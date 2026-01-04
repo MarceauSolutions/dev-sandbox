@@ -1,0 +1,28 @@
+# Core dependencies for the 3-layer architecture
+
+# Modal (for webhooks and cloud execution)
+modal
+
+# Google Cloud APIs (for Sheets, Slides, etc.)
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+
+# Environment and configuration
+python-dotenv
+
+# HTTP requests
+requests
+
+# Data processing (add as needed)
+# pandas
+# numpy
+
+# Optional: Database support
+# sqlalchemy
+# psycopg2-binary
+
+# Optional: Web scraping
+# beautifulsoup4
+# selenium
