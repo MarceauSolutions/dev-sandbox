@@ -203,6 +203,56 @@ Projects developed here and deployed to production Skills workspaces:
 
 ---
 
+### 🔧 Amazon Seller Operations (In Development)
+**Status:** Core functionality built, awaiting SP-API credentials
+
+**What it does:**
+- Inventory reorder optimization with cost-benefit analysis
+- FBA fee calculations and storage cost projections (2026 rates)
+- Review monitoring and compliance flagging
+- Buy box tracking and price optimization
+- Multi-marketplace operations
+
+**Built so far:**
+- `directives/amazon_seller_operations.md` - Master directive with 10 use cases
+- `execution/amazon_sp_api.py` - Base API wrapper with caching
+- `execution/amazon_inventory_optimizer.py` - Inventory optimizer
+- `docs/AMAZON_SETUP.md` - Complete setup guide
+
+**Next steps:**
+- Complete SP-API developer registration
+- Configure AWS IAM role and credentials
+- Test with real seller data
+
+---
+
+### 📄 Markdown to PDF Converter (Complete)
+**Status:** Ready to use
+
+**What it does:**
+- Convert markdown files to professional PDFs
+- Automatic styling with headers, code blocks, tables
+- Table of contents generation
+- Syntax highlighting for code
+- Batch conversion support
+
+**Built:**
+- `directives/convert_markdown_to_pdf.md` - Complete directive
+- `execution/markdown_to_pdf.py` - Converter script
+- `execution/styles/default_pdf.css` - Professional stylesheet
+- `docs/PDF_CONVERSION_GUIDE.md` - Usage guide
+
+**Usage:**
+```bash
+# Single file
+python execution/markdown_to_pdf.py --input file.md --output file.pdf
+
+# Batch convert all session notes
+python execution/markdown_to_pdf.py --batch "docs/sessions/*.md" --output-dir pdfs/
+```
+
+---
+
 ### 🚧 Future Projects (In Development)
 
 Add new projects here as you develop them.
@@ -238,6 +288,28 @@ This will:
 4. **Use production credentials** - Test with real services
 5. **Verify edge cases** - Make sure all scenarios work
 
+## Session History
+
+This workspace maintains detailed session notes to preserve context across work sessions. Think of it like version control for knowledge - every configuration, decision, and learning is documented.
+
+**📚 [View All Sessions](docs/sessions/README.md)**
+
+### Recent Sessions
+
+| Date | Topic | Quick Summary |
+|------|-------|---------------|
+| [2026-01-04](docs/sessions/2026-01-04-git-restructure-and-github-setup.md) | Git Restructure & GitHub Setup | Fixed git repo structure, pushed repos to GitHub organization, created session memory system |
+
+### Why Session History?
+
+Just like Python scripts in `execution/` preserve workflows for reuse, session notes preserve:
+- System configurations and how to replicate them
+- Decisions made and their rationale
+- Commands and shortcuts for common tasks
+- Gotchas encountered and solutions found
+
+This prevents having to re-explain or rediscover things in future sessions.
+
 ## Support
 
 For questions or issues, refer to CLAUDE.md for detailed operating principles.
@@ -246,3 +318,4 @@ For questions or issues, refer to CLAUDE.md for detailed operating principles.
 
 - [WORKSPACES_OVERVIEW.md](../WORKSPACES_OVERVIEW.md) - DOE vs Skills comparison
 - [deploy_to_skills.py](deploy_to_skills.py) - Deployment script
+- [Session History](docs/sessions/README.md) - Detailed notes from all work sessions

@@ -9,7 +9,12 @@
       "Bash(git rev-parse:*)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh repo view:*)",
+      "Bash(brew install:*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh repo create:*)"
     ]
   }
 }

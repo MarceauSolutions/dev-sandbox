@@ -15,6 +15,14 @@ python-dotenv
 # HTTP requests
 requests
 
+# Amazon Selling Partner API
+python-amazon-sp-api
+
+# PDF Generation
+markdown-pdf
+markdown
+pygments
+
 # Data processing (add as needed)
 # pandas
 # numpy
