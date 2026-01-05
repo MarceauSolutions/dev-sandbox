@@ -14,7 +14,10 @@
       "Bash(gh repo view:*)",
       "Bash(brew install:*)",
       "Bash(gh auth status:*)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "Bash(git push:*)",
+      "Bash(pip install:*)",
+      "Bash(python3:*)"
     ]
   }
 }
