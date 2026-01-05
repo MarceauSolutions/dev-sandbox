@@ -17,7 +17,9 @@
       "Bash(gh repo create:*)",
       "Bash(git push:*)",
       "Bash(pip install:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(test:*)"
     ]
   }
 }

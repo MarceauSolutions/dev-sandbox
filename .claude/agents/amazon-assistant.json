@@ -1,0 +1,23 @@
+{
+  "agent_name": "amazon-assistant",
+  "project": "amazon-assistant",
+  "description": "Amazon Seller automation and optimization tools",
+  "skills_manifest": "../.claude/projects/amazon-assistant-skills.json",
+  "allowed_tools": [
+    "Bash(python:*)",
+    "Read",
+    "Write",
+    "Grep"
+  ],
+  "knowledge_domains": [
+    "amazon-sp-api",
+    "e-commerce",
+    "inventory-management",
+    "pricing-optimization"
+  ],
+  "jargon": {
+    "enabled": false,
+    "domains": []
+  },
+  "restrictions": []
+}

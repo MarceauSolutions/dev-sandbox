@@ -1,0 +1,22 @@
+{
+  "agent_name": "weather-reports",
+  "project": "weather-reports",
+  "description": "Automated weather report generation",
+  "skills_manifest": "../.claude/projects/weather-reports-skills.json",
+  "allowed_tools": [
+    "Bash(python:*)",
+    "Read",
+    "Write",
+    "Grep"
+  ],
+  "knowledge_domains": [
+    "meteorology",
+    "weather-forecasting",
+    "data-visualization"
+  ],
+  "jargon": {
+    "enabled": false,
+    "domains": []
+  },
+  "restrictions": []
+}

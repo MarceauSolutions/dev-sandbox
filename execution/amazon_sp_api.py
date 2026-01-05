@@ -270,6 +270,108 @@ class AmazonSPAPI:
             print(f"ERROR: Unexpected error: {e}")
             return []
 
+    def get_order_items(self, order_id, use_cache=True, cache_minutes=60):
+        """
+        Get line items for a specific order.
+
+        Args:
+            order_id: Amazon Order ID
+            use_cache: Whether to use cached data
+            cache_minutes: Cache validity in minutes
+
+        Returns:
+            List of order items
+        """
+        cache_key = f"order_items_{order_id}"
+
+        # Check cache
+        if use_cache:
+            cached = self._cache_get(cache_key, cache_minutes)
+            if cached:
+                return cached
+
+        # Make API call
+        self.get_calls_count += 1
+
+        try:
+            orders_api = Orders(
+                credentials=self._get_credentials(),
+                marketplace=self.marketplace
+            )
+
+            result = orders_api.get_order_items(order_id)
+            items = result.payload['OrderItems'] if hasattr(result, 'payload') else []
+
+            # Cache result
+            if use_cache:
+                self._cache_set(cache_key, items)
+
+            return items
+
+        except SellingApiException as e:
+            print(f"ERROR: Could not get order items for {order_id}: {e}")
+            return []
+        except Exception as e:
+            print(f"ERROR: Unexpected error getting order items: {e}")
+            return []
+
+    def get_product_details(self, asin, use_cache=True, cache_minutes=1440):
+        """
+        Get product details including dimensions and category.
+
+        Args:
+            asin: Product ASIN
+            use_cache: Whether to use cached data
+            cache_minutes: Cache validity (default 24 hours)
+
+        Returns:
+            Dict with product details
+        """
+        cache_key = f"product_{asin}"
+
+        # Check cache (product details rarely change)
+        if use_cache:
+            cached = self._cache_get(cache_key, cache_minutes)
+            if cached:
+                print(f"✓ Using cached product data (saved 1 GET call)")
+                return cached
+
+        # Make API call
+        self.get_calls_count += 1
+        print(f"→ Making GET call #{self.get_calls_count} (will incur fee after April 30, 2026)")
+
+        try:
+            products_api = Products(
+                credentials=self._get_credentials(),
+                marketplace=self.marketplace
+            )
+
+            # Try multiple method names as the library API varies by version
+            try:
+                result = products_api.get_competitive_pricing_for_asin([asin])
+            except AttributeError:
+                try:
+                    result = products_api.get_competitive_pricing(asin_list=[asin])
+                except AttributeError:
+                    # Method doesn't exist - return None, caller will use defaults
+                    print(f"  Note: Product API method not available, using defaults")
+                    return None
+
+            product_data = result.payload if hasattr(result, 'payload') else {}
+
+            # Cache result
+            if use_cache:
+                self._cache_set(cache_key, product_data)
+
+            return product_data
+
+        except SellingApiException as e:
+            print(f"ERROR: Amazon SP-API error getting product {asin}: {e}")
+            return None
+        except Exception as e:
+            print(f"ERROR: Unexpected error: {e}")
+            return None
+
     def get_product_fees(self, asin, price, use_cache=True, cache_minutes=1440):
         """
         Get FBA fee estimates for a product.

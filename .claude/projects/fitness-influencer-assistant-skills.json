@@ -1,0 +1,15 @@
+{
+  "project": "fitness-influencer-assistant",
+  "description": "Fitness Influencer Assistant project skills",
+  "version": "1.0.0",
+  "skills": [
+    "fitness-influencer-operations"
+  ],
+  "allowed_tools": [
+    "Bash(python:*)",
+    "Read",
+    "Write",
+    "Grep"
+  ],
+  "knowledge_domains": []
+}

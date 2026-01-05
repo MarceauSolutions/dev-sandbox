@@ -1,0 +1,20 @@
+{
+  "project": "weather-reports",
+  "description": "Automated weather report generation",
+  "version": "1.0.0",
+  "skills": [
+    "generate-naples-weather-report"
+  ],
+  "allowed_tools": [
+    "Bash(python:*)",
+    "Read",
+    "Write",
+    "Grep"
+  ],
+  "knowledge_domains": [
+    "meteorology",
+    "weather-forecasting",
+    "data-visualization"
+  ],
+  "restrictions": []
+}
