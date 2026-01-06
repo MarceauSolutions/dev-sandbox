@@ -1,9 +1,29 @@
 #!/usr/bin/env python3
 """
-Automatic Jump Cut Video Editor
-Removes silence from videos and adds branded intro/outro.
+video_jumpcut.py - Automatic Jump Cut Video Editor
 
-Features:
+WHAT: Removes silence from videos using FFmpeg silence detection
+WHY: Save hours of manual editing time (10-15 min video → 8 min typical)
+INPUT: Video file (MP4/MOV/AVI), silence threshold (default -40dB)
+OUTPUT: Edited video with jump cuts applied, processing stats
+COST: FREE (uses FFmpeg + MoviePy)
+TIME: ~2-5 minutes for 10-minute video
+
+QUICK USAGE:
+  python video_jumpcut.py --input raw_video.mp4 --output edited.mp4
+
+CAPABILITIES:
+  - Silence detection and removal (configurable threshold)
+  - Automatic jump cuts (maintains natural flow)
+  - Branded intro/outro insertion (optional)
+  - Thumbnail generation from best frame
+  - Processing stats (cuts made, time saved, file size)
+
+DEPENDENCIES: ffmpeg, moviepy, pillow
+API_KEYS: None required
+
+---
+Original Features:
 - Silence detection and removal
 - Automatic jump cuts
 - Branded intro/outro insertion

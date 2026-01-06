@@ -1,9 +1,29 @@
 #!/usr/bin/env python3
 """
-Grok/xAI Image Generation
-Generate AI images using Grok's Aurora model.
+grok_image_gen.py - AI Image Generation via Grok/xAI
 
-Features:
+WHAT: Generate AI images from text prompts using Grok's Aurora model
+WHY: Create custom fitness images, backgrounds, and visual content on-demand
+INPUT: Text prompt describing desired image, count (1-10 images)
+OUTPUT: Image URLs or downloaded files (1024x768 default)
+COST: $0.07 per image
+TIME: ~10-15 seconds per image
+
+QUICK USAGE:
+  python grok_image_gen.py --prompt "Fitness influencer doing workout"
+
+CAPABILITIES:
+  - Text-to-image generation with photorealistic quality
+  - Batch generation (up to 10 images per request)
+  - Automatic cost tracking and reporting
+  - Optional local file download
+  - Precise text instruction following
+
+DEPENDENCIES: requests, python-dotenv
+API_KEYS: XAI_API_KEY (from x.ai console)
+
+---
+Original Features:
 - Text-to-image generation
 - Batch generation (up to 10 images)
 - Cost tracking ($0.07 per image)

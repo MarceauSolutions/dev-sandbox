@@ -1,9 +1,29 @@
 #!/usr/bin/env python3
 """
-Gmail Monitor and Email Summarization
-Monitors Gmail inbox and provides intelligent summaries.
+gmail_monitor.py - Gmail Monitor and Email Summarization
 
-Features:
+WHAT: Monitors Gmail inbox and provides intelligent email summaries
+WHY: Never miss important sponsorships, collaborations, or customer inquiries
+INPUT: Time period (hours back, default 24)
+OUTPUT: Categorized email digest with priority flagging and suggested actions
+COST: FREE (uses Gmail API)
+TIME: <30 seconds
+
+QUICK USAGE:
+  python gmail_monitor.py --hours 24
+
+CAPABILITIES:
+  - Email categorization (sponsorships, business, customer, other)
+  - Priority flagging (urgent items highlighted)
+  - Daily digest generation with summaries
+  - Draft response suggestions
+  - Batch processing of inbox
+
+DEPENDENCIES: google-auth, google-auth-oauthlib, google-api-python-client
+API_KEYS: Google OAuth (credentials.json, token.json)
+
+---
+Original Features:
 - Email categorization (sponsorships, business, other)
 - Priority flagging
 - Daily digest generation

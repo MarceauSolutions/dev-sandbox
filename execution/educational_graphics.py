@@ -1,9 +1,29 @@
 #!/usr/bin/env python3
 """
-Educational Fitness Content Generator
-Creates branded graphics matching Fitness_Tips.jpeg style.
+educational_graphics.py - Branded Fitness Content Generator
 
-Features:
+WHAT: Creates branded educational graphics matching Fitness_Tips.jpeg style
+WHY: Generate professional, consistent fitness content for social media
+INPUT: Title text, key points (list), platform type, optional background image
+OUTPUT: Branded graphic (JPG/PNG) sized for target platform
+COST: FREE (uses Pillow for graphics)
+TIME: <10 seconds per graphic
+
+QUICK USAGE:
+  python educational_graphics.py --title "Staying Lean" --points "Eat protein,Lift weights,Stay active"
+
+CAPABILITIES:
+  - Branded educational cards with Marceau Solutions styling
+  - Multiple platform formats (Instagram Post/Story, YouTube, TikTok)
+  - Consistent gold & black theme
+  - Logo and text overlay with custom fonts
+  - Background image support or solid color gradients
+
+DEPENDENCIES: pillow
+API_KEYS: None required
+
+---
+Original Features:
 - Branded educational cards
 - Multiple platform formats (Instagram, YouTube, TikTok)
 - Consistent styling
