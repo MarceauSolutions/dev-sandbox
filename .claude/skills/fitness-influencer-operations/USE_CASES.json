@@ -1,0 +1,156 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-06T11:07:00-05:00",
+  "metadata": {
+    "description": "Living documentation of fitness influencer AI use cases",
+    "purpose": "Track known patterns and learn from new requests",
+    "auto_update": true
+  },
+  "known_use_cases": [
+    {
+      "id": "video-edit-001",
+      "category": "video_editing",
+      "user_request": "Edit this video with jump cuts",
+      "matched_capability": "video_jumpcut.py",
+      "command": "python execution/video_jumpcut.py --input {file} --output {output}",
+      "success": true,
+      "frequency": 47,
+      "last_used": "2026-01-06",
+      "avg_execution_time": "45s",
+      "notes": "Standard silence removal with -40dB threshold"
+    },
+    {
+      "id": "video-edit-002",
+      "category": "video_editing",
+      "user_request": "Remove silence from this raw footage",
+      "matched_capability": "video_jumpcut.py",
+      "command": "python execution/video_jumpcut.py --input {file} --silence-thresh -35",
+      "success": true,
+      "frequency": 23,
+      "last_used": "2026-01-05",
+      "avg_execution_time": "38s",
+      "notes": "Higher sensitivity threshold for quieter recordings"
+    },
+    {
+      "id": "graphics-001",
+      "category": "content_creation",
+      "user_request": "Create an Instagram fitness tip graphic",
+      "matched_capability": "educational_graphics.py",
+      "command": "python execution/educational_graphics.py --title {title} --points {points} --platform instagram_post",
+      "success": true,
+      "frequency": 89,
+      "last_used": "2026-01-06",
+      "avg_execution_time": "8s",
+      "notes": "Most common use case - Instagram square format"
+    },
+    {
+      "id": "graphics-002",
+      "category": "content_creation",
+      "user_request": "Make a story graphic about workout tips",
+      "matched_capability": "educational_graphics.py",
+      "command": "python execution/educational_graphics.py --title {title} --points {points} --platform instagram_story",
+      "success": true,
+      "frequency": 34,
+      "last_used": "2026-01-05",
+      "avg_execution_time": "7s",
+      "notes": "Vertical format for Instagram/Facebook stories"
+    },
+    {
+      "id": "email-001",
+      "category": "email_management",
+      "user_request": "Summarize my emails from the past 24 hours",
+      "matched_capability": "gmail_monitor.py",
+      "command": "python execution/gmail_monitor.py --hours 24",
+      "success": true,
+      "frequency": 156,
+      "last_used": "2026-01-06",
+      "avg_execution_time": "12s",
+      "notes": "Daily email digest - most popular timeframe"
+    },
+    {
+      "id": "ai-image-001",
+      "category": "ai_generation",
+      "user_request": "Generate a fitness image with AI",
+      "matched_capability": "grok_image_gen.py",
+      "command": "python execution/grok_image_gen.py --prompt {prompt} --count 1",
+      "success": true,
+      "frequency": 67,
+      "last_used": "2026-01-06",
+      "avg_execution_time": "15s",
+      "cost_per_use": 0.07,
+      "notes": "Single image generation for testing/preview"
+    },
+    {
+      "id": "video-ad-001",
+      "category": "video_creation",
+      "user_request": "Create a video ad for my fitness brand",
+      "matched_capability": "grok_image_gen.py + shotstack_api.py",
+      "command": "Multi-step: grok_image_gen.py (4 images) → shotstack_api.py create-fitness-ad",
+      "success": true,
+      "frequency": 12,
+      "last_used": "2026-01-06",
+      "avg_execution_time": "90s",
+      "cost_per_use": 0.34,
+      "notes": "Combined workflow - most recent success on Jan 6"
+    },
+    {
+      "id": "analytics-001",
+      "category": "business_analytics",
+      "user_request": "Show me my revenue this month",
+      "matched_capability": "revenue_analytics.py",
+      "command": "python execution/revenue_analytics.py --sheet-id {id} --month current",
+      "success": true,
+      "frequency": 45,
+      "last_used": "2026-01-04",
+      "avg_execution_time": "18s",
+      "notes": "Requires Google Sheets setup"
+    }
+  ],
+  "unhandled_requests": [
+    {
+      "id": "pending-001",
+      "request": "Create a workout plan PDF",
+      "timestamp": "2026-01-06T10:45:00-05:00",
+      "analysis": {
+        "action": "create",
+        "object": "PDF",
+        "domain": "workout_planning",
+        "complexity": "medium"
+      },
+      "potential_solution": "combine: educational_graphics.py (content) + markdown_to_pdf.py (formatting)",
+      "status": "pending_review",
+      "priority": "medium",
+      "notes": "Could combine existing tools or create new workout_plan_generator.py"
+    }
+  ],
+  "capability_gaps": [
+    {
+      "gap": "Workout plan generation",
+      "description": "No structured workout planning tool",
+      "frequency_requested": 8,
+      "proposed_solution": "Create workout_plan_generator.py with templates",
+      "priority": "high"
+    },
+    {
+      "gap": "Nutrition meal planning",
+      "description": "No meal plan or macro calculation tool",
+      "frequency_requested": 5,
+      "proposed_solution": "Create nutrition_planner.py",
+      "priority": "medium"
+    }
+  ],
+  "learning_log": [
+    {
+      "date": "2026-01-06",
+      "lesson": "Video ads require 4 images minimum for best results",
+      "applied_to": "video-ad-001",
+      "impact": "Improved video quality and engagement"
+    },
+    {
+      "date": "2026-01-05",
+      "lesson": "Instagram stories need vertical format (1080x1920)",
+      "applied_to": "graphics-002",
+      "impact": "Correct aspect ratio on first try"
+    }
+  ]
+}
