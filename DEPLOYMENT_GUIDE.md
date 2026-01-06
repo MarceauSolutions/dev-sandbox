@@ -43,6 +43,15 @@ This guide covers deploying the optimized Fitness Influencer AI system with livi
 │  - USE_CASES.json (Living documentation)               │
 │  - update_skill_docs.py (Auto-updater)                 │
 └─────────────────────────────────────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────────────────┐
+│  Personalization Layer (NEW v2.0)                       │
+│  - setup_wizard.py (CLI setup)                          │
+│  - setup_form.html (Web setup)                          │
+│  - SETUP_GUIDE.md (End user documentation)             │
+│  - .env (User-specific configuration)                   │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
