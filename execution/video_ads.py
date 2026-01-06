@@ -106,7 +106,7 @@ class VideoAdGenerator:
         
         return prompts[:num_images]
     
-    async def create_video_ad(
+    def create_video_ad(
         self,
         concept: str = "fitness transformation",
         headline: str = "Transform Your Body",
@@ -168,19 +168,18 @@ class VideoAdGenerator:
         
         for i, prompt in enumerate(prompts, 1):
             print(f"\n-> Generating image {i}/{num_images}...")
-            result = await self.grok.generate_image(prompt)
+            result = self.grok.generate_image(prompt, count=1)
             
-            if result.get("success") and result.get("image_url"):
-                image_url = result["image_url"]
+            if result and isinstance(result, list) and len(result) > 0:
+                image_url = result[0]
                 image_urls.append(image_url)
-                total_image_cost += result.get("cost", 0.07)
+                total_image_cost += 0.07
                 print(f"  ✓ Image {i} generated: {image_url[:60]}...")
             else:
-                error = result.get("error", "Unknown error")
-                print(f"  ✗ Image {i} failed: {error}")
+                print(f"  ✗ Image {i} failed")
                 return {
                     "success": False,
-                    "error": f"Image generation failed: {error}",
+                    "error": f"Image generation failed for image {i}",
                     "step": "grok_image_generation"
                 }
         
@@ -271,7 +270,7 @@ class VideoAdGenerator:
         }
 
 
-async def main():
+def main():
     """CLI for video ad generation."""
     parser = argparse.ArgumentParser(
         description="Generate fitness video ads with AI images + video rendering"
@@ -332,7 +331,7 @@ async def main():
     generator = VideoAdGenerator()
     
     # Generate video ad
-    result = await generator.create_video_ad(
+    result = generator.create_video_ad(
         concept=args.concept,
         headline=args.headline,
         cta_text=args.cta,
@@ -352,4 +351,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
