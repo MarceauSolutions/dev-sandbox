@@ -17,7 +17,7 @@ trigger-phrases:
 
 ## ⚡ Quick Reference (AI: Read This First)
 
-**CAPABILITIES:** Video editing (jump cuts) • Educational graphics • Email digest • Revenue analytics • AI images (Grok) • Video ads (Shotstack)
+**CAPABILITIES:** Video editing (jump cuts) • Educational graphics • Email digest • Revenue analytics • AI images (Grok) • Video ads (Shotstack) • Workout plans • Nutrition guides
 
 **WHEN TO USE:** User requests content creation, video editing, email management, or analytics for fitness influencer workflows
 
@@ -55,10 +55,20 @@ User Request → Capability Mapping:
 │     INPUT: Prompt, count
 │     OUTPUT: Image URLs ($0.07 each)
 │
-└─ "video ad" / "create ad" / "social video"
-   └─ USE: execution/shotstack_api.py + grok_image_gen.py
-      PROCESS: Generate 4 images → Create video with Shotstack
-      OUTPUT: Video URL (~$0.35 total)
+├─ "video ad" / "create ad" / "social video"
+│  └─ USE: execution/shotstack_api.py + grok_image_gen.py
+│     PROCESS: Generate 4 images → Create video with Shotstack
+│     OUTPUT: Video URL (~$0.35 total)
+│
+├─ "workout plan" / "training program" / "exercise routine"
+│  └─ USE: execution/workout_plan_generator.py
+│     INPUT: Goal, experience level, days/week, equipment
+│     OUTPUT: Structured workout plan (markdown + JSON)
+│
+└─ "nutrition plan" / "meal plan" / "macros" / "diet guide"
+   └─ USE: execution/nutrition_guide_generator.py
+      INPUT: Weight, activity level, goal, dietary preference
+      OUTPUT: Personalized nutrition guide (markdown + JSON)
 ```
 
 ---
@@ -73,6 +83,8 @@ User Request → Capability Mapping:
 | `revenue_analytics.py` | Track income/expenses | Sheet ID | Revenue report | FREE |
 | `grok_image_gen.py` | AI image generation | Prompt | Image URLs | $0.07/image |
 | `shotstack_api.py` | Video from images | Image URLs | Video URL | $0.06/video |
+| `workout_plan_generator.py` | Generate workout plans | Goal, experience, days | Workout plan (MD/JSON) | FREE |
+| `nutrition_guide_generator.py` | Personalized nutrition | Weight, activity, goal | Nutrition guide (MD/JSON) | FREE |
 | `calendar_reminders.py` | Recurring reminders | Title, days, time | Calendar events | FREE |
 | `canva_integration.py` | Advanced designs | Template ID | Design URL | FREE |
 
