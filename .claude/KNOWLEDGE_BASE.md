@@ -78,6 +78,62 @@ periods = forecast['properties']['periods']  # 14 periods = 7 days
 - Refresh token obtained via OAuth flow
 - Wrapper handles token refresh automatically
 
+### Grok/xAI Image Generation API
+**Location:** `execution/grok_image_gen.py`
+
+**Key Facts:**
+- Model: `grok-2-image-1212` (Aurora)
+- Cost: $0.07 per image
+- Up to 10 images per request
+- Default size: 1024x768
+
+**Setup:**
+- Add `XAI_API_KEY` to `.env`
+- Get key from: https://console.x.ai/
+
+**Example:**
+```python
+generator = GrokImageGenerator()
+image_urls = generator.generate_image(
+    prompt="Fitness influencer workout",
+    count=4
+)
+```
+
+### Shotstack Video Generation API
+**Location:** `execution/shotstack_api.py`
+
+**Key Facts:**
+- Cost: ~$0.04-$0.10 per video
+- Creates videos from images with transitions
+- Text overlays, background music included
+- Multiple formats: mp4, gif, webm
+
+**Setup:**
+- Add `SHOTSTACK_API_KEY` to `.env`
+- Set `SHOTSTACK_ENV=stage` for testing, `v1` for production
+- Get key from: https://dashboard.shotstack.io/
+
+**Example:**
+```python
+api = ShotstackAPI()
+result = api.create_video_from_images(
+    image_urls=["url1", "url2", "url3"],
+    text_overlays=["HEADLINE", "", "CTA"],
+    duration_per_image=3.5,
+    transition="slideLeft",
+    music="energetic"
+)
+# Returns render_id, wait for completion
+final = api.wait_for_render(result["render_id"])
+video_url = final["video_url"]
+```
+
+**Video Ad Pipeline (Grok + Shotstack):**
+1. Generate images with Grok (~$0.28 for 4 images)
+2. Create video with Shotstack (~$0.06)
+3. Total: ~$0.35 per 15-second ad
+
 ---
 
 ## File Organization
@@ -276,6 +332,52 @@ allowed-tools: ["Bash(python:*)", "Read"]
 **API Access:**
 - National Weather Service (free, no key)
 - Naples, FL coordinates: 26.1420° N, 81.7948° W
+
+### Fitness Influencer Project
+**Goal:** Automate fitness influencer content creation and operations
+
+**Domains:**
+- fitness-content
+- video-editing
+- social-media
+- email-management
+
+**Skills (current):**
+- fitness-influencer-operations
+
+**Capabilities (WORKING):**
+- ✅ AI image generation (Grok) - $0.07/image
+- ✅ Video ad creation (Shotstack) - $0.06/video
+- ✅ Video jump cuts (FFmpeg/MoviePy) - FREE
+- ✅ Educational graphics (Pillow) - FREE
+
+**Capabilities (Pending):**
+- ❌ Email monitoring (Gmail API)
+- ❌ Calendar reminders (Google Calendar)
+- ❌ Revenue analytics (Google Sheets)
+- ❌ Canva integration
+
+**API Access:**
+- `XAI_API_KEY` - Grok image generation
+- `SHOTSTACK_API_KEY` - Video generation
+- Google APIs - pending setup
+
+**Example Video Ad Pipeline:**
+```bash
+# 1. Generate images
+python execution/grok_image_gen.py --prompt "Fitness workout" --count 4
+
+# 2. Create video (use URLs from step 1)
+python execution/shotstack_api.py create-fitness-ad \
+  --images "url1,url2,url3,url4" \
+  --headline "Transform Your Body" \
+  --cta "Follow @boabfit"
+```
+
+**First Success (2026-01-06):**
+- Created @boabfit video ad
+- 4 images → 14-second video
+- Cost: $0.34
 
 ---
 

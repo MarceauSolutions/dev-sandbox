@@ -114,6 +114,7 @@ Fitness influencers need to manage multiple channels (YouTube, Instagram, TikTok
 - `execution/educational_graphics.py` - Generate branded educational content
 - `execution/canva_integration.py` - Canva API wrapper for complex designs
 - `execution/grok_image_gen.py` - AI image generation via Grok API
+- `execution/shotstack_api.py` - Video generation from images (Shotstack API)
 
 ## Use Cases
 
@@ -270,6 +271,68 @@ NET PROFIT: $11,350 (88.7% margin)
 4. Flag missed deadlines
 
 **Output**: Automated reminders ensure consistent posting
+
+### 7. Video Ad Creation (AI-Generated) ✅ WORKING
+
+**Natural Language Request**: "Create a video ad for @boabfit"
+
+**Process**:
+1. Generate AI images with Grok:
+   - Prompt: Fitness influencer, workout, motivation, professional
+   - Count: 4 images
+   - Cost: $0.28
+2. Create video with Shotstack:
+   - Combine images with transitions (slideLeft)
+   - Add headline text overlay
+   - Add CTA text overlay
+   - Add energetic background music
+   - Format: 9:16 vertical for social media
+   - Cost: ~$0.06
+3. Wait for render (30-60 seconds)
+4. Return video URL
+
+**Example Implementation:**
+```python
+# Step 1: Generate images
+import requests
+import os
+
+api_key = os.getenv('XAI_API_KEY')
+response = requests.post(
+    'https://api.x.ai/v1/images/generations',
+    headers={'Authorization': f'Bearer {api_key}'},
+    json={
+        'prompt': 'Athletic fitness influencer in modern gym, energetic workout',
+        'n': 4,
+        'model': 'grok-2-image-1212'
+    }
+)
+image_urls = [img['url'] for img in response.json()['data']]
+
+# Step 2: Create video
+from execution.shotstack_api import ShotstackAPI
+api = ShotstackAPI()
+result = api.create_video_from_images(
+    image_urls=image_urls,
+    text_overlays=["TRANSFORM YOUR BODY", "", "", "Follow @boabfit"],
+    duration_per_image=3.5,
+    transition="slideLeft",
+    music="energetic",
+    resolution="hd"
+)
+final = api.wait_for_render(result["render_id"])
+print(f"Video URL: {final['video_url']}")
+```
+
+**Output**:
+- MP4 video (HD, 9:16 vertical)
+- 14-second duration
+- Professional transitions and music
+- Total cost: ~$0.35
+
+**First Success (2026-01-06):**
+- Created @boabfit video ad
+- URL: https://shotstack-api-stage-output.s3-ap-southeast-2.amazonaws.com/26vfkcrs1c/6e66969c-c573-433d-a7ba-2eb29ed6e568.mp4
 
 ## Outputs
 
