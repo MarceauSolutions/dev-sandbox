@@ -55,10 +55,10 @@ User Request → Capability Mapping:
 │     INPUT: Prompt, count
 │     OUTPUT: Image URLs ($0.07 each)
 │
-├─ "video ad" / "create ad" / "social video"
-│  └─ USE: execution/shotstack_api.py + grok_image_gen.py
-│     PROCESS: Generate 4 images → Create video with Shotstack
-│     OUTPUT: Video URL (~$0.35 total)
+├─ "video ad" / "create ad" / "social video" / "advertisement"
+│  └─ USE: execution/video_ads.py (orchestrates Grok + Shotstack)
+│     PROCESS: Generate 4 AI images → Create video with transitions
+│     OUTPUT: Video URL ($0.34 = 4×$0.07 images + $0.06 video)
 │
 ├─ "workout plan" / "training program" / "exercise routine"
 │  └─ USE: execution/workout_plan_generator.py
@@ -83,6 +83,7 @@ User Request → Capability Mapping:
 | `revenue_analytics.py` | Track income/expenses | Sheet ID | Revenue report | FREE |
 | `grok_image_gen.py` | AI image generation | Prompt | Image URLs | $0.07/image |
 | `shotstack_api.py` | Video from images | Image URLs | Video URL | $0.06/video |
+| `video_ads.py` | Complete video ads | Concept, headline, CTA | Video URL | $0.34 total |
 | `workout_plan_generator.py` | Generate workout plans | Goal, experience, days | Workout plan (MD/JSON) | FREE |
 | `nutrition_guide_generator.py` | Personalized nutrition | Weight, activity, goal | Nutrition guide (MD/JSON) | FREE |
 | `calendar_reminders.py` | Recurring reminders | Title, days, time | Calendar events | FREE |
