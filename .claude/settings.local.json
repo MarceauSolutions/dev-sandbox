@@ -28,7 +28,17 @@
       "Bash(git clone:*)",
       "Bash(git rm:*)",
       "Bash(file:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(xargs:*)",
+      "Bash(cat:*)",
+      "Bash(git pull:*)",
+      "Bash(railway status:*)",
+      "Bash(railway whoami:*)",
+      "Bash(railway list:*)",
+      "Bash(railway link:*)",
+      "Bash(railway service:*)",
+      "Bash(railway up:*)",
+      "Bash(railway domain:*)"
     ]
   }
 }
