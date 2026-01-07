@@ -135,7 +135,7 @@ class CreatomateAPI:
                 timeout=30
             )
             
-            if response.status_code not in [200, 201]:
+            if response.status_code not in [200, 201, 202]:
                 print(f"  X API Error: {response.status_code}")
                 print(f"  {response.text}")
                 return {"success": False, "error": response.text}
