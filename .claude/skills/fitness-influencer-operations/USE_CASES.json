@@ -129,14 +129,20 @@
       "description": "No structured workout planning tool",
       "frequency_requested": 8,
       "proposed_solution": "Create workout_plan_generator.py with templates",
-      "priority": "high priority"
+      "priority": "high priority",
+      "status": "RESOLVED",
+      "resolved_date": "2026-01-06",
+      "resolution": "Created execution/workout_plan_generator.py"
     },
     {
       "gap": "Nutrition meal planning",
       "description": "No meal plan or macro calculation tool",
       "frequency_requested": 5,
       "proposed_solution": "Create nutrition_planner.py",
-      "priority": "low priority"
+      "priority": "low priority",
+      "status": "RESOLVED",
+      "resolved_date": "2026-01-06",
+      "resolution": "Created execution/nutrition_guide_generator.py"
     }
   ],
   "learning_log": [
