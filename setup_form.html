@@ -44,6 +44,12 @@
             opacity: 0.9;
         }
         
+        .header .tagline {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
         .progress-bar {
             height: 8px;
             background: rgba(255, 255, 255, 0.3);
@@ -135,26 +141,27 @@
             margin-top: 6px;
         }
         
-        .api-instructions {
-            background: #f3f4f6;
+        .info-box {
+            background: #f0f9ff;
             border-left: 4px solid #667eea;
             padding: 16px;
             border-radius: 8px;
             margin-bottom: 20px;
         }
         
-        .api-instructions h4 {
+        .info-box h4 {
             color: #667eea;
             margin-bottom: 10px;
         }
         
-        .api-instructions ol {
-            margin-left: 20px;
-            line-height: 1.8;
+        .info-box p, .info-box li {
+            color: #374151;
+            line-height: 1.6;
         }
         
-        .api-instructions li {
-            color: #374151;
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
         }
         
         .checkbox-group {
@@ -260,21 +267,216 @@
             font-size: 48px;
         }
         
-        .download-btn {
+        .file-upload {
+            position: relative;
             display: inline-block;
-            padding: 14px 32px;
-            background: #4ade80;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            margin: 10px;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            background: #f9fafb;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .file-upload-label:hover {
+            border-color: #667eea;
+            background: #f0f9ff;
+        }
+        
+        .file-upload-label.has-file {
+            border-color: #4ade80;
+            background: #f0fdf4;
+        }
+        
+        .file-upload-icon {
+            font-size: 32px;
+            margin-right: 12px;
+        }
+        
+        .file-upload-text {
+            color: #6b7280;
+        }
+        
+        .file-upload-text strong {
+            color: #667eea;
+        }
+        
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .social-input {
+            display: flex;
+            align-items: center;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+            border-radius: 8px 0 0 8px;
+            border: 2px solid #e5e7eb;
+            border-right: none;
+            font-size: 18px;
+        }
+        
+        .social-input input {
+            border-radius: 0 8px 8px 0;
+            flex: 1;
+        }
+        
+        .feature-card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
             transition: all 0.2s;
         }
         
-        .download-btn:hover {
-            background: #22c55e;
-            transform: translateY(-2px);
+        .feature-card:hover {
+            border-color: #667eea;
+        }
+        
+        .feature-card h4 {
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .feature-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .pricing-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .pricing-badge.free {
+            background: #4ade80;
+        }
+        
+        /* Color Palette Styles */
+        .color-palette {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .color-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .color-row:last-child {
+            border-bottom: none;
+        }
+        
+        .color-label {
+            min-width: 140px;
+        }
+        
+        .color-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .color-badge.primary {
+            background: #667eea;
+        }
+        
+        .color-badge.secondary {
+            background: #764ba2;
+        }
+        
+        .color-badge.accent {
+            background: #4ade80;
+        }
+        
+        .color-desc {
+            display: block;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        .color-preview {
+            background: #f0f9ff;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .preview-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .preview-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-segment {
+            flex: 1;
+            transition: background 0.3s ease;
+        }
+        
+        @media (max-width: 600px) {
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .buttons button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -282,7 +484,8 @@
     <div class="container">
         <div class="header">
             <h1>🎯 Fitness Influencer AI</h1>
-            <p>Personalized Setup Wizard</p>
+            <p>Your Personal AI Business Assistant</p>
+            <p class="tagline">Powered by Marceau Solutions • No API Keys Required</p>
         </div>
         
         <div class="progress-bar">
@@ -292,25 +495,29 @@
         <div class="content">
             <!-- Step 1: Personal Information -->
             <div class="step active" data-step="1">
-                <h2 class="step-title">Step 1: Personal Information</h2>
-                <p class="step-description">Let's start with some basic information about you and your business.</p>
+                <h2 class="step-title">Step 1: Your Information</h2>
+                <p class="step-description">Let's personalize your AI assistant. This takes less than 2 minutes.</p>
+                
+                <div class="info-box">
+                    <h4>✨ No API Keys Needed!</h4>
+                    <p>Unlike other tools, you don't need to create accounts or get API keys from Grok, Shotstack, or Google. We handle all the technical stuff—you just focus on your fitness business.</p>
+                </div>
                 
                 <div class="form-group">
                     <label>Full Name *</label>
-                    <input type="text" id="fullName" required>
+                    <input type="text" id="fullName" required placeholder="Your name">
                     <p class="help-text">This will be used to personalize your AI assistant</p>
                 </div>
                 
                 <div class="form-group">
                     <label>Email Address *</label>
-                    <input type="email" id="email" required>
-                    <p class="help-text">We'll use this to send your configuration files</p>
+                    <input type="email" id="email" required placeholder="you@example.com">
+                    <p class="help-text">We'll send your login credentials here</p>
                 </div>
                 
                 <div class="form-group">
                     <label>Business/Brand Name <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="businessName">
-                    <p class="help-text">E.g., "FitCoach Pro", "Wellness Warriors"</p>
+                    <input type="text" id="businessName" placeholder="FitCoach Pro, Wellness Warriors, etc.">
                 </div>
                 
                 <div class="form-group">
@@ -319,16 +526,97 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Instagram Handle <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="instagram" placeholder="yourusername">
-                    <p class="help-text">Without the @ symbol</p>
+                    <label>Phone Number <span class="label-optional">(optional)</span></label>
+                    <input type="tel" id="phone" placeholder="(555) 123-4567">
+                    <p class="help-text">For account recovery and important updates</p>
+                </div>
+                
+                <div class="form-group" style="margin-top: 20px; padding: 20px; background: #f0f9ff; border-radius: 12px;">
+                    <label style="margin-bottom: 15px; font-size: 16px;">📬 Communication Preferences</label>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="emailOptIn" checked>
+                        <label for="emailOptIn">
+                            <strong>Email Updates</strong> - Receive tips, feature updates, and helpful resources
+                        </label>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="smsOptIn">
+                        <label for="smsOptIn">
+                            <strong>SMS Notifications</strong> - Get important alerts and reminders via text
+                        </label>
+                    </div>
+                    
+                    <p class="help-text" style="margin-top: 10px; font-size: 12px;">
+                        📱 By opting in to SMS, you agree to receive occasional text messages from Marceau Solutions. 
+                        Standard messaging rates may apply. Reply STOP to unsubscribe at any time.
+                    </p>
                 </div>
             </div>
             
-            <!-- Step 2: Branding -->
+            <!-- Step 2: Social Media -->
             <div class="step" data-step="2">
-                <h2 class="step-title">Step 2: Brand Customization</h2>
-                <p class="step-description">Customize how your AI assistant represents your brand.</p>
+                <h2 class="step-title">Step 2: Social Media Profiles</h2>
+                <p class="step-description">Connect your social media accounts so your AI can help manage and optimize your content.</p>
+                
+                <div class="form-group">
+                    <label>Social Media Handles <span class="label-optional">(all optional)</span></label>
+                    <p class="help-text" style="margin-bottom: 15px;">Enter your usernames without the @ symbol</p>
+                    
+                    <div class="social-grid">
+                        <div class="social-input">
+                            <span class="social-icon">📸</span>
+                            <input type="text" id="instagram" placeholder="Instagram">
+                        </div>
+                        
+                        <div class="social-input">
+                            <span class="social-icon">▶️</span>
+                            <input type="text" id="youtube" placeholder="YouTube">
+                        </div>
+                        
+                        <div class="social-input">
+                            <span class="social-icon">🎵</span>
+                            <input type="text" id="tiktok" placeholder="TikTok">
+                        </div>
+                        
+                        <div class="social-input">
+                            <span class="social-icon">𝕏</span>
+                            <input type="text" id="twitter" placeholder="X (Twitter)">
+                        </div>
+                        
+                        <div class="social-input">
+                            <span class="social-icon">💼</span>
+                            <input type="text" id="linkedin" placeholder="LinkedIn">
+                        </div>
+                        
+                        <div class="social-input">
+                            <span class="social-icon">👤</span>
+                            <input type="text" id="facebook" placeholder="Facebook">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Branding -->
+            <div class="step" data-step="3">
+                <h2 class="step-title">Step 3: Brand Customization</h2>
+                <p class="step-description">Upload your logo and customize your brand colors for all generated content.</p>
+                
+                <div class="form-group">
+                    <label>Logo <span class="label-optional">(optional)</span></label>
+                    <div class="file-upload">
+                        <div class="file-upload-label" id="logoUploadLabel">
+                            <span class="file-upload-icon">📁</span>
+                            <div class="file-upload-text">
+                                <strong>Click to upload</strong> or drag and drop<br>
+                                PNG, JPG, SVG (max 5MB)
+                            </div>
+                        </div>
+                        <input type="file" id="logoFile" accept="image/*">
+                    </div>
+                    <p class="help-text">Your logo will appear on all generated content</p>
+                </div>
                 
                 <div class="form-group">
                     <label>Brand Tagline <span class="label-optional">(optional)</span></label>
@@ -336,185 +624,171 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Primary Brand Color <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="primaryColor" placeholder="#4A90E2">
-                    <p class="help-text">Hex color code for your brand (e.g., #FF5733)</p>
-                </div>
-                
-                <div class="form-group">
-                    <label>Logo URL <span class="label-optional">(optional)</span></label>
-                    <input type="url" id="logoUrl" placeholder="https://yoursite.com/logo.png">
-                    <p class="help-text">Direct link to your logo image</p>
+                    <label>Brand Colors <span class="label-optional">(auto-detected from logo)</span></label>
+                    <p class="help-text" style="margin-bottom: 15px;">These colors will be used in your video creations, graphics, and branded content.</p>
+                    
+                    <div class="color-palette" id="colorPalette">
+                        <div class="color-row">
+                            <div class="color-label">
+                                <span class="color-badge primary">Primary</span>
+                                <span class="color-desc">Main brand color</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; flex: 1;">
+                                <input type="color" id="primaryColorPicker" value="#667eea" style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 8px;">
+                                <input type="text" id="primaryColor" placeholder="#667eea" style="flex: 1;">
+                            </div>
+                        </div>
+                        
+                        <div class="color-row">
+                            <div class="color-label">
+                                <span class="color-badge secondary">Secondary</span>
+                                <span class="color-desc">Supporting color</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; flex: 1;">
+                                <input type="color" id="secondaryColorPicker" value="#764ba2" style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 8px;">
+                                <input type="text" id="secondaryColor" placeholder="#764ba2" style="flex: 1;">
+                            </div>
+                        </div>
+                        
+                        <div class="color-row">
+                            <div class="color-label">
+                                <span class="color-badge accent">Accent</span>
+                                <span class="color-desc">Highlights & CTAs</span>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; flex: 1;">
+                                <input type="color" id="accentColorPicker" value="#4ade80" style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 8px;">
+                                <input type="text" id="accentColor" placeholder="#4ade80" style="flex: 1;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="colorPreview" class="color-preview" style="display: none;">
+                        <span class="preview-label">Preview:</span>
+                        <div class="preview-bar">
+                            <div id="previewPrimary" class="preview-segment" style="background: #667eea;"></div>
+                            <div id="previewSecondary" class="preview-segment" style="background: #764ba2;"></div>
+                            <div id="previewAccent" class="preview-segment" style="background: #4ade80;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Step 3: Grok API -->
-            <div class="step" data-step="3">
-                <h2 class="step-title">Step 3: Grok/xAI API Key</h2>
-                <p class="step-description">Required for AI image generation ($0.07 per image)</p>
-                
-                <div class="api-instructions">
-                    <h4>📸 How to get your Grok API key:</h4>
-                    <ol>
-                        <li>Go to <a href="https://console.x.ai/" target="_blank">https://console.x.ai/</a></li>
-                        <li>Sign up or log in with your X (Twitter) account</li>
-                        <li>Navigate to 'API Keys' section</li>
-                        <li>Click 'Create new API key'</li>
-                        <li>Copy the key (starts with 'xai-')</li>
-                        <li>Paste it below</li>
-                    </ol>
-                </div>
-                
-                <div class="form-group">
-                    <label>Grok API Key *</label>
-                    <input type="text" id="grokApiKey" placeholder="xai-...">
-                    <p class="help-text">Required for AI image generation features</p>
-                </div>
-            </div>
-            
-            <!-- Step 4: Shotstack API -->
+            <!-- Step 4: Features -->
             <div class="step" data-step="4">
-                <h2 class="step-title">Step 4: Shotstack API Key</h2>
-                <p class="step-description">Required for video generation ($0.06 per video)</p>
+                <h2 class="step-title">Step 4: Choose Your Features</h2>
+                <p class="step-description">Select which AI-powered tools you want to enable.</p>
                 
-                <div class="api-instructions">
-                    <h4>🎬 How to get your Shotstack API key:</h4>
-                    <ol>
-                        <li>Go to <a href="https://shotstack.io/" target="_blank">https://shotstack.io/</a></li>
-                        <li>Click 'Sign Up' (free account available)</li>
-                        <li>Verify your email</li>
-                        <li>Go to your Dashboard</li>
-                        <li>Find 'API Keys' in the left menu</li>
-                        <li>Copy your 'Stage' environment key for testing</li>
-                        <li>Paste it below</li>
-                    </ol>
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="videoEditing" checked>
+                        <label for="videoEditing">
+                            <h4>🎬 Video Editing & Creation</h4>
+                            <p>Automatic jump cuts, silence removal, and AI-generated video ads</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
                 </div>
                 
-                <div class="form-group">
-                    <label>Shotstack API Key *</label>
-                    <input type="text" id="shotstackApiKey">
-                    <p class="help-text">Required for video ad creation</p>
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="graphicsGeneration" checked>
+                        <label for="graphicsGeneration">
+                            <h4>🖼️ Graphics & Image Generation</h4>
+                            <p>AI-generated fitness images and branded social media graphics</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
                 </div>
                 
-                <div class="form-group">
-                    <label>Environment *</label>
-                    <select id="shotstackEnv">
-                        <option value="stage">Stage (for testing)</option>
-                        <option value="v1">Production (v1)</option>
-                    </select>
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="contentPlanning" checked>
+                        <label for="contentPlanning">
+                            <h4>📅 Content Planning & Calendar</h4>
+                            <p>Weekly content plans, posting schedules, and calendar management</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="emailManagement" checked>
+                        <label for="emailManagement">
+                            <h4>📧 Email Management</h4>
+                            <p>Smart email categorization, priority inbox, and auto-responses</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="revenueAnalytics" checked>
+                        <label for="revenueAnalytics">
+                            <h4>📊 Revenue & Analytics</h4>
+                            <p>Track income, expenses, and business growth via Google Sheets</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="workoutNutrition" checked>
+                        <label for="workoutNutrition">
+                            <h4>💪 Workout & Nutrition Plans</h4>
+                            <p>Generate personalized workout programs and meal plans for clients</p>
+                        </label>
+                    </div>
+                    <span class="pricing-badge free">Included</span>
                 </div>
             </div>
             
-            <!-- Step 5: Optional APIs -->
+            <!-- Step 5: Review -->
             <div class="step" data-step="5">
-                <h2 class="step-title">Step 5: Optional Integrations</h2>
-                <p class="step-description">These enable additional features but aren't required.</p>
-                
-                <div class="api-instructions">
-                    <h4>📧 Google APIs (Gmail, Calendar, Sheets)</h4>
-                    <p>Enables email monitoring, calendar reminders, and revenue analytics (FREE)</p>
-                </div>
-                
-                <div class="form-group">
-                    <label>Google Client ID <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="googleClientId">
-                </div>
-                
-                <div class="form-group">
-                    <label>Google Client Secret <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="googleClientSecret">
-                </div>
-                
-                <div class="api-instructions">
-                    <h4>🎨 Canva API</h4>
-                    <p>Enables advanced design templates (FREE with Canva Pro)</p>
-                </div>
-                
-                <div class="form-group">
-                    <label>Canva API Key <span class="label-optional">(optional)</span></label>
-                    <input type="text" id="canvaApiKey">
-                </div>
-            </div>
-            
-            <!-- Step 6: Features -->
-            <div class="step" data-step="6">
-                <h2 class="step-title">Step 6: Feature Preferences</h2>
-                <p class="step-description">Choose which features to enable by default.</p>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="videoEditing" checked>
-                    <label for="videoEditing">Video Editing (jump cuts, silence removal)</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="graphicsGeneration" checked>
-                    <label for="graphicsGeneration">Graphics Generation (branded content)</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="emailMonitoring">
-                    <label for="emailMonitoring">Email Monitoring (requires Google API)</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="aiImages" checked>
-                    <label for="aiImages">AI Image Generation ($0.07/image)</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="videoAds" checked>
-                    <label for="videoAds">Video Ad Creation ($0.34/video)</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="workoutPlans" checked>
-                    <label for="workoutPlans">Workout Plan Generation</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="nutritionGuides" checked>
-                    <label for="nutritionGuides">Nutrition Guide Generation</label>
-                </div>
-                
-                <div class="checkbox-group">
-                    <input type="checkbox" id="autoBranding" checked>
-                    <label for="autoBranding">Automatically add branding to all content</label>
-                </div>
-            </div>
-            
-            <!-- Step 7: Review -->
-            <div class="step" data-step="7">
-                <h2 class="step-title">Step 7: Review & Confirm</h2>
-                <p class="step-description">Please review your configuration before generating files.</p>
+                <h2 class="step-title">Step 5: Review & Confirm</h2>
+                <p class="step-description">Please review your information before creating your account.</p>
                 
                 <div class="summary" id="summary">
                     <!-- Summary will be generated by JavaScript -->
                 </div>
+                
+                <div class="info-box">
+                    <h4>🔒 What Happens Next?</h4>
+                    <ul>
+                        <li>We'll create your personalized AI assistant</li>
+                        <li>You'll receive login credentials via email</li>
+                        <li>Access your dashboard at marceausolutions.com/assistant</li>
+                        <li>Start using all features immediately—no setup required!</li>
+                    </ul>
+                </div>
             </div>
             
-            <!-- Step 8: Complete -->
-            <div class="step" data-step="8">
+            <!-- Step 6: Complete -->
+            <div class="step" data-step="6">
                 <div class="success-icon">✓</div>
-                <h2 class="step-title" style="text-align: center;">Setup Complete!</h2>
-                <p class="step-description" style="text-align: center;">Your personalized AI assistant is ready to use.</p>
+                <h2 class="step-title" style="text-align: center;">Welcome to Fitness Influencer AI!</h2>
+                <p class="step-description" style="text-align: center;">Your account has been created. Check your email for login details.</p>
                 
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="#" class="download-btn" id="downloadEnv">📄 Download .env File</a>
-                    <a href="#" class="download-btn" id="downloadConfig">⚙️ Download Config</a>
-                </div>
-                
-                <div class="api-instructions" style="margin-top: 30px;">
-                    <h4>Next Steps:</h4>
-                    <ol>
-                        <li>Place the .env file in your project root directory</li>
-                        <li>Run the test suite: <code>./quick_test.sh</code></li>
-                        <li>Deploy to Railway (see DEPLOYMENT_GUIDE.md)</li>
-                        <li>Access your AI at marceausolutions.com/assistant.html</li>
+                <div class="info-box" style="margin-top: 30px;">
+                    <h4>🚀 Getting Started</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>Check your email for your login credentials</li>
+                        <li>Visit <a href="https://marceausolutions.com/assistant.html" target="_blank">marceausolutions.com/assistant</a></li>
+                        <li>Log in with your credentials</li>
+                        <li>Start creating content and growing your fitness business!</li>
                     </ol>
                 </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://marceausolutions.com/assistant.html" class="btn-primary" style="display: inline-block; text-decoration: none; padding: 16px 40px;">
+                        Go to Dashboard →
+                    </a>
+                </div>
             </div>
             
-            <div class="buttons">
+            <div class="buttons" id="buttons">
                 <button class="btn-secondary" id="prevBtn" onclick="previousStep()" disabled>← Previous</button>
                 <button class="btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
             </div>
@@ -523,8 +797,223 @@
     
     <script>
         let currentStep = 1;
-        const totalSteps = 8;
+        const totalSteps = 6;
         const formData = {};
+        let logoFileData = null;
+        
+        // Logo file upload handling with automatic color extraction
+        document.getElementById('logoFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    return;
+                }
+                
+                logoFileData = file;
+                const label = document.getElementById('logoUploadLabel');
+                label.classList.add('has-file');
+                label.innerHTML = `
+                    <span class="file-upload-icon">✅</span>
+                    <div class="file-upload-text">
+                        <strong>${file.name}</strong><br>
+                        ${(file.size / 1024).toFixed(1)} KB<br>
+                        <span id="colorStatus" style="color: #667eea; font-size: 12px;">🎨 Analyzing colors...</span>
+                    </div>
+                `;
+                
+                // Extract dominant color from the logo
+                extractDominantColor(file);
+            }
+        });
+        
+        // Extract top 3 dominant colors from uploaded image
+        function extractDominantColor(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Scale down for faster processing
+                    const maxSize = 100;
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height = height * (maxSize / width);
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width = width * (maxSize / height);
+                            height = maxSize;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const imageData = ctx.getImageData(0, 0, width, height);
+                    const pixels = imageData.data;
+                    
+                    // Color frequency map
+                    const colorMap = {};
+                    
+                    for (let i = 0; i < pixels.length; i += 4) {
+                        const r = pixels[i];
+                        const g = pixels[i + 1];
+                        const b = pixels[i + 2];
+                        const a = pixels[i + 3];
+                        
+                        // Skip transparent or near-transparent pixels
+                        if (a < 128) continue;
+                        
+                        // Skip very light colors (likely background)
+                        const brightness = (r + g + b) / 3;
+                        if (brightness > 240) continue;
+                        
+                        // Skip very dark colors (likely black text/outlines)
+                        if (brightness < 15) continue;
+                        
+                        // Skip near-white and near-gray colors
+                        const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+                        if (saturation < 15 && brightness > 200) continue;
+                        
+                        // Quantize colors to reduce noise (group similar colors)
+                        const quantize = 32;
+                        const qr = Math.round(r / quantize) * quantize;
+                        const qg = Math.round(g / quantize) * quantize;
+                        const qb = Math.round(b / quantize) * quantize;
+                        
+                        const key = `${qr},${qg},${qb}`;
+                        
+                        if (!colorMap[key]) {
+                            colorMap[key] = { r: qr, g: qg, b: qb, count: 0, saturation };
+                        }
+                        colorMap[key].count++;
+                    }
+                    
+                    // Convert to array and sort by score (frequency * saturation)
+                    const colorArray = Object.values(colorMap).map(color => {
+                        const saturation = Math.max(color.r, color.g, color.b) - Math.min(color.r, color.g, color.b);
+                        return {
+                            ...color,
+                            saturation,
+                            score: color.count * (1 + saturation / 255)
+                        };
+                    });
+                    
+                    // Sort by score descending
+                    colorArray.sort((a, b) => b.score - a.score);
+                    
+                    // Get top 3 distinct colors (ensure they're visually different)
+                    const topColors = [];
+                    for (const color of colorArray) {
+                        if (topColors.length >= 3) break;
+                        
+                        // Check if this color is distinct from already selected colors
+                        const isDistinct = topColors.every(existing => {
+                            const diff = Math.abs(existing.r - color.r) + 
+                                        Math.abs(existing.g - color.g) + 
+                                        Math.abs(existing.b - color.b);
+                            return diff > 60; // Must differ by at least 60 total RGB
+                        });
+                        
+                        if (isDistinct && color.saturation > 20) {
+                            topColors.push(color);
+                        }
+                    }
+                    
+                    // If we don't have 3 colors, fill with defaults
+                    const defaults = [
+                        { r: 102, g: 126, b: 234 }, // #667eea
+                        { r: 118, g: 75, b: 162 },  // #764ba2
+                        { r: 74, g: 222, b: 128 }   // #4ade80
+                    ];
+                    
+                    while (topColors.length < 3) {
+                        topColors.push(defaults[topColors.length]);
+                    }
+                    
+                    // Update color pickers and text fields
+                    const colorIds = [
+                        { picker: 'primaryColorPicker', text: 'primaryColor' },
+                        { picker: 'secondaryColorPicker', text: 'secondaryColor' },
+                        { picker: 'accentColorPicker', text: 'accentColor' }
+                    ];
+                    
+                    topColors.forEach((color, index) => {
+                        const hexColor = rgbToHex(color.r, color.g, color.b);
+                        document.getElementById(colorIds[index].picker).value = hexColor;
+                        document.getElementById(colorIds[index].text).value = hexColor;
+                    });
+                    
+                    // Update preview bar
+                    document.getElementById('previewPrimary').style.background = rgbToHex(topColors[0].r, topColors[0].g, topColors[0].b);
+                    document.getElementById('previewSecondary').style.background = rgbToHex(topColors[1].r, topColors[1].g, topColors[1].b);
+                    document.getElementById('previewAccent').style.background = rgbToHex(topColors[2].r, topColors[2].g, topColors[2].b);
+                    document.getElementById('colorPreview').style.display = 'block';
+                    
+                    // Update status message
+                    const colorStatus = document.getElementById('colorStatus');
+                    if (colorStatus) {
+                        colorStatus.innerHTML = `✅ 3 brand colors detected!`;
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Convert RGB to Hex
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = Math.min(255, Math.max(0, x)).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+        
+        // Color picker sync for all 3 colors
+        function setupColorSync(pickerId, textId, previewId) {
+            document.getElementById(pickerId).addEventListener('input', function(e) {
+                document.getElementById(textId).value = e.target.value;
+                if (previewId) {
+                    document.getElementById(previewId).style.background = e.target.value;
+                }
+                updateColorPreviewVisibility();
+            });
+            
+            document.getElementById(textId).addEventListener('input', function(e) {
+                if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                    document.getElementById(pickerId).value = e.target.value;
+                    if (previewId) {
+                        document.getElementById(previewId).style.background = e.target.value;
+                    }
+                    updateColorPreviewVisibility();
+                }
+            });
+        }
+        
+        // Setup sync for all color pickers
+        setupColorSync('primaryColorPicker', 'primaryColor', 'previewPrimary');
+        setupColorSync('secondaryColorPicker', 'secondaryColor', 'previewSecondary');
+        setupColorSync('accentColorPicker', 'accentColor', 'previewAccent');
+        
+        // Show preview bar when any color is manually changed
+        function updateColorPreviewVisibility() {
+            const preview = document.getElementById('colorPreview');
+            const primary = document.getElementById('primaryColor').value;
+            const secondary = document.getElementById('secondaryColor').value;
+            const accent = document.getElementById('accentColor').value;
+            
+            if (primary || secondary || accent) {
+                preview.style.display = 'block';
+            }
+        }
         
         function updateProgress() {
             const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
@@ -537,14 +1026,14 @@
             
             document.getElementById('prevBtn').disabled = (step === 1);
             
-            if (step === 7) {
+            if (step === 5) {
                 generateSummary();
-                document.getElementById('nextBtn').textContent = 'Generate Files →';
-            } else if (step === 8) {
-                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('nextBtn').textContent = 'Create Account →';
+            } else if (step === 6) {
+                document.getElementById('buttons').style.display = 'none';
             } else {
                 document.getElementById('nextBtn').textContent = 'Next →';
-                document.getElementById('nextBtn').style.display = 'block';
+                document.getElementById('buttons').style.display = 'flex';
             }
             
             updateProgress();
@@ -554,44 +1043,61 @@
             formData.personal = {
                 name: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
                 businessName: document.getElementById('businessName').value,
-                website: document.getElementById('website').value,
-                instagram: document.getElementById('instagram').value
-            };
-            
-            formData.branding = {
-                tagline: document.getElementById('tagline').value,
-                primaryColor: document.getElementById('primaryColor').value || '#4A90E2',
-                logoUrl: document.getElementById('logoUrl').value
-            };
-            
-            formData.apiKeys = {
-                grokApiKey: document.getElementById('grokApiKey').value,
-                shotstackApiKey: document.getElementById('shotstackApiKey').value,
-                shotstackEnv: document.getElementById('shotstackEnv').value,
-                googleClientId: document.getElementById('googleClientId').value,
-                googleClientSecret: document.getElementById('googleClientSecret').value,
-                canvaApiKey: document.getElementById('canvaApiKey').value
+                website: document.getElementById('website').value
             };
             
             formData.preferences = {
+                emailOptIn: document.getElementById('emailOptIn').checked,
+                smsOptIn: document.getElementById('smsOptIn').checked
+            };
+            
+            formData.social = {
+                instagram: document.getElementById('instagram').value,
+                youtube: document.getElementById('youtube').value,
+                tiktok: document.getElementById('tiktok').value,
+                twitter: document.getElementById('twitter').value,
+                linkedin: document.getElementById('linkedin').value,
+                facebook: document.getElementById('facebook').value
+            };
+            
+            formData.branding = {
+                hasLogo: logoFileData !== null,
+                logoFileName: logoFileData ? logoFileData.name : null,
+                tagline: document.getElementById('tagline').value,
+                colors: {
+                    primary: document.getElementById('primaryColor').value || '#667eea',
+                    secondary: document.getElementById('secondaryColor').value || '#764ba2',
+                    accent: document.getElementById('accentColor').value || '#4ade80'
+                }
+            };
+            
+            formData.features = {
                 videoEditing: document.getElementById('videoEditing').checked,
                 graphicsGeneration: document.getElementById('graphicsGeneration').checked,
-                emailMonitoring: document.getElementById('emailMonitoring').checked,
-                aiImages: document.getElementById('aiImages').checked,
-                videoAds: document.getElementById('videoAds').checked,
-                workoutPlans: document.getElementById('workoutPlans').checked,
-                nutritionGuides: document.getElementById('nutritionGuides').checked,
-                autoBranding: document.getElementById('autoBranding').checked
+                contentPlanning: document.getElementById('contentPlanning').checked,
+                emailManagement: document.getElementById('emailManagement').checked,
+                revenueAnalytics: document.getElementById('revenueAnalytics').checked,
+                workoutNutrition: document.getElementById('workoutNutrition').checked
             };
         }
         
         function generateSummary() {
             collectFormData();
             
+            const socialAccounts = Object.entries(formData.social)
+                .filter(([k, v]) => v)
+                .map(([k, v]) => `@${v} (${k})`)
+                .join(', ') || 'None connected';
+            
+            const enabledFeatures = Object.entries(formData.features)
+                .filter(([k, v]) => v)
+                .length;
+            
             const summary = document.getElementById('summary');
             summary.innerHTML = `
-                <h3>Personal Information</h3>
+                <h3>👤 Personal Information</h3>
                 <div class="summary-item">
                     <span class="summary-label">Name:</span>
                     <span class="summary-value">${formData.personal.name}</span>
@@ -604,28 +1110,55 @@
                     <span class="summary-label">Business:</span>
                     <span class="summary-value">${formData.personal.businessName || formData.personal.name}</span>
                 </div>
-                
-                <h3 style="margin-top: 20px;">API Keys Configured</h3>
                 <div class="summary-item">
-                    <span class="summary-label">Grok/xAI:</span>
-                    <span class="summary-value">${formData.apiKeys.grokApiKey ? '✓ Configured' : '✗ Not set'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Shotstack:</span>
-                    <span class="summary-value">${formData.apiKeys.shotstackApiKey ? '✓ Configured' : '✗ Not set'}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Google APIs:</span>
-                    <span class="summary-value">${formData.apiKeys.googleClientId ? '✓ Configured' : '○ Optional'}</span>
+                    <span class="summary-label">Phone:</span>
+                    <span class="summary-value">${formData.personal.phone || 'Not provided'}</span>
                 </div>
                 
-                <h3 style="margin-top: 20px;">Enabled Features</h3>
-                ${Object.entries(formData.preferences).filter(([k,v]) => v).map(([k,v]) => `
-                    <div class="summary-item">
-                        <span class="summary-label">${k.replace(/([A-Z])/g, ' $1').trim()}:</span>
-                        <span class="summary-value">✓ Enabled</span>
-                    </div>
-                `).join('')}
+                <h3 style="margin-top: 20px;">📬 Communication</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Email Updates:</span>
+                    <span class="summary-value">${formData.preferences.emailOptIn ? '✓ Opted In' : '✗ Opted Out'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">SMS Notifications:</span>
+                    <span class="summary-value">${formData.preferences.smsOptIn ? '✓ Opted In' : '✗ Opted Out'}</span>
+                </div>
+                
+                <h3 style="margin-top: 20px;">📱 Social Media</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Connected:</span>
+                    <span class="summary-value">${socialAccounts}</span>
+                </div>
+                
+                <h3 style="margin-top: 20px;">🎨 Branding</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Logo:</span>
+                    <span class="summary-value">${formData.branding.hasLogo ? '✓ Uploaded' : 'Not uploaded'}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Brand Colors:</span>
+                    <span class="summary-value" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <span style="width: 24px; height: 24px; background: ${formData.branding.colors.primary}; border-radius: 4px; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            <span style="font-size: 12px; color: #6b7280;">Primary</span>
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <span style="width: 24px; height: 24px; background: ${formData.branding.colors.secondary}; border-radius: 4px; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            <span style="font-size: 12px; color: #6b7280;">Secondary</span>
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <span style="width: 24px; height: 24px; background: ${formData.branding.colors.accent}; border-radius: 4px; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                            <span style="font-size: 12px; color: #6b7280;">Accent</span>
+                        </span>
+                    </span>
+                </div>
+                
+                <h3 style="margin-top: 20px;">⚡ Features</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Enabled:</span>
+                    <span class="summary-value">${enabledFeatures} of 6 features</span>
+                </div>
             `;
         }
         
@@ -633,14 +1166,22 @@
             if (currentStep < totalSteps) {
                 // Validate required fields
                 if (currentStep === 1) {
-                    if (!document.getElementById('fullName').value || !document.getElementById('email').value) {
-                        alert('Please fill in all required fields (marked with *)');
+                    const name = document.getElementById('fullName').value;
+                    const email = document.getElementById('email').value;
+                    
+                    if (!name || !email) {
+                        alert('Please fill in all required fields (Name and Email)');
+                        return;
+                    }
+                    
+                    if (!email.includes('@')) {
+                        alert('Please enter a valid email address');
                         return;
                     }
                 }
                 
-                if (currentStep === 7) {
-                    generateFiles();
+                if (currentStep === 5) {
+                    createAccount();
                 }
                 
                 currentStep++;
@@ -655,53 +1196,34 @@
             }
         }
         
-        function generateFiles() {
+        async function createAccount() {
             collectFormData();
             
-            // Generate .env file content
-            const envContent = `# Fitness Influencer AI - Environment Configuration
-# Generated: ${new Date().toISOString()}
-# User: ${formData.personal.name}
-
-# REQUIRED API KEYS
-XAI_API_KEY=${formData.apiKeys.grokApiKey || 'YOUR_XAI_API_KEY_HERE'}
-SHOTSTACK_API_KEY=${formData.apiKeys.shotstackApiKey || 'YOUR_SHOTSTACK_API_KEY_HERE'}
-SHOTSTACK_ENV=${formData.apiKeys.shotstackEnv}
-
-# OPTIONAL API KEYS
-GOOGLE_CLIENT_ID=${formData.apiKeys.googleClientId || ''}
-GOOGLE_CLIENT_SECRET=${formData.apiKeys.googleClientSecret || ''}
-CANVA_API_KEY=${formData.apiKeys.canvaApiKey || ''}
-
-# USER PERSONALIZATION
-USER_NAME=${formData.personal.name}
-USER_EMAIL=${formData.personal.email}
-BUSINESS_NAME=${formData.personal.businessName || formData.personal.name}
-BRAND_TAGLINE=${formData.branding.tagline || ''}
-PRIMARY_COLOR=${formData.branding.primaryColor}`;
+            // In production, this would send to your backend API
+            console.log('Creating account with data:', formData);
             
-            // Setup download buttons
-            document.getElementById('downloadEnv').onclick = (e) => {
-                e.preventDefault();
-                downloadFile('.env', envContent);
-            };
+            // Prepare form data for API submission
+            const apiData = new FormData();
+            apiData.append('userData', JSON.stringify(formData));
             
-            document.getElementById('downloadConfig').onclick = (e) => {
-                e.preventDefault();
-                downloadFile('user_config.json', JSON.stringify(formData, null, 2));
-            };
-        }
-        
-        function downloadFile(filename, content) {
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            if (logoFileData) {
+                apiData.append('logo', logoFileData);
+            }
+            
+            // TODO: Replace with actual API endpoint
+            // try {
+            //     const response = await fetch('https://api.marceausolutions.com/fitness/signup', {
+            //         method: 'POST',
+            //         body: apiData
+            //     });
+            //     const result = await response.json();
+            //     console.log('Account created:', result);
+            // } catch (error) {
+            //     console.error('Error creating account:', error);
+            // }
+            
+            // For now, just log the data
+            console.log('Form submitted successfully');
         }
         
         // Initialize
