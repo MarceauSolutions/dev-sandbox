@@ -345,39 +345,80 @@ allowed-tools: ["Bash(python:*)", "Read"]
 **Skills (current):**
 - fitness-influencer-operations
 
+**Repositories:**
+| Repo | Purpose | Status |
+|------|---------|--------|
+| dev-sandbox | Development/DOE | Active |
+| fitness-influencer-backend | FastAPI backend | Scripts synced, not deployed |
+| fitness-influencer-frontend | Web UI | Empty - needs implementation |
+| marceausolutions.com | Website | Has fitness.html, assistant.html |
+
 **Capabilities (WORKING):**
 - ✅ AI image generation (Grok) - $0.07/image
-- ✅ Video ad creation (Shotstack) - $0.06/video
+- ✅ Video ad creation (Creatomate) - $0.05/video
+- ✅ Video ad creation (Shotstack) - $0.06/video (backup)
 - ✅ Video jump cuts (FFmpeg/MoviePy) - FREE
 - ✅ Educational graphics (Pillow) - FREE
+- ✅ Workout plan generator - FREE
+- ✅ Nutrition guide generator - FREE
+- ✅ Gmail monitoring (Gmail API) - tested working
+- ✅ Calendar integration (Google Calendar) - tested working
+- ✅ Google Auth setup - unified script
 
-**Capabilities (Pending):**
-- ❌ Email monitoring (Gmail API)
-- ❌ Calendar reminders (Google Calendar)
-- ❌ Revenue analytics (Google Sheets)
-- ❌ Canva integration
+**Capabilities (Pending Integration):**
+- ⏳ Revenue analytics (Google Sheets) - script exists
+- ⏳ Canva integration - script exists, API pending
+- ⏳ End-to-end video workflow (video_ads.py → enhanced API)
 
 **API Access:**
 - `XAI_API_KEY` - Grok image generation
-- `SHOTSTACK_API_KEY` - Video generation
-- Google APIs - pending setup
+- `SHOTSTACK_API_KEY` - Video generation (backup)
+- `CREATOMATE_API_KEY` - Primary video generation
+- `CREATOMATE_TEMPLATE_ID` - 508c3e40-b72d-483f-977f-c443c28f8dfc
+- Google APIs - Configured with OAuth
+  - Client ID: 915754256960-ujpassm3aaf9s8hkn3dbusm5euq5qhb2.apps.googleusercontent.com
+
+**Video Generation System:**
+```
+Intelligent Router (intelligent_video_router.py)
+├─ Try MoviePy first (FREE)
+└─ Fallback to Creatomate ($0.05)
+   └─ Fallback to Shotstack ($0.06)
+```
+
+**Creatomate Quality Presets:**
+- Low: 640x360, 24fps, 500k bitrate
+- Medium: 1280x720, 30fps, 2000k bitrate
+- High: 1920x1080, 30fps, 5000k bitrate (default)
+- Ultra: 1920x1080, 60fps, 8000k bitrate
+- 4K: 3840x2160, 30fps, 15000k bitrate
 
 **Example Video Ad Pipeline:**
 ```bash
-# 1. Generate images
-python execution/grok_image_gen.py --prompt "Fitness workout" --count 4
+# Option 1: Direct Creatomate (quality control)
+python execution/creatomate_api_enhanced.py create-video \
+  --template 508c3e40-b72d-483f-977f-c443c28f8dfc \
+  --modifications '{"headline":"Transform Your Body","cta":"Start Today"}' \
+  --quality high
 
-# 2. Create video (use URLs from step 1)
-python execution/shotstack_api.py create-fitness-ad \
-  --images "url1,url2,url3,url4" \
-  --headline "Transform Your Body" \
-  --cta "Follow @boabfit"
+# Option 2: Full pipeline (Grok + Creatomate)
+python execution/grok_image_gen.py --prompt "Fitness workout" --count 4
+python execution/creatomate_api_enhanced.py create-video --images "url1,url2,url3,url4"
 ```
 
-**First Success (2026-01-06):**
-- Created @boabfit video ad
-- 4 images → 14-second video
-- Cost: $0.34
+**Production Status (2026-01-07):**
+- ✅ All execution scripts tested
+- ✅ Backend repo synced with latest scripts
+- ❌ Backend not deployed to hosting
+- ❌ Frontend UI not built
+- ❌ End-to-end user flow untested
+
+**Next Steps (Priority Order):**
+1. Deploy backend to Railway
+2. Build frontend UI (React or simple HTML)
+3. Connect frontend → backend → execution scripts
+4. Test full user flow
+5. Recruit beta testers
 
 ---
 
