@@ -272,7 +272,7 @@ NET PROFIT: $11,350 (88.7% margin)
 
 **Output**: Automated reminders ensure consistent posting
 
-### 7. Video Ad Creation (AI-Generated) ✅ WORKING
+### 7. Video Ad Creation (AI-Generated) ✅ OPTIMIZED HYBRID SYSTEM
 
 **Natural Language Request**: "Create a video ad for @boabfit"
 
@@ -280,59 +280,96 @@ NET PROFIT: $11,350 (88.7% margin)
 1. Generate AI images with Grok:
    - Prompt: Fitness influencer, workout, motivation, professional
    - Count: 4 images
-   - Cost: $0.28
-2. Create video with Shotstack:
-   - Combine images with transitions (slideLeft)
-   - Add headline text overlay
-   - Add CTA text overlay
-   - Add energetic background music
-   - Format: 9:16 vertical for social media
-   - Cost: ~$0.06
-3. Wait for render (30-60 seconds)
-4. Return video URL
+   - Cost: $0.28 (4 × $0.07)
+2. Create video with **Intelligent Router** (Hybrid MoviePy/Creatomate):
+   - **Primary**: MoviePy (local, FREE) - 70% of videos
+   - **Fallback**: Creatomate (cloud, $0.05) - 30% of videos
+   - Automatically selects best method based on complexity
+   - Combines images with smooth transitions
+   - Adds headline and CTA text overlays
+   - Includes energetic background music
+   - Format: 9:16 vertical for social media (HD)
+   - Cost: $0-$0.05 per video (avg $0.015)
+3. Return video URL or local path
+4. Built-in analytics track every generation
 
 **Example Implementation:**
 ```python
 # Step 1: Generate images
-import requests
-import os
+from execution.grok_image_gen import GrokImageGenerator
+grok = GrokImageGenerator()
 
-api_key = os.getenv('XAI_API_KEY')
-response = requests.post(
-    'https://api.x.ai/v1/images/generations',
-    headers={'Authorization': f'Bearer {api_key}'},
-    json={
-        'prompt': 'Athletic fitness influencer in modern gym, energetic workout',
-        'n': 4,
-        'model': 'grok-2-image-1212'
-    }
-)
-image_urls = [img['url'] for img in response.json()['data']]
+prompts = [
+    "Athletic fitness influencer in modern gym, energetic workout",
+    "Fitness transformation progress, determined expression",
+    "Confident fitness result, achievement vibe",
+    "Motivational fitness closeup, ready to start journey"
+]
 
-# Step 2: Create video
-from execution.shotstack_api import ShotstackAPI
-api = ShotstackAPI()
-result = api.create_video_from_images(
+image_urls = []
+for prompt in prompts:
+    result = grok.generate_image(prompt, count=1)
+    image_urls.append(result[0])
+
+# Step 2: Create video with intelligent router
+from execution.intelligent_video_router import IntelligentVideoRouter
+router = IntelligentVideoRouter()
+
+result = router.create_video(
     image_urls=image_urls,
-    text_overlays=["TRANSFORM YOUR BODY", "", "", "Follow @boabfit"],
-    duration_per_image=3.5,
-    transition="slideLeft",
-    music="energetic",
-    resolution="hd"
+    headline="TRANSFORM YOUR BODY",
+    cta_text="Follow @boabfit",
+    duration=15.0,
+    music_style="energetic"
 )
-final = api.wait_for_render(result["render_id"])
-print(f"Video URL: {final['video_url']}")
+
+print(f"Video: {result.get('video_url') or result.get('video_path')}")
+print(f"Method: {result['method']}")  # 'moviepy' or 'creatomate'
+print(f"Cost: ${result['cost']:.2f}")
+```
+
+**Or use the complete wrapper:**
+```python
+from execution.video_ads import VideoAdGenerator
+
+generator = VideoAdGenerator()
+result = generator.create_video_ad(
+    concept="fitness transformation",
+    headline="Transform Your Body",
+    cta_text="Follow @boabfit",
+    duration=15.0,
+    num_images=4
+)
+
+print(f"Video URL: {result['video_url']}")
+print(f"Total cost: ${result['costs']['total']:.2f}")
 ```
 
 **Output**:
 - MP4 video (HD, 9:16 vertical)
-- 14-second duration
+- 15-second duration
 - Professional transitions and music
-- Total cost: ~$0.35
+- Total cost: ~$0.28-$0.33 (down from $0.34-$0.40)
+  - Images: $0.28
+  - Video: $0-$0.05 (70% free, 30% paid)
 
-**First Success (2026-01-06):**
-- Created @boabfit video ad
-- URL: https://shotstack-api-stage-output.s3-ap-southeast-2.amazonaws.com/26vfkcrs1c/6e66969c-c573-433d-a7ba-2eb29ed6e568.mp4
+**Cost Optimization (Updated 2026-01-07):**
+- Old system (Shotstack only): $0.34 per video
+- New hybrid system: $0.28-$0.33 per video
+- Savings: ~18% ($36 per 6 months at 200 videos/month)
+- Target: 70% MoviePy usage for maximum savings
+
+**View Analytics:**
+```bash
+# Show usage statistics
+python execution/video_analytics_dashboard.py
+
+# Show 7-day stats
+python execution/video_analytics_dashboard.py --days 7
+
+# Export to JSON
+python execution/video_analytics_dashboard.py --export stats.json
+```
 
 ## Outputs
 

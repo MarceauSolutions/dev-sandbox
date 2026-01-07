@@ -37,7 +37,7 @@ from dotenv import load_dotenv
 
 # Import our API wrappers
 from grok_image_gen import GrokImageGenerator
-from shotstack_api import ShotstackAPI
+from intelligent_video_router import IntelligentVideoRouter
 
 load_dotenv()
 
@@ -48,18 +48,20 @@ class VideoAdGenerator:
     
     Workflow:
     1. Generate 4 AI images based on fitness concept (Grok)
-    2. Create video from images with transitions (Shotstack)
+    2. Create video from images using intelligent router (MoviePy or Creatomate)
     3. Add text overlays (headline + CTA)
     4. Add background music
     5. Export as MP4
     
-    Cost: ~$0.34 per 15-second video ad
-    Time: ~90 seconds total
+    Cost: ~$0.28-$0.33 per 15-second video ad (down from $0.34)
+    - Images: $0.28 (4 images × $0.07)
+    - Video: $0-$0.05 (70% free MoviePy, 30% Creatomate)
+    Time: ~60-90 seconds total
     """
     
     def __init__(self):
         self.grok = GrokImageGenerator()
-        self.shotstack = ShotstackAPI()
+        self.video_router = IntelligentVideoRouter()
         
     def generate_image_prompts(
         self,
@@ -186,23 +188,24 @@ class VideoAdGenerator:
         print(f"\n✓ All {num_images} images generated successfully!")
         print(f"  Total image cost: ${total_image_cost:.2f}")
         
-        # Step 3: Create video from images with Shotstack
+        # Step 3: Create video from images with Intelligent Router
         print(f"\n{'='*70}")
-        print("STEP 3: CREATING VIDEO WITH SHOTSTACK")
+        print("STEP 3: CREATING VIDEO WITH INTELLIGENT ROUTER")
         print("="*70)
         print(f"Stitching {num_images} images into {duration}s video...")
         print(f"Resolution: HD (1080p)")
         print(f"Format: Vertical (9:16 for Instagram/TikTok)")
         print(f"Transitions: Smooth slides")
         print(f"Music: {music_style}")
+        print(f"Router will intelligently choose: MoviePy (free) or Creatomate ($0.05)")
         
-        # Create vertical video for social media
-        result = self.shotstack.create_fitness_ad(
+        # Create vertical video for social media using intelligent router
+        result = self.video_router.create_video(
             image_urls=image_urls,
             headline=headline,
             cta_text=cta_text,
             duration=duration,
-            music=music_style
+            music_style=music_style
         )
         
         if not result.get("success"):
@@ -211,15 +214,16 @@ class VideoAdGenerator:
             return {
                 "success": False,
                 "error": f"Video creation failed: {error}",
-                "step": "shotstack_video_creation",
+                "step": "video_router_creation",
                 "images_generated": len(image_urls),
                 "image_urls": image_urls,
                 "image_cost": total_image_cost
             }
         
-        video_url = result.get("video_url")
-        render_id = result.get("render_id")
-        video_cost = result.get("estimated_cost", 0.06)
+        video_url = result.get("video_url") or result.get("video_path")
+        render_id = result.get("render_id", "local")
+        video_cost = result.get("cost", 0)
+        video_method = result.get("method", "unknown")
         
         total_cost = total_image_cost + video_cost
         
@@ -229,14 +233,17 @@ class VideoAdGenerator:
         print(f"  Video cost: ${video_cost:.2f}")
         print(f"  Total cost: ${total_cost:.2f}")
         
-        # Step 4: Download video if output path specified
-        if output_path and video_url:
+        # Step 4: Copy video if output path specified and video is local
+        if output_path and result.get('video_path'):
             print(f"\n{'='*70}")
-            print("STEP 4: DOWNLOADING VIDEO")
+            print("STEP 4: SAVING VIDEO")
             print("="*70)
-            success = self.shotstack.download_video(video_url, output_path)
-            if success:
+            import shutil
+            try:
+                shutil.copy(result['video_path'], output_path)
                 print(f"✓ Video saved to: {output_path}")
+            except Exception as e:
+                print(f"✗ Failed to save video: {e}")
         
         # Final summary
         print(f"\n{'='*70}")

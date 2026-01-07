@@ -34,3 +34,11 @@ pygments
 # Optional: Web scraping
 # beautifulsoup4
 # selenium
+
+# Video processing (for fitness influencer assistant)
+moviepy
+pillow
+imageio-ffmpeg
+
+# Audio processing (for video background music)
+pydub
