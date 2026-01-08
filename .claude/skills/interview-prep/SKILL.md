@@ -140,11 +140,48 @@ Check that the file exists and is a supported format (PDF, DOCX, TXT).
 2. Generate personalized PowerPoint
 3. Confirm the presentation includes their experience highlights
 
+## Session-Based Editing
+
+After generating a presentation, a **session is automatically created**. This allows you to make iterative edits without specifying file paths each time.
+
+### Check Current Session
+```bash
+python execution/session_manager.py --status
+```
+
+### List Recent Sessions
+```bash
+python execution/session_manager.py --list
+```
+
+### Get Current PowerPoint File
+```bash
+python execution/session_manager.py --current
+```
+
+The session tracks:
+- Current presentation file (.pptx)
+- Original research data (.json)
+- Resume (if provided)
+- All edits made during the session
+- Slide count
+
+**IMPORTANT**: When the user asks to edit "the presentation" or "the slides" or "my PowerPoint", use the session to find the current file:
+1. Run `python execution/session_manager.py --current` to get the filename
+2. Use that filename in subsequent edit commands
+
 ## Interactive Slide Editing
 
 After generating a presentation, users can make iterative edits through natural language commands.
 
 ### List Slides
+```bash
+# Get current file first
+PPTX=$(python execution/session_manager.py --current)
+python execution/pptx_editor.py --input .tmp/$PPTX --action list
+```
+
+Or with explicit file:
 ```bash
 python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action list
 ```
