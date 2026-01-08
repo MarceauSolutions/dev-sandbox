@@ -362,26 +362,29 @@ class PowerPointGenerator:
             return None
 
     def add_experience_highlight_slide(self, title: str, experience: dict, slide_num: int = 1):
-        """Add a slide showcasing a specific experience with optional image."""
+        """
+        Add a slide showcasing a specific experience with optional image.
+
+        Uses consistent layout matching the "professional" experience slide format:
+        - Navy/primary background (no accent bar)
+        - Title at (0.55", 0.3") - white text
+        - Image on left at (0.75", 1.5") - 5" wide
+        - Description on right at (6.55", 1.5") - white text
+        - Relevance section at (6.55", 4.5") - white text with "Relevance:" header
+        """
         slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
 
-        # White background
-        self._add_background(slide, self.theme["background"])
+        # Primary color background (navy for professional theme)
+        self._add_background(slide, self.theme["primary"])
 
-        # Accent bar
-        bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0), Inches(0), Inches(13.333), Inches(0.15))
-        bar.fill.solid()
-        bar.fill.fore_color.rgb = self.theme["accent"]
-        bar.line.fill.background()
-
-        # Title with slide number
-        title_box = slide.shapes.add_textbox(Inches(0.75), Inches(0.5), Inches(11.833), Inches(0.8))
+        # Title (clean, no slide number suffix)
+        title_box = slide.shapes.add_textbox(Inches(0.55), Inches(0.3), Inches(12.23), Inches(0.54))
         tf = title_box.text_frame
         p = tf.paragraphs[0]
-        p.text = f"{title} ({slide_num})"
-        p.font.size = Pt(32)
+        p.text = title
+        p.font.size = Pt(28)
         p.font.bold = True
-        p.font.color.rgb = self.theme["primary"]
+        p.font.color.rgb = self.theme["text"]
 
         # Get experience details
         exp_text = experience.get("experience", str(experience)) if isinstance(experience, dict) else str(experience)
@@ -412,49 +415,41 @@ class PowerPointGenerator:
                 except Exception as e:
                     print(f"   ⚠️ Could not add downloaded image to slide: {e}")
 
-        # If we have an image, use two-column layout
+        # Layout depends on whether we have an image
         if image_added:
-            # Right column: Experience text
-            exp_box = slide.shapes.add_textbox(Inches(6.25), Inches(1.5), Inches(6.333), Inches(2.5))
-            tf = exp_box.text_frame
-            tf.word_wrap = True
-            p = tf.paragraphs[0]
-            p.text = exp_text
-            p.font.size = Pt(20)
-            p.font.bold = True
-            p.font.color.rgb = self.theme["text_dark"]
-
-            # Relevance
-            if relevance:
-                rel_box = slide.shapes.add_textbox(Inches(6.25), Inches(4.2), Inches(6.333), Inches(2))
-                tf = rel_box.text_frame
-                tf.word_wrap = True
-                p = tf.paragraphs[0]
-                p.text = f"Why it matters: {relevance}"
-                p.font.size = Pt(16)
-                p.font.italic = True
-                p.font.color.rgb = self.theme["secondary"]
+            # Two-column layout: image left, text right
+            desc_left = 6.55
+            desc_width = 5.9
         else:
-            # Full width layout without image
-            exp_box = slide.shapes.add_textbox(Inches(0.75), Inches(1.8), Inches(11.833), Inches(2.5))
-            tf = exp_box.text_frame
-            tf.word_wrap = True
-            p = tf.paragraphs[0]
-            p.text = exp_text
-            p.font.size = Pt(24)
-            p.font.bold = True
-            p.font.color.rgb = self.theme["text_dark"]
+            # Full width layout
+            desc_left = 0.75
+            desc_width = 11.83
 
-            # Relevance
-            if relevance:
-                rel_box = slide.shapes.add_textbox(Inches(0.75), Inches(4.5), Inches(11.833), Inches(2))
-                tf = rel_box.text_frame
-                tf.word_wrap = True
-                p = tf.paragraphs[0]
-                p.text = f"→ Why it matters for this role: {relevance}"
-                p.font.size = Pt(18)
-                p.font.italic = True
-                p.font.color.rgb = self.theme["secondary"]
+        # Description text
+        exp_box = slide.shapes.add_textbox(Inches(desc_left), Inches(1.5), Inches(desc_width), Inches(2.5))
+        tf = exp_box.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = exp_text
+        p.font.size = Pt(14)
+        p.font.color.rgb = self.theme["text"]
+
+        # Relevance section with header
+        if relevance:
+            rel_box = slide.shapes.add_textbox(Inches(desc_left), Inches(4.5), Inches(desc_width), Inches(2.0))
+            tf = rel_box.text_frame
+            tf.word_wrap = True
+            # "Relevance:" header
+            p = tf.paragraphs[0]
+            p.text = "Relevance:"
+            p.font.size = Pt(14)
+            p.font.bold = True
+            p.font.color.rgb = self.theme["text"]
+            # Actual relevance text
+            p2 = tf.add_paragraph()
+            p2.text = relevance
+            p2.font.size = Pt(12)
+            p2.font.color.rgb = self.theme["text"]
 
     def add_closing_slide(self, title: str = "Good Luck!", subtitle: str = "You've got this."):
         """Add a closing slide."""

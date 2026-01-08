@@ -13,7 +13,7 @@ This document defines the standard operating procedure for developing AI assista
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
 │  │  Interview  │  │   Fitness   │  │   Amazon    │  │   Naples    │        │
 │  │    Prep     │  │ Influencer  │  │   Seller    │  │   Weather   │        │
-│  │  PowerPoint │  │     AI      │  │     AI      │  │   Report    │        │
+│  │     AI      │  │     AI      │  │     AI      │  │   Report    │        │
 │  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘        │
 │         │                │                │                │               │
 │  ┌──────┴────────────────┴────────────────┴────────────────┴──────┐        │
@@ -22,10 +22,19 @@ This document defines the standard operating procedure for developing AI assista
 │  │  • projects/shared/      • .env credentials                    │        │
 │  │  • .claude/skills/       • credentials.json                    │        │
 │  └────────────────────────────────────────────────────────────────┘        │
+│                              │                                              │
+│                              │ All skills aggregate to                      │
+│                              ▼                                              │
+│  ┌────────────────────────────────────────────────────────────────┐        │
+│  │              PERSONAL AI ASSISTANT (Local Only)                │        │
+│  │  .claude/skills/personal-assistant/SKILL.md                    │        │
+│  │  Routes requests to appropriate project skills                 │        │
+│  │  No frontend - interaction via Claude Code chat                │        │
+│  └────────────────────────────────────────────────────────────────┘        │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
-                                    │ Deploy
+                                    │ Deploy (external-facing projects)
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         PRODUCTION DEPLOYMENTS                              │
@@ -42,6 +51,9 @@ This document defines the standard operating procedure for developing AI assista
 │  └─────────────────────┘    │ • Amazon Assistant  │                        │
 │                             │   Repo              │                        │
 │                             └─────────────────────┘                        │
+│                                                                             │
+│  NOTE: Personal Assistant does NOT deploy externally.                       │
+│        It remains local, aggregating all skills for William's use.          │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -71,7 +83,9 @@ dev-sandbox/
 │   │   └── USE_CASES.json
 │   ├── amazon-seller-operations/
 │   │   └── SKILL.md
-│   └── naples-weather-report/
+│   ├── naples-weather-report/
+│   │   └── SKILL.md
+│   └── personal-assistant/        # Aggregates all skills, no frontend
 │       └── SKILL.md
 │
 ├── directives/                    # SOPs for each capability
@@ -108,6 +122,12 @@ dev-sandbox/
 │   │   └── README.md
 │   ├── naples-weather/
 │   │   └── src/
+│   ├── personal-assistant/        # No frontend - Claude Code chat only
+│   │   ├── src/
+│   │   ├── workflows/
+│   │   ├── VERSION
+│   │   ├── CHANGELOG.md
+│   │   └── README.md
 │   └── shared/                    # Cross-project utilities
 │       ├── ai/
 │       ├── google/
@@ -268,6 +288,19 @@ Scripts used by multiple projects:
 | Directive | `directives/generate_naples_weather_report.md` |
 | Scripts | `fetch_naples_weather.py`, `generate_weather_report.py` |
 
+### Personal AI Assistant
+
+| Attribute | Value |
+|-----------|-------|
+| Development | `projects/personal-assistant/src/` |
+| Skill | `.claude/skills/personal-assistant/` |
+| Directive | None (aggregates other project directives) |
+| Frontend | **None** - interaction via Claude Code chat |
+| Deployment | **Local only** - no Railway, no external GitHub |
+| Purpose | Unified access to all project capabilities for William |
+
+**Key Difference:** This project aggregates all other skills. When skills are updated in other projects, the personal-assistant SKILL.md references them. No external deployment needed.
+
 ## Deployment Checklist
 
 Before deploying any project:
@@ -314,3 +347,38 @@ git add -A && git commit -m "feat: Description" && git push
 Changes flow: `dev-sandbox` → `project-specific repos` → `production`
 
 Never edit production repos directly. Always develop in dev-sandbox first.
+
+## Versioned Deployments
+
+See `docs/versioned-deployment.md` for the complete versioning guide.
+
+### Quick Reference
+
+```bash
+# Check status of all projects
+python deploy_to_skills.py --list
+
+# Check specific project status
+python deploy_to_skills.py --status interview-prep
+
+# Deploy with version
+python deploy_to_skills.py --project interview-prep --version 1.1.0
+```
+
+### Version Workflow
+
+1. **Develop** in dev-sandbox (VERSION = X.X.X-dev)
+2. **Test** locally
+3. **Bump version** in VERSION file and update CHANGELOG.md
+4. **Deploy** with `--version X.X.X`
+5. **Bump to next dev** version (X.X+1.0-dev)
+
+### Files Per Project
+
+```
+project/
+├── VERSION          # Current version (e.g., "1.1.0-dev")
+├── CHANGELOG.md     # History of all versions
+├── SKILL.md         # Skill definition
+└── src/             # Source code
+```

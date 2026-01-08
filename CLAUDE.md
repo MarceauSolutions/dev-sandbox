@@ -1,96 +1,128 @@
 # Agent Instructions
 
-> This file is mirrored across CLAUDE.md, AGENTS.md, and GEMINI.md so the same instructions load in any AI environment.
+> Read this file at the start of every session. It contains core operating methods and pointers to detailed documentation.
 
-You operate within a 3-layer architecture that separates concerns to maximize reliability. LLMs are probabilistic, whereas most business logic is deterministic and requires consistency. This system fixes that mismatch.
+## Architecture: DOE (Directive-Orchestration-Execution)
 
-## The 3-Layer Architecture
+```
+Layer 1: DIRECTIVE (directives/*.md)     → What to do
+Layer 2: ORCHESTRATION (You/Claude)      → Decision making
+Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
+```
 
-**Layer 1: Directive (What to do)**
-- Basically just SOPs written in Markdown, live in `directives/`
-- Define the goals, inputs, tools/scripts to use, outputs, and edge cases
-- Natural language instructions, like you'd give a mid-level employee
+**Your role:** Read directives, call execution scripts in order, handle errors, update docs with learnings.
 
-**Layer 2: Orchestration (Decision making)**
-- This is you. Your job: intelligent routing.
-- Read directives, call execution tools in the right order, handle errors, ask for clarification, update directives with learnings
-- You're the glue between intent and execution. E.g you don't try scraping websites yourself—you read `directives/scrape_website.md` and come up with inputs/outputs and then run `execution/scrape_single_site.py`
+**Why this works:** Push complexity into deterministic code. You focus on decisions, not implementation.
 
-**Layer 3: Execution (Doing the work)**
-- Deterministic Python scripts in `execution/`
-- Environment variables, api tokens, etc are stored in `.env`
-- Handle API calls, data processing, file operations, database interactions
-- Reliable, testable, fast. Use scripts instead of manual work.
+## Documentation Map
 
-**Why this works:** if you do everything yourself, errors compound. 90% accuracy per step = 59% success over 5 steps. The solution is push complexity into deterministic code. That way you just focus on decision-making.
+| Need | Location |
+|------|----------|
+| **How we work** | This file (CLAUDE.md) |
+| **How to prompt me** | `docs/prompting-guide.md` |
+| **Inference guidelines** | `docs/inference-guidelines.md` |
+| **Deployment SOP** | `docs/deployment.md` |
+| **Versioned deployment** | `docs/versioned-deployment.md` |
+| **Project navigation** | `docs/projects.md` |
+| **Workflow template** | `docs/workflow-standard.md` |
+| **Session learnings** | `docs/session-history.md` |
+| **Capability SOPs** | `directives/` |
+| **Task procedures** | `[project]/workflows/` |
+
+## Development Pipeline
+
+```
+1. DEVELOP in dev-sandbox/
+   └── Scripts in: [project]/src/
+   └── Test with: execution/
+
+2. ITERATE locally
+   └── Build workflows AS you complete tasks
+   └── Update directive with learnings
+
+3. DEPLOY when ready
+   └── python deploy_to_skills.py --project [name]
+```
+
+### Key Commands
+```bash
+python deploy_to_skills.py --list                    # List projects + versions
+python deploy_to_skills.py --status [name]           # Check dev vs prod version
+python deploy_to_skills.py --sync-execution --project [name]  # Sync to execution/
+python deploy_to_skills.py --project [name] --version 1.1.0   # Deploy with version
+python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHub
+```
+
+## Communication Patterns (William ↔ Claude)
+
+| William Says | Claude Does |
+|--------------|-------------|
+| "Make slides look like slide X" | Inspect target → run reformat script |
+| "Make it consistent" / "Same style" | Apply theme to ALL slides |
+| "I have the file open" | Start live editing session |
+| "Download it" / "Save final version" | Copy to ~/Downloads |
+| "Continue from last night" | Template mode workflow |
+| "Deploy to skills" / "Ship it" | Use deploy_to_skills.py with version |
+| "Don't deploy yet" | Stay in dev-sandbox, iterate locally |
+| "Save session progress" | Update docs/session-history.md |
+| "Document this" / "Create workflow" | Create/update workflow or SOP |
+
+**Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
+
+**When unclear:** Ask before deploying or making irreversible changes.
 
 ## Operating Principles
 
-**1. Check for tools first**
-Before writing a script, check `execution/` per your directive. Only create new scripts if none exist.
+1. **Check for existing tools first** - Look in `execution/` and `[project]/workflows/` before creating new
+2. **Build workflows as you work** - Document procedures while completing tasks
+3. **Self-anneal** - When errors occur: fix → update tool → update directive
+4. **Infer intelligently** - See `docs/inference-guidelines.md` for when to extend scope
+5. **Living documents** - Some docs evolve throughout sessions, others are stable references:
 
-**2. Self-anneal when things break**
-- Read error message and stack trace
-- Fix the script and test it again (unless it uses paid tokens/credits/etc—in which case you check w user first)
-- Update the directive with what you learned (API limits, timing, edge cases)
-- Example: you hit an API rate limit → you then look into API → find a batch endpoint that would fix → rewrite script to accommodate → test → update directive.
+   **Living (update throughout sessions):**
+   - `docs/session-history.md` - Add learnings as they happen
+   - `docs/prompting-guide.md` - Add new phrase patterns when discovered
+   - `CLAUDE.md` - Update communication patterns table
 
-**3. Update directives as you learn**
-Directives are living documents. When you discover API constraints, better approaches, common errors, or timing expectations—update the directive. But don't create or overwrite directives without asking unless explicitly told to. Directives are your instruction set and must be preserved (and improved upon over time, not extemporaneously used and then discarded).
+   **Stable References (update only when system changes):**
+   - `docs/inference-guidelines.md` - Framework/ruleset
+   - `docs/versioned-deployment.md` - SOP/procedure
+   - `docs/deployment.md` - SOP/architecture
+   - `[project]/workflows/` - Task procedures
+   - `[project]/USER_PROMPTS.md` - User guidance templates
+   - `[project]/CHANGELOG.md` - Version history (update at deploy time)
 
-## Self-annealing loop
+## Inference Quick Reference
 
-Errors are learning opportunities. When something breaks:
-1. Fix it
-2. Update the tool
-3. Test tool, make sure it works
-4. Update directive to include new flow
-5. System is now stronger
+| Risk | Example | Action |
+|------|---------|--------|
+| Very Low | Theme consistency on remaining slides | Just do it |
+| Low | Extend pattern to similar elements | Do it, mention in summary |
+| Medium | Changes that could override user edits | Ask first |
+| High | Structural changes (delete, reorder) | Always ask |
 
-## File Organization
+**Key question:** Would NOT doing this create obvious inconsistency? → If yes, just do it.
 
-**Deliverables vs Intermediates:**
-- **Deliverables**: Google Sheets, Google Slides, or other cloud-based outputs that the user can access
-- **Intermediates**: Temporary files needed during processing
+## Session Start Checklist
 
-**Directory structure:**
-- `.tmp/` - All intermediate files (dossiers, scraped data, temp exports). Never commit, always regenerated.
-- `execution/` - Python scripts (the deterministic tools)
-- `directives/` - SOPs in Markdown (the instruction set)
-- `.env` - Environment variables and API keys
-- `credentials.json`, `token.json` - Google OAuth credentials (required files, in `.gitignore`)
+1. ✅ Read this file (automatic)
+2. Check context - which project are we working on?
+3. Check `docs/session-history.md` if continuing previous work
+4. Check `[project]/workflows/` for existing procedures
 
-**Key principle:** Local files are only for processing. Deliverables live in cloud services (Google Sheets, Slides, etc.) where the user can access them. Everything in `.tmp/` can be deleted and regenerated.
+## Where to Put Things
 
-## Cloud Webhooks (Modal)
+| What | Where |
+|------|-------|
+| Core methods & patterns | `CLAUDE.md` (this file) |
+| Detailed reference docs | `docs/` |
+| Capability SOPs | `directives/` |
+| Task procedures | `[project]/workflows/` |
+| Session learnings | `docs/session-history.md` |
+| Deployment config | `deploy_to_skills.py` |
 
-The system supports event-driven execution via Modal webhooks. Each webhook maps to exactly one directive with scoped tool access.
+---
 
-**When user says "add a webhook that...":**
-1. Read `directives/add_webhook.md` for complete instructions
-2. Create the directive file in `directives/`
-3. Add entry to `execution/webhooks.json`
-4. Deploy: `modal deploy execution/modal_webhook.py`
-5. Test the endpoint
+**Model:** Use Opus-4.5 for all development work.
 
-**Key files:**
-- `execution/webhooks.json` - Webhook slug → directive mapping
-- `execution/modal_webhook.py` - Modal app (do not modify unless necessary)
-- `directives/add_webhook.md` - Complete setup guide
-
-**Endpoints:**
-- `https://nick-90891--claude-orchestrator-list-webhooks.modal.run` - List webhooks
-- `https://nick-90891--claude-orchestrator-directive.modal.run?slug={slug}` - Execute directive
-- `https://nick-90891--claude-orchestrator-test-email.modal.run` - Test email
-
-**Available tools for webhooks:** `send_email`, `read_sheet`, `update_sheet`
-
-**All webhook activity streams to Slack in real-time.**
-
-## Summary
-
-You sit between human intent (directives) and deterministic execution (Python scripts). Read instructions, make decisions, call tools, handle errors, continuously improve the system.
-
-Be pragmatic. Be reliable. Self-anneal.
-
-Also, use Opus-4.5 for everything while building. It came out a few days ago and is an order of magnitude better than Sonnet and other models. If you can't find it, look it up first.
+**Principle:** Be pragmatic. Be reliable. Self-anneal.

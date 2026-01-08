@@ -46,7 +46,11 @@
       "Bash(ANTHROPIC_API_KEY=\"$ANTHROPIC_API_KEY\" python:*)",
       "Bash(source:*)",
       "Bash(osascript:*)",
-      "Bash(railway init:*)"
+      "Bash(railway init:*)",
+      "Bash(for slide in 15 16 17 18 20 21)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)"
     ]
   }
 }

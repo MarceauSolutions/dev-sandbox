@@ -1,14 +1,20 @@
 ---
 name: interview-prep
-description: Research a company and role, then generate a professional PowerPoint presentation for interview preparation. Optionally include a resume/CV for personalized talking points and experience highlights.
+description: Comprehensive Interview Prep AI Assistant - research companies, generate presentations, practice with mock interviews, create cheat sheets, and more. Your complete interview preparation companion.
+version: 1.3.0
 trigger_phrases:
   - interview prep
-  - create interview presentation
   - prepare for interview
   - research company for interview
+  - create interview presentation
   - make interview slides
   - interview powerpoint
   - job interview preparation
+  - mock interview
+  - practice interview
+  - interview questions
+  - cheat sheet for interview
+  - interview talking points
 model: opus
 allowed_tools:
   - Bash(python:*)
@@ -16,382 +22,275 @@ allowed_tools:
   - Read
   - Write
   - Edit
+  - mcp:google-sheets
+  - mcp:google-drive
+  - mcp:brave-search
+mcp_servers:
+  - google-sheets    # Store interview prep data, track sessions
+  - google-drive     # Save/retrieve documents
+  - brave-search     # Enhanced company research
 ---
 
-# Interview Preparation PowerPoint Generator
+# Interview Prep AI Assistant
 
 ## Overview
 
-This Skill researches a company and specific role using AI, then generates a professional 10-20 slide PowerPoint presentation to help prepare for and present during an interview. Optionally accepts a resume/CV (PDF, Word, or text) for personalized content.
+A comprehensive AI assistant for interview preparation. Goes beyond just PowerPoint generation to include mock interviews, quick reference outputs, and coaching.
 
-## Deployment
+## Capabilities
 
-**Production API**: https://interview-prep-pptx-production.up.railway.app
-**Frontend**: https://interview-prep-pptx-production.up.railway.app/app
+| Category | What I Can Do |
+|----------|---------------|
+| **Research** | Research companies, analyze roles, identify interview questions |
+| **Documents** | Generate PowerPoint, cheat sheets, talking points, flashcards |
+| **Practice** | Conduct mock interviews (behavioral, technical, case) |
+| **Coaching** | Evaluate responses, provide STAR format feedback |
+| **Logistics** | Create day-of checklists, preparation materials |
 
-The API is deployed on Railway with automatic deploys from the `interview-prep-pptx` directory.
+## When to Use
 
-## When to use
-
-Use this Skill when the user asks to:
-- Prepare for an interview at a company
-- Research a company and role for interview
-- Create interview prep slides or PowerPoint
-- Generate interview presentation
-- Build interview preparation materials
-- Help with job interview preparation
+Use this assistant when the user wants to:
+- Prepare for a job interview
+- Research a company and role
+- Create interview preparation materials
+- Practice answering interview questions
+- Get a quick cheat sheet before an interview
+- Generate talking points
+- Practice with a mock interview
 
 ## Decision Tree
 
 ```
-User Request → Check Intent
+User Request → Classify Intent
 │
-├─ "Research [company] for [role]" → Run interview_research.py
-│   └─ With resume? → Add --resume flag
-│   └─ Want images? → Add --generate-images flag
+├─ Research/Presentation → Standard Research + PPTX Flow
+│   └─ "Research [Company] for [Role]"
+│   └─ "Create presentation for interview"
 │
-├─ "Create/Generate presentation" → Run pptx_generator.py
-│   └─ Check for research JSON in .tmp/
+├─ Mock Interview → mock_interview.py
+│   └─ "Practice interview with me"
+│   └─ "Ask me behavioral questions"
+│   └─ "Do a mock interview for Google PM"
 │
-├─ "Edit slide..." → Run pptx_editor.py
-│   └─ Text edit → --action edit-text
-│   └─ Image change → --action regenerate-image or replace-image
-│   └─ Add slide → --action add-slide
+├─ Quick Outputs → pdf_outputs.py
+│   └─ "Give me a cheat sheet"
+│   └─ "Create talking points"
+│   └─ "Generate flashcards"
+│   └─ "Day-of checklist"
 │
-├─ "Show/List slides" → Run pptx_editor.py --action list
+├─ Editing → pptx_editor.py / live_editor.py
+│   └─ "Edit slide 3"
+│   └─ "Make slides consistent"
+│   └─ "Apply theme"
 │
-└─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
+└─ Help → Show capabilities
+    └─ "What can you help with?"
+    └─ "How do I use this?"
 ```
 
-## Required Inputs
+## MCP Server Integration
 
-1. **Company Name** (required): The company to research
-2. **Role/Position** (required): The specific job title being interviewed for
+**MCP servers are token-intensive.** Use them for the **deployed/shared version** of this assistant, not for personal/development use.
 
-## Optional Inputs
+### When to Use MCP (Deployed Version)
+For external users where standardization and maintenance savings justify token costs:
 
-3. **Resume/CV** (optional): Path to a PDF, DOCX, or TXT file with work experience
-4. **Theme** (optional): "modern" (default), "professional", or "minimal"
-5. **Generate Images** (optional): Create AI visuals for experience highlights ($0.07/image)
+| MCP Server | Use Case |
+|------------|----------|
+| `google-sheets` | Track user sessions, save scores, export data |
+| `google-drive` | Save presentations to user's Drive, retrieve resumes |
+| `brave-search` | Enhanced company research for users |
 
-## Instructions
-
-### Option A: Basic Research (No Resume)
+### When to Use Python Scripts (Development/Personal)
+For local development and personal use, prefer scripts in `execution/`:
 
 ```bash
-# Step 1: Research company and role
+# Use scripts directly - more token-efficient
+python execution/interview_research.py --company "Google" --role "PM"
+python execution/pptx_generator.py --input .tmp/interview_research_google.json
+```
+
+**Decision rule:** If building for yourself → use scripts. If deploying for others → consider MCP.
+
+## Quick Commands
+
+### Research & Presentation
+```bash
+# Basic research (uses brave-search MCP if available)
 source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}"
 
-# Step 2: Generate PowerPoint
+# Generate PowerPoint
 python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
 
-# Step 3: Open the presentation
+# Open presentation
 open .tmp/interview_prep_{company_slug}.pptx
 ```
 
-### Option B: Personalized (With Resume)
-
+### Mock Interview Practice
 ```bash
-# Step 1: Research with resume parsing
-source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf"
+# Behavioral interview
+python interview-prep-pptx/src/mock_interview.py --company "{COMPANY}" --role "{ROLE}" --type behavioral
 
-# Step 2: Generate PowerPoint with experience highlights
-python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+# Technical interview
+python interview-prep-pptx/src/mock_interview.py --company "{COMPANY}" --role "{ROLE}" --type technical
 
-# Step 3: Open the presentation
-open .tmp/interview_prep_{company_slug}.pptx
+# Quick 5-question practice
+python interview-prep-pptx/src/mock_interview.py --company "{COMPANY}" --role "{ROLE}" --questions 5
 ```
 
-### Option C: Full Experience (Resume + Images)
-
+### Quick Reference Outputs
 ```bash
-# Step 1: Research with resume and generate images
-source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf" --generate-images
+# One-page cheat sheet
+python interview-prep-pptx/src/pdf_outputs.py --input .tmp/interview_research_{company_slug}.json --output cheat-sheet
 
-# Step 2: Generate PowerPoint
-python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+# Talking points document
+python interview-prep-pptx/src/pdf_outputs.py --input .tmp/interview_research_{company_slug}.json --output talking-points
 
-# Step 3: Open the presentation
-open .tmp/interview_prep_{company_slug}.pptx
+# Q&A flashcards
+python interview-prep-pptx/src/pdf_outputs.py --input .tmp/interview_research_{company_slug}.json --output flashcards
+
+# Day-of checklist
+python interview-prep-pptx/src/pdf_outputs.py --input .tmp/interview_research_{company_slug}.json --output checklist
+
+# All outputs
+python interview-prep-pptx/src/pdf_outputs.py --input .tmp/interview_research_{company_slug}.json --output all
 ```
 
-## Important Notes
-
-- **Company Slug**: Convert company name to lowercase with underscores (e.g., "Apple Inc" → "apple_inc")
-- **Source .env**: Always source .env before running interview_research.py to load the Anthropic API key
-- **Resume Formats**: Supports PDF (.pdf), Word (.docx, .doc), and text (.txt, .md)
-- **Themes**: "modern" (dark blue/coral), "professional" (navy/orange), "minimal" (slate/green)
-
-## Slide Structure
-
-**Core Slides (Always Included):**
-1. Title Slide - Company name, role, date
-2. Agenda - Overview of presentation
-3. Company Overview - Industry, mission, products
-4. Recent News - Latest developments
-5. Company Culture - Values, work environment
-6. Role Analysis - Responsibilities, department
-7. Skills & Metrics - Required skills, success measures
-8. Interview Questions 1 - Common questions with strategies
-9. Interview Questions 2 - More questions
-10. Questions to Ask - Smart questions for interviewer
-11. Competitive Landscape - Competitors, industry trends
-12. Talking Points - Key messages to communicate
-
-**Personalized Slides (When Resume Provided):**
-13. Your Relevant Experience - Section divider
-14-18. Experience Highlights - Individual slides for top 5 relevant experiences
-
-**Closing Slides:**
-- Preparation Checklist - Action items before interview
-- Closing - Motivational ending
-
-## Error Handling
-
-**Missing dependencies:**
+### Intent Routing (For Complex Requests)
 ```bash
-pip install anthropic python-pptx PyPDF2 python-docx
+# Route user request to appropriate workflow
+python interview-prep-pptx/src/intent_router.py --input "Help me prepare for my Google PM interview"
+
+# Interactive chat mode
+python interview-prep-pptx/src/intent_router.py --interactive
 ```
 
-**API key not set:**
-Ensure `ANTHROPIC_API_KEY` is set in `.env` file and source it before running.
+## Workflows
 
-**Resume parsing fails:**
-Check that the file exists and is a supported format (PDF, DOCX, TXT).
+| Workflow | File | Use When |
+|----------|------|----------|
+| Generate Presentation | `workflows/generate-presentation.md` | Creating new presentation |
+| Mock Interview | `workflows/mock-interview.md` | Practice interviews |
+| Quick Outputs | `workflows/quick-outputs.md` | Cheat sheets, flashcards, etc. |
+| Template Mode | `workflows/template-mode.md` | Continue existing PPTX |
+| Live Editing | `workflows/live-editing-session.md` | Real-time edits |
 
-## Cost
+## User Guidance
 
-- Research: ~$0.02-0.05 per run (Claude API)
-- PowerPoint: FREE (local generation)
-- Images: ~$0.07/image if using --generate-images flag (Grok API)
+After key actions, show next-step prompts from `USER_PROMPTS.md`:
 
-## Example Usage
+### After Research
+```
+✅ Research complete for [Company] - [Role]
 
-**User asks:** "Help me prepare for a Product Manager interview at Stripe"
-
-**Your response:**
-1. Ask if they have a resume to include
-2. Run interview_research.py with their inputs
-3. Run pptx_generator.py to create slides
-4. Open the PowerPoint and confirm success
-5. Tell them the file location
-
-**User asks:** "Create interview prep for Google Software Engineer using my resume at ~/resume.pdf"
-
-**Your response:**
-1. Run with --resume flag pointing to their file
-2. Generate personalized PowerPoint
-3. Confirm the presentation includes their experience highlights
-
-## Session-Based Editing
-
-After generating a presentation, a **session is automatically created**. This allows you to make iterative edits without specifying file paths each time.
-
-### Check Current Session
-```bash
-python execution/session_manager.py --status
+📋 What you can do next:
+• "Generate the PowerPoint presentation"
+• "Give me a one-page cheat sheet"
+• "Practice interview with me"
+• "Show me likely interview questions"
 ```
 
-### List Recent Sessions
-```bash
-python execution/session_manager.py --list
+### After Presentation
+```
+✅ Presentation created: [filename].pptx
+
+📋 What you can do next:
+• "Open the presentation"
+• "Apply consistent theme"
+• "Edit slide [X]"
+• "Download the final version"
 ```
 
-### Get Current PowerPoint File
-```bash
-python execution/session_manager.py --current
+### After Mock Interview
+```
+✅ Mock interview complete!
+
+📋 What you can do next:
+• "Review my scores"
+• "Practice again"
+• "Focus on behavioral questions"
+• "Create a cheat sheet from what I learned"
 ```
 
-The session tracks:
-- Current presentation file (.pptx)
-- Original research data (.json)
-- Resume (if provided)
-- All edits made during the session
-- Slide count
+## Output Formats
 
-**IMPORTANT**: When the user asks to edit "the presentation" or "the slides" or "my PowerPoint", use the session to find the current file:
-1. Run `python execution/session_manager.py --current` to get the filename
-2. Use that filename in subsequent edit commands
-
-## Interactive Slide Editing
-
-After generating a presentation, users can make iterative edits through natural language commands.
-
-### List Slides
-```bash
-# Get current file first
-PPTX=$(python execution/session_manager.py --current)
-python execution/pptx_editor.py --input .tmp/$PPTX --action list
-```
-
-Or with explicit file:
-```bash
-python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action list
-```
-
-### Edit Text on a Slide
-```bash
-python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action edit-text --slide {num} --find "old text" --replace "new text"
-```
-
-### Regenerate Image with AI ($0.07)
-```bash
-python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action regenerate-image --slide {num} --prompt "New image description" --open
-```
-
-### Add New Slide with User's Image (FREE)
-```bash
-python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
-  --title "Experience Title" \
-  --description "Description of the experience" \
-  --relevance "How it relates to the role" \
-  --new-image /path/to/user/image.jpg \
-  --after-slide {num} --open
-```
-
-### Add New Slide with AI Image ($0.07)
-```bash
-python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
-  --title "Experience Title" \
-  --description "Description of the experience" \
-  --relevance "How it relates to the role" \
-  --prompt "AI image prompt description" \
-  --after-slide {num} --open
-```
+| Format | Script | Cost |
+|--------|--------|------|
+| PowerPoint | `pptx_generator.py` | Free |
+| Cheat Sheet (MD/PDF) | `pdf_outputs.py` | Free |
+| Talking Points (MD/PDF) | `pdf_outputs.py` | Free |
+| Flashcards (MD/PDF) | `pdf_outputs.py` | Free |
+| Checklist (MD/PDF) | `pdf_outputs.py` | Free |
+| Mock Interview Session | `mock_interview.py` | ~$0.05 |
 
 ## Cost Summary
 
 | Action | Cost |
 |--------|------|
-| Research (Claude API) | ~$0.02-0.05 |
-| PowerPoint generation | FREE |
-| Text edits | FREE |
-| Replace image with local file | FREE |
-| Add slide with user's image | FREE |
-| AI image regeneration | $0.07/image |
-| Add slide with AI image | $0.07/image |
+| Company/Role Research | ~$0.02-0.05 |
+| PowerPoint Generation | Free |
+| Mock Interview (7 questions) | ~$0.05 |
+| PDF Outputs | Free |
+| Text Edits | Free |
+| AI Image Generation | $0.07/image |
 
 ## File Structure
 
 ```
 interview-prep-pptx/
 ├── src/
-│   ├── interview_research.py    # AI research script
-│   ├── pptx_generator.py        # PowerPoint generation
-│   ├── pptx_editor.py           # Interactive editing
-│   ├── session_manager.py       # Session tracking
-│   ├── interview_prep_api.py    # FastAPI REST API
-│   └── grok_image_gen.py        # AI image generation
-├── frontend/
-│   └── index.html               # Web interface
-├── requirements.txt
-├── railway.json                 # Railway deployment config
-├── Procfile
-└── SKILL.md                     # This file
+│   ├── interview_research.py     # AI research
+│   ├── pptx_generator.py         # PowerPoint generation
+│   ├── pptx_editor.py            # Slide editing
+│   ├── mock_interview.py         # Mock interview practice
+│   ├── pdf_outputs.py            # Cheat sheet, flashcards, etc.
+│   ├── intent_router.py          # Request routing
+│   ├── session_manager.py        # Session tracking
+│   └── live_editor.py            # Real-time editing
+├── workflows/
+│   ├── generate-presentation.md
+│   ├── mock-interview.md
+│   ├── quick-outputs.md
+│   └── live-editing-session.md
+├── VERSION                        # 1.2.0-dev
+├── CHANGELOG.md
+├── USER_PROMPTS.md
+├── EXPANDED_SCOPE.md
+└── SKILL.md
 ```
 
-## Template Mode - Continue From Existing Presentation
+## Example Interactions
 
-When the user has an existing PowerPoint they want to continue editing (e.g., from a previous session), use the template workflow.
+**User:** "Help me prepare for my Google PM interview"
+**Assistant:**
+1. Ask if they have a resume
+2. Run research script
+3. Generate PowerPoint
+4. Offer mock interview or cheat sheet
 
-### Option D: Load Existing Template
+**User:** "Practice interview with me"
+**Assistant:**
+1. Confirm company/role context
+2. Start mock interview (behavioral by default)
+3. Ask questions, evaluate responses
+4. Provide STAR format feedback
+5. Give overall performance summary
 
-Use this when the user says:
-- "I have a presentation from last night..."
-- "Continue editing my existing PowerPoint..."
-- "Use this file as a starting point..."
-- "Edit my presentation at .tmp/..."
+**User:** "Quick cheat sheet for my Apple interview tomorrow"
+**Assistant:**
+1. Check for existing research
+2. Generate one-page cheat sheet
+3. Offer to download to Downloads folder
 
-```bash
-# Step 1: List available templates
-python execution/template_manager.py --list
+## Deployment
 
-# Step 2: Load template and create editing session
-python execution/template_manager.py --load .tmp/interview_prep_company.pptx --create-session
+- **Production API**: https://interview-prep-pptx-production.up.railway.app
+- **Frontend**: https://interview-prep-pptx-production.up.railway.app/app
+- **Skill Version**: 1.2.0-dev
 
-# Step 3: List slides in the template
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action list
-
-# Step 4: Make edits using pptx_editor.py
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action edit-text --slide 3 --find "old" --replace "new"
-
-# Step 5: Add images to existing slides
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 14 --new-image .tmp/exp_img_1.jpeg --position left --width 4.5
-```
-
-### Option E: Copy Template and Regenerate with New Theme
-
-When user wants same content but different styling:
-
-```bash
-# Step 1: Copy existing template
-python execution/template_manager.py --load .tmp/interview_prep_company.pptx --copy-to .tmp/interview_prep_company_v2.pptx
-
-# Step 2: Extract company/role info
-python execution/template_manager.py --load .tmp/interview_prep_company.pptx --extract-info
-
-# Step 3: Regenerate with new theme (if research JSON exists)
-python execution/pptx_generator.py --input .tmp/interview_research_company.json --theme professional
-```
-
-### Template Manager Commands
-
-| Command | Description |
-|---------|-------------|
-| `--list` | List all available templates in .tmp/ |
-| `--load FILE` | Load and inspect a template |
-| `--load FILE --extract-info` | Extract company/role from template |
-| `--load FILE --create-session` | Create editing session from template |
-| `--load FILE --copy-to NEW` | Copy template to new file |
-
-### Working with Images from Previous Sessions
-
-If the user has images from a previous session (e.g., `exp_img_1.jpeg` through `exp_img_5.jpeg`), add them to experience slides:
-
-```bash
-# Add images to slides 14-18 (experience slides)
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 14 --new-image .tmp/exp_img_1.jpeg --position left --width 4.5
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 15 --new-image .tmp/exp_img_2.jpeg --position left --width 4.5
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 16 --new-image .tmp/exp_img_3.jpeg --position left --width 4.5
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 17 --new-image .tmp/exp_img_4.jpeg --position left --width 4.5
-python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 18 --new-image .tmp/exp_img_5.jpeg --position left --width 4.5 --open
-```
-
-## Decision Tree (Updated)
-
-```
-User Request → Check Intent
-│
-├─ "Research [company] for [role]" → Run interview_research.py
-│   └─ With resume? → Add --resume flag
-│   └─ Want images? → Add --generate-images flag
-│
-├─ "Create/Generate presentation" → Run pptx_generator.py
-│   └─ Check for research JSON in .tmp/
-│
-├─ "Continue editing my presentation from..." → Template Mode
-│   └─ Load template with template_manager.py
-│   └─ Create session with --create-session
-│   └─ Use pptx_editor.py for edits
-│
-├─ "Use this existing PowerPoint..." → Template Mode
-│   └─ Copy template if needed
-│   └─ Add images from .tmp/ if available
-│
-├─ "Edit slide..." → Run pptx_editor.py
-│   └─ Text edit → --action edit-text
-│   └─ Add image → --action add-image
-│   └─ Image change → --action regenerate-image or replace-image
-│   └─ Add slide → --action add-slide
-│
-├─ "Show/List slides" → Run pptx_editor.py --action list
-│
-└─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
-```
-
-## Additional Resources
+## Related Files
 
 - Directive: `directives/interview_prep.md`
-- Interactive editing guide: `directives/pptx_interactive_edit.md`
-- Template manager: `execution/template_manager.py`
-- Project symlink: `projects/interview-prep` → `interview-prep-pptx`
+- User prompts: `interview-prep-pptx/USER_PROMPTS.md`
+- Expanded scope: `interview-prep-pptx/EXPANDED_SCOPE.md`
+- Inference guidelines: `docs/inference-guidelines.md`

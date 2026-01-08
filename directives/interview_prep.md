@@ -3,6 +3,20 @@
 ## Goal
 Research a company and role, then generate a professional PowerPoint presentation to help prepare for and present during an interview. Optionally personalize with resume/CV for tailored talking points.
 
+## Workflows
+
+For detailed step-by-step procedures, see the workflows directory:
+
+| Workflow | File | Use When |
+|----------|------|----------|
+| Generate Presentation | `workflows/generate-presentation.md` | Creating new presentation from scratch |
+| Template Mode | `workflows/template-mode.md` | Continuing from existing PPTX |
+| Live Editing | `workflows/live-editing-session.md` | Interactive editing while viewing |
+| Reformat Slides | `workflows/reformat-experience-slides.md` | Standardizing slide layouts |
+| Add Images | `workflows/add-images-to-slides.md` | Adding images from previous session |
+
+Location: `interview-prep-pptx/workflows/`
+
 ## Inputs
 - **Company Name** (required): The company to research
 - **Role/Position** (required): The specific role being interviewed for
@@ -226,6 +240,71 @@ python execution/pptx_generator.py --input .tmp/interview_research_company.json 
 | `--load FILE --extract-info` | Extract company/role from template |
 | `--load FILE --create-session` | Create editing session |
 | `--load FILE --copy-to NEW` | Copy to new file |
+
+## Live Interactive Editing Mode
+
+For real-time editing while viewing the PowerPoint, use the live editor. This allows you to have the presentation open and watch changes happen as you describe them.
+
+### Starting a Live Session
+
+```bash
+# Start session and open the file
+python execution/live_editor.py --start .tmp/interview_prep_company.pptx --open
+
+# Or start without opening (if already open)
+python execution/live_editor.py --start .tmp/interview_prep_company.pptx
+```
+
+### Making Live Edits
+
+```bash
+# Edit text on a slide (auto-refreshes PowerPoint)
+python execution/live_editor.py --edit-text --slide 3 --find "old text" --replace "new text"
+
+# Add image to a slide
+python execution/live_editor.py --add-image --slide 14 --image .tmp/exp_img_1.jpeg --position left
+
+# List all slides
+python execution/live_editor.py --list
+
+# Manually refresh PowerPoint to see changes
+python execution/live_editor.py --refresh
+```
+
+### Session Management
+
+```bash
+# Check session status and recent edits
+python execution/live_editor.py --status
+
+# Revert all changes to backup
+python execution/live_editor.py --revert
+
+# End session
+python execution/live_editor.py --end
+```
+
+### Live Editor Commands
+
+| Command | Description |
+|---------|-------------|
+| `--start FILE` | Start live session with a PPTX file |
+| `--start FILE --open` | Start and open the file |
+| `--list` | List all slides in session |
+| `--edit-text --slide N --find "X" --replace "Y"` | Edit text on slide |
+| `--add-image --slide N --image PATH` | Add image to slide |
+| `--refresh` | Refresh PowerPoint/Keynote to show changes |
+| `--status` | Show session status and recent edits |
+| `--revert` | Revert to backup from session start |
+| `--end` | End the live editing session |
+
+### How It Works
+
+1. A backup is created when you start a session
+2. Edits modify the PPTX file directly
+3. AppleScript triggers PowerPoint/Keynote to reload (macOS)
+4. All edits are logged for undo capability
+5. Use `--revert` to restore original state
 
 ## Future Enhancements
 - [ ] Add interviewer research (LinkedIn integration)

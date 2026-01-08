@@ -1,0 +1,57 @@
+{
+  "_comment": "MCP servers are TOKEN-INTENSIVE. Use for external/shared AI assistants only. For personal use, prefer Python scripts in execution/",
+  "_usage_guide": {
+    "external_assistants": "USE MCP - standardization benefits outweigh token costs",
+    "personal_tools": "PREFER SCRIPTS - more token-efficient",
+    "high_frequency_ops": "PREFER SCRIPTS - avoid MCP overhead",
+    "rate_limited_apis": "USE MCP - automatic rate limiting is valuable (e.g., amazon-sp-api)"
+  },
+  "mcpServers": {
+    "google-sheets": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-google-sheets"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${HOME}/dev-sandbox/credentials.json"
+      },
+      "description": "Google Sheets integration - USE FOR DEPLOYED ASSISTANTS ONLY",
+      "recommended_for": ["interview-prep-deployed", "fitness-influencer-deployed"]
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": ["-y", "mcp-gdrive"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}"
+      },
+      "description": "Google Drive - USE FOR DEPLOYED ASSISTANTS ONLY",
+      "recommended_for": ["interview-prep-deployed"]
+    },
+    "amazon-sp-api": {
+      "command": "npx",
+      "args": ["-y", "amazon-sp-api-mcp-server"],
+      "env": {
+        "SP_API_REFRESH_TOKEN": "${SP_API_REFRESH_TOKEN}",
+        "SP_API_CLIENT_ID": "${SP_API_CLIENT_ID}",
+        "SP_API_CLIENT_SECRET": "${SP_API_CLIENT_SECRET}",
+        "SP_API_MARKETPLACE_ID": "${SP_API_MARKETPLACE_ID}"
+      },
+      "description": "Amazon SP-API - RECOMMENDED due to automatic rate limiting",
+      "recommended_for": ["amazon-seller", "personal-assistant"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-filesystem", "${HOME}/dev-sandbox"],
+      "description": "File system - NOT RECOMMENDED, use native Claude tools instead",
+      "recommended_for": []
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      },
+      "description": "Web search - NOT RECOMMENDED, Claude has built-in search",
+      "recommended_for": ["interview-prep-deployed"]
+    }
+  }
+}

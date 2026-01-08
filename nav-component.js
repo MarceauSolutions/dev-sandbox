@@ -78,6 +78,10 @@
                             <div class="dropdown-item-title">MedTech & Device Companies</div>
                             <div class="dropdown-item-desc">Healthcare automation solutions</div>
                         </a>
+                        <a href="https://interview-prep-pptx-production.up.railway.app/app" class="dropdown-item">
+                            <div class="dropdown-item-title">Interview Prep</div>
+                            <div class="dropdown-item-desc">AI-powered interview preparation assistant</div>
+                        </a>
                         <div class="dropdown-divider"></div>
                         <a href="${base}/solutions.html" class="dropdown-item">
                             <div class="dropdown-item-title" style="color: #fbbf24;">All Solutions</div>

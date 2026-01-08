@@ -389,9 +389,71 @@ User Request → Check Intent
 └─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
 ```
 
+## Live Interactive Editing Mode
+
+For real-time editing while viewing the PowerPoint open on screen. User can describe changes and watch them happen.
+
+### When to Use Live Mode
+
+Use when user says:
+- "I have the presentation open, change slide 3..."
+- "While I'm looking at it, update the title..."
+- "Let me watch you make the changes..."
+- "I want to edit this interactively..."
+
+### Starting Live Session
+
+```bash
+# Start and open the file
+python execution/live_editor.py --start .tmp/interview_prep_company.pptx --open
+```
+
+### Live Edit Commands
+
+```bash
+# Edit text (auto-refreshes PowerPoint)
+python execution/live_editor.py --edit-text --slide 3 --find "old" --replace "new"
+
+# Add image
+python execution/live_editor.py --add-image --slide 14 --image .tmp/exp_img_1.jpeg
+
+# List slides
+python execution/live_editor.py --list
+
+# Refresh PowerPoint
+python execution/live_editor.py --refresh
+
+# Check status
+python execution/live_editor.py --status
+
+# Revert all changes
+python execution/live_editor.py --revert
+
+# End session
+python execution/live_editor.py --end
+```
+
+### Decision Tree (Live Mode)
+
+```
+User Request → Check if presentation is open
+│
+├─ "I have it open, change..." → Live Mode
+│   └─ Start session if not active: --start FILE
+│   └─ Make edit: --edit-text or --add-image
+│   └─ Auto-refresh shows changes
+│
+├─ "Watch me edit..." → Live Mode
+│   └─ --start FILE --open
+│   └─ Proceed with edits
+│
+└─ "Revert my changes" → --revert
+```
+
 ## Additional Resources
 
 - Directive: `directives/interview_prep.md`
 - Interactive editing guide: `directives/pptx_interactive_edit.md`
 - Template manager: `execution/template_manager.py`
+- Live editor: `execution/live_editor.py`
 - Project symlink: `projects/interview-prep` → `interview-prep-pptx`
