@@ -174,6 +174,59 @@ Install: `pip install anthropic python-pptx`
 - Research: ~$0.02-0.05 per run (Claude API)
 - PowerPoint: FREE (local generation)
 
+## Template Mode - Continue From Existing Presentation
+
+When you have an existing PowerPoint from a previous session that you want to continue editing:
+
+### Option D: Load Existing Template
+
+```bash
+# Step 1: List available templates in .tmp/
+python execution/template_manager.py --list
+
+# Step 2: Load template and see structure
+python execution/template_manager.py --load .tmp/interview_prep_company.pptx
+
+# Step 3: Create editing session
+python execution/template_manager.py --load .tmp/interview_prep_company.pptx --create-session
+
+# Step 4: Make edits using pptx_editor.py
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action list
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action edit-text --slide 3 --find "old" --replace "new"
+```
+
+### Option E: Add Images from Previous Session
+
+If you have AI-generated images from a previous session (exp_img_1.jpeg through exp_img_5.jpeg):
+
+```bash
+# Add images to experience slides (14-18)
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 14 --new-image .tmp/exp_img_1.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 15 --new-image .tmp/exp_img_2.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 16 --new-image .tmp/exp_img_3.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 17 --new-image .tmp/exp_img_4.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 18 --new-image .tmp/exp_img_5.jpeg --position left --width 4.5 --open
+```
+
+### Option F: Regenerate with Different Theme
+
+Keep the same research but apply a new theme:
+
+```bash
+# Uses existing research JSON to regenerate with new theme
+python execution/pptx_generator.py --input .tmp/interview_research_company.json --theme professional
+```
+
+### Template Manager Commands
+
+| Command | Description |
+|---------|-------------|
+| `--list` | List all templates in .tmp/ |
+| `--load FILE` | Load and inspect a template |
+| `--load FILE --extract-info` | Extract company/role from template |
+| `--load FILE --create-session` | Create editing session |
+| `--load FILE --copy-to NEW` | Copy to new file |
+
 ## Future Enhancements
 - [ ] Add interviewer research (LinkedIn integration)
 - [ ] Include salary benchmarking data

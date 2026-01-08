@@ -290,8 +290,108 @@ interview-prep-pptx/
 └── SKILL.md                     # This file
 ```
 
+## Template Mode - Continue From Existing Presentation
+
+When the user has an existing PowerPoint they want to continue editing (e.g., from a previous session), use the template workflow.
+
+### Option D: Load Existing Template
+
+Use this when the user says:
+- "I have a presentation from last night..."
+- "Continue editing my existing PowerPoint..."
+- "Use this file as a starting point..."
+- "Edit my presentation at .tmp/..."
+
+```bash
+# Step 1: List available templates
+python execution/template_manager.py --list
+
+# Step 2: Load template and create editing session
+python execution/template_manager.py --load .tmp/interview_prep_company.pptx --create-session
+
+# Step 3: List slides in the template
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action list
+
+# Step 4: Make edits using pptx_editor.py
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action edit-text --slide 3 --find "old" --replace "new"
+
+# Step 5: Add images to existing slides
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 14 --new-image .tmp/exp_img_1.jpeg --position left --width 4.5
+```
+
+### Option E: Copy Template and Regenerate with New Theme
+
+When user wants same content but different styling:
+
+```bash
+# Step 1: Copy existing template
+python execution/template_manager.py --load .tmp/interview_prep_company.pptx --copy-to .tmp/interview_prep_company_v2.pptx
+
+# Step 2: Extract company/role info
+python execution/template_manager.py --load .tmp/interview_prep_company.pptx --extract-info
+
+# Step 3: Regenerate with new theme (if research JSON exists)
+python execution/pptx_generator.py --input .tmp/interview_research_company.json --theme professional
+```
+
+### Template Manager Commands
+
+| Command | Description |
+|---------|-------------|
+| `--list` | List all available templates in .tmp/ |
+| `--load FILE` | Load and inspect a template |
+| `--load FILE --extract-info` | Extract company/role from template |
+| `--load FILE --create-session` | Create editing session from template |
+| `--load FILE --copy-to NEW` | Copy template to new file |
+
+### Working with Images from Previous Sessions
+
+If the user has images from a previous session (e.g., `exp_img_1.jpeg` through `exp_img_5.jpeg`), add them to experience slides:
+
+```bash
+# Add images to slides 14-18 (experience slides)
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 14 --new-image .tmp/exp_img_1.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 15 --new-image .tmp/exp_img_2.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 16 --new-image .tmp/exp_img_3.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 17 --new-image .tmp/exp_img_4.jpeg --position left --width 4.5
+python execution/pptx_editor.py --input .tmp/interview_prep_company.pptx --action add-image --slide 18 --new-image .tmp/exp_img_5.jpeg --position left --width 4.5 --open
+```
+
+## Decision Tree (Updated)
+
+```
+User Request → Check Intent
+│
+├─ "Research [company] for [role]" → Run interview_research.py
+│   └─ With resume? → Add --resume flag
+│   └─ Want images? → Add --generate-images flag
+│
+├─ "Create/Generate presentation" → Run pptx_generator.py
+│   └─ Check for research JSON in .tmp/
+│
+├─ "Continue editing my presentation from..." → Template Mode
+│   └─ Load template with template_manager.py
+│   └─ Create session with --create-session
+│   └─ Use pptx_editor.py for edits
+│
+├─ "Use this existing PowerPoint..." → Template Mode
+│   └─ Copy template if needed
+│   └─ Add images from .tmp/ if available
+│
+├─ "Edit slide..." → Run pptx_editor.py
+│   └─ Text edit → --action edit-text
+│   └─ Add image → --action add-image
+│   └─ Image change → --action regenerate-image or replace-image
+│   └─ Add slide → --action add-slide
+│
+├─ "Show/List slides" → Run pptx_editor.py --action list
+│
+└─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
+```
+
 ## Additional Resources
 
 - Directive: `directives/interview_prep.md`
 - Interactive editing guide: `directives/pptx_interactive_edit.md`
+- Template manager: `execution/template_manager.py`
 - Project symlink: `projects/interview-prep` → `interview-prep-pptx`

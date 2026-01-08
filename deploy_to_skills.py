@@ -45,6 +45,7 @@ PROJECTS = {
             "pptx_generator.py",
             "pptx_editor.py",
             "session_manager.py",
+            "template_manager.py",
             "grok_image_gen.py"
         ],
         "description": "Interview Prep PowerPoint Generator"
