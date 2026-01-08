@@ -1,0 +1,15 @@
+# Interview Prep PowerPoint Generator - Dependencies
+
+# PowerPoint generation
+python-pptx>=0.6.21
+
+# API clients
+anthropic>=0.18.0
+requests>=2.31.0
+
+# Resume parsing
+PyPDF2>=3.0.0
+python-docx>=0.8.11
+
+# Environment management
+python-dotenv>=1.0.0

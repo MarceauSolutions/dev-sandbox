@@ -1,0 +1,147 @@
+---
+name: interview-prep
+description: Research a company and role, then generate a professional PowerPoint presentation for interview preparation. Optionally include a resume/CV for personalized talking points and experience highlights.
+allowed-tools: Bash(python:*), Read
+---
+
+# Interview Preparation PowerPoint Generator
+
+## Overview
+
+This Skill researches a company and specific role using AI, then generates a professional 10-20 slide PowerPoint presentation to help prepare for and present during an interview. Optionally accepts a resume/CV (PDF, Word, or text) for personalized content.
+
+## When to use
+
+Use this Skill when the user asks to:
+- Prepare for an interview at a company
+- Research a company and role for interview
+- Create interview prep slides or PowerPoint
+- Generate interview presentation
+- Build interview preparation materials
+- Help with job interview preparation
+
+## Required Inputs
+
+1. **Company Name** (required): The company to research
+2. **Role/Position** (required): The specific job title being interviewed for
+
+## Optional Inputs
+
+3. **Resume/CV** (optional): Path to a PDF, DOCX, or TXT file with work experience
+4. **Theme** (optional): "modern" (default), "professional", or "minimal"
+5. **Generate Images** (optional): Create AI visuals for experience highlights ($0.07/image)
+
+## Instructions
+
+### Option A: Basic Research (No Resume)
+
+```bash
+# Step 1: Research company and role
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}"
+
+# Step 2: Generate PowerPoint
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
+```
+
+### Option B: Personalized (With Resume)
+
+```bash
+# Step 1: Research with resume parsing
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf"
+
+# Step 2: Generate PowerPoint with experience highlights
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
+```
+
+### Option C: Full Experience (Resume + Images)
+
+```bash
+# Step 1: Research with resume and generate images
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf" --generate-images
+
+# Step 2: Generate PowerPoint
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
+```
+
+## Important Notes
+
+- **Company Slug**: Convert company name to lowercase with underscores (e.g., "Apple Inc" → "apple_inc")
+- **Source .env**: Always source .env before running interview_research.py to load the Anthropic API key
+- **Resume Formats**: Supports PDF (.pdf), Word (.docx, .doc), and text (.txt, .md)
+- **Themes**: "modern" (dark blue/coral), "professional" (navy/orange), "minimal" (slate/green)
+
+## Slide Structure
+
+**Core Slides (Always Included):**
+1. Title Slide - Company name, role, date
+2. Agenda - Overview of presentation
+3. Company Overview - Industry, mission, products
+4. Recent News - Latest developments
+5. Company Culture - Values, work environment
+6. Role Analysis - Responsibilities, department
+7. Skills & Metrics - Required skills, success measures
+8. Interview Questions 1 - Common questions with strategies
+9. Interview Questions 2 - More questions
+10. Questions to Ask - Smart questions for interviewer
+11. Competitive Landscape - Competitors, industry trends
+12. Talking Points - Key messages to communicate
+
+**Personalized Slides (When Resume Provided):**
+13. Your Relevant Experience - Section divider
+14-18. Experience Highlights - Individual slides for top 5 relevant experiences
+
+**Closing Slides:**
+- Preparation Checklist - Action items before interview
+- Closing - Motivational ending
+
+## Error Handling
+
+**Missing dependencies:**
+```bash
+pip install anthropic python-pptx PyPDF2 python-docx
+```
+
+**API key not set:**
+Ensure `ANTHROPIC_API_KEY` is set in `.env` file and source it before running.
+
+**Resume parsing fails:**
+Check that the file exists and is a supported format (PDF, DOCX, TXT).
+
+## Cost
+
+- Research: ~$0.02-0.05 per run (Claude API)
+- PowerPoint: FREE (local generation)
+- Images: ~$0.07/image if using --generate-images flag (Grok API)
+
+## Example Usage
+
+**User asks:** "Help me prepare for a Product Manager interview at Stripe"
+
+**Your response:**
+1. Ask if they have a resume to include
+2. Run interview_research.py with their inputs
+3. Run pptx_generator.py to create slides
+4. Open the PowerPoint and confirm success
+5. Tell them the file location
+
+**User asks:** "Create interview prep for Google Software Engineer using my resume at ~/resume.pdf"
+
+**Your response:**
+1. Run with --resume flag pointing to their file
+2. Generate personalized PowerPoint
+3. Confirm the presentation includes their experience highlights
+
+## Additional Resources
+
+- Directive: `directives/interview_prep.md`
+- Research script: `execution/interview_research.py`
+- PowerPoint generator: `execution/pptx_generator.py`

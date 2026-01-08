@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistants Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent-1: #667eea;
+            --accent-2: #764ba2;
+            --accent-3: #e94d60;
+            --text: #ffffff;
+            --text-dark: #1f2937;
+            --bg-light: #f8f9fa;
+            --success: #4ade80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 280px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.875rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-item-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-item-desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 10rem 2rem 6rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Modules Grid */
+        .modules {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .module-card.fitness::before {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+        }
+
+        .module-card.interview::before {
+            background: linear-gradient(90deg, var(--accent-3), #ff7676);
+        }
+
+        .module-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .module-card.fitness .module-icon {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        }
+
+        .module-card.interview .module-icon {
+            background: linear-gradient(135deg, var(--accent-3), #ff7676);
+        }
+
+        .module-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .module-card p {
+            opacity: 0.7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .module-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .module-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .module-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            background: rgba(74, 222, 128, 0.2);
+            border-radius: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .module-status.live {
+            color: var(--success);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .module-card.interview .btn-primary {
+            background: linear-gradient(135deg, var(--accent-3), #ff7676);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            opacity: 0.6;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-menu {
+                gap: 1rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">AI Assistants</a>
+            <div class="nav-menu">
+                <div class="dropdown">
+                    <button class="dropdown-toggle">
+                        AI Systems
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="setup_form.html" class="dropdown-item">
+                            <div class="dropdown-item-title">Fitness Influencer AI</div>
+                            <div class="dropdown-item-desc">Video editing, graphics, email, analytics</div>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="interview-prep-pptx/frontend/index.html" class="dropdown-item">
+                            <div class="dropdown-item-title">Interview Prep PowerPoint</div>
+                            <div class="dropdown-item-desc">AI research & presentation generator</div>
+                        </a>
+                    </div>
+                </div>
+                <a href="#modules" class="nav-link">Modules</a>
+                <a href="https://github.com" class="nav-link" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            2 AI Assistants Active
+        </div>
+        <h1>Your Personal<br><span>AI Assistant Hub</span></h1>
+        <p>Powerful AI-powered tools for fitness content creation and professional interview preparation.</p>
+    </section>
+
+    <section class="modules" id="modules">
+        <h2 class="section-title">Available AI Assistants</h2>
+        <div class="modules-grid">
+            <!-- Fitness Influencer Module -->
+            <div class="module-card fitness">
+                <div class="module-status live">
+                    <span class="status-dot"></span>
+                    Live
+                </div>
+                <div class="module-icon">💪</div>
+                <h3>Fitness Influencer AI</h3>
+                <p>Automate your fitness content workflow with AI-powered video editing, graphics creation, email management, and revenue analytics.</p>
+                <ul class="module-features">
+                    <li>Automatic jump-cut video editing</li>
+                    <li>Educational graphics generation</li>
+                    <li>Gmail email summarization</li>
+                    <li>Revenue analytics from Sheets</li>
+                    <li>AI image generation via Grok</li>
+                    <li>Calendar reminders</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="setup_form.html" class="btn btn-primary">
+                        Open Assistant
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="btn btn-secondary">Documentation</a>
+                </div>
+            </div>
+
+            <!-- Interview Prep Module -->
+            <div class="module-card interview">
+                <div class="module-status live">
+                    <span class="status-dot"></span>
+                    Live
+                </div>
+                <div class="module-icon">📊</div>
+                <h3>Interview Prep PowerPoint</h3>
+                <p>Prepare for job interviews with AI-powered company research, personalized presentations, and technical visualizations from your resume.</p>
+                <ul class="module-features">
+                    <li>AI company & role research</li>
+                    <li>Resume parsing (PDF, DOCX, TXT)</li>
+                    <li>Professional PowerPoint generation</li>
+                    <li>AI image generation for slides</li>
+                    <li>Interactive slide editing</li>
+                    <li>Multiple presentation themes</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="interview-prep-pptx/frontend/index.html" class="btn btn-primary">
+                        Open Assistant
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="interview-prep-pptx/README.md" class="btn btn-secondary">Documentation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>AI Assistants Hub v1.0 | Powered by Claude AI, Grok, and FastAPI</p>
+        <p style="margin-top: 0.5rem;">Built with the 3-Layer Architecture: Directive → Orchestration → Execution</p>
+    </footer>
+</body>
+</html>
