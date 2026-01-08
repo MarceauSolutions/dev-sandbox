@@ -4,6 +4,47 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-08 (Night): Interview Prep v1.3.0 Full Deployment
+
+**Context:** Deploying Interview Prep AI Assistant with frontend and website integration
+
+**Accomplished:**
+- Deployed Interview Prep v1.3.0 to production
+- Frontend deployed to Railway (https://interview-prep-pptx-production.up.railway.app/app)
+- Added Interview Prep to website Industries dropdown navigation
+- Updated solution card with full AI Assistant capabilities
+- Enhanced deployment checklist with security review, pre-deployment verification
+- Created MCP server configuration with cost-benefit guidelines
+- Documented MCP decision matrix for future deployments
+
+**Key Learnings:**
+1. **MCP servers are token-intensive** - Use for external/shared assistants, prefer scripts for personal tools
+2. **Full deployment = skill + frontend** - Use `deploy_to_skills.py --full` for one-command deploy
+3. **Decision matrix location** - Document in `docs/full-deployment-pipeline.md` for future reference
+4. **Industries dropdown** - Edit `nav-component.js` to add new solutions
+
+**Deployment Checklist Additions:**
+- Pre-deployment verification (git status, env vars, no hardcoded secrets)
+- Security review section (credentials, input validation, API protection)
+- Post-deployment monitoring (first hour)
+- Documentation section (README, API docs, help text)
+
+**Files Created/Updated:**
+- `docs/full-deployment-pipeline.md` - Enhanced deployment checklist
+- `.claude/mcp-servers/mcp-config.json` - MCP configuration with cost guidance
+- `docs/mcp-integration-opportunities.md` - MCP research and analysis
+- `nav-component.js` - Added Interview Prep to Industries dropdown
+- `index.html` - Updated solution card to "Interview Prep AI Assistant"
+- `.claude/skills/interview-prep/SKILL.md` - Updated to v1.3.0
+
+**Current Status:**
+- Production version: 1.3.0
+- Development version: 1.4.0-dev
+- Frontend: Live at Railway
+- Skill: Deployed to `.claude/skills/interview-prep/`
+
+---
+
 ## 2026-01-08 (Late Evening): Interview Prep Expansion & Personal AI Assistant
 
 **Context:** Expanding Interview Prep from PowerPoint-only to comprehensive assistant, setting up Personal AI Assistant project
