@@ -140,8 +140,61 @@ Check that the file exists and is a supported format (PDF, DOCX, TXT).
 2. Generate personalized PowerPoint
 3. Confirm the presentation includes their experience highlights
 
+## Interactive Slide Editing
+
+After generating a presentation, users can make iterative edits through natural language commands.
+
+### List Slides
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action list
+```
+
+### Edit Text on a Slide
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action edit-text --slide {num} --find "old text" --replace "new text"
+```
+
+### Regenerate Image with AI ($0.07)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action regenerate-image --slide {num} --prompt "New image description" --open
+```
+
+### Add New Slide with User's Image (FREE)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
+  --title "Experience Title" \
+  --description "Description of the experience" \
+  --relevance "How it relates to the role" \
+  --new-image /path/to/user/image.jpg \
+  --after-slide {num} --open
+```
+
+### Add New Slide with AI Image ($0.07)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
+  --title "Experience Title" \
+  --description "Description of the experience" \
+  --relevance "How it relates to the role" \
+  --prompt "AI image prompt description" \
+  --after-slide {num} --open
+```
+
+## Cost Summary
+
+| Action | Cost |
+|--------|------|
+| Research (Claude API) | ~$0.02-0.05 |
+| PowerPoint generation | FREE |
+| Text edits | FREE |
+| Replace image with local file | FREE |
+| Add slide with user's image | FREE |
+| AI image regeneration | $0.07/image |
+| Add slide with AI image | $0.07/image |
+
 ## Additional Resources
 
 - Directive: `directives/interview_prep.md`
+- Interactive editing guide: `directives/pptx_interactive_edit.md`
 - Research script: `execution/interview_research.py`
 - PowerPoint generator: `execution/pptx_generator.py`
+- PowerPoint editor: `execution/pptx_editor.py`

@@ -1,0 +1,180 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-08T00:30:00.000000",
+  "metadata": {
+    "description": "Living documentation of interview prep PowerPoint AI use cases",
+    "purpose": "Track known patterns and learn from new requests",
+    "auto_update": true
+  },
+  "known_use_cases": [
+    {
+      "id": "research-001",
+      "category": "company_research",
+      "user_request": "Research a company for an interview",
+      "matched_capability": "interview_research.py",
+      "command": "source .env && python execution/interview_research.py --company {company} --role {role}",
+      "success": true,
+      "frequency": 12,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "45s",
+      "cost_per_use": 0.03,
+      "notes": "Basic research without resume - Claude API cost"
+    },
+    {
+      "id": "research-002",
+      "category": "company_research",
+      "user_request": "Prepare for an interview with my resume",
+      "matched_capability": "interview_research.py",
+      "command": "source .env && python execution/interview_research.py --company {company} --role {role} --resume {resume_path}",
+      "success": true,
+      "frequency": 8,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "60s",
+      "cost_per_use": 0.04,
+      "notes": "Personalized research with resume parsing"
+    },
+    {
+      "id": "research-003",
+      "category": "company_research",
+      "user_request": "Create interview prep with images",
+      "matched_capability": "interview_research.py",
+      "command": "source .env && python execution/interview_research.py --company {company} --role {role} --resume {resume_path} --generate-images",
+      "success": true,
+      "frequency": 5,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "120s",
+      "cost_per_use": 0.39,
+      "notes": "Full experience with 5 AI-generated images ($0.07 each)"
+    },
+    {
+      "id": "pptx-001",
+      "category": "presentation_generation",
+      "user_request": "Generate PowerPoint from research",
+      "matched_capability": "pptx_generator.py",
+      "command": "python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json",
+      "success": true,
+      "frequency": 25,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "8s",
+      "cost_per_use": 0.00,
+      "notes": "Local generation - FREE"
+    },
+    {
+      "id": "pptx-002",
+      "category": "presentation_generation",
+      "user_request": "Generate with professional theme",
+      "matched_capability": "pptx_generator.py",
+      "command": "python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json --theme professional",
+      "success": true,
+      "frequency": 6,
+      "last_used": "2026-01-07",
+      "avg_execution_time": "8s",
+      "cost_per_use": 0.00,
+      "notes": "Alternative themes: modern, professional, minimal"
+    },
+    {
+      "id": "edit-001",
+      "category": "slide_editing",
+      "user_request": "Change text on a slide",
+      "matched_capability": "pptx_editor.py",
+      "command": "python execution/pptx_editor.py --input {pptx_file} --action edit-text --slide {slide_num} --find {old_text} --replace {new_text}",
+      "success": true,
+      "frequency": 15,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "2s",
+      "cost_per_use": 0.00,
+      "notes": "FREE - local text replacement"
+    },
+    {
+      "id": "edit-002",
+      "category": "slide_editing",
+      "user_request": "Regenerate an image on a slide",
+      "matched_capability": "pptx_editor.py",
+      "command": "python execution/pptx_editor.py --input {pptx_file} --action regenerate-image --slide {slide_num} --prompt {new_prompt}",
+      "success": true,
+      "frequency": 8,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "15s",
+      "cost_per_use": 0.07,
+      "notes": "AI image regeneration via Grok"
+    },
+    {
+      "id": "edit-003",
+      "category": "slide_editing",
+      "user_request": "Add a new slide with my image",
+      "matched_capability": "pptx_editor.py",
+      "command": "python execution/pptx_editor.py --input {pptx_file} --action add-slide --title {title} --description {desc} --relevance {rel} --new-image {image_path} --after-slide {num} --open",
+      "success": true,
+      "frequency": 6,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "3s",
+      "cost_per_use": 0.00,
+      "notes": "FREE - user provides their own image"
+    },
+    {
+      "id": "edit-004",
+      "category": "slide_editing",
+      "user_request": "Add a new slide with AI image",
+      "matched_capability": "pptx_editor.py",
+      "command": "python execution/pptx_editor.py --input {pptx_file} --action add-slide --title {title} --description {desc} --relevance {rel} --prompt {ai_prompt} --after-slide {num} --open",
+      "success": true,
+      "frequency": 4,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "18s",
+      "cost_per_use": 0.07,
+      "notes": "AI-generated image via Grok"
+    },
+    {
+      "id": "edit-005",
+      "category": "slide_editing",
+      "user_request": "List all slides in presentation",
+      "matched_capability": "pptx_editor.py",
+      "command": "python execution/pptx_editor.py --input {pptx_file} --action list",
+      "success": true,
+      "frequency": 20,
+      "last_used": "2026-01-08",
+      "avg_execution_time": "1s",
+      "cost_per_use": 0.00,
+      "notes": "FREE - view slide contents"
+    }
+  ],
+  "unhandled_requests": [],
+  "capability_gaps": [
+    {
+      "gap": "LinkedIn interviewer research",
+      "description": "Ability to research specific interviewers before meeting",
+      "frequency_requested": 3,
+      "proposed_solution": "Integrate LinkedIn profile scraping or manual input",
+      "priority": "medium",
+      "status": "pending"
+    },
+    {
+      "gap": "Salary benchmarking",
+      "description": "Include salary data for role/location",
+      "frequency_requested": 2,
+      "proposed_solution": "Integrate Levels.fyi or Glassdoor data",
+      "priority": "low",
+      "status": "pending"
+    }
+  ],
+  "learning_log": [
+    {
+      "date": "2026-01-08",
+      "lesson": "Auto-close existing PowerPoint windows before opening new ones prevents crowding",
+      "applied_to": "pptx_generator.py, pptx_editor.py",
+      "impact": "Better user experience with clean presentation opening"
+    },
+    {
+      "date": "2026-01-08",
+      "lesson": "User's own images should always be FREE option vs AI-generated ($0.07)",
+      "applied_to": "pptx_editor.py add-slide action",
+      "impact": "Clear cost transparency for users"
+    },
+    {
+      "date": "2026-01-07",
+      "lesson": "Technical prompts for engineering visuals work best with specific terms like 'CAD rendering', 'exploded view', 'cutaway diagram'",
+      "applied_to": "All image generation prompts",
+      "impact": "Higher quality AI-generated images"
+    }
+  ]
+}
