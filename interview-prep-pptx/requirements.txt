@@ -7,6 +7,7 @@ python-multipart>=0.0.6
 
 # PowerPoint generation
 python-pptx>=0.6.21
+Pillow>=10.0.0
 
 # API clients
 anthropic>=0.18.0
