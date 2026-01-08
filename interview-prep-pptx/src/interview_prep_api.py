@@ -26,7 +26,8 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 # Add parent directory to path for imports
@@ -549,6 +550,18 @@ async def list_files():
             })
 
     return {"files": sorted(files, key=lambda x: x["modified"], reverse=True)}
+
+
+# Serve frontend
+FRONTEND_DIR = BASE_DIR / "frontend"
+
+@app.get("/app", response_class=HTMLResponse)
+async def serve_frontend():
+    """Serve the frontend application."""
+    index_path = FRONTEND_DIR / "index.html"
+    if index_path.exists():
+        return HTMLResponse(content=index_path.read_text(), status_code=200)
+    raise HTTPException(status_code=404, detail="Frontend not found")
 
 
 if __name__ == "__main__":
