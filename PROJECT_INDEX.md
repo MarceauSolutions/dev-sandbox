@@ -2,40 +2,87 @@
 
 Use this guide to quickly switch between projects and find the right files.
 
+**Full deployment documentation:** See [DEPLOYMENT_PIPELINE.md](DEPLOYMENT_PIPELINE.md)
+
 ## Quick Commands
 
 ```bash
 # Switch to a project
-cd projects/fitness-influencer   # Fitness Influencer AI
-cd projects/interview-prep       # Interview Prep PowerPoint
-cd projects/amazon-seller        # Amazon Seller Operations
+cd interview-prep-pptx               # Interview Prep PowerPoint
+cd projects/fitness-influencer       # Fitness Influencer AI
+cd projects/amazon-seller            # Amazon Seller Operations
+cd projects/naples-weather           # Naples Weather Report
+
+# Sync scripts to execution/ (required for skills)
+python deploy_to_skills.py --sync-execution --project interview-prep
+python deploy_to_skills.py --sync-all       # Sync ALL projects
+
+# Deploy to production
+python deploy_to_skills.py --project interview-prep
+python deploy_to_skills.py --project interview-prep --repo MarceauSolutions/interview-prep-assistant
+
+# List all projects
+python deploy_to_skills.py --list
 ```
 
 ---
 
 ## Project Overview
 
-| Project | Status | Directory | Skill | Deployment |
-|---------|--------|-----------|-------|------------|
+| Project | Status | Directory | Skill | Live URL |
+|---------|--------|-----------|-------|----------|
+| **Interview Prep** | Live | `interview-prep-pptx/` | `interview-prep` | [Railway](https://interview-prep-pptx-production.up.railway.app/app) |
 | **Fitness Influencer** | Live | `projects/fitness-influencer/` | `fitness-influencer-operations` | Railway |
-| **Interview Prep** | Live | `projects/interview-prep/` | `interview-prep` | [Railway](https://interview-prep-pptx-production.up.railway.app/app) |
 | **Amazon Seller** | Dev | `projects/amazon-seller/` | `amazon-seller-operations` | - |
 | **Naples Weather** | Dev | `projects/naples-weather/` | `naples-weather-report` | - |
 
 ---
 
+## Interview Prep PowerPoint
+
+**Trigger phrases:** "interview prep", "research company", "create presentation", "PowerPoint"
+
+### Key Files
+| Purpose | Path |
+|---------|------|
+| Main scripts | `interview-prep-pptx/src/` |
+| Frontend | `interview-prep-pptx/frontend/index.html` |
+| SKILL.md | `interview-prep-pptx/SKILL.md` |
+| Directive | `directives/interview_prep.md` |
+| Railway config | `interview-prep-pptx/railway.json` |
+
+### Scripts
+- `interview_research.py` - Company/role research via Claude
+- `pptx_generator.py` - PowerPoint generation
+- `pptx_editor.py` - Slide editing (text, images, new slides)
+- `session_manager.py` - Session tracking for edits
+- `interview_prep_api.py` - FastAPI REST API
+- `grok_image_gen.py` - AI image generation (shared)
+
+### Deploy
+```bash
+# Sync to execution/ first
+python deploy_to_skills.py --sync-execution --project interview-prep
+
+# Deploy to Railway
+cd interview-prep-pptx && railway up
+```
+
+**Live URL:** https://interview-prep-pptx-production.up.railway.app/app
+
+---
+
 ## Fitness Influencer AI
 
-**When user says:** "Work on fitness influencer", "edit video", "create graphic", "email summary"
+**Trigger phrases:** "video editing", "create graphic", "email summary", "revenue analytics"
 
 ### Key Files
 | Purpose | Path |
 |---------|------|
 | Main scripts | `projects/fitness-influencer/src/` |
 | Frontend | `projects/fitness-influencer/frontend/index.html` |
+| SKILL.md | `.claude/skills/fitness-influencer-operations/SKILL.md` |
 | Directive | `directives/fitness_influencer_operations.md` |
-| Skill | `.claude/skills/fitness-influencer-operations/SKILL.md` |
-| Execution (legacy) | `execution/video_jumpcut.py`, `execution/educational_graphics.py`, etc. |
 
 ### Scripts
 - `video_jumpcut.py` - Jump-cut video editing
@@ -43,103 +90,117 @@ cd projects/amazon-seller        # Amazon Seller Operations
 - `gmail_monitor.py` - Email summarization (shared)
 - `revenue_analytics.py` - Revenue tracking (shared)
 - `grok_image_gen.py` - AI image generation (shared)
+- `twilio_sms.py` - SMS notifications (shared)
 - `workout_plan_generator.py` - Workout plans
 - `nutrition_guide_generator.py` - Nutrition guides
-- `twilio_sms.py` - SMS notifications (shared)
 
 ### Deploy
 ```bash
-cd projects/fitness-influencer
-railway up
+python deploy_to_skills.py --sync-execution --project fitness-influencer
+cd projects/fitness-influencer && railway up
 ```
-
----
-
-## Interview Prep PowerPoint
-
-**When user says:** "Interview prep", "research company", "create presentation", "PowerPoint"
-
-### Key Files
-| Purpose | Path |
-|---------|------|
-| Main scripts | `projects/interview-prep/src/` |
-| Frontend | `projects/interview-prep/frontend/index.html` |
-| Directive | `directives/interview_prep.md` |
-| Skill | `.claude/skills/interview-prep/SKILL.md` |
-| Execution (legacy) | `execution/interview_research.py`, `execution/pptx_generator.py`, etc. |
-
-### Scripts
-- `interview_research.py` - Company/role research via Claude
-- `pptx_generator.py` - PowerPoint generation
-- `pptx_editor.py` - Slide editing (text, images, new slides)
-- `grok_image_gen.py` - AI image generation (shared)
-- `interview_prep_api.py` - FastAPI backend
-
-### Deploy
-```bash
-cd projects/interview-prep
-railway up --service interview-prep-pptx
-```
-
-**Live URL:** https://interview-prep-pptx-production.up.railway.app/app
 
 ---
 
 ## Amazon Seller Operations
 
-**When user says:** "Amazon seller", "inventory", "FBA fees", "SP-API"
+**Trigger phrases:** "Amazon seller", "inventory", "FBA fees", "SP-API"
 
 ### Key Files
 | Purpose | Path |
 |---------|------|
 | Main scripts | `projects/amazon-seller/src/` |
-| Frontend | `projects/amazon-seller/frontend/` (TODO) |
+| SKILL.md | `.claude/skills/amazon-seller-operations/SKILL.md` |
 | Directive | `directives/amazon_seller_operations.md` |
-| Skill | `.claude/skills/amazon-seller-operations/SKILL.md` |
-| Execution (legacy) | `execution/amazon_*.py` |
 
 ### Scripts
 - `amazon_sp_api.py` - Core SP-API client
 - `amazon_fee_calculator.py` - FBA fee calculations
 - `amazon_inventory_optimizer.py` - Restock recommendations
 - `amazon_oauth_server.py` - OAuth authentication
-- `setup_amazon_auth.py` - Credential setup wizard
 - `gmail_monitor.py` - Supplier emails (shared)
 - `revenue_analytics.py` - Revenue tracking (shared)
+- `twilio_sms.py` - SMS notifications (shared)
 
 ### Deploy
 ```bash
-cd projects/amazon-seller
-railway init
-railway up
+python deploy_to_skills.py --sync-execution --project amazon-seller
+cd projects/amazon-seller && railway init && railway up
 ```
 
 ---
 
-## Shared Utilities
+## Naples Weather Report
 
-Files used by multiple projects. Located in `projects/shared/`.
+**Trigger phrases:** "Naples weather", "weekly forecast", "weather report"
 
-| Utility | Used By | Path |
-|---------|---------|------|
-| Grok Image Gen | Fitness, Interview | `projects/shared/ai/grok_image_gen.py` |
-| Gmail Monitor | Fitness, Amazon | `projects/shared/google/gmail_monitor.py` |
-| Revenue Analytics | Fitness, Amazon | `projects/shared/analytics/revenue_analytics.py` |
-| Twilio SMS | Fitness, Amazon | `projects/shared/communication/twilio_sms.py` |
-| Google Auth | All | `projects/shared/google/google_auth_setup.py` |
+### Key Files
+| Purpose | Path |
+|---------|------|
+| Main scripts | `projects/naples-weather/src/` |
+| SKILL.md | `.claude/skills/naples-weather-report/SKILL.md` |
+| Directive | `directives/generate_naples_weather_report.md` |
+
+### Scripts
+- `fetch_naples_weather.py` - Weather API client
+- `generate_weather_report.py` - Report generation
+- `markdown_to_pdf.py` - PDF export
+
+### Deploy
+```bash
+python deploy_to_skills.py --sync-execution --project naples-weather
+```
+
+---
+
+## Shared Resources
+
+### Shared Scripts (in `execution/`)
+
+| Script | Used By | Purpose |
+|--------|---------|---------|
+| `grok_image_gen.py` | Interview, Fitness | AI image generation via Grok |
+| `gmail_monitor.py` | Fitness, Amazon | Email summarization |
+| `revenue_analytics.py` | Fitness, Amazon | Business metrics |
+| `twilio_sms.py` | Fitness, Amazon | SMS notifications |
+| `google_auth_setup.py` | All Google | OAuth setup |
+
+### Environment Variables (root `.env`)
+
+```env
+# AI Services (All projects)
+ANTHROPIC_API_KEY=xxx           # Claude API
+XAI_API_KEY=xxx                 # Grok image generation
+
+# Google APIs (Fitness, Amazon)
+GOOGLE_CREDENTIALS_PATH=credentials.json
+
+# Amazon SP-API (Amazon only)
+AMAZON_REFRESH_TOKEN=xxx
+AMAZON_LWA_APP_ID=xxx
+AMAZON_LWA_CLIENT_SECRET=xxx
+
+# Communication (Fitness, Amazon)
+TWILIO_ACCOUNT_SID=xxx
+TWILIO_AUTH_TOKEN=xxx
+TWILIO_PHONE_NUMBER=xxx
+
+# Video (Fitness only)
+CREATOMATE_API_KEY=xxx
+```
 
 ---
 
 ## Skills Location
 
-All skills are in `.claude/skills/`:
+All local skill definitions in `.claude/skills/`:
 
 ```
 .claude/skills/
-├── fitness-influencer-operations/
+├── interview-prep/
 │   ├── SKILL.md
 │   └── USE_CASES.json
-├── interview-prep/
+├── fitness-influencer-operations/
 │   ├── SKILL.md
 │   └── USE_CASES.json
 ├── amazon-seller-operations/
@@ -150,42 +211,36 @@ All skills are in `.claude/skills/`:
 
 ---
 
-## Execution Scripts (Legacy Location)
+## Development Workflow
 
-The `execution/` directory contains all scripts for backward compatibility with existing skills. When developing:
+### 1. Develop in Project Folder
+```bash
+cd interview-prep-pptx/src/
+# Edit scripts, test locally
+```
 
-1. **Edit in `projects/{project}/src/`** - Primary development location
-2. **Copy to `execution/`** - For skill access
-3. **Deploy** - Push to Railway or run `deploy_to_skills.py`
+### 2. Sync to Execution (for skills)
+```bash
+python deploy_to_skills.py --sync-execution --project interview-prep
+```
 
----
+### 3. Update Skill Definition
+```bash
+# Edit .claude/skills/{skill}/SKILL.md or project SKILL.md
+```
 
-## Environment Variables
+### 4. Deploy to Production
+```bash
+# Railway (web apps)
+cd interview-prep-pptx && railway up
 
-All projects share the root `.env` file:
+# GitHub repo (skills)
+python deploy_to_skills.py --project interview-prep --repo MarceauSolutions/interview-prep-assistant
+```
 
-```env
-# AI Services (All projects)
-ANTHROPIC_API_KEY=xxx
-XAI_API_KEY=xxx
-
-# Google (Fitness, Amazon)
-GOOGLE_CREDENTIALS_PATH=credentials.json
-
-# Amazon SP-API (Amazon only)
-AMAZON_SELLER_ID=xxx
-AMAZON_CLIENT_ID=xxx
-AMAZON_CLIENT_SECRET=xxx
-AMAZON_REFRESH_TOKEN=xxx
-
-# Video Services (Fitness only)
-SHOTSTACK_API_KEY=xxx
-CREATOMATE_API_KEY=xxx
-
-# Communication (Fitness, Amazon)
-TWILIO_ACCOUNT_SID=xxx
-TWILIO_AUTH_TOKEN=xxx
-TWILIO_PHONE_NUMBER=xxx
+### 5. Commit Changes
+```bash
+git add -A && git commit -m "feat: Description" && git push
 ```
 
 ---
@@ -194,17 +249,17 @@ TWILIO_PHONE_NUMBER=xxx
 
 When switching projects mid-session:
 
-1. **Say which project:** "Let's switch to Amazon seller"
+1. **Say which project:** "Let's work on Amazon seller"
 2. **Reference this index:** Files are in `projects/amazon-seller/`
-3. **Edit appropriate files:** Both `projects/*/src/` AND `execution/`
-4. **Deploy if needed:** `railway up` or `deploy_to_skills.py`
+3. **After changes:** Sync to execution + update skill
+4. **Deploy:** Railway for web apps, GitHub for skills
 
-### Example: Add feature to multiple projects
+### Example: Copy feature between projects
 
 "Add email notifications to Amazon seller like we have in Fitness"
 
-1. Check Fitness implementation: `projects/fitness-influencer/src/twilio_sms.py`
-2. It uses shared utility: `projects/shared/communication/twilio_sms.py`
-3. Import in Amazon project: Add to `projects/amazon-seller/src/`
-4. Copy to execution: `cp projects/amazon-seller/src/new_file.py execution/`
+1. Check Fitness: `projects/fitness-influencer/src/`
+2. It uses shared: `execution/twilio_sms.py`
+3. Add to Amazon config in `deploy_to_skills.py`
+4. Sync: `python deploy_to_skills.py --sync-execution --project amazon-seller`
 5. Update skill: `.claude/skills/amazon-seller-operations/SKILL.md`

@@ -1,6 +1,6 @@
 ---
 name: interview-prep
-description: Generate interview preparation PowerPoint presentations with AI-powered company research, resume parsing, and technical images
+description: Research a company and role, then generate a professional PowerPoint presentation for interview preparation. Optionally include a resume/CV for personalized talking points and experience highlights.
 trigger_phrases:
   - interview prep
   - create interview presentation
@@ -18,17 +18,28 @@ allowed_tools:
   - Edit
 ---
 
-# Interview Prep PowerPoint Generator
+# Interview Preparation PowerPoint Generator
 
-AI-powered tool that researches companies, analyzes roles, and generates professional PowerPoint presentations for interview preparation.
+## Overview
 
-## Capabilities
+This Skill researches a company and specific role using AI, then generates a professional 10-20 slide PowerPoint presentation to help prepare for and present during an interview. Optionally accepts a resume/CV (PDF, Word, or text) for personalized content.
 
-1. **Research Company & Role** - AI-powered research on company culture, mission, products, and role requirements
-2. **Parse Resume** - Extract relevant experience from PDF, DOCX, or TXT resumes
-3. **Generate PowerPoint** - Create professional presentations with multiple themes
-4. **Add AI Images** - Generate technical images for experience slides ($0.07/image)
-5. **Interactive Editing** - Modify slides through natural language commands
+## Deployment
+
+**Production API**: https://interview-prep-pptx-production.up.railway.app
+**Frontend**: https://interview-prep-pptx-production.up.railway.app/app
+
+The API is deployed on Railway with automatic deploys from the `interview-prep-pptx` directory.
+
+## When to use
+
+Use this Skill when the user asks to:
+- Prepare for an interview at a company
+- Research a company and role for interview
+- Create interview prep slides or PowerPoint
+- Generate interview presentation
+- Build interview preparation materials
+- Help with job interview preparation
 
 ## Decision Tree
 
@@ -52,64 +63,235 @@ User Request → Check Intent
 └─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
 ```
 
-## Usage Examples
+## Required Inputs
 
-### Full Workflow
-```bash
-# Research with resume and images
-python execution/interview_research.py \
-  --company "Google" \
-  --role "Software Engineer" \
-  --resume ~/resume.pdf \
-  --generate-images
+1. **Company Name** (required): The company to research
+2. **Role/Position** (required): The specific job title being interviewed for
 
-# Generate presentation
-python execution/pptx_generator.py \
-  --input .tmp/interview_research_google.json \
-  --theme modern
-```
+## Optional Inputs
 
-### Interactive Editing
-```bash
-# List slides
-python execution/pptx_editor.py --input .tmp/interview_prep_google.pptx --action list
+3. **Resume/CV** (optional): Path to a PDF, DOCX, or TXT file with work experience
+4. **Theme** (optional): "modern" (default), "professional", or "minimal"
+5. **Generate Images** (optional): Create AI visuals for experience highlights ($0.07/image)
 
-# Add slide with user's image (FREE)
-python execution/pptx_editor.py --input .tmp/interview_prep_google.pptx \
-  --action add-slide \
-  --title "My Project" \
-  --description "Description here" \
-  --relevance "Why it matters" \
-  --new-image ~/photo.jpg \
-  --after-slide 18 --open
+## Instructions
 
-# Add slide with AI image ($0.07)
-python execution/pptx_editor.py --input .tmp/interview_prep_google.pptx \
-  --action add-slide \
-  --title "Technical Experience" \
-  --description "Engineering work" \
-  --relevance "Demonstrates skills" \
-  --prompt "Technical CAD rendering" \
-  --after-slide 18 --open
-```
-
-## Required Environment Variables
+### Option A: Basic Research (No Resume)
 
 ```bash
-ANTHROPIC_API_KEY=...  # Required for research
-XAI_API_KEY=...        # Optional for AI images
+# Step 1: Research company and role
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}"
+
+# Step 2: Generate PowerPoint
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
 ```
+
+### Option B: Personalized (With Resume)
+
+```bash
+# Step 1: Research with resume parsing
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf"
+
+# Step 2: Generate PowerPoint with experience highlights
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
+```
+
+### Option C: Full Experience (Resume + Images)
+
+```bash
+# Step 1: Research with resume and generate images
+source .env && python execution/interview_research.py --company "{COMPANY}" --role "{ROLE}" --resume "/path/to/resume.pdf" --generate-images
+
+# Step 2: Generate PowerPoint
+python execution/pptx_generator.py --input .tmp/interview_research_{company_slug}.json
+
+# Step 3: Open the presentation
+open .tmp/interview_prep_{company_slug}.pptx
+```
+
+## Important Notes
+
+- **Company Slug**: Convert company name to lowercase with underscores (e.g., "Apple Inc" → "apple_inc")
+- **Source .env**: Always source .env before running interview_research.py to load the Anthropic API key
+- **Resume Formats**: Supports PDF (.pdf), Word (.docx, .doc), and text (.txt, .md)
+- **Themes**: "modern" (dark blue/coral), "professional" (navy/orange), "minimal" (slate/green)
+
+## Slide Structure
+
+**Core Slides (Always Included):**
+1. Title Slide - Company name, role, date
+2. Agenda - Overview of presentation
+3. Company Overview - Industry, mission, products
+4. Recent News - Latest developments
+5. Company Culture - Values, work environment
+6. Role Analysis - Responsibilities, department
+7. Skills & Metrics - Required skills, success measures
+8. Interview Questions 1 - Common questions with strategies
+9. Interview Questions 2 - More questions
+10. Questions to Ask - Smart questions for interviewer
+11. Competitive Landscape - Competitors, industry trends
+12. Talking Points - Key messages to communicate
+
+**Personalized Slides (When Resume Provided):**
+13. Your Relevant Experience - Section divider
+14-18. Experience Highlights - Individual slides for top 5 relevant experiences
+
+**Closing Slides:**
+- Preparation Checklist - Action items before interview
+- Closing - Motivational ending
+
+## Error Handling
+
+**Missing dependencies:**
+```bash
+pip install anthropic python-pptx PyPDF2 python-docx
+```
+
+**API key not set:**
+Ensure `ANTHROPIC_API_KEY` is set in `.env` file and source it before running.
+
+**Resume parsing fails:**
+Check that the file exists and is a supported format (PDF, DOCX, TXT).
 
 ## Cost
+
+- Research: ~$0.02-0.05 per run (Claude API)
+- PowerPoint: FREE (local generation)
+- Images: ~$0.07/image if using --generate-images flag (Grok API)
+
+## Example Usage
+
+**User asks:** "Help me prepare for a Product Manager interview at Stripe"
+
+**Your response:**
+1. Ask if they have a resume to include
+2. Run interview_research.py with their inputs
+3. Run pptx_generator.py to create slides
+4. Open the PowerPoint and confirm success
+5. Tell them the file location
+
+**User asks:** "Create interview prep for Google Software Engineer using my resume at ~/resume.pdf"
+
+**Your response:**
+1. Run with --resume flag pointing to their file
+2. Generate personalized PowerPoint
+3. Confirm the presentation includes their experience highlights
+
+## Session-Based Editing
+
+After generating a presentation, a **session is automatically created**. This allows you to make iterative edits without specifying file paths each time.
+
+### Check Current Session
+```bash
+python execution/session_manager.py --status
+```
+
+### List Recent Sessions
+```bash
+python execution/session_manager.py --list
+```
+
+### Get Current PowerPoint File
+```bash
+python execution/session_manager.py --current
+```
+
+The session tracks:
+- Current presentation file (.pptx)
+- Original research data (.json)
+- Resume (if provided)
+- All edits made during the session
+- Slide count
+
+**IMPORTANT**: When the user asks to edit "the presentation" or "the slides" or "my PowerPoint", use the session to find the current file:
+1. Run `python execution/session_manager.py --current` to get the filename
+2. Use that filename in subsequent edit commands
+
+## Interactive Slide Editing
+
+After generating a presentation, users can make iterative edits through natural language commands.
+
+### List Slides
+```bash
+# Get current file first
+PPTX=$(python execution/session_manager.py --current)
+python execution/pptx_editor.py --input .tmp/$PPTX --action list
+```
+
+Or with explicit file:
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action list
+```
+
+### Edit Text on a Slide
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action edit-text --slide {num} --find "old text" --replace "new text"
+```
+
+### Regenerate Image with AI ($0.07)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action regenerate-image --slide {num} --prompt "New image description" --open
+```
+
+### Add New Slide with User's Image (FREE)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
+  --title "Experience Title" \
+  --description "Description of the experience" \
+  --relevance "How it relates to the role" \
+  --new-image /path/to/user/image.jpg \
+  --after-slide {num} --open
+```
+
+### Add New Slide with AI Image ($0.07)
+```bash
+python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx --action add-slide \
+  --title "Experience Title" \
+  --description "Description of the experience" \
+  --relevance "How it relates to the role" \
+  --prompt "AI image prompt description" \
+  --after-slide {num} --open
+```
+
+## Cost Summary
 
 | Action | Cost |
 |--------|------|
 | Research (Claude API) | ~$0.02-0.05 |
-| Text/title edits | FREE |
-| Add slide with own image | FREE |
-| AI image generation | $0.07/image |
+| PowerPoint generation | FREE |
+| Text edits | FREE |
+| Replace image with local file | FREE |
+| Add slide with user's image | FREE |
+| AI image regeneration | $0.07/image |
+| Add slide with AI image | $0.07/image |
 
-## Output Location
+## File Structure
 
-- Research JSON: `.tmp/interview_research_{company}.json`
-- PowerPoint: `.tmp/interview_prep_{company}.pptx`
+```
+interview-prep-pptx/
+├── src/
+│   ├── interview_research.py    # AI research script
+│   ├── pptx_generator.py        # PowerPoint generation
+│   ├── pptx_editor.py           # Interactive editing
+│   ├── session_manager.py       # Session tracking
+│   ├── interview_prep_api.py    # FastAPI REST API
+│   └── grok_image_gen.py        # AI image generation
+├── frontend/
+│   └── index.html               # Web interface
+├── requirements.txt
+├── railway.json                 # Railway deployment config
+├── Procfile
+└── SKILL.md                     # This file
+```
+
+## Additional Resources
+
+- Directive: `directives/interview_prep.md`
+- Interactive editing guide: `directives/pptx_interactive_edit.md`
+- Project symlink: `projects/interview-prep` → `interview-prep-pptx`

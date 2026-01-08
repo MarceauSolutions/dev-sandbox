@@ -1,276 +1,427 @@
 #!/usr/bin/env python3
 """
-Deploy a tested DOE project to a new Skills workspace.
+Deploy projects from dev-sandbox to production Skills workspaces or GitHub repos.
 
 Usage:
-    python deploy_to_skills.py --project project-name
-    python deploy_to_skills.py --project client-crm --skill-name crm-management
+    # Sync scripts from project src to execution/
+    python deploy_to_skills.py --sync-execution --project interview-prep
+
+    # Deploy to local Skills workspace
+    python deploy_to_skills.py --project interview-prep
+
+    # Deploy to GitHub repository
+    python deploy_to_skills.py --project interview-prep --repo MarceauSolutions/interview-prep-assistant
+
+    # List all projects
+    python deploy_to_skills.py --list
 """
 
 import os
 import sys
 import argparse
 import shutil
+import subprocess
+import json
 from pathlib import Path
+from datetime import datetime
 
 # Base paths
-DOE_WORKSPACE = Path(__file__).parent
-SKILLS_BASE = Path.home() / "youtubeworkspace-skills"
+DEV_SANDBOX = Path(__file__).parent
+EXECUTION_DIR = DEV_SANDBOX / "execution"
+DIRECTIVES_DIR = DEV_SANDBOX / "directives"
+SKILLS_DIR = DEV_SANDBOX / ".claude" / "skills"
+PROJECTS_DIR = DEV_SANDBOX / "projects"
+
+# Project configurations
+PROJECTS = {
+    "interview-prep": {
+        "skill_name": "interview-prep",
+        "src_dir": DEV_SANDBOX / "interview-prep-pptx" / "src",
+        "skill_md": DEV_SANDBOX / "interview-prep-pptx" / "SKILL.md",
+        "directive": "interview_prep.md",
+        "scripts": [
+            "interview_research.py",
+            "interview_prep_api.py",
+            "pptx_generator.py",
+            "pptx_editor.py",
+            "session_manager.py",
+            "grok_image_gen.py"
+        ],
+        "description": "Interview Prep PowerPoint Generator"
+    },
+    "fitness-influencer": {
+        "skill_name": "fitness-influencer-operations",
+        "src_dir": PROJECTS_DIR / "fitness-influencer" / "src",
+        "skill_md": SKILLS_DIR / "fitness-influencer-operations" / "SKILL.md",
+        "directive": "fitness_influencer_operations.md",
+        "scripts": [
+            "video_jumpcut.py",
+            "educational_graphics.py",
+            "gmail_monitor.py",
+            "revenue_analytics.py",
+            "grok_image_gen.py",
+            "twilio_sms.py",
+            "workout_plan_generator.py",
+            "nutrition_guide_generator.py"
+        ],
+        "description": "Fitness Influencer AI Operations"
+    },
+    "amazon-seller": {
+        "skill_name": "amazon-seller-operations",
+        "src_dir": PROJECTS_DIR / "amazon-seller" / "src",
+        "skill_md": SKILLS_DIR / "amazon-seller-operations" / "SKILL.md",
+        "directive": "amazon_seller_operations.md",
+        "scripts": [
+            "amazon_sp_api.py",
+            "amazon_fee_calculator.py",
+            "amazon_inventory_optimizer.py",
+            "gmail_monitor.py",
+            "revenue_analytics.py",
+            "twilio_sms.py"
+        ],
+        "description": "Amazon Seller AI Operations"
+    },
+    "naples-weather": {
+        "skill_name": "naples-weather-report",
+        "src_dir": PROJECTS_DIR / "naples-weather" / "src",
+        "skill_md": SKILLS_DIR / "naples-weather-report" / "SKILL.md",
+        "directive": "generate_naples_weather_report.md",
+        "scripts": [
+            "fetch_naples_weather.py",
+            "generate_weather_report.py",
+            "markdown_to_pdf.py"
+        ],
+        "description": "Naples Weather Report Generator"
+    }
+}
 
 
-def create_skill_workspace(project_name, skill_name=None):
-    """Create a new Skills workspace for a deployed project."""
+def list_projects():
+    """List all available projects."""
+    print("\n" + "=" * 60)
+    print("Available Projects")
+    print("=" * 60 + "\n")
 
-    if not skill_name:
-        skill_name = project_name
+    for name, config in PROJECTS.items():
+        status = "✓" if config["src_dir"].exists() else "✗"
+        print(f"  {status} {name}")
+        print(f"      Skill: {config['skill_name']}")
+        print(f"      Src: {config['src_dir']}")
+        print()
 
+
+def sync_to_execution(project_name: str):
+    """Sync project scripts from src/ to execution/ directory."""
+    if project_name not in PROJECTS:
+        print(f"❌ Unknown project: {project_name}")
+        print(f"   Available: {', '.join(PROJECTS.keys())}")
+        return False
+
+    config = PROJECTS[project_name]
+    src_dir = config["src_dir"]
+
+    if not src_dir.exists():
+        print(f"❌ Source directory not found: {src_dir}")
+        return False
+
+    print(f"\n{'=' * 60}")
+    print(f"Syncing {project_name} to execution/")
+    print(f"{'=' * 60}\n")
+
+    synced = 0
+    for script in config["scripts"]:
+        src_file = src_dir / script
+        if src_file.exists():
+            dest_file = EXECUTION_DIR / script
+            shutil.copy(src_file, dest_file)
+            print(f"   ✓ {script}")
+            synced += 1
+        else:
+            # Try to find in execution/ already (shared scripts)
+            exec_file = EXECUTION_DIR / script
+            if exec_file.exists():
+                print(f"   ○ {script} (already in execution/)")
+            else:
+                print(f"   ✗ {script} (not found)")
+
+    print(f"\n✅ Synced {synced} scripts to execution/")
+    return True
+
+
+def sync_all_execution():
+    """Sync all project scripts to execution/."""
+    print("\n" + "=" * 60)
+    print("Syncing ALL projects to execution/")
+    print("=" * 60 + "\n")
+
+    for project_name in PROJECTS:
+        sync_to_execution(project_name)
+        print()
+
+
+def deploy_to_local_workspace(project_name: str):
+    """Deploy project to a local Skills workspace (~/{project}-prod/)."""
+    if project_name not in PROJECTS:
+        print(f"❌ Unknown project: {project_name}")
+        return False
+
+    config = PROJECTS[project_name]
+    skill_name = config["skill_name"]
     workspace_path = Path.home() / f"{project_name}-prod"
 
-    print(f"\n{'='*70}")
-    print(f"Deploying: {project_name} → Production Skills Workspace")
-    print(f"{'='*70}\n")
+    print(f"\n{'=' * 60}")
+    print(f"Deploying: {project_name} → Local Skills Workspace")
+    print(f"{'=' * 60}\n")
 
-    # Check if workspace already exists
+    # Check if workspace exists
     if workspace_path.exists():
-        response = input(f"⚠️  Workspace already exists at {workspace_path}\nOverwrite? (y/n): ")
+        response = input(f"⚠️  Workspace exists at {workspace_path}. Overwrite? (y/n): ")
         if response.lower() != 'y':
             print("❌ Deployment cancelled")
-            return
+            return False
         shutil.rmtree(workspace_path)
 
     # Create directory structure
     print("📁 Creating directory structure...")
-    skill_dir = workspace_path / ".claude" / "skills" / skill_name / "scripts"
-    skill_dir.mkdir(parents=True, exist_ok=True)
+    skill_dir = workspace_path / ".claude" / "skills" / skill_name
+    scripts_dir = skill_dir / "scripts"
+    scripts_dir.mkdir(parents=True, exist_ok=True)
     (workspace_path / ".tmp").mkdir(exist_ok=True)
 
-    # Copy configuration files
-    print("⚙️  Copying configuration files...")
-    files_to_copy = [".env.example", "requirements.txt", ".gitignore"]
-    for file in files_to_copy:
-        src = DOE_WORKSPACE / file
-        if src.exists():
-            shutil.copy(src, workspace_path / file)
-
-    # Create .env from .env.example
-    env_example = workspace_path / ".env.example"
-    env_file = workspace_path / ".env"
+    # Copy .env.example
+    env_example = DEV_SANDBOX / ".env.example"
     if env_example.exists():
-        shutil.copy(env_example, env_file)
-        print(f"   ✓ Created .env (REMEMBER TO UPDATE WITH PRODUCTION CREDENTIALS)")
+        shutil.copy(env_example, workspace_path / ".env.example")
+        shutil.copy(env_example, workspace_path / ".env")
+        print("   ✓ Created .env (UPDATE WITH PRODUCTION CREDENTIALS)")
 
-    # Find and copy directive
-    print(f"📋 Looking for directive: directives/{project_name}.md")
-    directive_path = DOE_WORKSPACE / "directives" / f"{project_name}.md"
-
-    if not directive_path.exists():
-        print(f"   ⚠️  Directive not found at {directive_path}")
-        print(f"   You'll need to create SKILL.md manually")
-        directive_content = None
+    # Copy SKILL.md
+    if config["skill_md"].exists():
+        shutil.copy(config["skill_md"], skill_dir / "SKILL.md")
+        print(f"   ✓ Copied SKILL.md")
     else:
-        with open(directive_path, 'r') as f:
-            directive_content = f.read()
-        print(f"   ✓ Found directive")
+        # Try from .claude/skills
+        alt_skill = SKILLS_DIR / skill_name / "SKILL.md"
+        if alt_skill.exists():
+            shutil.copy(alt_skill, skill_dir / "SKILL.md")
+            print(f"   ✓ Copied SKILL.md (from .claude/skills)")
 
-    # Find and copy scripts
-    print(f"🔍 Looking for scripts: execution/{project_name}*.py")
-    execution_dir = DOE_WORKSPACE / "execution"
-    scripts = list(execution_dir.glob(f"{project_name}*.py"))
+    # Copy USE_CASES.json if exists
+    use_cases = SKILLS_DIR / skill_name / "USE_CASES.json"
+    if use_cases.exists():
+        shutil.copy(use_cases, skill_dir / "USE_CASES.json")
+        print(f"   ✓ Copied USE_CASES.json")
 
-    if not scripts:
-        scripts = list(execution_dir.glob("*.py"))
-        print(f"   ⚠️  No project-specific scripts found")
-        print(f"   Found {len(scripts)} general scripts")
-        response = input(f"   Copy all scripts? (y/n): ")
-        if response.lower() != 'y':
-            scripts = []
+    # Copy scripts
+    print(f"\n📋 Copying scripts...")
+    for script in config["scripts"]:
+        src = EXECUTION_DIR / script
+        if src.exists():
+            shutil.copy(src, scripts_dir / script)
+            print(f"   ✓ {script}")
+        else:
+            print(f"   ✗ {script} (not found in execution/)")
 
-    for script in scripts:
-        dest = skill_dir / script.name
-        shutil.copy(script, dest)
-        print(f"   ✓ Copied {script.name}")
-
-    # Copy any JSON config files
-    json_files = list(execution_dir.glob("*.json"))
-    for json_file in json_files:
-        if not json_file.name.startswith('.'):
-            dest = skill_dir / json_file.name
-            shutil.copy(json_file, dest)
-            print(f"   ✓ Copied {json_file.name}")
-
-    # Create SKILL.md
-    print(f"📝 Creating SKILL.md...")
-    skill_md = create_skill_md(skill_name, project_name, directive_content, scripts)
-    skill_md_path = workspace_path / ".claude" / "skills" / skill_name / "SKILL.md"
-    with open(skill_md_path, 'w') as f:
-        f.write(skill_md)
-    print(f"   ✓ Created SKILL.md")
+    # Copy directive
+    directive = DIRECTIVES_DIR / config["directive"]
+    if directive.exists():
+        shutil.copy(directive, skill_dir / "DIRECTIVE.md")
+        print(f"   ✓ Copied directive")
 
     # Create README
-    print(f"📖 Creating README...")
-    readme = create_readme(project_name, skill_name)
-    with open(workspace_path / "README.md", 'w') as f:
-        f.write(readme)
+    readme = f"""# {config['description']} - Production Workspace
+
+**Deployed from:** dev-sandbox
+**Skill:** {skill_name}
+**Date:** {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+## Setup
+
+1. Update `.env` with production credentials
+2. Test the skill with natural language commands
+
+## Documentation
+
+See `.claude/skills/{skill_name}/SKILL.md` for usage.
+
+## Development
+
+DO NOT edit directly here. Make changes in dev-sandbox first, then redeploy:
+
+```bash
+cd ~/dev-sandbox
+python deploy_to_skills.py --project {project_name}
+```
+"""
+    (workspace_path / "README.md").write_text(readme)
 
     # Initialize git
-    print(f"🔧 Initializing git repository...")
-    os.system(f'cd "{workspace_path}" && git init')
+    os.system(f'cd "{workspace_path}" && git init -q')
 
-    # Summary
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 60}")
     print(f"✅ Deployment Complete!")
-    print(f"{'='*70}\n")
-    print(f"📍 Location: {workspace_path}")
+    print(f"{'=' * 60}")
+    print(f"\n📍 Location: {workspace_path}")
     print(f"🎯 Skill: {skill_name}")
     print(f"\n📋 Next Steps:")
     print(f"   1. cd {workspace_path}")
     print(f"   2. Edit .env with production credentials")
-    print(f"   3. Review SKILL.md and add trigger phrases")
-    print(f"   4. Test with natural language commands")
-    print(f"   5. Use in production!\n")
+    print(f"   3. Test with natural language commands\n")
 
-    return workspace_path
+    return True
 
 
-def create_skill_md(skill_name, project_name, directive_content, scripts):
-    """Generate SKILL.md from directive."""
+def deploy_to_github(project_name: str, repo: str):
+    """Deploy project skills to a GitHub repository."""
+    if project_name not in PROJECTS:
+        print(f"❌ Unknown project: {project_name}")
+        return False
 
-    script_names = [s.name for s in scripts] if scripts else ["your-script.py"]
+    config = PROJECTS[project_name]
+    skill_name = config["skill_name"]
 
-    skill_md = f"""---
-name: {skill_name}
-description: [ADD DESCRIPTION - this triggers auto-activation]
-allowed-tools: [Bash, Read, Write, Edit]
-model: opus
-trigger-phrases:
-  - "[ADD TRIGGER PHRASE 1]"
-  - "[ADD TRIGGER PHRASE 2]"
----
+    print(f"\n{'=' * 60}")
+    print(f"Deploying: {project_name} → GitHub: {repo}")
+    print(f"{'=' * 60}\n")
 
-# {skill_name.replace('-', ' ').title()} Skill
+    # Clone or update the repo
+    repo_dir = Path.home() / ".deploy-temp" / repo.split("/")[1]
+    repo_dir.parent.mkdir(parents=True, exist_ok=True)
 
-**Deployed from DOE project:** {project_name}
-
-## When to Activate
-
-[ADD: When should this skill activate? What problems does it solve?]
-
-## Quick Usage
-
-```bash
-# Example command
-python .claude/skills/{skill_name}/scripts/{script_names[0]} --help
-```
-
-## What This Does
-
-[ADD: Step-by-step description of what this skill does]
-
-## Configuration
-
-Required environment variables in `.env`:
-
-```env
-# [ADD: List required environment variables]
-EXAMPLE_VAR=value
-```
-
-## Examples
-
-**Example 1:**
-```
-User: "[ADD EXAMPLE USER REQUEST]"
-→ [What happens]
-```
-
-## Technical Details
-
-### Scripts
-"""
-
-    for script_name in script_names:
-        skill_md += f"- `scripts/{script_name}`\n"
-
-    if directive_content:
-        skill_md += f"\n\n## Original Directive\n\n{directive_content}\n"
+    if repo_dir.exists():
+        print(f"📥 Updating existing clone...")
+        result = subprocess.run(
+            ["git", "pull"],
+            cwd=repo_dir,
+            capture_output=True,
+            text=True
+        )
+        if result.returncode != 0:
+            print(f"⚠️  Pull failed, re-cloning...")
+            shutil.rmtree(repo_dir)
+            subprocess.run(["gh", "repo", "clone", repo, str(repo_dir)], check=True)
     else:
-        skill_md += "\n\n## TODO\n\n- Add trigger phrases in YAML frontmatter\n"
-        skill_md += "- Document usage examples\n"
-        skill_md += "- Add configuration requirements\n"
-        skill_md += "- Test with natural language\n"
+        print(f"📥 Cloning {repo}...")
+        try:
+            subprocess.run(["gh", "repo", "clone", repo, str(repo_dir)], check=True)
+        except subprocess.CalledProcessError:
+            print(f"❌ Failed to clone {repo}. Make sure it exists and you have access.")
+            return False
 
-    return skill_md
+    # Create .claude/skills directory
+    skill_dir = repo_dir / ".claude" / "skills" / skill_name
+    skill_dir.mkdir(parents=True, exist_ok=True)
 
+    # Copy SKILL.md
+    print(f"\n📋 Copying skill files...")
+    if config["skill_md"].exists():
+        shutil.copy(config["skill_md"], skill_dir / "SKILL.md")
+        print(f"   ✓ SKILL.md")
+    else:
+        alt_skill = SKILLS_DIR / skill_name / "SKILL.md"
+        if alt_skill.exists():
+            shutil.copy(alt_skill, skill_dir / "SKILL.md")
+            print(f"   ✓ SKILL.md")
 
-def create_readme(project_name, skill_name):
-    """Create README for Skills workspace."""
+    # Copy USE_CASES.json
+    use_cases = SKILLS_DIR / skill_name / "USE_CASES.json"
+    if use_cases.exists():
+        shutil.copy(use_cases, skill_dir / "USE_CASES.json")
+        print(f"   ✓ USE_CASES.json")
 
-    return f"""# {project_name.replace('-', ' ').title()} - Production Skills Workspace
+    # Copy directive
+    directive = DIRECTIVES_DIR / config["directive"]
+    if directive.exists():
+        shutil.copy(directive, skill_dir / "DIRECTIVE.md")
+        print(f"   ✓ DIRECTIVE.md")
 
-**Deployed from:** DOE Development Workspace
-**Skill:** {skill_name}
+    # Create scripts directory and copy scripts
+    scripts_dir = skill_dir / "scripts"
+    scripts_dir.mkdir(exist_ok=True)
 
-## Purpose
+    print(f"\n📋 Copying scripts...")
+    for script in config["scripts"]:
+        src = EXECUTION_DIR / script
+        if src.exists():
+            shutil.copy(src, scripts_dir / script)
+            print(f"   ✓ {script}")
 
-This is a **production Skills workspace** for the {project_name} project.
+    # Commit and push
+    print(f"\n📤 Committing and pushing...")
+    os.chdir(repo_dir)
+    subprocess.run(["git", "add", "-A"], check=True)
 
-Use natural language to interact with this skill.
+    commit_msg = f"chore: Update {skill_name} skill from dev-sandbox\n\nDeployed: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+    result = subprocess.run(
+        ["git", "commit", "-m", commit_msg],
+        capture_output=True,
+        text=True
+    )
 
-## Setup
+    if "nothing to commit" in result.stdout or "nothing to commit" in result.stderr:
+        print("   ○ No changes to commit")
+    else:
+        subprocess.run(["git", "push"], check=True)
+        print("   ✓ Pushed to GitHub")
 
-1. Update `.env` with production credentials:
-   ```bash
-   nano .env
-   ```
+    print(f"\n{'=' * 60}")
+    print(f"✅ Deployment Complete!")
+    print(f"{'=' * 60}")
+    print(f"\n📍 Repository: https://github.com/{repo}")
+    print(f"🎯 Skill: .claude/skills/{skill_name}/")
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+    # Cleanup
+    os.chdir(DEV_SANDBOX)
 
-3. Test the skill:
-   ```
-   [ADD: Natural language test command]
-   ```
-
-## Documentation
-
-See [.claude/skills/{skill_name}/SKILL.md](.claude/skills/{skill_name}/SKILL.md) for complete documentation.
-
-## Configuration
-
-All configuration is in `.env` (not committed to git).
-
-## Development
-
-To make changes:
-1. Go back to DOE workspace: `/Users/williammarceaujr./youtubeworkspaceDOE/`
-2. Update directive and scripts there
-3. Test thoroughly
-4. Re-deploy with: `python deploy_to_skills.py --project {project_name}`
-
-**DO NOT edit scripts directly in this workspace.** Always develop in DOE, then deploy.
-
-## Related Workspaces
-
-- **DOE Development:** `/Users/williammarceaujr./youtubeworkspaceDOE/` (for development/testing)
-- **This workspace:** Production deployment (for actual use)
-"""
+    return True
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Deploy DOE project to Skills workspace")
-    parser.add_argument("--project", required=True, help="Project name (matches directive filename)")
-    parser.add_argument("--skill-name", help="Custom skill name (defaults to project name)")
+    parser = argparse.ArgumentParser(
+        description="Deploy dev-sandbox projects to production",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python deploy_to_skills.py --list
+  python deploy_to_skills.py --sync-execution --project interview-prep
+  python deploy_to_skills.py --sync-all
+  python deploy_to_skills.py --project interview-prep
+  python deploy_to_skills.py --project interview-prep --repo MarceauSolutions/interview-prep-assistant
+        """
+    )
+    parser.add_argument("--list", action="store_true", help="List all available projects")
+    parser.add_argument("--project", help="Project name to deploy")
+    parser.add_argument("--repo", help="GitHub repo (org/name) to deploy to")
+    parser.add_argument("--sync-execution", action="store_true", help="Sync project scripts to execution/")
+    parser.add_argument("--sync-all", action="store_true", help="Sync ALL project scripts to execution/")
 
     args = parser.parse_args()
 
-    workspace_path = create_skill_workspace(args.project, args.skill_name)
+    if args.list:
+        list_projects()
+        return 0
 
-    if workspace_path:
-        print(f"🎉 Ready to use! Open Claude Code in the new workspace:")
-        print(f"   cd {workspace_path}")
+    if args.sync_all:
+        sync_all_execution()
+        return 0
+
+    if args.sync_execution:
+        if not args.project:
+            print("❌ --project required with --sync-execution")
+            return 1
+        sync_to_execution(args.project)
+        return 0
+
+    if args.project:
+        if args.repo:
+            deploy_to_github(args.project, args.repo)
+        else:
+            deploy_to_local_workspace(args.project)
+        return 0
+
+    parser.print_help()
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

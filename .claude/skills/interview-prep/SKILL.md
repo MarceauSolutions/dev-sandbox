@@ -1,7 +1,21 @@
 ---
 name: interview-prep
 description: Research a company and role, then generate a professional PowerPoint presentation for interview preparation. Optionally include a resume/CV for personalized talking points and experience highlights.
-allowed-tools: Bash(python:*), Read
+trigger_phrases:
+  - interview prep
+  - create interview presentation
+  - prepare for interview
+  - research company for interview
+  - make interview slides
+  - interview powerpoint
+  - job interview preparation
+model: opus
+allowed_tools:
+  - Bash(python:*)
+  - Bash(python3:*)
+  - Read
+  - Write
+  - Edit
 ---
 
 # Interview Preparation PowerPoint Generator
@@ -9,6 +23,13 @@ allowed-tools: Bash(python:*), Read
 ## Overview
 
 This Skill researches a company and specific role using AI, then generates a professional 10-20 slide PowerPoint presentation to help prepare for and present during an interview. Optionally accepts a resume/CV (PDF, Word, or text) for personalized content.
+
+## Deployment
+
+**Production API**: https://interview-prep-pptx-production.up.railway.app
+**Frontend**: https://interview-prep-pptx-production.up.railway.app/app
+
+The API is deployed on Railway with automatic deploys from the `interview-prep-pptx` directory.
 
 ## When to use
 
@@ -19,6 +40,28 @@ Use this Skill when the user asks to:
 - Generate interview presentation
 - Build interview preparation materials
 - Help with job interview preparation
+
+## Decision Tree
+
+```
+User Request → Check Intent
+│
+├─ "Research [company] for [role]" → Run interview_research.py
+│   └─ With resume? → Add --resume flag
+│   └─ Want images? → Add --generate-images flag
+│
+├─ "Create/Generate presentation" → Run pptx_generator.py
+│   └─ Check for research JSON in .tmp/
+│
+├─ "Edit slide..." → Run pptx_editor.py
+│   └─ Text edit → --action edit-text
+│   └─ Image change → --action regenerate-image or replace-image
+│   └─ Add slide → --action add-slide
+│
+├─ "Show/List slides" → Run pptx_editor.py --action list
+│
+└─ "Add [experience] slide with my image" → Run pptx_editor.py --action add-slide --new-image
+```
 
 ## Required Inputs
 
@@ -228,10 +271,27 @@ python execution/pptx_editor.py --input .tmp/interview_prep_{company_slug}.pptx 
 | AI image regeneration | $0.07/image |
 | Add slide with AI image | $0.07/image |
 
+## File Structure
+
+```
+interview-prep-pptx/
+├── src/
+│   ├── interview_research.py    # AI research script
+│   ├── pptx_generator.py        # PowerPoint generation
+│   ├── pptx_editor.py           # Interactive editing
+│   ├── session_manager.py       # Session tracking
+│   ├── interview_prep_api.py    # FastAPI REST API
+│   └── grok_image_gen.py        # AI image generation
+├── frontend/
+│   └── index.html               # Web interface
+├── requirements.txt
+├── railway.json                 # Railway deployment config
+├── Procfile
+└── SKILL.md                     # This file
+```
+
 ## Additional Resources
 
 - Directive: `directives/interview_prep.md`
 - Interactive editing guide: `directives/pptx_interactive_edit.md`
-- Research script: `execution/interview_research.py`
-- PowerPoint generator: `execution/pptx_generator.py`
-- PowerPoint editor: `execution/pptx_editor.py`
+- Project symlink: `projects/interview-prep` → `interview-prep-pptx`
