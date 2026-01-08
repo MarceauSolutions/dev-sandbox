@@ -1,321 +1,185 @@
-# Development Sandbox (dev-sandbox)
+# AI Assistants Hub - Development Sandbox
 
-This is your **development and experimentation workspace** using the Directive-Orchestration-Execution (DOE) methodology.
+Central development workspace for AI-powered automation assistants using the **3-Layer Architecture** (Directive → Orchestration → Execution).
 
-## Purpose
+## Active Projects
 
-Use this workspace to:
-- 🧪 Tinker and experiment with new ideas
-- 🔨 Build complex workflows from scratch
-- 🐛 Debug and perfect automation scripts
-- 📝 Develop detailed SOPs (directives)
-- 🔄 Test self-annealing systems
-- 💡 Prototype random crazy projects
+| Project | Status | Production URL | Description |
+|---------|--------|----------------|-------------|
+| [Fitness Influencer](projects/fitness-influencer/) | **Live** | Railway | Video editing, graphics, email, analytics |
+| [Interview Prep](projects/interview-prep/) | **Live** | [Railway](https://interview-prep-pptx-production.up.railway.app/app) | Company research & PowerPoint generation |
+| [Amazon Seller](projects/amazon-seller/) | Dev | - | SP-API inventory & fee management |
+| [Naples Weather](projects/naples-weather/) | Dev | - | Automated weather report generation |
 
-**DO NOT use for production work.** Once a project is stable and tested, deploy it to a dedicated Skills workspace.
+## Repository Structure
 
-## Architecture Overview
+```
+dev-sandbox/
+├── projects/                    # Individual AI assistant projects
+│   ├── fitness-influencer/      # Fitness content automation
+│   │   ├── src/                 # Python scripts
+│   │   ├── frontend/            # Web interface
+│   │   └── README.md
+│   ├── interview-prep/          # Interview preparation tool
+│   │   ├── src/
+│   │   ├── frontend/
+│   │   └── README.md
+│   ├── amazon-seller/           # Amazon SP-API automation
+│   └── naples-weather/          # Weather report generator
+│
+├── execution/                   # All execution scripts (shared location)
+├── directives/                  # SOPs in Markdown format
+│
+├── .claude/
+│   └── skills/                  # Skill configurations for Claude
+│       ├── fitness-influencer-operations/
+│       │   ├── SKILL.md
+│       │   └── USE_CASES.json
+│       ├── interview-prep/
+│       │   ├── SKILL.md
+│       │   └── USE_CASES.json
+│       ├── amazon-seller-operations/
+│       └── naples-weather-report/
+│
+├── index.html                   # Main website homepage
+├── deploy_to_skills.py          # Deployment pipeline
+└── CLAUDE.md                    # Agent instructions
+```
 
-This workspace follows a 3-layer architecture that separates concerns:
+## 3-Layer Architecture
 
-1. **Directives** (`directives/`) - Natural language SOPs that define what to do
-2. **Orchestration** - AI agent that reads directives and makes decisions
-3. **Execution** (`execution/`) - Deterministic Python scripts that do the work
+### Layer 1: Directive (What to do)
+- SOPs written in Markdown in `directives/`
+- Define goals, inputs, tools, outputs, and edge cases
+- Natural language instructions
+
+### Layer 2: Orchestration (Decision making)
+- Claude reads directives and calls execution scripts
+- Handles errors, asks for clarification
+- Updates directives with learnings
+
+### Layer 3: Execution (Doing the work)
+- Deterministic Python scripts in `execution/`
+- API calls, data processing, file operations
+- Reliable, testable, fast
 
 ## Quick Start
 
-### 1. Setup Environment
-
+### Run Interview Prep (Local)
 ```bash
-# Copy environment template
-cp .env.example .env
-
-# Edit .env and add your API keys
-# (Google Cloud, Modal, Slack, etc.)
+source .env && ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" python execution/interview_research.py \
+  --company "Google" --role "Software Engineer"
+python execution/pptx_generator.py --input .tmp/interview_research_google.json
 ```
 
-### 2. Install Dependencies
-
+### Run Fitness Video Editor
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install required packages
-pip install modal google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client python-dotenv requests
+python execution/video_jumpcut.py --input raw_video.mp4 --output edited.mp4
 ```
 
-### 3. Google Cloud Setup (for Sheets/Slides)
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable Google Sheets API and Google Slides API
-4. Create OAuth 2.0 credentials (Desktop app)
-5. Download credentials as `credentials.json` and place in workspace root
-6. First run will generate `token.json` automatically
-
-### 4. Modal Setup (for webhooks)
-
+### Deploy a Project to Skills
 ```bash
-# Install Modal CLI
-pip install modal
-
-# Authenticate
-modal token new
-
-# Deploy webhooks (if configured)
-modal deploy execution/modal_webhook.py
+python deploy_to_skills.py --project fitness-influencer-operations
 ```
 
-## Directory Structure
+## Skills Deployment Pipeline
 
-```
-.
-├── CLAUDE.md              # System instructions (mirrored to AGENTS.md, GEMINI.md)
-├── README.md              # This file
-├── .env                   # Environment variables (not committed)
-├── .env.example           # Template for environment variables
-├── credentials.json       # Google OAuth credentials (not committed)
-├── token.json            # Google OAuth token (not committed)
-├── directives/           # Natural language SOPs
-├── execution/            # Python scripts (deterministic tools)
-│   ├── modal_webhook.py  # Modal webhook handler
-│   └── webhooks.json     # Webhook configuration
-└── .tmp/                 # Temporary files (never committed)
-```
+To deploy a tested project as a Claude skill:
 
-## How It Works
+1. **Develop** in `execution/` and document in `directives/`
+2. **Test** thoroughly using the directive workflow
+3. **Create skill** in `.claude/skills/{skill-name}/`
+   - `SKILL.md` - Skill definition with trigger phrases
+   - `USE_CASES.json` - Known use cases for learning
+4. **Deploy** to Railway or run `deploy_to_skills.py`
 
-### Creating a Directive
+### Skill Registration
 
-Directives are markdown files in `directives/` that define:
-- Goal/purpose
-- Required inputs
-- Available tools (scripts to use)
-- Expected outputs
-- Edge cases and error handling
+Skills are automatically available when their `SKILL.md` is in `.claude/skills/`. Key components:
 
-Example structure:
-```markdown
-# Directive: Task Name
-
-## Goal
-What this directive accomplishes
-
-## Inputs
-- Input 1: description
-- Input 2: description
-
-## Tools
-- `execution/script_name.py` - What it does
-
-## Process
-1. Step 1
-2. Step 2
-3. Step 3
-
-## Outputs
-What gets produced
-
-## Edge Cases
-- Case 1: How to handle
-- Case 2: How to handle
-```
-
-### Creating an Execution Script
-
-Scripts in `execution/` should be:
-- Deterministic (same input = same output)
-- Single-purpose
-- Well-documented
-- Error-handling focused
-
-### Self-Annealing Loop
-
-When errors occur:
-1. AI fixes the issue
-2. Updates the script
-3. Tests to verify
-4. Updates the directive with learnings
-5. System is now stronger
-
-## Cloud Deliverables
-
-This system produces cloud-based deliverables (Google Sheets, Slides, etc.) rather than local files. Local files in `.tmp/` are only intermediates and can be regenerated.
-
-## Webhooks
-
-Event-driven execution via Modal. Each webhook maps to a directive.
-
-List webhooks:
-```
-https://nick-90891--claude-orchestrator-list-webhooks.modal.run
-```
-
-Execute directive:
-```
-https://nick-90891--claude-orchestrator-directive.modal.run?slug={slug}
-```
-
-See `directives/add_webhook.md` for complete setup instructions.
-
-## Development → Production Workflow
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  1. DEVELOP (Here - DOE Workspace)                          │
-├─────────────────────────────────────────────────────────────┤
-│  • Create directive in directives/                          │
-│  • Build Python scripts in execution/                       │
-│  • Test manually with step-by-step orchestration            │
-│  • Iterate until it works perfectly                         │
-│  • Document learnings in directive                          │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│  2. DEPLOY (Skills Workspace)                               │
-├─────────────────────────────────────────────────────────────┤
-│  • Run: python deploy_to_skills.py --project project-name   │
-│  • Creates new Skills workspace for the project             │
-│  • Converts directive → SKILL.md                            │
-│  • Copies tested scripts to skill/scripts/                  │
-│  • Add trigger phrases for auto-activation                  │
-│  • Use in production via natural language                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Deployed Projects
-
-Projects developed here and deployed to production Skills workspaces:
-
-### ✅ Client Onboarding + Sales CRM (Deployed)
-**Skills Workspace:** `/Users/williammarceaujr./youtubeworkspace-skills/`
-
-**What it does:**
-- Client onboarding emails with Calendly
-- ClickUp CRM with 7-stage pipeline
-- Full customer information tracking
-
-**Developed from:**
-- `directives/onboard_client.md` → `client-onboarding` skill
-- `directives/sales_crm.md` → `sales-crm-management` skill
-- `execution/clickup_*.py` → `clickup-operations` skill
-
+```yaml
 ---
-
-### 🔧 Amazon Seller Operations (In Development)
-**Status:** Core functionality built, awaiting SP-API credentials
-
-**What it does:**
-- Inventory reorder optimization with cost-benefit analysis
-- FBA fee calculations and storage cost projections (2026 rates)
-- Review monitoring and compliance flagging
-- Buy box tracking and price optimization
-- Multi-marketplace operations
-
-**Built so far:**
-- `directives/amazon_seller_operations.md` - Master directive with 10 use cases
-- `execution/amazon_sp_api.py` - Base API wrapper with caching
-- `execution/amazon_inventory_optimizer.py` - Inventory optimizer
-- `docs/AMAZON_SETUP.md` - Complete setup guide
-
-**Next steps:**
-- Complete SP-API developer registration
-- Configure AWS IAM role and credentials
-- Test with real seller data
-
+name: skill-name
+description: What triggers this skill
+allowed-tools: Bash(python:*), Read
 ---
-
-### 📄 Markdown to PDF Converter (Complete)
-**Status:** Ready to use
-
-**What it does:**
-- Convert markdown files to professional PDFs
-- Automatic styling with headers, code blocks, tables
-- Table of contents generation
-- Syntax highlighting for code
-- Batch conversion support
-
-**Built:**
-- `directives/convert_markdown_to_pdf.md` - Complete directive
-- `execution/markdown_to_pdf.py` - Converter script
-- `execution/styles/default_pdf.css` - Professional stylesheet
-- `docs/PDF_CONVERSION_GUIDE.md` - Usage guide
-
-**Usage:**
-```bash
-# Single file
-python execution/markdown_to_pdf.py --input file.md --output file.pdf
-
-# Batch convert all session notes
-python execution/markdown_to_pdf.py --batch "docs/sessions/*.md" --output-dir pdfs/
 ```
 
----
+## Environment Variables
 
-### 🚧 Future Projects (In Development)
+Copy `.env.example` to `.env` and configure:
 
-Add new projects here as you develop them.
+```env
+# AI APIs
+ANTHROPIC_API_KEY=your_key
+XAI_API_KEY=your_key
+
+# Google APIs
+GOOGLE_CREDENTIALS_PATH=credentials.json
+
+# Video Services
+SHOTSTACK_API_KEY=your_key
+CREATOMATE_API_KEY=your_key
+
+# Communication
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+```
+
+## Website
+
+The main website (`index.html`) provides access to all AI assistants:
+- Dropdown menu for quick access
+- Module cards with feature lists
+- Direct links to deployed apps
+
+## Documentation Index
+
+### Project Documentation
+- [Fitness Influencer Guide](projects/fitness-influencer/README.md)
+- [Interview Prep Guide](projects/interview-prep/README.md)
+- [Amazon Seller Guide](projects/amazon-seller/README.md)
+
+### Directives (SOPs)
+- [fitness_influencer_operations.md](directives/fitness_influencer_operations.md)
+- [interview_prep.md](directives/interview_prep.md)
+- [pptx_interactive_edit.md](directives/pptx_interactive_edit.md)
+- [amazon_seller_operations.md](directives/amazon_seller_operations.md)
+
+### Skills Configuration
+- [Fitness Influencer Skill](.claude/skills/fitness-influencer-operations/SKILL.md)
+- [Interview Prep Skill](.claude/skills/interview-prep/SKILL.md)
+
+## Development Workflow
+
+1. **Start here** - All development happens in this workspace
+2. **Create directive** - Document the workflow in `directives/`
+3. **Build scripts** - Create execution scripts in `execution/`
+4. **Test locally** - Use directives to test the workflow
+5. **Create skill** - Add skill config to `.claude/skills/`
+6. **Deploy** - Push to Railway or run `deploy_to_skills.py`
 
 ## Deploying to Production
 
-When a project is ready for production, run:
+### Railway Deployment (Recommended)
+```bash
+cd projects/interview-prep
+railway init
+railway up
+railway domain
+```
 
+### Skills Deployment
 ```bash
 python deploy_to_skills.py --project project-name
 ```
 
-This will:
-1. Create new Skills workspace: `~/youtubeworkspace-skills-{project-name}/`
-2. Convert directive to SKILL.md format
-3. Copy tested scripts
-4. Set up proper directory structure
-5. Create documentation
-
-## Best Practices
-
-### Development
-1. **Check for tools first** - Before creating scripts, check if one exists
-2. **Update directives** - Document learnings as you go
-3. **Test deterministically** - Execution scripts should be reliable
-4. **Use cloud deliverables** - Don't rely on local files for final output
-5. **Self-anneal** - Fix errors and improve the system continuously
-
-### Before Deploying
-1. **Test end-to-end** - Run the full workflow multiple times
-2. **Document everything** - Directive should be complete
-3. **Handle errors gracefully** - Scripts should fail safely
-4. **Use production credentials** - Test with real services
-5. **Verify edge cases** - Make sure all scenarios work
-
 ## Session History
 
-This workspace maintains detailed session notes to preserve context across work sessions. Think of it like version control for knowledge - every configuration, decision, and learning is documented.
+This workspace maintains detailed session notes to preserve context across work sessions.
 
 **📚 [View All Sessions](docs/sessions/README.md)**
 
-### Recent Sessions
+## License
 
-| Date | Topic | Quick Summary |
-|------|-------|---------------|
-| [2026-01-04](docs/sessions/2026-01-04-git-restructure-and-github-setup.md) | Git Restructure & GitHub Setup | Fixed git repo structure, pushed repos to GitHub organization, created session memory system |
-
-### Why Session History?
-
-Just like Python scripts in `execution/` preserve workflows for reuse, session notes preserve:
-- System configurations and how to replicate them
-- Decisions made and their rationale
-- Commands and shortcuts for common tasks
-- Gotchas encountered and solutions found
-
-This prevents having to re-explain or rediscover things in future sessions.
-
-## Support
-
-For questions or issues, refer to CLAUDE.md for detailed operating principles.
-
-## Related Files
-
-- [WORKSPACES_OVERVIEW.md](../WORKSPACES_OVERVIEW.md) - DOE vs Skills comparison
-- [deploy_to_skills.py](deploy_to_skills.py) - Deployment script
-- [Session History](docs/sessions/README.md) - Detailed notes from all work sessions
+Private repository - Marceau Solutions

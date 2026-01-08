@@ -38,7 +38,15 @@
       "Bash(railway link:*)",
       "Bash(railway service:*)",
       "Bash(railway up:*)",
-      "Bash(railway domain:*)"
+      "Bash(railway domain:*)",
+      "Bash(railway logs:*)",
+      "Bash(railway variables:*)",
+      "Bash(dig:*)",
+      "Bash(ANTHROPIC_API_KEY=\"$ANTHROPIC_API_KEY\" python execution/interview_research.py:*)",
+      "Bash(ANTHROPIC_API_KEY=\"$ANTHROPIC_API_KEY\" python:*)",
+      "Bash(source:*)",
+      "Bash(osascript:*)",
+      "Bash(railway init:*)"
     ]
   }
 }

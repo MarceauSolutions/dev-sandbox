@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Prep PowerPoint Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #e94d60;
+            --accent-hover: #d43d50;
+            --text: #ffffff;
+            --text-dark: #333333;
+            --bg-light: #f8f9fa;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --error: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card h2 .step {
+            background: var(--accent);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        select option {
+            background: var(--primary);
+            color: var(--text);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .file-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--accent);
+            background: rgba(233, 77, 96, 0.1);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--error);
+        }
+
+        .status.loading {
+            display: block;
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid var(--warning);
+        }
+
+        .slides-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+
+        .cost-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid var(--success);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        .cost-badge.paid {
+            background: rgba(243, 156, 18, 0.2);
+            border-color: var(--warning);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab.active {
+            background: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            opacity: 0.6;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interview Prep PowerPoint Generator</h1>
+            <p class="subtitle">AI-powered interview preparation with personalized presentations</p>
+        </header>
+
+        <!-- Step 1: Research -->
+        <div class="card">
+            <h2><span class="step">1</span> Research Company & Role</h2>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="company">Company Name *</label>
+                    <input type="text" id="company" placeholder="e.g., Google, Apple, Meta">
+                </div>
+                <div class="form-group">
+                    <label for="role">Role / Position *</label>
+                    <input type="text" id="role" placeholder="e.g., Software Engineer, Product Manager">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Resume (Optional - for personalized insights)</label>
+                <div class="file-upload" id="resumeUpload">
+                    <p>Drop your resume here or click to upload</p>
+                    <p style="opacity: 0.6; font-size: 0.875rem; margin-top: 0.5rem;">Supports PDF, DOCX, TXT</p>
+                    <input type="file" id="resumeFile" accept=".pdf,.docx,.doc,.txt,.md">
+                </div>
+                <p id="resumeFileName" style="margin-top: 0.5rem; color: var(--accent);"></p>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="generateImages">
+                <label for="generateImages">Generate AI images for experience slides <span class="cost-badge paid">$0.07/image</span></label>
+            </div>
+
+            <button class="btn btn-primary" id="startResearch">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                Start Research
+            </button>
+
+            <div class="progress-bar" id="researchProgress">
+                <div class="fill"></div>
+            </div>
+
+            <div class="status" id="researchStatus"></div>
+        </div>
+
+        <!-- Step 2: Generate Presentation -->
+        <div class="card">
+            <h2><span class="step">2</span> Generate PowerPoint</h2>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="theme">Presentation Theme</label>
+                    <select id="theme">
+                        <option value="modern">Modern (Dark blue + coral)</option>
+                        <option value="professional">Professional (Navy + orange)</option>
+                        <option value="minimal">Minimal (Slate + green)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="researchFile">Research File</label>
+                    <input type="text" id="researchFile" placeholder="interview_research_google.json" readonly>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="generatePptx" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Generate Presentation
+            </button>
+
+            <div class="status" id="generateStatus"></div>
+
+            <div id="downloadSection" style="display: none; margin-top: 1rem;">
+                <a href="#" id="downloadLink" class="btn btn-success">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download PowerPoint
+                </a>
+            </div>
+        </div>
+
+        <!-- Step 3: Edit Presentation -->
+        <div class="card">
+            <h2><span class="step">3</span> Edit Presentation</h2>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="slides">View Slides</button>
+                <button class="tab" data-tab="editText">Edit Text</button>
+                <button class="tab" data-tab="addSlide">Add Slide</button>
+                <button class="tab" data-tab="regenerate">Regenerate Image</button>
+            </div>
+
+            <!-- View Slides Tab -->
+            <div class="tab-content active" id="slidesTab">
+                <button class="btn btn-secondary" id="listSlides">
+                    Refresh Slides List
+                </button>
+                <div class="slides-list" id="slidesList" style="margin-top: 1rem;">
+                    Click "Refresh Slides List" to view presentation contents.
+                </div>
+            </div>
+
+            <!-- Edit Text Tab -->
+            <div class="tab-content" id="editTextTab">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="editSlideNum">Slide Number</label>
+                        <input type="text" id="editSlideNum" placeholder="e.g., 3">
+                    </div>
+                    <div class="form-group">
+                        <label for="findText">Find Text</label>
+                        <input type="text" id="findText" placeholder="Text to find">
+                    </div>
+                    <div class="form-group">
+                        <label for="replaceText">Replace With</label>
+                        <input type="text" id="replaceText" placeholder="Replacement text">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="editTextBtn">
+                    Apply Text Edit <span class="cost-badge">FREE</span>
+                </button>
+                <div class="status" id="editTextStatus"></div>
+            </div>
+
+            <!-- Add Slide Tab -->
+            <div class="tab-content" id="addSlideTab">
+                <div class="form-group">
+                    <label for="slideTitle">Slide Title *</label>
+                    <input type="text" id="slideTitle" placeholder="e.g., My Engineering Experience">
+                </div>
+                <div class="form-group">
+                    <label for="slideDescription">Description *</label>
+                    <textarea id="slideDescription" rows="3" placeholder="Describe the experience or project..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="slideRelevance">Relevance to Role *</label>
+                    <textarea id="slideRelevance" rows="2" placeholder="Why this matters for the interview..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="afterSlide">Insert After Slide (optional)</label>
+                    <input type="text" id="afterSlide" placeholder="e.g., 18">
+                </div>
+
+                <div class="tabs" style="margin-top: 1rem;">
+                    <button class="tab active" data-subtab="uploadImage">Upload Image <span class="cost-badge">FREE</span></button>
+                    <button class="tab" data-subtab="aiImage">AI Generate <span class="cost-badge paid">$0.07</span></button>
+                </div>
+
+                <div class="tab-content active" id="uploadImageTab">
+                    <div class="file-upload" id="slideImageUpload">
+                        <p>Drop image here or click to upload</p>
+                        <input type="file" id="slideImageFile" accept="image/*">
+                    </div>
+                    <p id="slideImageFileName" style="margin-top: 0.5rem; color: var(--accent);"></p>
+                    <button class="btn btn-primary" id="addSlideUpload" style="margin-top: 1rem;">
+                        Add Slide with Image
+                    </button>
+                </div>
+
+                <div class="tab-content" id="aiImageTab">
+                    <div class="form-group">
+                        <label for="imagePrompt">Image Generation Prompt</label>
+                        <textarea id="imagePrompt" rows="2" placeholder="Technical CAD rendering of precision mechanical assembly..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="addSlideAI">
+                        Add Slide with AI Image <span class="cost-badge paid">$0.07</span>
+                    </button>
+                </div>
+
+                <div class="status" id="addSlideStatus"></div>
+            </div>
+
+            <!-- Regenerate Image Tab -->
+            <div class="tab-content" id="regenerateTab">
+                <div class="row">
+                    <div class="form-group">
+                        <label for="regenSlideNum">Slide Number</label>
+                        <input type="text" id="regenSlideNum" placeholder="e.g., 14">
+                    </div>
+                    <div class="form-group">
+                        <label for="regenImageIndex">Image Index (default: 0)</label>
+                        <input type="text" id="regenImageIndex" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regenPrompt">New Image Prompt</label>
+                    <textarea id="regenPrompt" rows="2" placeholder="Technical cutaway diagram of aerospace component..."></textarea>
+                </div>
+                <button class="btn btn-primary" id="regenerateBtn">
+                    Regenerate Image <span class="cost-badge paid">$0.07</span>
+                </button>
+                <div class="status" id="regenerateStatus"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Interview Prep PowerPoint Generator v1.0 | Powered by Claude AI & Grok</p>
+        </footer>
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE = '/api';  // Change to your API URL if needed
+
+        // State
+        let currentPptxFile = '';
+        let currentResearchFile = '';
+
+        // DOM Elements
+        const elements = {
+            company: document.getElementById('company'),
+            role: document.getElementById('role'),
+            resumeFile: document.getElementById('resumeFile'),
+            resumeUpload: document.getElementById('resumeUpload'),
+            resumeFileName: document.getElementById('resumeFileName'),
+            generateImages: document.getElementById('generateImages'),
+            startResearch: document.getElementById('startResearch'),
+            researchProgress: document.getElementById('researchProgress'),
+            researchStatus: document.getElementById('researchStatus'),
+            theme: document.getElementById('theme'),
+            researchFile: document.getElementById('researchFile'),
+            generatePptx: document.getElementById('generatePptx'),
+            generateStatus: document.getElementById('generateStatus'),
+            downloadSection: document.getElementById('downloadSection'),
+            downloadLink: document.getElementById('downloadLink'),
+            listSlides: document.getElementById('listSlides'),
+            slidesList: document.getElementById('slidesList'),
+        };
+
+        // File upload handlers
+        function setupFileUpload(uploadEl, inputEl, displayEl) {
+            uploadEl.addEventListener('click', () => inputEl.click());
+            uploadEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadEl.classList.add('dragover');
+            });
+            uploadEl.addEventListener('dragleave', () => {
+                uploadEl.classList.remove('dragover');
+            });
+            uploadEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadEl.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    inputEl.files = e.dataTransfer.files;
+                    displayEl.textContent = e.dataTransfer.files[0].name;
+                }
+            });
+            inputEl.addEventListener('change', () => {
+                if (inputEl.files.length) {
+                    displayEl.textContent = inputEl.files[0].name;
+                }
+            });
+        }
+
+        setupFileUpload(elements.resumeUpload, elements.resumeFile, elements.resumeFileName);
+        setupFileUpload(
+            document.getElementById('slideImageUpload'),
+            document.getElementById('slideImageFile'),
+            document.getElementById('slideImageFileName')
+        );
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab || tab.dataset.subtab;
+                const isSubtab = !!tab.dataset.subtab;
+                const tabGroup = tab.parentElement;
+
+                tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const contentId = tabName + 'Tab';
+                const container = isSubtab ? tab.closest('.tab-content') : tab.closest('.card');
+                container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(contentId)?.classList.add('active');
+            });
+        });
+
+        // Status helper
+        function showStatus(element, type, message) {
+            element.className = 'status ' + type;
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        // Research
+        elements.startResearch.addEventListener('click', async () => {
+            const company = elements.company.value.trim();
+            const role = elements.role.value.trim();
+
+            if (!company || !role) {
+                showStatus(elements.researchStatus, 'error', 'Please enter company and role.');
+                return;
+            }
+
+            elements.startResearch.disabled = true;
+            elements.researchProgress.classList.add('active');
+            elements.researchProgress.querySelector('.fill').style.width = '30%';
+            showStatus(elements.researchStatus, 'loading', 'Researching... This may take 1-2 minutes.');
+
+            try {
+                let response;
+
+                if (elements.resumeFile.files.length > 0) {
+                    // With resume upload
+                    const formData = new FormData();
+                    formData.append('company', company);
+                    formData.append('role', role);
+                    formData.append('generate_images', elements.generateImages.checked);
+                    formData.append('resume', elements.resumeFile.files[0]);
+
+                    response = await fetch(`${API_BASE}/research/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    // Without resume
+                    response = await fetch(`${API_BASE}/research`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            company,
+                            role,
+                            generate_images: elements.generateImages.checked
+                        })
+                    });
+                }
+
+                const data = await response.json();
+                elements.researchProgress.querySelector('.fill').style.width = '100%';
+
+                if (data.success) {
+                    currentResearchFile = data.output_file;
+                    elements.researchFile.value = data.output_file;
+                    elements.generatePptx.disabled = false;
+                    showStatus(elements.researchStatus, 'success', 'Research completed! Ready to generate presentation.');
+                } else {
+                    showStatus(elements.researchStatus, 'error', 'Research failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch (err) {
+                showStatus(elements.researchStatus, 'error', 'Error: ' + err.message);
+            } finally {
+                elements.startResearch.disabled = false;
+                setTimeout(() => {
+                    elements.researchProgress.classList.remove('active');
+                }, 1000);
+            }
+        });
+
+        // Generate PPTX
+        elements.generatePptx.addEventListener('click', async () => {
+            if (!currentResearchFile) {
+                showStatus(elements.generateStatus, 'error', 'Please complete research first.');
+                return;
+            }
+
+            elements.generatePptx.disabled = true;
+            showStatus(elements.generateStatus, 'loading', 'Generating presentation...');
+
+            try {
+                const response = await fetch(`${API_BASE}/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        research_file: currentResearchFile,
+                        theme: elements.theme.value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentPptxFile = data.output_file;
+                    elements.downloadLink.href = `${API_BASE}/download/${data.output_file}`;
+                    elements.downloadSection.style.display = 'block';
+                    showStatus(elements.generateStatus, 'success', 'Presentation generated! Click to download.');
+                } else {
+                    showStatus(elements.generateStatus, 'error', 'Generation failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch (err) {
+                showStatus(elements.generateStatus, 'error', 'Error: ' + err.message);
+            } finally {
+                elements.generatePptx.disabled = false;
+            }
+        });
+
+        // List Slides
+        elements.listSlides.addEventListener('click', async () => {
+            if (!currentPptxFile) {
+                elements.slidesList.textContent = 'Generate a presentation first.';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/slides?pptx_file=${currentPptxFile}`);
+                const data = await response.json();
+                elements.slidesList.textContent = data.output || 'No slides found.';
+            } catch (err) {
+                elements.slidesList.textContent = 'Error loading slides: ' + err.message;
+            }
+        });
+
+        // Edit Text
+        document.getElementById('editTextBtn').addEventListener('click', async () => {
+            if (!currentPptxFile) {
+                showStatus(document.getElementById('editTextStatus'), 'error', 'Generate a presentation first.');
+                return;
+            }
+
+            const slideNum = document.getElementById('editSlideNum').value;
+            const findText = document.getElementById('findText').value;
+            const replaceText = document.getElementById('replaceText').value;
+
+            if (!slideNum || !findText || !replaceText) {
+                showStatus(document.getElementById('editTextStatus'), 'error', 'Please fill all fields.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/edit/text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pptx_file: currentPptxFile,
+                        slide_number: parseInt(slideNum),
+                        find_text: findText,
+                        replace_text: replaceText
+                    })
+                });
+
+                const data = await response.json();
+                showStatus(
+                    document.getElementById('editTextStatus'),
+                    data.success ? 'success' : 'error',
+                    data.message || data.error
+                );
+            } catch (err) {
+                showStatus(document.getElementById('editTextStatus'), 'error', 'Error: ' + err.message);
+            }
+        });
+
+        // Add Slide with Upload
+        document.getElementById('addSlideUpload').addEventListener('click', async () => {
+            if (!currentPptxFile) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Generate a presentation first.');
+                return;
+            }
+
+            const title = document.getElementById('slideTitle').value;
+            const description = document.getElementById('slideDescription').value;
+            const relevance = document.getElementById('slideRelevance').value;
+            const afterSlide = document.getElementById('afterSlide').value;
+            const imageFile = document.getElementById('slideImageFile').files[0];
+
+            if (!title || !description || !relevance) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Please fill title, description, and relevance.');
+                return;
+            }
+
+            showStatus(document.getElementById('addSlideStatus'), 'loading', 'Adding slide...');
+
+            try {
+                const formData = new FormData();
+                formData.append('pptx_file', currentPptxFile);
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('relevance', relevance);
+                if (afterSlide) formData.append('after_slide', afterSlide);
+                if (imageFile) formData.append('image', imageFile);
+
+                const response = await fetch(`${API_BASE}/edit/add-slide/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                showStatus(
+                    document.getElementById('addSlideStatus'),
+                    data.success ? 'success' : 'error',
+                    data.message || data.error
+                );
+            } catch (err) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Error: ' + err.message);
+            }
+        });
+
+        // Add Slide with AI
+        document.getElementById('addSlideAI').addEventListener('click', async () => {
+            if (!currentPptxFile) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Generate a presentation first.');
+                return;
+            }
+
+            const title = document.getElementById('slideTitle').value;
+            const description = document.getElementById('slideDescription').value;
+            const relevance = document.getElementById('slideRelevance').value;
+            const afterSlide = document.getElementById('afterSlide').value;
+            const prompt = document.getElementById('imagePrompt').value;
+
+            if (!title || !description || !relevance) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Please fill title, description, and relevance.');
+                return;
+            }
+
+            showStatus(document.getElementById('addSlideStatus'), 'loading', 'Generating AI image and adding slide... (costs $0.07)');
+
+            try {
+                const response = await fetch(`${API_BASE}/edit/add-slide`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pptx_file: currentPptxFile,
+                        title,
+                        description,
+                        relevance,
+                        after_slide: afterSlide ? parseInt(afterSlide) : null,
+                        image_prompt: prompt || null
+                    })
+                });
+
+                const data = await response.json();
+                showStatus(
+                    document.getElementById('addSlideStatus'),
+                    data.success ? 'success' : 'error',
+                    data.message || data.error
+                );
+            } catch (err) {
+                showStatus(document.getElementById('addSlideStatus'), 'error', 'Error: ' + err.message);
+            }
+        });
+
+        // Regenerate Image
+        document.getElementById('regenerateBtn').addEventListener('click', async () => {
+            if (!currentPptxFile) {
+                showStatus(document.getElementById('regenerateStatus'), 'error', 'Generate a presentation first.');
+                return;
+            }
+
+            const slideNum = document.getElementById('regenSlideNum').value;
+            const prompt = document.getElementById('regenPrompt').value;
+            const imageIndex = document.getElementById('regenImageIndex').value || '0';
+
+            if (!slideNum || !prompt) {
+                showStatus(document.getElementById('regenerateStatus'), 'error', 'Please fill slide number and prompt.');
+                return;
+            }
+
+            showStatus(document.getElementById('regenerateStatus'), 'loading', 'Regenerating image... (costs $0.07)');
+
+            try {
+                const response = await fetch(`${API_BASE}/edit/regenerate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pptx_file: currentPptxFile,
+                        slide_number: parseInt(slideNum),
+                        prompt,
+                        image_index: parseInt(imageIndex)
+                    })
+                });
+
+                const data = await response.json();
+                showStatus(
+                    document.getElementById('regenerateStatus'),
+                    data.success ? 'success' : 'error',
+                    data.message || data.error
+                );
+            } catch (err) {
+                showStatus(document.getElementById('regenerateStatus'), 'error', 'Error: ' + err.message);
+            }
+        });
+    </script>
+</body>
+</html>
