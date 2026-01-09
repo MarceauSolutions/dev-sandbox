@@ -1,0 +1,50 @@
+# Fitness Influencer AI - Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [1.0.0] - 2026-01-08
+
+### Added
+- **Dual-AI Architecture**: Claude handles intent understanding and tool routing, Grok/XAI handles image generation and cost optimization
+- **Web Chat Interface**: Production-ready chat UI at `/` with real-time API integration
+- **Tool Dashboard**: Alternative dashboard view at `/dashboard` with modal-based tool interfaces
+- **Cost Confirmation System**: Operations >$0.10 require user confirmation before execution
+- **Alternative Suggestions**: Shows cheaper/premium options for paid operations
+- **Session Cost Tracking**: Tracks cumulative costs per session with `/api/costs` endpoint
+
+### Core Modules
+- `dual_ai_router.py` - Dual-AI decision routing with cost tiers
+- `chat_api.py` - FastAPI backend with Claude tool use integration
+- `video_jumpcut.py` - FFmpeg-based silence removal
+- `educational_graphics.py` - Pillow-based graphic generation
+- `grok_image_gen.py` - XAI/Grok image generation
+- `video_ads.py` - Shotstack video ad creation
+- `gmail_monitor.py` - Email categorization
+- `revenue_analytics.py` - Google Sheets analytics
+- `workout_plan_generator.py` - Personalized workout plans
+- `nutrition_guide_generator.py` - Macro-calculated nutrition guides
+
+### Cost Tiers
+- **FREE**: Video editing, graphics, email summary, analytics, workout/nutrition plans
+- **LOW** (<$0.10): 1 AI image ($0.07)
+- **MEDIUM** ($0.10-$0.30): 2-4 AI images
+- **HIGH** (>$0.30): Video ads ($0.34+)
+
+### Deployment
+- Railway project: `fitness-influencer-ai`
+- Production URL: https://api-production-1edc.up.railway.app
+- Health endpoint: `/health`
+- Costs endpoint: `/api/costs`
+
+---
+
+## [0.x.x] - Previous Development
+
+Initial development of individual tools:
+- Video jump cut automation
+- Educational graphics generator
+- Grok image generation integration
+- Email monitoring
+- Revenue analytics
+- Calendar reminders
+- SMS notifications via Twilio

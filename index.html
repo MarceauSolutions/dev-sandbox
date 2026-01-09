@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marceau Solutions | Custom AI Automation for Your Industry</title>
-    <link rel="stylesheet" href="nav-styles.css">
+    <title>Marceau Solutions | AI Automation - Coming Soon</title>
     <style>
         * {
             margin: 0;
@@ -17,18 +16,36 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             color: #ffffff;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Hero Section */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .hero {
-            padding: 10rem 2rem 6rem;
             text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 2rem;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             line-height: 1.1;
         }
 
@@ -43,394 +60,465 @@
         .hero p {
             font-size: 1.25rem;
             opacity: 0.8;
-            max-width: 700px;
-            margin: 0 auto 2.5rem;
+            max-width: 600px;
+            margin: 0 auto;
             line-height: 1.6;
         }
 
-        .hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
+        .coming-soon-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #fbbf24;
-            color: #000;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-        }
-
-        /* Features Section */
-        .features {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
             color: #fbbf24;
-        }
-
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-        }
-
-        /* Solutions Section */
-        .solutions {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.1rem;
-        }
-
-        .solutions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .solution-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .solution-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .solution-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-        }
-
-        .solution-card.fitness::before {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .solution-card.interview::before {
-            background: linear-gradient(90deg, #e94d60, #ff7676);
-        }
-
-        .solution-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 2rem;
-        }
-
-        .solution-card.fitness .solution-icon {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .solution-card.interview .solution-icon {
-            background: linear-gradient(135deg, #e94d60, #ff7676);
-        }
-
-        .solution-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .solution-card > p {
-            opacity: 0.7;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .solution-features {
-            list-style: none;
             margin-bottom: 2rem;
         }
 
-        .solution-features li {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            font-size: 0.9rem;
-        }
-
-        .solution-features li::before {
-            content: '';
-            color: #4ade80;
-            font-weight: bold;
-        }
-
-        .solution-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            padding: 0.5rem 1rem;
-            background: rgba(74, 222, 128, 0.2);
-            border-radius: 50px;
-            margin-bottom: 1rem;
-        }
-
-        .solution-status.live {
-            color: #4ade80;
-        }
-
-        .status-dot {
+        .coming-soon-badge .dot {
             width: 8px;
             height: 8px;
-            background: #4ade80;
+            background: #fbbf24;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
 
-        .solution-card .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .solution-card.interview .btn-primary {
-            background: linear-gradient(135deg, #e94d60, #ff7676);
-        }
-
-        .btn-group {
-            display: flex;
+        /* Projects Preview */
+        .projects-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            flex-wrap: wrap;
+            margin: 2rem 0;
         }
 
-        /* CTA Section */
-        .cta-section {
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
             text-align: center;
-            padding: 5rem 2rem;
-            background: rgba(0, 0, 0, 0.2);
-            margin-top: 4rem;
         }
 
-        .cta-section h2 {
+        .project-card .icon {
             font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .project-card p {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Inquiry Form */
+        .inquiry-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .inquiry-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .inquiry-section > p {
+            text-align: center;
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
             margin-bottom: 1rem;
         }
 
-        .cta-section p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2rem;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
+        .form-group.full-width {
+            grid-column: 1 / -1;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .features {
-                grid-template-columns: 1fr;
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Communication Preferences - Auto Opt-In */
+        .comm-prefs {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .comm-prefs-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #fbbf24;
+        }
+
+        .comm-prefs p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .checkbox-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #fbbf24;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: #fbbf24;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Contact Info */
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .contact-item a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            color: #fbbf24;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #4ade80;
+        }
+
+        .success-message p {
+            opacity: 0.8;
+        }
+
+        /* Hide form when success */
+        .inquiry-form.hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 2rem 1.5rem;
             }
-        }
 
-        @media (max-width: 768px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
 
-            .hero {
-                padding: 8rem 1.5rem 4rem;
-            }
-
-            .solutions-grid {
+            .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .hero-buttons {
+            .checkbox-row {
                 flex-direction: column;
-                align-items: center;
+                gap: 0.75rem;
             }
         }
     </style>
 </head>
 <body>
-    <div id="site-nav"></div>
+    <div class="container">
+        <section class="hero">
+            <div class="logo">Marceau Solutions</div>
+            <div class="coming-soon-badge">
+                <span class="dot"></span>
+                Coming Soon
+            </div>
+            <h1>Custom <em>AI Automation</em><br>Built for Your Industry</h1>
+            <p>We're building intelligent AI assistants tailored to your workflow. Be the first to know when we launch.</p>
+        </section>
 
-    <section class="hero">
-        <h1>Custom <em>AI Automation</em><br>Built for Your Industry</h1>
-        <p>Stop wasting time on repetitive tasks. We build intelligent AI assistants tailored to your workflow—whether you're scaling an e-commerce empire, growing your fitness brand, or managing complex MedTech operations.</p>
-        <div class="hero-buttons">
-            <a href="contact.html" class="btn btn-primary">
-                Book a Consultation
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
-            <a href="solutions.html" class="btn btn-secondary">Explore Industries</a>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Industry-Specific</h3>
-            <p>Not generic chatbots. Custom-built workflows designed for your exact use case and industry challenges.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🔧</div>
-            <h3>Hands-Off Automation</h3>
-            <p>Set it and forget it. Our AI assistants handle the busywork while you focus on scaling your business.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>ROI-Driven</h3>
-            <p>Measurable results. Track time saved, leads captured, and revenue generated through built-in analytics.</p>
-        </div>
-    </section>
-
-    <section class="solutions" id="solutions">
-        <div class="section-header">
-            <h2>Available AI Assistants</h2>
-            <p>Production-ready solutions for specific industries</p>
-        </div>
-        <div class="solutions-grid">
-            <!-- Fitness Influencer Module -->
-            <div class="solution-card fitness">
-                <div class="solution-status live">
-                    <span class="status-dot"></span>
-                    Live
-                </div>
-                <div class="solution-icon">💪</div>
+        <div class="projects-preview">
+            <div class="project-card">
+                <div class="icon">💪</div>
                 <h3>Fitness Influencer AI</h3>
-                <p>Automate your fitness content workflow with AI-powered video editing, graphics creation, email management, and revenue analytics.</p>
-                <ul class="solution-features">
-                    <li>Automatic jump-cut video editing</li>
-                    <li>Educational graphics generation</li>
-                    <li>Gmail email summarization</li>
-                    <li>Revenue analytics from Sheets</li>
-                    <li>AI image generation via Grok</li>
-                    <li>Calendar reminders</li>
-                </ul>
-                <div class="btn-group">
-                    <a href="setup_form.html" class="btn btn-primary">
-                        Open Assistant
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
+                <p>Content & revenue automation</p>
             </div>
-
-            <!-- Interview Prep Module -->
-            <div class="solution-card interview">
-                <div class="solution-status live">
-                    <span class="status-dot"></span>
-                    Live
-                </div>
-                <div class="solution-icon">🎯</div>
-                <h3>Interview Prep AI Assistant</h3>
-                <p>Your complete interview preparation companion. Research companies, generate presentations, practice with mock interviews, and create cheat sheets.</p>
-                <ul class="solution-features">
-                    <li>AI company & role research</li>
-                    <li>Professional PowerPoint generation</li>
-                    <li>Mock interview practice (behavioral, technical)</li>
-                    <li>Cheat sheets, flashcards & talking points</li>
-                    <li>STAR format response coaching</li>
-                    <li>Interactive slide editing</li>
-                </ul>
-                <div class="btn-group">
-                    <a href="https://interview-prep-pptx-production.up.railway.app/app" class="btn btn-primary">
-                        Open Assistant
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
+            <div class="project-card">
+                <div class="icon">🎯</div>
+                <h3>Interview Prep AI</h3>
+                <p>Research & presentation</p>
+            </div>
+            <div class="project-card">
+                <div class="icon">📦</div>
+                <h3>Amazon Seller AI</h3>
+                <p>Inventory optimization</p>
+            </div>
+            <div class="project-card">
+                <div class="icon">🏥</div>
+                <h3>MedTech Solutions</h3>
+                <p>Healthcare automation</p>
             </div>
         </div>
-    </section>
 
-    <section class="cta-section">
-        <h2>Need Something Different?</h2>
-        <p>We build custom AI solutions for any industry. Let's discuss your specific needs.</p>
-        <a href="contact.html" class="btn btn-primary">
-            Schedule a Call
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-        </a>
-    </section>
+        <section class="inquiry-section">
+            <h2>Get Early Access</h2>
+            <p>Submit your inquiry and we'll reach out when your solution is ready.</p>
 
-    <div id="site-footer"></div>
+            <form id="inquiryForm" class="inquiry-form" action="https://formspree.io/f/your-form-id" method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </div>
+                </div>
 
-    <script src="nav-component.js"></script>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone (optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="interest">I'm interested in...</label>
+                        <select id="interest" name="interest">
+                            <option value="">Select a solution</option>
+                            <option value="fitness">Fitness Influencer AI</option>
+                            <option value="interview">Interview Prep AI</option>
+                            <option value="amazon">Amazon Seller AI</option>
+                            <option value="medtech">MedTech Solutions</option>
+                            <option value="custom">Custom AI Solution</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="message">Tell us about your needs (optional)</label>
+                    <textarea id="message" name="message" placeholder="Describe your business, challenges, or what you'd like to automate..."></textarea>
+                </div>
+
+                <!-- Consolidated Communication Preferences - Auto Opt-In -->
+                <div class="comm-prefs">
+                    <div class="comm-prefs-header">
+                        <span>📬</span> Stay Connected
+                    </div>
+                    <p>By submitting this form, you'll receive updates about your selected solution. You can customize your preferences below:</p>
+                    <div class="checkbox-row">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emailOptIn" name="emailOptIn" checked>
+                            <label for="emailOptIn">Email updates & tips</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="smsOptIn" name="smsOptIn" checked>
+                            <label for="smsOptIn">SMS notifications</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden field for tracking -->
+                <input type="hidden" name="source" value="coming-soon-page">
+                <input type="hidden" name="timestamp" id="timestamp">
+
+                <button type="submit" class="btn-submit">Request Early Access</button>
+
+                <p class="form-footer">
+                    We respect your privacy. Unsubscribe anytime.
+                    <a href="terms.html" style="color: #fbbf24;">Terms</a> &
+                    <a href="privacy.html" style="color: #fbbf24;">Privacy</a>
+                </p>
+            </form>
+
+            <div id="successMessage" class="success-message">
+                <div class="success-icon">✓</div>
+                <h3>You're on the list!</h3>
+                <p>We'll reach out when your solution is ready. Check your email for confirmation.</p>
+            </div>
+        </section>
+
+        <div class="contact-info">
+            <div class="contact-item">
+                <span>📧</span>
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+            </div>
+            <div class="contact-item">
+                <span>📞</span>
+                <a href="tel:+18552399364">+1 (855) 239-9364</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set timestamp on form load
+        document.getElementById('timestamp').value = new Date().toISOString();
+
+        // Handle form submission
+        document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Collect form data for logging/API
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                interest: formData.get('interest'),
+                message: formData.get('message'),
+                emailOptIn: formData.get('emailOptIn') === 'on',
+                smsOptIn: formData.get('smsOptIn') === 'on',
+                source: formData.get('source'),
+                timestamp: formData.get('timestamp')
+            };
+
+            console.log('Form submitted:', data);
+
+            // TODO: Replace with actual backend API
+            // For now, show success message
+            try {
+                // Simulate API call
+                // await fetch('/api/inquiries', { method: 'POST', body: JSON.stringify(data) });
+
+                // Show success message
+                form.classList.add('hidden');
+                document.getElementById('successMessage').classList.add('show');
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('There was an error submitting your request. Please try again.');
+            }
+        });
+    </script>
 </body>
 </html>

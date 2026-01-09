@@ -123,6 +123,24 @@ PROJECTS = {
         "scripts": [],  # Aggregates other project scripts
         "description": "William's Personal AI Assistant (Aggregates all skills)",
         "deployment_target": "local-only"  # No Railway/GitHub deployment
+    },
+    "website-builder": {
+        "skill_name": "website-builder",
+        "src_dir": PROJECTS_DIR / "website-builder" / "src",
+        "skill_md": SKILLS_DIR / "website-builder" / "SKILL.md",
+        "directive": "website_builder.md",
+        "scripts": [
+            "research_engine.py",
+            "content_generator.py",
+            "site_builder.py",
+            "website_builder_api.py"
+        ],
+        "description": "AI Website Builder - Research & Generate Websites",
+        "frontend": {
+            "dir": PROJECTS_DIR / "website-builder",
+            "deploy_method": "railway",
+            "deploy_command": "railway up"
+        }
     }
 }
 

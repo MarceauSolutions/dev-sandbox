@@ -91,6 +91,46 @@ The key is: **What you say → What I do** is now documented in CLAUDE.md and th
 
 ---
 
+## Fitness Influencer AI
+
+### Content Creation
+
+| You Say | I Do |
+|---------|------|
+| "Edit my video" | Run video_jumpcut.py (FREE) |
+| "Remove silence from video" | Run video_jumpcut.py (FREE) |
+| "Create a graphic" | Run educational_graphics.py (FREE) |
+| "Make an Instagram post" | Run educational_graphics.py (FREE) |
+| "Generate AI images" | Call Grok API ($0.07/image) - confirms if >$0.10 |
+| "Create a video ad" | Shotstack + Grok ($0.34) - requires confirmation |
+
+### Business Management
+
+| You Say | I Do |
+|---------|------|
+| "Summarize my emails" | Run gmail_monitor.py (FREE) |
+| "Show revenue analytics" | Run revenue_analytics.py (FREE) |
+| "What are my expenses?" | Run revenue_analytics.py (FREE) |
+
+### Fitness Planning
+
+| You Say | I Do |
+|---------|------|
+| "Create workout plan" | Run workout_plan_generator.py (FREE) |
+| "Make nutrition guide" | Run nutrition_guide_generator.py (FREE) |
+| "Calculate my macros" | Run nutrition_guide_generator.py (FREE) |
+
+### Cost Confirmations
+
+| Pattern | Interpretation |
+|---------|---------------|
+| Paid operation requested | Show cost + alternatives, ask to confirm |
+| "Yes, proceed" / "Confirm" | Execute paid operation |
+| "Use the cheaper option" | Execute budget alternative |
+| "Cancel" | Abort operation, no charge |
+
+---
+
 ## General Patterns
 
 ### Scope Extension (Inference)

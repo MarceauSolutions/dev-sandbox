@@ -4,6 +4,122 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-09: DOE Architecture Rollback & Website Builder Social Pipeline
+
+**Context:** Rolling back premature deployments to follow DOE (Directive-Orchestration-Execution) architecture properly. Also completed social media research pipeline for website-builder.
+
+### Part 1: Website Builder Social Research Pipeline
+
+**Accomplished:**
+- Built complete social media research → website generation pipeline
+- Implemented 5 approaches: Direct API, Web Scraping, Hybrid Search, Manual Input, Multi-Agent
+- Selected hybrid approach combining Manual Input + Hybrid Search
+- Created personality-driven content generation and styling
+
+**Files Created:**
+- `projects/website-builder/src/social_profile_analyzer.py` - Parse social URLs, analyze communication style
+- `projects/website-builder/src/web_search.py` - Brave/Tavily web search integration
+- `projects/website-builder/src/personality_synthesizer.py` - Brand personality synthesis
+
+**Files Updated:**
+- `projects/website-builder/src/research_engine.py` - Added `research_with_social()` method
+- `projects/website-builder/src/content_generator.py` - Added `generate_personality_content()`
+- `projects/website-builder/src/site_builder.py` - Added `build_personality_site()` with dynamic styling
+- `projects/website-builder/src/website_builder_api.py` - Added 4 new endpoints for social workflow
+- `projects/website-builder/README.md` - Complete rewrite with architecture diagram
+- `projects/website-builder/VERSION` - Updated to 0.2.0
+
+**New Endpoints:**
+- `POST /api/research/social` - Research with social profiles
+- `POST /api/generate/personality` - Personality-driven content
+- `POST /api/build/personality` - Personality-styled site
+- `POST /api/workflow/social` - Full social workflow
+
+### Part 2: DOE Architecture Rollback
+
+**Problem:** Jumped the gun deploying marketing pages before projects were ready. Violated DOE pattern.
+
+**Rollback Actions:**
+1. Updated root `index.html` → "Coming Soon" page with unified inquiry form
+2. Updated `contact.html` → Streamlined with consolidated email/SMS opt-in
+3. Removed premature pages: `solutions.html`, `about.html`, `setup_form.html`, `nav-styles.css`, `nav-component.js`
+4. Updated `website-repo/index.html` → "Coming Soon" with inquiry form
+5. Updated `website-repo/contact.html` → Consistent contact form
+6. Removed premature website-repo pages: `fitness.html`, `amazon.html`, `medtech.html`, `all-solutions.html`, `services.html`, `about.html`, `assistant.html`, `testimonials.html`, `blog.html`, `signup.html`, `opt-in.html`
+
+**Key Learnings:**
+1. **DOE discipline** - Don't deploy frontend until execution layer is solid
+2. **Coming Soon pattern** - Show project previews, collect inquiries, auto opt-in for email/SMS
+3. **Consolidated opt-in** - Pre-checked email + SMS checkboxes on all forms
+4. **Clean rollback** - Remove premature files rather than leaving broken links
+
+**New Communication Patterns:**
+- "Roll back" → Remove premature deployments, show Coming Soon
+- "Follow DOE" → Check if Directive exists before deploying Execution
+- Form submission → Auto opt-in for both email and SMS (pre-checked)
+
+**Architecture Reminder:**
+```
+DOE Pattern:
+Layer 1: DIRECTIVE (directives/*.md)     → What to do
+Layer 2: ORCHESTRATION (You/Claude)      → Decision making
+Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
+```
+
+Deploy ONLY when all three layers are solid.
+
+---
+
+## 2026-01-08 (Late Night): Fitness Influencer Dual-AI Chat System
+
+**Context:** Building polished web chat interface for Fitness Influencer AI with dual-AI architecture (Claude + Grok)
+
+**Accomplished:**
+- Built dual-AI router combining Claude (intent/routing) and Grok (cost optimization/images)
+- Implemented cost confirmation guardrails for operations >$0.10
+- Created production-ready chat interface with real API integration
+- Deployed Fitness Influencer AI to Railway
+- Live at: https://api-production-1edc.up.railway.app
+
+**Key Learnings:**
+1. **Dual-AI architecture** - Claude handles NLU/routing, Grok handles images + cost suggestions
+2. **Cost guardrails** - $0.10 threshold requires user confirmation, show alternatives
+3. **Module imports in Railway** - Use `src.module_name` format with try/except for local dev
+4. **python-multipart required** - FastAPI file uploads need this dependency
+5. **Railway secrets** - Safe for production, but avoid CLI `--set` (logs to shell history)
+
+**New Communication Patterns:**
+- "Perfect the Fitness Influencer" → Focus on web chat, not CLI
+- Paid operations → Always show cost + alternatives before executing
+- "Why show them CLI?" → Client-facing demos should match delivery format
+
+**Cost Tier System:**
+- FREE: Video editing, graphics, email, analytics, workout/nutrition plans
+- LOW (<$0.10): 1 AI image ($0.07)
+- MEDIUM ($0.10-$0.30): 2-4 AI images ($0.14-$0.28)
+- HIGH (>$0.30): Video ads ($0.34+)
+
+**Files Created:**
+- `projects/fitness-influencer/src/dual_ai_router.py` - Dual-AI decision router
+- `projects/fitness-influencer/src/__init__.py` - Module init
+- `projects/fitness-influencer/frontend/chat.html` - Chat interface (updated)
+- `projects/fitness-influencer/frontend/dashboard.html` - Tool dashboard
+- `projects/fitness-influencer/.env.example` - Environment template
+- `projects/fitness-influencer/Procfile` - Railway start command
+- `projects/fitness-influencer/railway.toml` - Railway config
+
+**Files Updated:**
+- `projects/fitness-influencer/src/chat_api.py` - Dual-AI flow, cost tracking
+- `projects/fitness-influencer/requirements.txt` - Added python-multipart
+
+**Deployment:**
+- Railway project: fitness-influencer-ai
+- Service: api
+- Domain: https://api-production-1edc.up.railway.app
+- Status: Live and healthy
+
+---
+
 ## 2026-01-08 (Night): Interview Prep v1.3.0 Full Deployment
 
 **Context:** Deploying Interview Prep AI Assistant with frontend and website integration
