@@ -261,7 +261,7 @@ def markdown_to_html(md_content, headers):
     # Add anchor IDs to headers in markdown
     for header in headers:
         # Match the header line
-        pattern = f"^({'#' * header['level']})\s+{re.escape(header['text'])}$"
+        pattern = rf"^({'#' * header['level']})\s+{re.escape(header['text'])}$"
         # Replace with header + anchor
         replacement = f"{'#' * header['level']} <a id='{header['anchor']}'></a>{header['text']}"
         md_content = re.sub(pattern, replacement, md_content, flags=re.MULTILINE)
