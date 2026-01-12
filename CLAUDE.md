@@ -189,8 +189,16 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **Project development** | `projects/[name]/` | ✅ dev-sandbox (NO separate git!) |
 | **Deployed skills** | `/Users/williammarceaujr./[name]-prod/` | ✅ Separate repo |
 | **Standalone projects** | `/Users/williammarceaujr./[name]/` | ✅ Separate repo |
+| **Temporary/test files** | `.tmp/` | ❌ NOT tracked (ephemeral workspace) |
 
 **Critical**: Never initialize git inside `projects/` - the parent dev-sandbox repo tracks everything. See `docs/repository-management.md`.
+
+**Temporary files policy**: The `.tmp/` directory is for ephemeral work only:
+- Testing and experimentation files
+- Temporary outputs that don't need long-term storage
+- Files that serve a single-use purpose
+- **Auto-cleanup**: Delete files after their intended purpose to prevent clutter
+- **Not tracked**: `.tmp/` is in `.gitignore` and should never be committed
 
 ---
 
