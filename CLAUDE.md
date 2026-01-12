@@ -21,7 +21,9 @@ Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
 | **How we work** | This file (CLAUDE.md) |
 | **How to prompt me** | `docs/prompting-guide.md` |
 | **Inference guidelines** | `docs/inference-guidelines.md` |
-| **Deployment SOP** | `docs/deployment.md` |
+| **Deployment pipeline** | `docs/deployment.md` |
+| **Repository management** | `docs/repository-management.md` ⭐ |
+| **Repository quick ref** | `docs/REPO-QUICK-REFERENCE.md` |
 | **Versioned deployment** | `docs/versioned-deployment.md` |
 | **Project navigation** | `docs/projects.md` |
 | **Workflow template** | `docs/workflow-standard.md` |
@@ -29,22 +31,55 @@ Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
 
-## Development Pipeline
+## Development Pipeline (DOE → Skills)
+
+**Complete documentation**: See `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md`
 
 ```
-1. DEVELOP in dev-sandbox/
-   └── Scripts in: [project]/src/
-   └── Test with: execution/
+1. DESIGN in directives/
+   └── Create/update [project].md with capability SOPs
+   └── Define what the project does
 
-2. ITERATE locally
+2. DEVELOP in dev-sandbox/projects/[project]/
+   └── NO git init inside projects! (see repository-management.md)
+   └── Scripts in: [project]/src/
+   └── Workflows in: [project]/workflows/
+   └── Test with: execution/
+   └── Commit to dev-sandbox repo (parent tracks all)
+
+3. ORCHESTRATE (You/Claude)
+   └── Read directives
+   └── Call execution scripts
    └── Build workflows AS you complete tasks
    └── Update directive with learnings
 
-3. DEPLOY when ready
-   └── python deploy_to_skills.py --project [name]
+4. DEPLOY when ready
+   └── python deploy_to_skills.py --project [name] --version X.Y.Z
+   └── Creates separate repo: /Users/williammarceaujr./[name]-prod/
+   └── NOT nested in dev-sandbox (see repository-management.md)
 ```
 
+**Repository structure**:
+- **dev-sandbox/**: Development workspace (ONE git repo)
+- **[project]-prod/**: Deployed skills (SEPARATE git repos, siblings to dev-sandbox)
+- **Never nest repos**: `find . -name ".git" -type d` should only show `./.git`
+
 ### Key Commands
+
+**Repository management**:
+```bash
+# Check for nested repos (run weekly)
+cd /Users/williammarceaujr./dev-sandbox && find . -name ".git" -type d
+# Should only show: ./.git
+
+# Commit dev-sandbox changes (includes all projects)
+cd /Users/williammarceaujr./dev-sandbox
+git add .
+git commit -m "feat: Description"
+git push
+```
+
+**Deployment**:
 ```bash
 python deploy_to_skills.py --list                    # List projects + versions
 python deploy_to_skills.py --status [name]           # Check dev vs prod version
@@ -86,8 +121,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
    **Stable References (update only when system changes):**
    - `docs/inference-guidelines.md` - Framework/ruleset
-   - `docs/versioned-deployment.md` - SOP/procedure
-   - `docs/deployment.md` - SOP/architecture
+   - `docs/repository-management.md` - Repository structure rules
+   - `docs/REPO-QUICK-REFERENCE.md` - Quick repo checks
+   - `docs/versioned-deployment.md` - Version control SOP
+   - `docs/deployment.md` - Deployment pipeline architecture
    - `[project]/workflows/` - Task procedures
    - `[project]/USER_PROMPTS.md` - User guidance templates
    - `[project]/CHANGELOG.md` - Version history (update at deploy time)
@@ -112,14 +149,20 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
 ## Where to Put Things
 
-| What | Where |
-|------|-------|
-| Core methods & patterns | `CLAUDE.md` (this file) |
-| Detailed reference docs | `docs/` |
-| Capability SOPs | `directives/` |
-| Task procedures | `[project]/workflows/` |
-| Session learnings | `docs/session-history.md` |
-| Deployment config | `deploy_to_skills.py` |
+| What | Where | Git? |
+|------|-------|------|
+| **Core methods & patterns** | `CLAUDE.md` (this file) | ✅ dev-sandbox |
+| **Detailed reference docs** | `docs/` | ✅ dev-sandbox |
+| **Capability SOPs** | `directives/` | ✅ dev-sandbox |
+| **Task procedures** | `[project]/workflows/` | ✅ dev-sandbox |
+| **Session learnings** | `docs/session-history.md` | ✅ dev-sandbox |
+| **Deployment config** | `deploy_to_skills.py` | ✅ dev-sandbox |
+| **Executable scripts** | `execution/` | ✅ dev-sandbox |
+| **Project development** | `projects/[name]/` | ✅ dev-sandbox (NO separate git!) |
+| **Deployed skills** | `/Users/williammarceaujr./[name]-prod/` | ✅ Separate repo |
+| **Standalone projects** | `/Users/williammarceaujr./[name]/` | ✅ Separate repo |
+
+**Critical**: Never initialize git inside `projects/` - the parent dev-sandbox repo tracks everything. See `docs/repository-management.md`.
 
 ---
 
