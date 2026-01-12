@@ -4,6 +4,68 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-12: Documentation Process & MD-to-PDF Project
+
+**Context:** Documenting the complete development-to-deployment pipeline, creating comprehensive reference guides
+
+**Accomplished:**
+- Created comprehensive development-to-deployment process guide
+- Built Markdown to PDF Converter project following SOP 1
+- Enhanced CLAUDE.md with development process references
+- Documented repository structure and where files live during each phase
+
+**Key Learnings:**
+1. **Documentation process** - Create directive, develop in dev-sandbox, document workflows as you work, deploy when ready
+2. **Repository structure** - Development in ONE repo (dev-sandbox), production in separate sibling repos
+3. **Document types** - Living (session-history, prompting-guide) vs Stable (SOPs, workflows, directives)
+4. **WeasyPrint advantages** - Better CSS support and interactive PDF links than ReportLab
+5. **Workflow documentation timing** - Document WHILE completing tasks, not after
+
+**New Documentation:**
+- `docs/development-to-deployment.md` - Complete guide from dev through deployment (700+ lines)
+  - Repository structure (dev vs prod)
+  - Documentation process (5 phases)
+  - Common workflows
+  - Deployment commands reference
+  - Where things live at each stage
+  - Quick reference checklists
+
+**New Project: MD-to-PDF Converter**
+- `directives/md_to_pdf.md` - Capability SOP with edge cases
+- `projects/md-to-pdf/src/md_to_pdf.py` - Full implementation (450+ lines)
+- `projects/md-to-pdf/workflows/convert-md-to-pdf.md` - Step-by-step workflow
+- `projects/md-to-pdf/README.md` - Project overview
+- `projects/md-to-pdf/VERSION` - 0.1.0-dev
+- `projects/md-to-pdf/CHANGELOG.md` - Version history
+
+**Files Updated:**
+- `CLAUDE.md` - Added development-to-deployment.md to Documentation Map
+
+**Architecture Reinforcement:**
+```
+Development (ONE repo):
+/Users/williammarceaujr./dev-sandbox/
+  ├── .git/                    ← Single git repo
+  ├── directives/              ← What to do
+  ├── projects/[name]/         ← NO .git here!
+  └── execution/               ← How to do it
+
+Production (MANY repos):
+/Users/williammarceaujr./
+  ├── dev-sandbox/             ← Development
+  ├── [project]-prod/          ← Deployed skills
+  │   └── .git/                ← Separate repos
+  └── website-repo/            ← Standalone projects
+      └── .git/
+```
+
+**Next Steps:**
+- Test MD-to-PDF converter with various markdown files
+- Deploy v1.0.0 when ready
+- Use as reference for future documentation projects
+
+---
+
 ## 2026-01-09: DOE Architecture Rollback & Website Builder Social Pipeline
 
 **Context:** Rolling back premature deployments to follow DOE (Directive-Orchestration-Execution) architecture properly. Also completed social media research pipeline for website-builder.

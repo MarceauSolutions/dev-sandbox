@@ -21,6 +21,7 @@ Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
 | **How we work** | This file (CLAUDE.md) |
 | **How to prompt me** | `docs/prompting-guide.md` |
 | **Inference guidelines** | `docs/inference-guidelines.md` |
+| **Dev-to-deployment process** | `docs/development-to-deployment.md` ⭐ |
 | **Deployment pipeline** | `docs/deployment.md` |
 | **Repository management** | `docs/repository-management.md` ⭐ |
 | **Repository quick ref** | `docs/REPO-QUICK-REFERENCE.md` |
@@ -33,7 +34,7 @@ Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
 
 ## Development Pipeline (DOE → Skills)
 
-**Complete documentation**: See `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md`
+**Complete documentation**: See `docs/development-to-deployment.md` for full process, or `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md` for specific topics.
 
 ```
 1. DESIGN in directives/
