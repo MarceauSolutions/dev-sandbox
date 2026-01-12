@@ -348,6 +348,23 @@ Changes flow: `dev-sandbox` → `project-specific repos` → `production`
 
 Never edit production repos directly. Always develop in dev-sandbox first.
 
+### Repository Management
+
+**CRITICAL**: Avoid nested git repositories. See [repository-management.md](repository-management.md) for:
+- How to detect nested repos
+- Proper project structure
+- Deployment workflow that prevents nesting
+- Fixing common mistakes
+
+**Quick check for nested repos**:
+```bash
+cd /Users/williammarceaujr./dev-sandbox
+find . -name ".git" -type d
+# Should only return: ./.git
+```
+
+If you see multiple `.git` directories, follow the [repository-management.md](repository-management.md) guide to fix it.
+
 ## Versioned Deployments
 
 See `docs/versioned-deployment.md` for the complete versioning guide.
