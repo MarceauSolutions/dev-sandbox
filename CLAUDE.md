@@ -101,6 +101,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Don't deploy yet" | Stay in dev-sandbox, iterate locally |
 | "Save session progress" | Update docs/session-history.md |
 | "Document this" / "Create workflow" | Create/update workflow or SOP |
+| "Roll back" | Remove premature deployments, show Coming Soon |
+| "Follow DOE" | Check if Directive exists before deploying |
+| "Perfect the [project]" | Focus on production-ready polish |
+| "Run multi-agent testing" | Launch specialized testing agents |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -108,11 +112,34 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
 ## Operating Principles
 
-1. **Check for existing tools first** - Look in `execution/` and `[project]/workflows/` before creating new
-2. **Build workflows as you work** - Document procedures while completing tasks
-3. **Self-anneal** - When errors occur: fix → update tool → update directive
-4. **Infer intelligently** - See `docs/inference-guidelines.md` for when to extend scope
-5. **Living documents** - Some docs evolve throughout sessions, others are stable references:
+1. **Follow DOE discipline** - Don't deploy frontend until execution layer is solid
+   - Layer 1 (Directive) must exist before Layer 3 (Execution)
+   - Deploy ONLY when all three layers are complete
+
+2. **Check for existing tools first** - Look in `execution/` and `[project]/workflows/` before creating new
+
+3. **Build workflows as you work** - Document procedures while completing tasks
+   - Create workflows in `[project]/workflows/` as tasks are completed
+   - Update directives with learnings after each task
+
+4. **Self-anneal** - When errors occur: fix → update tool → update directive
+   - Fix the immediate issue
+   - Update the execution script if needed
+   - Document the learning in the directive
+
+5. **Repository hygiene** - Never nest git repositories
+   - Weekly check: `find . -name ".git" -type d` should only show `./.git`
+   - Develop in `dev-sandbox/projects/` WITHOUT git init
+   - Deploy creates separate sibling repos automatically
+
+6. **Multi-agent testing** - Use specialized agents for comprehensive testing
+   - Launch when implementing complex features
+   - Each agent focuses on specific edge cases
+   - Consolidate findings before implementing fixes
+
+7. **Infer intelligently** - See `docs/inference-guidelines.md` for when to extend scope
+
+8. **Living documents** - Some docs evolve throughout sessions, others are stable references:
 
    **Living (update throughout sessions):**
    - `docs/session-history.md` - Add learnings as they happen
@@ -167,5 +194,323 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 ---
 
 **Model:** Use Opus-4.5 for all development work.
+
+**Principle:** Be pragmatic. Be reliable. Self-anneal.
+
+---
+
+## Standard Operating Procedures (SOPs)
+
+### SOP 1: New Project Initialization
+
+**When**: Starting a new AI assistant or automation project
+
+**Steps**:
+1. **Create directive**: `directives/[project-name].md`
+   - Define capabilities and SOPs
+   - Document edge cases and error handling
+   - Include tool usage patterns
+
+2. **Create project folder**: `dev-sandbox/projects/[project-name]/`
+   - **DO NOT** run `git init` inside this folder
+   - Create structure:
+     ```
+     projects/[project-name]/
+     ├── src/              # Python scripts
+     ├── workflows/        # Task procedures (markdown)
+     ├── VERSION           # e.g., "1.0.0-dev"
+     ├── CHANGELOG.md      # Version history
+     ├── SKILL.md          # Skill definition
+     └── README.md         # Project documentation
+     ```
+
+3. **Develop iteratively**:
+   - Write scripts in `src/`
+   - Test using `execution/` shared scripts
+   - Document workflows as you complete tasks
+   - Update directive with learnings
+
+4. **Commit to dev-sandbox**:
+   ```bash
+   cd /Users/williammarceaujr./dev-sandbox
+   git add projects/[project-name]/
+   git commit -m "feat: Initial [project-name] structure"
+   ```
+
+5. **Deploy when ready**:
+   ```bash
+   python deploy_to_skills.py --project [project-name] --version 1.0.0
+   ```
+
+**References**: `docs/deployment.md`, `docs/repository-management.md`
+
+---
+
+### SOP 2: Multi-Agent Testing
+
+**When**: Implementing complex features with multiple edge cases
+
+**Steps**:
+1. **Create test plan**: `[project]/testing/TEST-PLAN.md`
+   - Define test scenarios (3-4 per agent)
+   - Assign focus areas to each agent
+   - Set isolated workspaces
+
+2. **Create agent prompts**: `[project]/testing/AGENT-PROMPTS.txt`
+   - Copy-paste ready prompts for each agent
+   - Include workspace isolation instructions
+   - Specify expected deliverables
+
+3. **Launch agents** (in parallel):
+   - Open separate Claude instances
+   - Paste agent-specific prompts
+   - Let agents work independently
+
+4. **Consolidate findings**:
+   - Wait for all agents to complete
+   - Create `[project]/testing/consolidated-results/CONSOLIDATED-FINDINGS.md`
+   - Categorize: Critical, Important, Nice-to-Have
+   - Prioritize fixes
+
+5. **Implement fixes**:
+   - Address critical issues first
+   - Update workflows with solutions
+   - Deploy new version
+   - Update CHANGELOG
+
+**Example**: Email Analyzer v1.1.0 - 4 agents found 6 critical + 6 important issues in 225 minutes
+
+**References**: `email-analyzer/testing/TEST-PLAN.md`
+
+---
+
+### SOP 3: Version Control & Deployment
+
+**When**: Deploying a new version to production
+
+**Steps**:
+1. **Develop in dev-sandbox** (version X.Y.Z-dev in VERSION file)
+   - Make changes
+   - Test thoroughly
+   - Update workflows
+
+2. **Update version files**:
+   - `VERSION`: Change from `X.Y.Z-dev` to `X.Y.Z`
+   - `CHANGELOG.md`: Document all changes under `## [X.Y.Z] - YYYY-MM-DD`
+   - Include: Added, Changed, Fixed, Deprecated sections
+
+3. **Deploy with version**:
+   ```bash
+   python deploy_to_skills.py --project [name] --version X.Y.Z
+   ```
+   - Creates `/Users/williammarceaujr./[name]-prod/` with separate git repo
+   - Copies necessary files
+   - Commits and tags version
+
+4. **Bump to next dev version**:
+   - `VERSION`: Update to `X.Y+1.0-dev` (or `X+1.0.0-dev` for major)
+   - Commit to dev-sandbox
+
+5. **Verify deployment**:
+   ```bash
+   python deploy_to_skills.py --status [name]
+   # Should show: dev-sandbox (X.Y+1.0-dev) vs prod (X.Y.Z)
+   ```
+
+**Version strategy**:
+- **Major (X.0.0)**: Breaking changes, major features
+- **Minor (x.Y.0)**: New features, backwards compatible
+- **Patch (x.y.Z)**: Bug fixes only
+
+**References**: `docs/versioned-deployment.md`
+
+---
+
+### SOP 4: Repository Cleanup & Verification
+
+**When**: Weekly maintenance, or when adding new projects
+
+**Steps**:
+1. **Check for nested repos**:
+   ```bash
+   cd /Users/williammarceaujr./dev-sandbox
+   find . -name ".git" -type d
+   # Expected: Only ./.git
+   ```
+
+2. **If nested repos found**:
+   - Move to parent: `mv dev-sandbox/[nested-repo] /Users/williammarceaujr./[nested-repo]`
+   - Verify: Re-run find command
+   - Commit change: `git add -A && git commit -m "fix: Move nested repo to parent"`
+
+3. **Verify git status**:
+   ```bash
+   git status
+   # Should show clean working tree or expected changes
+   # Should NOT show submodule warnings
+   ```
+
+4. **Check deployment targets**:
+   ```bash
+   python deploy_to_skills.py --list
+   # Verify all prod repos are outside dev-sandbox
+   ```
+
+**If issues persist**: See `docs/repository-management.md` Section: "Common Mistakes and Fixes"
+
+**References**: `docs/repository-management.md`, `docs/REPO-QUICK-REFERENCE.md`
+
+---
+
+### SOP 5: Session Documentation
+
+**When**: At end of each significant session or when major learnings occur
+
+**Steps**:
+1. **Update session-history.md**:
+   ```markdown
+   ## YYYY-MM-DD: [Session Title]
+
+   **Context:** [What you were working on]
+
+   **Accomplished:**
+   - [Key achievement 1]
+   - [Key achievement 2]
+
+   **Key Learnings:**
+   1. [Learning with explanation]
+   2. [Pattern discovered]
+
+   **New Communication Patterns:**
+   - "[User phrase]" → [What Claude does]
+
+   **Files Created/Updated:**
+   - `path/to/file.ext` - [What changed]
+   ```
+
+2. **Update prompting-guide.md** (if new phrases discovered):
+   - Add to appropriate category
+   - Include context and expected action
+
+3. **Update CLAUDE.md Communication Patterns** (if recurring pattern):
+   - Add row to table
+   - Keep concise (3-5 words in each column)
+
+4. **Commit documentation**:
+   ```bash
+   git add docs/session-history.md docs/prompting-guide.md CLAUDE.md
+   git commit -m "docs: Session learnings from YYYY-MM-DD"
+   ```
+
+**References**: `docs/session-history.md`, `docs/prompting-guide.md`
+
+---
+
+### SOP 6: Workflow Creation
+
+**When**: Completing a repeatable task for the first time
+
+**Steps**:
+1. **While working**, note the steps you're taking
+
+2. **After completion**, create workflow file:
+   - Location: `[project]/workflows/[workflow-name].md`
+   - Structure:
+     ```markdown
+     # Workflow: [Name]
+
+     ## Overview
+     [What this workflow does]
+
+     ## Use Cases
+     - [Use case 1]
+     - [Use case 2]
+
+     ## Prerequisites
+     - [What must exist before starting]
+
+     ## Steps
+
+     ### 1. [Step Name]
+     **Objective**: [What this step achieves]
+     **Actions**: [What to do]
+     **Tools**: [Which tools to use]
+
+     ## Troubleshooting
+     [Common issues and solutions]
+
+     ## Success Criteria
+     - ✅ [Criterion 1]
+     - ✅ [Criterion 2]
+     ```
+
+3. **Test the workflow**:
+   - Have another agent (or yourself fresh) follow it
+   - Note any ambiguities
+   - Refine steps
+
+4. **Reference in directive**:
+   - Add to `directives/[project].md`
+   - Link to workflow for detailed steps
+
+**Example**: `email-analyzer/workflows/analyze-email-from-html.md`
+
+**References**: `docs/workflow-standard.md`
+
+---
+
+### SOP 7: DOE Architecture Rollback
+
+**When**: Premature deployment detected (deployed execution without directive)
+
+**Steps**:
+1. **Identify premature deployments**:
+   - Frontend deployed without backend
+   - Execution scripts without directive
+   - Features advertised but not implemented
+
+2. **Create "Coming Soon" page**:
+   - Replace premature content with inquiry form
+   - Collect email/SMS opt-ins (pre-checked)
+   - Show project preview/description
+   - Link to contact form
+
+3. **Remove premature files**:
+   ```bash
+   git rm [premature-file.html]
+   git commit -m "rollback: Remove premature [feature] deployment"
+   ```
+
+4. **Build directive first**:
+   - Create `directives/[project].md`
+   - Define capabilities, SOPs, edge cases
+   - Document tool usage patterns
+
+5. **Then build execution**:
+   - Create scripts in `[project]/src/`
+   - Test thoroughly
+   - Update directive with learnings
+
+6. **Finally deploy frontend** (when ready):
+   - All layers complete (Directive, Orchestration, Execution)
+   - Replace "Coming Soon" with real content
+
+**References**: `docs/session-history.md` (2026-01-09 entry)
+
+---
+
+## Quick Reference: When to Use Which SOP
+
+| Situation | Use SOP |
+|-----------|---------|
+| Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) |
+| Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) |
+| Ready to deploy to production | [SOP 3: Version Control & Deployment](#sop-3-version-control--deployment) |
+| Weekly maintenance / New project added | [SOP 4: Repository Cleanup & Verification](#sop-4-repository-cleanup--verification) |
+| End of significant session | [SOP 5: Session Documentation](#sop-5-session-documentation) |
+| Just completed a repeatable task | [SOP 6: Workflow Creation](#sop-6-workflow-creation) |
+| Deployed too early / No directive | [SOP 7: DOE Architecture Rollback](#sop-7-doe-architecture-rollback) |
+
+---
 
 **Principle:** Be pragmatic. Be reliable. Self-anneal.
