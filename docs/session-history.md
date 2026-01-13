@@ -4,7 +4,294 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
-## 2026-01-12: Documentation Process & MD-to-PDF Project
+## 2026-01-13: MCP Aggregator Platform Generalization
+
+**Context:** Discovered that MCP Aggregator was developed in parallel with rideshare, baking in 51 rideshare-specific assumptions that blocked non-rideshare services. Executed systematic discovery methodology and parallel agent refactoring.
+
+**Accomplished:**
+- Created systematic shortcoming discovery methodology (documented in plan file)
+- Analyzed 5 core files: router.py, registry.py, billing.py, schema.sql, rideshare_mcp.py
+- Found 51 rideshare-specific assumptions blocking non-rideshare services
+- Deployed 4 parallel refactoring agents to fix all shortcomings
+- All agents completed successfully with comprehensive changes
+- Platform now supports 6 connectivity types, 5 pricing models, 6 scoring profiles
+- Updated CHANGELOG.md with v1.1.0-dev documentation
+- Verified repository structure (no nested .git repos)
+- Committed all changes (48 files, 16,960 insertions)
+
+**Key Learnings:**
+
+1. **Shortcoming Discovery Methodology**
+   - Define what current implementation assumes (rideshare characteristics)
+   - Define what OTHER services need (HVAC, flights, hotels, etc.)
+   - Analyze each file for hardcoded vs configurable values
+   - Calculate impact scores for non-rideshare services
+   - Prioritize fixes by blocking severity
+
+2. **Platform Core Was Dead Code**
+   - `rideshare_mcp.py` bypassed platform core entirely
+   - Direct HTTP calls instead of using router.py
+   - No health tracking, no billing, no scoring
+   - **Fix**: Created `aggregator_mcp.py` that uses platform core
+
+3. **Parallel Agent Deployment**
+   - Can deploy 4 agents in parallel using Task tool with subagent_type
+   - Each agent gets isolated workspace (agent1/, agent2/, etc.)
+   - Agents complete independently, consolidate findings after
+   - Much faster than sequential refactoring
+
+4. **Non-Rideshare Service Requirements**
+   - Flight search: 3-5s latency (not 100-500ms), $0.10-0.25/call
+   - HVAC services: 24-48hr response, email-based, per-RFQ billing
+   - Hotels: Commission-based (10-15% of booking value)
+   - Payment processors: Webhook-based (inbound events)
+   - GraphQL APIs: Query-based (different request structure)
+
+**New Communication Patterns:**
+- "Determine shortcomings" → Create discovery methodology, analyze systematically
+- "Run parallel agents" → Use Task tool with 4 subagents in single message
+- "Platform not working for X" → Check if assumptions from parallel development
+
+**Refactoring Changes:**
+
+**Agent 1 - Platform Core Wiring:**
+- Created `mcp-server/aggregator_mcp.py` - New MCP using platform core
+- Fixed dead code issue - router.py, registry.py, billing.py now actually used
+- Added configurable timeout per-MCP (supports hours for async services)
+
+**Agent 2 - Connectivity Abstraction:**
+- Added `ConnectivityType` enum: HTTP, EMAIL, OAUTH, WEBHOOK, GRAPHQL, ASYNC
+- Made `endpoint_url` optional (not required for email-based services)
+- Added `email_address` and `webhook_path` fields to MCP dataclass
+- Validation now connectivity-type-specific
+
+**Agent 3 - Flexible Billing:**
+- Added `PricingModel` enum: PER_REQUEST, SUBSCRIPTION, COMMISSION, TIERED, HYBRID
+- Added `TierConfig` dataclass for volume-based pricing
+- Added fee calculation methods for all pricing models
+- Added `subscriptions` and `pricing_tiers` tables to schema
+
+**Agent 4 - Configurable Scoring:**
+- Added `ScoringProfile` dataclass with configurable thresholds
+- Added 6 scoring profiles: rideshare, travel, food_delivery, async, e_commerce, default
+- Latency/cost scoring now uses category-specific thresholds
+- Scoring weights configurable per-category
+
+**Results:**
+- Flight search (3s latency) now scores 100/100 instead of 30/100
+- HVAC services (24hr response) now score fairly
+- Email-based services can now register
+- Commission-based billing now supported
+
+**Files Created:**
+- `projects/mcp-aggregator/mcp-server/aggregator_mcp.py` - New MCP server
+- `projects/mcp-aggregator/SHORTCOMING-DISCOVERY-REPORT.md` - Complete analysis
+- `projects/mcp-aggregator/agent1-rest-api/` - REST API workspace
+- `projects/mcp-aggregator/agent2-accuracy-testing/` - Accuracy testing workspace
+- `projects/mcp-aggregator/agent3-platform-core/` - Platform core refactoring
+
+**Files Modified:**
+- `projects/mcp-aggregator/agent3-platform-core/workspace/router.py` - ScoringProfile
+- `projects/mcp-aggregator/agent3-platform-core/workspace/registry.py` - ConnectivityType
+- `projects/mcp-aggregator/agent3-platform-core/workspace/billing.py` - PricingModel
+- `projects/mcp-aggregator/agent3-platform-core/workspace/schema.sql` - New tables
+- `projects/mcp-aggregator/CHANGELOG.md` - v1.1.0-dev documentation
+
+**Next Steps:**
+- Integrate refactored platform core back into main mcp-aggregator/src/
+- Test with HVAC service registration (next project)
+- Deploy aggregator_mcp.py to Claude Desktop
+- Create integration tests for all connectivity types
+
+---
+
+## 2026-01-12 (Part 3): Architecture Conflict Resolution - Phase 1 Complete
+
+**Context:** Comprehensive SOP audit revealed 5 major architectural conflicts. Evaluated 3+ solution options for each conflict, chose optimal solutions, and implemented Phase 1 (Documentation Updates).
+
+**Accomplished:**
+- Resolved all architectural conflicts with Two-Tier system
+- Created comprehensive architecture guide (1000+ lines)
+- Updated all core documentation for consistency
+- Verified no remaining conflicts across all SOPs
+
+**Key Decisions:**
+
+1. **Code Location**: Hybrid Architecture (Option C)
+   - Shared utilities (2+ projects) → `execution/`
+   - Project-specific code → `projects/[name]/src/`
+   - Extract to `execution/` only when 2+ projects use code
+
+2. **DOE Application**: Two-Tier Architecture (Option C)
+   - Tier 1 (Shared): Strict DOE in `execution/`
+   - Tier 2 (Projects): Flexible architecture in `projects/[name]/src/`
+
+3. **Skills Deployment**: -prod repos (Option B)
+   - Production: `/Users/williammarceaujr./[name]-prod/` (separate repos)
+   - Clean git workflow, can push to GitHub
+
+4. **Version Management**: Comprehensive (Option C)
+   - VERSION file + CHANGELOG.md + Git tags (three-way sync)
+
+5. **Testing Artifacts**: Separate by Purpose (Option B)
+   - `.tmp/` for temporary files
+   - `testing/` for multi-agent tests
+   - `demos/` for client outputs
+
+**New Documentation:**
+- `docs/architecture-guide.md` (1000+ lines) - Complete Two-Tier Architecture reference
+  - Decision trees (where to put code, when to extract, how to deploy)
+  - Code organization examples
+  - Deployment patterns for both tiers
+  - Migration guide from old architecture
+  - Troubleshooting Q&A
+
+**Files Updated:**
+- `CLAUDE.md` - Architecture section replaced with Two-Tier system
+  - Documentation Map updated with architecture-guide.md
+  - Development Pipeline clarified (execution/ vs projects/src/)
+  - "Where to Put Things" table expanded
+  - SOP 1 updated with code organization guidance
+- `docs/testing-strategy.md` - Integration with Two-Tier Architecture
+  - Testing Environment Setup section updated
+  - Architecture notes added
+- `docs/COMPREHENSIVE-CONFLICT-AUDIT.md` - Status updated (Phase 1 complete)
+- `docs/ARCHITECTURE-CONFLICT-RESOLUTION.md` - Status updated (Resolved)
+- `docs/SOP-VERIFICATION.md` - Phase 1 implementation status added
+
+**Architecture Resolution:**
+
+**Before** (Conflicting):
+```
+execution/*.py - Mixed shared and project-specific code
+projects/[name]/src/ - Unclear when to use
+Confusion about source of truth
+```
+
+**After** (Clear):
+```
+Tier 1: Shared Utilities (Strict DOE)
+  execution/*.py - Shared across 2+ projects
+
+Tier 2: Projects (Flexible Architecture)
+  projects/[name]/src/*.py - Project-specific code
+```
+
+**Decision Rule**: Default to `projects/[name]/src/`, extract to `execution/` when 2+ projects use it.
+
+**Verification:**
+- ✅ All documents reference architecture-guide.md
+- ✅ Code organization rules clear across all SOPs
+- ✅ Testing strategy aligned with Two-Tier Architecture
+- ✅ No conflicting guidance remaining
+
+**Critical Addition - Deployment Timing**:
+
+User identified missing guidance: "When in the development, testing, and deployment process do we deploy to skills?"
+
+**Added explicit deployment timing**:
+- Updated `docs/architecture-guide.md` - Added "When to Deploy to Skills" section
+  - 6-step pipeline diagram showing deployment at Step 5
+  - Prerequisites checklist before deployment
+  - Timeline example (Day 1-10 showing deployment on Day 10)
+- Updated `CLAUDE.md` - Development Pipeline step 5 with prerequisites
+  - "NEVER deploy before Step 3 (testing) is complete!"
+  - Post-deployment verification step added (Step 6)
+- Updated `docs/testing-strategy.md` - Complete 6-step pipeline
+  - CRITICAL TIMING section
+  - Location rules for each step (dev-sandbox vs -prod)
+  - Example timeline (Monday-Saturday showing Friday deployment)
+  - Common mistake vs correct timing
+
+**Key Rule Established**: Deploy to skills ONLY after ALL testing complete (Manual → Multi-Agent → Pre-Deployment → THEN Deploy)
+
+**Critical Clarification - Post-Deployment Testing**:
+
+User asked: "How does testing only in dev-sandbox (DOE method files) affect deployment since we deploy to Claude skills method files? Is it worth testing again after deployment?"
+
+**Answer: YES - Post-deployment testing is CRITICAL, not optional**
+
+**Why**:
+- Dev-sandbox structure (`projects/[name]/src/`) ≠ Production structure (`[name]-prod/execution/`)
+- Different directory paths can cause import errors
+- Different working directories can break relative paths
+- Missing dependencies not caught until production
+- Deployment process itself can introduce bugs
+
+**What Was Updated**:
+- Changed Scenario 4 from "RECOMMENDED" to "ALWAYS REQUIRED"
+- Updated CLAUDE.md Development Pipeline (Step 6 required)
+- Updated testing-strategy.md Scenario 4 with comprehensive checklists:
+  - Deployment Structure Verification (files, paths, imports)
+  - Functional Testing (same tests as pre-deployment)
+  - Troubleshooting guide for common issues
+- Added "Why Post-Deployment Testing is Critical" section to architecture-guide.md
+  - Visual comparison of dev vs prod structure
+  - 5 things that can go wrong
+  - Real example showing import error
+
+**New Testing Rule**:
+```
+Step 4: Pre-Deployment Verification - in dev-sandbox (tests CODE)
+Step 5: DEPLOY to skills
+Step 6: Post-Deployment Verification - in -prod (tests DEPLOYMENT + STRUCTURE)
+```
+
+Both steps 4 and 6 are ALWAYS REQUIRED.
+
+**Next Phase**: Phase 2 (Code Audit & Reorganization) - Audit `execution/` folder to separate shared vs project-specific scripts
+
+---
+
+## 2026-01-12 (Part 2): Multi-Agent Testing Failure & Testing Strategy
+
+**Context:** MD-to-PDF multi-agent testing failed due to premature testing (before implementation stable and environment resolved)
+
+**Accomplished:**
+- Root caused testing failure
+- Created comprehensive testing strategy
+- Updated all SOPs with testing prerequisites
+- Documented lessons learned
+
+**Key Learning:** **Test too early = agents crash**
+
+Prerequisites for multi-agent testing:
+1. ✅ Manual testing complete (Scenario 1)
+2. ✅ Core implementation stable
+3. ✅ Environment issues resolved (library paths, dependencies)
+4. ✅ Basic workflows documented
+5. ✅ Basic functionality verified
+
+**New Documentation:**
+- `docs/testing-strategy.md` (400+ lines) - Single source of truth for all testing
+  - Scenario 1: Manual Testing (ALWAYS required)
+  - Scenario 2: Multi-Agent Testing (OPTIONAL, after Scenario 1)
+  - Scenario 3: Pre-Deployment Verification (ALWAYS required)
+  - Scenario 4: Post-Deployment Verification (RECOMMENDED)
+  - Decision trees for when to use each
+  - Prerequisites checklists
+- `projects/md-to-pdf/testing/TESTING-ISSUES-RESOLVED.md` - Root cause analysis
+
+**Files Updated:**
+- `CLAUDE.md` - Added TEST step to Development Pipeline (between DEVELOP and DEPLOY)
+  - SOP 2 updated with CRITICAL PREREQUISITES
+  - SOP 3 updated with testing prerequisites
+  - Quick Reference table updated
+- `docs/development-to-deployment.md` - Testing references added
+- `docs/SOP-VERIFICATION.md` - Verified all SOPs consistent
+
+**Testing Pipeline Established:**
+```
+Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy → Post-Deployment
+(ALWAYS)         (OPTIONAL)            (ALWAYS)         (Done)   (RECOMMENDED)
+```
+
+**Success Example**: email-analyzer (tested after stable implementation)
+**Failure Example**: md-to-pdf (tested too early, agents crashed)
+
+---
+
+## 2026-01-12 (Part 1): Documentation Process & MD-to-PDF Project
 
 **Context:** Documenting the complete development-to-deployment pipeline, creating comprehensive reference guides
 

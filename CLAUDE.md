@@ -2,26 +2,56 @@
 
 > Read this file at the start of every session. It contains core operating methods and pointers to detailed documentation.
 
-## Architecture: DOE (Directive-Orchestration-Execution)
+## Architecture: Two-Tier System
+
+### Tier 1: Shared Utilities (Strict DOE)
+
+**For code used by multiple projects:**
 
 ```
-Layer 1: DIRECTIVE (directives/*.md)     → What to do
-Layer 2: ORCHESTRATION (You/Claude)      → Decision making
-Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
+Layer 1: DIRECTIVE (directives/shared_utilities.md)
+Layer 2: ORCHESTRATION (Claude)
+Layer 3: EXECUTION (execution/*.py) ← Shared across multiple projects
 ```
 
-**Your role:** Read directives, call execution scripts in order, handle errors, update docs with learnings.
+### Tier 2: Projects (Flexible Architecture)
 
-**Why this works:** Push complexity into deterministic code. You focus on decisions, not implementation.
+**For project-specific code:**
+
+```
+Layer 1: DIRECTIVE (directives/[project].md)
+Layer 2: ORCHESTRATION (Claude or standalone)
+Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
+```
+
+### Decision Rules: Where to Put Code
+
+**Put code in `execution/` when:**
+- Used by 2+ projects
+- Stable, shared API
+- General-purpose utility
+
+**Put code in `projects/[name]/src/` when:**
+- Used by 1 project only
+- Project-specific logic
+- Frequently changing during development
+
+**Your role:** Read directives, orchestrate execution (shared utilities) or implementation (project code), handle errors, update docs with learnings.
+
+**Why this works:** Shared utilities follow strict DOE for stability. Projects have flexibility for rapid iteration.
+
+**See:** [docs/architecture-guide.md](docs/architecture-guide.md) for comprehensive architecture explanation and decision trees.
 
 ## Documentation Map
 
 | Need | Location |
 |------|----------|
 | **How we work** | This file (CLAUDE.md) |
+| **Architecture & code organization** | `docs/architecture-guide.md` ⭐ |
 | **How to prompt me** | `docs/prompting-guide.md` |
 | **Inference guidelines** | `docs/inference-guidelines.md` |
 | **Dev-to-deployment process** | `docs/development-to-deployment.md` ⭐ |
+| **Testing strategy** | `docs/testing-strategy.md` ⭐ |
 | **Deployment pipeline** | `docs/deployment.md` |
 | **Repository management** | `docs/repository-management.md` ⭐ |
 | **Repository quick ref** | `docs/REPO-QUICK-REFERENCE.md` |
@@ -41,24 +71,44 @@ Layer 3: EXECUTION (execution/*.py)      → Deterministic scripts
    └── Create/update [project].md with capability SOPs
    └── Define what the project does
 
-2. DEVELOP in dev-sandbox/projects/[project]/
+2. DEVELOP in dev-sandbox
    └── NO git init inside projects! (see repository-management.md)
-   └── Scripts in: [project]/src/
+   └── Project-specific code: projects/[project]/src/
+   └── Shared utilities (2+ projects): execution/
    └── Workflows in: [project]/workflows/
-   └── Test with: execution/
+   └── See: docs/architecture-guide.md for where to put code
    └── Commit to dev-sandbox repo (parent tracks all)
 
-3. ORCHESTRATE (You/Claude)
+3. TEST in dev-sandbox (BEFORE deployment!)
+   └── Manual testing (ALWAYS required)
+   └── Multi-agent testing (OPTIONAL for complex projects)
+   └── Pre-deployment verification
+   └── See: docs/testing-strategy.md for complete pipeline
+
+4. ORCHESTRATE (You/Claude)
    └── Read directives
    └── Call execution scripts
    └── Build workflows AS you complete tasks
    └── Update directive with learnings
 
-4. DEPLOY when ready
+5. DEPLOY when ALL testing complete (Step 3 finished)
+   └── Prerequisites: ✅ Manual testing, ✅ Multi-agent (if complex), ✅ Pre-deployment verification
    └── python deploy_to_skills.py --project [name] --version X.Y.Z
    └── Creates separate repo: /Users/williammarceaujr./[name]-prod/
    └── NOT nested in dev-sandbox (see repository-management.md)
+   └── NEVER deploy before Step 3 (testing) is complete!
+
+6. POST-DEPLOYMENT VERIFICATION (ALWAYS REQUIRED)
+   └── Test in production repo to verify deployment succeeded
+   └── Verify scripts run identically in -prod structure
+   └── Test imports and dependencies in production environment
+   └── See: docs/testing-strategy.md Scenario 4
 ```
+
+**CRITICAL**:
+- Deployment happens AFTER dev-sandbox testing (Step 5), not during development (Step 2)
+- Post-deployment verification (Step 6) is REQUIRED to catch deployment/structure issues
+- Production structure is different from dev-sandbox (execution/ vs projects/src/)
 
 **Repository structure**:
 - **dev-sandbox/**: Development workspace (ONE git repo)
@@ -106,6 +156,8 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Follow DOE" | Check if Directive exists before deploying |
 | "Perfect the [project]" | Focus on production-ready polish |
 | "Run multi-agent testing" | Launch specialized testing agents |
+| "Run parallel agents" | Deploy multiple agents simultaneously via Task tool |
+| "Determine shortcomings" | Create discovery methodology, analyze systematically |
 | "Save this for the client" | Move output to demos/client-[name]/$(date)/ |
 | "This is a good example" | Move to samples/ for documentation reference |
 | "Clean up test files" | Delete everything in .tmp/ |
@@ -183,12 +235,14 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | What | Where | Git? |
 |------|-------|------|
 | **Core methods & patterns** | `CLAUDE.md` (this file) | ✅ dev-sandbox |
+| **Architecture decisions** | `docs/architecture-guide.md` | ✅ dev-sandbox |
 | **Detailed reference docs** | `docs/` | ✅ dev-sandbox |
 | **Capability SOPs** | `directives/` | ✅ dev-sandbox |
 | **Task procedures** | `[project]/workflows/` | ✅ dev-sandbox |
 | **Session learnings** | `docs/session-history.md` | ✅ dev-sandbox |
 | **Deployment config** | `deploy_to_skills.py` | ✅ dev-sandbox |
-| **Executable scripts** | `execution/` | ✅ dev-sandbox |
+| **Shared utilities (2+ projects)** | `execution/` | ✅ dev-sandbox |
+| **Project-specific code** | `projects/[name]/src/` | ✅ dev-sandbox (NO separate git!) |
 | **Project development** | `projects/[name]/` | ✅ dev-sandbox (NO separate git!) |
 | **Client demo outputs** | `projects/[name]/demos/client-[name]/` | ✅ Optional (check sensitivity) |
 | **Reference examples** | `projects/[name]/samples/` | ✅ dev-sandbox |
@@ -196,7 +250,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **Standalone projects** | `/Users/williammarceaujr./[name]/` | ✅ Separate repo |
 | **Temporary/test files** | `.tmp/` | ❌ NOT tracked (ephemeral workspace) |
 
-**Critical**: Never initialize git inside `projects/` - the parent dev-sandbox repo tracks everything. See `docs/repository-management.md`.
+**Critical**:
+- Never initialize git inside `projects/` - the parent dev-sandbox repo tracks everything
+- Code organization: `execution/` for shared (2+ projects), `projects/[name]/src/` for project-specific
+- See `docs/repository-management.md` for git structure, `docs/architecture-guide.md` for code organization
 
 **Temporary files policy**: The `.tmp/` directory is for ephemeral work only:
 - Testing and experimentation files
@@ -239,10 +296,12 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
      ```
 
 3. **Develop iteratively**:
-   - Write scripts in `src/`
-   - Test using `execution/` shared scripts
+   - Write project-specific scripts in `src/`
+   - Use shared utilities from `execution/` (if needed)
+   - Extract to `execution/` only when 2+ projects use same code
    - Document workflows as you complete tasks
    - Update directive with learnings
+   - See: `docs/architecture-guide.md` for code organization decisions
 
 4. **Commit to dev-sandbox**:
    ```bash
@@ -262,50 +321,115 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
 ### SOP 2: Multi-Agent Testing
 
-**When**: Implementing complex features with multiple edge cases
+**When**: After manual testing complete AND implementing complex features with multiple edge cases
+
+**Complete Testing Guide**: See `docs/testing-strategy.md` for full pipeline
+
+**This SOP is Scenario 2** in the testing pipeline:
+```
+Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
+(Scenario 1)     (Scenario 2 - YOU)    (Scenario 3)
+```
+
+**CRITICAL PREREQUISITES** (verify ALL before creating test plan):
+1. ✅ **Manual testing complete** - Scenario 1 from testing-strategy.md passed
+2. ✅ **Core implementation stable** - All main scripts working in `src/`
+3. ✅ **Basic functionality verified** - Tool works for simple happy-path cases
+4. ✅ **Environment dependencies resolved** - All libraries installed and accessible
+5. ✅ **Workflows documented** - At least 1-2 workflows tested manually
+
+**DO NOT start multi-agent testing if**:
+- Manual testing (Scenario 1) hasn't been completed
+- Implementation is incomplete
+- Scripts haven't been manually tested first
+- Environment issues exist (library paths, dependencies, etc.)
+- You haven't tested it yourself first
 
 **Steps**:
-1. **Create test plan**: `[project]/testing/TEST-PLAN.md`
-   - Define test scenarios (3-4 per agent)
-   - Assign focus areas to each agent
-   - Set isolated workspaces
+1. **Reference working example first**: `email-analyzer/testing/`
+   - Use as template for directory structure
+   - Copy AGENT-PROMPTS.txt format
+   - Use **absolute paths** in prompts (not relative)
+   - Include clear "HOW TO RUN" sections with exact commands
 
-2. **Create agent prompts**: `[project]/testing/AGENT-PROMPTS.txt`
-   - Copy-paste ready prompts for each agent
-   - Include workspace isolation instructions
-   - Specify expected deliverables
+2. **Create test infrastructure**:
+   - `[project]/testing/TEST-PLAN.md` - Define test scenarios (3-4 per agent)
+   - `[project]/testing/AGENT-PROMPTS.txt` - Copy-paste ready prompts
+   - `[project]/testing/agent1/` through `agent4/` - Empty workspace directories
+   - `[project]/testing/consolidated-results/` - Results folder
+   - `[project]/testing/START-HERE.md` - Quick launch guide
 
-3. **Launch agents** (in parallel):
+3. **Set up workspace structure**:
+   ```
+   projects/[project]/testing/
+   ├── TEST-PLAN.md
+   ├── AGENT-PROMPTS.txt
+   ├── START-HERE.md
+   ├── agent1/              ← Absolute paths in prompts
+   ├── agent2/
+   ├── agent3/
+   ├── agent4/
+   └── consolidated-results/
+   ```
+
+4. **Write agent prompts with**:
+   - **Absolute paths**: `/Users/williammarceaujr./dev-sandbox/projects/[project]/testing/agent1/`
+   - **Exact commands**: Full paths to wrapper scripts or executables
+   - **Clear examples**: Show exact command with expected output
+   - **Workspace isolation**: "CRITICAL: I will ONLY work in my workspace"
+
+5. **Launch agents** (in parallel):
    - Open separate Claude instances
    - Paste agent-specific prompts
    - Let agents work independently
 
-4. **Consolidate findings**:
+6. **Consolidate findings**:
    - Wait for all agents to complete
    - Create `[project]/testing/consolidated-results/CONSOLIDATED-FINDINGS.md`
    - Categorize: Critical, Important, Nice-to-Have
    - Prioritize fixes
 
-5. **Implement fixes**:
+7. **Implement fixes**:
    - Address critical issues first
    - Update workflows with solutions
    - Deploy new version
    - Update CHANGELOG
 
-**Example**: Email Analyzer v1.1.0 - 4 agents found 6 critical + 6 important issues in 225 minutes
+**Troubleshooting Template**: If agents fail, create `TESTING-ISSUES-RESOLVED.md`:
+- Document root causes
+- List all fixes applied
+- Verify with test runs
+- Reference: `md-to-pdf/testing/TESTING-ISSUES-RESOLVED.md`
 
-**References**: `email-analyzer/testing/TEST-PLAN.md`
+**Successful Example**: `email-analyzer/testing/` - 4 agents found 6 critical + 6 important issues in 225 minutes
+
+**Failed Example (lessons learned)**: `md-to-pdf/testing/TESTING-ISSUES-RESOLVED.md`
+- Used relative paths → agents confused about workspace
+- Missing library path wrapper → agents crashed on conversion
+- Fixed with absolute paths + wrapper script
+
+**References**: `email-analyzer/testing/TEST-PLAN.md`, `md-to-pdf/testing/TESTING-ISSUES-RESOLVED.md`
 
 ---
 
 ### SOP 3: Version Control & Deployment
 
-**When**: Deploying a new version to production
+**When**: Deploying a new version to production (AFTER testing complete)
+
+**CRITICAL PREREQUISITES** (verify BEFORE deploying):
+1. ✅ **Manual testing complete** - Scenario 1 from testing-strategy.md
+2. ✅ **Multi-agent testing complete** (if applicable) - Scenario 2
+3. ✅ **Pre-deployment verification passed** - Scenario 3 from testing-strategy.md
+4. ✅ **All critical issues resolved**
+5. ✅ **Documentation updated**
+
+**Complete Testing Guide**: See `docs/testing-strategy.md`
 
 **Steps**:
-1. **Develop in dev-sandbox** (version X.Y.Z-dev in VERSION file)
+1. **Develop and test in dev-sandbox** (version X.Y.Z-dev in VERSION file)
    - Make changes
-   - Test thoroughly
+   - Test thoroughly (see testing-strategy.md)
+   - Fix all critical issues
    - Update workflows
 
 2. **Update version files**:
@@ -654,18 +778,285 @@ open projects/interview-prep/demos/client-acme/latest/acme-demo.pptx
 
 ---
 
+### SOP 9: Multi-Agent Architecture Exploration
+
+**When**: Before starting implementation of a new project with multiple possible approaches
+
+**Purpose**: Research and evaluate 3-4 different implementation strategies in parallel to choose the optimal approach BEFORE writing code
+
+**Key Distinction**:
+- **SOP 9 (Exploration)**: BEFORE implementation - "Which approach should we use?"
+- **SOP 2 (Testing)**: AFTER implementation - "Does our implementation handle edge cases?"
+
+**Directory Structure**:
+```
+projects/[project-name]/
+├── exploration/                    # PRE-implementation research
+│   ├── EXPLORATION-PLAN.md         # Research questions for each agent
+│   ├── AGENT-PROMPTS.txt           # Copy-paste prompts for 4 agents
+│   ├── agent1-[approach-name]/
+│   │   └── FINDINGS.md
+│   ├── agent2-[approach-name]/
+│   │   └── FINDINGS.md
+│   ├── agent3-[approach-name]/
+│   │   └── FINDINGS.md
+│   ├── agent4-[approach-name]/
+│   │   └── FINDINGS.md
+│   └── consolidated-results/
+│       ├── COMPARISON-MATRIX.md    # Side-by-side comparison
+│       └── RECOMMENDATION.md        # Chosen approach + rationale
+│
+├── directives/                     # Created AFTER choosing approach
+└── src/                            # Implementation starts AFTER exploration
+```
+
+**Steps**:
+
+**1. Identify Multiple Approaches**
+
+Define 3-4 possible ways to build the project:
+
+Example (Uber/Lyft Price Comparison):
+- Approach 1: Official APIs
+- Approach 2: Web Scraping
+- Approach 3: Third-Party Aggregator APIs
+- Approach 4: Mobile App Integration
+
+**2. Define Evaluation Criteria** (`exploration/EXPLORATION-PLAN.md`):
+
+```markdown
+## Evaluation Criteria
+- **Feasibility**: Can this actually be built?
+- **Legal**: Does this violate Terms of Service or laws?
+- **Cost**: What are the ongoing API/service costs?
+- **Reliability**: How often will this break?
+- **Maintenance**: How much ongoing work is required?
+- **User Experience**: How fast/accurate are the results?
+- **Scalability**: Can this handle growth?
+
+## Scoring System
+- 5 stars: Excellent
+- 4 stars: Good
+- 3 stars: Acceptable
+- 2 stars: Poor
+- 1 star: Unusable
+```
+
+**3. Create Agent Prompts** (`exploration/AGENT-PROMPTS.txt`):
+
+```
+==================================================
+AGENT 1: [APPROACH NAME] RESEARCH
+==================================================
+
+I'm Agent 1 in a multi-agent EXPLORATION effort for [Project Name].
+
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/[project]/exploration/agent1-[approach]/
+
+MY MISSION: Research [Approach 1 Name]
+
+RESEARCH QUESTIONS:
+1. [Specific question about feasibility]
+2. [Specific question about cost]
+3. [Specific question about legal compliance]
+4. [Specific question about reliability]
+5. [Specific question about maintenance]
+
+DELIVERABLE: Create FINDINGS.md with:
+- **Summary** (feasible? yes/no)
+- **Technical Details** (how it works)
+- **Costs** (setup, ongoing, per-use)
+- **Pros** (3-5 advantages)
+- **Cons** (3-5 disadvantages)
+- **Risks** (legal, technical, business)
+- **Code Example** (if feasible - proof of concept)
+- **RECOMMENDATION** (1-5 stars with rationale)
+
+Use web search, documentation review, technical analysis, and proof-of-concept code.
+
+DO NOT implement the full solution - only research and create small proof-of-concept if helpful.
+```
+
+Create similar prompts for Agents 2, 3, 4 (different approaches).
+
+**4. Launch 4 Agents in Parallel**:
+- Open 4 separate Claude instances (browser tabs or windows)
+- Copy-paste each agent prompt into a separate instance
+- Let agents research independently (1-2 hours each)
+- Agents should use web search, read documentation, write proof-of-concept code
+
+**5. Consolidate Findings** (`exploration/consolidated-results/COMPARISON-MATRIX.md`):
+
+```markdown
+# Approach Comparison Matrix
+
+| Criterion | Approach 1 | Approach 2 | Approach 3 | Approach 4 |
+|-----------|------------|------------|------------|------------|
+| **Feasibility** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Legal** | ✅ Allowed | ❌ Violation | ✅ Allowed | ⚠️ Gray area |
+| **Cost** | $0.10/call | Free | $50/mo | Free |
+| **Reliability** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **Maintenance** | ⭐⭐⭐⭐⭐ Low | ⭐⭐ High | ⭐⭐⭐⭐ Low | ⭐⭐⭐ Med |
+| **Speed** | <1s | 3-5s | <2s | 2-3s |
+| **UX** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **TOTAL SCORE** | 23/25 | 9/25 | 20/25 | 15/25 |
+
+## Key Findings
+
+**Approach 1** (Highest Score):
+- Pros: [List from agent findings]
+- Cons: [List from agent findings]
+- Risk: [Main risk identified]
+
+**Approach 2** (Lowest Score):
+- Fatal Flaw: [Why this won't work]
+
+[etc...]
+```
+
+**6. Make Recommendation** (`exploration/consolidated-results/RECOMMENDATION.md`):
+
+```markdown
+# Recommended Approach: [Chosen Approach]
+
+## Decision
+Use **[Approach Name]** for the following reasons:
+
+**Pros**:
+- ✅ [Key advantage 1]
+- ✅ [Key advantage 2]
+- ✅ [Key advantage 3]
+
+**Cons**:
+- ❌ [Known limitation 1]
+- ❌ [Known limitation 2]
+
+**Cost Analysis**:
+- [Detailed cost breakdown]
+- [ROI or sustainability plan]
+
+**Risk Mitigation**:
+- [How we'll handle main risk 1]
+- [How we'll handle main risk 2]
+
+**Alternative Considered**: [Second best approach]
+- Why not chosen: [Specific reason]
+- When we'd reconsider: [Conditions that would change decision]
+
+## Next Steps
+1. [First implementation task]
+2. [Second implementation task]
+3. Create directive: `directives/[project].md`
+4. Implement using SOP 1
+
+## Architecture Decision
+**Tier 2 (Project-Specific)**:
+- `projects/[name]/src/[main-script].py`
+- `projects/[name]/src/[helper].py`
+
+**Shared Utilities** (if needed):
+- `execution/[utility].py` (if other projects use it)
+```
+
+**7. Proceed to Implementation** (SOP 1):
+- Now implement the CHOSEN approach
+- Create directive based on recommendation
+- Build with confidence (research already done)
+- Skip approaches that were ruled out
+
+**When to Use**:
+
+✅ **Use SOP 9 when**:
+- Multiple valid approaches exist (3+ ways to solve it)
+- Significant cost, legal, or technical unknowns
+- High stakes (don't want to rebuild from scratch)
+- New technology domain (unfamiliar territory)
+- Examples: API vs Scraping vs Third-party, SQL vs NoSQL, Cloud provider selection
+
+❌ **Skip SOP 9 when**:
+- Obvious approach (only one way to do it)
+- Low stakes (quick experiment, easy to pivot)
+- Familiar domain (you know the best approach already)
+- Simple project with clear requirements
+
+**Benefits**:
+
+1. **Avoid Costly Mistakes**: Don't spend 2 weeks implementing wrong approach
+2. **Evidence-Based Decisions**: Compare approaches with data, not guessing
+3. **Uncover Hidden Issues Early**: Discover ToS violations, API limits, costs BEFORE coding
+4. **Parallel Research = Faster**: 4 agents in parallel (1-2 hours) vs sequential (4-8 hours)
+5. **Documentation for Future**: Explains WHY you chose this approach for future reference
+
+**Integration with Development Pipeline**:
+
+```
+0. EXPLORE (SOP 9) ← NEW! For complex projects
+   └── Multi-agent architecture exploration
+   └── Choose best approach
+
+1. DESIGN (Directive)
+   └── Based on chosen approach
+
+2. DEVELOP (SOP 1)
+   └── Implement chosen approach
+
+3. TEST (SOP 2)
+   └── Test implementation for edge cases
+
+4. DEPLOY (SOP 3)
+
+5. VERIFY (Scenario 4)
+```
+
+**Example Timeline**:
+```
+Day 1-2: Architecture Exploration (SOP 9) - 4 agents research in parallel
+Day 3: Consolidate findings, choose approach
+Day 4: Create directive based on chosen approach
+Day 5-9: Implement (SOP 1)
+Day 10-12: Multi-Agent Testing (SOP 2) - Test implementation
+Day 13-14: Deploy (SOP 3)
+```
+
+**Compared to Without SOP 9**:
+```
+Day 1: Pick approach (guess)
+Day 2-7: Implement wrong approach
+Day 8: Discover it violates ToS / too expensive / doesn't work
+Day 9: Start over with different approach
+Day 10-15: Implement correct approach
+Day 16-18: Testing
+Day 19-20: Deploy
+
+Net savings with SOP 9: 5-7 days
+```
+
+**References**:
+- See `docs/testing-strategy.md` for distinction between exploration (SOP 9) and testing (SOP 2)
+- See `email-analyzer/testing/` as template for multi-agent setup (similar structure)
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
-| Situation | Use SOP |
-|-----------|---------|
-| Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) |
-| Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) |
-| Ready to deploy to production | [SOP 3: Version Control & Deployment](#sop-3-version-control--deployment) |
-| Weekly maintenance / New project added | [SOP 4: Repository Cleanup & Verification](#sop-4-repository-cleanup--verification) |
-| End of significant session | [SOP 5: Session Documentation](#sop-5-session-documentation) |
-| Just completed a repeatable task | [SOP 6: Workflow Creation](#sop-6-workflow-creation) |
-| Deployed too early / No directive | [SOP 7: DOE Architecture Rollback](#sop-7-doe-architecture-rollback) |
-| Testing for client / Need to save demo outputs | [SOP 8: Client Demo & Test Output Management](#sop-8-client-demo--test-output-management) |
+| Situation | Use SOP | ⚠️ Prerequisites |
+|-----------|---------|-----------------|
+| Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) | None |
+| Just wrote code / Need to test | `docs/testing-strategy.md` ⭐ | **Start with Scenario 1 (Manual Testing)** |
+| Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) | **⚠️ Manual testing complete (Scenario 1), environment working** |
+| Ready to deploy to production | [SOP 3: Version Control & Deployment](#sop-3-version-control--deployment) | **⚠️ All testing scenarios complete** |
+| Weekly maintenance / New project added | [SOP 4: Repository Cleanup & Verification](#sop-4-repository-cleanup--verification) | None |
+| End of significant session | [SOP 5: Session Documentation](#sop-5-session-documentation) | None |
+| Just completed a repeatable task | [SOP 6: Workflow Creation](#sop-6-workflow-creation) | Task tested |
+| Deployed too early / No directive | [SOP 7: DOE Architecture Rollback](#sop-7-doe-architecture-rollback) | None |
+| Testing for client / Need to save demo outputs | [SOP 8: Client Demo & Test Output Management](#sop-8-client-demo--test-output-management) | None |
+| New project with multiple possible approaches | [SOP 9: Multi-Agent Architecture Exploration](#sop-9-multi-agent-architecture-exploration) | None (use BEFORE implementation) |
+
+**Critical Notes**:
+- **Architecture Exploration (SOP 9)**: Use BEFORE coding to research which approach is best
+- **Testing**: ALWAYS see `docs/testing-strategy.md` for complete pipeline (Manual → Multi-Agent → Pre-Deployment)
+- **Multi-Agent Testing**: ALWAYS check `email-analyzer/testing/` first as reference template
+- **Deployment**: Can ONLY happen after all testing scenarios complete
 
 ---
 
