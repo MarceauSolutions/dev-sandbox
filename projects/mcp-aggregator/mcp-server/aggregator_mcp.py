@@ -44,19 +44,15 @@ from decimal import Decimal
 from datetime import datetime
 import httpx
 
-# Add platform core to path
-PLATFORM_CORE_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'agent3-platform-core',
-    'workspace'
-)
-sys.path.insert(0, PLATFORM_CORE_PATH)
+# Add project root to path for imports
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
 
-# Import platform core modules
-from database import Database, DatabaseConfig, create_test_database
-from registry import MCPRegistry, MCPCategory, MCPStatus, MCP
-from router import MCPRouter, RoutingRequest, RoutingStrategy
-from billing import BillingSystem
+# Import platform core modules from src.core
+from src.core.database import Database, DatabaseConfig, create_test_database
+from src.core.registry import Registry as MCPRegistry, MCPCategory, MCPStatus, MCP, ConnectivityType
+from src.core.router import Router as MCPRouter, RoutingRequest, RoutingStrategy, get_scoring_profile
+from src.core.billing import BillingSystem, PricingModel
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -164,7 +160,7 @@ class AggregatorMCPServer:
         """Start the server"""
         await self.executor.start()
         logger.info("Aggregator MCP Server started")
-        logger.info(f"Platform Core loaded from: {PLATFORM_CORE_PATH}")
+        logger.info(f"Platform Core loaded from: {PROJECT_ROOT}/src/core")
 
     async def stop(self):
         """Stop the server"""
