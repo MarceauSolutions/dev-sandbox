@@ -1,0 +1,335 @@
+# Agent Prompts for Parallel Development
+# Copy-paste these into 3 separate Claude instances
+
+===============================================================================
+AGENT 1: REST API DEVELOPMENT
+===============================================================================
+
+I'm Agent 1 working on the MCP Aggregator REST API.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent1-rest-api/workspace
+- Deliverable: Production-ready REST API for rideshare price comparison
+- Timeline: 2 days
+- My workspace is ISOLATED from other agents (we merge on Day 4)
+
+EXISTING CODE I CAN USE:
+- Rideshare MCP: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/src/mcps/rideshare/
+  - comparison.py (proprietary algorithm)
+  - rate_cards.py (10 cities)
+  - deep_links.py (affiliate links)
+
+MY TASKS:
+1. Build FastAPI server
+   - Single endpoint: POST /v1/compare
+   - Input: {pickup_address, dropoff_address} OR {pickup_lat, pickup_lng, dropoff_lat, dropoff_lng}
+   - Output: {uber: {...}, lyft: {...}, recommendation, savings, deep_links}
+
+2. Add API key authentication
+   - Header: Authorization: Bearer sk_test_...
+   - Generate test API keys
+   - Rate limiting (100 req/min per key)
+
+3. Error handling
+   - Invalid addresses
+   - Unsupported cities
+   - Rate limit exceeded
+   - Server errors
+
+4. API documentation
+   - OpenAPI/Swagger at /docs
+   - Examples for all endpoints
+   - Authentication guide
+
+5. Dockerize
+   - Dockerfile for production deployment
+   - docker-compose for local development
+
+6. Deploy to staging
+   - AWS Lambda (serverless) OR
+   - Simple EC2 instance
+   - Test with curl/Postman
+
+DELIVERABLES (save to ../output/):
+- server.py (FastAPI app)
+- Dockerfile
+- API-DOCS.md (comprehensive documentation)
+- DEPLOYMENT-GUIDE.md (how to deploy)
+- Test results (curl commands + responses)
+
+SUCCESS CRITERIA:
+- API responds in <200ms
+- Handles 100 req/sec
+- Returns correct JSON format
+- Authentication working
+- Can be deployed to production
+
+START WITH:
+Read the existing rideshare MCP code, understand the interface, then build the API.
+
+Document all decisions in FINDINGS.md as you go.
+
+BEGIN!
+
+===============================================================================
+AGENT 2: ACCURACY TESTING
+===============================================================================
+
+I'm Agent 2 working on accuracy validation for the rideshare MCP.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent2-accuracy-testing/workspace
+- Deliverable: Accuracy report + algorithm improvements
+- Timeline: 3 days
+- My workspace is ISOLATED from other agents (we merge on Day 4)
+
+EXISTING CODE I CAN USE:
+- Rideshare MCP: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/src/mcps/rideshare/
+  - comparison.py (algorithm to test)
+  - rate_cards.py (pricing data)
+
+MY TASKS:
+1. Generate 30 diverse test routes
+   - 10 short rides (1-3 miles): Downtown to nearby
+   - 10 medium rides (5-10 miles): Cross-town
+   - 10 long rides (10-20 miles): Airport runs
+   - Mix of cities: SF, NYC, LA, Chicago
+   - Mix of times: Morning rush, midday, evening, late night
+   - Save to: test-routes.csv
+
+2. Collect actual quotes (MANUAL PROCESS):
+   - For each route:
+     a. Open Uber app → Enter pickup/dropoff → Screenshot quote
+     b. Open Lyft app → Enter pickup/dropoff → Screenshot quote
+     c. Record in actual-quotes.csv: route_id, actual_uber, actual_lyft, timestamp, screenshot_filename
+   - This is the MOST IMPORTANT step - real data to validate against
+   - Save screenshots to: screenshots/
+
+3. Run our algorithm on same routes
+   - Use comparison.py to get estimates
+   - Save to: estimated-quotes.csv
+
+4. Calculate accuracy metrics:
+   ```python
+   for each route:
+       uber_error = abs(actual_uber - estimated_uber) / actual_uber * 100
+       lyft_error = abs(actual_lyft - estimated_lyft) / actual_lyft * 100
+
+       within_10 = error <= 10%
+       within_20 = error <= 20%
+       within_30 = error <= 30%
+
+       directional_correct = (actual_uber < actual_lyft) == (estimated_uber < estimated_lyft)
+   ```
+
+5. Analyze patterns:
+   - Which cities have highest error?
+   - Overestimating or underestimating?
+   - Surge prediction accurate?
+   - Time-of-day patterns?
+
+6. Make recommendations:
+   - If accuracy <75%: Specific algorithm fixes needed
+   - If accuracy >85%: We're good to launch!
+
+DELIVERABLES (save to ../output/):
+- test-routes.csv (30 routes)
+- actual-quotes.csv (real Uber/Lyft prices)
+- estimated-quotes.csv (our algorithm's predictions)
+- screenshots/ (proof of actual quotes)
+- ACCURACY-REPORT.md (main deliverable with metrics)
+- ERROR-ANALYSIS.md (where we're off)
+- RECOMMENDATIONS.md (algorithm improvements if needed)
+
+SUCCESS CRITERIA:
+- 75%+ estimates within ±20% (MINIMUM for launch)
+- 85%+ estimates within ±20% (TARGET)
+- 95%+ directional accuracy (cheaper option correct)
+- Clear recommendations for improvement if <85%
+
+IMPORTANT:
+- The manual quote collection (step 2) is CRITICAL - don't skip or fake this data
+- Take actual screenshots as proof
+- Test at different times of day to capture real surge pricing
+
+START WITH:
+1. Generate test-routes.csv (can automate this)
+2. Manual collection of actual quotes (most time-consuming but essential)
+3. Run algorithm comparisons
+4. Calculate metrics
+5. Write report
+
+Document all findings in FINDINGS.md as you go.
+
+BEGIN!
+
+===============================================================================
+AGENT 3: PLATFORM CORE (REGISTRY + ROUTING)
+===============================================================================
+
+I'm Agent 3 working on the platform core infrastructure.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent3-platform-core/workspace
+- Deliverable: MCP Registry + Routing Engine + Billing System
+- Timeline: 4 days
+- My workspace is ISOLATED from other agents (we merge on Day 4)
+
+EXISTING CODE I CAN USE:
+- Rideshare MCP: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/src/mcps/rideshare/
+- Directive: /Users/williammarceaujr./dev-sandbox/directives/mcp_aggregator.md (SOPs for registry, routing, billing)
+
+MY TASKS:
+1. Database Schema (PostgreSQL)
+   ```sql
+   CREATE TABLE mcps (
+       id UUID PRIMARY KEY,
+       name VARCHAR(255) UNIQUE NOT NULL,
+       provider VARCHAR(255) NOT NULL,
+       category VARCHAR(100) NOT NULL,
+       capabilities JSONB NOT NULL,
+       endpoint URL,
+       pricing DECIMAL(10,4) NOT NULL,
+       sla_uptime DECIMAL(5,2) NOT NULL,
+       rating DECIMAL(3,2),
+       total_requests INTEGER DEFAULT 0,
+       status VARCHAR(50) DEFAULT 'active',
+       created_at TIMESTAMP DEFAULT NOW()
+   );
+
+   CREATE TABLE transactions (
+       id UUID PRIMARY KEY,
+       ai_agent_id VARCHAR(255) NOT NULL,
+       mcp_id UUID REFERENCES mcps(id),
+       request_type VARCHAR(100) NOT NULL,
+       mcp_cost DECIMAL(10,4) NOT NULL,
+       platform_fee DECIMAL(10,4) NOT NULL,
+       latency_ms INTEGER NOT NULL,
+       success BOOLEAN NOT NULL,
+       created_at TIMESTAMP DEFAULT NOW()
+   );
+   ```
+   Save to: database_schema.sql
+
+2. Build MCP Registry (registry.py)
+   - register_mcp(metadata): Add new MCP to database
+   - find_mcps(intent, filters): Find MCPs that can handle request
+   - get_health_status(mcp_id): Check uptime, latency, error rate
+   - update_rating(mcp_id, rating): Update quality score
+
+3. Build Routing Engine (router.py)
+   - route_request(query, context): Main routing logic
+   - score_and_select(mcps, context): Pick best MCP
+   - Scoring algorithm:
+     ```python
+     score = (reliability * 0.40) +
+             (latency * 0.30) +
+             (cost * 0.20) +
+             (user_preference * 0.10)
+     ```
+   - execute_mcp(mcp, query): Call selected MCP
+   - Fallback logic: If primary fails, try 2nd best
+   - Circuit breaker: Stop routing to failing MCPs
+
+4. Build Billing System (billing.py)
+   - log_transaction(ai_agent, mcp, cost): Record every request
+   - calculate_fees(mcp_cost): Platform fee = mcp_cost * 0.15 (15%)
+   - generate_invoice(ai_agent, month): Monthly invoice
+   - process_payouts(month): Pay MCP developers
+
+5. Seed Database
+   - Register rideshare MCP as first MCP
+   - Test data: 10 sample transactions
+   - Save to: seed_data.sql
+
+6. Integration Tests
+   - Register rideshare MCP
+   - Route test request ("Compare Uber and Lyft from Union Square to SFO")
+   - Verify correct MCP selected
+   - Verify transaction logged
+   - Verify fallback works (simulate MCP failure)
+   Save to: test_integration.py
+
+DELIVERABLES (save to ../output/):
+- registry.py (MCP registry system)
+- router.py (intelligent routing engine)
+- billing.py (transaction tracking)
+- database_schema.sql (PostgreSQL schema)
+- seed_data.sql (initial data)
+- test_integration.py (integration tests)
+- ARCHITECTURE.md (system design)
+- INTEGRATION-GUIDE.md (how other agents use this)
+
+SUCCESS CRITERIA:
+- Can register new MCPs
+- Routes requests to correct MCP (95%+ accuracy)
+- Tracks transactions for billing
+- <50ms routing decision time
+- Fallback works when MCP fails
+- All integration tests pass
+
+REFERENCE:
+- Read /Users/williammarceaujr./dev-sandbox/directives/mcp_aggregator.md for SOPs on:
+  - SOP 1: Register New MCP
+  - SOP 2: Route User Request
+  - SOP 3: Handle MCP Failure
+  - SOP 4: Calculate Billing
+
+START WITH:
+1. Create database schema
+2. Build registry (simpler)
+3. Build router (more complex)
+4. Build billing (straightforward)
+5. Integration tests
+6. Documentation
+
+Document all decisions in FINDINGS.md as you go.
+
+BEGIN!
+
+===============================================================================
+COORDINATION NOTES (FOR ALL AGENTS)
+===============================================================================
+
+WORKSPACE ISOLATION:
+- Work in your assigned workspace directory
+- Don't modify other agents' files
+- Can READ shared code in src/mcps/rideshare/
+- Save deliverables to your output/ folder
+
+DAILY SYNC (15 min):
+- End of Day 1, 2, 3: Share progress in your FINDINGS.md
+- Quick check: Any blockers? Any interface changes needed?
+
+DAY 4 - INTEGRATION DAY:
+- All agents converge in consolidated/ folder
+- Merge components into final-deployment/
+- Full system test
+- Fix any integration issues
+
+COMMUNICATION:
+- If you need something from another agent, note it in FINDINGS.md
+- Don't block - use mock data/interfaces and continue
+- We'll resolve dependencies on Day 4
+
+REMINDERS:
+- Agent 1: Focus on API quality, not platform features (keep it simple)
+- Agent 2: ACTUAL quotes are critical - don't fake data
+- Agent 3: Build for future (registry must support 100+ MCPs eventually)
+
+===============================================================================
+READY TO LAUNCH?
+===============================================================================
+
+1. Copy Agent 1 prompt → Open new Claude instance → Paste → Let it work
+2. Copy Agent 2 prompt → Open new Claude instance → Paste → Let it work
+3. Copy Agent 3 prompt → Open new Claude instance → Paste → Let it work
+
+4. Check back in 24 hours to review progress
+5. Day 4: Integration session
+6. Day 5: LAUNCH! 🚀
+
+GOAL: Break-even ($500/month revenue) by Month 2
+PATH: 3 agents working in parallel = 4-5 days to production (vs 12-14 days sequential)
+
+LET'S GO! 💪
