@@ -71,6 +71,7 @@ TOOL_COSTS = {
     "revenue_report": {"base": 0.0, "per_unit": 0.0, "tier": CostTier.FREE},
     "create_workout_plan": {"base": 0.0, "per_unit": 0.0, "tier": CostTier.FREE},
     "create_nutrition_guide": {"base": 0.0, "per_unit": 0.0, "tier": CostTier.FREE},
+    "generate_video_template": {"base": 0.0, "per_unit": 0.0, "tier": CostTier.FREE},
 }
 
 # Confirmation threshold
@@ -215,6 +216,36 @@ class DualAIRouter:
                         "activity_level": {"type": "string"}
                     },
                     "required": ["weight_lbs", "goal"]
+                }
+            },
+            {
+                "name": "generate_video_template",
+                "description": "Generate a video blueprint with segment-by-segment scripts and filming suggestions. FREE operation. Creates viral video structures based on trending fitness content patterns.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "topic": {
+                            "type": "string",
+                            "description": "Video topic (e.g., 'upper body workout', '5 tips for abs', 'morning routine')"
+                        },
+                        "style": {
+                            "type": "string",
+                            "enum": ["educational", "transformation", "day_in_life", "before_after", "workout_demo"],
+                            "description": "Video style/format"
+                        },
+                        "target_duration": {
+                            "type": "integer",
+                            "description": "Target duration in seconds (30-180)",
+                            "minimum": 30,
+                            "maximum": 180
+                        },
+                        "platform": {
+                            "type": "string",
+                            "enum": ["tiktok", "instagram_reels", "youtube_shorts", "youtube"],
+                            "description": "Target platform for the video"
+                        }
+                    },
+                    "required": ["topic"]
                 }
             }
         ]

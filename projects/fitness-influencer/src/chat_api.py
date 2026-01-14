@@ -418,6 +418,32 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
                 "download_text": "Download Full Guide (PDF)"
             }
 
+        elif tool_name == "generate_video_template":
+            # Import the video template framework
+            try:
+                from video_template_framework import VideoTemplateGenerator, generate_timeline_html
+            except ImportError:
+                from src.video_template_framework import VideoTemplateGenerator, generate_timeline_html
+
+            generator = VideoTemplateGenerator()
+            template = generator.generate_template(
+                topic=tool_input.get("topic", "fitness tips"),
+                style=tool_input.get("style", "educational"),
+                target_duration=tool_input.get("target_duration", 60),
+                platform=tool_input.get("platform", "instagram_reels")
+            )
+
+            if template:
+                return {
+                    "success": True,
+                    "title": f"Video Blueprint: {template.get('name', 'Template')}",
+                    "icon": "template",
+                    "html": generate_timeline_html(template),
+                    "cost": 0.0
+                }
+            else:
+                return {"success": False, "error": "Template generation failed"}
+
         else:
             return {"success": False, "error": f"Unknown tool: {tool_name}"}
 

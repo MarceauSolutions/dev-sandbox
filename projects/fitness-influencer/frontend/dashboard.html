@@ -725,6 +725,21 @@
                         <button class="btn btn-primary" onclick="openModal('analytics-modal')">View Report</button>
                     </div>
                 </div>
+
+                <!-- Video Blueprint -->
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon" style="background: linear-gradient(135deg, #a855f7, #6366f1);">📋</div>
+                        <div>
+                            <div class="tool-title">Video Blueprint</div>
+                            <div class="tool-cost">FREE</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">Get viral video templates with segment-by-segment scripts. Choose a style, enter your topic, and get a complete filming guide in seconds.</p>
+                    <div class="tool-actions">
+                        <button class="btn btn-primary" onclick="openModal('template-modal')">Create Blueprint</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1003,6 +1018,67 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
                 <div class="result-container" id="analytics-result">
                     <div class="result-title">Revenue Report</div>
                     <div id="analytics-content" style="color: #e5e7eb; line-height: 1.8;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Template Modal -->
+    <div class="modal-overlay" id="template-modal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 Video Blueprint Generator</h2>
+                <button class="modal-close" onclick="closeModal('template-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Video Topic</label>
+                    <input type="text" id="template-topic" placeholder="e.g., 5 best exercises for abs, my morning routine">
+                    <p class="form-hint">What's your video about?</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Video Style</label>
+                    <select id="template-style">
+                        <option value="educational">Educational/Tips</option>
+                        <option value="transformation">Transformation Story</option>
+                        <option value="day_in_life">Day in the Life</option>
+                        <option value="before_after">Before/After</option>
+                        <option value="workout_demo">Workout Demo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Target Duration</label>
+                    <select id="template-duration">
+                        <option value="30">30 seconds (TikTok/Reels)</option>
+                        <option value="60" selected>60 seconds (Reels/Shorts)</option>
+                        <option value="90">90 seconds (YouTube Shorts)</option>
+                        <option value="180">3 minutes (YouTube)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Primary Platform</label>
+                    <select id="template-platform">
+                        <option value="instagram_reels">Instagram Reels</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="youtube_shorts">YouTube Shorts</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateTemplate()" style="width:100%;">Generate Blueprint</button>
+
+                <div class="progress-container" id="template-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="template-progress-fill"></div>
+                    </div>
+                    <div class="progress-status" id="template-progress-status">Generating your blueprint...</div>
+                </div>
+
+                <div class="result-container" id="template-result">
+                    <div id="template-content"></div>
                 </div>
             </div>
         </div>
@@ -1342,6 +1418,39 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
 
             } catch (error) {
                 hideProgress('analytics');
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Video Blueprint Generator - Calls real API
+        async function generateTemplate() {
+            const topic = document.getElementById('template-topic').value;
+            const style = document.getElementById('template-style').value;
+            const duration = document.getElementById('template-duration').value;
+            const platform = document.getElementById('template-platform').value;
+
+            if (!topic) {
+                alert('Please enter a video topic');
+                return;
+            }
+
+            try {
+                showProgress('template', 'Analyzing viral video patterns...');
+
+                const message = `Generate video template: topic="${topic}", style=${style}, duration=${duration}s, platform=${platform}`;
+                const result = await callChatAPI(message);
+
+                completeProgress('template');
+                document.getElementById('template-result').classList.add('active');
+
+                if (result.result && result.result.html) {
+                    document.getElementById('template-content').innerHTML = result.result.html;
+                } else if (result.message) {
+                    document.getElementById('template-content').innerHTML = `<p style="color:#9ca3af;">${result.message}</p>`;
+                }
+
+            } catch (error) {
+                hideProgress('template');
                 alert('Error: ' + error.message);
             }
         }
