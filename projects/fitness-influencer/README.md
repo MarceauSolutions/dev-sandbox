@@ -1,5 +1,7 @@
 # Fitness Influencer AI Assistant
 
+mcp-name: io.github.wmarceau/fitness-influencer
+
 AI-powered automation suite for fitness content creators. Automates video editing, graphics creation, email management, SMS communication, and revenue analytics.
 
 ## Status: Live

@@ -4,6 +4,97 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-13 (Part 2): MCP Registry Publishing & SOPs 11-13
+
+**Context:** Publishing MCPs to PyPI and Claude's MCP Registry marketplace. Created SOPs documenting the complete publishing pipeline.
+
+**Accomplished:**
+- Published 3 MCPs to PyPI and Claude MCP Registry:
+  - `md-to-pdf-mcp` v1.0.1 → `io.github.wmarceau/md-to-pdf`
+  - `amazon-seller-mcp` v1.0.0 → `io.github.wmarceau/amazon-seller`
+  - `fitness-influencer-mcp` v1.0.0 → `io.github.wmarceau/fitness-influencer`
+- Created SOP 11: MCP Package Structure (converting projects to MCP format)
+- Created SOP 12: PyPI Publishing (uploading to PyPI)
+- Created SOP 13: MCP Registry Publishing (registering on Claude marketplace)
+- Updated Development Pipeline with Step 7 (MCP Registry Publishing)
+- Updated Quick Reference table with SOPs 11-13
+- Added communication patterns for MCP publishing
+
+**Key Learnings:**
+
+1. **Publishing Order is Critical**
+   - PyPI MUST come before MCP Registry
+   - MCP Registry validates package exists on PyPI
+   - Version in server.json must match PyPI version exactly
+
+2. **Package Structure Requirements**
+   - Use underscores in package directory (`fitness_influencer_mcp`)
+   - Use hyphens in PyPI package name (`fitness-influencer-mcp`)
+   - Relative imports required (`.module` not `module`)
+   - Remove sys.path manipulation from server.py
+
+3. **MCP Registry Authentication**
+   - Uses GitHub device flow authentication
+   - Token expires after ~1 hour
+   - Re-run `mcp-publisher login github` on 401 errors
+
+4. **Ownership Verification**
+   - Must add `mcp-name: io.github.[user]/[project]` to README
+   - Must be near top of file
+   - MCP Registry validates this before accepting publish
+
+5. **Version Bumping**
+   - PyPI does NOT allow re-uploading same version
+   - Must bump version in 3 places: pyproject.toml, server.json, __init__.py
+   - Use 1.0.1 if 1.0.0 already published
+
+**Common Errors Fixed:**
+| Error | Solution |
+|-------|----------|
+| `registryType "pip" unsupported` | Use `"pypi"` not `"pip"` |
+| `401 Unauthorized` | Re-authenticate: `mcp-publisher login github` |
+| `Ownership validation failed` | Add `mcp-name:` line to README |
+| `File already exists` on PyPI | Bump version number |
+| `Package not found` | Publish to PyPI before MCP Registry |
+
+**New Communication Patterns:**
+- "Publish to registry" / "Put on Claude marketplace" → Run SOPs 11-13
+- "Make this an MCP" → Run SOP 11 (create package structure)
+
+**Files Created:**
+- `projects/md-to-pdf/pyproject.toml` - PyPI build config
+- `projects/md-to-pdf/server.json` - MCP Registry manifest
+- `projects/md-to-pdf/src/md_to_pdf_mcp/` - Package directory
+- `projects/amazon-seller/pyproject.toml`
+- `projects/amazon-seller/server.json`
+- `projects/amazon-seller/src/amazon_seller_mcp/`
+- `projects/fitness-influencer/pyproject.toml`
+- `projects/fitness-influencer/server.json`
+- `projects/fitness-influencer/src/fitness_influencer_mcp/`
+
+**Files Updated:**
+- `CLAUDE.md` - Added SOPs 11-13, updated pipeline, updated quick reference
+- `projects/*/README.md` - Added `mcp-name:` ownership verification lines
+
+**Published MCPs:**
+| Package | PyPI URL | MCP Registry Name |
+|---------|----------|-------------------|
+| md-to-pdf-mcp | https://pypi.org/project/md-to-pdf-mcp/1.0.1/ | io.github.wmarceau/md-to-pdf |
+| amazon-seller-mcp | https://pypi.org/project/amazon-seller-mcp/1.0.0/ | io.github.wmarceau/amazon-seller |
+| fitness-influencer-mcp | https://pypi.org/project/fitness-influencer-mcp/1.0.0/ | io.github.wmarceau/fitness-influencer |
+
+**Tools Used:**
+- `python -m build` - Build Python packages
+- `twine upload` - Upload to PyPI
+- `mcp-publisher` - Publish to MCP Registry (requires Go)
+
+**Next Steps:**
+- Test MCPs via Claude Desktop installation
+- Publish additional projects (interview-prep, mcp-aggregator)
+- Consider GitHub Actions for automated publishing
+
+---
+
 ## 2026-01-13: MCP Aggregator Platform Generalization
 
 **Context:** Discovered that MCP Aggregator was developed in parallel with rideshare, baking in 51 rideshare-specific assumptions that blocked non-rideshare services. Executed systematic discovery methodology and parallel agent refactoring.

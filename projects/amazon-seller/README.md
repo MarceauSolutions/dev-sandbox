@@ -1,113 +1,118 @@
-# Amazon Seller Operations AI Assistant
+# Amazon Seller Operations
 
-AI-powered Amazon Seller Central automation for inventory management, fee calculation, listing optimization, and business analytics via SP-API.
+AI-powered Amazon Seller Central tools for inventory management, fee calculation, and optimization via SP-API.
 
-## Status: Development
-
-**Production URL:** Not yet deployed
+mcp-name: io.github.wmarceau/amazon-seller
 
 ## Features
 
-| Feature | Script | Cost |
-|---------|--------|------|
-| SP-API Integration | `amazon_sp_api.py` | FREE |
-| FBA Fee Calculator | `amazon_fee_calculator.py` | FREE |
-| Inventory Optimizer | `amazon_inventory_optimizer.py` | FREE |
-| OAuth Authentication | `amazon_oauth_server.py` | FREE |
-| Token Refresh | `refresh_amazon_token.py` | FREE |
-| Auth Setup Wizard | `setup_amazon_auth.py` | FREE |
-| Connection Test | `test_amazon_connection.py` | FREE |
+| Feature | Script | Description |
+|---------|--------|-------------|
+| SP-API Integration | `amazon_sp_api.py` | Core API with caching |
+| FBA Fee Calculator | `amazon_fee_calculator.py` | 2026 fee structure |
+| Inventory Optimizer | `amazon_inventory_optimizer.py` | Restock recommendations |
+| OAuth Authentication | `amazon_oauth_server.py` | OAuth flow handling |
+| MCP Server | `amazon_seller_mcp.py` | MCP protocol wrapper |
 
 ## Directory Structure
 
 ```
 amazon-seller/
-├── src/                              # Python execution scripts
+├── src/
 │   ├── amazon_sp_api.py              # Core SP-API client
 │   ├── amazon_fee_calculator.py      # FBA fee calculations
 │   ├── amazon_inventory_optimizer.py # Restock recommendations
-│   ├── amazon_oauth_server.py        # OAuth server for auth
-│   ├── amazon_get_refresh_token.py   # Get refresh token
-│   ├── refresh_amazon_token.py       # Refresh access token
-│   ├── setup_amazon_auth.py          # Setup wizard
-│   ├── test_amazon_connection.py     # Test connection
-│   └── test_sp_api_simple.py         # Simple API test
-├── docs/                             # Documentation
-├── frontend/                         # Web interface (TODO)
-└── README.md
+│   ├── amazon_oauth_server.py        # OAuth server
+│   └── ...
+├── mcp-server/
+│   └── amazon_seller_mcp.py          # MCP server wrapper
+├── registry/
+│   └── manifest.json                 # MCP Registry manifest
+├── VERSION                           # Current version
+├── CHANGELOG.md                      # Version history
+├── SKILL.md                          # MCP tool documentation
+└── README.md                         # This file
 ```
+
+## MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_inventory_summary` | Get FBA inventory levels |
+| `get_orders` | Get recent orders |
+| `get_order_items` | Get order line items |
+| `get_product_details` | Get product info |
+| `calculate_fba_fees` | Calculate comprehensive fees |
+| `estimate_profit_margin` | Quick profit estimation |
+| `suggest_restock_quantities` | Reorder recommendations |
+| `analyze_sell_through_rate` | Sales velocity analysis |
+
+See [SKILL.md](SKILL.md) for detailed tool documentation.
 
 ## Quick Start
 
-### 1. Setup Amazon Credentials
+### 1. Install Dependencies
 ```bash
-python src/setup_amazon_auth.py
+pip install python-amazon-sp-api python-dotenv mcp
 ```
 
-### 2. Test Connection
+### 2. Configure Credentials
+Create `.env` file:
+```env
+AMAZON_REFRESH_TOKEN=your_refresh_token
+AMAZON_LWA_APP_ID=your_client_id
+AMAZON_LWA_CLIENT_SECRET=your_client_secret
+AMAZON_AWS_ACCESS_KEY=your_aws_access_key
+AMAZON_AWS_SECRET_KEY=your_aws_secret_key
+AMAZON_ROLE_ARN=arn:aws:iam::123456789:role/your-role
+AMAZON_MARKETPLACE_ID=ATVPDKIKX0DER
+```
+
+### 3. Test Connection
 ```bash
 python src/test_amazon_connection.py
 ```
 
-### 3. Calculate Fees
+### 4. Run MCP Server
 ```bash
-python src/amazon_fee_calculator.py --asin B0XXXXXXXX
+python mcp-server/amazon_seller_mcp.py
 ```
 
-### 4. Get Inventory Recommendations
+## CLI Usage
+
+### Calculate Fees
 ```bash
-python src/amazon_inventory_optimizer.py --days 30
+python src/amazon_fee_calculator.py --asin B08XYZ123 --price 29.99 --cost 10.00
 ```
 
-## Environment Variables
-
-```env
-# Amazon SP-API
-AMAZON_SELLER_ID=your_seller_id
-AMAZON_MARKETPLACE_ID=ATVPDKIKX0DER  # US marketplace
-AMAZON_CLIENT_ID=your_client_id
-AMAZON_CLIENT_SECRET=your_client_secret
-AMAZON_REFRESH_TOKEN=your_refresh_token
-
-# AWS (for SP-API signing)
-AWS_ACCESS_KEY_ID=your_aws_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret
-
-# Shared Services (from ../shared/)
-XAI_API_KEY=your_xai_key              # For AI features
-ANTHROPIC_API_KEY=your_anthropic_key  # For AI analysis
+### Get Inventory Recommendations
+```bash
+python src/amazon_inventory_optimizer.py --asin B08XYZ123 --days 30
 ```
 
-## Shared Utilities Used
+## Key Features
 
-This project uses shared utilities from `projects/shared/`:
+### 2026 Fee Structure
+- FBA fulfillment fees (size-tier based)
+- Monthly storage fees (seasonal rates)
+- Aged inventory surcharges (12-15mo, 15+mo)
+- Low inventory level fees
+- GET call fee awareness (post April 2026)
 
-| Utility | Purpose |
-|---------|---------|
-| `shared/google/gmail_monitor.py` | Monitor supplier emails |
-| `shared/analytics/revenue_analytics.py` | Revenue tracking |
-| `shared/communication/twilio_sms.py` | Inventory alerts |
+### Caching Layer
+Aggressive caching to minimize API costs:
+- Inventory: 30 min
+- Orders: 15 min
+- Products: 24 hours
+- Fees: 24 hours
 
-## Skill Configuration
+### Multi-Marketplace
+Supports US, CA, MX, BR, UK, DE, FR, IT, ES, NL, JP, SG, AU
 
-Located at: `.claude/skills/amazon-seller-operations/SKILL.md`
+## Version
 
-Trigger phrases:
-- "check Amazon inventory"
-- "calculate FBA fees"
-- "optimize Amazon listings"
-- "restock recommendations"
+Current version: 1.0.0
 
-## Related Documentation
+## License
 
-- Main directive: `directives/amazon_seller_operations.md`
-- Setup guide: `docs/AMAZON_SETUP.md`
-- Quick start: `docs/AMAZON_QUICK_START.md`
-
-## Planned Features
-
-- [ ] Automated repricing based on competition
-- [ ] Buy Box tracking and alerts
-- [ ] Review monitoring and sentiment analysis
-- [ ] PPC campaign optimization
-- [ ] Multi-marketplace support (EU, UK, CA)
+MIT License

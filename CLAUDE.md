@@ -48,6 +48,9 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 |------|----------|
 | **How we work** | This file (CLAUDE.md) |
 | **Architecture & code organization** | `docs/architecture-guide.md` ⭐ |
+| **App type decision** | `docs/app-type-decision-guide.md` ⭐ |
+| **Cost-benefit analysis** | `docs/cost-benefit-templates.md` |
+| **Project kickoff questionnaire** | `templates/project-kickoff-questionnaire.md` |
 | **How to prompt me** | `docs/prompting-guide.md` |
 | **Inference guidelines** | `docs/inference-guidelines.md` |
 | **Dev-to-deployment process** | `docs/development-to-deployment.md` ⭐ |
@@ -67,6 +70,13 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 **Complete documentation**: See `docs/development-to-deployment.md` for full process, or `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md` for specific topics.
 
 ```
+0. KICKOFF (SOP 0) - BEFORE starting any new project
+   └── Complete project-kickoff-questionnaire.md (19 questions)
+   └── Decide app type (MCP, CLI, Web, Desktop, Hybrid)
+   └── Complete cost-benefit analysis
+   └── Decide template vs clean slate
+   └── See: docs/app-type-decision-guide.md
+
 1. DESIGN in directives/
    └── Create/update [project].md with capability SOPs
    └── Define what the project does
@@ -103,6 +113,13 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
    └── Verify scripts run identically in -prod structure
    └── Test imports and dependencies in production environment
    └── See: docs/testing-strategy.md Scenario 4
+
+7. MCP REGISTRY PUBLISHING (OPTIONAL - for MCP projects)
+   └── Prerequisites: ✅ Steps 1-6 complete, ✅ PyPI account, ✅ GitHub account
+   └── SOP 11: Create MCP package structure (pyproject.toml, server.json)
+   └── SOP 12: Publish to PyPI (pip install [project]-mcp)
+   └── SOP 13: Publish to MCP Registry (Claude marketplace)
+   └── See: SOPs 11-13 for detailed steps
 ```
 
 **CRITICAL**:
@@ -161,6 +178,8 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Save this for the client" | Move output to demos/client-[name]/$(date)/ |
 | "This is a good example" | Move to samples/ for documentation reference |
 | "Clean up test files" | Delete everything in .tmp/ |
+| "Publish to registry" / "Put on Claude marketplace" | Run SOPs 11-13 (MCP → PyPI → Registry) |
+| "Make this an MCP" | Run SOP 11 (create package structure) |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -272,9 +291,58 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
 ## Standard Operating Procedures (SOPs)
 
+### SOP 0: Project Kickoff & App Type Classification
+
+**When**: BEFORE starting any new project (runs before SOP 1 and SOP 9)
+
+**Purpose**: Ensure proper app type selection, cost analysis, and template decisions are made upfront.
+
+**Steps**:
+1. **Complete kickoff questionnaire**: Copy `templates/project-kickoff-questionnaire.md` to project folder
+   - Answer all 19 questions
+   - Part 1: Business/Purpose (Q1-5)
+   - Part 2: Technical Requirements (Q6-10)
+   - Part 3: App Type Decision (Q11-13)
+   - Part 4: Resource Assessment (Q14-16)
+   - Part 5: Template Decision (Q17-19)
+
+2. **Determine MCP Aggregator alignment**:
+   - Use `docs/app-type-decision-guide.md` decision tree
+   - If YES → Select MCP connectivity type (HTTP, EMAIL, OAUTH, WEBHOOK, GRAPHQL, ASYNC)
+   - If NO → Select standalone app type (CLI, Skill, Web API, Full-Stack, Desktop, Hybrid)
+
+3. **Complete cost-benefit analysis**:
+   - Use templates from `docs/cost-benefit-templates.md`
+   - Calculate development cost
+   - Calculate monthly operational cost
+   - Project revenue/value
+   - Determine break-even timeline
+
+4. **Decide template vs clean slate**:
+   - Low innovation → Use full template
+   - Medium innovation → Adapt template
+   - High innovation → Clean slate
+
+5. **Document decision**:
+   - Record in `KICKOFF.md` in project folder
+   - Include rationale for app type choice
+   - Include cost-benefit summary
+   - Get approval before proceeding
+
+**Decision Output**:
+- App Type selected
+- Connectivity type (if MCP)
+- Template decision
+- Go/No-Go decision
+- Next step (SOP 1 or SOP 9)
+
+**References**: `docs/app-type-decision-guide.md`, `docs/cost-benefit-templates.md`, `templates/project-kickoff-questionnaire.md`
+
+---
+
 ### SOP 1: New Project Initialization
 
-**When**: Starting a new AI assistant or automation project
+**When**: Starting a new AI assistant or automation project (AFTER completing SOP 0)
 
 **Steps**:
 1. **Create directive**: `directives/[project-name].md`
@@ -990,7 +1058,12 @@ Use **[Approach Name]** for the following reasons:
 **Integration with Development Pipeline**:
 
 ```
-0. EXPLORE (SOP 9) ← NEW! For complex projects
+0. KICKOFF (SOP 0) - ALWAYS FIRST
+   └── Complete questionnaire (19 questions)
+   └── App type decision, cost-benefit analysis
+   └── Template vs clean slate decision
+
+0.5 EXPLORE (SOP 9) - IF multiple approaches possible
    └── Multi-agent architecture exploration
    └── Choose best approach
 
@@ -1270,11 +1343,467 @@ This is where outputs are merged into a working system:
 
 ---
 
+### SOP 11: MCP Package Structure
+
+**When**: Converting a project to MCP (Model Context Protocol) format for distribution via PyPI and the Claude MCP Registry
+
+**Purpose**: Create a properly structured Python package that can be installed via `pip` and registered on Claude's MCP marketplace
+
+**Prerequisites**:
+- ✅ Project has working `src/` code with MCP server implementation
+- ✅ Project has been tested (SOP 2/3 complete)
+- ✅ README.md exists with project description
+
+**Directory Structure** (before → after):
+```
+projects/[project]/
+├── src/
+│   ├── server.py              # Original MCP server
+│   └── module.py              # Supporting modules
+├── README.md
+├── VERSION
+└── CHANGELOG.md
+
+↓ After SOP 11 ↓
+
+projects/[project]/
+├── src/
+│   ├── [project]_mcp/         # NEW: Package directory
+│   │   ├── __init__.py        # Package init with version
+│   │   ├── server.py          # MCP server (imports fixed)
+│   │   └── module.py          # Supporting modules (copied)
+│   └── (original files)
+├── pyproject.toml             # NEW: Build configuration
+├── server.json                # NEW: MCP Registry manifest
+├── README.md                  # UPDATED: Add mcp-name line
+├── VERSION
+└── CHANGELOG.md
+```
+
+**Steps**:
+
+**1. Create Package Directory**
+```bash
+mkdir -p projects/[project]/src/[project]_mcp/
+```
+
+**2. Create `__init__.py`**
+```python
+# projects/[project]/src/[project]_mcp/__init__.py
+__version__ = "1.0.0"
+
+from .server import mcp  # or main entry point
+```
+
+**3. Copy and Fix Server Code**
+```bash
+# Copy server and modules to package directory
+cp projects/[project]/src/server.py projects/[project]/src/[project]_mcp/
+cp projects/[project]/src/module.py projects/[project]/src/[project]_mcp/
+```
+
+Then fix imports in `server.py`:
+```python
+# BEFORE (absolute imports)
+from module import SomeClass
+
+# AFTER (relative imports for package)
+from .module import SomeClass
+```
+
+Also remove any `sys.path` manipulation:
+```python
+# DELETE these lines if present
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+```
+
+**4. Create `pyproject.toml`**
+```toml
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "[project]-mcp"
+version = "1.0.0"
+description = "Short description under 100 characters"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Your Name", email = "your@email.com"}
+]
+keywords = ["mcp", "claude", "ai", "[domain-keywords]"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    # Add other dependencies from requirements.txt
+]
+
+[project.urls]
+Homepage = "https://github.com/[username]/[repo]"
+Repository = "https://github.com/[username]/[repo]"
+
+[project.scripts]
+[project]-mcp = "[project]_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/[project]_mcp"]
+```
+
+**5. Create `server.json`** (MCP Registry manifest)
+```json
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.[username]/[project]",
+  "description": "Short description under 100 characters",
+  "repository": {
+    "url": "https://github.com/[username]/[repo]",
+    "source": "github",
+    "subfolder": "projects/[project]"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "[project]-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtime": "python",
+      "environmentVariables": [
+        {
+          "name": "API_KEY",
+          "description": "Description of required API key"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**6. Update README.md** (add ownership verification line)
+```markdown
+# Project Name
+
+mcp-name: io.github.[username]/[project]
+
+Rest of README...
+```
+
+**Important**: The `mcp-name:` line MUST be near the top of README for MCP Registry ownership verification.
+
+**7. Verify Package Structure**
+```bash
+# Check all files exist
+ls -la projects/[project]/src/[project]_mcp/
+# Should show: __init__.py, server.py, and modules
+
+# Test imports work
+cd projects/[project]
+python -c "from src.[project]_mcp import mcp"
+```
+
+**Naming Conventions**:
+| Item | Format | Example |
+|------|--------|---------|
+| PyPI package name | `[project]-mcp` | `fitness-influencer-mcp` |
+| Package directory | `[project]_mcp` | `fitness_influencer_mcp` |
+| MCP Registry name | `io.github.[user]/[project]` | `io.github.wmarceau/fitness-influencer` |
+
+**Common Mistakes**:
+| Mistake | Fix |
+|---------|-----|
+| Using hyphens in package dir | Use underscores: `fitness_influencer_mcp` not `fitness-influencer-mcp` |
+| Absolute imports in package | Change to relative: `from .module import X` |
+| sys.path manipulation | Remove it - package imports handle this |
+| Description > 100 chars | Shorten it for MCP Registry |
+| Missing `mcp-name:` in README | Add it near top for ownership verification |
+
+**Success Criteria**:
+- ✅ Package directory created with `__init__.py`
+- ✅ All imports use relative syntax (`.module`)
+- ✅ `pyproject.toml` has correct package path
+- ✅ `server.json` has valid schema
+- ✅ README has `mcp-name:` line
+- ✅ `python -c "from src.[project]_mcp import ..."` works
+
+**Next Step**: SOP 12 (PyPI Publishing)
+
+**References**:
+- `projects/md-to-pdf/` - Working example
+- `projects/amazon-seller/` - Working example
+- `projects/fitness-influencer/` - Working example
+
+---
+
+### SOP 12: PyPI Publishing
+
+**When**: Publishing an MCP package to PyPI (AFTER SOP 11 complete)
+
+**Purpose**: Make your MCP installable via `pip install [project]-mcp`
+
+**Prerequisites**:
+- ✅ SOP 11 complete (package structure created)
+- ✅ PyPI account created at https://pypi.org
+- ✅ PyPI API token generated
+
+**One-Time Setup** (first time only):
+
+1. **Create PyPI Account**: https://pypi.org/account/register/
+2. **Generate API Token**: https://pypi.org/manage/account/token/
+   - Scope: Entire account (for multiple projects) OR per-project
+   - Save token securely (starts with `pypi-`)
+
+3. **Install build tools**:
+```bash
+pip install build twine
+```
+
+**Steps**:
+
+**1. Clean Previous Builds**
+```bash
+cd projects/[project]
+rm -rf dist/ build/ *.egg-info
+```
+
+**2. Build Package**
+```bash
+python -m build
+```
+
+Expected output:
+```
+Successfully built [project]_mcp-1.0.0.tar.gz and [project]_mcp-1.0.0-py3-none-any.whl
+```
+
+**3. Verify Build Contents**
+```bash
+# Check wheel contents
+unzip -l dist/*.whl
+
+# Should show your package files:
+# [project]_mcp/__init__.py
+# [project]_mcp/server.py
+# [project]_mcp/module.py
+```
+
+**4. Upload to PyPI**
+```bash
+python -m twine upload dist/* --username __token__ --password pypi-YOUR_TOKEN_HERE
+```
+
+**5. Verify on PyPI**
+- Visit: `https://pypi.org/project/[project]-mcp/`
+- Should show your package with version, description, and files
+
+**Version Bumping** (for updates):
+
+If you need to publish an update:
+1. Version in `pyproject.toml` MUST be higher than PyPI
+2. Version in `server.json` should match
+3. Version in `__init__.py` should match
+4. PyPI does NOT allow re-uploading same version
+
+```bash
+# If 1.0.0 already exists on PyPI, bump to 1.0.1
+# Update all three files, then rebuild and upload
+```
+
+**Troubleshooting**:
+
+| Error | Solution |
+|-------|----------|
+| `File already exists` | Bump version (can't re-upload same version) |
+| `Invalid credentials` | Check token starts with `pypi-` and use `__token__` as username |
+| `Package not found in wheel` | Check `[tool.hatch.build.targets.wheel]` path in pyproject.toml |
+| `ModuleNotFoundError` | Check package directory name matches pyproject.toml |
+
+**Stored Credentials** (optional):
+
+Create `~/.pypirc` to avoid entering token each time:
+```ini
+[pypi]
+username = __token__
+password = pypi-YOUR_TOKEN_HERE
+```
+
+Then upload with just:
+```bash
+python -m twine upload dist/*
+```
+
+**Success Criteria**:
+- ✅ Build completes without errors
+- ✅ Package visible at `https://pypi.org/project/[project]-mcp/`
+- ✅ `pip install [project]-mcp` works in fresh environment
+
+**Next Step**: SOP 13 (MCP Registry Publishing)
+
+**References**:
+- PyPI: https://pypi.org
+- Twine docs: https://twine.readthedocs.io
+
+---
+
+### SOP 13: MCP Registry Publishing
+
+**When**: Publishing to Claude's MCP Registry (AFTER SOP 12 complete - package must be on PyPI first)
+
+**Purpose**: Make your MCP discoverable in Claude's marketplace and installable via Claude Desktop
+
+**Prerequisites**:
+- ✅ SOP 11 complete (package structure)
+- ✅ SOP 12 complete (package live on PyPI)
+- ✅ GitHub account (for authentication)
+- ✅ `mcp-publisher` CLI installed
+
+**One-Time Setup** (first time only):
+
+1. **Install mcp-publisher**:
+```bash
+# Requires Go installed
+brew install go  # macOS
+
+# Clone and build
+git clone https://github.com/modelcontextprotocol/registry.git
+cd registry
+go build -o bin/mcp-publisher ./cmd/mcp-publisher
+```
+
+Or download pre-built binary from releases.
+
+2. **Authenticate with GitHub**:
+```bash
+./bin/mcp-publisher login github
+```
+
+This opens a browser for GitHub device flow authentication:
+- Go to: https://github.com/login/device
+- Enter the code shown in terminal
+- Authorize the application
+
+**Token expires** after ~1 hour. Re-run `login github` if you see `401 Unauthorized` or `token expired`.
+
+**Steps**:
+
+**1. Verify Prerequisites**
+```bash
+# Check PyPI package exists
+pip index versions [project]-mcp
+# Should show: [project]-mcp (1.0.0)
+
+# Check server.json exists and is valid
+cat projects/[project]/server.json | python -m json.tool
+
+# Check README has mcp-name line
+head -5 projects/[project]/README.md
+# Should show: mcp-name: io.github.[username]/[project]
+```
+
+**2. Publish to MCP Registry**
+```bash
+cd projects/[project]
+/path/to/mcp-publisher publish --server server.json
+```
+
+Expected output:
+```
+Publishing to https://registry.modelcontextprotocol.io...
+✓ Successfully published
+✓ Server io.github.[username]/[project] version 1.0.0
+```
+
+**3. Verify Publication**
+
+The MCP should now be discoverable in Claude Desktop and the MCP Registry website.
+
+**Updating an Existing MCP**:
+
+1. Update code in dev-sandbox
+2. Bump version in all files:
+   - `pyproject.toml`
+   - `server.json`
+   - `src/[project]_mcp/__init__.py`
+3. Rebuild: `python -m build`
+4. Upload to PyPI: `twine upload dist/*`
+5. Republish to Registry: `mcp-publisher publish --server server.json`
+
+**Troubleshooting**:
+
+| Error | Solution |
+|-------|----------|
+| `401 Unauthorized` / `token expired` | Re-run `mcp-publisher login github` |
+| `server.json not found` | Run from project directory or use absolute path |
+| `Package not found on registry` | Ensure PyPI upload completed first (SOP 12) |
+| `Ownership validation failed` | Add `mcp-name: io.github.[user]/[project]` to README |
+| `registryType "pip" unsupported` | Use `"pypi"` not `"pip"` in server.json |
+| `Description too long` | Shorten to under 100 characters |
+
+**server.json Validation**:
+
+Common issues:
+```json
+{
+  "registryType": "pypi",     // NOT "pip"
+  "identifier": "[project]-mcp",  // Must match PyPI package name exactly
+  "version": "1.0.0"          // Must match PyPI version
+}
+```
+
+**MCP Registry Namespace**:
+
+Your MCP name format: `io.github.[github-username]/[project-name]`
+
+Examples:
+- `io.github.wmarceau/md-to-pdf`
+- `io.github.wmarceau/amazon-seller`
+- `io.github.wmarceau/fitness-influencer`
+
+**Success Criteria**:
+- ✅ `mcp-publisher publish` succeeds
+- ✅ MCP appears in Claude Desktop's MCP browser
+- ✅ Users can install via the registry
+
+**Complete Publishing Workflow**:
+
+```bash
+# From project directory
+cd projects/[project]
+
+# 1. Build
+rm -rf dist/ && python -m build
+
+# 2. Upload to PyPI
+python -m twine upload dist/* --username __token__ --password $PYPI_TOKEN
+
+# 3. Publish to MCP Registry
+/path/to/mcp-publisher publish --server server.json
+```
+
+**References**:
+- MCP Registry: https://registry.modelcontextprotocol.io
+- mcp-publisher repo: https://github.com/modelcontextprotocol/registry
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
 |-----------|---------|-----------------|
-| Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) | None |
+| **FIRST** for any new project | [SOP 0: Project Kickoff & App Type Classification](#sop-0-project-kickoff--app-type-classification) | None (START HERE) |
+| Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) | **⚠️ Complete SOP 0 first** |
 | Just wrote code / Need to test | `docs/testing-strategy.md` ⭐ | **Start with Scenario 1 (Manual Testing)** |
 | Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) | **⚠️ Manual testing complete (Scenario 1), environment working** |
 | Ready to deploy to production | [SOP 3: Version Control & Deployment](#sop-3-version-control--deployment) | **⚠️ All testing scenarios complete** |
@@ -1283,15 +1812,20 @@ This is where outputs are merged into a working system:
 | Just completed a repeatable task | [SOP 6: Workflow Creation](#sop-6-workflow-creation) | Task tested |
 | Deployed too early / No directive | [SOP 7: DOE Architecture Rollback](#sop-7-doe-architecture-rollback) | None |
 | Testing for client / Need to save demo outputs | [SOP 8: Client Demo & Test Output Management](#sop-8-client-demo--test-output-management) | None |
-| New project with multiple possible approaches | [SOP 9: Multi-Agent Architecture Exploration](#sop-9-multi-agent-architecture-exploration) | None (use BEFORE implementation) |
+| New project with multiple possible approaches | [SOP 9: Multi-Agent Architecture Exploration](#sop-9-multi-agent-architecture-exploration) | **⚠️ Complete SOP 0 first** (use BEFORE implementation) |
 | Large system with 3+ independent components | [SOP 10: Multi-Agent Parallel Development](#sop-10-multi-agent-parallel-development) | Clear component boundaries |
+| Converting project to MCP format | [SOP 11: MCP Package Structure](#sop-11-mcp-package-structure) | **⚠️ Project tested and working** |
+| Publishing MCP to PyPI | [SOP 12: PyPI Publishing](#sop-12-pypi-publishing) | **⚠️ SOP 11 complete, PyPI account** |
+| Publishing to Claude MCP Registry | [SOP 13: MCP Registry Publishing](#sop-13-mcp-registry-publishing) | **⚠️ SOP 12 complete (on PyPI first)** |
 
 **Critical Notes**:
+- **Project Kickoff (SOP 0)**: ALWAYS start here for new projects - decide app type, cost-benefit, template vs clean slate
 - **Architecture Exploration (SOP 9)**: Use BEFORE coding to research which approach is best
 - **Parallel Development (SOP 10)**: Use DURING coding to build components simultaneously
 - **Testing**: ALWAYS see `docs/testing-strategy.md` for complete pipeline (Manual → Multi-Agent → Pre-Deployment)
 - **Multi-Agent Testing**: ALWAYS check `email-analyzer/testing/` first as reference template
 - **Deployment**: Can ONLY happen after all testing scenarios complete
+- **MCP Publishing (SOPs 11-13)**: OPTIONAL step after deployment - publishes to Claude's marketplace
 
 ---
 

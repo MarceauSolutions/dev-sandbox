@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-01-13
+
+### Added
+- **MCP Server Wrapper** (`mcp-server/fitness_influencer_mcp.py`)
+- Six MCP tools:
+  - `create_jump_cut_video` - Automatic silence removal
+  - `add_video_branding` - Intro/outro insertion
+  - `generate_fitness_image` - AI image generation via Grok
+  - `generate_workout_plan` - Custom workout plans
+  - `get_revenue_report` - Google Sheets analytics
+  - `analyze_content_engagement` - Engagement placeholder
+- Registry manifest for MCP Registry submission
+- SKILL.md documentation
+
+---
+
 ## [1.0.0] - 2026-01-08
 
 ### Added
