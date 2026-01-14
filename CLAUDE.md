@@ -573,6 +573,22 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 
 **When**: At end of each significant session or when major learnings occur
 
+**Intermittent Save Points**:
+
+Save progress mid-session when:
+- Completing a major milestone (e.g., all repos created, PR submitted)
+- Before starting a risky operation (destructive commands, major refactors)
+- At natural breakpoints in multi-step tasks
+- Every 30-60 minutes of intensive work
+- After discovering something that took effort to figure out
+
+**Quick Save Actions:**
+1. Update relevant checklist/tracking doc (mark items complete)
+2. Commit changes to dev-sandbox if files were modified
+3. Note critical learnings in session-history.md (brief bullet points)
+
+**Full Save** (end of session): Follow Steps 1-4 below.
+
 **Steps**:
 1. **Update session-history.md**:
    ```markdown
@@ -616,6 +632,29 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 ### SOP 6: Workflow Creation
 
 **When**: Completing a repeatable task for the first time
+
+**Decision Matrix** - Score each factor 0-3:
+
+| Factor | 0 | 1 | 2 | 3 |
+|--------|---|---|---|---|
+| **Recurrence** | One-time | Unlikely | Probable | Frequent |
+| **Consistency** | Doesn't matter | Nice to have | Important | Critical |
+| **Complexity** | Trivial (<3 steps) | Simple | Moderate | Complex (10+ steps) |
+| **Onboarding** | Only I'll do this | Might help others | Would help | Essential for handoff |
+
+**Total Score:**
+- **0-3**: Skip workflow, note in session-history.md if notable
+- **4-6**: Consider workflow, or create after second occurrence
+- **7-9**: Create workflow during this session
+- **10-12**: Create workflow immediately
+
+**Quick Test**: If you'd feel frustrated repeating the same research/trial-and-error next time, create the workflow now.
+
+**Parallel Workflow Creation** (Optional for complex tasks):
+Launch a second Claude instance to document steps as you work:
+1. Main instance: Execute the task
+2. Workflow instance: Document steps in real-time
+3. Benefit: Captures edge cases and troubleshooting without interrupting work
 
 **Steps**:
 1. **While working**, note the steps you're taking
@@ -2007,11 +2046,474 @@ All three should show the same version number.
 
 ---
 
+### SOP 15: Multi-Channel Deployment
+
+**When**: Deploying a project to multiple distribution channels simultaneously
+
+**Purpose**: Orchestrate deployment across all configured channels (Local, GitHub, PyPI, MCP Registry, OpenRouter) in a single workflow
+
+**Available Channels**:
+
+| Channel | Target Audience | Prerequisites |
+|---------|----------------|---------------|
+| **Local Workspace** | Internal testing | None (automatic) |
+| **GitHub Repo** | Open source / team | GitHub account, repo exists |
+| **PyPI Package** | Python developers | pyproject.toml, PyPI token |
+| **Claude MCP Registry** | Claude users | server.json, mcp-publisher |
+| **OpenRouter** | Multi-LLM users | MCP server with stdio transport |
+
+**Channel Configuration**:
+
+Add `deployment_channels` to project config in `deploy_to_skills.py`:
+
+```python
+"project-name": {
+    # ... existing config ...
+    "deployment_channels": {
+        "local": True,           # Always enabled
+        "github": "org/repo",    # GitHub repo or False
+        "pypi": "package-mcp",   # PyPI package name or False
+        "mcp_registry": "io.github.user/project",  # MCP name or False
+        "openrouter": True       # Register on OpenRouter directories
+    }
+}
+```
+
+**Commands**:
+
+```bash
+# Deploy to all configured channels
+python deploy_to_skills.py --project [name] --all-channels --version 1.0.0
+
+# Deploy to specific channels only
+python deploy_to_skills.py --project [name] --channels local,github,pypi
+
+# Validate prerequisites without deploying
+python deploy_to_skills.py --project [name] --validate-channels
+
+# List configured channels for a project
+python deploy_to_skills.py --project [name] --list-channels
+```
+
+**Deployment Sequence**:
+
+1. **Validate** - Check all prerequisites for enabled channels
+2. **Local Workspace** - Deploy to `~/{project}-prod/`
+3. **GitHub** - Push to configured repository
+4. **PyPI** - Build and upload package (`twine upload dist/*`)
+5. **MCP Registry** - Publish to Claude marketplace (`mcp-publisher publish`)
+6. **OpenRouter** - Register on PulseMCP/Glama directories
+7. **Verify** - Confirm each deployment succeeded
+8. **Report** - Generate deployment summary
+
+**Prerequisites per Channel**:
+
+| Channel | Required Files | Required Tools/Accounts |
+|---------|----------------|------------------------|
+| Local | VERSION, CHANGELOG | None |
+| GitHub | README, LICENSE | `gh` CLI, repo access |
+| PyPI | pyproject.toml, src/[pkg]_mcp/ | PyPI token |
+| MCP Registry | server.json, mcp-name in README | mcp-publisher, GitHub auth |
+| OpenRouter | Working MCP server (stdio) | None (manual registration) |
+
+**Example Multi-Channel Deployment**:
+
+```bash
+# Full deployment of rideshare MCP to all channels
+python deploy_to_skills.py --project mcp-aggregator-rideshare \
+    --all-channels \
+    --version 1.0.0
+
+# Output:
+# ✓ Local Workspace: ~/mcp-aggregator-rideshare-prod/
+# ✓ GitHub: wmarceau/rideshare-comparison-mcp
+# ✓ PyPI: rideshare-comparison-mcp v1.0.0
+# ✓ MCP Registry: io.github.wmarceau/rideshare-comparison
+# ✓ OpenRouter: Listed on PulseMCP, Glama
+```
+
+**Post-Deployment**:
+
+1. Update `docs/MCP-CONVERSION-PLAN.md` status
+2. Add to curated collection landing page
+3. Document in session-history.md
+
+**References**:
+- SOP 11-14: Individual channel SOPs
+- `docs/deployment-channels-guide.md`: Full channel documentation
+
+---
+
+### SOP 16: OpenRouter Registration
+
+**When**: Registering an MCP on OpenRouter and related directories (PulseMCP, Glama)
+
+**Purpose**: Expand MCP reach to 200+ LLM providers via AI gateway integration
+
+**Prerequisites**:
+- ✅ MCP published to PyPI (SOP 12 complete)
+- ✅ MCP server uses stdio transport
+- ✅ Working documentation/README
+
+**Steps**:
+
+1. **Verify MCP works locally**:
+   ```bash
+   # Test MCP server runs
+   python -m [package]_mcp.server
+   ```
+
+2. **Register on PulseMCP** (https://pulsemcp.com):
+   - Submit MCP URL/package name
+   - Add description and keywords
+   - Wait for review/approval
+
+3. **Register on Glama** (https://glama.ai/mcp/servers):
+   - Submit GitHub repo or PyPI package
+   - Add metadata and examples
+
+4. **Register on MCP Market** (https://mcpmarket.com):
+   - Create listing with documentation
+   - Add use case examples
+
+5. **Update project documentation**:
+   - Add "Available on OpenRouter" badge to README
+   - Link to directory listings
+
+**Verification**:
+- Search for your MCP on each directory
+- Confirm listing appears correctly
+- Test installation instructions work
+
+**References**:
+- [Using MCP Servers with OpenRouter](https://openrouter.ai/docs/guides/guides/mcp-servers)
+- [PulseMCP Directory](https://pulsemcp.com)
+- [Glama MCP Servers](https://glama.ai/mcp/servers)
+
+---
+
+### SOP 17: Market Viability Analysis (Multi-Agent)
+
+**When**: BEFORE investing significant development time in a new product/project idea
+
+**Purpose**: Quickly assess market viability using parallel research agents to determine if an idea is worth pursuing, saving weeks of wasted development time on unviable products.
+
+**Key Principle**: Fail fast, fail cheap. Better to spend 2 hours researching than 2 weeks building something nobody wants.
+
+**Prerequisites**:
+- Product/service idea defined (can be vague)
+- Target customer hypothesis (who would use this?)
+
+**Directory Structure**:
+```
+projects/[project-name]/
+├── market-analysis/
+│   ├── ANALYSIS-PLAN.md           # Research questions for each agent
+│   ├── AGENT-PROMPTS.txt          # Copy-paste prompts for 4 agents
+│   ├── agent1-market-size/
+│   │   └── FINDINGS.md
+│   ├── agent2-competition/
+│   │   └── FINDINGS.md
+│   ├── agent3-customer-research/
+│   │   └── FINDINGS.md
+│   ├── agent4-monetization/
+│   │   └── FINDINGS.md
+│   └── consolidated/
+│       ├── VIABILITY-SCORECARD.md
+│       └── GO-NO-GO-DECISION.md
+```
+
+**The 4 Research Agents**:
+
+| Agent | Focus | Key Questions |
+|-------|-------|---------------|
+| **Agent 1: Market Size** | TAM/SAM/SOM | How big is the market? Growing or shrinking? |
+| **Agent 2: Competition** | Competitive landscape | Who else solves this? How do they monetize? |
+| **Agent 3: Customer** | Buyer persona & pain | Would they pay? How much? Where do they hang out? |
+| **Agent 4: Monetization** | Revenue model | B2B vs B2C? Subscription? One-time? Unit economics? |
+
+**Steps**:
+
+**Phase 1: Define the Research Questions**
+
+Create `market-analysis/ANALYSIS-PLAN.md`:
+
+```markdown
+# Market Viability Analysis: [Product Name]
+
+## Product Hypothesis
+**What it is**: [1-2 sentence description]
+**Who it's for**: [Target customer]
+**Problem it solves**: [Pain point]
+**How we'd make money**: [Initial monetization idea]
+
+## Agent 1: Market Size Questions
+1. What is the TAM (Total Addressable Market)?
+2. What is the SAM (Serviceable Addressable Market)?
+3. What is the realistic SOM (Serviceable Obtainable Market)?
+4. Is the market growing, stable, or shrinking?
+5. What are the key market trends?
+
+## Agent 2: Competition Questions
+1. Who are the direct competitors (same solution)?
+2. Who are indirect competitors (different solution, same problem)?
+3. What do competitors charge? What's their revenue model?
+4. What's their market share / funding / size?
+5. What's their main weakness we could exploit?
+6. Is there a gap in the market?
+
+## Agent 3: Customer Research Questions
+1. Who exactly is the target customer (be specific)?
+2. How painful is this problem (1-10)?
+3. How do they currently solve it (workarounds)?
+4. How much do they currently pay for alternatives?
+5. Where do they congregate online (forums, social)?
+6. What triggers them to search for a solution?
+
+## Agent 4: Monetization Questions
+1. What pricing model makes sense (subscription, usage, one-time)?
+2. What price point would the market bear?
+3. What are realistic customer acquisition costs?
+4. What's the expected LTV (lifetime value)?
+5. What's the break-even timeline?
+6. Are there adjacent revenue opportunities (upsells)?
+```
+
+**Phase 2: Create Agent Prompts**
+
+Create `market-analysis/AGENT-PROMPTS.txt`:
+
+```
+==================================================
+AGENT 1: MARKET SIZE RESEARCH
+==================================================
+
+I'm Agent 1 in a MARKET VIABILITY analysis for [Product Name].
+
+MY WORKSPACE: /absolute/path/to/market-analysis/agent1-market-size/
+MY OUTPUT: Create FINDINGS.md
+
+PRODUCT HYPOTHESIS:
+[Paste product description here]
+
+MY MISSION: Determine market size (TAM/SAM/SOM) and trends
+
+RESEARCH QUESTIONS:
+1. What is the TAM (Total Addressable Market)?
+2. What is the SAM (Serviceable Addressable Market)?
+3. What is the realistic SOM (Serviceable Obtainable Market)?
+4. Is the market growing, stable, or shrinking? What's the CAGR?
+5. What are key market trends affecting this space?
+
+DELIVERABLE FORMAT (FINDINGS.md):
+- **TAM**: $X billion [source]
+- **SAM**: $X million [source]
+- **SOM**: $X million (realistic year 1-3) [methodology]
+- **Growth Rate**: X% CAGR [source]
+- **Key Trends**: Bullet list with sources
+- **Market Viability Score**: 1-5 stars with rationale
+
+Use web search extensively. Cite all sources. Be skeptical of inflated market claims.
+```
+
+(Create similar prompts for Agents 2, 3, 4 with their specific questions)
+
+**Phase 3: Launch Agents in Parallel**
+
+1. Open 4 separate Claude instances
+2. Copy-paste each agent's prompt
+3. Let agents research independently (30-60 minutes each)
+4. Agents should use web search, industry reports, competitor analysis
+
+**Phase 4: Consolidate into Viability Scorecard**
+
+After all agents complete, create `consolidated/VIABILITY-SCORECARD.md`:
+
+```markdown
+# Market Viability Scorecard: [Product Name]
+
+## Summary Scores
+
+| Factor | Score (1-5) | Weight | Weighted |
+|--------|-------------|--------|----------|
+| **Market Size** | ⭐⭐⭐⭐ | 25% | 1.0 |
+| **Competition** | ⭐⭐⭐ | 25% | 0.75 |
+| **Customer Pain** | ⭐⭐⭐⭐⭐ | 30% | 1.5 |
+| **Monetization** | ⭐⭐⭐ | 20% | 0.6 |
+| **TOTAL** | | 100% | **3.85/5** |
+
+## Scoring Guide
+- ⭐⭐⭐⭐⭐ (5): Exceptional - strong signal to proceed
+- ⭐⭐⭐⭐ (4): Good - worth pursuing
+- ⭐⭐⭐ (3): Acceptable - proceed with caution
+- ⭐⭐ (2): Weak - significant concerns
+- ⭐ (1): Poor - likely not viable
+
+## Key Findings
+
+### Market Size (Agent 1)
+- TAM: $X
+- SAM: $X
+- SOM: $X (year 1-3 realistic)
+- Growth: X% CAGR
+- **Verdict**: [Summary]
+
+### Competition (Agent 2)
+- Direct competitors: [List]
+- Indirect competitors: [List]
+- Market gap: [Opportunity]
+- **Verdict**: [Summary]
+
+### Customer Pain (Agent 3)
+- Target persona: [Description]
+- Pain level: X/10
+- Current solutions: [How they solve it now]
+- Willingness to pay: [Evidence]
+- **Verdict**: [Summary]
+
+### Monetization (Agent 4)
+- Recommended model: [Subscription/Usage/etc]
+- Price point: $X
+- CAC estimate: $X
+- LTV estimate: $X
+- Break-even: X months
+- **Verdict**: [Summary]
+
+## Red Flags
+- [List any serious concerns discovered]
+
+## Opportunities
+- [List any positive surprises or blue ocean opportunities]
+```
+
+**Phase 5: Make Go/No-Go Decision**
+
+Create `consolidated/GO-NO-GO-DECISION.md`:
+
+```markdown
+# Go/No-Go Decision: [Product Name]
+
+## Overall Score: X.XX/5
+
+## Decision: [GO / NO-GO / PIVOT]
+
+## Rationale
+[2-3 paragraphs explaining the decision]
+
+## If GO:
+- Recommended MVP scope: [What to build first]
+- Target customer segment: [Who to focus on]
+- Pricing strategy: [How to price]
+- Go-to-market: [Where to find customers]
+
+## If NO-GO:
+- Primary dealbreaker: [What killed it]
+- Could this pivot work?: [Alternative ideas]
+
+## If PIVOT:
+- Original idea: [What we started with]
+- Pivoted idea: [What might work instead]
+- Why pivot is more viable: [Rationale]
+
+## Next Steps
+1. [Action item 1]
+2. [Action item 2]
+3. [Action item 3]
+```
+
+**Scoring Thresholds**:
+
+| Score | Decision | Action |
+|-------|----------|--------|
+| **4.0-5.0** | GO | Proceed to SOP 0 (Project Kickoff) |
+| **3.0-3.9** | CONDITIONAL GO | Address red flags first, then proceed |
+| **2.0-2.9** | PIVOT | Research alternative approaches |
+| **1.0-1.9** | NO-GO | Archive idea, move on |
+
+**Time Investment**:
+- Phase 1-2: 30 minutes (setup)
+- Phase 3: 1-2 hours (parallel agent research)
+- Phase 4-5: 30 minutes (consolidation)
+- **Total: 2-3 hours** vs weeks of building the wrong thing
+
+**When to Use vs Skip**:
+
+✅ **Use SOP 17 when**:
+- New product idea with uncertain market
+- Entering unfamiliar market segment
+- Significant development investment required (>1 week)
+- B2C product (harder to validate than B2B)
+- No existing customers or waitlist
+
+❌ **Skip SOP 17 when**:
+- Building for yourself (dog-fooding)
+- Existing customers already requesting it
+- Simple feature addition to existing product
+- Internal tool (no revenue model needed)
+- Quick experiment (<2 days to build)
+
+**Integration with Development Pipeline**:
+
+```
+-1. MARKET ANALYSIS (SOP 17) - BEFORE committing to build
+    └── 4-agent parallel research
+    └── Viability scorecard
+    └── Go/No-Go decision
+    └── If NO-GO: Stop here, save weeks of work
+
+0. KICKOFF (SOP 0) - Only if SOP 17 = GO
+   └── Complete questionnaire
+   └── App type decision
+
+1. DESIGN → 2. DEVELOP → 3. TEST → 4. DEPLOY
+```
+
+**Example: Fitness Influencer AI Viability**
+
+```
+Agent 1 (Market Size):
+- TAM: $21.4B creator economy
+- SAM: $2.1B fitness influencer tools
+- SOM: $50-100K (year 1 realistic for solopreneur)
+- Growth: 15% CAGR
+- Score: ⭐⭐⭐⭐ (4/5)
+
+Agent 2 (Competition):
+- Direct: Later, Buffer (social scheduling)
+- Indirect: Canva, CapCut (manual tools)
+- Gap: All-in-one for fitness niche
+- Score: ⭐⭐⭐ (3/5) - crowded but fragmented
+
+Agent 3 (Customer):
+- Persona: 10K-100K follower fitness creators
+- Pain: 8/10 (time-consuming editing)
+- Current: Piecing together 5+ tools
+- WTP: $20-50/month
+- Score: ⭐⭐⭐⭐⭐ (5/5) - strong pain
+
+Agent 4 (Monetization):
+- Model: Freemium + Pro subscription
+- Price: $29/month Pro tier
+- CAC: $10-30 (content marketing)
+- LTV: $200+ (6+ month retention)
+- Score: ⭐⭐⭐⭐ (4/5)
+
+TOTAL: 4.0/5 = GO
+```
+
+**References**:
+- SOP 0: Project Kickoff (runs after GO decision)
+- SOP 9: Architecture Exploration (technical approach)
+- `docs/cost-benefit-templates.md` (financial projections)
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
 |-----------|---------|-----------------|
-| **FIRST** for any new project | [SOP 0: Project Kickoff & App Type Classification](#sop-0-project-kickoff--app-type-classification) | None (START HERE) |
+| **NEW IDEA** - uncertain market viability | [SOP 17: Market Viability Analysis](#sop-17-market-viability-analysis-multi-agent) | Product hypothesis, target customer |
+| **FIRST** for any new project | [SOP 0: Project Kickoff & App Type Classification](#sop-0-project-kickoff--app-type-classification) | ⚠️ SOP 17 = GO (if applicable) |
 | Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) | **⚠️ Complete SOP 0 first** |
 | Just wrote code / Need to test | `docs/testing-strategy.md` ⭐ | **Start with Scenario 1 (Manual Testing)** |
 | Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) | **⚠️ Manual testing complete (Scenario 1), environment working** |
@@ -2027,15 +2529,20 @@ All three should show the same version number.
 | Publishing MCP to PyPI | [SOP 12: PyPI Publishing](#sop-12-pypi-publishing) | **⚠️ SOP 11 complete, PyPI account** |
 | Publishing to Claude MCP Registry | [SOP 13: MCP Registry Publishing](#sop-13-mcp-registry-publishing) | **⚠️ SOP 12 complete (on PyPI first)** |
 | Updating an existing MCP | [SOP 14: MCP Update & Version Bump](#sop-14-mcp-update--version-bump) | **⚠️ MCP already published, changes tested** |
+| Deploy to multiple channels at once | [SOP 15: Multi-Channel Deployment](#sop-15-multi-channel-deployment) | **⚠️ Channels configured in deploy_to_skills.py** |
+| Register MCP on OpenRouter directories | [SOP 16: OpenRouter Registration](#sop-16-openrouter-registration) | **⚠️ SOP 12 complete (PyPI first)** |
+| Submit to external directories | See `docs/mcp-collection/workflows/submit-to-directories.md` | **⚠️ GitHub repos created, SOP 12-13 complete** |
 
 **Critical Notes**:
+- **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
 - **Project Kickoff (SOP 0)**: ALWAYS start here for new projects - decide app type, cost-benefit, template vs clean slate
 - **Architecture Exploration (SOP 9)**: Use BEFORE coding to research which approach is best
 - **Parallel Development (SOP 10)**: Use DURING coding to build components simultaneously
 - **Testing**: ALWAYS see `docs/testing-strategy.md` for complete pipeline (Manual → Multi-Agent → Pre-Deployment)
 - **Multi-Agent Testing**: ALWAYS check `email-analyzer/testing/` first as reference template
 - **Deployment**: Can ONLY happen after all testing scenarios complete
-- **MCP Publishing (SOPs 11-13)**: OPTIONAL step after deployment - publishes to Claude's marketplace
+- **MCP Publishing (SOPs 11-14)**: Publishes to Claude's marketplace
+- **Multi-Channel (SOPs 15-16)**: Expands reach beyond Claude to OpenRouter + directories
 
 ---
 
