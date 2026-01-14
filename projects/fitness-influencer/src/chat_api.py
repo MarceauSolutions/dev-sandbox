@@ -70,6 +70,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Allow iframe embedding from marceausolutions.com
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
+
+class IframeAllowMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        # Allow embedding in iframes from any origin
+        response.headers["X-Frame-Options"] = "ALLOWALL"
+        response.headers["Content-Security-Policy"] = "frame-ancestors *"
+        return response
+
+app.add_middleware(IframeAllowMiddleware)
+
 # Paths
 SCRIPTS_PATH = Path(__file__).parent
 FRONTEND_PATH = SCRIPTS_PATH.parent / "frontend"
