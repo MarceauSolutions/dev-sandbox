@@ -631,8 +631,12 @@ async def root():
 
 @app.get("/dashboard")
 async def dashboard():
-    """Serve dashboard interface."""
-    return FileResponse(FRONTEND_PATH / "dashboard.html")
+    """Serve dashboard interface with iframe-friendly headers."""
+    response = FileResponse(FRONTEND_PATH / "dashboard.html")
+    # Allow embedding in iframes
+    response.headers["X-Frame-Options"] = "ALLOWALL"
+    response.headers["Content-Security-Policy"] = "frame-ancestors *"
+    return response
 
 
 @app.get("/api/costs")
