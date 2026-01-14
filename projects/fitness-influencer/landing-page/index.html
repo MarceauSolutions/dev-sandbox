@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Influencer AI - Your AI Assistant for Content Creation</title>
+    <meta name="description" content="Save hours on video editing, manage comments at scale, and prevent content burnout with AI-powered tools built for fitness creators.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Fitness Influencer AI - Your AI Assistant for Content Creation">
+    <meta property="og:description" content="Save hours on video editing, manage comments at scale, and prevent content burnout.">
+    <meta property="og:type" content="website">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Email Form */
+        .email-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .email-form input[type="email"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .email-form button {
+            padding: 15px 30px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .email-form button:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .form-note {
+            margin-top: 15px;
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Pain Points */
+        .pain-points {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .pain-points h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 50px;
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .pain-card {
+            padding: 30px;
+            background: var(--light);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .pain-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .pain-card p {
+            color: var(--gray);
+        }
+
+        /* Features */
+        .features {
+            padding: 80px 0;
+            background: var(--light);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 50px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .feature-card .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-card .tag.paid {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Pricing Preview */
+        .pricing {
+            padding: 80px 0;
+            background: white;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .pricing .subtitle {
+            color: var(--gray);
+            margin-bottom: 50px;
+        }
+
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .pricing-card {
+            background: var(--light);
+            border-radius: 16px;
+            padding: 40px;
+            width: 300px;
+            text-align: left;
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .pricing-card .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .pricing-card li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        .pricing-card.featured li::before {
+            color: #a5f3fc;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            background: var(--dark);
+            color: white;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: #dcfce7;
+            color: #166534;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">Fitness Influencer AI</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Your AI Assistant for<br>Fitness Content Creation</h1>
+            <p>Save hours on video editing, manage comments at scale, and prevent content burnout with AI-powered tools built for fitness creators.</p>
+
+            <form class="email-form" id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <input type="email" name="email" placeholder="Enter your email" required>
+                <button type="submit">Get Early Access</button>
+            </form>
+            <p class="form-note">Join 0+ creators on the waitlist. Pro features launching soon.</p>
+
+            <div class="success-message" id="success-message">
+                You're on the list! We'll notify you when Pro features launch.
+            </div>
+        </div>
+    </section>
+
+    <section class="pain-points">
+        <div class="container">
+            <h2>Sound Familiar?</h2>
+            <div class="pain-grid">
+                <div class="pain-card">
+                    <h3>"I spend 4+ hours editing each video"</h3>
+                    <p>Cutting silence, adding intros, removing ums and ahs. It takes forever.</p>
+                </div>
+                <div class="pain-card">
+                    <h3>"My DMs are completely unmanageable"</h3>
+                    <p>Brand inquiries buried under spam. Fan messages you can't respond to. Collabs you miss.</p>
+                </div>
+                <div class="pain-card">
+                    <h3>"I'm burnt out from posting every day"</h3>
+                    <p>Content calendar? What content calendar? You're just surviving to the next post.</p>
+                </div>
+                <div class="pain-card">
+                    <h3>"Every platform needs different specs"</h3>
+                    <p>TikTok wants 9:16. YouTube wants 16:9. Instagram wants... everything.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>AI Tools Built for Fitness Creators</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✂️</div>
+                    <h3>Auto Jump-Cut Video Editor</h3>
+                    <p>Remove silence, ums, and dead air automatically. Turn a 20-minute raw video into a tight 8-minute edit in seconds.</p>
+                    <span class="tag">FREE</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Comment Auto-Categorizer</h3>
+                    <p>AI categorizes your comments and DMs: brand inquiries (priority!), collabs, fans, spam, and haters. Never miss a deal again.</p>
+                    <span class="tag">FREE</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Burnout-Proof Content Calendar</h3>
+                    <p>Generate 30-day content calendars with balanced effort levels. Includes rest days and holiday-themed content ideas.</p>
+                    <span class="tag">FREE</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Cross-Platform Optimizer</h3>
+                    <p>One video, 9 platforms. Get instant specs, hashtag counts, and optimal posting times for TikTok, IG, YouTube, and more.</p>
+                    <span class="tag">FREE</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💪</div>
+                    <h3>Workout Plan Generator</h3>
+                    <p>Create professional workout plans for your audience in seconds. Customized by goal, experience, and equipment.</p>
+                    <span class="tag">FREE</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>AI Fitness Image Generator</h3>
+                    <p>Generate professional gym photos, motivational images, and branded graphics with AI. No photoshoot needed.</p>
+                    <span class="tag paid">$0.07/image</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing">
+        <div class="container">
+            <h2>Simple Pricing, Coming Soon</h2>
+            <p class="subtitle">Start free, upgrade when you need more</p>
+
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0<span>/month</span></div>
+                    <ul>
+                        <li>5 video edits/month</li>
+                        <li>10 comment batches/day</li>
+                        <li>3 workout plans/month</li>
+                        <li>1 content calendar/week</li>
+                        <li>Unlimited platform optimizer</li>
+                    </ul>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Pro</h3>
+                    <div class="price">$9<span>/month</span></div>
+                    <ul>
+                        <li>Unlimited video edits</li>
+                        <li>Unlimited comment management</li>
+                        <li>Unlimited workout plans</li>
+                        <li>Unlimited content calendars</li>
+                        <li>20 AI images/month</li>
+                        <li>Priority support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Save Hours Every Week?</h2>
+            <p>Join the waitlist and be first to know when Pro launches.</p>
+            <form class="email-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <input type="email" name="email" placeholder="Enter your email" required>
+                <button type="submit">Join Waitlist</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Fitness Influencer AI - Built with Claude MCP</p>
+            <p><a href="https://pypi.org/project/fitness-influencer-mcp/">View on PyPI</a> | <a href="https://github.com/MarceauSolutions/fitness-influencer-mcp">GitHub</a></p>
+            <p style="margin-top: 20px; opacity: 0.7;">© 2026 Marceau Solutions. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Form submission handling
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            // For now, just show success message (replace with actual form handling)
+            // e.preventDefault();
+            // document.getElementById('success-message').style.display = 'block';
+            // this.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
