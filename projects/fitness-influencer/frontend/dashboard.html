@@ -1009,10 +1009,8 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
     </div>
 
     <script>
-        // API Base URL - Update this for production
-        const API_BASE = window.location.hostname === 'localhost'
-            ? 'http://localhost:8000'
-            : 'https://fitness-influencer-production.up.railway.app';
+        // API Base URL - automatically detect local vs production
+        const API_BASE = window.location.origin;
 
         // Modal Functions
         function openModal(id) {
@@ -1084,38 +1082,69 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
             }
         }
 
-        // Progress Simulation (for demo)
-        function simulateProgress(prefix, statusMessages, duration, callback) {
+        // Progress Display Helper
+        function showProgress(prefix, message) {
             const progressFill = document.getElementById(prefix + '-progress-fill');
             const progressStatus = document.getElementById(prefix + '-progress-status');
             const progressContainer = document.getElementById(prefix + '-progress');
 
             progressContainer.classList.add('active');
-            let progress = 0;
-            const interval = duration / 100;
-
-            const timer = setInterval(() => {
-                progress += 1;
-                progressFill.style.width = progress + '%';
-
-                // Update status message at certain points
-                if (progress < 30) {
-                    progressStatus.textContent = statusMessages[0] || 'Processing...';
-                } else if (progress < 60) {
-                    progressStatus.textContent = statusMessages[1] || 'Almost there...';
-                } else if (progress < 90) {
-                    progressStatus.textContent = statusMessages[2] || 'Finalizing...';
-                }
-
-                if (progress >= 100) {
-                    clearInterval(timer);
-                    progressStatus.textContent = 'Complete!';
-                    setTimeout(callback, 500);
-                }
-            }, interval);
+            progressStatus.textContent = message;
+            progressFill.style.width = '50%';
         }
 
-        // Video Processing
+        function completeProgress(prefix) {
+            const progressFill = document.getElementById(prefix + '-progress-fill');
+            const progressStatus = document.getElementById(prefix + '-progress-status');
+
+            progressFill.style.width = '100%';
+            progressStatus.textContent = 'Complete!';
+        }
+
+        function hideProgress(prefix) {
+            const progressContainer = document.getElementById(prefix + '-progress');
+            progressContainer.classList.remove('active');
+        }
+
+        // API Helper - calls chat endpoint with tool intent
+        async function callChatAPI(message, fileInfo = null) {
+            const response = await fetch(`${API_BASE}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    history: [],
+                    file_info: fileInfo,
+                    confirmed: true  // Auto-confirm for dashboard direct calls
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Request failed');
+            }
+
+            return await response.json();
+        }
+
+        // Upload file to server
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch(`${API_BASE}/api/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('File upload failed');
+            }
+
+            return await response.json();
+        }
+
+        // Video Processing - Calls real API
         async function processVideo() {
             if (!selectedVideoFile) {
                 alert('Please select a video file first');
@@ -1124,25 +1153,39 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
 
             const threshold = document.getElementById('silence-threshold').value;
 
-            simulateProgress('video', [
-                'Uploading video...',
-                'Analyzing audio for silence...',
-                'Creating jump cuts...'
-            ], 8000, async () => {
-                // In production, this would call the actual API
-                // For demo, show a success result
-                document.getElementById('video-result').classList.add('active');
-                document.getElementById('video-stats').textContent =
-                    'Original: 10:23 → Edited: 7:45 (25% reduction)';
+            try {
+                showProgress('video', 'Uploading video...');
 
-                // Create object URL for preview (in real app, would be API response)
-                const previewUrl = URL.createObjectURL(selectedVideoFile);
-                document.getElementById('video-preview').src = previewUrl;
-                document.getElementById('video-download').href = previewUrl;
-            });
+                // Upload the file first
+                const uploadResult = await uploadFile(selectedVideoFile);
+
+                showProgress('video', 'Processing video with AI...');
+
+                // Call the chat API with video editing intent
+                const result = await callChatAPI(
+                    `Edit my video and remove all the silent parts. Use silence threshold of ${threshold}dB`,
+                    { name: selectedVideoFile.name, type: selectedVideoFile.type, size: selectedVideoFile.size }
+                );
+
+                completeProgress('video');
+
+                // Show result
+                document.getElementById('video-result').classList.add('active');
+
+                if (result.result && result.result.download) {
+                    document.getElementById('video-download').href = result.result.download;
+                    document.getElementById('video-stats').textContent = result.message;
+                } else {
+                    document.getElementById('video-stats').textContent = result.message || 'Video processed successfully';
+                }
+
+            } catch (error) {
+                hideProgress('video');
+                alert('Error: ' + error.message);
+            }
         }
 
-        // Graphics Generation
+        // Graphics Generation - Calls real API
         async function createGraphic() {
             const title = document.getElementById('graphic-title').value;
             const points = Array.from(document.querySelectorAll('.point-input'))
@@ -1155,19 +1198,29 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
                 return;
             }
 
-            simulateProgress('graphics', [
-                'Creating layout...',
-                'Applying brand styling...',
-                'Generating final graphic...'
-            ], 3000, () => {
+            try {
+                showProgress('graphics', 'Creating graphic...');
+
+                const message = `Create a ${platform.replace('_', ' ')} graphic titled "${title}" with these points: ${points.join(', ')}`;
+                const result = await callChatAPI(message);
+
+                completeProgress('graphics');
                 document.getElementById('graphics-result').classList.add('active');
-                // Demo image - in production would be API response
-                document.getElementById('graphics-preview').src =
-                    'https://via.placeholder.com/1080x1080/667eea/ffffff?text=' + encodeURIComponent(title);
-            });
+
+                if (result.result && result.result.download) {
+                    document.getElementById('graphics-preview').src = result.result.download;
+                    document.getElementById('graphics-download').href = result.result.download;
+                } else if (result.result && result.result.html) {
+                    document.getElementById('graphics-result').querySelector('.result-preview').innerHTML = result.result.html;
+                }
+
+            } catch (error) {
+                hideProgress('graphics');
+                alert('Error: ' + error.message);
+            }
         }
 
-        // AI Image Generation
+        // AI Image Generation - Calls real API
         async function generateAIImage() {
             const prompt = document.getElementById('ai-prompt').value;
             const count = document.getElementById('ai-count').value;
@@ -1177,125 +1230,120 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
                 return;
             }
 
-            simulateProgress('ai', [
-                'Sending to Grok AI...',
-                'Generating images...',
-                'Downloading results...'
-            ], 6000, () => {
+            try {
+                showProgress('ai', 'Generating images with Grok AI...');
+
+                const message = `Generate ${count} AI image(s) of: ${prompt}`;
+                const result = await callChatAPI(message);
+
+                completeProgress('ai');
                 document.getElementById('ai-result').classList.add('active');
+
                 const container = document.getElementById('ai-preview-container');
                 container.innerHTML = '';
 
-                for (let i = 0; i < count; i++) {
-                    const img = document.createElement('img');
-                    img.src = 'https://via.placeholder.com/512x512/10b981/ffffff?text=AI+Generated+' + (i+1);
-                    img.style.cssText = 'width:48%; margin:1%; border-radius:8px;';
-                    container.appendChild(img);
+                if (result.result && result.result.images) {
+                    result.result.images.forEach((imgUrl, i) => {
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.style.cssText = 'width:48%; margin:1%; border-radius:8px;';
+                        img.alt = 'AI Generated ' + (i+1);
+                        container.appendChild(img);
+                    });
+                } else if (result.result && result.result.html) {
+                    container.innerHTML = result.result.html;
+                } else {
+                    container.innerHTML = `<p style="color:#9ca3af;">${result.message}</p>`;
                 }
-            });
+
+            } catch (error) {
+                hideProgress('ai');
+                alert('Error: ' + error.message);
+            }
         }
 
-        // Video Ad Creation
+        // Video Ad Creation - Calls real API
         async function createVideoAd() {
             const theme = document.getElementById('ad-theme').value;
             const cta = document.getElementById('ad-cta').value;
+            const handle = document.getElementById('ad-handle').value;
 
             if (!theme) {
                 alert('Please enter an ad theme');
                 return;
             }
 
-            simulateProgress('ads', [
-                'Generating 4 AI images...',
-                'Creating video sequence...',
-                'Adding transitions and effects...'
-            ], 12000, () => {
+            try {
+                showProgress('ads', 'Creating video ad with AI...');
+
+                const message = `Create a video ad about "${theme}" with call-to-action "${cta || 'Start your journey today!'}" for handle ${handle || '@fitness'}`;
+                const result = await callChatAPI(message);
+
+                completeProgress('ads');
                 document.getElementById('ads-result').classList.add('active');
-                // Demo - in production would be actual video
-                document.getElementById('ads-preview').poster =
-                    'https://via.placeholder.com/1080x1920/ef4444/ffffff?text=Video+Ad+Preview';
-            });
+
+                if (result.result && result.result.download) {
+                    document.getElementById('ads-preview').src = result.result.download;
+                    document.getElementById('ads-download').href = result.result.download;
+                } else {
+                    document.getElementById('ads-result').querySelector('.result-preview').innerHTML =
+                        `<p style="color:#9ca3af;">${result.message}</p>`;
+                }
+
+            } catch (error) {
+                hideProgress('ads');
+                alert('Error: ' + error.message);
+            }
         }
 
-        // Email Summary
+        // Email Summary - Calls real API
         async function summarizeEmails() {
             const hours = document.getElementById('email-hours').value;
 
-            simulateProgress('email', [
-                'Connecting to Gmail...',
-                'Analyzing messages...',
-                'Categorizing by priority...'
-            ], 4000, () => {
+            try {
+                showProgress('email', 'Analyzing inbox...');
+
+                const message = `Summarize my emails from the last ${hours} hours`;
+                const result = await callChatAPI(message);
+
+                completeProgress('email');
                 document.getElementById('email-result').classList.add('active');
-                document.getElementById('email-summary-content').innerHTML = `
-                    <div style="margin-bottom: 20px;">
-                        <strong style="color: #ef4444;">🔴 URGENT (2)</strong>
-                        <ul style="margin: 8px 0 0 20px;">
-                            <li>Sponsorship offer from FitGear Pro - $2,500/month</li>
-                            <li>Brand collaboration deadline tomorrow</li>
-                        </ul>
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <strong style="color: #f59e0b;">🟡 BUSINESS (5)</strong>
-                        <ul style="margin: 8px 0 0 20px;">
-                            <li>Payment received: $450 from coaching client</li>
-                            <li>Invoice due: Equipment rental</li>
-                            <li>3 new affiliate program invitations</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <strong style="color: #4ade80;">🟢 CUSTOMER (12)</strong>
-                        <ul style="margin: 8px 0 0 20px;">
-                            <li>8 questions about workout programs</li>
-                            <li>4 testimonials/thank you messages</li>
-                        </ul>
-                    </div>
-                `;
-            });
+
+                if (result.result && result.result.html) {
+                    document.getElementById('email-summary-content').innerHTML = result.result.html;
+                } else {
+                    document.getElementById('email-summary-content').innerHTML =
+                        `<p>${result.message}</p>`;
+                }
+
+            } catch (error) {
+                hideProgress('email');
+                alert('Error: ' + error.message);
+            }
         }
 
-        // Revenue Analytics
+        // Revenue Analytics - Calls real API
         async function getAnalytics() {
-            const sheetId = document.getElementById('sheet-id').value;
+            try {
+                showProgress('analytics', 'Generating revenue report...');
 
-            if (!sheetId) {
-                alert('Please enter your Google Sheet ID');
-                return;
-            }
+                const message = `Show me my revenue analytics for this month`;
+                const result = await callChatAPI(message);
 
-            simulateProgress('analytics', [
-                'Connecting to Google Sheets...',
-                'Processing transactions...',
-                'Calculating metrics...'
-            ], 5000, () => {
+                completeProgress('analytics');
                 document.getElementById('analytics-result').classList.add('active');
-                document.getElementById('analytics-content').innerHTML = `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                        <div style="background: rgba(74, 222, 128, 0.1); padding: 16px; border-radius: 10px;">
-                            <div style="color: #6b7280; font-size: 14px;">Total Revenue</div>
-                            <div style="color: #4ade80; font-size: 28px; font-weight: 700;">$8,450</div>
-                        </div>
-                        <div style="background: rgba(239, 68, 68, 0.1); padding: 16px; border-radius: 10px;">
-                            <div style="color: #6b7280; font-size: 14px;">Total Expenses</div>
-                            <div style="color: #ef4444; font-size: 28px; font-weight: 700;">$2,100</div>
-                        </div>
-                    </div>
-                    <div style="background: rgba(96, 165, 250, 0.1); padding: 16px; border-radius: 10px; margin-bottom: 20px;">
-                        <div style="color: #6b7280; font-size: 14px;">Net Profit</div>
-                        <div style="color: #60a5fa; font-size: 32px; font-weight: 700;">$6,350</div>
-                        <div style="color: #4ade80; font-size: 14px;">↑ 23% vs last month</div>
-                    </div>
-                    <div>
-                        <strong>Revenue by Source:</strong>
-                        <ul style="margin: 8px 0 0 20px;">
-                            <li>Coaching: $4,200 (50%)</li>
-                            <li>Sponsorships: $2,500 (30%)</li>
-                            <li>Affiliate: $1,200 (14%)</li>
-                            <li>Digital Products: $550 (6%)</li>
-                        </ul>
-                    </div>
-                `;
-            });
+
+                if (result.result && result.result.html) {
+                    document.getElementById('analytics-content').innerHTML = result.result.html;
+                } else {
+                    document.getElementById('analytics-content').innerHTML =
+                        `<p>${result.message}</p>`;
+                }
+
+            } catch (error) {
+                hideProgress('analytics');
+                alert('Error: ' + error.message);
+            }
         }
 
         // Close modal on overlay click
@@ -1306,6 +1354,24 @@ Example: Professional fitness woman doing yoga pose in modern gym, natural light
                 }
             });
         });
+
+        // Check API health on load
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                console.log('API Health:', data);
+
+                if (data.status !== 'healthy') {
+                    console.warn('API may not be fully configured');
+                }
+            } catch (error) {
+                console.error('API health check failed:', error);
+            }
+        }
+
+        // Initialize
+        checkHealth();
     </script>
 </body>
 </html>
