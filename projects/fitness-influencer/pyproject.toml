@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fitness-influencer-mcp"
-version = "1.0.0"
-description = "Fitness content creator tools: video editing, AI images, workout plans, analytics."
+version = "1.2.0"
+description = "Fitness content creator tools: video editing, AI images, comment management, content calendars."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.8"

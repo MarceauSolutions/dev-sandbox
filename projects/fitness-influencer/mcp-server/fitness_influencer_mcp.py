@@ -9,10 +9,14 @@ Registry: io.github.williammarceaujr/fitness-influencer
 """
 
 import asyncio
+import base64
 import json
 import os
 import sys
 from pathlib import Path
+
+# Add parent src directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 try:
     from mcp.server import Server
@@ -213,120 +217,6 @@ Returns engagement analysis for fitness content.""",
                     }
                 }
             }
-        ),
-
-        # NEW v1.2.0 Tools - Comment Management & Content Planning
-        Tool(
-            name="categorize_comments",
-            description="""Auto-categorize comments and DMs for efficient management.
-
-Categories: FAQ, SPAM, COLLAB_REQUEST, FAN_MESSAGE, BRAND_INQUIRY, SUPPORT, NEGATIVE
-
-Returns categorized comments with suggested actions and auto-reply templates.
-Helps manage high-volume engagement at scale.
-
-Cost: FREE""",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "comments": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Array of comment/DM text strings to categorize"
-                    },
-                    "include_auto_replies": {
-                        "type": "boolean",
-                        "description": "Include suggested auto-reply templates",
-                        "default": True
-                    }
-                },
-                "required": ["comments"]
-            }
-        ),
-        Tool(
-            name="optimize_for_platforms",
-            description="""Optimize content for multiple social media platforms.
-
-Analyzes your content and generates platform-specific recommendations for:
-- TikTok, Instagram (Feed, Reels, Stories), YouTube (Standard, Shorts)
-- Twitter/X, Threads, LinkedIn
-
-Returns: aspect ratios, caption lengths, hashtag counts, posting times, and platform tips.
-
-Cost: FREE""",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "content_type": {
-                        "type": "string",
-                        "description": "Type: video, image, or carousel"
-                    },
-                    "caption": {
-                        "type": "string",
-                        "description": "Original caption text"
-                    },
-                    "video_duration": {
-                        "type": "integer",
-                        "description": "Video duration in seconds (if applicable)"
-                    },
-                    "hashtags": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "List of hashtags to use"
-                    },
-                    "platforms": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Target platforms (defaults to all)"
-                    }
-                },
-                "required": ["content_type", "caption"]
-            }
-        ),
-        Tool(
-            name="generate_content_calendar",
-            description="""Generate a balanced content calendar to prevent burnout.
-
-Creates a 30-day content plan with:
-- Balanced effort distribution (low/medium/high effort posts)
-- Platform variety
-- Holiday-aware scheduling
-- Rest day support
-- Workload assessment and recommendations
-
-Helps maintain consistent posting without burnout.
-
-Cost: FREE""",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "days": {
-                        "type": "integer",
-                        "description": "Number of days to plan (default: 30)",
-                        "default": 30
-                    },
-                    "posts_per_day": {
-                        "type": "integer",
-                        "description": "Target posts per day (1-4)",
-                        "default": 2
-                    },
-                    "platforms": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Platforms to include (defaults to all major platforms)"
-                    },
-                    "content_focus": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Categories to focus on: workout, nutrition, motivation, lifestyle, education"
-                    },
-                    "rest_days": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Days of week to skip (e.g., ['Sunday'])"
-                    }
-                }
-            }
         )
     ]
 
@@ -354,15 +244,6 @@ async def call_tool(name: str, arguments: dict):
         elif name == "analyze_content_engagement":
             return await handle_engagement_analysis(arguments)
 
-        elif name == "categorize_comments":
-            return await handle_categorize_comments(arguments)
-
-        elif name == "optimize_for_platforms":
-            return await handle_optimize_platforms(arguments)
-
-        elif name == "generate_content_calendar":
-            return await handle_content_calendar(arguments)
-
         else:
             return [TextContent(
                 type="text",
@@ -383,7 +264,7 @@ async def call_tool(name: str, arguments: dict):
 async def handle_jump_cut(arguments: dict):
     """Handle video jump cut processing."""
     try:
-        from .video_jumpcut import VideoJumpCutter
+        from video_jumpcut import VideoJumpCutter
     except ImportError as e:
         return [TextContent(
             type="text",
@@ -437,7 +318,7 @@ async def handle_jump_cut(arguments: dict):
 async def handle_video_branding(arguments: dict):
     """Handle adding intro/outro to video."""
     try:
-        from .video_jumpcut import VideoJumpCutter
+        from video_jumpcut import VideoJumpCutter
     except ImportError as e:
         return [TextContent(
             type="text",
@@ -474,7 +355,7 @@ async def handle_video_branding(arguments: dict):
 async def handle_image_generation(arguments: dict):
     """Handle AI image generation."""
     try:
-        from .grok_image_gen import GrokImageGenerator
+        from grok_image_gen import GrokImageGenerator
     except ImportError as e:
         return [TextContent(
             type="text",
@@ -516,7 +397,7 @@ async def handle_image_generation(arguments: dict):
 async def handle_workout_plan(arguments: dict):
     """Handle workout plan generation."""
     try:
-        from .workout_plan_generator import WorkoutPlanGenerator
+        from workout_plan_generator import WorkoutPlanGenerator
     except ImportError as e:
         return [TextContent(
             type="text",
@@ -558,7 +439,7 @@ async def handle_workout_plan(arguments: dict):
 async def handle_revenue_report(arguments: dict):
     """Handle revenue analytics."""
     try:
-        from .revenue_analytics import RevenueAnalytics
+        from revenue_analytics import RevenueAnalytics
     except ImportError as e:
         return [TextContent(
             type="text",
@@ -604,102 +485,6 @@ async def handle_engagement_analysis(arguments: dict):
             "message": "Engagement analysis placeholder",
             "note": "Full implementation requires YouTube/Instagram/TikTok API integration",
             "request": arguments
-        }, indent=2)
-    )]
-
-
-async def handle_categorize_comments(arguments: dict):
-    """Handle comment categorization."""
-    try:
-        from .comment_categorizer import CommentCategorizer
-    except ImportError as e:
-        return [TextContent(
-            type="text",
-            text=f"Error: Could not import comment_categorizer module: {e}"
-        )]
-
-    comments = arguments.get("comments")
-    if not comments:
-        return [TextContent(type="text", text="Error: comments array is required")]
-
-    if not isinstance(comments, list):
-        return [TextContent(type="text", text="Error: comments must be an array of strings")]
-
-    categorizer = CommentCategorizer()
-    include_replies = arguments.get("include_auto_replies", True)
-
-    results = categorizer.categorize_batch(comments, include_auto_replies=include_replies)
-
-    return [TextContent(
-        type="text",
-        text=json.dumps({
-            "success": True,
-            "total_comments": len(comments),
-            "results": results
-        }, indent=2)
-    )]
-
-
-async def handle_optimize_platforms(arguments: dict):
-    """Handle cross-platform content optimization."""
-    try:
-        from .cross_platform_optimizer import CrossPlatformOptimizer
-    except ImportError as e:
-        return [TextContent(
-            type="text",
-            text=f"Error: Could not import cross_platform_optimizer module: {e}"
-        )]
-
-    content_type = arguments.get("content_type")
-    caption = arguments.get("caption")
-
-    if not content_type or not caption:
-        return [TextContent(type="text", text="Error: content_type and caption are required")]
-
-    optimizer = CrossPlatformOptimizer()
-
-    results = optimizer.optimize_for_all_platforms(
-        content_type=content_type,
-        original_caption=caption,
-        video_duration=arguments.get("video_duration"),
-        hashtags=arguments.get("hashtags"),
-        platforms=arguments.get("platforms")
-    )
-
-    return [TextContent(
-        type="text",
-        text=json.dumps({
-            "success": True,
-            "optimization": results
-        }, indent=2)
-    )]
-
-
-async def handle_content_calendar(arguments: dict):
-    """Handle content calendar generation."""
-    try:
-        from .content_calendar import ContentCalendarGenerator
-    except ImportError as e:
-        return [TextContent(
-            type="text",
-            text=f"Error: Could not import content_calendar module: {e}"
-        )]
-
-    generator = ContentCalendarGenerator()
-
-    calendar = generator.generate_calendar(
-        days=arguments.get("days", 30),
-        posts_per_day=arguments.get("posts_per_day", 2),
-        platforms=arguments.get("platforms"),
-        content_focus=arguments.get("content_focus"),
-        rest_days=arguments.get("rest_days")
-    )
-
-    return [TextContent(
-        type="text",
-        text=json.dumps({
-            "success": True,
-            "calendar": calendar
         }, indent=2)
     )]
 

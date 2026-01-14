@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-14
+
+### Added - New MCP Tools for Content Management
+- **Comment Auto-Categorizer** (`categorize_comments`)
+  - Automatically categorize comments/DMs into: FAQ, SPAM, COLLAB_REQUEST, FAN_MESSAGE, BRAND_INQUIRY, SUPPORT, NEGATIVE
+  - Includes suggested actions and priority levels
+  - Auto-reply templates for common categories
+  - Helps manage high-volume engagement at scale
+
+- **Cross-Platform Content Optimizer** (`optimize_for_platforms`)
+  - Optimize content for 9 platforms: TikTok, Instagram (Feed/Reels/Stories), YouTube (Standard/Shorts), Twitter/X, Threads, LinkedIn
+  - Platform-specific recommendations: aspect ratios, caption lengths, hashtag counts
+  - Optimal posting time suggestions
+  - Platform feature recommendations
+
+- **Content Calendar Generator** (`generate_content_calendar`)
+  - Generate balanced 30-day content calendars
+  - Workload balancing to prevent burnout
+  - Content type variety (workout, nutrition, motivation, lifestyle, education)
+  - Holiday-aware scheduling
+  - Rest day support
+  - Effort distribution analysis and recommendations
+
+### New Modules
+- `comment_categorizer.py` - Comment categorization engine
+- `cross_platform_optimizer.py` - Platform optimization rules
+- `content_calendar.py` - Calendar generation with burnout prevention
+
+### Technical
+- MCP now exposes 9 tools (up from 6)
+- All new tools are FREE (no API costs)
+
+---
+
 ## [1.1.0] - 2026-01-13
 
 ### Added

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://registry.modelcontextprotocol.io/schemas/manifest.json",
+  "name": "Fitness Influencer Operations",
+  "version": "1.0.0",
+  "description": "Comprehensive toolkit for fitness content creators: automatic video editing with jump cuts, AI image generation, revenue analytics, and customized workout plan generation.",
+  "author": {
+    "name": "William Marceau Jr.",
+    "github": "williammarceaujr"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/williammarceaujr/fitness-influencer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williammarceaujr/fitness-influencer.git"
+  },
+  "categories": [
+    "content-creation",
+    "fitness",
+    "video-editing",
+    "ai-generation"
+  ],
+  "keywords": [
+    "fitness",
+    "influencer",
+    "content",
+    "video",
+    "editing",
+    "jump-cut",
+    "ai-image",
+    "workout",
+    "analytics",
+    "creator"
+  ],
+  "tools": [
+    {
+      "name": "create_jump_cut_video",
+      "description": "Remove silence and create jump cuts automatically"
+    },
+    {
+      "name": "add_video_branding",
+      "description": "Add intro and outro to videos"
+    },
+    {
+      "name": "generate_fitness_image",
+      "description": "Generate AI fitness images using Grok"
+    },
+    {
+      "name": "generate_workout_plan",
+      "description": "Create customized workout plans"
+    },
+    {
+      "name": "get_revenue_report",
+      "description": "Generate revenue analytics from Google Sheets"
+    },
+    {
+      "name": "analyze_content_engagement",
+      "description": "Analyze content engagement metrics"
+    }
+  ],
+  "requirements": {
+    "python": ">=3.8",
+    "packages": [
+      "moviepy",
+      "pillow",
+      "requests",
+      "python-dotenv",
+      "google-auth",
+      "google-auth-oauthlib",
+      "google-api-python-client",
+      "mcp"
+    ],
+    "system": {
+      "macos": ["ffmpeg"],
+      "linux": ["ffmpeg"]
+    }
+  },
+  "authentication": {
+    "type": "multiple",
+    "services": [
+      {
+        "name": "xAI/Grok",
+        "type": "api_key",
+        "env_var": "XAI_API_KEY",
+        "required_for": ["generate_fitness_image"]
+      },
+      {
+        "name": "Google Sheets",
+        "type": "oauth2",
+        "required_for": ["get_revenue_report"]
+      }
+    ]
+  },
+  "connectivity": "hybrid",
+  "pricing": {
+    "model": "mixed",
+    "free_tools": [
+      "create_jump_cut_video",
+      "add_video_branding",
+      "generate_workout_plan"
+    ],
+    "paid_tools": [
+      {
+        "name": "generate_fitness_image",
+        "cost": "$0.07 per image"
+      }
+    ]
+  },
+  "features": [
+    "Automatic silence detection",
+    "Professional jump cuts",
+    "AI image generation",
+    "Custom workout plans",
+    "Revenue tracking",
+    "Multi-format export"
+  ]
+}
