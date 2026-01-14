@@ -230,10 +230,10 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
                         "success": True,
                         "title": "Video Ad Created",
                         "icon": "ads",
-                        "message": "Created video ad with AI images and transitions. Cost: $0.34",
+                        "message": "Created video ad with AI images and transitions. Cost: $0.20",
                         "file_path": str(output_path),
                         "download_text": "Download Video Ad",
-                        "cost": 0.34
+                        "cost": 0.20
                     }
                 else:
                     error_msg = result.stderr or result.stdout or "Video ad creation failed"

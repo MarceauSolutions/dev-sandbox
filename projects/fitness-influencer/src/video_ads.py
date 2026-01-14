@@ -53,10 +53,10 @@ class VideoAdGenerator:
     4. Add background music
     5. Export as MP4
 
-    Cost: ~$0.34 per 15-second video ad
-    - Images: $0.28 (4 images × $0.07)
+    Cost: ~$0.20 per 15-second video ad
+    - Images: $0.14 (2 images × $0.07)
     - Video: ~$0.06 (Shotstack render)
-    Time: ~60-90 seconds total
+    Time: ~30-45 seconds total
     """
 
     def __init__(self):
@@ -115,7 +115,7 @@ class VideoAdGenerator:
         cta_text: str = "Start Your Journey",
         account_name: str = None,
         duration: float = 15.0,
-        num_images: int = 4,
+        num_images: int = 2,
         music_style: str = "energetic",
         output_path: str = None
     ) -> Dict[str, Any]:
@@ -314,8 +314,8 @@ def main():
     parser.add_argument(
         "--images",
         type=int,
-        default=4,
-        help="Number of images to generate (default: 4)"
+        default=2,
+        help="Number of images to generate (default: 2)"
     )
     
     parser.add_argument(
