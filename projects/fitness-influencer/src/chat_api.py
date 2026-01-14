@@ -215,9 +215,10 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
             cmd = [
                 "python",
                 str(SCRIPTS_PATH / "video_ads.py"),
-                "--theme", tool_input.get("theme", "fitness"),
+                "--concept", tool_input.get("concept", tool_input.get("theme", "fitness transformation")),
+                "--headline", tool_input.get("headline", "Transform Your Body"),
                 "--cta", tool_input.get("cta", "Start your journey today!"),
-                "--handle", tool_input.get("handle", "@fitness"),
+                "--account", tool_input.get("account", tool_input.get("handle", "@fitness")),
                 "--output", str(output_path)
             ]
 
