@@ -222,20 +222,29 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
                 "--output", str(output_path)
             ]
 
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+            try:
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
 
-            if result.returncode == 0 and output_path.exists():
-                return {
-                    "success": True,
-                    "title": "Video Ad Created",
-                    "icon": "ads",
-                    "message": "Created video ad with AI images and transitions. Cost: $0.34",
-                    "file_path": str(output_path),
-                    "download_text": "Download Video Ad",
-                    "cost": 0.34
-                }
-            else:
-                return {"success": False, "error": result.stderr or "Video ad creation failed"}
+                if result.returncode == 0 and output_path.exists():
+                    return {
+                        "success": True,
+                        "title": "Video Ad Created",
+                        "icon": "ads",
+                        "message": "Created video ad with AI images and transitions. Cost: $0.34",
+                        "file_path": str(output_path),
+                        "download_text": "Download Video Ad",
+                        "cost": 0.34
+                    }
+                else:
+                    error_msg = result.stderr or result.stdout or "Video ad creation failed"
+                    # Truncate long error messages
+                    if len(error_msg) > 500:
+                        error_msg = error_msg[:500] + "..."
+                    return {"success": False, "error": error_msg}
+            except subprocess.TimeoutExpired:
+                return {"success": False, "error": "Video ad creation timed out (180s limit)"}
+            except Exception as e:
+                return {"success": False, "error": f"Video ad error: {str(e)}"}
 
         elif tool_name == "summarize_emails":
             hours = tool_input.get("hours_back", 24)
