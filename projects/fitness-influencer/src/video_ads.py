@@ -37,7 +37,7 @@ from dotenv import load_dotenv
 
 # Import our API wrappers
 from grok_image_gen import GrokImageGenerator
-from intelligent_video_router import IntelligentVideoRouter
+from shotstack_api import ShotstackAPI
 
 load_dotenv()
 
@@ -45,23 +45,23 @@ load_dotenv()
 class VideoAdGenerator:
     """
     Complete fitness video ad generator combining AI images + video rendering.
-    
+
     Workflow:
     1. Generate 4 AI images based on fitness concept (Grok)
-    2. Create video from images using intelligent router (MoviePy or Creatomate)
+    2. Create video from images using Shotstack API
     3. Add text overlays (headline + CTA)
     4. Add background music
     5. Export as MP4
-    
-    Cost: ~$0.28-$0.33 per 15-second video ad (down from $0.34)
+
+    Cost: ~$0.34 per 15-second video ad
     - Images: $0.28 (4 images × $0.07)
-    - Video: $0-$0.05 (70% free MoviePy, 30% Creatomate)
+    - Video: ~$0.06 (Shotstack render)
     Time: ~60-90 seconds total
     """
-    
+
     def __init__(self):
         self.grok = GrokImageGenerator()
-        self.video_router = IntelligentVideoRouter()
+        self.shotstack = ShotstackAPI()
         
     def generate_image_prompts(
         self,
@@ -188,24 +188,23 @@ class VideoAdGenerator:
         print(f"\n✓ All {num_images} images generated successfully!")
         print(f"  Total image cost: ${total_image_cost:.2f}")
         
-        # Step 3: Create video from images with Intelligent Router
+        # Step 3: Create video from images with Shotstack
         print(f"\n{'='*70}")
-        print("STEP 3: CREATING VIDEO WITH INTELLIGENT ROUTER")
+        print("STEP 3: CREATING VIDEO WITH SHOTSTACK")
         print("="*70)
         print(f"Stitching {num_images} images into {duration}s video...")
         print(f"Resolution: HD (1080p)")
-        print(f"Format: Vertical (9:16 for Instagram/TikTok)")
+        print(f"Format: 16:9 for social media")
         print(f"Transitions: Smooth slides")
         print(f"Music: {music_style}")
-        print(f"Router will intelligently choose: MoviePy (free) or Creatomate ($0.05)")
-        
-        # Create vertical video for social media using intelligent router
-        result = self.video_router.create_video(
+
+        # Create video using Shotstack API
+        result = self.shotstack.create_fitness_ad(
             image_urls=image_urls,
             headline=headline,
             cta_text=cta_text,
             duration=duration,
-            music_style=music_style
+            music=music_style
         )
         
         if not result.get("success"):
@@ -214,16 +213,15 @@ class VideoAdGenerator:
             return {
                 "success": False,
                 "error": f"Video creation failed: {error}",
-                "step": "video_router_creation",
+                "step": "shotstack_creation",
                 "images_generated": len(image_urls),
                 "image_urls": image_urls,
                 "image_cost": total_image_cost
             }
-        
-        video_url = result.get("video_url") or result.get("video_path")
-        render_id = result.get("render_id", "local")
-        video_cost = result.get("cost", 0)
-        video_method = result.get("method", "unknown")
+
+        video_url = result.get("video_url")
+        render_id = result.get("render_id", "unknown")
+        video_cost = result.get("estimated_cost", 0.06)
         
         total_cost = total_image_cost + video_cost
         

@@ -239,13 +239,36 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
         elif tool_name == "summarize_emails":
             hours = tool_input.get("hours_back", 24)
 
-            # For demo/testing, return simulated data
-            # In production, this would call gmail_monitor.py
+            # Try to call real gmail_monitor.py script
+            try:
+                cmd = [
+                    "python",
+                    str(SCRIPTS_PATH / "gmail_monitor.py"),
+                    "--hours", str(hours),
+                    "--format", "json"
+                ]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+                if result.returncode == 0:
+                    data = json.loads(result.stdout)
+                    return {
+                        "success": True,
+                        "title": f"Email Summary (Last {hours} hours)",
+                        "icon": "email",
+                        "html": data.get("html", "")
+                    }
+            except Exception:
+                pass  # Fall back to demo mode
+
+            # Demo mode - return sample data with clear label
             return {
                 "success": True,
-                "title": f"Email Summary (Last {hours} hours)",
+                "title": f"Email Summary - Demo (Last {hours} hours)",
                 "icon": "email",
                 "html": """
+                    <div style="background: rgba(251, 191, 36, 0.15); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                        <strong style="color: #fbbf24;">📋 Demo Mode</strong>
+                        <div style="color: #9ca3af; font-size: 13px; margin-top: 4px;">Connect your Gmail account for real email summaries</div>
+                    </div>
                     <div style="margin-bottom: 16px;">
                         <strong style="color: #ef4444;">URGENT (2)</strong>
                         <ul style="margin: 8px 0 0 20px;">
@@ -271,12 +294,35 @@ def execute_tool(tool_name: str, tool_input: Dict[str, Any], uploaded_file_path:
             }
 
         elif tool_name == "revenue_report":
-            # For demo/testing, return simulated data
+            # Try to call real revenue_analytics.py script
+            try:
+                cmd = [
+                    "python",
+                    str(SCRIPTS_PATH / "revenue_analytics.py"),
+                    "--format", "json"
+                ]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+                if result.returncode == 0:
+                    data = json.loads(result.stdout)
+                    return {
+                        "success": True,
+                        "title": "Revenue Analytics",
+                        "icon": "analytics",
+                        "html": data.get("html", "")
+                    }
+            except Exception:
+                pass  # Fall back to demo mode
+
+            # Demo mode - return sample data with clear label
             return {
                 "success": True,
-                "title": "Revenue Analytics",
+                "title": "Revenue Analytics - Demo",
                 "icon": "analytics",
                 "html": """
+                    <div style="background: rgba(251, 191, 36, 0.15); padding: 12px; border-radius: 8px; margin-bottom: 16px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                        <strong style="color: #fbbf24;">📊 Demo Mode</strong>
+                        <div style="color: #9ca3af; font-size: 13px; margin-top: 4px;">Connect your Google Sheets for real revenue analytics</div>
+                    </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                         <div style="background: rgba(74, 222, 128, 0.1); padding: 12px; border-radius: 8px;">
                             <div style="color: #6b7280; font-size: 12px;">Total Revenue</div>
