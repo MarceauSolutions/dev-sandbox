@@ -188,6 +188,9 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Create a method for [X]" | Run SOP 20 (Internal Method Development) |
 | "How should we classify [X]" | Run SOP 20 (Internal Method Development) |
 | "Should this be an SOP?" | Run SOP 21 (score using decision tree) |
+| "Log this as a product opportunity" | Add entry to methods/product-opportunities/OPPORTUNITY-LOG.md |
+| "This could be a product" | Ask for details, add to OPPORTUNITY-LOG.md |
+| "Weekly product review" | Open OPPORTUNITY-LOG.md, review pending items |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
