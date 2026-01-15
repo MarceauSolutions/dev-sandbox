@@ -380,6 +380,72 @@ Cost: FREE (uses local templates or Claude API if available)""",
                 },
                 "required": ["topic"]
             }
+        ),
+
+        # COGS Tracking
+        Tool(
+            name="get_cogs_report",
+            description="""Get Cost of Goods Sold (COGS) report for AI API usage.
+
+Tracks API costs and calculates gross margins for:
+- AI Image Generation (Grok): $0.07/image
+- Video Generation (Shotstack): $0.06/video
+- Video Ads (Bundle): $0.20/ad
+
+Returns costs, revenue, gross margins, and alerts.
+Target margin: 60%+
+
+Cost: FREE (internal tracking)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "period": {
+                        "type": "string",
+                        "enum": ["daily", "monthly"],
+                        "description": "Report period",
+                        "default": "daily"
+                    },
+                    "generate_dashboard": {
+                        "type": "boolean",
+                        "description": "Generate HTML dashboard file",
+                        "default": False
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="log_api_usage",
+            description="""Log an API usage transaction for COGS tracking.
+
+Services:
+- grok_image: AI image generation ($0.07 cost, $0.25 revenue)
+- shotstack_video: Video generation ($0.06 cost, $0.35 revenue)
+- video_ad: Complete video ad ($0.20 cost, $1.00 revenue)
+- claude_api: Claude API call ($0.002 cost, included in subscription)
+
+Use this to track pay-per-use API consumption.
+
+Cost: FREE (internal tracking)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "service": {
+                        "type": "string",
+                        "enum": ["grok_image", "shotstack_video", "video_ad", "claude_api"],
+                        "description": "Service type"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "description": "User identifier"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "description": "Number of items (e.g., number of images)",
+                        "default": 1
+                    }
+                },
+                "required": ["service", "user_id"]
+            }
         )
     ]
 
@@ -418,6 +484,12 @@ async def call_tool(name: str, arguments: dict):
 
         elif name == "generate_video_blueprint":
             return await handle_video_blueprint(arguments)
+
+        elif name == "get_cogs_report":
+            return await handle_cogs_report(arguments)
+
+        elif name == "log_api_usage":
+            return await handle_log_api_usage(arguments)
 
         else:
             return [TextContent(
@@ -816,6 +888,91 @@ async def handle_video_blueprint(arguments: dict):
             "success": True,
             "template": template,
             "html_preview": html[:500] + "..." if len(html) > 500 else html
+        }, indent=2)
+    )]
+
+
+async def handle_cogs_report(arguments: dict):
+    """Handle COGS report generation."""
+    try:
+        import sys
+        from pathlib import Path
+        parent_src = Path(__file__).parent.parent
+        if str(parent_src) not in sys.path:
+            sys.path.insert(0, str(parent_src))
+        from cogs_tracker import COGSTracker
+    except ImportError as e:
+        return [TextContent(
+            type="text",
+            text=f"Error: Could not import cogs_tracker module: {e}"
+        )]
+
+    tracker = COGSTracker()
+
+    period = arguments.get("period", "daily")
+
+    if period == "daily":
+        report = tracker.get_daily_report()
+    else:
+        report = tracker.get_monthly_report()
+
+    result = {
+        "success": True,
+        "report": report
+    }
+
+    # Generate dashboard if requested
+    if arguments.get("generate_dashboard", False):
+        dashboard_path = tracker.export_html_dashboard()
+        result["dashboard_path"] = dashboard_path
+
+    return [TextContent(
+        type="text",
+        text=json.dumps(result, indent=2)
+    )]
+
+
+async def handle_log_api_usage(arguments: dict):
+    """Handle logging API usage for COGS tracking."""
+    try:
+        import sys
+        from pathlib import Path
+        parent_src = Path(__file__).parent.parent
+        if str(parent_src) not in sys.path:
+            sys.path.insert(0, str(parent_src))
+        from cogs_tracker import COGSTracker
+    except ImportError as e:
+        return [TextContent(
+            type="text",
+            text=f"Error: Could not import cogs_tracker module: {e}"
+        )]
+
+    service = arguments.get("service")
+    user_id = arguments.get("user_id")
+
+    if not service or not user_id:
+        return [TextContent(type="text", text="Error: service and user_id are required")]
+
+    tracker = COGSTracker()
+
+    txn = tracker.log_transaction(
+        service=service,
+        user_id=user_id,
+        quantity=arguments.get("quantity", 1)
+    )
+
+    return [TextContent(
+        type="text",
+        text=json.dumps({
+            "success": True,
+            "transaction": {
+                "service": txn.service,
+                "user_id": txn.user_id,
+                "quantity": txn.quantity,
+                "cost": round(txn.cost, 2),
+                "revenue": round(txn.revenue, 2),
+                "timestamp": txn.timestamp.isoformat()
+            }
         }, indent=2)
     )]
 

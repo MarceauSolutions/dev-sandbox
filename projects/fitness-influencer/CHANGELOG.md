@@ -14,9 +14,18 @@ All notable changes to this project will be documented in this file.
   - Hashtag recommendations
   - Cost: FREE (uses local templates or Claude API if available)
 
+- **COGS Tracker** (`get_cogs_report`, `log_api_usage`)
+  - Track Cost of Goods Sold for AI API usage
+  - Monitor gross margins (target: 60%+)
+  - Daily and monthly reports
+  - HTML dashboard generation
+  - Alerts for margin threshold violations
+  - Pre-launch requirement for business viability
+
 ### Technical
-- MCP now exposes 10 tools (up from 9)
+- MCP now exposes 12 tools (up from 9)
 - Added `video_template_framework.py` integration to MCP server
+- Added `cogs_tracker.py` for API cost monitoring
 
 ---
 
