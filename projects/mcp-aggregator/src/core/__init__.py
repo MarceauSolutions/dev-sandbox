@@ -67,21 +67,22 @@ Usage:
 """
 
 # Database
-from .database import Database
+from .database import Database, DatabaseConfig, create_test_database
 
 # Registry
 from .registry import (
-    Registry,
+    MCPRegistry as Registry,
     MCP,
     MCPCategory,
     MCPStatus,
     ConnectivityType,
-    MCPCapability
+    MCPCapability,
+    HealthCheckResult
 )
 
 # Router
 from .router import (
-    Router,
+    MCPRouter as Router,
     RoutingRequest,
     RoutingResult,
     RoutingStrategy,

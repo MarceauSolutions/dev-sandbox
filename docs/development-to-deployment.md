@@ -8,16 +8,33 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
+│ STEP 0: KICKOFF (Before Development)                        │
+│   ├── Complete questionnaire (19 questions)                 │
+│   ├── Choose app type (MCP, CLI, Web, Desktop, Hybrid)      │
+│   ├── Complete cost-benefit analysis                        │
+│   └── Decide: Template vs Clean Slate                       │
+│   See: docs/app-type-decision-guide.md                      │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────────┐
 │ DEVELOPMENT (Single Repo)                                   │
 │ /Users/williammarceaujr./dev-sandbox/                       │
 │   ├── .git/                    ← ONE git repo tracks all    │
 │   ├── directives/              ← Capability SOPs            │
 │   ├── projects/[name]/         ← NO .git here!              │
+│   │   ├── src/                 ← Implementation            │
+│   │   ├── testing/             ← Multi-agent tests         │
+│   │   └── workflows/           ← Task procedures           │
 │   ├── execution/               ← Shared execution scripts   │
 │   └── docs/                    ← Process documentation      │
 └─────────────────────────────────────────────────────────────┘
                            ↓
+                    TEST in dev-sandbox
+          (Manual → Multi-Agent → Pre-Deploy)
+          See: docs/testing-strategy.md
+                           ↓
                     deploy_to_skills.py
+                (ONLY after testing complete)
                            ↓
 ┌─────────────────────────────────────────────────────────────┐
 │ PRODUCTION (Separate Repos)                                 │
@@ -106,6 +123,70 @@ email-analyzer-prod/
 ---
 
 ## Documentation Process
+
+### 0. Project Kickoff (BEFORE Development)
+
+**NEW**: Before starting any new project, complete SOP 0 to make key decisions upfront.
+
+#### A. Complete Kickoff Questionnaire
+
+**When**: BEFORE writing any code
+
+**File**: Copy `templates/project-kickoff-questionnaire.md` to your project folder as `KICKOFF.md`
+
+**Contents** (19 questions in 5 parts):
+- Part 1: Business/Purpose (Q1-5)
+- Part 2: Technical Requirements (Q6-10)
+- Part 3: App Type Decision (Q11-13)
+- Part 4: Resource Assessment (Q14-16)
+- Part 5: Template Decision (Q17-19)
+
+#### B. Determine App Type
+
+**Use**: `docs/app-type-decision-guide.md`
+
+**Decision tree**:
+1. Is this MCP Aggregator compatible?
+   - YES → Select connectivity type (HTTP, EMAIL, OAUTH, WEBHOOK, GRAPHQL, ASYNC)
+   - NO → Select standalone type (CLI, Skill, Web API, Full-Stack, Desktop, Hybrid)
+
+#### C. Complete Cost-Benefit Analysis
+
+**Use**: `docs/cost-benefit-templates.md`
+
+**Calculate**:
+- Development cost (hours × rate)
+- Monthly operational cost
+- Expected revenue/value
+- Break-even timeline
+
+#### D. Decide Template vs Clean Slate
+
+**Questions 17-19 from questionnaire**:
+- Does a similar project exist?
+- What's the innovation level? (Low/Medium/High)
+- Template recommendation? (Use/Adapt/Clean slate)
+
+**Decision Matrix**:
+| Innovation Level | Template Decision |
+|-----------------|-------------------|
+| Low | Use full template |
+| Medium | Adapt template |
+| High | Clean slate |
+
+#### E. Document Decision in KICKOFF.md
+
+**Record**:
+- App type selected
+- Connectivity type (if MCP)
+- Cost-benefit summary
+- Template decision and rationale
+- Go/No-Go decision
+- Next step (SOP 1 or SOP 9)
+
+**Then proceed to Step 1 (Development)**
+
+---
 
 ### 1. During Development (in dev-sandbox)
 
@@ -302,17 +383,31 @@ After:  1.0.0
 
 #### C. Test in Dev-Sandbox
 
-**Verify everything works**:
-```bash
-# Test single conversion
-python projects/md-to-pdf/src/md_to_pdf.py README.md test.pdf
+**CRITICAL**: ALL testing happens in dev-sandbox BEFORE deployment!
 
-# Test batch conversion
-python projects/md-to-pdf/src/md_to_pdf.py "docs/*.md" --output pdfs/
+**Complete Testing Pipeline**: See `docs/testing-strategy.md` for full guide
 
-# Verify output quality
-open test.pdf
-```
+**Quick Summary**:
+1. **Manual Testing (ALWAYS required)**:
+   ```bash
+   # Test single conversion
+   python projects/md-to-pdf/src/md_to_pdf.py README.md test.pdf
+
+   # Verify output quality
+   open test.pdf
+   ```
+
+2. **Multi-Agent Testing (OPTIONAL for complex projects)**:
+   - Only if manual testing passes
+   - Reference: `email-analyzer/testing/`
+   - Creates: `projects/[name]/testing/`
+
+3. **Pre-Deployment Verification (ALWAYS required)**:
+   - Re-test core functionality
+   - Verify edge cases (from multi-agent findings)
+   - Ensure no regressions
+
+**See**: `docs/testing-strategy.md` for complete decision tree and procedures
 
 #### D. Review Documentation
 
@@ -320,6 +415,8 @@ open test.pdf
 - [ ] Directive complete in `directives/`
 - [ ] README.md clear and accurate
 - [ ] Workflow documented in `workflows/`
+- [ ] **Testing complete** (see testing-strategy.md)
+- [ ] **All critical issues fixed**
 - [ ] VERSION updated (remove `-dev`)
 - [ ] CHANGELOG.md updated
 - [ ] All code committed to dev-sandbox
@@ -412,9 +509,15 @@ md-to-pdf-prod/
 
 ### New Project From Scratch
 
+0. **Complete kickoff (SOP 0)**:
+   - Copy `templates/project-kickoff-questionnaire.md` to project folder
+   - Answer 19 questions
+   - Decide app type, cost-benefit, template vs clean slate
+   - See: `docs/app-type-decision-guide.md`
 1. **Create directive**: `directives/[name].md`
 2. **Create project folder**: `projects/[name]/`
    - DO NOT run `git init`!
+   - Include `KICKOFF.md` from Step 0
 3. **Develop iteratively**:
    - Write code in `src/`
    - Document in `workflows/` as you work
@@ -652,21 +755,33 @@ git status
 ## Quick Reference Checklist
 
 ### Starting New Project
+- [ ] **Complete SOP 0 (Kickoff)**:
+  - [ ] Copy questionnaire to project folder
+  - [ ] Answer all 19 questions
+  - [ ] Determine app type
+  - [ ] Complete cost-benefit analysis
+  - [ ] Decide template vs clean slate
+  - [ ] Record decision in KICKOFF.md
 - [ ] Create directive: `directives/[name].md`
 - [ ] Create folder: `projects/[name]/` (NO git init!)
-- [ ] Add README, VERSION, CHANGELOG
+- [ ] Add README, VERSION, CHANGELOG, KICKOFF.md
 - [ ] Develop in `src/`
 - [ ] Document in `workflows/` as you work
 - [ ] Commit to dev-sandbox repo
 
 ### Deploying Project
-- [ ] Test everything works in dev-sandbox
+- [ ] **Manual testing complete** (Scenario 1 from testing-strategy.md)
+- [ ] **Multi-agent testing complete** (if applicable, Scenario 2)
+- [ ] **Pre-deployment verification passed** (Scenario 3)
+- [ ] **All critical issues fixed**
 - [ ] Update VERSION (remove `-dev`)
 - [ ] Update CHANGELOG with changes
 - [ ] Commit all changes to dev-sandbox
 - [ ] Run: `deploy_to_skills.py --project [name] --version X.Y.Z`
 - [ ] Verify: Check `/Users/williammarceaujr./[name]-prod/`
 - [ ] Return to dev: Update VERSION to `X.Y.Z-dev`
+
+**See**: `docs/testing-strategy.md` for complete testing pipeline
 
 ### Repository Health Check
 - [ ] Run: `find . -name ".git" -type d`
@@ -677,6 +792,10 @@ git status
 
 ## Related Documentation
 
+- [App Type Decision Guide](app-type-decision-guide.md) ⭐ - Choose MCP vs standalone app types
+- [Cost-Benefit Templates](cost-benefit-templates.md) - Development and operational cost analysis
+- [Project Kickoff Questionnaire](../templates/project-kickoff-questionnaire.md) - 19-question template
+- [Testing Strategy](testing-strategy.md) ⭐ - Complete testing pipeline (Manual → Multi-Agent → Deploy)
 - [Repository Management Guide](repository-management.md) - Comprehensive repo rules
 - [REPO-QUICK-REFERENCE.md](REPO-QUICK-REFERENCE.md) - Single-page lookup
 - [Deployment Guide](deployment.md) - Detailed deployment SOP
@@ -686,5 +805,5 @@ git status
 
 ---
 
-**Last Updated**: 2026-01-12
-**Version**: 1.0.0
+**Last Updated**: 2026-01-13
+**Version**: 1.1.0

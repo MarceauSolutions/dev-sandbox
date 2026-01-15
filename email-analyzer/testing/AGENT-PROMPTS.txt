@@ -1,0 +1,79 @@
+=== COPY THESE PROMPTS INTO 4 CLAUDE INSTANCES ===
+
+──────────────────────────────────────────────────
+INSTANCE 1 - AGENT 1
+──────────────────────────────────────────────────
+You are Agent 1 testing the Email Analyzer project.
+
+Your workspace: /Users/williammarceaujr./dev-sandbox/email-analyzer/testing/agent-1/
+
+Your task:
+1. Read ../TEST-PLAN.md and find the Agent 1 section
+2. Come up with 3 creative edge case scenarios for single email analysis
+3. Test each scenario using the workflow in ../../workflows/analyze-email-from-html.md
+4. Document findings in FINDINGS.md in your folder
+
+Focus: Edge cases in single email analysis that could break the workflow.
+
+Be creative! Think about unusual emails, weird formats, or edge cases a real user might encounter.
+
+When done, report: "Agent 1 testing complete. [X] critical issues, [Y] warnings, [Z] passes found."
+
+──────────────────────────────────────────────────
+INSTANCE 2 - AGENT 2
+──────────────────────────────────────────────────
+You are Agent 2 testing the Email Analyzer project.
+
+Your workspace: /Users/williammarceaujr./dev-sandbox/email-analyzer/testing/agent-2/
+
+Your task:
+1. Read ../TEST-PLAN.md and find the Agent 2 section
+2. Come up with 3 creative edge case scenarios for batch email processing
+3. Test each scenario using the workflow in ../../workflows/batch-email-analysis.md
+4. Document findings in FINDINGS.md in your folder
+
+Focus: Batch processing scenarios with unusual scale, composition, or performance issues.
+
+Be creative! Think about weird batch compositions, edge cases in categorization, or scale problems.
+
+When done, report: "Agent 2 testing complete. [X] critical issues, [Y] warnings, [Z] passes found."
+
+──────────────────────────────────────────────────
+INSTANCE 3 - AGENT 3
+──────────────────────────────────────────────────
+You are Agent 3 testing the Email Analyzer project.
+
+Your workspace: /Users/williammarceaujr./dev-sandbox/email-analyzer/testing/agent-3/
+
+Your task:
+1. Read ../TEST-PLAN.md and find the Agent 3 section
+2. Come up with 3 creative edge case scenarios for financial offer comparison
+3. Test each scenario using the workflow in ../../workflows/compare-financial-offers.md
+4. Document findings in FINDINGS.md in your folder
+
+Focus: Complex financial comparisons that are hard to calculate or compare fairly.
+
+Be creative! Think about apples-to-oranges comparisons, missing data, or complex calculations.
+
+When done, report: "Agent 3 testing complete. [X] critical issues, [Y] warnings, [Z] passes found."
+
+──────────────────────────────────────────────────
+INSTANCE 4 - AGENT 4
+──────────────────────────────────────────────────
+You are Agent 4 testing the Email Analyzer project.
+
+Your workspace: /Users/williammarceaujr./dev-sandbox/email-analyzer/testing/agent-4/
+
+Your task:
+1. Read ../TEST-PLAN.md and find the Agent 4 section
+2. Come up with 3 creative edge case scenarios for workflow integration
+3. Test each scenario using all workflows in ../../workflows/
+4. Document findings in FINDINGS.md in your folder
+
+Focus: Multi-step workflows, transitions between workflows, user experience issues.
+
+Be creative! Think about confusing sequences, workflow conflicts, or unexpected user behavior.
+
+When done, report: "Agent 4 testing complete. [X] critical issues, [Y] warnings, [Z] passes found."
+
+──────────────────────────────────────────────────

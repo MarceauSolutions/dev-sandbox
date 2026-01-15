@@ -9,7 +9,7 @@ Copy-paste these prompts into separate Claude instances to run parallel testing.
 ```
 I'm Agent 1 in a multi-agent testing effort for the MD-to-PDF Converter.
 
-MY WORKSPACE: projects/md-to-pdf/testing/agent1/
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent1/
 CRITICAL: I will ONLY work in my workspace. I will NOT touch other agents' workspaces.
 
 MY FOCUS: Table of contents generation and header handling
@@ -22,9 +22,9 @@ TEST SCENARIOS:
 
 MY TASKS:
 1. Create markdown test files in my workspace for each scenario
-2. Run the MD-to-PDF converter on each test file
+2. Run the MD-to-PDF converter on each test file using the wrapper script
 3. Review generated PDFs for issues
-4. Document findings in projects/md-to-pdf/testing/agent1/FINDINGS.md
+4. Document findings in /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent1/FINDINGS.md
 
 SEVERITY CATEGORIES:
 - CRITICAL: Crashes, data loss, broken core functionality
@@ -37,11 +37,13 @@ EXPECTED BEHAVIOR:
 - Properly wrapped long headers
 - Complete TOC hierarchy with correct indentation
 
-Please begin testing. Use the converter script at:
-projects/md-to-pdf/src/md_to_pdf.py
+HOW TO RUN CONVERTER:
+Use the wrapper script (handles library paths automatically):
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh input.md output.pdf
 
-Set DYLD_LIBRARY_PATH=/opt/homebrew/lib before running:
-export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+Example:
+cd /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent1/
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh test1.md test1.pdf
 ```
 
 ---
@@ -51,7 +53,7 @@ export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
 ```
 I'm Agent 2 in a multi-agent testing effort for the MD-to-PDF Converter.
 
-MY WORKSPACE: projects/md-to-pdf/testing/agent2/
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent2/
 CRITICAL: I will ONLY work in my workspace. I will NOT touch other agents' workspaces.
 
 MY FOCUS: Markdown element rendering
@@ -64,9 +66,9 @@ TEST SCENARIOS:
 
 MY TASKS:
 1. Create markdown test files in my workspace for each scenario
-2. Run the MD-to-PDF converter on each test file
+2. Run the MD-to-PDF converter on each test file using the wrapper script
 3. Review generated PDFs for issues
-4. Document findings in projects/md-to-pdf/testing/agent2/FINDINGS.md
+4. Document findings in /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent2/FINDINGS.md
 
 SEVERITY CATEGORIES:
 - CRITICAL: Crashes, data loss, broken core functionality
@@ -79,11 +81,13 @@ EXPECTED BEHAVIOR:
 - Code blocks preserve formatting and syntax highlighting
 - Mixed content renders cleanly
 
-Please begin testing. Use the converter script at:
-projects/md-to-pdf/src/md_to_pdf.py
+HOW TO RUN CONVERTER:
+Use the wrapper script (handles library paths automatically):
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh input.md output.pdf
 
-Set DYLD_LIBRARY_PATH=/opt/homebrew/lib before running:
-export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+Example:
+cd /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent2/
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh test.md test.pdf
 ```
 
 ---
@@ -93,7 +97,7 @@ export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
 ```
 I'm Agent 3 in a multi-agent testing effort for the MD-to-PDF Converter.
 
-MY WORKSPACE: projects/md-to-pdf/testing/agent3/
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent3/
 CRITICAL: I will ONLY work in my workspace. I will NOT touch other agents' workspaces.
 
 MY FOCUS: External resources and hyperlinks
@@ -106,9 +110,9 @@ TEST SCENARIOS:
 
 MY TASKS:
 1. Create markdown test files in my workspace for each scenario
-2. Run the MD-to-PDF converter on each test file
+2. Run the MD-to-PDF converter on each test file using the wrapper script
 3. Review generated PDFs for issues
-4. Document findings in projects/md-to-pdf/testing/agent3/FINDINGS.md
+4. Document findings in /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent3/FINDINGS.md
 
 SEVERITY CATEGORIES:
 - CRITICAL: Crashes, data loss, broken core functionality
@@ -121,11 +125,13 @@ EXPECTED BEHAVIOR:
 - External links are clickable
 - Internal anchor links navigate correctly
 
-Please begin testing. Use the converter script at:
-projects/md-to-pdf/src/md_to_pdf.py
+HOW TO RUN CONVERTER:
+Use the wrapper script (handles library paths automatically):
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh input.md output.pdf
 
-Set DYLD_LIBRARY_PATH=/opt/homebrew/lib before running:
-export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+Example:
+cd /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent3/
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh test.md test.pdf
 ```
 
 ---
@@ -135,7 +141,7 @@ export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
 ```
 I'm Agent 4 in a multi-agent testing effort for the MD-to-PDF Converter.
 
-MY WORKSPACE: projects/md-to-pdf/testing/agent4/
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent4/
 CRITICAL: I will ONLY work in my workspace. I will NOT touch other agents' workspaces.
 
 MY FOCUS: Scalability and edge case file sizes
@@ -148,9 +154,9 @@ TEST SCENARIOS:
 
 MY TASKS:
 1. Create markdown test files in my workspace for each scenario
-2. Run the MD-to-PDF converter on each test file
+2. Run the MD-to-PDF converter on each test file using the wrapper script
 3. Review generated PDFs for issues
-4. Document findings in projects/md-to-pdf/testing/agent4/FINDINGS.md
+4. Document findings in /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent4/FINDINGS.md
 
 SEVERITY CATEGORIES:
 - CRITICAL: Crashes, data loss, broken core functionality
@@ -163,11 +169,13 @@ EXPECTED BEHAVIOR:
 - No-header documents skip TOC generation
 - UTF-8 characters render correctly
 
-Please begin testing. Use the converter script at:
-projects/md-to-pdf/src/md_to_pdf.py
+HOW TO RUN CONVERTER:
+Use the wrapper script (handles library paths automatically):
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh input.md output.pdf
 
-Set DYLD_LIBRARY_PATH=/opt/homebrew/lib before running:
-export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+Example:
+cd /Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/testing/agent4/
+/Users/williammarceaujr./dev-sandbox/projects/md-to-pdf/src/convert.sh test.md test.pdf
 ```
 
 ---

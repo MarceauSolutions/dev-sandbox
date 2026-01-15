@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hvac-quotes-mcp"
+version = "1.0.0"
+description = "HVAC equipment RFQ management via MCP for Claude Desktop"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "William Marceau", email = "william@marceausolutions.com"}
+]
+keywords = ["mcp", "claude", "hvac", "rfq", "quotes", "contractor", "equipment"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/wmarceau/hvac-quotes-mcp"
+Repository = "https://github.com/wmarceau/hvac-quotes-mcp"
+
+[project.scripts]
+hvac-quotes-mcp = "hvac_quotes_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hvac_quotes_mcp"]

@@ -4,6 +4,71 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-15: Lead Scraper Enhancement & Project Viability Assessment
+
+**Context:** Enhancing lead-scraper with Apollo.io/LinkedIn integration, assessing all projects for MCP commercialization potential, documenting cloud function deployment model.
+
+**Accomplished:**
+
+1. **Lead Scraper Enhancements**
+   - Added `apollo.py` - Apollo.io API integration for LinkedIn enrichment, email finder, company/person search
+   - Added `linkedin.py` - Sales Navigator export parsing, LinkedIn URL validation, search URL builder
+   - Updated `config.py` with new API key fields (Apollo, Hunter)
+   - Added Google Places API key to `.env`: `AIzaSyAViFkLMAp46vJo1CoXanVurYiFNXRp12w`
+
+2. **New Documentation Created**
+   - `docs/cloud-function-deployment-analysis.md` - Analysis of serverless model (Modal, Lambda) vs our architecture
+   - `docs/optimization-threshold-policy.md` - **10x Rule**: Only optimize if 10x cost reduction OR 10x value increase
+   - `docs/project-viability-assessment.md` - All projects scored for MCP commercialization
+
+3. **Deployed New Projects**
+   - `time-blocks` v1.0.0 deployed to `/Users/williammarceaujr./time-blocks-prod/`
+   - `lead-scraper` v1.0.0 deployed to `/Users/williammarceaujr./lead-scraper-prod/`
+   - Fixed `deploy_to_skills.py` to auto-copy templates and create `src/` package structure
+
+4. **Updated CLAUDE.md**
+   - Added cloud function model and optimization threshold docs to documentation map
+
+**Project Viability Summary:**
+
+| Project | Score | Verdict |
+|---------|-------|---------|
+| Lead Scraper | 4.0/5 | **MCP candidate** - $0.25-0.50/lead |
+| Amazon Seller | 4.0/5 | **MCP candidate** - per-query pricing |
+| MCP Aggregator | 4.2/5 | **Platform priority** - transaction fees |
+| Fitness Influencer | 3.6/5 | **Web app** (not MCP) - subscription |
+| Others | <3.2 | Personal tools only |
+
+**Key Learnings:**
+
+1. **10x Rule for Optimization**
+   - Don't spend 8 hours for 5% improvement
+   - Only pursue changes that provide 10x cost reduction or value increase
+   - Document in backlog if <10x but still valuable (review quarterly)
+
+2. **Cloud Functions Are Enhancement, Not Replacement**
+   - Our DOE architecture is solid for development
+   - Cloud functions add pay-per-use monetization channel
+   - Best candidates: lead-scraper, mcp-aggregator, email-analyzer
+   - Poor candidates: interactive tools (interview-prep, fitness-influencer)
+
+3. **API Key Organization**
+   - Lead scraper needs: Google Places ✅, Yelp, Apollo, Hunter
+   - Apollo.io provides legitimate LinkedIn data access (50 free credits/mo)
+   - Use Apollo instead of scraping LinkedIn directly
+
+**API Keys Still Needed:**
+- `YELP_API_KEY` - https://www.yelp.com/developers/v3/manage_app
+- `APOLLO_API_KEY` - https://app.apollo.io/#/settings/integrations/api
+- `HUNTER_API_KEY` - https://hunter.io/api_keys (optional)
+
+**Next Steps:**
+1. Get remaining API keys for lead-scraper
+2. Test lead-scraper with Google Places API
+3. Continue fitness-influencer development toward subscription launch
+
+---
+
 ## 2026-01-13 (Part 2): MCP Registry Publishing & SOPs 11-13
 
 **Context:** Publishing MCPs to PyPI and Claude's MCP Registry marketplace. Created SOPs documenting the complete publishing pipeline.

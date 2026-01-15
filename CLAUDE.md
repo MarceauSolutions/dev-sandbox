@@ -59,6 +59,8 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Repository management** | `docs/repository-management.md` ⭐ |
 | **Repository quick ref** | `docs/REPO-QUICK-REFERENCE.md` |
 | **Versioned deployment** | `docs/versioned-deployment.md` |
+| **Cloud function model** | `docs/cloud-function-deployment-analysis.md` ⭐ |
+| **Optimization thresholds** | `docs/optimization-threshold-policy.md` ⭐ |
 | **Project navigation** | `docs/projects.md` |
 | **Workflow template** | `docs/workflow-standard.md` |
 | **Session learnings** | `docs/session-history.md` |

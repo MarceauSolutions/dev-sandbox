@@ -25,8 +25,8 @@ from datetime import datetime, timedelta
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
-from database import Database, Row
-from registry import MCPRegistry, MCP, MCPCategory, MCPStatus, HealthCheckResult
+from .database import Database, Row
+from .registry import MCPRegistry, MCP, MCPCategory, MCPStatus, HealthCheckResult
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

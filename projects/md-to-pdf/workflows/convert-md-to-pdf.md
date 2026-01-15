@@ -419,6 +419,37 @@ python src/md_to_pdf.py input.md output.pdf \
 
 ## Troubleshooting
 
+### WeasyPrint Library Not Found (macOS with Homebrew)
+
+**Problem**: Error loading `libpango-1.0-0` or similar library errors
+
+**Symptoms**:
+```
+OSError: cannot load library 'libpango-1.0-0'
+```
+
+**Solutions**:
+1. **Option A: Use wrapper script (easiest)**:
+   ```bash
+   ./src/convert.sh input.md output.pdf
+   ```
+   The wrapper automatically sets library paths for Homebrew installations.
+
+2. **Option B: Set library path manually**:
+   ```bash
+   export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
+   python src/md_to_pdf.py input.md output.pdf
+   ```
+
+3. **Option C: Install system libraries**:
+   ```bash
+   brew install pango cairo gdk-pixbuf
+   ```
+
+**Note**: This issue typically only occurs on macOS when WeasyPrint dependencies are installed via Homebrew. Most Linux systems and properly configured environments don't need the wrapper.
+
+---
+
 ### Images Not Displaying
 
 **Problem**: Images referenced in markdown don't appear in PDF

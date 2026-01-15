@@ -71,6 +71,9 @@ This assistant has access to MCP (Model Context Protocol) servers, but **use the
 | **Fitness Influencer** | Video editing, email, analytics, graphics | google-sheets, google-drive | "Create video ad", "Check fitness emails" |
 | **Amazon Seller** | Inventory, fees, reviews | amazon-sp-api | "Check Amazon inventory", "Calculate FBA fees" |
 | **Naples Weather** | Weather reports, PDF generation | filesystem | "Generate Naples weather report" |
+| **Resume** | Role-tailored resumes, job-specific customization | filesystem | "Update my resume", "Tailor resume for Stripe" |
+| **Lead Scraper** | Local business leads, cold email prospecting | filesystem | "Find leads in Naples", "Scrape gyms" |
+| **Time Blocks** | Calendar scheduling, productivity templates | google-calendar | "Schedule my day", "Apply productive day template" |
 | **Dev Operations** | Deployment, versioning, documentation | filesystem | "Deploy to skills", "Check project status" |
 
 ## How to Use
@@ -114,6 +117,36 @@ Just describe what you need. I'll route to the appropriate skill:
 ```
 → Routes to: `.claude/skills/naples-weather-report/SKILL.md`
 
+### Resume
+```
+"Update my resume"
+"Give me my software engineer resume"
+"Tailor resume for [Company] [Role]"
+"I'm applying to Stripe for backend engineer"
+"Add this project to my resume"
+```
+→ Routes to: `projects/resume/SKILL.md`
+
+### Lead Scraper
+```
+"Find leads in Naples"
+"Scrape gyms in Fort Myers"
+"Find businesses without websites"
+"Export leads to CSV"
+"Show me lead statistics"
+```
+→ Routes to: `projects/lead-scraper/SKILL.md`
+
+### Time Blocks
+```
+"Schedule my day"
+"Apply productive day template"
+"Block out 6-7am for workout"
+"Show my schedule"
+"Sync blocks to Google Calendar"
+```
+→ Routes to: `projects/time-blocks/SKILL.md`
+
 ### Dev Operations
 ```
 "Deploy [project] to skills"
@@ -148,6 +181,21 @@ User Request → Parse Intent
 │   └─ "weather", "naples", "forecast", "report"
 │   └─ → Read .claude/skills/naples-weather-report/SKILL.md
 │   └─ → Execute weather workflow
+│
+├─ Resume-related keywords?
+│   └─ "resume", "job application", "applying", "tailor"
+│   └─ → Read projects/resume/SKILL.md
+│   └─ → Execute resume workflow
+│
+├─ Lead generation keywords?
+│   └─ "leads", "scrape", "businesses", "prospects", "cold email"
+│   └─ → Read projects/lead-scraper/SKILL.md
+│   └─ → Execute lead scraper workflow
+│
+├─ Time/schedule keywords?
+│   └─ "schedule", "time block", "calendar", "template", "productivity"
+│   └─ → Read projects/time-blocks/SKILL.md
+│   └─ → Execute time blocks workflow
 │
 ├─ Dev/deployment keywords?
 │   └─ "deploy", "status", "version", "sync"
@@ -193,6 +241,33 @@ User Request → Parse Intent
   - Weekly weather report generation
   - PDF output
   - Weather data fetching
+
+### Resume (v1.0.0-dev)
+- **Location**: `projects/resume/SKILL.md`
+- **Capabilities**:
+  - Role-tailored resume generation (SWE, AI/ML, Tech Lead, PM)
+  - Job-specific customization from postings
+  - Master data management (experience, skills, projects)
+  - ATS optimization
+
+### Lead Scraper (v1.0.0-dev)
+- **Location**: `projects/lead-scraper/SKILL.md`
+- **Capabilities**:
+  - Google Places API integration
+  - Yelp Fusion API integration
+  - Pain point detection (no website, no booking, low ratings)
+  - Lead enrichment (email discovery from websites)
+  - CSV/JSON export for email tools
+  - Preconfigured for SW Florida (Naples, Fort Myers, etc.)
+
+### Time Blocks (v1.0.0-dev)
+- **Location**: `projects/time-blocks/SKILL.md`
+- **Capabilities**:
+  - Create and manage time blocks for productivity
+  - Pre-built templates (productive day, weekend, deep work, outreach)
+  - Google Calendar sync
+  - Category-based color coding
+  - Timeline and list views
 
 ## Quick Commands
 
@@ -249,7 +324,7 @@ When working on any project:
 ## Version
 
 - **Personal Assistant**: 1.0.0-dev
-- **Last Updated**: 2026-01-08
+- **Last Updated**: 2026-01-14
 
 ## Related Files
 

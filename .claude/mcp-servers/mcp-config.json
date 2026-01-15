@@ -52,6 +52,17 @@
       },
       "description": "Web search - NOT RECOMMENDED, Claude has built-in search",
       "recommended_for": ["interview-prep-deployed"]
+    },
+    "rideshare-comparison": {
+      "command": "python3",
+      "args": ["${HOME}/dev-sandbox/projects/mcp-aggregator/mcp-server/rideshare_mcp.py"],
+      "env": {
+        "RIDESHARE_API_URL": "http://localhost:8000",
+        "RIDESHARE_API_KEY": "test_free_key_12345"
+      },
+      "description": "Compare Uber vs Lyft prices - FLAGSHIP MCP for revenue generation",
+      "recommended_for": ["mcp-aggregator", "personal-assistant"],
+      "requires": "REST API running at localhost:8000 (uvicorn server:app)"
     }
   }
 }

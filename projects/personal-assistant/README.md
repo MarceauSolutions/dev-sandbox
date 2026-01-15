@@ -15,7 +15,7 @@ This project follows the same DOE (Directive-Orchestration-Execution) architectu
 │  │                     PROJECT SKILLS                              │    │
 │  │                                                                 │    │
 │  │  interview-prep/   fitness-influencer/   amazon-seller/        │    │
-│  │  naples-weather/   [future projects...]                        │    │
+│  │  naples-weather/   resume/   [future projects...]              │    │
 │  │                                                                 │    │
 │  └──────────────────────────┬─────────────────────────────────────┘    │
 │                             │                                           │
@@ -81,6 +81,11 @@ This project follows the same DOE (Directive-Orchestration-Execution) architectu
 - Weekly weather reports
 - PDF generation
 
+### Resume
+- Role-tailored resume generation (SWE, AI/ML, Tech Lead, PM)
+- Job-specific customization
+- ATS optimization
+
 ### Personal Productivity (Planned)
 - Task management
 - Note organization
@@ -129,6 +134,9 @@ Just talk to me in Claude Code chat:
 
 "Generate Naples weather report"
 → Routes to naples-weather skill
+
+"Tailor my resume for Stripe backend engineer"
+→ Routes to resume skill
 ```
 
 ## Key Differences from Other Projects

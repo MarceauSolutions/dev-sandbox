@@ -1,0 +1,60 @@
+{
+  "name": "Outreach Day",
+  "description": "Focus on cold emails, lead generation, and client outreach",
+  "blocks": [
+    {
+      "start": "06:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "high"
+    },
+    {
+      "start": "08:00",
+      "duration": 120,
+      "activity": "Lead Research & Scraping",
+      "category": "work",
+      "priority": "high",
+      "notes": "Find and qualify new leads"
+    },
+    {
+      "start": "10:30",
+      "duration": 90,
+      "activity": "Cold Email Writing",
+      "category": "work",
+      "priority": "critical",
+      "notes": "Write personalized outreach emails"
+    },
+    {
+      "start": "12:30",
+      "duration": 30,
+      "activity": "Lunch",
+      "category": "meal",
+      "priority": "low"
+    },
+    {
+      "start": "14:00",
+      "duration": 120,
+      "activity": "Follow-up Emails",
+      "category": "work",
+      "priority": "high",
+      "notes": "Follow up on previous outreach"
+    },
+    {
+      "start": "16:30",
+      "duration": 60,
+      "activity": "LinkedIn Outreach",
+      "category": "work",
+      "priority": "medium",
+      "notes": "Connection requests and messages"
+    },
+    {
+      "start": "19:00",
+      "duration": 120,
+      "activity": "Project Building",
+      "category": "work",
+      "priority": "medium",
+      "notes": "Switch to building if outreach is done"
+    }
+  ]
+}

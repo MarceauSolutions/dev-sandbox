@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 
-from database import Database, Row
+from .database import Database, Row
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

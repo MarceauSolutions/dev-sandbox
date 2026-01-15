@@ -1,0 +1,232 @@
+# Multi-Agent Architecture Exploration Prompts
+# Uber/Lyft Price Comparison App
+
+Instructions: Copy-paste each agent prompt below into a separate Claude instance.
+Launch all 4 agents in parallel for fastest results.
+
+==================================================
+AGENT 1: OFFICIAL UBER/LYFT APIS RESEARCH
+==================================================
+
+I'm Agent 1 in a multi-agent EXPLORATION effort for the Uber/Lyft Price Comparison App.
+
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent1-official-apis/
+
+MY MISSION: Research using Official Uber and Lyft Developer APIs
+
+RESEARCH QUESTIONS:
+1. Does Uber have a public price estimate API? What's the endpoint and documentation?
+2. Does Lyft have a public price estimate API? What's the endpoint and documentation?
+3. What's the authentication process? (OAuth, API keys, developer accounts)
+4. What are the API rate limits? (requests per hour, per day, per month)
+5. What are the costs? (per API call, monthly fees, free tiers)
+6. Can we get real-time prices or just estimates? What's the accuracy?
+7. What's the geographic coverage? (US only, international)
+8. Developer account requirements? (Business vs individual, approval process, wait time)
+
+DELIVERABLE: Create /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent1-official-apis/FINDINGS.md with:
+
+```markdown
+# Official APIs - Research Findings
+
+## Summary
+**Feasible?**: [Yes/No/Partial]
+**One-sentence verdict**: [Your assessment]
+
+## Technical Details
+### Uber API
+- Endpoint: [URL]
+- Authentication: [Method]
+- Documentation: [Link]
+- Example response: [JSON]
+
+### Lyft API
+- Endpoint: [URL]
+- Authentication: [Method]
+- Documentation: [Link]
+- Example response: [JSON]
+
+## Costs
+- **Setup cost**: [Amount]
+- **Monthly cost**: [Amount]
+- **Per-request cost**: [Amount]
+- **Free tier**: [Details]
+
+## Pros
+1. [List 3-5 advantages]
+
+## Cons
+1. [List 3-5 disadvantages]
+
+## Risks
+### Legal Risks
+- [Assessment]
+
+### Technical Risks
+- [Assessment]
+
+### Business Risks
+- [Assessment]
+
+## Code Example
+```python
+# Proof of concept showing API calls
+```
+
+## Scoring
+| Criterion | Score | Rationale |
+|-----------|-------|-----------|
+| Feasibility | ⭐ | [Why] |
+| Legal | ⭐ | [Why] |
+| Cost | ⭐ | [Why] |
+| Reliability | ⭐ | [Why] |
+| User Experience | ⭐ | [Why] |
+
+**Weighted Total**: X/25 points
+
+## Recommendation
+[⭐⭐⭐⭐⭐ Highly Recommended / ⭐⭐⭐⭐ Recommended / ⭐⭐⭐ Acceptable / ⭐⭐ Not Recommended / ⭐ Avoid]
+
+**Rationale**: [Why this rating]
+
+## References
+- [Links to documentation, pricing, ToS]
+```
+
+RESEARCH METHODS:
+- Use web search to find Uber Developer Portal and Lyft Developer Portal
+- Read official API documentation thoroughly
+- Check pricing pages
+- Review Terms of Service
+- Look for example code in documentation
+- Search for developer community discussions about costs/limits
+- If possible, create a simple proof-of-concept API call (read-only, no account needed)
+
+DO NOT implement the full solution - only research and document findings.
+
+==================================================
+AGENT 2: WEB SCRAPING RESEARCH
+==================================================
+
+I'm Agent 2 in a multi-agent EXPLORATION effort for the Uber/Lyft Price Comparison App.
+
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent2-web-scraping/
+
+MY MISSION: Research web scraping Uber.com and Lyft.com for price estimates
+
+RESEARCH QUESTIONS:
+1. Can we access price estimates from Uber.com without logging in?
+2. Can we access price estimates from Lyft.com without logging in?
+3. What's the HTML structure? (Easy to scrape or obfuscated/dynamic?)
+4. What anti-scraping measures exist? (CAPTCHA, rate limiting, IP blocking, JavaScript rendering)
+5. Does this violate Uber/Lyft Terms of Service? (CRITICAL - check their ToS)
+6. How often do they change their web UI? (Check GitHub for scraper projects - how often do they break?)
+7. What tools would we need? (Puppeteer, Selenium, Playwright, BeautifulSoup)
+8. How fast is scraping? (Can we get results in < 5 seconds?)
+
+DELIVERABLE: Create /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent2-web-scraping/FINDINGS.md
+
+Use the same markdown template as Agent 1, but focused on web scraping approach.
+
+CRITICAL FOCUS:
+- **Legal Analysis**: Does Uber/Lyft ToS prohibit scraping? (Search their Terms of Service)
+- **Technical Feasibility**: Can we actually scrape prices programmatically?
+- **Maintenance Risk**: How often will scrapers break when UIs change?
+
+RESEARCH METHODS:
+- Search for "Uber Terms of Service scraping" and "Lyft Terms of Service scraping"
+- Visit Uber.com and Lyft.com and try to get a price estimate manually
+- Inspect the HTML/JavaScript to see how prices are loaded
+- Search GitHub for existing Uber/Lyft scrapers (are they maintained? When do they break?)
+- Research anti-scraping measures (reCAPTCHA, rate limits, etc.)
+- Research scraping tools (Puppeteer vs Selenium vs Playwright)
+
+IMPORTANT: If ToS prohibits scraping, rate this approach very low on Legal criteria.
+
+==================================================
+AGENT 3: THIRD-PARTY AGGREGATOR APIS RESEARCH
+==================================================
+
+I'm Agent 3 in a multi-agent EXPLORATION effort for the Uber/Lyft Price Comparison App.
+
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent3-third-party/
+
+MY MISSION: Research third-party aggregator services that provide Uber/Lyft pricing
+
+RESEARCH QUESTIONS:
+1. Do third-party aggregator services exist? (RideGuru, Rome2rio, Wanderu, etc.)
+2. What are their API offerings? (Public API, pricing, documentation)
+3. How do THEY get Uber/Lyft prices? (Official APIs, partnerships, or scraping?)
+4. What are the costs? (Free tier, paid tiers, per-request pricing)
+5. How fresh is their data? (Real-time, cached, estimates only)
+6. What's the reliability? (Uptime, accuracy, customer support)
+7. Are they legal and compliant? (Do they have official partnerships with Uber/Lyft?)
+8. What's the lock-in risk? (Can they shut down, change pricing, or discontinue service?)
+
+DELIVERABLE: Create /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent3-third-party/FINDINGS.md
+
+Use the same markdown template as Agent 1, but focused on third-party services.
+
+RESEARCH METHODS:
+- Search for "ride price comparison API"
+- Search for "Uber Lyft price API aggregator"
+- Investigate specific services: RideGuru, Rome2rio, Wanderu, Transit, Citymapper
+- Check if they have public APIs or are consumer-facing only
+- Review their pricing (free vs paid)
+- Assess their reliability (reviews, uptime, company backing)
+- Check if they claim official partnerships with Uber/Lyft
+
+IMPORTANT: Compare at least 2-3 different third-party services if they exist.
+
+==================================================
+AGENT 4: MOBILE APP / DEEP LINKING RESEARCH
+==================================================
+
+I'm Agent 4 in a multi-agent EXPLORATION effort for the Uber/Lyft Price Comparison App.
+
+MY WORKSPACE: /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent4-mobile-approach/
+
+MY MISSION: Research building a mobile app using Uber/Lyft mobile SDKs or deep linking
+
+RESEARCH QUESTIONS:
+1. Do Uber/Lyft provide mobile SDKs? (iOS, Android - official developer SDKs)
+2. Can we use deep linking to get prices? (Open Uber/Lyft apps with prefilled locations)
+3. Can we get price estimates within our app via SDK? (Without leaving our app)
+4. What are the legal implications? (Are SDKs for integration or just deep linking?)
+5. Would this work as a mobile-first app? (User experience considerations)
+6. Can we programmatically extract prices from SDK responses?
+7. What's the authentication flow? (User OAuth, app permissions, user login required?)
+8. Platform limitations? (iOS-only, Android-only, or both? React Native compatible?)
+
+DELIVERABLE: Create /Users/williammarceaujr./dev-sandbox/projects/uber-lyft-comparison/exploration/agent4-mobile-approach/FINDINGS.md
+
+Use the same markdown template as Agent 1, but focused on mobile approach.
+
+RESEARCH METHODS:
+- Search for "Uber mobile SDK" and "Lyft mobile SDK"
+- Check Uber Developer Documentation for mobile integration
+- Check Lyft Developer Documentation for mobile integration
+- Research deep linking capabilities (uber://? lyft://? URL schemes)
+- Look for example mobile apps that integrate Uber/Lyft
+- Assess if this could work as a React Native app (cross-platform)
+- Consider user experience: Does user need to authenticate with Uber/Lyft within our app?
+
+IMPORTANT: Consider that this might only work as a mobile app (not web), which affects distribution.
+
+==================================================
+
+INSTRUCTIONS FOR WILLIAM:
+
+1. Open 4 separate Claude instances (4 browser tabs/windows)
+2. Copy-paste Agent 1 prompt into instance 1
+3. Copy-paste Agent 2 prompt into instance 2
+4. Copy-paste Agent 3 prompt into instance 3
+5. Copy-paste Agent 4 prompt into instance 4
+6. Let all 4 agents work in parallel (1-2 hours each)
+7. Return to this session when all agents complete
+
+Each agent will create their FINDINGS.md in their respective workspace.
+
+After all agents complete, we'll consolidate findings and make a recommendation.
+
+==================================================

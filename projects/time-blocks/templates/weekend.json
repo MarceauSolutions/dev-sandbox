@@ -1,0 +1,37 @@
+{
+  "name": "Weekend",
+  "description": "Relaxed weekend schedule with flexibility",
+  "blocks": [
+    {
+      "start": "08:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "medium",
+      "notes": "Later start for weekends"
+    },
+    {
+      "start": "10:00",
+      "duration": 120,
+      "activity": "Personal Projects",
+      "category": "personal",
+      "priority": "low",
+      "notes": "Fun side projects or learning"
+    },
+    {
+      "start": "15:00",
+      "duration": 60,
+      "activity": "Dog Park / Training",
+      "category": "personal",
+      "priority": "medium"
+    },
+    {
+      "start": "19:00",
+      "duration": 120,
+      "activity": "Project Building",
+      "category": "work",
+      "priority": "medium",
+      "notes": "Optional - only if motivated"
+    }
+  ]
+}

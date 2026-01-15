@@ -1,0 +1,52 @@
+{
+  "name": "Deep Work Day",
+  "description": "Maximum focus day for intensive project work - minimal interruptions",
+  "blocks": [
+    {
+      "start": "06:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "high"
+    },
+    {
+      "start": "07:30",
+      "duration": 240,
+      "activity": "Deep Work Session 1",
+      "category": "work",
+      "priority": "critical",
+      "notes": "No meetings, no email - pure focus"
+    },
+    {
+      "start": "12:00",
+      "duration": 60,
+      "activity": "Lunch + Walk",
+      "category": "rest",
+      "priority": "medium"
+    },
+    {
+      "start": "13:00",
+      "duration": 180,
+      "activity": "Deep Work Session 2",
+      "category": "work",
+      "priority": "critical",
+      "notes": "Continue morning momentum"
+    },
+    {
+      "start": "17:00",
+      "duration": 60,
+      "activity": "Admin & Email",
+      "category": "admin",
+      "priority": "low",
+      "notes": "Clear inbox, respond to messages"
+    },
+    {
+      "start": "19:00",
+      "duration": 120,
+      "activity": "Deep Work Session 3",
+      "category": "work",
+      "priority": "high",
+      "notes": "Evening focus block"
+    }
+  ]
+}

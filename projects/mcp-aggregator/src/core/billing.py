@@ -21,7 +21,7 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal, ROUND_HALF_UP
 from enum import Enum
 
-from database import Database, Row
+from .database import Database, Row
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

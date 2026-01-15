@@ -1,0 +1,53 @@
+{
+  "name": "Productive Day",
+  "description": "William's standard productive day template with workout, planning, client work, and project building",
+  "blocks": [
+    {
+      "start": "06:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "high",
+      "notes": "Morning workout to start the day strong"
+    },
+    {
+      "start": "07:30",
+      "duration": 30,
+      "activity": "Planning & Review",
+      "category": "admin",
+      "priority": "medium",
+      "notes": "Review goals, plan the day's priorities"
+    },
+    {
+      "start": "12:00",
+      "duration": 30,
+      "activity": "Lunch",
+      "category": "meal",
+      "priority": "low"
+    },
+    {
+      "start": "18:00",
+      "duration": 60,
+      "activity": "Cold Emails / Lead Scraping",
+      "category": "work",
+      "priority": "high",
+      "notes": "Outreach and lead generation"
+    },
+    {
+      "start": "19:00",
+      "duration": 180,
+      "activity": "Project Building",
+      "category": "work",
+      "priority": "critical",
+      "notes": "Deep focus time for building projects"
+    },
+    {
+      "start": "22:00",
+      "duration": 30,
+      "activity": "Dog Training",
+      "category": "personal",
+      "priority": "medium",
+      "notes": "Evening training session with the dog"
+    }
+  ]
+}

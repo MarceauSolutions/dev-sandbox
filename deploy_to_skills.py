@@ -141,6 +141,114 @@ PROJECTS = {
             "deploy_method": "railway",
             "deploy_command": "railway up"
         }
+    },
+    "email-analyzer": {
+        "skill_name": "email-analyzer",
+        "src_dir": DEV_SANDBOX / "email-analyzer" / "src",
+        "skill_md": DEV_SANDBOX / "email-analyzer" / "SKILL.md",
+        "directive": "email_analyzer.md",
+        "scripts": [],  # Future: Python automation scripts
+        "description": "Email Analysis - Extract, summarize, and compare email offers",
+        "deployment_target": "workflows-only"  # Documentation-based, no code deployment yet
+    },
+    "hvac-distributors": {
+        "skill_name": "hvac-distributors",
+        "src_dir": PROJECTS_DIR / "hvac-distributors" / "src",
+        "skill_md": PROJECTS_DIR / "hvac-distributors" / "SKILL.md",
+        "directive": "hvac_distributors.md",
+        "scripts": [
+            "hvac_cli.py",
+            "hvac_mcp.py",
+            "rfq_manager.py",
+            "models.py",
+            "distributor_db.py",
+            "quote_tracker.py",
+            "email_sender.py",
+            "email_receiver.py"
+        ],
+        "description": "HVAC Distributor RFQ System - Submit RFQs and compare quotes",
+        "deployment_channels": {
+            "local": True,
+            "github": False,
+            "pypi": "hvac-quotes-mcp",
+            "mcp_registry": "io.github.wmarceau/hvac-quotes",
+            "openrouter": True
+        }
+    },
+    # MCP Aggregator - Rideshare Comparison
+    "mcp-aggregator-rideshare": {
+        "skill_name": "rideshare-comparison",
+        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
+        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
+        "directive": "uber_lyft_comparison.md",
+        "scripts": ["rideshare_mcp.py"],
+        "description": "Uber/Lyft price comparison MCP",
+        "deployment_channels": {
+            "local": True,
+            "github": False,
+            "pypi": "rideshare-comparison-mcp",
+            "mcp_registry": "io.github.wmarceau/rideshare-comparison",
+            "openrouter": True
+        }
+    },
+    # MCP Aggregator - HVAC Quotes
+    "mcp-aggregator-hvac": {
+        "skill_name": "hvac-quotes",
+        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
+        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
+        "directive": "hvac_distributors.md",
+        "scripts": ["hvac_mcp.py"],
+        "description": "HVAC equipment quote comparison MCP",
+        "deployment_channels": {
+            "local": True,
+            "github": False,
+            "pypi": "hvac-mcp",
+            "mcp_registry": "io.github.wmarceau/hvac",
+            "openrouter": True
+        }
+    },
+    # MCP Aggregator - Platform Core
+    "mcp-aggregator": {
+        "skill_name": "mcp-aggregator",
+        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
+        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
+        "directive": None,
+        "scripts": ["aggregator_mcp.py"],
+        "description": "Universal MCP Aggregator Platform",
+        "deployment_channels": {
+            "local": True,
+            "github": False,
+            "pypi": "mcp-aggregator",
+            "mcp_registry": "io.github.wmarceau/mcp-aggregator",
+            "openrouter": True
+        }
+    },
+    # Time Blocks - Personal Productivity
+    "time-blocks": {
+        "skill_name": "time-blocks",
+        "src_dir": PROJECTS_DIR / "time-blocks" / "src",
+        "skill_md": PROJECTS_DIR / "time-blocks" / "SKILL.md",
+        "directive": None,
+        "scripts": ["time_blocks.py"],
+        "description": "Time Blocks - Personal productivity and calendar scheduling",
+        "deployment_target": "local-only"
+    },
+    # Lead Scraper - Business Lead Generation
+    "lead-scraper": {
+        "skill_name": "lead-scraper",
+        "src_dir": PROJECTS_DIR / "lead-scraper" / "src",
+        "skill_md": PROJECTS_DIR / "lead-scraper" / "SKILL.md",
+        "directive": None,
+        "scripts": [
+            "scraper.py",
+            "config.py",
+            "models.py",
+            "google_places.py",
+            "yelp.py",
+            "enrichment.py"
+        ],
+        "description": "Lead Scraper - Local business lead generation for cold outreach",
+        "deployment_target": "local-only"
     }
 }
 
@@ -333,18 +441,68 @@ def deploy_to_local_workspace(project_name: str, version: str = None):
     # Copy scripts
     print(f"\n📋 Copying scripts...")
     for script in config["scripts"]:
-        src = EXECUTION_DIR / script
-        if src.exists():
-            shutil.copy(src, scripts_dir / script)
-            print(f"   ✓ {script}")
-        else:
-            print(f"   ✗ {script} (not found in execution/)")
+        # Try project src/ first (new architecture), then execution/ (legacy/shared)
+        src_from_project = config.get("src_dir", Path()) / script
+        src_from_execution = EXECUTION_DIR / script
 
-    # Copy directive
-    directive = DIRECTIVES_DIR / config["directive"]
-    if directive.exists():
-        shutil.copy(directive, skill_dir / "DIRECTIVE.md")
-        print(f"   ✓ Copied directive")
+        if src_from_project.exists():
+            shutil.copy(src_from_project, scripts_dir / script)
+            print(f"   ✓ {script} (from projects/)")
+        elif src_from_execution.exists():
+            shutil.copy(src_from_execution, scripts_dir / script)
+            print(f"   ✓ {script} (from execution/)")
+        else:
+            print(f"   ✗ {script} (not found in projects/ or execution/)")
+
+    # Copy shared utilities if specified
+    shared_utils = config.get("shared_utils", [])
+    if shared_utils:
+        print(f"\n📋 Copying shared utilities...")
+        for script in shared_utils:
+            src = EXECUTION_DIR / script
+            if src.exists():
+                shutil.copy(src, scripts_dir / script)
+                print(f"   ✓ {script} (shared from execution/)")
+            else:
+                print(f"   ✗ {script} (shared utility not found)")
+
+    # Copy templates directory if exists
+    project_dir = config.get("src_dir", Path()).parent
+    templates_dir = project_dir / "templates"
+    if templates_dir.exists() and templates_dir.is_dir():
+        dest_templates = skill_dir / "templates"
+        shutil.copytree(templates_dir, dest_templates)
+        print(f"\n📦 Copied templates directory ({len(list(dest_templates.glob('*')))} files)")
+
+    # Create src/ package structure for scripts that use 'from src.X import Y'
+    # Check if any script imports from src module
+    has_src_imports = False
+    for script in config["scripts"]:
+        script_path = scripts_dir / script
+        if script_path.exists():
+            content = script_path.read_text()
+            if "from src." in content or "import src." in content:
+                has_src_imports = True
+                break
+
+    if has_src_imports:
+        print(f"\n📦 Creating src/ package structure for module imports...")
+        src_pkg_dir = scripts_dir / "src"
+        src_pkg_dir.mkdir(exist_ok=True)
+        (src_pkg_dir / "__init__.py").write_text("# Auto-generated for production imports\n")
+        # Copy all scripts (except the main one) to src/ as well
+        for script in config["scripts"]:
+            script_path = scripts_dir / script
+            if script_path.exists():
+                shutil.copy(script_path, src_pkg_dir / script)
+        print(f"   ✓ Created src/ package with {len(config['scripts'])} modules")
+
+    # Copy directive (if exists)
+    if config.get("directive"):
+        directive = DIRECTIVES_DIR / config["directive"]
+        if directive.exists():
+            shutil.copy(directive, skill_dir / "DIRECTIVE.md")
+            print(f"   ✓ Copied directive")
 
     # Create README
     readme = f"""# {config['description']} - Production Workspace
@@ -447,11 +605,12 @@ def deploy_to_github(project_name: str, repo: str):
         shutil.copy(use_cases, skill_dir / "USE_CASES.json")
         print(f"   ✓ USE_CASES.json")
 
-    # Copy directive
-    directive = DIRECTIVES_DIR / config["directive"]
-    if directive.exists():
-        shutil.copy(directive, skill_dir / "DIRECTIVE.md")
-        print(f"   ✓ DIRECTIVE.md")
+    # Copy directive (if exists)
+    if config.get("directive"):
+        directive = DIRECTIVES_DIR / config["directive"]
+        if directive.exists():
+            shutil.copy(directive, skill_dir / "DIRECTIVE.md")
+            print(f"   ✓ DIRECTIVE.md")
 
     # Create scripts directory and copy scripts
     scripts_dir = skill_dir / "scripts"
@@ -459,10 +618,30 @@ def deploy_to_github(project_name: str, repo: str):
 
     print(f"\n📋 Copying scripts...")
     for script in config["scripts"]:
-        src = EXECUTION_DIR / script
-        if src.exists():
-            shutil.copy(src, scripts_dir / script)
-            print(f"   ✓ {script}")
+        # Try project src/ first (new architecture), then execution/ (legacy/shared)
+        src_from_project = config.get("src_dir", Path()) / script
+        src_from_execution = EXECUTION_DIR / script
+
+        if src_from_project.exists():
+            shutil.copy(src_from_project, scripts_dir / script)
+            print(f"   ✓ {script} (from projects/)")
+        elif src_from_execution.exists():
+            shutil.copy(src_from_execution, scripts_dir / script)
+            print(f"   ✓ {script} (from execution/)")
+        else:
+            print(f"   ✗ {script} (not found in projects/ or execution/)")
+
+    # Copy shared utilities if specified
+    shared_utils = config.get("shared_utils", [])
+    if shared_utils:
+        print(f"\n📋 Copying shared utilities...")
+        for script in shared_utils:
+            src = EXECUTION_DIR / script
+            if src.exists():
+                shutil.copy(src, scripts_dir / script)
+                print(f"   ✓ {script} (shared from execution/)")
+            else:
+                print(f"   ✗ {script} (shared utility not found)")
 
     # Commit and push
     print(f"\n📤 Committing and pushing...")
