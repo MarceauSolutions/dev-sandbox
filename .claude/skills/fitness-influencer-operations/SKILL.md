@@ -11,13 +11,16 @@ trigger-phrases:
   - "generate revenue report"
   - "create AI fitness image"
   - "make video ad"
+  - "create video blueprint"
+  - "video template"
+  - "plan my video"
 ---
 
 # Fitness Influencer Operations
 
 ## ⚡ Quick Reference (AI: Read This First)
 
-**CAPABILITIES:** Video editing (jump cuts) • Educational graphics • Email digest • Revenue analytics • AI images (Grok) • Video ads (Shotstack) • Workout plans • Nutrition guides
+**CAPABILITIES:** Video editing (jump cuts) • Educational graphics • Email digest • Revenue analytics • AI images (Grok) • Video ads (Shotstack) • Workout plans • Nutrition guides • Video Blueprints • Content Calendar • Comment Categorizer • Cross-Platform Optimizer
 
 **WHEN TO USE:** User requests content creation, video editing, email management, or analytics for fitness influencer workflows
 
@@ -65,10 +68,30 @@ User Request → Capability Mapping:
 │     INPUT: Goal, experience level, days/week, equipment
 │     OUTPUT: Structured workout plan (markdown + JSON)
 │
-└─ "nutrition plan" / "meal plan" / "macros" / "diet guide"
-   └─ USE: execution/nutrition_guide_generator.py
-      INPUT: Weight, activity level, goal, dietary preference
-      OUTPUT: Personalized nutrition guide (markdown + JSON)
+├─ "nutrition plan" / "meal plan" / "macros" / "diet guide"
+│  └─ USE: execution/nutrition_guide_generator.py
+│     INPUT: Weight, activity level, goal, dietary preference
+│     OUTPUT: Personalized nutrition guide (markdown + JSON)
+│
+├─ "video blueprint" / "video template" / "plan my video"
+│  └─ USE: execution/video_template_framework.py
+│     INPUT: Topic, style, duration, platform
+│     OUTPUT: Segment-by-segment script with visual hints (HTML timeline)
+│
+├─ "content calendar" / "posting schedule" / "plan content"
+│  └─ USE: MCP tool: generate_content_calendar
+│     INPUT: Days, posts/day, platforms, content focus, rest days
+│     OUTPUT: 30-day balanced content plan with burnout prevention
+│
+├─ "categorize comments" / "sort DMs" / "manage engagement"
+│  └─ USE: MCP tool: categorize_comments
+│     INPUT: Array of comment strings
+│     OUTPUT: Categorized comments with auto-reply suggestions
+│
+└─ "optimize for platforms" / "cross-platform" / "repurpose content"
+   └─ USE: MCP tool: optimize_for_platforms
+      INPUT: Content type, caption, video duration, hashtags
+      OUTPUT: Platform-specific optimizations for 9 platforms
 ```
 
 ---
@@ -86,8 +109,12 @@ User Request → Capability Mapping:
 | `video_ads.py` | Complete video ads | Concept, headline, CTA | Video URL | $0.34 total |
 | `workout_plan_generator.py` | Generate workout plans | Goal, experience, days | Workout plan (MD/JSON) | FREE |
 | `nutrition_guide_generator.py` | Personalized nutrition | Weight, activity, goal | Nutrition guide (MD/JSON) | FREE |
+| `video_template_framework.py` | Video blueprints | Topic, style, duration | HTML timeline + scripts | FREE |
 | `calendar_reminders.py` | Recurring reminders | Title, days, time | Calendar events | FREE |
 | `canva_integration.py` | Advanced designs | Template ID | Design URL | FREE |
+| `comment_categorizer.py` | Categorize comments/DMs | Comment array | Categorized with actions | FREE |
+| `cross_platform_optimizer.py` | Platform optimization | Content, caption | 9-platform recommendations | FREE |
+| `content_calendar.py` | Content scheduling | Days, posts/day | 30-day calendar | FREE |
 
 ---
 

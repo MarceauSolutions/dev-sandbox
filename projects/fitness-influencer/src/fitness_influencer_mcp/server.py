@@ -327,6 +327,59 @@ Cost: FREE""",
                     }
                 }
             }
+        ),
+
+        # Video Blueprint Generator
+        Tool(
+            name="generate_video_blueprint",
+            description="""Generate viral video templates with segment-by-segment scripts.
+
+Creates structured video blueprints with:
+- Hook, talking head, B-roll, CTA segments
+- Script suggestions for each segment
+- Visual hints for what to film
+- Platform-optimized timing
+- Hashtag recommendations
+
+Styles: educational, transformation, day_in_life, before_after, workout_demo
+Platforms: tiktok, instagram_reels, youtube_shorts, youtube
+
+Returns interactive timeline HTML for visualization.
+
+Cost: FREE (uses local templates or Claude API if available)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "Video topic (e.g., '5 best exercises for abs')"
+                    },
+                    "style": {
+                        "type": "string",
+                        "enum": ["educational", "transformation", "day_in_life", "before_after", "workout_demo"],
+                        "description": "Template style",
+                        "default": "educational"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "Target duration in seconds (30-180)",
+                        "minimum": 30,
+                        "maximum": 180,
+                        "default": 60
+                    },
+                    "platform": {
+                        "type": "string",
+                        "enum": ["tiktok", "instagram_reels", "youtube_shorts", "youtube"],
+                        "description": "Target platform",
+                        "default": "instagram_reels"
+                    },
+                    "output_html": {
+                        "type": "string",
+                        "description": "Path to save interactive HTML visualization (optional)"
+                    }
+                },
+                "required": ["topic"]
+            }
         )
     ]
 
@@ -362,6 +415,9 @@ async def call_tool(name: str, arguments: dict):
 
         elif name == "generate_content_calendar":
             return await handle_content_calendar(arguments)
+
+        elif name == "generate_video_blueprint":
+            return await handle_video_blueprint(arguments)
 
         else:
             return [TextContent(
@@ -700,6 +756,66 @@ async def handle_content_calendar(arguments: dict):
         text=json.dumps({
             "success": True,
             "calendar": calendar
+        }, indent=2)
+    )]
+
+
+async def handle_video_blueprint(arguments: dict):
+    """Handle video blueprint generation."""
+    # Import from parent src directory
+    try:
+        import sys
+        from pathlib import Path
+        parent_src = Path(__file__).parent.parent
+        if str(parent_src) not in sys.path:
+            sys.path.insert(0, str(parent_src))
+        from video_template_framework import VideoTemplateGenerator, generate_timeline_html
+    except ImportError as e:
+        return [TextContent(
+            type="text",
+            text=f"Error: Could not import video_template_framework module: {e}"
+        )]
+
+    topic = arguments.get("topic")
+    if not topic:
+        return [TextContent(type="text", text="Error: topic is required")]
+
+    generator = VideoTemplateGenerator()
+
+    template = generator.generate_template(
+        topic=topic,
+        style=arguments.get("style", "educational"),
+        target_duration=arguments.get("duration", 60),
+        platform=arguments.get("platform", "instagram_reels")
+    )
+
+    # Generate HTML visualization
+    html = generate_timeline_html(template)
+
+    # Save HTML if output path specified
+    output_html = arguments.get("output_html")
+    if output_html:
+        full_html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>{template.get('name', 'Video Blueprint')}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="background:#0f0f1a; padding:40px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    {html}
+</body>
+</html>"""
+        with open(output_html, "w") as f:
+            f.write(full_html)
+        template["html_saved_to"] = output_html
+
+    return [TextContent(
+        type="text",
+        text=json.dumps({
+            "success": True,
+            "template": template,
+            "html_preview": html[:500] + "..." if len(html) > 500 else html
         }, indent=2)
     )]
 

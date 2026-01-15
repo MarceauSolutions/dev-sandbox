@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-01-15
+
+### Added
+- **Video Blueprint Generator** (`generate_video_blueprint`)
+  - Generate viral video templates with segment-by-segment scripts
+  - 5 styles: educational, transformation, day_in_life, before_after, workout_demo
+  - Platform-optimized timing (TikTok, Instagram Reels, YouTube Shorts, YouTube)
+  - Interactive HTML timeline visualization
+  - Script suggestions and visual hints for each segment
+  - Hashtag recommendations
+  - Cost: FREE (uses local templates or Claude API if available)
+
+### Technical
+- MCP now exposes 10 tools (up from 9)
+- Added `video_template_framework.py` integration to MCP server
+
+---
+
 ## [1.2.0] - 2026-01-14
 
 ### Added - New MCP Tools for Content Management
