@@ -4,6 +4,50 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-15 (Part 2): Fitness Influencer v1.3.0 - Video Blueprint & COGS Tracker
+
+**Context:** Continuing fitness-influencer development toward subscription launch per GO-NO-GO decision requirements.
+
+**Accomplished:**
+
+1. **Video Blueprint Generator** (`generate_video_blueprint`)
+   - Added to MCP server (10th tool, now 12 total)
+   - Generates viral video templates with segment-by-segment scripts
+   - 5 styles: educational, transformation, day_in_life, before_after, workout_demo
+   - Platform-optimized timing (TikTok, Instagram Reels, YouTube Shorts, YouTube)
+   - Interactive HTML timeline visualization
+   - Script suggestions and visual hints for each segment
+   - Cost: FREE
+
+2. **COGS Tracking Dashboard** (`get_cogs_report`, `log_api_usage`)
+   - Created `cogs_tracker.py` for API cost monitoring
+   - Tracks Grok images ($0.07), Shotstack video ($0.06), video ads ($0.20)
+   - Daily and monthly COGS reports with gross margin calculation
+   - HTML dashboard generation with alerts
+   - Target margin: 60%+ (warns at 55%, critical at 50%)
+   - Addresses pre-launch requirement from GO-NO-GO decision
+
+3. **Updated SKILL.md**
+   - Added new trigger phrases: "create video blueprint", "video template", "plan my video"
+   - Added new capabilities to decision tree
+   - Updated script reference table with new tools
+
+**Version:** 1.3.0 (12 MCP tools total)
+
+**Pre-Launch Checklist Progress (from GO-NO-GO):**
+- [x] COGS monitoring - Set up API cost tracking dashboard
+- [ ] Pricing update - PRO tier to $49/month (pending)
+- [ ] Annual billing - Implement annual option (pending)
+- [ ] Churn tracking - Cohort analysis (pending)
+
+**Next Steps:**
+1. Implement pricing tier updates ($19 STARTER, $49 PRO, $149 AGENCY)
+2. Add annual billing option (20% discount)
+3. Create onboarding flow
+4. Prepare launch content
+
+---
+
 ## 2026-01-15: Lead Scraper Enhancement & Project Viability Assessment
 
 **Context:** Enhancing lead-scraper with Apollo.io/LinkedIn integration, assessing all projects for MCP commercialization potential, documenting cloud function deployment model.
