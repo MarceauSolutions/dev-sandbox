@@ -67,7 +67,7 @@ class WebhookConfig:
     google_client_id: str = ""
     google_client_secret: str = ""
     google_sheets_spreadsheet_id: str = ""
-    google_sheets_range: str = "Inquiries!A:Z"
+    google_sheets_range: str = "Sheet1!A:Z"
 
     # ClickUp
     clickup_api_token: str = ""
@@ -216,8 +216,52 @@ class GoogleSheetsClient:
         if token_path.exists():
             with open(token_path) as f:
                 token_data = json.load(f)
-                # TODO: Check expiration and refresh if needed
-                return token_data.get("access_token")
+
+            # Check if token is expired and refresh if needed
+            expiry_str = token_data.get("expiry")
+            if expiry_str:
+                from datetime import datetime
+                try:
+                    # Handle timezone-aware ISO format
+                    expiry = datetime.fromisoformat(expiry_str.replace("Z", "+00:00"))
+                    now = datetime.now(expiry.tzinfo) if expiry.tzinfo else datetime.now()
+
+                    if now >= expiry:
+                        # Token expired, refresh it
+                        refresh_token = token_data.get("refresh_token")
+                        client_id = token_data.get("client_id")
+                        client_secret = token_data.get("client_secret")
+                        token_uri = token_data.get("token_uri", "https://oauth2.googleapis.com/token")
+
+                        if refresh_token and client_id and client_secret:
+                            logger.info("Refreshing expired Google token...")
+                            response = requests.post(token_uri, data={
+                                "grant_type": "refresh_token",
+                                "refresh_token": refresh_token,
+                                "client_id": client_id,
+                                "client_secret": client_secret
+                            })
+
+                            if response.status_code == 200:
+                                new_token_data = response.json()
+                                token_data["token"] = new_token_data["access_token"]
+                                # Update expiry (tokens typically last 1 hour)
+                                from datetime import timedelta
+                                new_expiry = datetime.now() + timedelta(seconds=new_token_data.get("expires_in", 3600))
+                                token_data["expiry"] = new_expiry.isoformat() + "Z"
+
+                                # Save updated token
+                                with open(token_path, "w") as f:
+                                    json.dump(token_data, f)
+                                logger.info("Google token refreshed successfully")
+                            else:
+                                logger.error(f"Failed to refresh token: {response.text}")
+                                return None
+                except Exception as e:
+                    logger.warning(f"Error checking token expiry: {e}")
+
+            # Return the access token (key is "token" not "access_token")
+            return token_data.get("token") or token_data.get("access_token")
 
         logger.warning("No Google access token found. Run authorization flow first.")
         return None
