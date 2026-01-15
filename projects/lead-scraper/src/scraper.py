@@ -14,6 +14,12 @@ Environment Variables:
     YELP_API_KEY - Yelp Fusion API key
 """
 
+# Load .env file from dev-sandbox root
+from pathlib import Path
+from dotenv import load_dotenv
+env_path = Path(__file__).parent.parent.parent.parent / ".env"
+load_dotenv(env_path)
+
 import argparse
 import json
 import logging
@@ -281,6 +287,15 @@ Examples:
     # Add optout
     python -m src.scraper optout --add "business@example.com"
 
+    # Cold outreach - preview emails (Hormozi framework)
+    python -m src.scraper outreach --dry-run --limit 10
+
+    # Cold outreach - actually send emails
+    python -m src.scraper outreach --for-real --limit 100
+
+    # Enrich leads with Apollo (find owner emails)
+    python -m src.scraper enrich --limit 50
+
 Environment Variables:
     GOOGLE_PLACES_API_KEY - Google Places API key
     YELP_API_KEY - Yelp Fusion API key
@@ -327,6 +342,37 @@ Environment Variables:
     optout_parser.add_argument("--add", type=str, help="Add identifier to optout list")
     optout_parser.add_argument("--list", action="store_true", help="List all optouts")
     optout_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
+
+    # Outreach command (Hormozi-style cold emails)
+    outreach_parser = subparsers.add_parser("outreach", help="Send cold outreach emails (Hormozi framework)")
+    outreach_parser.add_argument("--dry-run", action="store_true", default=True, help="Preview without sending")
+    outreach_parser.add_argument("--for-real", action="store_true", help="Actually send emails")
+    outreach_parser.add_argument("--template", "-t", type=str, help="Force specific template")
+    outreach_parser.add_argument("--pain-point", "-p", type=str, help="Filter by pain point")
+    outreach_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit (Rule of 100)")
+    outreach_parser.add_argument("--enrich", action="store_true", help="Enrich with Apollo before sending")
+    outreach_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
+
+    # Enrich command (Apollo enrichment)
+    enrich_parser = subparsers.add_parser("enrich", help="Enrich leads with Apollo (find owner emails)")
+    enrich_parser.add_argument("--limit", "-l", type=int, default=50, help="Number of leads to enrich")
+    enrich_parser.add_argument("--pain-point", "-p", type=str, help="Filter by pain point first")
+    enrich_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
+
+    # Templates command
+    templates_parser = subparsers.add_parser("templates", help="List available email templates")
+
+    # SMS command (Twilio-based SMS outreach)
+    sms_parser = subparsers.add_parser("sms", help="Send SMS outreach via Twilio (Hormozi framework)")
+    sms_parser.add_argument("--dry-run", action="store_true", default=True, help="Preview without sending")
+    sms_parser.add_argument("--for-real", action="store_true", help="Actually send SMS messages")
+    sms_parser.add_argument("--template", "-t", type=str, help="Force specific template")
+    sms_parser.add_argument("--pain-point", "-p", type=str, help="Filter by pain point")
+    sms_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit (Rule of 100)")
+    sms_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
+
+    # SMS Templates command
+    sms_templates_parser = subparsers.add_parser("sms-templates", help="List available SMS templates")
 
     return parser
 
@@ -453,6 +499,141 @@ def main():
             for identifier in sorted(scraper.leads.optout_list):
                 print(f"  {identifier}")
             print(f"\nTotal: {len(scraper.leads.optout_list)}")
+
+    elif args.command == "outreach":
+        from .cold_outreach import ColdOutreachManager, TEMPLATES
+
+        # Get leads
+        leads = list(scraper.leads.leads.values())
+
+        # Filter by pain point if specified
+        if args.pain_point:
+            leads = [l for l in leads if args.pain_point in l.pain_points]
+
+        print(f"\n=== Cold Outreach Campaign (Hormozi Framework) ===")
+        print(f"Leads available: {len(leads)}")
+        print(f"Limit: {args.limit}")
+        print(f"Mode: {'DRY RUN' if not args.for_real else 'SENDING FOR REAL'}")
+        print()
+
+        manager = ColdOutreachManager(output_dir=output_dir)
+
+        stats = manager.run_campaign(
+            leads=leads[:args.limit],
+            template_name=args.template,
+            enrich=args.enrich,
+            dry_run=not args.for_real,
+            daily_limit=args.limit
+        )
+
+        print("\n=== Campaign Results ===")
+        for key, value in stats.items():
+            if key != "errors":
+                print(f"  {key}: {value}")
+
+        if stats.get("errors"):
+            print(f"\n  Errors: {len(stats['errors'])}")
+
+    elif args.command == "enrich":
+        from .cold_outreach import ColdOutreachManager
+
+        # Get leads with websites but no email
+        leads = [l for l in scraper.leads.leads.values() if l.website and not l.email]
+
+        # Filter by pain point if specified
+        if args.pain_point:
+            leads = [l for l in leads if args.pain_point in l.pain_points]
+
+        print(f"\n=== Apollo Enrichment ===")
+        print(f"Leads to enrich: {min(len(leads), args.limit)} of {len(leads)} total")
+        print()
+
+        manager = ColdOutreachManager(output_dir=output_dir)
+        enriched = 0
+        enriched_leads = []
+
+        for i, lead in enumerate(leads[:args.limit]):
+            print(f"[{i+1}/{min(len(leads), args.limit)}] Enriching {lead.business_name}...")
+            owner_info = manager.enrich_lead_with_owner(lead)
+
+            if owner_info:
+                enriched += 1
+                lead.owner_name = f"{owner_info.get('first_name', '')} {owner_info.get('last_name', '')}".strip()
+                lead.email = owner_info.get('email', '')
+                lead.linkedin = owner_info.get('linkedin', '')
+                print(f"    Found: {lead.owner_name} ({lead.email})")
+                enriched_leads.append(lead)
+            else:
+                print(f"    No owner found")
+
+        # Save updated leads
+        scraper._save_progress()
+
+        print(f"\n=== Enrichment Complete ===")
+        print(f"  Enriched: {enriched}/{min(len(leads), args.limit)}")
+        print(f"  Success rate: {enriched/min(len(leads), args.limit)*100:.1f}%")
+
+    elif args.command == "templates":
+        from .cold_outreach import TEMPLATES
+
+        print("\n=== Available Email Templates (Hormozi Framework) ===\n")
+        for name, template in TEMPLATES.items():
+            print(f"📧 {name}")
+            print(f"   Subject: {template['subject'][:60]}...")
+            pain_points = template.get('pain_points', [])
+            print(f"   Best for: {', '.join(pain_points) if pain_points else 'Any lead'}")
+            if template.get('notes'):
+                print(f"   Notes: {template['notes']}")
+            print()
+
+    elif args.command == "sms":
+        from .sms_outreach import SMSOutreachManager, SMS_TEMPLATES
+
+        # Get leads with phone numbers
+        leads = [l for l in scraper.leads.leads.values() if l.phone]
+
+        # Filter by pain point if specified
+        if args.pain_point:
+            leads = [l for l in leads if args.pain_point in l.pain_points]
+
+        print(f"\n=== SMS Outreach Campaign (Hormozi Framework) ===")
+        print(f"Leads with phone: {len(leads)}")
+        print(f"Limit: {args.limit}")
+        print(f"Mode: {'DRY RUN' if not args.for_real else 'SENDING FOR REAL'}")
+        if args.template:
+            print(f"Template: {args.template}")
+        print()
+
+        manager = SMSOutreachManager(output_dir=output_dir)
+
+        stats = manager.run_campaign(
+            leads=leads[:args.limit],
+            template_name=args.template,
+            dry_run=not args.for_real,
+            daily_limit=args.limit
+        )
+
+        print("\n=== SMS Campaign Results ===")
+        for key, value in stats.items():
+            if key != "errors":
+                print(f"  {key}: {value}")
+
+        if stats.get("errors"):
+            print(f"\n  Errors: {len(stats['errors'])}")
+            for error in stats["errors"][:5]:
+                print(f"    - {error}")
+
+    elif args.command == "sms-templates":
+        from .sms_outreach import SMS_TEMPLATES
+
+        print("\n=== Available SMS Templates (Hormozi Framework) ===\n")
+        for name, template in SMS_TEMPLATES.items():
+            print(f"📱 {name}")
+            print(f"   Body: {template['body'][:80]}...")
+            print(f"   Chars: {template['char_count']} (SMS limit: 160)")
+            pain_points = template.get('pain_points', [])
+            print(f"   Best for: {', '.join(pain_points) if pain_points else 'Any lead'}")
+            print()
 
     return 0
 

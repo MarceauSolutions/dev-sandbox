@@ -183,6 +183,11 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Publish to registry" / "Put on Claude marketplace" | Run SOPs 11-13 (MCP → PyPI → Registry) |
 | "Make this an MCP" | Run SOP 11 (create package structure) |
 | "Update the MCP" / "Push new version" | Run SOP 14 (version bump → PyPI → Registry) |
+| "Run SMS campaign" / "Send outreach" | Run SOP 18 (template approval → dry run → send) |
+| "Start follow-up sequence" | Run SOP 19 (create campaign → process due) |
+| "Create a method for [X]" | Run SOP 20 (Internal Method Development) |
+| "How should we classify [X]" | Run SOP 20 (Internal Method Development) |
+| "Should this be an SOP?" | Run SOP 21 (score using decision tree) |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -2510,6 +2515,304 @@ TOTAL: 4.0/5 = GO
 
 ---
 
+### SOP 18: SMS Campaign Execution
+
+**When**: Running SMS outreach campaigns via Twilio
+
+**Purpose**: Execute compliant SMS campaigns with proper template approval, sending, and tracking
+
+**Prerequisites**:
+- ✅ Twilio account with balance (>$10)
+- ✅ Phone number configured (+1 855 239 9364)
+- ✅ Templates approved by William
+- ✅ Lead list with valid phone numbers
+- ✅ Webhook server running for replies
+
+**Steps**:
+
+1. **Verify prerequisites**:
+   ```bash
+   cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
+   grep TWILIO .env  # All 3 vars set
+   cat output/approved_templates.json | grep template_name
+   ```
+
+2. **Dry run first** (always required):
+   ```bash
+   python -m src.scraper sms --dry-run --limit 5 --template no_website_intro
+   ```
+   Verify: Messages render correctly, personalization works, under 160 chars
+
+3. **Small batch test** (10 leads):
+   ```bash
+   python -m src.scraper sms --for-real --limit 10 --pain-point no_website
+   ```
+   Wait 24 hours, check: Delivery rate, STOP responses, carrier violations
+
+4. **Full campaign** (only after small batch succeeds):
+   ```bash
+   python -m src.scraper sms --for-real --limit 100 --pain-point no_website
+   ```
+
+5. **Monitor**:
+   - Twilio Console: https://console.twilio.com/us1/monitor/logs/sms
+   - Webhook for replies: `python -m src.twilio_webhook serve --port 5001`
+
+**TCPA Compliance Requirements**:
+- B2B exemption for business numbers
+- "This is William" in every message
+- "Reply STOP to opt out" required
+- No messages before 8am or after 9pm local time
+
+**Success Criteria**:
+- ✅ Delivery rate >95%
+- ✅ Reply rate 2-5%
+- ✅ Opt-out rate <2%
+- ✅ No carrier violations
+
+**References**: `projects/lead-scraper/workflows/sms-campaign-sop.md`, `projects/lead-scraper/workflows/cold-outreach-sop.md`
+
+---
+
+### SOP 19: Multi-Touch Follow-Up Sequence
+
+**When**: Managing automated follow-up sequences for non-responding leads
+
+**Purpose**: Execute the 7-touch, 60-day follow-up sequence based on Hormozi's "Still Looking" framework
+
+**Sequence Architecture**:
+```
+Day 0:  Initial outreach (intro message)
+Day 2:  Follow-up #1 (still_looking)
+Day 5:  Follow-up #2 (social_proof)
+Day 10: Follow-up #3 (direct_question)
+Day 15: Follow-up #4 (availability)
+Day 30: Follow-up #5 (breakup)
+Day 60: Follow-up #6 (re_engage)
+```
+
+**Steps**:
+
+1. **Create campaign with sequence**:
+   ```bash
+   python -m src.follow_up_sequence create \
+       --name "Naples Gyms No Website" \
+       --pain-point no_website \
+       --limit 100
+   ```
+
+2. **Send initial outreach (Day 0)**:
+   ```bash
+   python -m src.follow_up_sequence send --campaign {campaign_id} --day 0
+   ```
+
+3. **Process due follow-ups** (run daily via cron or manually):
+   ```bash
+   python -m src.follow_up_sequence process-due
+   ```
+
+4. **Handle responses**:
+   ```bash
+   # Mark lead as responded
+   python -m src.follow_up_sequence mark-responded \
+       --campaign {campaign_id} \
+       --phone "+1XXXXXXXXXX" \
+       --outcome positive  # positive, negative, callback_scheduled, not_interested
+   ```
+
+5. **View campaign status**:
+   ```bash
+   python -m src.follow_up_sequence status --campaign {campaign_id}
+   python -m src.follow_up_sequence report --format daily
+   ```
+
+**Exit Conditions** (lead removed from sequence):
+- Lead replies (any response)
+- Lead opts out (STOP)
+- Delivery fails 2x consecutive
+- Callback scheduled
+- Day 60 completed
+
+**Success Criteria**:
+- ✅ Overall reply rate >5%
+- ✅ Opt-out rate <3%
+- ✅ Delivery rate >95%
+- ✅ >80% reach Day 60
+
+**References**: `projects/lead-scraper/workflows/multi-touch-followup-sop.md`
+
+---
+
+### SOP 20: Internal Method Development
+
+**When**: Creating internal operational frameworks, classification systems, or procedural methods
+
+**Purpose**: Develop internal methods (estimation frameworks, qualification criteria, onboarding processes) with the same rigor as projects, but with appropriate differences
+
+**Key Distinction from Projects**:
+- **Projects** → External products/services → Deploy to PyPI/GitHub
+- **Internal Methods** → Operational tools → Integrate into CLAUDE.md/SOPs
+
+**Directory Structure**:
+```
+methods/[method-name]/
+├── DEFINITION.md           # Problem statement, scope, success criteria
+├── exploration/            # SOP 9 multi-agent research
+│   ├── EXPLORATION-PLAN.md
+│   ├── agent1-[focus]/
+│   ├── agent2-[focus]/
+│   ├── agent3-[focus]/
+│   ├── agent4-[focus]/
+│   └── consolidated/
+├── [METHOD-OUTPUT].md      # The actual framework/matrix
+├── templates/              # Supporting templates
+└── VALIDATION-LOG.md       # Test cases and refinements
+```
+
+**Steps**:
+
+1. **DEFINE** - Create `methods/[name]/DEFINITION.md`:
+   - What problem does this method solve?
+   - Who uses it (William, Claude, both)?
+   - What does success look like?
+   - What are the inputs and outputs?
+
+2. **EXPLORE** (SOP 9) - Multi-agent research:
+   - Launch 3-4 agents to research different aspects
+   - Consolidate findings into recommendation
+
+3. **DESIGN** - Create the method:
+   - Classification matrix / decision tree
+   - Templates / checklists
+   - Automation scripts (if applicable)
+
+4. **DOCUMENT** - Make it usable:
+   - Create SOP in `workflows/`
+   - Add to CLAUDE.md communication patterns
+   - Update KNOWLEDGE_BASE.md
+
+5. **VALIDATE** - Test on real scenarios:
+   - Apply to 3-5 past or hypothetical cases
+   - Document in `VALIDATION-LOG.md`
+   - Refine based on results
+
+6. **INTEGRATE** - No deployment, just integration:
+   - Reference in relevant SOPs
+   - Add communication patterns to CLAUDE.md
+
+**Versioning**: Date-based (2026-01-15) not semantic (1.0.0)
+
+**Examples of Internal Methods**:
+- Project scoping & estimation
+- Lead qualification criteria
+- Client onboarding process
+- Pricing strategy framework
+- Quality assurance checklists
+- SOP creation method (meta-method)
+
+**References**: SOP 9 (Multi-Agent Exploration), SOP 6 (Workflow Creation)
+
+---
+
+### SOP 21: SOP Creation Method (Meta-Method)
+
+**When**: A recurring process is identified that needs documentation
+
+**Purpose**: Systematically decide when and how to create new SOPs on-the-fly
+
+**Trigger Conditions**:
+- Task repeated 2+ times
+- Complex multi-step process completed
+- New integration/tool set up
+- Process others (or future Claude sessions) will need to replicate
+
+**Decision Tree**:
+```
+Is this task repeatable?
+├── NO → Skip SOP, note in session-history.md if notable
+└── YES → Score using SOP 6 matrix (Recurrence, Consistency, Complexity, Onboarding)
+          ├── Score 0-3 → Skip or create after 2nd occurrence
+          ├── Score 4-6 → Create lightweight SOP
+          └── Score 7-12 → Create full SOP immediately
+```
+
+**Lightweight SOP Template** (scores 4-6):
+```markdown
+# SOP: [Name]
+
+*Created: YYYY-MM-DD*
+
+## Purpose
+[One sentence: what this SOP does]
+
+## When to Use
+[Trigger conditions]
+
+## Steps
+1. [Step]
+2. [Step]
+3. [Step]
+
+## Commands
+\`\`\`bash
+[key commands]
+\`\`\`
+
+## Verification
+- [ ] [How to know it worked]
+```
+
+**Full SOP Template** (scores 7-12):
+```markdown
+# SOP: [Name]
+
+*Last Updated: YYYY-MM-DD*
+*Version: 1.0.0*
+
+## Overview
+[What this SOP covers]
+
+## Prerequisites
+| Requirement | Check | Expected |
+|-------------|-------|----------|
+| ... | ... | ... |
+
+## Steps
+### Step 1: [Name]
+**Objective**: ...
+**Actions**: ...
+**Verification**: ✅ You should see...
+
+[Repeat for each step]
+
+## Troubleshooting
+| Issue | Cause | Solution |
+|-------|-------|----------|
+
+## Rollback Procedures
+[How to undo/recover]
+
+## Success Criteria
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+
+## Commands Reference
+\`\`\`bash
+[All commands used]
+\`\`\`
+```
+
+**Integration**:
+- Add new SOP to CLAUDE.md Quick Reference table
+- Add communication pattern if relevant
+- Reference in SOP 6 (Workflow Creation)
+
+**Location for meta-method documentation**: `methods/sop-creation/`
+
+**References**: SOP 6 (Workflow Creation), SOP 20 (Internal Method Development)
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
@@ -2534,6 +2837,10 @@ TOTAL: 4.0/5 = GO
 | Deploy to multiple channels at once | [SOP 15: Multi-Channel Deployment](#sop-15-multi-channel-deployment) | **⚠️ Channels configured in deploy_to_skills.py** |
 | Register MCP on OpenRouter directories | [SOP 16: OpenRouter Registration](#sop-16-openrouter-registration) | **⚠️ SOP 12 complete (PyPI first)** |
 | Submit to external directories | See `docs/mcp-collection/workflows/submit-to-directories.md` | **⚠️ GitHub repos created, SOP 12-13 complete** |
+| Running SMS campaign | [SOP 18: SMS Campaign Execution](#sop-18-sms-campaign-execution) | **⚠️ Templates approved, Twilio configured** |
+| Managing follow-up sequences | [SOP 19: Multi-Touch Follow-Up Sequence](#sop-19-multi-touch-follow-up-sequence) | **⚠️ Campaign created, leads loaded** |
+| Creating internal frameworks/methods | [SOP 20: Internal Method Development](#sop-20-internal-method-development) | None |
+| Deciding when to create an SOP | [SOP 21: SOP Creation Method](#sop-21-sop-creation-method-meta-method) | Repeatable task identified |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
