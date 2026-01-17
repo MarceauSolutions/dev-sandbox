@@ -37,21 +37,25 @@ class RevenueAnalytics:
     Analyze revenue and expenses from Google Sheets.
     """
 
-    # Google Sheets API scopes
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+    # Google Sheets API scopes - use full spreadsheets scope to match shared token
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-    def __init__(self, sheet_id, credentials_path='credentials.json', token_path='token.json'):
+    # Default paths - use shared Google credentials from lead-scraper
+    DEFAULT_TOKEN_PATH = '/Users/williammarceaujr./dev-sandbox/projects/lead-scraper/output/google_token.json'
+    DEFAULT_CREDENTIALS_PATH = '/Users/williammarceaujr./dev-sandbox/projects/lead-scraper/credentials.json'
+
+    def __init__(self, sheet_id, credentials_path=None, token_path=None):
         """
         Initialize revenue analytics.
 
         Args:
             sheet_id: Google Sheets ID
-            credentials_path: Path to OAuth credentials
-            token_path: Path to token file
+            credentials_path: Path to OAuth credentials (defaults to shared lead-scraper creds)
+            token_path: Path to token file (defaults to shared lead-scraper token)
         """
         self.sheet_id = sheet_id
-        self.credentials_path = credentials_path
-        self.token_path = token_path
+        self.credentials_path = credentials_path or self.DEFAULT_CREDENTIALS_PATH
+        self.token_path = token_path or self.DEFAULT_TOKEN_PATH
         self.service = None
 
     def authenticate(self):

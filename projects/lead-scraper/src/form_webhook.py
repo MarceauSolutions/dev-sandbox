@@ -136,6 +136,9 @@ class FormSubmission:
     processed: bool = False
     clickup_task_id: str = ""
     sheets_row: int = 0
+    follow_up_sent: str = ""  # Timestamp when follow-up was sent
+    meeting_booked: bool = False  # Whether the lead booked a meeting
+    auto_response_sent: str = ""  # Timestamp when auto-response was sent
 
     def __post_init__(self):
         if not self.submitted_at:
@@ -177,23 +180,49 @@ class FormSubmission:
         return asdict(self)
 
     def to_sheets_row(self) -> List[str]:
-        """Convert to a row for Google Sheets."""
+        """Convert to a row for Google Sheets.
+
+        Columns match the sheet headers:
+        Timestamp | First Name | Last Name | Business Name | Email | Phone |
+        Project Description | SMS Opt-in | Email Opt-in | Source | Status | Notes
+        """
+        # Split name into first/last
+        name_parts = self.name.split(maxsplit=1) if self.name else ["", ""]
+        first_name = name_parts[0] if len(name_parts) > 0 else ""
+        last_name = name_parts[1] if len(name_parts) > 1 else ""
+
+        # Determine status based on processing state
+        status = "new"
+        if self.meeting_booked:
+            status = "meeting booked"
+        elif self.follow_up_sent:
+            status = "in progress"
+        elif self.processed:
+            status = "contacted"
+
+        # Build notes from various fields
+        notes_parts = []
+        if self.clickup_task_id:
+            notes_parts.append(f"ClickUp: {self.clickup_task_id}")
+        if self.follow_up_sent:
+            notes_parts.append(f"Follow-up: {self.follow_up_sent}")
+        if self.message:
+            notes_parts.append(self.message[:100])  # Truncate long messages
+        notes = " | ".join(notes_parts) if notes_parts else ""
+
         return [
-            self.submitted_at,
-            self.name,
-            self.email,
-            self.phone,
-            self.company,
-            self.project_type,
-            self.message,
-            self.budget,
-            self.timeline,
-            self.source,
-            self.utm_source,
-            self.utm_medium,
-            self.utm_campaign,
-            self.clickup_task_id,
-            "Yes" if self.processed else "No"
+            self.submitted_at,                    # Timestamp
+            first_name,                           # First Name
+            last_name,                            # Last Name
+            self.company,                         # Business Name
+            self.email,                           # Email
+            self.phone,                           # Phone
+            self.project_type or self.message,    # Project Description
+            "Yes" if self.phone else "No",        # SMS Opt-in (has phone = can SMS)
+            "Yes" if self.email else "No",        # Email Opt-in (has email = can email)
+            self.source,                          # Source
+            status,                               # Status
+            notes                                 # Notes
         ]
 
 
@@ -394,6 +423,176 @@ class NotificationManager:
 
     def __init__(self, config: WebhookConfig):
         self.config = config
+        # Auto-response settings (check multiple env var names for flexibility)
+        self.calendly_link = os.getenv("CALENDLY_URL") or os.getenv("CALENDLY_LINK", "https://calendly.com/marceausolutions/discovery")
+        self.business_name = os.getenv("BUSINESS_NAME", "Marceau Solutions")
+        self.owner_name = os.getenv("OWNER_NAME", "William")
+
+    def send_lead_auto_response_sms(self, submission: FormSubmission) -> bool:
+        """Send immediate SMS auto-response to the lead."""
+        if not submission.phone:
+            logger.info("No phone number provided - skipping SMS auto-response to lead")
+            return False
+
+        if not all([
+            self.config.twilio_account_sid,
+            self.config.twilio_auth_token,
+            self.config.twilio_phone_number,
+        ]):
+            logger.warning("Twilio not fully configured - skipping SMS auto-response")
+            return False
+
+        try:
+            from twilio.rest import Client
+
+            client = Client(
+                self.config.twilio_account_sid,
+                self.config.twilio_auth_token
+            )
+
+            # Personalized auto-response with Calendly link
+            first_name = submission.name.split()[0] if submission.name else "there"
+            message_body = (
+                f"Hi {first_name}! Thanks for reaching out to {self.business_name}. "
+                f"I got your message and I'm excited to learn more about your project!\n\n"
+                f"To save time, feel free to book a quick call here: {self.calendly_link}\n\n"
+                f"Talk soon!\n- {self.owner_name}"
+            )
+
+            # Normalize phone number to E.164 format
+            phone = submission.phone
+            if not phone.startswith('+'):
+                # Remove non-digits
+                phone_digits = ''.join(c for c in phone if c.isdigit())
+                if len(phone_digits) == 10:
+                    phone = f"+1{phone_digits}"
+                elif len(phone_digits) == 11 and phone_digits.startswith('1'):
+                    phone = f"+{phone_digits}"
+                else:
+                    phone = f"+{phone_digits}"
+
+            message = client.messages.create(
+                body=message_body,
+                from_=self.config.twilio_phone_number,
+                to=phone
+            )
+
+            logger.info(f"Auto-response SMS sent to lead {submission.name}: {message.sid}")
+            return True
+
+        except ImportError:
+            logger.error("Twilio library not installed. Run: pip install twilio")
+            return False
+        except Exception as e:
+            logger.error(f"Failed to send auto-response SMS to lead: {e}")
+            return False
+
+    def send_lead_auto_response_email(self, submission: FormSubmission) -> bool:
+        """Send immediate email auto-response to the lead."""
+        if not submission.email:
+            logger.info("No email provided - skipping email auto-response to lead")
+            return False
+
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        # Get SMTP credentials from environment
+        smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+        smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        smtp_username = os.getenv("SMTP_USERNAME", "")
+        smtp_password = os.getenv("SMTP_PASSWORD", "")
+        sender_name = os.getenv("SENDER_NAME", self.business_name)
+        sender_email = os.getenv("SENDER_EMAIL", smtp_username)
+
+        if not smtp_username or not smtp_password:
+            logger.warning("SMTP credentials not configured - skipping email auto-response")
+            return False
+
+        try:
+            first_name = submission.name.split()[0] if submission.name else "there"
+
+            # Create message
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = f"Thanks for reaching out, {first_name}! 🎉"
+            msg["From"] = f"{sender_name} <{sender_email}>"
+            msg["To"] = submission.email
+
+            # Plain text version
+            text_content = f"""Hi {first_name}!
+
+Thanks so much for reaching out to {self.business_name}! I received your message and I'm excited to learn more about what you're working on.
+
+I typically respond within a few hours, but if you'd like to skip the back-and-forth, feel free to book a quick discovery call directly:
+
+📅 Book a call: {self.calendly_link}
+
+This lets us dive right into your project and see how I can help.
+
+Talk soon!
+{self.owner_name}
+{self.business_name}
+"""
+
+            # HTML version
+            html_content = f"""
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0;">Thanks for reaching out! 🎉</h1>
+    </div>
+
+    <div style="background: #ffffff; padding: 30px; border: 1px solid #ddd;">
+        <p style="font-size: 16px;">Hi {first_name}!</p>
+
+        <p>Thanks so much for reaching out to <strong>{self.business_name}</strong>! I received your message and I'm excited to learn more about what you're working on.</p>
+
+        <p>I typically respond within a few hours, but if you'd like to skip the back-and-forth, feel free to book a quick discovery call directly:</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{self.calendly_link}"
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 15px 40px;
+                      text-decoration: none;
+                      border-radius: 25px;
+                      font-weight: bold;
+                      font-size: 16px;
+                      display: inline-block;">
+                📅 Book a Discovery Call
+            </a>
+        </div>
+
+        <p>This lets us dive right into your project and see how I can help.</p>
+
+        <p>Talk soon!<br>
+        <strong>{self.owner_name}</strong><br>
+        <span style="color: #666;">{self.business_name}</span></p>
+    </div>
+
+    <div style="background: #f5f5f5; padding: 20px; text-align: center; border-radius: 0 0 10px 10px; font-size: 12px; color: #666;">
+        <p style="margin: 0;">You're receiving this because you submitted an inquiry at {self.business_name}</p>
+    </div>
+</body>
+</html>
+"""
+
+            msg.attach(MIMEText(text_content, "plain"))
+            msg.attach(MIMEText(html_content, "html"))
+
+            # Send email
+            logger.info(f"Sending auto-response email to lead: {submission.email}")
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_username, smtp_password)
+                server.sendmail(sender_email, submission.email, msg.as_string())
+
+            logger.info(f"Auto-response email sent to lead {submission.name}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send auto-response email to lead: {e}")
+            return False
 
     def send_sms_notification(self, submission: FormSubmission) -> bool:
         """Send SMS notification about new inquiry."""
@@ -439,16 +638,106 @@ class NotificationManager:
             return False
 
     def send_email_notification(self, submission: FormSubmission) -> bool:
-        """Send email notification about new inquiry."""
+        """Send email notification about new inquiry via SMTP."""
         if not self.config.notification_email:
             logger.warning("Notification email not configured - skipping")
             return False
 
-        # For now, log the email that would be sent
-        # Full email implementation would require SMTP credentials
-        logger.info(f"Email notification would be sent to: {self.config.notification_email}")
-        logger.info(f"Subject: New Inquiry from {submission.name}")
-        return True
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        # Get SMTP credentials from environment
+        smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+        smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        smtp_username = os.getenv("SMTP_USERNAME", "")
+        smtp_password = os.getenv("SMTP_PASSWORD", "")
+        sender_name = os.getenv("SENDER_NAME", "Lead Scraper")
+        sender_email = os.getenv("SENDER_EMAIL", smtp_username)
+
+        if not smtp_username or not smtp_password:
+            logger.warning("SMTP credentials not configured - skipping email")
+            return False
+
+        try:
+            # Create message
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = f"🔔 New Inquiry from {submission.name}"
+            msg["From"] = f"{sender_name} <{sender_email}>"
+            msg["To"] = self.config.notification_email
+
+            # Plain text version
+            text_content = f"""
+New Lead Inquiry Received!
+
+Name: {submission.name}
+Email: {submission.email}
+Phone: {submission.phone or 'Not provided'}
+Company: {submission.company or 'Not provided'}
+Source: {submission.source}
+Message: {submission.message or 'No message'}
+
+Timestamp: {submission.submitted_at}
+            """
+
+            # HTML version
+            html_content = f"""
+<html>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0;">🔔 New Lead Inquiry</h1>
+    </div>
+    <div style="background: #f9f9f9; padding: 20px; border: 1px solid #ddd;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px; font-weight: bold; width: 120px;">Name:</td>
+                <td style="padding: 10px;">{submission.name}</td>
+            </tr>
+            <tr style="background: white;">
+                <td style="padding: 10px; font-weight: bold;">Email:</td>
+                <td style="padding: 10px;"><a href="mailto:{submission.email}">{submission.email}</a></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; font-weight: bold;">Phone:</td>
+                <td style="padding: 10px;">{submission.phone or 'Not provided'}</td>
+            </tr>
+            <tr style="background: white;">
+                <td style="padding: 10px; font-weight: bold;">Company:</td>
+                <td style="padding: 10px;">{submission.company or 'Not provided'}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; font-weight: bold;">Source:</td>
+                <td style="padding: 10px;">{submission.source}</td>
+            </tr>
+            <tr style="background: white;">
+                <td style="padding: 10px; font-weight: bold;">Message:</td>
+                <td style="padding: 10px;">{submission.message or 'No message'}</td>
+            </tr>
+        </table>
+    </div>
+    <div style="background: #333; color: #999; padding: 15px; text-align: center; border-radius: 0 0 10px 10px; font-size: 12px;">
+        Lead received at {submission.submitted_at}
+    </div>
+</body>
+</html>
+            """
+
+            msg.attach(MIMEText(text_content, "plain"))
+            msg.attach(MIMEText(html_content, "html"))
+
+            # Send email
+            logger.info(f"Sending email notification to: {self.config.notification_email}")
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_username, smtp_password)
+                server.sendmail(sender_email, self.config.notification_email, msg.as_string())
+
+            logger.info("Email notification sent successfully")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send email notification: {e}")
+            return False
 
 
 # =============================================================================
@@ -499,7 +788,8 @@ class FormWebhookHandler:
         source: str = "webhook",
         notify: bool = True,
         create_task: bool = True,
-        add_to_sheets: bool = True
+        add_to_sheets: bool = True,
+        auto_respond: bool = True
     ) -> Dict[str, Any]:
         """
         Process an incoming form submission.
@@ -507,9 +797,10 @@ class FormWebhookHandler:
         Args:
             data: Form data dictionary
             source: Where the submission came from
-            notify: Whether to send notifications
+            notify: Whether to send notifications TO YOU about the lead
             create_task: Whether to create ClickUp task
             add_to_sheets: Whether to add to Google Sheets
+            auto_respond: Whether to send immediate auto-response TO THE LEAD
 
         Returns:
             Processing result with status and IDs
@@ -520,6 +811,7 @@ class FormWebhookHandler:
             "clickup_task_id": None,
             "sheets_added": False,
             "notifications_sent": [],
+            "auto_response_sent": [],
             "errors": []
         }
 
@@ -533,6 +825,31 @@ class FormWebhookHandler:
             result["submission_id"] = submission_id
 
             logger.info(f"Processing submission from {submission.name} ({submission.email})")
+
+            # Check if this is a test email (skip auto-response and nurture for tests)
+            is_test = "@example.com" in (submission.email or "") or "@test.com" in (submission.email or "")
+
+            # 0. IMMEDIATE: Send auto-response to the lead (so they don't wait!)
+            if auto_respond and not is_test:
+                auto_response_sent = False
+
+                # Email auto-response to lead
+                if self.notification_manager.send_lead_auto_response_email(submission):
+                    result["auto_response_sent"].append("email")
+                    auto_response_sent = True
+                    logger.info(f"✅ Auto-response email sent to {submission.email}")
+
+                # SMS auto-response to lead (if they provided phone)
+                if self.notification_manager.send_lead_auto_response_sms(submission):
+                    result["auto_response_sent"].append("sms")
+                    auto_response_sent = True
+                    logger.info(f"✅ Auto-response SMS sent to {submission.phone}")
+
+                # Record when auto-response was sent
+                if auto_response_sent:
+                    submission.auto_response_sent = datetime.now().isoformat()
+            elif is_test:
+                logger.info(f"Skipping auto-response for test email: {submission.email}")
 
             # 1. Add to Google Sheets
             if add_to_sheets and self.config.google_sheets_spreadsheet_id:
@@ -554,15 +871,41 @@ class FormWebhookHandler:
                 else:
                     result["errors"].append("Failed to create ClickUp task")
 
-            # 3. Send notifications
+            # 3. Send notifications TO YOU about the new lead
             if notify:
-                # SMS notification
+                # SMS notification to you
                 if self.notification_manager.send_sms_notification(submission):
                     result["notifications_sent"].append("sms")
 
-                # Email notification
+                # Email notification to you
                 if self.notification_manager.send_email_notification(submission):
                     result["notifications_sent"].append("email")
+
+            # 4. Enroll in nurture sequence (time-based follow-ups)
+            if auto_respond and not is_test:
+                try:
+                    from .lead_nurture_scheduler import LeadNurtureScheduler
+
+                    # Determine sequence based on industry/project type
+                    sequence_id = "website_builder"
+                    if any(kw in (submission.company or "").lower() for kw in ["gym", "fitness", "yoga", "crossfit", "pilates"]):
+                        sequence_id = "gym_website"
+                    elif any(kw in (submission.project_type or "").lower() for kw in ["gym", "fitness"]):
+                        sequence_id = "gym_website"
+
+                    scheduler = LeadNurtureScheduler(output_dir=self.config.output_dir)
+                    scheduler.enroll_lead(
+                        email=submission.email,
+                        name=submission.name,
+                        phone=submission.phone,
+                        company=submission.company,
+                        industry=submission.project_type or "business",
+                        sequence_id=sequence_id
+                    )
+                    result["nurture_enrolled"] = sequence_id
+                    logger.info(f"✅ Enrolled in nurture sequence: {sequence_id}")
+                except Exception as e:
+                    logger.warning(f"Could not enroll in nurture sequence: {e}")
 
             # Mark as processed and save
             submission.processed = True
@@ -679,6 +1022,13 @@ def main():
     clickup_parser = subparsers.add_parser("clickup-lists", help="List available ClickUp lists")
     clickup_parser.add_argument("--output-dir", type=str, default="output", help="Output directory")
 
+    # Test auto-response (sends to a real email/phone)
+    auto_response_parser = subparsers.add_parser("test-auto-response", help="Test auto-response to a lead")
+    auto_response_parser.add_argument("--email", type=str, required=True, help="Email to send auto-response to")
+    auto_response_parser.add_argument("--phone", type=str, help="Phone to send auto-response SMS to")
+    auto_response_parser.add_argument("--name", type=str, default="Test Lead", help="Name for the test")
+    auto_response_parser.add_argument("--output-dir", type=str, default="output", help="Output directory")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -743,6 +1093,35 @@ def main():
         for lst in lists:
             print(f"  - {lst['name']} (ID: {lst['id']})")
         print("\nSet CLICKUP_LIST_ID in .env to enable automatic task creation")
+
+    elif args.command == "test-auto-response":
+        test_submission = FormSubmission(
+            name=args.name,
+            email=args.email,
+            phone=args.phone or "",
+            company="Test Company",
+            project_type="website",
+            message="Test auto-response",
+            source="test"
+        )
+
+        print(f"\n=== Testing Auto-Response ===")
+        print(f"Sending to: {args.email}")
+        if args.phone:
+            print(f"SMS to: {args.phone}")
+        print(f"Calendly Link: {handler.notification_manager.calendly_link}")
+        print()
+
+        # Send email auto-response
+        email_sent = handler.notification_manager.send_lead_auto_response_email(test_submission)
+        print(f"✅ Email auto-response sent: {email_sent}")
+
+        # Send SMS auto-response (if phone provided)
+        if args.phone:
+            sms_sent = handler.notification_manager.send_lead_auto_response_sms(test_submission)
+            print(f"✅ SMS auto-response sent: {sms_sent}")
+
+        print("\nThis is what leads will receive immediately when they submit a form!")
 
     return 0
 

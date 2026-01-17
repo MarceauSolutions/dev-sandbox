@@ -511,12 +511,55 @@ class ColdOutreachManager:
                 )
                 self.campaigns[lead.id] = record
 
+                # Register for unified response monitoring (if not dry run)
+                if not dry_run:
+                    self._register_for_unified_tracking(lead, email, email_content, template)
+
             stats["processed"] += 1
 
         # Save campaign data
         self._save_campaigns()
 
         return stats
+
+    def _register_for_unified_tracking(
+        self,
+        lead: Lead,
+        email: str,
+        email_content: Dict[str, str],
+        template: str
+    ) -> None:
+        """Register outreach for unified response monitoring across all projects."""
+        try:
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / 'execution'))
+            from email_response_monitor import EmailResponseMonitor
+
+            # Determine project based on template/category
+            project = 'lead-scraper'
+            if 'gym' in template or 'fitness' in lead.category.lower():
+                project = 'fitness'
+            elif 'website' in template:
+                project = 'website-builder'
+
+            monitor = EmailResponseMonitor()
+            monitor.register_outreach(
+                inquiry_id=lead.id,
+                project=project,
+                recipient_email=email,
+                recipient_name=lead.owner_name or lead.business_name,
+                subject=email_content["subject"],
+                inquiry_type='cold_outreach',
+                metadata={
+                    'business_name': lead.business_name,
+                    'template': template,
+                    'category': lead.category,
+                    'pain_points': lead.pain_points,
+                }
+            )
+            logger.info(f"Registered cold outreach {lead.id} for unified tracking")
+        except Exception as e:
+            logger.warning(f"Failed to register for unified tracking: {e}")
 
     def get_campaign_stats(self) -> Dict[str, Any]:
         """Get overall campaign statistics."""

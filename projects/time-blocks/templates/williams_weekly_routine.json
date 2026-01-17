@@ -1,0 +1,338 @@
+{
+  "name": "William's Weekly Routine",
+  "description": "Complete weekly schedule with workout (Mon/Wed/Fri/Sat), creative work, reading, and core activities (6 AM - 9 PM)",
+  "working_hours": {
+    "start": "06:00",
+    "end": "21:00"
+  },
+  "recurring_blocks": [
+    {
+      "start": "06:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "high",
+      "notes": "Morning workout to start the day strong",
+      "recurring": true,
+      "days": ["mon", "wed", "fri", "sat"]
+    },
+    {
+      "start": "07:30",
+      "duration": 120,
+      "activity": "Creative Work",
+      "category": "work",
+      "priority": "high",
+      "notes": "Creative work time - mind is fresh after workout",
+      "recurring": true,
+      "days": ["mon", "wed", "fri", "sat"]
+    },
+    {
+      "start": "20:00",
+      "duration": 60,
+      "activity": "Reading",
+      "category": "learning",
+      "priority": "medium",
+      "notes": "Evening reading time - wind down with a good book",
+      "recurring": true,
+      "days": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+    }
+  ],
+  "day_specific": {
+    "mon": {
+      "description": "Monday - Workout + Full Productive Day",
+      "blocks": [
+        {
+          "start": "10:00",
+          "duration": 30,
+          "activity": "Planning & Review",
+          "category": "admin",
+          "priority": "medium",
+          "notes": "Weekly planning, review goals"
+        },
+        {
+          "start": "12:00",
+          "duration": 30,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "13:00",
+          "duration": 180,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "critical",
+          "notes": "Deep focus time"
+        },
+        {
+          "start": "17:00",
+          "duration": 60,
+          "activity": "Dog Training",
+          "category": "personal",
+          "priority": "medium"
+        },
+        {
+          "start": "18:30",
+          "duration": 90,
+          "activity": "Cold Emails / Outreach",
+          "category": "work",
+          "priority": "high"
+        }
+      ]
+    },
+    "tue": {
+      "description": "Tuesday - No Workout (Recovery) + Outreach Focus",
+      "blocks": [
+        {
+          "start": "07:00",
+          "duration": 120,
+          "activity": "Lead Research & Scraping",
+          "category": "work",
+          "priority": "high"
+        },
+        {
+          "start": "09:30",
+          "duration": 90,
+          "activity": "Cold Email Writing",
+          "category": "work",
+          "priority": "critical"
+        },
+        {
+          "start": "12:00",
+          "duration": 30,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "13:00",
+          "duration": 120,
+          "activity": "Follow-up Emails",
+          "category": "work",
+          "priority": "high"
+        },
+        {
+          "start": "15:30",
+          "duration": 60,
+          "activity": "LinkedIn Outreach",
+          "category": "work",
+          "priority": "medium"
+        },
+        {
+          "start": "17:00",
+          "duration": 180,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "high"
+        }
+      ]
+    },
+    "wed": {
+      "description": "Wednesday - Workout + Deep Work Day",
+      "blocks": [
+        {
+          "start": "10:00",
+          "duration": 120,
+          "activity": "Deep Work Session",
+          "category": "work",
+          "priority": "critical"
+        },
+        {
+          "start": "12:00",
+          "duration": 60,
+          "activity": "Lunch + Walk",
+          "category": "rest",
+          "priority": "medium"
+        },
+        {
+          "start": "13:00",
+          "duration": 180,
+          "activity": "Deep Work Session 2",
+          "category": "work",
+          "priority": "critical"
+        },
+        {
+          "start": "17:00",
+          "duration": 60,
+          "activity": "Admin & Email",
+          "category": "admin",
+          "priority": "low"
+        },
+        {
+          "start": "18:30",
+          "duration": 90,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "high"
+        }
+      ]
+    },
+    "thu": {
+      "description": "Thursday - No Workout (Recovery) + Mixed Day",
+      "blocks": [
+        {
+          "start": "07:00",
+          "duration": 120,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "high"
+        },
+        {
+          "start": "09:30",
+          "duration": 90,
+          "activity": "Cold Emails / Outreach",
+          "category": "work",
+          "priority": "high"
+        },
+        {
+          "start": "12:00",
+          "duration": 30,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "13:00",
+          "duration": 180,
+          "activity": "Deep Work Session",
+          "category": "work",
+          "priority": "critical"
+        },
+        {
+          "start": "17:00",
+          "duration": 60,
+          "activity": "Dog Training",
+          "category": "personal",
+          "priority": "medium"
+        },
+        {
+          "start": "18:30",
+          "duration": 90,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "high"
+        }
+      ]
+    },
+    "fri": {
+      "description": "Friday - Workout + Productive Day (early end)",
+      "blocks": [
+        {
+          "start": "10:00",
+          "duration": 120,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "critical"
+        },
+        {
+          "start": "12:00",
+          "duration": 30,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "13:00",
+          "duration": 120,
+          "activity": "Admin & Weekly Review",
+          "category": "admin",
+          "priority": "medium",
+          "notes": "Review week, plan next week"
+        },
+        {
+          "start": "15:30",
+          "duration": 90,
+          "activity": "Cold Emails / Outreach",
+          "category": "work",
+          "priority": "high"
+        },
+        {
+          "start": "17:30",
+          "duration": 150,
+          "activity": "Project Building or Social",
+          "category": "personal",
+          "priority": "medium",
+          "notes": "Flexible time - work or social"
+        }
+      ]
+    },
+    "sat": {
+      "description": "Saturday - Workout + Relaxed Productive",
+      "blocks": [
+        {
+          "start": "10:00",
+          "duration": 120,
+          "activity": "Personal Projects",
+          "category": "personal",
+          "priority": "low",
+          "notes": "Fun side projects or learning"
+        },
+        {
+          "start": "12:00",
+          "duration": 60,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "15:00",
+          "duration": 60,
+          "activity": "Dog Park / Training",
+          "category": "personal",
+          "priority": "medium"
+        },
+        {
+          "start": "17:00",
+          "duration": 120,
+          "activity": "Project Building",
+          "category": "work",
+          "priority": "medium",
+          "notes": "Optional - only if motivated"
+        }
+      ]
+    },
+    "sun": {
+      "description": "Sunday - Rest Day (No Workout)",
+      "blocks": [
+        {
+          "start": "09:00",
+          "duration": 120,
+          "activity": "Personal Time / Hobbies",
+          "category": "personal",
+          "priority": "low",
+          "notes": "Sleep in, relaxed morning"
+        },
+        {
+          "start": "12:00",
+          "duration": 60,
+          "activity": "Lunch",
+          "category": "meal",
+          "priority": "low"
+        },
+        {
+          "start": "14:00",
+          "duration": 60,
+          "activity": "Weekly Planning",
+          "category": "admin",
+          "priority": "medium",
+          "notes": "Plan the week ahead"
+        },
+        {
+          "start": "15:30",
+          "duration": 90,
+          "activity": "Dog Park",
+          "category": "personal",
+          "priority": "medium"
+        },
+        {
+          "start": "17:30",
+          "duration": 120,
+          "activity": "Light Project Work",
+          "category": "work",
+          "priority": "low",
+          "notes": "Optional - only if motivated"
+        }
+      ]
+    }
+  }
+}

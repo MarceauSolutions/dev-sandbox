@@ -26,8 +26,8 @@ This SOP covers real-time monitoring of SMS/form webhooks, handling inbound repl
                         └─────────────────┘
 
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Formspree      │────▶│  form_webhook   │────▶│  ClickUp Task   │
-│  (Landing Page) │     │  (Port 5000)    │     │  + Notification │
+│  Landing Page   │────▶│  form_webhook   │────▶│  ClickUp Task   │
+│  (Email Form)   │     │  (Port 5000)    │     │  + Notification │
 └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 

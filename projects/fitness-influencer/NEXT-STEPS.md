@@ -36,9 +36,11 @@ The landing page is ready at `landing-page/index.html`. To deploy:
 3. Custom domain support
 
 **Email Capture Setup**:
-1. Sign up for Formspree (free tier: 50 submissions/month)
-2. Create form at formspree.io/forms
-3. Replace `YOUR_FORM_ID` in index.html with actual form ID
+The landing page form submits directly to our form webhook at `form_webhook.py`, which:
+- Saves to Google Sheets
+- Creates ClickUp task
+- Sends SMS notification
+- Sends email notification
 
 ---
 

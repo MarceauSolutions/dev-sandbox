@@ -1,0 +1,52 @@
+{
+  "id": "script_20260116_210918_4116",
+  "title": "Demo: Hanging Leg Raises",
+  "platform": "youtube_shorts",
+  "duration_range": "60s max",
+  "duration_target": 45,
+  "style": "demo",
+  "hook": "Perfect hanging leg raises form in 30 seconds",
+  "main_content": [
+    {
+      "point": "Starting Position",
+      "script": "First, set up for hanging leg raises like this - feet [POSITION], hands [POSITION]...",
+      "visual": "Show setup/stance",
+      "duration": "11s"
+    },
+    {
+      "point": "The Movement",
+      "script": "Control the movement - [SPECIFIC TEMPO]. Don't rush.",
+      "visual": "Execute with clear form",
+      "duration": "11s"
+    },
+    {
+      "point": "Key Cue",
+      "script": "If you remember one thing, it's this: [SPECIFIC CUE]",
+      "visual": "Highlight the important detail",
+      "duration": "11s"
+    }
+  ],
+  "cta": "Save this for your next workout",
+  "b_roll_suggestions": [
+    "Feet/shoes positioning shot",
+    "Timer/stopwatch for rest periods",
+    "Hands gripping weights/bars (detail shot)",
+    "Correct form highlight for hanging leg raises",
+    "Muscle engagement close-up during hanging leg raises",
+    "Vertical-optimized shots (9:16)",
+    "Loop-friendly end shot matching start",
+    "Bold text overlay opportunities"
+  ],
+  "hashtags": [
+    "Hanginglegraises",
+    "FitnessMotivation",
+    "FitnessTips",
+    "FitnessCoach",
+    "Shorts"
+  ],
+  "created_at": "2026-01-16T21:09:18.755716",
+  "status": "pending",
+  "filmed_at": null,
+  "posted_at": null,
+  "notes": "Platform notes: Hook in first 3 seconds, loop-friendly ending preferred"
+}

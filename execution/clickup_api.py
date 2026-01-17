@@ -229,6 +229,23 @@ def get_task(task_id):
     return task
 
 
+def add_comment(task_id, comment_text):
+    """Add a comment to a task"""
+    url = f"{CLICKUP_API_BASE}/task/{task_id}/comment"
+
+    data = {
+        "comment_text": comment_text
+    }
+
+    response = requests.post(url, headers=get_headers(), json=data)
+    response.raise_for_status()
+
+    result = response.json()
+
+    print(f"✅ Comment added to task {task_id}")
+    return result
+
+
 def main():
     """Main CLI handler"""
     if len(sys.argv) < 2:
@@ -240,6 +257,7 @@ def main():
         print("  create-task NAME --list ID   Create a new task")
         print("  update-task ID --status X    Update task status")
         print("  get-task ID                  Get task details")
+        print("  add-comment ID \"comment\"     Add comment to a task")
         sys.exit(1)
 
     command = sys.argv[1]
@@ -283,6 +301,11 @@ def main():
         elif command == "get-task":
             task_id = sys.argv[2]
             get_task(task_id)
+
+        elif command == "add-comment":
+            task_id = sys.argv[2]
+            comment_text = sys.argv[3]
+            add_comment(task_id, comment_text)
 
         else:
             print(f"❌ Unknown command: {command}")

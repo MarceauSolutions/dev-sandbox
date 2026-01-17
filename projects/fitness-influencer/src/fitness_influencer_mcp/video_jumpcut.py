@@ -43,15 +43,19 @@ import json
 from pathlib import Path
 
 try:
-    from moviepy.editor import (
-        VideoFileClip, concatenate_videoclips, TextClip,
-        CompositeVideoClip, ImageClip
-    )
-    from moviepy.video.fx import resize
+    # MoviePy 2.x imports (new style)
+    from moviepy import VideoFileClip, concatenate_videoclips, TextClip, CompositeVideoClip, ImageClip
 except ImportError:
-    print("ERROR: moviepy not installed")
-    print("Install with: pip install moviepy")
-    sys.exit(1)
+    try:
+        # Fallback to MoviePy 1.x imports (old style)
+        from moviepy.editor import (
+            VideoFileClip, concatenate_videoclips, TextClip,
+            CompositeVideoClip, ImageClip
+        )
+    except ImportError:
+        print("ERROR: moviepy not installed")
+        print("Install with: pip install moviepy")
+        sys.exit(1)
 
 
 class VideoJumpCutter:

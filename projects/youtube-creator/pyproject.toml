@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "youtube-creator-mcp"
+version = "1.0.0"
+description = "YouTube automation MCP: upload videos, Shorts, manage playlists, analytics"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "William Marceau Jr.", email = "william@marceausolutions.com" }
+]
+keywords = ["mcp", "youtube", "video", "upload", "shorts", "automation", "creator"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "google-auth-oauthlib>=1.0.0",
+    "google-auth-httplib2>=0.1.0",
+    "google-api-python-client>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/MarceauSolutions/dev-sandbox/tree/main/projects/youtube-creator"
+Repository = "https://github.com/MarceauSolutions/dev-sandbox"
+
+[project.scripts]
+youtube-creator-mcp = "youtube_creator_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/youtube_creator_mcp"]

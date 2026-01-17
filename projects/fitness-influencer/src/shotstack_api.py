@@ -149,12 +149,18 @@ class ShotstackAPI:
                 },
                 "start": start_time,
                 "length": duration_per_image,
-                "fit": "cover",
-                "transition": {
-                    "in": transition if i > 0 else None,
-                    "out": transition if i < len(image_urls) - 1 else None
-                }
+                "fit": "cover"
             }
+
+            # Only add transition if needed (Shotstack doesn't accept None values)
+            transition_obj = {}
+            if i > 0:
+                transition_obj["in"] = transition
+            if i < len(image_urls) - 1:
+                transition_obj["out"] = transition
+            if transition_obj:
+                clip["transition"] = transition_obj
+
             clips.append(clip)
 
             # Text overlay if provided

@@ -528,6 +528,156 @@ python execution/manage_agent_skills.py list-skills
 
 ---
 
+## Lead Scraper & SMS Campaign System
+
+*Added: 2026-01-15*
+
+### Overview
+
+The lead-scraper project enables cold outreach campaigns via SMS and email, with automated follow-up sequences and CRM integration.
+
+**Core Components:**
+| Component | File | Purpose |
+|-----------|------|---------|
+| Lead Scraper | `src/scraper.py` | Google Places + Apollo enrichment |
+| SMS Sender | `src/sms_outreach.py` | Twilio SMS integration |
+| Campaign Runner | `src/campaign_runner.py` | Autonomous batch sending |
+| Follow-Up Sequence | `src/follow_up_sequence.py` | 7-touch, 60-day automation |
+| Twilio Webhook | `src/twilio_webhook.py` | SMS reply handling |
+| Form Webhook | `src/form_webhook.py` | Landing page form processing |
+
+### Key Configuration
+
+**Environment Variables (.env):**
+```bash
+# Twilio SMS
+TWILIO_ACCOUNT_SID=ACXXX
+TWILIO_AUTH_TOKEN=XXX
+TWILIO_PHONE_NUMBER=+18552399364
+
+# Apollo Lead Enrichment
+APOLLO_API_KEY=XXX
+
+# ClickUp CRM
+CLICKUP_API_TOKEN=XXX
+CLICKUP_LIST_ID=901709132478
+
+# Google Sheets (optional)
+GOOGLE_SHEETS_SPREADSHEET_ID=XXX
+
+# Notifications
+NOTIFICATION_EMAIL=wmarceau@marceausolutions.com
+```
+
+### Hormozi Framework Implementation
+
+| Principle | Implementation |
+|-----------|---------------|
+| Rule of 100 | Campaign runner with daily limits |
+| Cocktail Party | Business name personalization in templates |
+| Big Fast Value | Lead magnet offers (free mockup, audit) |
+| Multi-touch | 7-touch sequence over 60 days |
+| Still Looking | 9-word reactivation template |
+
+### SMS Templates (Current)
+
+| Template | Day | Message | Chars |
+|----------|-----|---------|-------|
+| `no_website_intro` | 0 | "Hi, this is William. I noticed $business_name doesn't have a website..." | 158 |
+| `still_looking` | 2 | "Still looking to get more members at $business_name?" | 89 |
+| `social_proof` | 5 | "Just helped a Naples gym add 40 members..." | 131 |
+| `direct_question` | 10 | "Quick question for $business_name - do you have someone handling..." | 152 |
+| `competitor_hook` | 15 | "Hi, calling about a gym near $business_name that just got 23 new members..." | 156 |
+| `breakup` | 30 | "Hey, closing out my list of Naples gyms..." | 119 |
+| `re_engage` | 60 | "Hey $business_name, wanted to check back in..." | 124 |
+
+**CRITICAL**: All templates require William's approval before use.
+
+### Lead Database Stats
+
+```
+Total Leads: 361
+With Phone Numbers: 313 (86.7%)
+With "no_website" Pain Point: 201 (55.7%)
+Location: Naples, FL area
+Categories: Gym, Fitness Center, Personal Trainer, Yoga Studio
+```
+
+### SOPs (Workflows)
+
+| SOP | Location | Purpose |
+|-----|----------|---------|
+| Cold Outreach | `workflows/cold-outreach-sop.md` | Main campaign execution |
+| Form Webhook | `workflows/form-webhook-sop.md` | Form processing pipeline |
+| SMS Campaign | `workflows/sms-campaign-sop.md` | SMS-specific procedures |
+| Multi-Touch | `workflows/multi-touch-followup-sop.md` | Follow-up sequence management |
+| Webhook Monitoring | `workflows/webhook-monitoring-sop.md` | Reply handling and monitoring |
+
+### Common Commands
+
+```bash
+# Navigate to project
+cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
+
+# Check lead stats
+python -m src.scraper stats
+
+# Dry run SMS
+python -m src.scraper sms --dry-run --limit 5 --pain-point no_website
+
+# Send SMS (requires template approval)
+python -m src.scraper sms --for-real --limit 100 --pain-point no_website
+
+# Start Twilio webhook server
+python -m src.twilio_webhook serve --port 5001
+
+# Process form submission
+python -m src.form_webhook process --data '{"name":"...", "email":"..."}' --source "test"
+
+# View ClickUp lists
+python -m src.form_webhook clickup-lists
+```
+
+### Integration Points
+
+| System | Integration | Status |
+|--------|-------------|--------|
+| Twilio | SMS send/receive | ✅ Ready |
+| Apollo | Lead enrichment | ✅ Ready |
+| ClickUp | CRM task creation | ✅ Ready |
+| Google Sheets | Lead logging | ✅ Ready |
+| SMTP Email | Notification emails | ✅ Ready |
+| ngrok | Webhook exposure | ✅ Available |
+
+### Deployment Pattern
+
+Use GitHub Pages + ngrok to marceausolutions.com (NOT Netlify):
+1. Push landing page to GitHub repo
+2. Enable GitHub Pages
+3. Use ngrok to tunnel webhook servers
+4. Configure Twilio webhook URL with ngrok URL
+
+### Cost Estimates
+
+| Item | Cost | Notes |
+|------|------|-------|
+| SMS Outbound | $0.0079/msg | ~$0.79 per 100 |
+| SMS Inbound | $0.0079/msg | Reply handling |
+| Phone Number | $1.15/month | Twilio |
+| Apollo | Per credit | Check balance |
+| SMTP Email | Free | Via Gmail app password |
+
+### Known Gotchas
+
+| Issue | Solution |
+|-------|----------|
+| GOOGLE_SHEETS_SPREADSHEET_ID empty | Create spreadsheet, add ID to .env |
+| Twilio carrier filtering | Review message for spam triggers |
+| Low enrichment rate | Apollo needs websites to find contacts |
+| Webhook not receiving | Check ngrok tunnel, update Twilio URL |
+
+---
+
 ## Troubleshooting
 
 ### Skill Not Triggering

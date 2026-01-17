@@ -38,6 +38,14 @@ load_dotenv(env_path)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Import opt-out manager for centralized handling
+try:
+    from .opt_out_manager import OptOutManager, OptOutReason, detect_opt_out
+    OPT_OUT_MANAGER_AVAILABLE = True
+except ImportError:
+    OPT_OUT_MANAGER_AVAILABLE = False
+    logger.warning("OptOutManager not available, using basic opt-out handling")
+
 
 # =============================================================================
 # Configuration
@@ -273,6 +281,12 @@ class TwilioWebhookHandler:
         self.notification_manager = NotificationManager()
         self.sheets_tracker = SheetsTracker(output_dir)
 
+        # Initialize centralized opt-out manager
+        if OPT_OUT_MANAGER_AVAILABLE:
+            self.opt_out_manager = OptOutManager(output_dir=output_dir)
+        else:
+            self.opt_out_manager = None
+
         # Load leads for matching
         self.leads_by_phone: Dict[str, Dict] = {}
         self._load_leads()
@@ -343,7 +357,7 @@ class TwilioWebhookHandler:
 
         # Handle opt-out
         if category == ResponseCategory.OPT_OUT:
-            self._handle_optout(from_phone, reply.business_name)
+            self._handle_optout(from_phone, reply.business_name, message_body=body, message_sid=message_sid)
             result["actions_taken"].append("added_to_optout_list")
 
         # Send notification for hot/warm leads
@@ -359,26 +373,36 @@ class TwilioWebhookHandler:
 
         return result
 
-    def _handle_optout(self, phone: str, business_name: str) -> None:
-        """Add phone to opt-out list."""
-        optout_file = self.output_dir / "optout_list.json"
+    def _handle_optout(self, phone: str, business_name: str, message_body: str = "", message_sid: str = "") -> None:
+        """Add phone to opt-out list using centralized OptOutManager."""
+        if self.opt_out_manager:
+            # Use centralized opt-out manager for better tracking
+            self.opt_out_manager.process_sms_reply(
+                from_phone=phone,
+                message_body=message_body,
+                business_name=business_name,
+                message_sid=message_sid
+            )
+        else:
+            # Fallback to basic file-based opt-out (legacy)
+            optout_file = self.output_dir / "optout_list.json"
 
-        optouts = []
-        if optout_file.exists():
-            with open(optout_file) as f:
-                optouts = json.load(f)
+            optouts = []
+            if optout_file.exists():
+                with open(optout_file) as f:
+                    optouts = json.load(f)
 
-        # Add normalized phone
-        normalized = self._normalize_phone(phone)
-        if normalized not in optouts:
-            optouts.append(normalized)
+            # Add normalized phone
+            normalized = self._normalize_phone(phone)
+            if normalized not in optouts:
+                optouts.append(normalized)
 
-        # Also add business name if available
-        if business_name and business_name.lower() not in [o.lower() for o in optouts if isinstance(o, str)]:
-            optouts.append(business_name.lower())
+            # Also add business name if available
+            if business_name and business_name.lower() not in [o.lower() for o in optouts if isinstance(o, str)]:
+                optouts.append(business_name.lower())
 
-        with open(optout_file, "w") as f:
-            json.dump(optouts, f, indent=2)
+            with open(optout_file, "w") as f:
+                json.dump(optouts, f, indent=2)
 
         logger.info(f"Added to opt-out list: {phone} ({business_name})")
 

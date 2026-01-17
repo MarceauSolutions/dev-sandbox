@@ -25,6 +25,10 @@ except ImportError:
     print("Error: MCP SDK not installed. Install with: pip install mcp", file=sys.stderr)
     sys.exit(1)
 
+# Subscription and usage tracking
+from .subscription_manager import SubscriptionManager
+from .usage_tracker import UsageTracker
+
 # Server instance
 server = Server("fitness-influencer")
 
@@ -446,6 +450,90 @@ Cost: FREE (internal tracking)""",
                 },
                 "required": ["service", "user_id"]
             }
+        ),
+
+        # Subscription & Usage Management
+        Tool(
+            name="get_user_tier",
+            description="""Get the current user's subscription tier and limits.
+
+Returns:
+- Current tier (free, starter, pro, agency)
+- Tier display name and price
+- All usage limits for the tier
+- Feature access (multi_client, api_access, etc.)
+
+Use this to show users their current plan and available features.
+
+Cost: FREE (internal lookup)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "user_email": {
+                        "type": "string",
+                        "description": "User email (optional, uses MCP_USER_EMAIL env var if not provided)"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="get_usage_summary",
+            description="""Get complete usage summary showing remaining quota for all features.
+
+Returns for each feature:
+- Current usage count
+- Limit (or 'unlimited' for paid tiers)
+- Remaining quota
+- Whether at limit
+
+Features tracked:
+- video_jumpcut: Monthly limit
+- comment_categorization: Daily limit
+- workout_plan: Monthly limit
+- content_calendar: Weekly limit
+- ai_image: Monthly limit
+- video_blueprint: Monthly limit
+
+Cost: FREE (internal lookup)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "user_email": {
+                        "type": "string",
+                        "description": "User email (optional, uses MCP_USER_EMAIL env var if not provided)"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="check_feature_access",
+            description="""Check if user can access a specific feature based on their tier and usage.
+
+Returns:
+- can_access: Boolean indicating if feature can be used
+- message: Informational message (remaining quota or upgrade prompt)
+- tier: Current user tier
+- limit: Feature limit for user's tier
+
+Use this before executing any metered feature to check quota.
+
+Cost: FREE (internal lookup)""",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "feature": {
+                        "type": "string",
+                        "enum": ["video_jumpcut", "comment_categorization", "workout_plan",
+                                 "content_calendar", "ai_image", "video_blueprint"],
+                        "description": "Feature to check access for"
+                    },
+                    "user_email": {
+                        "type": "string",
+                        "description": "User email (optional, uses MCP_USER_EMAIL env var if not provided)"
+                    }
+                },
+                "required": ["feature"]
+            }
         )
     ]
 
@@ -491,6 +579,15 @@ async def call_tool(name: str, arguments: dict):
         elif name == "log_api_usage":
             return await handle_log_api_usage(arguments)
 
+        elif name == "get_user_tier":
+            return await handle_get_user_tier(arguments)
+
+        elif name == "get_usage_summary":
+            return await handle_get_usage_summary(arguments)
+
+        elif name == "check_feature_access":
+            return await handle_check_feature_access(arguments)
+
         else:
             return [TextContent(
                 type="text",
@@ -510,6 +607,18 @@ async def call_tool(name: str, arguments: dict):
 
 async def handle_jump_cut(arguments: dict):
     """Handle video jump cut processing."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    can_proceed, message = tracker.check_limit(user_email, "video_jumpcut")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     try:
         from .video_jumpcut import VideoJumpCutter
     except ImportError as e:
@@ -545,6 +654,9 @@ async def handle_jump_cut(arguments: dict):
     )
 
     if result:
+        # Increment usage after successful execution
+        tracker.increment_usage(user_email, "video_jumpcut")
+
         response = {
             "success": True,
             "output_path": result,
@@ -601,6 +713,20 @@ async def handle_video_branding(arguments: dict):
 
 async def handle_image_generation(arguments: dict):
     """Handle AI image generation."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    # Check for each image requested
+    count = arguments.get("count", 1)
+    can_proceed, message = tracker.check_limit(user_email, "ai_image")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     try:
         from .grok_image_gen import GrokImageGenerator
     except ImportError as e:
@@ -615,7 +741,6 @@ async def handle_image_generation(arguments: dict):
 
     generator = GrokImageGenerator()
 
-    count = arguments.get("count", 1)
     output_path = arguments.get("output_path")
 
     results = await asyncio.get_event_loop().run_in_executor(
@@ -627,6 +752,9 @@ async def handle_image_generation(arguments: dict):
     )
 
     if results:
+        # Increment usage for each image generated
+        tracker.increment_usage(user_email, "ai_image", count=len(results))
+
         usage = generator.get_usage_summary()
         return [TextContent(
             type="text",
@@ -643,6 +771,18 @@ async def handle_image_generation(arguments: dict):
 
 async def handle_workout_plan(arguments: dict):
     """Handle workout plan generation."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    can_proceed, message = tracker.check_limit(user_email, "workout_plan")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     try:
         from .workout_plan_generator import WorkoutPlanGenerator
     except ImportError as e:
@@ -664,6 +804,9 @@ async def handle_workout_plan(arguments: dict):
         days_per_week=arguments["days_per_week"],
         equipment=arguments["equipment"]
     )
+
+    # Increment usage after successful generation
+    tracker.increment_usage(user_email, "workout_plan")
 
     # Export to files
     filename = f"workout_{arguments['goal']}_{arguments['experience']}"
@@ -738,6 +881,18 @@ async def handle_engagement_analysis(arguments: dict):
 
 async def handle_categorize_comments(arguments: dict):
     """Handle comment categorization."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    can_proceed, message = tracker.check_limit(user_email, "comment_categorization")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     try:
         from .comment_categorizer import CommentCategorizer
     except ImportError as e:
@@ -757,6 +912,9 @@ async def handle_categorize_comments(arguments: dict):
     include_replies = arguments.get("include_auto_replies", True)
 
     results = categorizer.categorize_batch(comments, include_auto_replies=include_replies)
+
+    # Increment usage after successful categorization
+    tracker.increment_usage(user_email, "comment_categorization")
 
     return [TextContent(
         type="text",
@@ -805,6 +963,18 @@ async def handle_optimize_platforms(arguments: dict):
 
 async def handle_content_calendar(arguments: dict):
     """Handle content calendar generation."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    can_proceed, message = tracker.check_limit(user_email, "content_calendar")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     try:
         from .content_calendar import ContentCalendarGenerator
     except ImportError as e:
@@ -823,6 +993,9 @@ async def handle_content_calendar(arguments: dict):
         rest_days=arguments.get("rest_days")
     )
 
+    # Increment usage after successful generation
+    tracker.increment_usage(user_email, "content_calendar")
+
     return [TextContent(
         type="text",
         text=json.dumps({
@@ -834,6 +1007,18 @@ async def handle_content_calendar(arguments: dict):
 
 async def handle_video_blueprint(arguments: dict):
     """Handle video blueprint generation."""
+    # Check usage limit before proceeding
+    user_email = os.getenv("MCP_USER_EMAIL", "anonymous")
+    tracker = UsageTracker()
+
+    can_proceed, message = tracker.check_limit(user_email, "video_blueprint")
+    if not can_proceed:
+        return [TextContent(type="text", text=json.dumps({
+            "error": "Usage limit reached",
+            "message": message,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2))]
+
     # Import from parent src directory
     try:
         import sys
@@ -860,6 +1045,9 @@ async def handle_video_blueprint(arguments: dict):
         target_duration=arguments.get("duration", 60),
         platform=arguments.get("platform", "instagram_reels")
     )
+
+    # Increment usage after successful generation
+    tracker.increment_usage(user_email, "video_blueprint")
 
     # Generate HTML visualization
     html = generate_timeline_html(template)
@@ -973,6 +1161,119 @@ async def handle_log_api_usage(arguments: dict):
                 "revenue": round(txn.revenue, 2),
                 "timestamp": txn.timestamp.isoformat()
             }
+        }, indent=2)
+    )]
+
+
+async def handle_get_user_tier(arguments: dict):
+    """Handle getting user's subscription tier and limits."""
+    user_email = arguments.get("user_email") or os.getenv("MCP_USER_EMAIL", "anonymous")
+
+    manager = SubscriptionManager()
+    tier = manager.get_tier(user_email)
+    is_paid = manager.is_paid(user_email)
+    limits = manager.get_tier_limits(tier)
+
+    return [TextContent(
+        type="text",
+        text=json.dumps({
+            "success": True,
+            "user_email": user_email,
+            "tier": tier,
+            "tier_display": limits.get("tier_display", tier.capitalize()),
+            "price": f"${limits.get('price', 0)}/month",
+            "is_paid": is_paid,
+            "limits": {
+                "video_jumpcuts": limits.get("video_jumpcuts", 0),
+                "comments": "unlimited" if limits.get("comments") == -1 else limits.get("comments", 0),
+                "workout_plans": "unlimited" if limits.get("workout_plans") == -1 else limits.get("workout_plans", 0),
+                "calendars": "unlimited" if limits.get("calendars") == -1 else limits.get("calendars", 0),
+                "ai_images": limits.get("ai_images", 0),
+                "video_blueprints": "unlimited" if limits.get("video_blueprints") == -1 else limits.get("video_blueprints", 0),
+            },
+            "features": {
+                "multi_client": limits.get("multi_client", False),
+                "api_access": limits.get("api_access", False),
+                "priority_support": limits.get("priority_support", False),
+                "white_label": limits.get("white_label", False),
+            },
+            "upgrade_url": "https://marceausolutions.com/fitness-pro"
+        }, indent=2)
+    )]
+
+
+async def handle_get_usage_summary(arguments: dict):
+    """Handle getting complete usage summary for a user."""
+    user_email = arguments.get("user_email") or os.getenv("MCP_USER_EMAIL", "anonymous")
+
+    tracker = UsageTracker()
+    summary = tracker.get_usage_summary(user_email)
+
+    # Format for cleaner output
+    formatted_features = {}
+    for feature_name, feature_data in summary.get("features", {}).items():
+        formatted_features[feature_name] = {
+            "display_name": feature_data.get("display_name"),
+            "period": feature_data.get("period"),
+            "used": feature_data.get("used", 0),
+            "limit": feature_data.get("limit"),
+            "remaining": feature_data.get("remaining"),
+            "at_limit": feature_data.get("at_limit", False),
+        }
+
+    return [TextContent(
+        type="text",
+        text=json.dumps({
+            "success": True,
+            "user_email": summary.get("user_email"),
+            "tier": summary.get("tier"),
+            "tier_display": summary.get("tier_display"),
+            "features": formatted_features,
+            "total_operations_this_month": summary.get("total_operations_this_month", 0),
+            "upgrade_url": summary.get("upgrade_url"),
+            "generated_at": summary.get("generated_at")
+        }, indent=2)
+    )]
+
+
+async def handle_check_feature_access(arguments: dict):
+    """Handle checking if user can access a specific feature."""
+    feature = arguments.get("feature")
+    if not feature:
+        return [TextContent(type="text", text="Error: feature is required")]
+
+    user_email = arguments.get("user_email") or os.getenv("MCP_USER_EMAIL", "anonymous")
+
+    tracker = UsageTracker()
+    manager = SubscriptionManager()
+
+    can_access, message = tracker.check_limit(user_email, feature)
+    tier = manager.get_tier(user_email)
+    limits = manager.get_tier_limits(tier)
+
+    # Get limit for this feature (map feature names)
+    feature_limit_map = {
+        "video_jumpcut": "video_jumpcuts",
+        "comment_categorization": "comments",
+        "workout_plan": "workout_plans",
+        "content_calendar": "calendars",
+        "ai_image": "ai_images",
+        "video_blueprint": "video_blueprints",
+    }
+    limit_key = feature_limit_map.get(feature, feature)
+    feature_limit = limits.get(limit_key, 0)
+
+    return [TextContent(
+        type="text",
+        text=json.dumps({
+            "success": True,
+            "feature": feature,
+            "can_access": can_access,
+            "message": message if message else "Access granted",
+            "user_email": user_email,
+            "tier": tier,
+            "limit": "unlimited" if feature_limit == -1 else feature_limit,
+            "upgrade_url": "https://marceausolutions.com/fitness-pro" if not can_access else None
         }, indent=2)
     )]
 

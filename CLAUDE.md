@@ -64,6 +64,8 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Project navigation** | `docs/projects.md` |
 | **Workflow template** | `docs/workflow-standard.md` |
 | **Session learnings** | `docs/session-history.md` |
+| **Autonomous agent triggers** | `docs/autonomous-agent-decision-tree.md` ⭐ |
+| **Deferred features/reminders** | `projects/social-media-automation/DOCKET.md` ⭐ |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
 
@@ -72,7 +74,14 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 **Complete documentation**: See `docs/development-to-deployment.md` for full process, or `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md` for specific topics.
 
 ```
+-1. RESEARCH (SOP 17/9) - BEFORE committing resources
+   └── For NEW product ideas: SOP 17 Market Viability (4 agents)
+   └── For OPTIMIZATION decisions: SOP 9 Multi-Agent Exploration (3-4 agents)
+   └── Output: GO/NO-GO decision or optimal approach selection
+   └── Skip if: Internal tool, <2 days effort, or clear requirements
+
 0. KICKOFF (SOP 0) - BEFORE starting any new project
+   └── Prerequisites: ✅ SOP 17 = GO (if applicable)
    └── Complete project-kickoff-questionnaire.md (19 questions)
    └── Decide app type (MCP, CLI, Web, Desktop, Hybrid)
    └── Complete cost-benefit analysis
@@ -191,6 +200,18 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Log this as a product opportunity" | Add entry to methods/product-opportunities/OPPORTUNITY-LOG.md |
 | "This could be a product" | Ask for details, add to OPPORTUNITY-LOG.md |
 | "Weekly product review" | Open OPPORTUNITY-LOG.md, review pending items |
+| "Show campaign analytics" / "How's the campaign doing?" | Run `python -m src.campaign_analytics report` (SOP 22) |
+| "Which template performs best?" | Run `python -m src.campaign_analytics templates` (SOP 22) |
+| "Record response from [phone]" | Run `python -m src.campaign_analytics response --phone X --category Y` |
+| "Show conversion funnel" | Run `python -m src.campaign_analytics funnel` (SOP 22) |
+| "Create A/B test" / "Test this message" | Run SOP 23 (create hypothesis → design test → execute) |
+| "New outreach strategy for [segment]" | Run SOP 23 (define segment → create hypotheses → test) |
+| "Should we build X?" / "Is X worth it?" | **AUTO**: Launch SOP 17 (4 market viability agents) |
+| "I have an idea for..." / "What about selling..." | **AUTO**: Launch SOP 17 (4 market viability agents) |
+| "How should we implement X?" | **AUTO**: Launch SOP 9 (3-4 architecture agents) |
+| "Multiple ways to do this..." | **AUTO**: Launch SOP 9 (3-4 architecture agents) |
+| Complex feature completed | **AUTO**: Launch SOP 2 (4 testing agents) after manual pass |
+| "Check the docket" / "What's deferred?" | Review DOCKET.md, report items with met triggers |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -202,7 +223,13 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - Layer 1 (Directive) must exist before Layer 3 (Execution)
    - Deploy ONLY when all three layers are complete
 
-2. **Check for existing tools first** - Look in `execution/` and `[project]/workflows/` before creating new
+2. **Check for existing tools first** - BEFORE creating anything new:
+   - Search `projects/` for similar capabilities (e.g., email-analyzer for email tasks)
+   - Check `execution/` for shared utilities
+   - Check `[project]/workflows/` for documented procedures
+   - Run: `ls projects/` to see all available projects
+   - Run: `grep -r "keyword" projects/` to find relevant functionality
+   - **Goal: Reuse existing work, don't reinvent the wheel**
 
 3. **Build workflows as you work** - Document procedures while completing tasks
    - Create workflows in `[project]/workflows/` as tasks are completed
@@ -223,14 +250,54 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - Each agent focuses on specific edge cases
    - Consolidate findings before implementing fixes
 
-7. **Infer intelligently** - See `docs/inference-guidelines.md` for when to extend scope
+7. **Parallel agent execution** - Use Task tool with multiple agents when possible
+   - If tasks are independent (no dependencies), launch in parallel
+   - Send a single message with multiple Task tool calls
+   - Example: Research + implementation can run in parallel
+   - Example: Multiple file searches can run in parallel
+   - **Always prefer parallel over sequential for independent work**
 
-8. **Living documents** - Some docs evolve throughout sessions, others are stable references:
+8. **Infer intelligently** - See `docs/inference-guidelines.md` for when to extend scope
+
+9. **Autonomous agent execution** - Launch agents WITHOUT explicit user request when:
+   - New product/idea mentioned → Auto-launch SOP 17 (4 market viability agents)
+   - Multiple implementation approaches → Auto-launch SOP 9 (architecture exploration)
+   - Complex feature done + manual test passed → Auto-launch SOP 2 (multi-agent testing)
+   - 4+ independent components to build → Auto-launch SOP 10 (parallel development)
+   - Open-ended codebase questions → Auto-launch Explore agents
+   - See: `docs/autonomous-agent-decision-tree.md` for full decision matrix
+
+10. **Track deferred work** - Use DOCKET.md for items with future trigger conditions
+   - Add items with clear trigger conditions (metrics, dates, dependencies)
+   - Check docket when relevant metrics change
+   - Move completed items to "Completed" section
+   - See: `projects/social-media-automation/DOCKET.md`
+
+11. **Living documents & self-annealing** - This system improves itself through use:
+
+   **Core Principle**: Workflows, SOPs, and project structures emerge FROM doing work, not upfront planning.
+   - Build workflows WHILE completing tasks (not before)
+   - Create SOPs when patterns repeat 2+ times (not theoretically)
+   - Document learnings immediately (not at end of project)
+   - Create project structures on the fly as needs become clear
+   - The 17+ SOPs in this file all came from real work, then got documented
+   - **If you're doing something new, do it first, then document what worked**
+
+   **Self-Annealing Triggers** (update CLAUDE.md when):
+   - New communication pattern emerges → add to Communication Patterns table
+   - New autonomous agent trigger identified → add to Operating Principles #9
+   - Repeated manual action should be automated → create workflow or SOP
+   - Error occurs that could be prevented → document fix in relevant SOP
+   - User asks for something 2+ times the same way → codify as pattern
+   - New project type encountered → create project-specific workflows on the fly
+   - New tool/integration discovered → add to relevant project's workflows/
 
    **Living (update throughout sessions):**
+   - `CLAUDE.md` - Communication patterns, operating principles, autonomous triggers
    - `docs/session-history.md` - Add learnings as they happen
    - `docs/prompting-guide.md` - Add new phrase patterns when discovered
-   - `CLAUDE.md` - Update communication patterns table
+   - `docs/autonomous-agent-decision-tree.md` - New agent launch conditions
+   - `projects/social-media-automation/DOCKET.md` - Deferred work with triggers
 
    **Stable References (update only when system changes):**
    - `docs/inference-guidelines.md` - Framework/ruleset
@@ -2816,6 +2883,277 @@ Is this task repeatable?
 
 ---
 
+### SOP 22: Campaign Analytics & Tracking
+
+**When**: Tracking campaign performance, response rates, and optimizing outreach strategies
+
+**Purpose**: Measure campaign effectiveness, identify winning templates, and track conversion funnels to continuously improve cold outreach ROI
+
+**Key Metrics Tracked**:
+- Response rates by template
+- Conversion funnel (Contacted → Responded → Qualified → Converted)
+- Multi-touch attribution (which follow-up drives responses)
+- A/B test performance with statistical significance
+
+**Directory Structure**:
+```
+projects/lead-scraper/
+├── output/
+│   ├── sms_campaigns.json       # Raw campaign data
+│   ├── campaign_analytics.json  # Aggregated metrics
+│   └── template_performance.json
+├── src/
+│   └── campaign_analytics.py    # Analytics engine
+```
+
+**Steps**:
+
+1. **Record a response** when lead replies:
+   ```bash
+   python -m src.campaign_analytics response \
+       --phone "+1XXXXXXXXXX" \
+       --text "Yes, I'm interested" \
+       --category hot_lead
+   ```
+
+   Categories: `hot_lead`, `warm_lead`, `cold_lead`, `not_interested`, `wrong_number`, `callback_requested`
+
+2. **Update campaign metrics** after batch completes:
+   ```bash
+   python -m src.campaign_analytics update --campaign-id "wave_1_no_website_jan15"
+   ```
+
+3. **View performance report**:
+   ```bash
+   python -m src.campaign_analytics report
+   ```
+
+4. **Compare template performance**:
+   ```bash
+   python -m src.campaign_analytics templates
+   ```
+
+5. **View conversion funnel**:
+   ```bash
+   python -m src.campaign_analytics funnel
+   ```
+
+**Conversion Funnel Stages**:
+```
+CONTACTED (100%) → RESPONDED (5-10%) → QUALIFIED (50% of responded) → CONVERTED (20% of qualified)
+```
+
+**Statistical Significance for A/B Tests**:
+- Minimum 100 contacts per variant
+- 85% confidence threshold for declaring winner
+- Run tests for minimum 7 days
+
+**ClickUp Integration Strategy**:
+- ClickUp = **Qualified leads only** (hot/warm)
+- Don't create tasks for every cold contact
+- Auto-create task when lead categorized as `hot_lead` or `callback_requested`
+
+**Success Criteria**:
+- ✅ Response rates tracked per template
+- ✅ Funnel conversion rates calculated
+- ✅ A/B tests reach statistical significance
+- ✅ Winning templates identified
+
+**References**: `projects/lead-scraper/src/campaign_analytics.py`, SOP 18 (SMS Campaign Execution)
+
+---
+
+### SOP 23: Cold Outreach Strategy Development
+
+**When**: Developing new cold outreach strategies, testing messaging hypotheses, or optimizing campaign performance
+
+**Purpose**: Systematically create, test, and optimize cold outreach strategies using A/B testing and data-driven iteration
+
+**The Hormozi Framework** (foundation for all outreach):
+1. **Lead with value** - Offer something before asking
+2. **Be specific** - Mention their business name, location, pain point
+3. **Social proof** - Reference similar businesses helped
+4. **Clear CTA** - One simple action to take
+5. **Multi-touch** - 5+ touches before giving up (most respond after touch 3-5)
+
+**Steps**:
+
+**Phase 1: Define Target Segment**
+```markdown
+## Segment Definition
+- **Who**: [e.g., Naples gyms without websites]
+- **Pain point**: [e.g., losing customers to competitors with online presence]
+- **Evidence**: [e.g., 55% of scraped gyms have no website]
+- **Offer**: [e.g., free mockup website in 48 hours]
+```
+
+**Phase 2: Create Message Hypotheses**
+
+For each segment, develop 2-3 competing message angles:
+
+| Hypothesis | Angle | Example |
+|------------|-------|---------|
+| A (Control) | Direct pain | "80% of customers search online first" |
+| B (Variant) | Social proof | "Just helped 3 Naples businesses" |
+| C (Variant) | Scarcity | "Only taking 2 more clients this month" |
+
+**Phase 3: Design A/B Test**
+```bash
+# Split leads into equal groups
+python -m src.campaign_analytics ab-test create \
+    --name "pain_vs_social_proof" \
+    --control-template no_website_intro \
+    --variant-template social_proof_intro \
+    --sample-size 100
+```
+
+**Phase 4: Execute Campaign** (per SOP 18)
+```bash
+# Send to control group
+python -m src.scraper sms --for-real --limit 50 --template no_website_intro --ab-group control
+
+# Send to variant group
+python -m src.scraper sms --for-real --limit 50 --template social_proof_intro --ab-group variant
+```
+
+**Phase 5: Analyze Results**
+```bash
+# After 7+ days and 100+ contacts per variant
+python -m src.campaign_analytics ab-test results --name "pain_vs_social_proof"
+```
+
+Output shows:
+- Response rate per variant
+- Statistical significance (85% confidence threshold)
+- Recommended winner
+
+**Phase 6: Iterate**
+- Winner becomes new control
+- Develop new variant hypothesis
+- Repeat cycle
+
+**Template Library Structure**:
+```
+projects/lead-scraper/
+├── templates/
+│   ├── sms/
+│   │   ├── intro/           # Initial outreach templates
+│   │   ├── followup/        # Follow-up sequence templates
+│   │   └── archived/        # Losing templates (for reference)
+│   └── email/
+│       ├── intro/
+│       └── followup/
+```
+
+**New Template Checklist**:
+- [ ] Under 160 characters (SMS)
+- [ ] Contains personalization ({business_name})
+- [ ] Clear CTA
+- [ ] "STOP to opt out" included
+- [ ] Reviewed by William before sending
+
+**Optimization Cycle**:
+```
+Define Segment → Create Hypotheses → A/B Test → Analyze → Scale Winner → Repeat
+      ↑                                                          │
+      └──────────────────────────────────────────────────────────┘
+```
+
+**Success Criteria**:
+- ✅ Each segment has documented strategy
+- ✅ A/B tests reach statistical significance
+- ✅ Response rate improves over baseline (target: +20% per quarter)
+- ✅ Losing templates archived with learnings
+
+**References**: `projects/lead-scraper/workflows/cold-outreach-strategy-sop.md`, SOP 18 (SMS Campaign Execution), SOP 22 (Campaign Analytics)
+
+---
+
+### SOP 24: Daily/Weekly Digest System
+
+**When**: Reviewing business operations or setting up automated digest delivery
+
+**Purpose**: Aggregate data from multiple sources (Gmail, SMS, Forms, Calendar, Campaigns) into unified morning digest with prioritized action items
+
+**Key Files**:
+```
+projects/personal-assistant/
+├── src/
+│   ├── digest_aggregator.py    # Combines all data sources
+│   ├── morning_digest.py       # Generates + sends digest via SMTP
+│   └── routine_scheduler.py    # Creates calendar reminders
+├── workflows/
+│   ├── daily-routine-sop.md    # Morning checklist (8-10:30 AM)
+│   └── weekly-routine-sop.md   # Weekly/monthly tasks
+└── output/digests/             # Historical digests (JSON)
+```
+
+**Commands**:
+
+```bash
+# Preview morning digest (no email sent)
+cd /Users/williammarceaujr./dev-sandbox/projects/personal-assistant
+python -m src.morning_digest --preview
+
+# Send digest email
+python -m src.morning_digest
+
+# Check digest data only
+python -m src.digest_aggregator --hours 24
+
+# Create calendar reminders (one-time setup)
+python -m src.routine_scheduler --create-all
+```
+
+**Data Sources Aggregated**:
+
+| Source | Data Retrieved |
+|--------|----------------|
+| Gmail API | Emails categorized (urgent, sponsorship, business, customer) |
+| SMS Campaigns | Hot leads, callbacks, questions, opt-outs |
+| Form Submissions | New inquiries with source tracking |
+| Google Calendar | Today's events + upcoming week |
+| Campaign Analytics | Response rates, funnel metrics |
+
+**Digest Schedule**:
+
+| Frequency | Tasks | Time |
+|-----------|-------|------|
+| Daily | Morning digest review, SMS replies, Form submissions | 8:00-10:30 AM |
+| Weekly (Mon) | Campaign performance, ClickUp pipeline, Week preview | 9:00-10:30 AM |
+| Bi-weekly | Revenue analytics, API costs, Inventory check | 10:30-11:30 AM |
+| Monthly | Revenue report, ROI analysis, Churn, Storage fees | 1st of month |
+
+**Setup Requirements**:
+
+1. **Environment variables** (in `.env`):
+   ```
+   SMTP_SERVER=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USERNAME=your-email@gmail.com
+   SMTP_PASSWORD=your-app-password
+   DIGEST_RECIPIENT=your-email@gmail.com
+   ```
+
+2. **Google OAuth** (first time):
+   - Place `credentials.json` in project root
+   - Run once to generate `token.json`
+
+**Communication Patterns**:
+- "Run morning digest" → `python -m src.morning_digest --preview`
+- "Send the digest" → `python -m src.morning_digest`
+- "Set up calendar reminders" → `python -m src.routine_scheduler --create-all`
+
+**Success Criteria**:
+- ✅ Morning digest delivers at 8 AM with all summaries
+- ✅ Action items prioritized (hot leads first)
+- ✅ Calendar reminders created for all routine tasks
+- ✅ Historical digests saved in `output/digests/`
+
+**References**: `projects/personal-assistant/workflows/daily-routine-sop.md`, `projects/personal-assistant/workflows/weekly-routine-sop.md`
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
@@ -2844,6 +3182,9 @@ Is this task repeatable?
 | Managing follow-up sequences | [SOP 19: Multi-Touch Follow-Up Sequence](#sop-19-multi-touch-follow-up-sequence) | **⚠️ Campaign created, leads loaded** |
 | Creating internal frameworks/methods | [SOP 20: Internal Method Development](#sop-20-internal-method-development) | None |
 | Deciding when to create an SOP | [SOP 21: SOP Creation Method](#sop-21-sop-creation-method-meta-method) | Repeatable task identified |
+| Tracking campaign performance | [SOP 22: Campaign Analytics & Tracking](#sop-22-campaign-analytics--tracking) | **⚠️ Campaign data exists in sms_campaigns.json** |
+| Developing new outreach strategies | [SOP 23: Cold Outreach Strategy Development](#sop-23-cold-outreach-strategy-development) | Target segment defined |
+| Daily/weekly routine check | [SOP 24: Daily/Weekly Digest System](#sop-24-dailyweekly-digest-system) | **⚠️ SMTP configured, Google OAuth optional** |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing

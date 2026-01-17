@@ -1,0 +1,337 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-16",
+  "description": "Nick Saraev-style talking head video format for automation and AI content",
+
+  "creator_profile": {
+    "name": "Nick Saraev",
+    "niche": "AI automation, no-code tools, agency building",
+    "style": "Educational talking head with fast-paced, value-dense delivery",
+    "audience": "Entrepreneurs, freelancers, agency owners looking to leverage automation",
+    "key_platforms": ["YouTube", "Twitter/X", "LinkedIn"]
+  },
+
+  "video_structure": {
+    "hook": {
+      "duration_seconds": "0-8",
+      "purpose": "Pattern interrupt, grab attention immediately",
+      "techniques": [
+        "Controversial statement",
+        "Bold promise",
+        "Question that creates curiosity",
+        "Shocking statistic",
+        "Contrarian take"
+      ],
+      "examples": [
+        "Stop building funnels. Here's what to do instead.",
+        "This AI tool replaced my entire team.",
+        "I made $50,000 in a week with this automation.",
+        "90% of coaches are doing this wrong.",
+        "Delete your to-do list. Seriously."
+      ]
+    },
+
+    "introduction": {
+      "duration_seconds": "8-25",
+      "purpose": "Establish credibility and preview value",
+      "techniques": [
+        "Quick personal credibility marker",
+        "Preview what they'll learn",
+        "Why this matters to them",
+        "Set expectations"
+      ],
+      "template": "I've [credibility marker]. Today I'm going to show you [specific outcome]. By the end of this video, you'll [benefit]."
+    },
+
+    "rising_action": {
+      "duration_seconds": "25-70%",
+      "purpose": "Build tension, deliver core content",
+      "techniques": [
+        "Problem-solution pacing",
+        "Multiple mini-hooks throughout",
+        "Screen share demonstrations",
+        "Step-by-step breakdowns"
+      ],
+      "pacing": "Fast cuts, minimal pauses, high information density"
+    },
+
+    "climax": {
+      "duration_seconds": "70-90%",
+      "purpose": "Deliver the 'aha moment' or key insight",
+      "techniques": [
+        "The big reveal",
+        "The counterintuitive insight",
+        "The complete system shown working",
+        "Results demonstration"
+      ]
+    },
+
+    "resolution": {
+      "duration_seconds": "90-100%",
+      "purpose": "Recap, CTA, loop back to hook",
+      "techniques": [
+        "Quick summary of key points",
+        "Clear next step CTA",
+        "Tease next video or related content",
+        "End on high energy"
+      ]
+    }
+  },
+
+  "content_pillars": {
+    "automation_tutorials": {
+      "description": "Step-by-step guides on automation tools",
+      "tools_covered": ["Make.com", "n8n", "Zapier", "Claude", "ChatGPT"],
+      "format": "Screen share + talking head overlay",
+      "hook_templates": [
+        "This {tool} automation saves me {hours} hours a week",
+        "Automate your entire {process} in {minutes} minutes",
+        "Stop doing {task} manually. Here's the fix."
+      ]
+    },
+
+    "ai_business_insights": {
+      "description": "How to leverage AI for business growth",
+      "topics": ["AI agents", "ChatGPT prompts", "Claude workflows", "Automation stacking"],
+      "format": "Talking head with graphics/diagrams",
+      "hook_templates": [
+        "AI just replaced {job_function}",
+        "This AI workflow makes {outcome}",
+        "The {industry} is about to change forever"
+      ]
+    },
+
+    "agency_building": {
+      "description": "Growing and scaling service businesses",
+      "topics": ["Pricing", "Client acquisition", "Operations", "Hiring/outsourcing"],
+      "format": "Talking head, whiteboard-style",
+      "hook_templates": [
+        "How I built a {revenue} agency in {timeframe}",
+        "Stop charging by the hour. Do this instead.",
+        "The {number} clients you need to hit {goal}"
+      ]
+    },
+
+    "productivity_systems": {
+      "description": "Personal productivity and systems thinking",
+      "topics": ["Time blocking", "Task management", "Energy management", "Focus"],
+      "format": "Talking head with app demos",
+      "hook_templates": [
+        "Delete your to-do list. Here's why.",
+        "The {time} morning routine that changed everything",
+        "Stop using {popular_app}. Try this instead."
+      ]
+    }
+  },
+
+  "production_style": {
+    "camera": {
+      "framing": "Medium close-up, centered or rule of thirds",
+      "eye_line": "Direct to camera, confident",
+      "movement": "Minimal camera movement, cuts for emphasis"
+    },
+    "editing": {
+      "pacing": "Fast - cut out all pauses and filler words",
+      "jump_cuts": "Heavy use of jump cuts for energy",
+      "b_roll": "Minimal - mostly talking head with screen share",
+      "text_overlays": "Key points, statistics, emphasis",
+      "transitions": "Hard cuts, occasional zoom punches"
+    },
+    "audio": {
+      "style": "Clean, close-mic sound",
+      "music": "Light background music (optional), lower during speech",
+      "sfx": "Subtle whoosh/pop on key points"
+    },
+    "graphics": {
+      "lower_thirds": "Name and title on first appearance",
+      "callouts": "Arrows, circles, highlights on screen shares",
+      "statistics": "Large bold numbers for emphasis"
+    }
+  },
+
+  "platform_adaptations": {
+    "youtube_long_form": {
+      "duration": "8-15 minutes optimal",
+      "structure": "Full structure with all phases",
+      "thumbnails": "Face + bold text + bright colors",
+      "title_format": "How I [Result] with [Method] (in [Timeframe])",
+      "description": "Hook, timestamps, links, keywords"
+    },
+
+    "youtube_shorts": {
+      "duration": "30-60 seconds",
+      "structure": "Hook + one key insight + mini CTA",
+      "format": "Vertical 9:16, text overlays essential",
+      "repurpose_from": "Best moments from long-form content"
+    },
+
+    "x_twitter": {
+      "duration": "30-60 seconds for video, or text thread",
+      "structure": "Hook + insight + CTA",
+      "text_version": "Thread format with hook as first tweet",
+      "posting_frequency": "3-5x daily, mix of video and text"
+    },
+
+    "instagram_reels": {
+      "duration": "30-60 seconds",
+      "structure": "Same as YouTube Shorts",
+      "format": "Vertical 9:16, captions required",
+      "hashtags": "5-10 relevant, niche-specific"
+    },
+
+    "tiktok": {
+      "duration": "30-60 seconds",
+      "structure": "Hook within first 1 second critical",
+      "format": "Vertical 9:16, native captions",
+      "trends": "Adapt to trending sounds/formats when relevant"
+    },
+
+    "linkedin": {
+      "duration": "60-180 seconds for video",
+      "structure": "Professional angle, business outcomes focus",
+      "format": "Square or landscape acceptable",
+      "text_version": "Long-form post with hook, insights, CTA"
+    }
+  },
+
+  "content_repurposing_pipeline": {
+    "step_1": {
+      "action": "Create YouTube long-form video",
+      "output": "8-15 minute educational video"
+    },
+    "step_2": {
+      "action": "Extract 3-5 clip moments",
+      "criteria": "Best hooks, key insights, quotable moments"
+    },
+    "step_3": {
+      "action": "Convert to vertical format",
+      "platforms": ["YouTube Shorts", "Instagram Reels", "TikTok"]
+    },
+    "step_4": {
+      "action": "Create text versions",
+      "platforms": ["X/Twitter thread", "LinkedIn post"]
+    },
+    "step_5": {
+      "action": "Schedule across platforms",
+      "stagger": "Different times to avoid overlap"
+    }
+  },
+
+  "weekly_content_calendar": {
+    "monday": {
+      "long_form": "YouTube tutorial (publish)",
+      "short_form": ["Clip 1 to Shorts/Reels/TikTok", "Thread to X"]
+    },
+    "tuesday": {
+      "short_form": ["Clip 2 to Shorts/Reels/TikTok", "LinkedIn post"]
+    },
+    "wednesday": {
+      "short_form": ["Clip 3 to Shorts/Reels/TikTok", "X engagement thread"]
+    },
+    "thursday": {
+      "long_form": "YouTube tutorial (publish)",
+      "short_form": ["Clip 1 to Shorts/Reels/TikTok", "Thread to X"]
+    },
+    "friday": {
+      "short_form": ["Clip 2 to Shorts/Reels/TikTok", "LinkedIn post"]
+    },
+    "saturday": {
+      "short_form": ["Compilation/recap content"]
+    },
+    "sunday": {
+      "action": "Plan and script next week's content"
+    }
+  },
+
+  "script_templates": {
+    "automation_tutorial": {
+      "hook": "[Result] in [Timeframe] using [Tool]. Let me show you.",
+      "intro": "I've helped {number} businesses automate this exact process. Here's the step-by-step.",
+      "body": [
+        "Step 1: [Setup] - [Why this matters]",
+        "Step 2: [Configuration] - [Common mistake to avoid]",
+        "Step 3: [Testing] - [What to look for]",
+        "Step 4: [Deployment] - [Expected results]"
+      ],
+      "cta": "Link in bio to get the template. See you in the next one."
+    },
+
+    "contrarian_insight": {
+      "hook": "Stop [common practice]. It's killing your [metric].",
+      "intro": "I know this sounds crazy, but hear me out.",
+      "body": [
+        "The conventional wisdom says [X]",
+        "But here's what actually happens [Y]",
+        "Instead, you should [Z]",
+        "Here's proof: [Evidence/story]"
+      ],
+      "cta": "If this changed how you think, follow for more. Link in bio."
+    },
+
+    "case_study": {
+      "hook": "[Result] in [Timeframe]. Here's exactly what I did.",
+      "intro": "[Number] months ago, I was [starting point]. Now I'm [current state].",
+      "body": [
+        "The problem: [What wasn't working]",
+        "The insight: [What I discovered]",
+        "The system: [What I implemented]",
+        "The results: [Specific metrics]"
+      ],
+      "cta": "Want the full breakdown? Link in bio. Follow for more."
+    },
+
+    "tool_comparison": {
+      "hook": "[Tool A] vs [Tool B]: One of these is a complete waste of money.",
+      "intro": "I've used both extensively. Here's the honest truth.",
+      "body": [
+        "[Tool A] pros and cons",
+        "[Tool B] pros and cons",
+        "When to use each",
+        "My recommendation"
+      ],
+      "cta": "Save this for later. Follow for more tool breakdowns."
+    }
+  },
+
+  "fitness_adaptation": {
+    "description": "How to apply Nick Saraev style to fitness content",
+    "content_pillars_adapted": {
+      "workout_tutorials": {
+        "original": "automation_tutorials",
+        "adaptation": "Step-by-step exercise guides with form cues",
+        "hook_templates": [
+          "This exercise builds {muscle_group} 2x faster",
+          "Stop doing {exercise} like this. Here's the fix.",
+          "The {exercise} technique nobody talks about"
+        ]
+      },
+      "training_insights": {
+        "original": "ai_business_insights",
+        "adaptation": "Training science and programming insights",
+        "hook_templates": [
+          "Your {training_split} is wrong. Here's why.",
+          "This training principle changed everything",
+          "The science behind {concept} (simplified)"
+        ]
+      },
+      "coaching_business": {
+        "original": "agency_building",
+        "adaptation": "Building a fitness coaching business",
+        "hook_templates": [
+          "How I built a {revenue} coaching business",
+          "Stop trading time for money as a trainer",
+          "The {number} clients you need for {income}"
+        ]
+      },
+      "lifestyle_systems": {
+        "original": "productivity_systems",
+        "adaptation": "Fitness lifestyle and habits",
+        "hook_templates": [
+          "My {time} morning routine for gains",
+          "The meal prep system that takes {minutes} minutes",
+          "Stop tracking {metric}. Track this instead."
+        ]
+      }
+    }
+  }
+}

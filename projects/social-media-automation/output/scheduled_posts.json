@@ -1,0 +1,62 @@
+[
+  {
+    "id": "a0eaba718b11",
+    "text": "\ud83d\udcaa Quick tip: Warm up properly - 5-10 minutes minimum\n\nThe right program makes all the difference.\n\nhttps://marceausolutions.com/fitness?utm_source=x&utm_medium=social&utm_campaign=fitness-launch\n\n#FitnessCoach #FitnessBusiness",
+    "priority": "normal",
+    "status": "scheduled",
+    "scheduled_time": "2026-01-19T09:00:00",
+    "created_at": "2026-01-16T20:45:47.511337",
+    "posted_at": null,
+    "tweet_id": null,
+    "error": null,
+    "campaign": "fitness-launch",
+    "utm_params": {
+      "utm_source": "x",
+      "utm_medium": "social",
+      "utm_campaign": "fitness-launch"
+    },
+    "media_paths": [],
+    "retry_count": 0,
+    "max_retries": 3
+  },
+  {
+    "id": "5952d78708f7",
+    "text": "\ud83c\udfac Coming soon: Your guide to build muscle efficiently\n\nStay tuned.\n\nhttps://marceausolutions.com/fitness?utm_source=x&utm_medium=social&utm_campaign=fitness-launch\n\n#FitnessCoach #FitnessBusiness",
+    "priority": "normal",
+    "status": "scheduled",
+    "scheduled_time": "2026-01-19T12:00:00",
+    "created_at": "2026-01-16T20:45:47.511651",
+    "posted_at": null,
+    "tweet_id": null,
+    "error": null,
+    "campaign": "fitness-launch",
+    "utm_params": {
+      "utm_source": "x",
+      "utm_medium": "social",
+      "utm_campaign": "fitness-launch"
+    },
+    "media_paths": [],
+    "retry_count": 0,
+    "max_retries": 3
+  },
+  {
+    "id": "e0ff0ac3e7e9",
+    "text": "Before: Motivation running low\n\nAfter: Learning to train smarter, not harder\n\nThe difference? A proper plan.\n\nhttps://marceausolutions.com/fitness?utm_source=x&utm_medium=social&utm_campaign=fitness-launch\n\n#FitnessCoach #FitnessBusiness",
+    "priority": "normal",
+    "status": "scheduled",
+    "scheduled_time": "2026-01-17T09:00:00",
+    "created_at": "2026-01-16T20:45:47.511911",
+    "posted_at": null,
+    "tweet_id": null,
+    "error": null,
+    "campaign": "fitness-launch",
+    "utm_params": {
+      "utm_source": "x",
+      "utm_medium": "social",
+      "utm_campaign": "fitness-launch"
+    },
+    "media_paths": [],
+    "retry_count": 0,
+    "max_retries": 3
+  }
+]

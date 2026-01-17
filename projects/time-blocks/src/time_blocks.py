@@ -35,6 +35,49 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 TOKEN_PATH = Path.home() / '.time-blocks' / 'token.json'
 CREDENTIALS_PATH = Path.home() / '.time-blocks' / 'credentials.json'
 DATA_PATH = Path.home() / '.time-blocks' / 'blocks.json'
+USER_PREFS_PATH = Path(__file__).parent.parent / 'config' / 'user_preferences.json'
+
+# Default working hours (can be overridden by user_preferences.json)
+DEFAULT_WORKING_HOURS = {
+    "start": "06:00",
+    "end": "21:00"
+}
+
+
+def load_user_preferences() -> Dict[str, Any]:
+    """Load user preferences from config file."""
+    if USER_PREFS_PATH.exists():
+        with open(USER_PREFS_PATH, 'r') as f:
+            return json.load(f)
+    return {}
+
+
+def get_working_hours() -> Dict[str, str]:
+    """Get working hours from user preferences or defaults."""
+    prefs = load_user_preferences()
+    return prefs.get('working_hours', DEFAULT_WORKING_HOURS)
+
+
+def validate_block_within_working_hours(block: 'TimeBlock') -> tuple[bool, str]:
+    """Validate that a block falls within working hours.
+
+    Returns:
+        tuple: (is_valid, error_message)
+    """
+    working_hours = get_working_hours()
+    start_limit = datetime.strptime(working_hours['start'], '%H:%M')
+    end_limit = datetime.strptime(working_hours['end'], '%H:%M')
+
+    block_start = datetime.strptime(block.start, '%H:%M')
+    block_end = datetime.strptime(block.end, '%H:%M')
+
+    if block_start < start_limit:
+        return False, f"Block starts at {block.start}, before working hours start ({working_hours['start']})"
+
+    if block_end > end_limit:
+        return False, f"Block ends at {block.end}, after working hours end ({working_hours['end']})"
+
+    return True, ""
 
 # Category colors for Google Calendar (color IDs)
 # https://developers.google.com/calendar/api/v3/reference/colors/get
@@ -575,12 +618,24 @@ class ScheduleDisplay:
         print('\n')
 
     @classmethod
-    def print_timeline(cls, schedule: DaySchedule, start_hour: int = 5,
-                       end_hour: int = 24) -> None:
-        """Print a timeline view of the day."""
+    def print_timeline(cls, schedule: DaySchedule, start_hour: int = None,
+                       end_hour: int = None) -> None:
+        """Print a timeline view of the day.
+
+        Uses working hours from config if start_hour/end_hour not specified.
+        """
         c = cls.COLORS
 
-        print(f"\n{c['bold']}TIMELINE VIEW - {schedule.date}{c['reset']}\n")
+        # Use configured working hours if not specified
+        if start_hour is None or end_hour is None:
+            working_hours = get_working_hours()
+            if start_hour is None:
+                start_hour = int(working_hours['start'].split(':')[0])
+            if end_hour is None:
+                end_hour = int(working_hours['end'].split(':')[0]) + 1  # +1 to include the last hour
+
+        print(f"\n{c['bold']}TIMELINE VIEW - {schedule.date}{c['reset']}")
+        print(f"{c['dim']}Working hours: {start_hour:02d}:00 - {end_hour-1:02d}:00{c['reset']}\n")
 
         # Create hour slots
         for hour in range(start_hour, end_hour):
@@ -700,6 +755,9 @@ Examples:
     # Auth (for initial setup)
     subparsers.add_parser('auth', help='Authenticate with Google Calendar')
 
+    # Show config/preferences
+    subparsers.add_parser('config', help='Show current configuration and working hours')
+
     args = parser.parse_args()
 
     # Initialize components
@@ -735,6 +793,17 @@ Examples:
         else:
             print("Error: Must specify either --end or --duration")
             sys.exit(1)
+
+        # Validate block is within working hours
+        is_valid, error_msg = validate_block_within_working_hours(block)
+        if not is_valid:
+            working_hours = get_working_hours()
+            print(f"Warning: {error_msg}")
+            print(f"Working hours are set to {working_hours['start']} - {working_hours['end']}")
+            response = input("Add anyway? (y/N): ").strip().lower()
+            if response != 'y':
+                print("Block not added.")
+                sys.exit(0)
 
         storage.add_block(date_str, block)
         print(f"Added: {block.activity} ({block.start} - {block.end})")
@@ -797,8 +866,20 @@ Examples:
             print("\nAvailable templates:")
             for t in template_list:
                 data = templates.load_template(t)
+                # Count blocks - handle both flat blocks and day-specific structure
                 block_count = len(data.get('blocks', []))
-                print(f"  - {t} ({block_count} blocks)")
+                recurring_count = len(data.get('recurring_blocks', []))
+                day_specific = data.get('day_specific', {})
+
+                if day_specific:
+                    # Count total blocks across all days
+                    day_block_count = sum(
+                        len(day_data.get('blocks', []))
+                        for day_data in day_specific.values()
+                    )
+                    print(f"  - {t} (weekly: {recurring_count} recurring + {day_block_count} day-specific)")
+                else:
+                    print(f"  - {t} ({block_count} blocks)")
         else:
             print("No templates found")
 
@@ -843,6 +924,40 @@ Examples:
             print(f"Token saved to: {TOKEN_PATH}")
         else:
             sys.exit(1)
+
+    elif args.command == 'config':
+        prefs = load_user_preferences()
+        working_hours = get_working_hours()
+
+        print("\n" + "=" * 50)
+        print("  TIME BLOCKS CONFIGURATION")
+        print("=" * 50 + "\n")
+
+        print(f"Config file: {USER_PREFS_PATH}")
+        print(f"Config exists: {USER_PREFS_PATH.exists()}\n")
+
+        print("WORKING HOURS:")
+        print(f"  Start: {working_hours['start']} (6 AM)")
+        print(f"  End:   {working_hours['end']} (9 PM)")
+        print(f"  Note:  All blocks must fall within these hours\n")
+
+        if prefs.get('recurring_blocks'):
+            print("RECURRING BLOCKS:")
+            for name, block in prefs['recurring_blocks'].items():
+                days = ', '.join(d.upper() for d in block.get('days', []))
+                time_start = block.get('time', {}).get('start', 'N/A')
+                time_end = block.get('time', {}).get('end', 'N/A')
+                print(f"  {name.upper()}:")
+                print(f"    Time: {time_start} - {time_end}")
+                print(f"    Days: {days}")
+                print(f"    Category: {block.get('category', 'N/A')}")
+                print()
+
+        print("DATA PATHS:")
+        print(f"  Blocks storage: {DATA_PATH}")
+        print(f"  Token path: {TOKEN_PATH}")
+        print(f"  Credentials: {CREDENTIALS_PATH}")
+        print()
 
     else:
         parser.print_help()

@@ -1,0 +1,41 @@
+{
+  "records": [
+    {
+      "id": "8b7ec33a",
+      "project": "elder-tech",
+      "recipient_email": "customercare@wesellcellular.com",
+      "recipient_name": "WeSellCellular",
+      "subject": "Bulk Pricing Inquiry #8b7ec33a: Ipad x5",
+      "sent_at": "2026-01-16T14:42:00.592443",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "bulk_pricing",
+      "metadata": {
+        "wholesaler_id": "wesellcellular",
+        "device_type": "ipad",
+        "quantity": 5
+      }
+    },
+    {
+      "id": "fitgym-naples-followup",
+      "project": "website-builder",
+      "recipient_email": "jane@fitgym.com",
+      "recipient_name": "Jane - FitGym Naples",
+      "subject": "Re: Your website inquiry for FitGym Naples",
+      "sent_at": "2026-01-16T14:46:56.868428",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "bulk_pricing",
+      "metadata": {}
+    }
+  ],
+  "updated_at": "2026-01-16T14:46:56.868460"
+}

@@ -244,11 +244,48 @@ class EmailSender:
                 f"  Message-ID: {message_id}"
             )
 
+            # Register for response tracking
+            self._register_for_tracking(rfq, distributor, subject)
+
             return message_id
 
         except smtplib.SMTPException as e:
             logger.error(f"Failed to send RFQ email: {e}")
             raise EmailSendError(f"Failed to send email to {distributor.email_address}: {e}")
+
+    def _register_for_tracking(
+        self,
+        rfq: RFQ,
+        distributor: Distributor,
+        subject: str
+    ) -> None:
+        """Register outreach email for response monitoring."""
+        try:
+            # Import monitor (lazy load to avoid circular imports)
+            import sys
+            from pathlib import Path
+            sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / 'execution'))
+            from email_response_monitor import EmailResponseMonitor
+
+            monitor = EmailResponseMonitor()
+            monitor.register_outreach(
+                inquiry_id=rfq.id,
+                project='hvac',
+                recipient_email=distributor.email_address,
+                recipient_name=distributor.contact_name or distributor.name,
+                subject=subject,
+                inquiry_type='rfq',
+                metadata={
+                    'distributor_id': distributor.id,
+                    'equipment_type': rfq.equipment_type,
+                    'quantity': rfq.quantity,
+                    'brand_preference': rfq.brand_preference,
+                }
+            )
+            logger.info(f"Registered RFQ {rfq.id} for response tracking")
+        except Exception as e:
+            # Don't fail the email send if tracking registration fails
+            logger.warning(f"Failed to register for tracking: {e}")
 
     def get_sent_emails(self) -> List[dict]:
         """Get list of sent emails (mock mode only)"""

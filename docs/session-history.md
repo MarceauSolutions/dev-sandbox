@@ -4,6 +4,72 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-17: Pricing Optimization + Branding Strategy + Development Pipeline Update
+
+**Context:** Optimizing business pricing and branding using multi-agent exploration (SOP 9), formalizing research phase in development pipeline.
+
+**Accomplished:**
+
+1. **Pricing Optimization (SOP 9 - 4 Agents)**
+   - Agent 1: Pure Value-Based (3.52/5)
+   - Agent 2: Tiered SaaS (3.65/5)
+   - Agent 3: Hybrid Model (4.05/5) - **WINNER**
+   - Agent 4: Nick Saraev Pure (2.80/5)
+
+   **Final Pricing (7 Stripe Products):**
+   - Setup: $2,997 (Starter) / $7,497 (Growth) / $14,997 (Enterprise)
+   - Retainers: $747/mo (Maintenance) / $2,247/mo (Partner)
+   - Community: $47/mo (Monthly) / $397/yr (Annual)
+
+2. **Branding Optimization (SOP 9 - 4 Agents)**
+   - Agent 1: Generalist (2.85/5) - "Jack of all trades" hurts premium pricing
+   - Agent 2: Fitness Niche (3.425/5) - Price mismatch with audience
+   - Agent 3: AI/Claude Niche (3.625/5) - Strong technical credibility
+   - Agent 4: Multi-Brand Landing Pages (4.05/5) - **WINNER**
+
+   **Final Structure:**
+   ```
+   marceausolutions.com (Parent - AI Automation Agency)
+   ├── /developers (PRIMARY - Claude implementations)
+   ├── /fitness (SECONDARY - Creator automation)
+   ├── /contractors (TERTIARY - Trade business automation)
+   └── /community (Claude Framework community)
+   ```
+
+   **Primary Positioning:** "Claude Implementation Experts"
+   **Tagline:** "AI Automation Systems That Actually Ship"
+
+3. **Development Pipeline Updated (CLAUDE.md)**
+   - Added formal RESEARCH phase (-1) before KICKOFF (0)
+   - SOP 17 for market viability, SOP 9 for optimization decisions
+   - Codifies the research-before-building pattern
+
+4. **Stripe Products Created**
+   - All 7 products created in Stripe (test mode)
+   - Price IDs needed for payment links (user to provide)
+
+**Files Created/Updated:**
+- `CLAUDE.md` - Added research phase to development pipeline
+- `projects/claude-framework/market-analysis/pricing-research/FINDINGS.md`
+- `projects/claude-framework/market-analysis/pricing-optimization/*/FINDINGS.md` (4 agents)
+- `projects/claude-framework/market-analysis/pricing-optimization/consolidated/OPTIMAL-MODEL.md`
+- `projects/claude-framework/market-analysis/branding-optimization/*/FINDINGS.md` (4 agents)
+- `projects/claude-framework/market-analysis/branding-optimization/consolidated/OPTIMAL-BRANDING.md`
+- `docs/autonomous-agent-decision-tree.md`
+
+**Next Steps (for next session):**
+1. Get Stripe Price IDs for payment link integration
+2. Create payment links for landing pages
+3. Execute website changes based on branding decision
+4. Build /developers, /fitness, /contractors landing pages
+
+**Key Learning:**
+- Research phase is NOT redundant - it's essential for optimization decisions
+- Multi-agent exploration (SOP 9) produces better decisions than single-pass analysis
+- Self-annealing: Document patterns as they emerge from work
+
+---
+
 ## 2026-01-15 (Part 2): Fitness Influencer v1.3.0 - Video Blueprint & COGS Tracker
 
 **Context:** Continuing fitness-influencer development toward subscription launch per GO-NO-GO decision requirements.

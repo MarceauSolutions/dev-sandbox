@@ -30,6 +30,7 @@ env_path = Path(__file__).parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 from .models import Lead, LeadCollection
+from .opt_out_manager import OptOutManager, check_before_send
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +145,7 @@ class SMSOutreachManager:
     - STOP opt-out in every message
     - Rate limiting (1 message per number per day)
     - Business hours enforcement (9am-8pm)
-    - Automatic opt-out tracking
+    - Automatic opt-out tracking with OptOutManager integration
     """
 
     def __init__(self, output_dir: str = "output"):
@@ -165,13 +166,22 @@ class SMSOutreachManager:
         # Track sent numbers for rate limiting
         self.sent_today: Dict[str, str] = {}  # phone -> date
 
+        # Initialize opt-out manager for compliance checks
+        self.opt_out_manager = OptOutManager(output_dir=output_dir)
+
     def _load_campaigns(self) -> None:
         """Load existing campaign records."""
         if self.campaigns_file.exists():
             with open(self.campaigns_file, 'r') as f:
                 data = json.load(f)
                 for record in data.get("records", []):
-                    self.campaigns[record["lead_id"]] = SMSRecord(**record)
+                    # Filter to only known SMSRecord fields to handle any extra fields from sync
+                    known_fields = {
+                        'lead_id', 'phone', 'business_name', 'template_used',
+                        'message_body', 'message_sid', 'sent_at', 'status', 'error_message'
+                    }
+                    filtered_record = {k: v for k, v in record.items() if k in known_fields}
+                    self.campaigns[record["lead_id"]] = SMSRecord(**filtered_record)
                 # Load sent_today tracking
                 self.sent_today = data.get("sent_today", {})
 
@@ -195,6 +205,10 @@ class SMSOutreachManager:
         today = datetime.now().strftime("%Y-%m-%d")
         last_sent = self.sent_today.get(phone)
         return last_sent != today
+
+    def _is_opted_out(self, phone: str) -> bool:
+        """Check if phone number is on the opt-out list."""
+        return self.opt_out_manager.is_opted_out(phone=phone)
 
     def _normalize_phone(self, phone: str) -> str:
         """Normalize phone number to E.164 format."""
@@ -338,6 +352,7 @@ class SMSOutreachManager:
             "skipped_no_phone": 0,
             "skipped_already_contacted": 0,
             "skipped_rate_limited": 0,
+            "skipped_opted_out": 0,
             "errors": []
         }
 
@@ -350,6 +365,12 @@ class SMSOutreachManager:
             # Skip if no phone
             if not lead.phone:
                 stats["skipped_no_phone"] += 1
+                continue
+
+            # Skip if opted out (COMPLIANCE CHECK - highest priority)
+            if self._is_opted_out(lead.phone):
+                stats["skipped_opted_out"] += 1
+                logger.info(f"  Skipped (opted out): {lead.business_name}")
                 continue
 
             # Skip if already contacted
@@ -432,17 +453,37 @@ class SMSOutreachManager:
 
         return stats
 
-    def add_optout(self, phone: str) -> None:
-        """Add phone number to opt-out list."""
-        normalized = self._normalize_phone(phone)
+    def add_optout(self, phone: str, reason: str = "manual", business_name: str = "") -> None:
+        """
+        Add phone number to opt-out list using OptOutManager.
 
-        # Update any existing records
+        Args:
+            phone: Phone number to opt out
+            reason: Reason for opt-out (e.g., "sms_stop", "manual")
+            business_name: Associated business name
+        """
+        from .opt_out_manager import OptOutReason
+
+        # Add to centralized opt-out manager
+        try:
+            reason_enum = OptOutReason(reason)
+        except ValueError:
+            reason_enum = OptOutReason.MANUAL
+
+        self.opt_out_manager.add_opt_out(
+            phone=phone,
+            reason=reason_enum,
+            business_name=business_name
+        )
+
+        # Update any existing campaign records
+        normalized = self._normalize_phone(phone)
         for record in self.campaigns.values():
             if self._normalize_phone(record.phone) == normalized:
                 record.status = "opted_out"
 
         self._save_campaigns()
-        logger.info(f"Added to opt-out: {normalized}")
+        logger.info(f"Added to opt-out: {phone} ({reason})")
 
 
 def list_templates():
@@ -491,6 +532,8 @@ def main():
     # Optout command
     optout_parser = subparsers.add_parser("optout", help="Add number to opt-out list")
     optout_parser.add_argument("phone", help="Phone number to opt out")
+    optout_parser.add_argument("--reason", "-r", default="manual", help="Reason for opt-out (sms_stop, manual, etc)")
+    optout_parser.add_argument("--business", "-b", default="", help="Business name")
     optout_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
 
     args = parser.parse_args()
@@ -514,8 +557,11 @@ def main():
 
     if args.command == "optout":
         manager = SMSOutreachManager(output_dir=args.output_dir)
-        manager.add_optout(args.phone)
+        manager.add_optout(args.phone, reason=args.reason, business_name=args.business)
         print(f"Added to opt-out list: {args.phone}")
+        print(f"  Reason: {args.reason}")
+        if args.business:
+            print(f"  Business: {args.business}")
         return
 
     if args.command == "send":
