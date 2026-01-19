@@ -77,38 +77,43 @@ Start here for orientation.
 
 **Question:** Which product do you launch FIRST?
 
-**Option A: Claude Framework Community** (Education product)
-- Sell your CLAUDE.md documentation to developers
-- $47/mo or $397/year
-- Content already exists (package and launch)
-- Faster to revenue (10-20 members in 30 days = $470-940/mo)
+**Option A: Automation Services** (Done-for-you) - **RECOMMENDED**
+- Sell $4,997-$19,997 bundled website + automation to businesses
+- Get real results first (track HVAC + Shipping for 30 days OR get first paying client)
+- Build credibility with proven case studies
+- Revenue: $4,997-19,997 per client
 
-**Option B: Automation Services** (Done-for-you)
-- Sell $2,997-$14,997 automation setups to businesses
-- Requires real case studies (track HVAC + Shipping for 30 days)
-- Requires market research (choose HVAC vs Restaurants vs Horizontal)
-- Slower to revenue (first client in 60-90 days)
+**Option B: Claude Framework Community** (Education product) - **NOT YET VIABLE**
+- Can't sell "how to build AI businesses" before proving it works yourself
+- Need: Real paying clients + proven results + testimonials FIRST
+- Delay until Month 3-4 after you have case studies
+- Then: $47/mo or $397/year (10-20 members = $470-940/mo)
 
-**My Recommendation:** Option A (Community) first for 4 weeks, then add Option B in Month 2.
+**My Recommendation:** Option A (Automation Services) ONLY. Get 1-2 paying clients, prove ROI, THEN launch Community in Q2.
 
 ---
 
-## What Happens After You Decide
+## What Happens Next (Automation Services Path)
 
-**If you choose Community:**
-1. I'll create a focused execution plan for Week 1 (package content, launch)
-2. You follow the plan daily (no strategy changes)
-3. Goal: 10-20 members in 30 days
+**Week 1 (Jan 19-25):**
+1. Choose approach: Track HVAC/Shipping for 30 days OR find first discounted client
+2. Update Stripe products with new bundled tiers ($4,997, $9,997, $19,997)
+3. Create first proposal using templates
 
-**If you choose Automation:**
-1. I'll create a focused execution plan for Week 1 (market research)
-2. You interview 15 businesses (HVAC, restaurants, plumbers)
-3. Goal: Make niche decision in 30 days
+**Week 2-4:**
+- **If tracking practice projects:** Monitor HVAC/Shipping, collect real data, get testimonials
+- **IF finding first client:** Run market research (interview 15 businesses), choose niche, launch outreach
 
-**If you choose Both:**
-1. I'll warn you this is harder (split focus)
-2. You decide time allocation (50/50 or 70/30?)
-3. Slower progress on each
+**Goal for Month 1:**
+- 1-2 paying clients OR 30 days of real data from practice projects
+- First case study with actual results (not projections)
+
+**Month 2-3:**
+- Scale to 3-5 clients using proven case studies
+- Revenue: $14,991-$99,985
+
+**Month 4 (Q2):**
+- THEN consider launching Claude Framework Community (with proven results to sell)
 
 ---
 
@@ -120,10 +125,10 @@ Start here for orientation.
 - [ ] ACTION-ITEMS-JAN-20-2026.md (10 min)
 - [ ] This file (5 min)
 
-### Step 2: Make The Decision (10 minutes)
-- [ ] Community first, Automation second? (Recommended)
-- [ ] Automation first, Community second?
-- [ ] Both simultaneously? (Not recommended)
+### Step 2: Choose Your Approach (10 minutes)
+- [ ] Track HVAC + Shipping for 30 days (get real results from practice projects)
+- [ ] Find first discounted client ($2,500 for Growth System as beta)
+- [ ] Do market research first (interview 15 businesses to choose niche)
 
 ### Step 3: Tell Me Your Decision
 Reply with: "I choose [A/B/C]"
