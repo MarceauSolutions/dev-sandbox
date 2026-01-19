@@ -1,0 +1,14 @@
+[
+  {
+    "submission_id": "2068293d-ffdb-4ff3-9b2f-a51f18db8448",
+    "email": "test@squarefootshipping.com",
+    "phone": "",
+    "name": "Test Shipping Lead",
+    "business_id": "squarefootshipping",
+    "sequence_id": "default",
+    "added_at": "2026-01-18T16:31:40.359529",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-18T16:31:40.359547"
+  }
+]

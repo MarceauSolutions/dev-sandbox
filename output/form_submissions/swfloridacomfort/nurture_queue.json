@@ -1,0 +1,26 @@
+[
+  {
+    "submission_id": "36adf779-464f-476f-abb7-85905757abf4",
+    "email": "test@example.com",
+    "phone": "",
+    "name": "Test HVAC",
+    "business_id": "swfloridacomfort",
+    "sequence_id": "default",
+    "added_at": "2026-01-18T16:16:01.028089",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-18T16:16:01.028114"
+  },
+  {
+    "submission_id": "73ef2df1-9152-44c3-afe8-c958988e0a74",
+    "email": "wjgeorge26@gmail.com",
+    "phone": "+12397666129",
+    "name": "Test HVAC Lead",
+    "business_id": "swfloridacomfort",
+    "sequence_id": "default",
+    "added_at": "2026-01-18T16:25:35.985214",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-18T16:25:35.985246"
+  }
+]

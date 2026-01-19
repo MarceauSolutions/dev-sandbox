@@ -1,6 +1,6 @@
 # App Type Decision Guide
 
-A systematic framework for deciding what type of application to build (MCP, Web App, Desktop, CLI, Hybrid) before implementation begins.
+A systematic framework for deciding what type of application to build (MCP, Web App, Desktop, CLI, Hybrid, Mobile App, PWA) before implementation begins.
 
 ## When to Use This Guide
 
@@ -275,6 +275,80 @@ If you're NOT building an MCP, choose the appropriate standalone type:
 
 ---
 
+### Mobile App (iOS/Android)
+
+| Aspect | Details |
+|--------|---------|
+| **Best for** | Consumer apps, location-based services, frequent daily use |
+| **Development cost** | High (160-320 hours for MVP) |
+| **Complexity** | High |
+| **Hosting** | $20-100/month + $99/year Apple + $25 Google |
+| **Maintenance** | 8-16 hrs/month |
+| **Distribution** | App Store, Google Play |
+
+**When to choose:**
+- Primary users are on-the-go (mobile-first)
+- Needs device features (GPS, camera, push notifications)
+- Daily/frequent use with short sessions
+- Consumer market (B2C)
+- Offline capability needed
+
+**Framework recommendation:** React Native + Expo (fastest for solo dev)
+
+**Mobile App Viability Scorecard** (score each 1-5):
+
+| Factor | Question |
+|--------|----------|
+| Location Dependency | Is user typically mobile when using this? |
+| Frequency | Daily/multiple times per day use? |
+| Session Length | Quick tasks (<5 min sessions)? |
+| Offline Need | Must work without internet? |
+| Push Notifications | Core to the experience? |
+| Device Features | Need camera/GPS/sensors? |
+| Competition | Is market mobile-first? |
+| Revenue Model | Consumer subscription viable? |
+
+**Scoring thresholds:**
+- 32-40: Strong mobile candidate → BUILD MOBILE APP
+- 24-31: Consider mobile → Evaluate carefully
+- 16-23: PWA might suffice → Build web app, make responsive
+- 8-15: Not mobile fit → Choose different app type
+
+**Reference:** See [mobile-app-development-guide.md](mobile-app-development-guide.md) for full SOP
+
+---
+
+### Progressive Web App (PWA)
+
+| Aspect | Details |
+|--------|---------|
+| **Best for** | Mobile-accessible web apps without app store |
+| **Development cost** | Medium (60-120 hours) |
+| **Complexity** | Medium |
+| **Hosting** | $10-50/month |
+| **Maintenance** | 4-8 hrs/month |
+| **Distribution** | Direct URL, no app store needed |
+
+**When to choose:**
+- Mobile Viability Score 16-23 (borderline)
+- Don't need native device features
+- Want to avoid app store approval process
+- Rapid iteration is priority
+- Cross-platform with single codebase
+
+**PWA vs Native App:**
+
+| Factor | PWA | Native App |
+|--------|-----|------------|
+| Push notifications | Limited (iOS restrictions) | Full support |
+| Offline | Service workers | Full native |
+| Camera/GPS | Web APIs (limited) | Full access |
+| App store presence | No | Yes |
+| Install friction | Low (add to home) | Higher (store download) |
+| Update speed | Instant | Store review (1-7 days) |
+
+---
+
 ## Step 3: Template vs Clean Slate Decision
 
 ### Use a Template When:
@@ -363,6 +437,7 @@ Create a decision record with:
 | md-to-pdf | CLI Tool | - | Conversion utility |
 | naples-weather | Python Skill | - | Report generation |
 | mcp-aggregator | Platform | Multiple | Infrastructure |
+| restaurant-finder | Mobile App (candidate) | - | Location-based, high mobile score |
 
 ---
 
@@ -372,3 +447,4 @@ Create a decision record with:
 - [Project Kickoff Questionnaire](../templates/project-kickoff-questionnaire.md)
 - [Development to Deployment Pipeline](development-to-deployment.md)
 - [Architecture Guide](architecture-guide.md)
+- [Mobile App Development Guide](mobile-app-development-guide.md) ⭐ NEW

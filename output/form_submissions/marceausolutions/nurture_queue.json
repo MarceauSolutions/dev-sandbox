@@ -1,0 +1,26 @@
+[
+  {
+    "submission_id": "dfc22abf-8fa9-436b-a17f-beed25a763b6",
+    "email": "test@example.com",
+    "phone": "+12395551234",
+    "name": "Test User",
+    "business_id": "marceausolutions",
+    "sequence_id": "default",
+    "added_at": "2026-01-18T16:14:59.587490",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-18T16:14:59.587514"
+  },
+  {
+    "submission_id": "cfbff06b-54ef-4b94-ba2d-50d1b0ae0d2e",
+    "email": "test@marceausolutions.com",
+    "phone": "",
+    "name": "Public API Test",
+    "business_id": "marceausolutions",
+    "sequence_id": "default",
+    "added_at": "2026-01-18T16:26:04.738688",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-18T16:26:04.738701"
+  }
+]

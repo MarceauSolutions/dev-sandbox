@@ -1,0 +1,16 @@
+[
+  {
+    "phone": "2393984852",
+    "person_name": "Angela",
+    "business_name": "Insulet Corporation",
+    "business_type": "medical device",
+    "custom_context": "diabetes care and clinical data insights"
+  },
+  {
+    "phone": "2393987544",
+    "person_name": "William",
+    "business_name": "AI Dream Builders",
+    "business_type": "AI automation and consulting",
+    "custom_context": "building Voice AI systems, fitness influencer automation, and MCP tools"
+  }
+]

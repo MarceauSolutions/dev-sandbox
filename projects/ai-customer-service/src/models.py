@@ -106,3 +106,7 @@ class ConversationState(BaseModel):
     context: list[dict] = Field(default_factory=list)  # Message history for LLM
     awaiting_confirmation: bool = False
     transfer_requested: bool = False
+    live_transfer_requested: bool = False  # For live transfer to William
+    person_context: Optional[dict] = None  # For personalized outreach calls
+    message_for_william: Optional[str] = None  # For inbound call message taking
+    caller_info: Optional[dict] = None  # Info gathered from inbound caller

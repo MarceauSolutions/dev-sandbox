@@ -1,0 +1,23 @@
+{
+  "email": "test@example.com",
+  "name": "Test HVAC",
+  "phone": "",
+  "message": "",
+  "source": "swfloridacomfort",
+  "interest": "AC Repair",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "36adf779-464f-476f-abb7-85905757abf4",
+  "timestamp": "2026-01-18T16:15:54.989789",
+  "ip_address": "127.0.0.1",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

@@ -320,7 +320,7 @@
         </section>
 
         <div class="contact-card">
-            <form id="contactForm" class="contact-form" action="https://formspree.io/f/your-form-id" method="POST">
+            <form id="contactForm" class="contact-form" data-form-handler="contact">
                 <div class="form-group">
                     <label for="name">Name *</label>
                     <input type="text" id="name" name="name" placeholder="Your name" required>
@@ -415,45 +415,11 @@
         </div>
     </div>
 
+    <!-- Unified Form Handler -->
+    <script src="/assets/js/form-handler.js"></script>
     <script>
         // Set timestamp on form load
         document.getElementById('timestamp').value = new Date().toISOString();
-
-        // Handle form submission
-        document.getElementById('contactForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const form = e.target;
-            const formData = new FormData(form);
-
-            // Collect form data
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                interest: formData.get('interest'),
-                message: formData.get('message'),
-                emailOptIn: formData.get('emailOptIn') === 'on',
-                smsOptIn: formData.get('smsOptIn') === 'on',
-                source: formData.get('source'),
-                timestamp: formData.get('timestamp')
-            };
-
-            console.log('Contact form submitted:', data);
-
-            // TODO: Replace with actual backend API
-            try {
-                // Simulate API call
-                // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(data) });
-
-                // Show success message
-                form.classList.add('hidden');
-                document.getElementById('successMessage').classList.add('show');
-            } catch (error) {
-                console.error('Submission error:', error);
-                alert('There was an error sending your message. Please try again.');
-            }
-        });
     </script>
 </body>
 </html>

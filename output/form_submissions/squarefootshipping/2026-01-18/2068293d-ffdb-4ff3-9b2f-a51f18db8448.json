@@ -1,0 +1,23 @@
+{
+  "email": "test@squarefootshipping.com",
+  "name": "Test Shipping Lead",
+  "phone": "",
+  "message": "Need storage for 50 boxes",
+  "source": "squarefootshipping",
+  "interest": "Storage Quote",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "2068293d-ffdb-4ff3-9b2f-a51f18db8448",
+  "timestamp": "2026-01-18T16:31:30.006189",
+  "ip_address": "127.0.0.1",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

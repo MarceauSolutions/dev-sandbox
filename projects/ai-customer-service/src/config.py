@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # Server
     host: str = "0.0.0.0"
     port: int = 8000
-    base_url: str = "https://cuddly-bryn-fiduciarily.ngrok-free.dev"
+    base_url: str = "https://api.marceausolutions.com"
 
     class Config:
         env_file = str(Path(__file__).parent.parent.parent.parent / ".env")

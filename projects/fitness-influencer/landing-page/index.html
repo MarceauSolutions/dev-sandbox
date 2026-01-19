@@ -290,7 +290,7 @@
             <!-- Inquiry Form -->
             <div class="inquiry-form">
                 <h3>Request Early Access</h3>
-                <form id="inquiryForm">
+                <form id="inquiryForm" data-form-handler="fitness-waitlist">
                     <input type="hidden" name="source" value="fitness_influencer_landing">
 
                     <div class="form-group">
@@ -349,35 +349,7 @@
         </div>
     </div>
 
-    <script>
-        // Handle form submission
-        document.getElementById('inquiryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => { data[key] = value; });
-
-            // Build email body from form data
-            const subject = encodeURIComponent('Fitness Influencer AI - Early Access Request');
-            const body = encodeURIComponent(
-                `New Early Access Request\n\n` +
-                `Name: ${data.name || 'Not provided'}\n` +
-                `Email: ${data.email || 'Not provided'}\n` +
-                `Social: ${data.social_handle || 'Not provided'}\n` +
-                `Followers: ${data.followers || 'Not provided'}\n` +
-                `Challenge: ${data.message || 'Not provided'}\n` +
-                `Email Opt-In: ${data.email_opt_in ? 'Yes' : 'No'}\n` +
-                `SMS Opt-In: ${data.sms_opt_in ? 'Yes' : 'No'}`
-            );
-
-            // Open email client with pre-filled data
-            window.location.href = `mailto:wmarceau@marceausolutions.com?subject=${subject}&body=${body}`;
-
-            // Show success message
-            this.style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-        });
-    </script>
+    <!-- Unified Form Handler -->
+    <script src="/assets/js/form-handler.js"></script>
 </body>
 </html>

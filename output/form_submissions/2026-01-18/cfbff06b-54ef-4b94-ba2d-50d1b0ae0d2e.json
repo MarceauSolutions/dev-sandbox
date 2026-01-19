@@ -1,0 +1,23 @@
+{
+  "email": "test@marceausolutions.com",
+  "name": "Public API Test",
+  "phone": "",
+  "message": "Testing public API endpoint",
+  "source": "marceausolutions",
+  "interest": "Custom AI Solution",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "cfbff06b-54ef-4b94-ba2d-50d1b0ae0d2e",
+  "timestamp": "2026-01-18T16:25:54.980579",
+  "ip_address": "2600:1016:b0ef:6fb:81d2:2b42:bb8f:c011",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

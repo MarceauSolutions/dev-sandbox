@@ -1,0 +1,61 @@
+{
+  "scheduled_posts": [
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Warehouse Storage that actually works.\n\nClimate-controlled to protect your goods\nDedicated account m...",
+      "scheduled_for": "2026-01-18T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "E-commerce orders piling up faster than you can ship?\n\nThat's why we offer pick-pack-ship fulfillmen...",
+      "scheduled_for": "2026-01-18T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "No AC in this heat? That's an emergency. Call now: (239) 766-6129\n\n(239) 766-6129\n\n#Emergency #SWFL...",
+      "scheduled_for": "2026-01-18T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook...",
+      "scheduled_for": "2026-01-18T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Fulfillment Services that actually works.\n\nNo hidden fees, transparent pricing\n24/7 secured warehous...",
+      "scheduled_for": "2026-01-19T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Is your current warehouse eating into your profits?\n\nThat's why we offer professional logistics part...",
+      "scheduled_for": "2026-01-19T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "No AC in this heat? That's an emergency. Call now: (239) 766-6129\n\n(239) 766-6129\n\n#Emergency #SWFL...",
+      "scheduled_for": "2026-01-19T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook...",
+      "scheduled_for": "2026-01-19T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    }
+  ],
+  "last_run": "2026-01-18T13:38:24.126048"
+}
