@@ -103,14 +103,14 @@ class BusinessVoiceEngine:
 
 # Business registry - maps phone numbers to configurations
 BUSINESS_REGISTRY = {
-    # Square Foot Shipping & Storage
+    # Square Foot Shipping
     "+12398803365": {
-        "name": "Square Foot Shipping & Storage",
+        "name": "Square Foot Shipping",
         "phone": "+12398803365",
         "owner": "William George",
         "owner_phone": "+12396921101",  # William George's personal number for transfers
         "type": "logistics",
-        "greeting": "Thank you for calling Square Foot Shipping and Storage! This is our AI assistant. How can I help you today?",
+        "greeting": "Thank you for calling Square Foot Shipping! This is our AI assistant. How can I help you today?",
         "services": [
             "Warehouse Storage - Climate-controlled with 24/7 security",
             "Freight Shipping - LTL and FTL ground freight",
@@ -119,9 +119,9 @@ BUSINESS_REGISTRY = {
             "Last-Mile Delivery - Same-day available",
             "Inventory Management - Real-time tracking"
         ],
-        "system_prompt": """You are an AI phone assistant for Square Foot Shipping & Storage, a logistics company owned by William George.
+        "system_prompt": """You are an AI phone assistant for Square Foot Shipping, a logistics company owned by William George.
 
-GREETING: "Thank you for calling Square Foot Shipping and Storage! This is our AI assistant. How can I help you today?"
+GREETING: "Thank you for calling Square Foot Shipping! This is our AI assistant. How can I help you today?"
 
 YOUR JOB:
 1. Answer questions about shipping and storage services
