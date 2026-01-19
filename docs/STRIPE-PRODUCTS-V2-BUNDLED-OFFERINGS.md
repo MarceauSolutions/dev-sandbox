@@ -43,7 +43,27 @@ Bundle website + automation into single offering. Higher perceived value, single
 
 ---
 
-## Product Line: Bundled Website + Automation Tiers
+## Pricing Approach: Bundled vs Automation-Only
+
+**Primary Offering:** Bundled Website + Automation (higher value, higher revenue)
+- Most clients need both (55% of businesses have no website)
+- Bundled pricing is 20-30% discount vs buying separately
+- Seamless integration, single project, faster ROI
+
+**Secondary Offering:** Automation-Only (for clients with existing websites)
+- Use when client has a decent existing website
+- Saves $2,000-3,000 vs bundled price
+- Still requires website integration work (forms, APIs)
+
+**Pricing Logic:**
+- Automation-only = Bundled price - Website cost
+- Digital Storefront bundle ($4,997) - Website ($2,000) = **Automation Starter ($2,997)**
+- Growth System bundle ($9,997) - Website ($3,000) = **Automation Growth ($6,997)**
+- Enterprise bundle ($19,997) - Website ($5,000) = **Automation Enterprise ($14,997)**
+
+---
+
+## Product Line 1: Bundled Website + Automation Tiers (PRIMARY)
 
 ---
 
@@ -333,6 +353,154 @@ Bundle website + automation into single offering. Higher perceived value, single
 - Want continuous improvement (not just maintenance)
 - Need strategic partner (not just vendor)
 - High-value clients (ROI justifies investment)
+
+---
+
+## Product Line 2: Automation-Only Tiers (SECONDARY - For Existing Websites)
+
+**When to Use:**
+- Client already has a decent website (not outdated, mobile-friendly)
+- Website just needs minor updates (add forms, integrate APIs)
+- Client specifically requests automation-only
+- Budget constraints (can't afford bundled pricing)
+
+**Important Note:** These prices assume client's existing website is integration-ready. If major website work is needed (redesign, rebuild), recommend bundled offering instead.
+
+---
+
+### Automation Starter - $2,997
+
+**Stripe Product Name:** "Automation Starter - Single Workflow Setup"
+
+**Stripe Description:**
+"Single core automation workflow for businesses with existing websites. Includes one automation (Voice AI OR Booking OR Quote Request), CRM integration, and training. Perfect for businesses starting automation journey."
+
+**What's Included:**
+- ✅ **ONE Automation Workflow** (choose Voice AI, Booking, or Quote Request)
+- ✅ Website integration (embed forms, connect APIs)
+- ✅ CRM integration (ClickUp lead tracking)
+- ✅ SMS/email automation
+- ✅ 1-hour training session
+- ✅ 30-day warranty
+
+**What's NOT Included:**
+- ❌ Website design/development (assumes existing website)
+- ❌ Multiple automation workflows (only 1 included)
+- ❌ Advanced CRM customization
+- ❌ Ongoing support after 30 days
+
+**Timeline:** 3 weeks from contract signed to launch
+
+**Best For:**
+- Businesses with existing website (not outdated)
+- Need one specific automation to solve immediate pain
+- Budget: $2,000-3,000 range
+
+**Upgrade Path:** Add $2,000 to get full Digital Storefront with new website
+
+---
+
+### Automation Growth - $6,997
+
+**Stripe Product Name:** "Automation Growth - Multi-Channel Automation"
+
+**Stripe Description:**
+"Complete automation stack for businesses with existing websites. Includes Voice AI, multi-step lead capture, follow-up sequences, and CRM pipeline management. Everything you need to systematize lead conversion."
+
+**What's Included:**
+- ✅ **ALL Automation Workflows:**
+  - Voice AI call answering + routing
+  - Multi-step lead capture (forms, booking, quotes)
+  - Automated follow-up sequences (SMS + email)
+  - CRM pipeline management (ClickUp)
+- ✅ Website integration (all forms, APIs, tracking)
+- ✅ 6 integrations (Twilio, Calendar, CRM, Email, Analytics, GMB)
+- ✅ 2-hour training + video library
+- ✅ 60-day email support
+
+**What's NOT Included:**
+- ❌ Website redesign/development (assumes existing website)
+- ❌ SEO optimization beyond basic tracking
+- ❌ Ongoing optimization (see Partner Retainer)
+
+**Timeline:** 5 weeks from contract signed to launch
+
+**Best For:**
+- Businesses with existing website that works well
+- Need comprehensive automation but don't want website rebuild
+- Budget: $6,000-8,000 range
+
+**Upgrade Path:** Add $3,000 to get full Growth System with website redesign + SEO
+
+---
+
+### Automation Enterprise - $14,997
+
+**Stripe Product Name:** "Automation Enterprise - Custom AI Agent + Full Stack"
+
+**Stripe Description:**
+"Enterprise-grade automation for businesses with existing websites. Custom AI voice agent trained on your business, comprehensive automation stack, advanced CRM, and analytics dashboard. For businesses ready to fully automate operations."
+
+**What's Included:**
+- ✅ **Custom AI Voice Agent:**
+  - Trained on your business (services, pricing, FAQs, team knowledge)
+  - Multi-language support (English + Spanish)
+  - Advanced call routing (intent, time, urgency, team availability)
+  - Payment collection over phone (Stripe integration)
+- ✅ **Comprehensive Automation Stack:**
+  - Multi-channel lead capture (website, phone, SMS, email, social)
+  - Advanced CRM automation (custom pipeline, task assignment, lead routing)
+  - Customer journey automation (pre/post service, re-engagement)
+- ✅ **Analytics & Reporting:**
+  - Custom dashboard (KPIs for your business)
+  - Weekly automated reports
+  - A/B testing framework
+- ✅ Website integration (extensive API connections, custom functionality)
+- ✅ 6+ system integrations (Twilio, Calendar, CRM, Stripe, Zapier, custom)
+- ✅ 4 hours team training + operations manual (50+ pages)
+- ✅ 90 days priority support
+
+**What's NOT Included:**
+- ❌ Website redesign (assumes existing website is professional-grade)
+- ❌ Content marketing
+- ❌ Major custom software development
+
+**Timeline:** 7-9 weeks from contract signed to launch
+
+**Best For:**
+- Established businesses with existing professional website
+- High revenue ($500K+), complex operations
+- Need advanced AI automation without website rebuild
+- Budget: $14,000-16,000 range
+
+**Upgrade Path:** Add $5,000 to get full Enterprise Package with website redesign + professional copywriting + advanced SEO
+
+**Note:** Partner Retainer ($2,247/mo) REQUIRED for first 6 months
+
+---
+
+## When to Recommend Bundled vs Automation-Only
+
+| Client Scenario | Recommend | Reasoning |
+|-----------------|-----------|-----------|
+| No website at all | **Bundled** | Must have website for automation to work |
+| Website is outdated (5+ years, not mobile) | **Bundled** | Rebuilding easier than patching old site |
+| Website is decent, mobile-friendly, <3 years old | **Automation-Only** | Save $2,000-3,000, website already works |
+| Client says "I just need automation" | **Start with Automation-Only, upsell later** | Respect their stated need, but offer bundle as option |
+| Client has budget constraints | **Automation-Only** | Lower barrier to entry, can upgrade later |
+| Client wants "everything" | **Bundled** | Higher value, better integration |
+
+**Sales Script - When Client Has Existing Website:**
+
+"I see you already have a website. Let me give you two options:
+
+**Option 1: Automation-Only ($2,997/$6,997/$14,997)**
+We integrate our automation with your existing site. Saves you $2,000-3,000 vs bundled pricing. Works great if your current website is mobile-friendly and conversion-focused.
+
+**Option 2: Bundled Website + Automation ($4,997/$9,997/$19,997)**
+We rebuild your site from scratch with automation built-in from day one. Better integration, better design, SEO optimized. Only $2,000-3,000 more than automation-only.
+
+Most clients choose the bundle because they get a fresh start, but if your current site is working well for you, automation-only makes sense. Want me to take a look at your site and make a recommendation?"
 
 ---
 
