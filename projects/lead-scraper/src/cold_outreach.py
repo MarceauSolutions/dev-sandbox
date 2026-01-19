@@ -22,6 +22,9 @@ import smtplib
 import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+from email.mime.base import MIMEBase
+from email import encoders
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -35,6 +38,13 @@ load_dotenv(env_path)
 
 from .models import Lead, LeadCollection
 from .apollo import ApolloClient
+
+# Import image generator (optional - only if XAI_API_KEY is set)
+try:
+    from .outreach_image_generator import OutreachImageGenerator
+    IMAGE_GEN_AVAILABLE = True
+except ImportError:
+    IMAGE_GEN_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -241,6 +251,15 @@ class ColdOutreachManager:
         self.email_config = EmailConfig.from_env()
         self.apollo = ApolloClient()
 
+        # Initialize image generator if available
+        self.image_generator = None
+        if IMAGE_GEN_AVAILABLE:
+            try:
+                self.image_generator = OutreachImageGenerator()
+                logger.info("Image generation enabled via Grok/xAI")
+            except Exception as e:
+                logger.warning(f"Image generation disabled: {e}")
+
         # Load existing campaign data
         self.campaigns_file = self.output_dir / "outreach_campaigns.json"
         self.campaigns: Dict[str, OutreachRecord] = {}
@@ -366,12 +385,64 @@ class ColdOutreachManager:
         else:
             return "social_proof"
 
+    def generate_image_for_lead(
+        self,
+        lead: Lead,
+        template_name: str,
+        output_dir: str = "mockups"
+    ) -> Optional[str]:
+        """
+        Generate a personalized mockup image for a lead.
+
+        Args:
+            lead: The lead to generate image for
+            template_name: Template being used (determines image type)
+            output_dir: Directory to save images
+
+        Returns:
+            Path to generated image or None
+        """
+        if not self.image_generator:
+            logger.warning("Image generation not available (XAI_API_KEY not set)")
+            return None
+
+        # Map template to pain point for image generation
+        pain_point_map = {
+            "no_website": "no_website",
+            "few_reviews": "few_reviews",
+            "no_booking": "no_online_booking",
+            "social_proof": "no_website"  # Default mockup
+        }
+
+        pain_point = pain_point_map.get(template_name, "no_website")
+
+        # Create output directory
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        # Safe filename
+        safe_name = "".join(c if c.isalnum() else "_" for c in lead.business_name.lower())
+        image_path = output_path / f"{safe_name}_mockup.png"
+
+        try:
+            result = self.image_generator.generate_mockup(
+                business_name=lead.business_name,
+                pain_point=pain_point,
+                industry=lead.category or "default",
+                output_path=str(image_path)
+            )
+            return result
+        except Exception as e:
+            logger.error(f"Failed to generate image for {lead.business_name}: {e}")
+            return None
+
     def send_email(
         self,
         to_email: str,
         subject: str,
         body: str,
-        dry_run: bool = True
+        dry_run: bool = True,
+        image_path: Optional[str] = None
     ) -> bool:
         """
         Send email via SMTP.
@@ -381,6 +452,7 @@ class ColdOutreachManager:
             subject: Email subject
             body: Email body (plain text)
             dry_run: If True, just log without sending
+            image_path: Optional path to image attachment (e.g., mockup)
 
         Returns:
             True if sent successfully
@@ -389,6 +461,8 @@ class ColdOutreachManager:
             logger.info(f"[DRY RUN] Would send to: {to_email}")
             logger.info(f"Subject: {subject}")
             logger.info(f"Body:\n{body[:200]}...")
+            if image_path:
+                logger.info(f"Image attachment: {image_path}")
             return True
 
         if not self.email_config.smtp_username:
@@ -401,7 +475,16 @@ class ColdOutreachManager:
             msg['To'] = to_email
             msg['Subject'] = subject
 
+            # Attach body text
             msg.attach(MIMEText(body, 'plain'))
+
+            # Attach image if provided
+            if image_path and Path(image_path).exists():
+                with open(image_path, 'rb') as f:
+                    img = MIMEImage(f.read())
+                    img.add_header('Content-Disposition', 'attachment', filename=Path(image_path).name)
+                    msg.attach(img)
+                logger.info(f"Attached image: {image_path}")
 
             with smtplib.SMTP(self.email_config.smtp_host, self.email_config.smtp_port) as server:
                 server.starttls()
