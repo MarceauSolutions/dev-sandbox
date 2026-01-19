@@ -49,6 +49,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **How we work** | This file (CLAUDE.md) |
 | **Architecture & code organization** | `docs/architecture-guide.md` ⭐ |
 | **App type decision** | `docs/app-type-decision-guide.md` ⭐ |
+| **Mobile app development** | `docs/mobile-app-development-guide.md` ⭐ |
 | **Cost-benefit analysis** | `docs/cost-benefit-templates.md` |
 | **Project kickoff questionnaire** | `templates/project-kickoff-questionnaire.md` |
 | **How to prompt me** | `docs/prompting-guide.md` |
@@ -66,6 +67,8 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Session learnings** | `docs/session-history.md` |
 | **Autonomous agent triggers** | `docs/autonomous-agent-decision-tree.md` ⭐ |
 | **Deferred features/reminders** | `projects/social-media-automation/DOCKET.md` ⭐ |
+| **Documentation decision framework** | `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` ⭐ |
+| **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
 
@@ -83,10 +86,11 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 0. KICKOFF (SOP 0) - BEFORE starting any new project
    └── Prerequisites: ✅ SOP 17 = GO (if applicable)
    └── Complete project-kickoff-questionnaire.md (19 questions)
-   └── Decide app type (MCP, CLI, Web, Desktop, Hybrid)
+   └── Decide app type (MCP, CLI, Web, Desktop, Hybrid, Mobile, PWA)
+   └── If Mobile considered: Run Mobile App Viability Scorecard (≥24 to proceed)
    └── Complete cost-benefit analysis
    └── Decide template vs clean slate
-   └── See: docs/app-type-decision-guide.md
+   └── See: docs/app-type-decision-guide.md, docs/mobile-app-development-guide.md
 
 1. DESIGN in directives/
    └── Create/update [project].md with capability SOPs
@@ -212,6 +216,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Multiple ways to do this..." | **AUTO**: Launch SOP 9 (3-4 architecture agents) |
 | Complex feature completed | **AUTO**: Launch SOP 2 (4 testing agents) after manual pass |
 | "Check the docket" / "What's deferred?" | Review DOCKET.md, report items with met triggers |
+| "Document this setup" / "Save this config" | Use SOP-25 decision tree → Create setup guide |
+| "Don't forget this" / "Save this decision" | Create decision record with rationale |
+| "This should be in the SOPs" | Evaluate using SOP-25 → Create SOP if warranted |
+| "We should document [X]" | Determine doc type (Setup Guide/SOP/Decision Record/Workflow) |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -309,6 +317,15 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - `[project]/USER_PROMPTS.md` - User guidance templates
    - `[project]/CHANGELOG.md` - Version history (update at deploy time)
 
+12. **Document Large Efforts Immediately** - Use SOP-25 decision tree to prevent repeating work
+   - One-time setups (Stripe, OAuth, DNS, webhooks) → Create setup guide DURING work
+   - Strategic decisions (pricing, positioning, niche choice) → Create decision record with rationale
+   - Repeatable processes (campaign execution, testing) → Create SOP or workflow
+   - Architecture choices (tech stack, integrations) → Create Architecture Decision Record
+   - **Rule: If it took >30 minutes, document it BEFORE moving on**
+   - **Document DURING work, not AFTER** - you'll forget critical details
+   - See: `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` for decision tree
+
 ## Inference Quick Reference
 
 | Risk | Example | Action |
@@ -358,6 +375,63 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 - Files that serve a single-use purpose
 - **Auto-cleanup**: Delete files after their intended purpose to prevent clutter
 - **Not tracked**: `.tmp/` is in `.gitignore` and should never be committed
+
+## Credentials & API Keys
+
+**All credentials are stored in `/Users/williammarceaujr./dev-sandbox/.env`**
+
+This is the single source of truth for all API keys, tokens, and secrets across all projects.
+
+| Category | Environment Variables | Notes |
+|----------|----------------------|-------|
+| **Google OAuth** | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_PROJECT_ID` | For Gmail, Calendar, Sheets, Drive APIs |
+| **Google Sheets** | `GOOGLE_SHEETS_SPREADSHEET_ID` | Form submissions storage |
+| **Gmail/SMTP** | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Email sending |
+| **Amazon SP-API** | `AMAZON_REFRESH_TOKEN`, `AMAZON_LWA_APP_ID`, `AMAZON_LWA_CLIENT_SECRET`, `AMAZON_AWS_*` | Seller Central access |
+| **Twilio SMS** | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER` | SMS campaigns (+1 855 239 9364) |
+| **ClickUp CRM** | `CLICKUP_API_TOKEN`, `CLICKUP_WORKSPACE_ID`, `CLICKUP_LIST_ID` | Lead management |
+| **Lead Scraping** | `GOOGLE_PLACES_API_KEY`, `YELP_API_KEY`, `APOLLO_API_KEY` | Business discovery |
+| **Video/Image AI** | `SHOTSTACK_API_KEY`, `XAI_API_KEY`, `CREATOMATE_API_KEY` | Content generation |
+| **Social Media** | `X_API_KEY`, `X_ACCESS_TOKEN`, `YOUTUBE_*`, `TIKTOK_*` | Platform integrations |
+| **PyPI Publishing** | `PYPI_TOKEN` | MCP package publishing |
+| **Anthropic** | `ANTHROPIC_API_KEY` | Claude API access |
+
+**Google OAuth Setup** (for Gmail/Calendar/Sheets):
+
+Scripts that need Google API access require a `credentials.json` file generated from the `.env` variables:
+
+```bash
+# Generate credentials.json from .env (one-time setup)
+cd /Users/williammarceaujr./dev-sandbox
+python -c "
+import os, json
+from dotenv import load_dotenv
+load_dotenv()
+creds = {
+    'installed': {
+        'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+        'client_secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+        'project_id': os.getenv('GOOGLE_PROJECT_ID'),
+        'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
+        'token_uri': 'https://oauth2.googleapis.com/token',
+        'redirect_uris': ['http://localhost']
+    }
+}
+with open('credentials.json', 'w') as f:
+    json.dump(creds, f, indent=2)
+print('Created credentials.json')
+"
+
+# Then run the script once to generate token.json (browser auth flow)
+cd projects/personal-assistant
+python -m src.digest_aggregator --hours 1
+```
+
+**Important**:
+- `.env` is in `.gitignore` - never commit credentials
+- `credentials.json` and `token.json` are also gitignored
+- When setting up a new machine, copy `.env` from secure backup
+- Each project reads from the root `.env` via `python-dotenv`
 
 ---
 
