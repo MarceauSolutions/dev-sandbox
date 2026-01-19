@@ -134,7 +134,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - Single location, straightforward services
 - Budget-conscious clients
 
-**Timeline:** 4 weeks from contract signed to launch
+**Timeline:** 2-3 weeks from contract signed to launch
 
 **Support After Launch:**
 - 30-day warranty (bug fixes only)
@@ -213,7 +213,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - Need systematic follow-up
 - Want to scale operations
 
-**Timeline:** 6 weeks from contract signed to launch
+**Timeline:** 4-5 weeks from contract signed to launch
 
 **Support After Launch:**
 - 60 days of email support (bug fixes + questions)
@@ -296,7 +296,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - Want competitive advantage via automation
 - Ready to invest in systems
 
-**Timeline:** 8-10 weeks from contract signed to launch
+**Timeline:** 6-8 weeks from contract signed to launch
 
 **Support After Launch:**
 - 90 days of priority support (24-hour response)
@@ -313,7 +313,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 **What's Included:**
 - ✅ Bug fixes and error resolution
 - ✅ Platform/API updates (when Twilio, ClickUp, etc. change)
-- ✅ Up to 5 hours of support monthly (minor tweaks, questions)
+- ✅ Up to 5 hours of support per month total (minor tweaks, questions, troubleshooting)
 - ✅ Quarterly check-in call (15-30 min)
 - ✅ Email support (48-hour response)
 
@@ -335,11 +335,11 @@ Bundle website + automation into single offering. Higher perceived value, single
 **For:** Growth System or Enterprise clients who want continuous optimization
 
 **What's Included:**
-- ✅ 10 hours of optimization/development monthly
+- ✅ 10 hours of optimization/development per month total (new features, improvements, troubleshooting)
 - ✅ Monthly strategy calls (30-60 min)
 - ✅ Priority support (24-hour response)
 - ✅ Proactive monitoring (we notice issues before you do)
-- ✅ New feature builds (within 10 hours)
+- ✅ New feature builds (within the 10-hour monthly allocation)
 - ✅ Slack/direct communication channel
 - ✅ Strategic AI guidance (how to improve conversion, reduce costs)
 
@@ -389,7 +389,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - ❌ Advanced CRM customization
 - ❌ Ongoing support after 30 days
 
-**Timeline:** 3 weeks from contract signed to launch
+**Timeline:** 2 weeks from contract signed to launch
 
 **Best For:**
 - Businesses with existing website (not outdated)
@@ -423,7 +423,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - ❌ SEO optimization beyond basic tracking
 - ❌ Ongoing optimization (see Partner Retainer)
 
-**Timeline:** 5 weeks from contract signed to launch
+**Timeline:** 3-4 weeks from contract signed to launch
 
 **Best For:**
 - Businesses with existing website that works well
@@ -465,7 +465,7 @@ Bundle website + automation into single offering. Higher perceived value, single
 - ❌ Content marketing
 - ❌ Major custom software development
 
-**Timeline:** 7-9 weeks from contract signed to launch
+**Timeline:** 5-7 weeks from contract signed to launch
 
 **Best For:**
 - Established businesses with existing professional website
