@@ -50,6 +50,7 @@ class GeneratedPost:
     created_at: str
     scheduled_for: Optional[str] = None
     posted: bool = False
+    media_paths: Optional[List[str]] = None
 
 
 class BusinessContentGenerator:
@@ -130,7 +131,8 @@ class BusinessContentGenerator:
         self,
         business_id: str,
         template_type: Optional[str] = None,
-        campaign: str = "general-awareness"
+        campaign: str = "general-awareness",
+        generate_image: bool = False
     ) -> GeneratedPost:
         """
         Generate a single post for a business.
@@ -139,6 +141,7 @@ class BusinessContentGenerator:
             business_id: The business identifier (e.g., 'squarefoot-shipping')
             template_type: Specific template to use, or None for random
             campaign: Campaign to generate for
+            generate_image: Whether to generate Grok image for this post
 
         Returns:
             GeneratedPost object
@@ -171,7 +174,7 @@ class BusinessContentGenerator:
         cta_options = biz.get("cta_options", ["Contact us"])
         cta = random.choice(cta_options)
 
-        return GeneratedPost(
+        post = GeneratedPost(
             business_id=business_id,
             business_name=biz["name"],
             content=content,
@@ -181,6 +184,119 @@ class BusinessContentGenerator:
             cta=cta,
             created_at=datetime.now().isoformat()
         )
+
+        # Generate Grok image if requested
+        if generate_image:
+            image_path = self._generate_grok_image(post)
+            if image_path:
+                post.media_paths = [image_path]
+
+        return post
+
+    def _generate_grok_image(self, post: GeneratedPost) -> Optional[str]:
+        """
+        Generate image via Grok based on post content.
+
+        Args:
+            post: The GeneratedPost to create an image for
+
+        Returns:
+            Path to generated image file, or None if generation failed
+        """
+        try:
+            # Import Grok generator
+            import sys
+            sys.path.insert(0, str(PROJECT_ROOT.parent / "shared" / "utils"))
+            from grok_image_gen import GrokImageGenerator
+
+            grok = GrokImageGenerator()
+
+            # Build prompt from post content
+            prompt = self._build_image_prompt(post)
+
+            # Create output directory
+            output_dir = OUTPUT_PATH / "images"
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            # Generate unique filename
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            image_path = output_dir / f"{post.business_id}_{timestamp}.png"
+
+            # Generate image
+            result = grok.generate_image(
+                prompt=prompt,
+                count=1,
+                output_path=str(image_path)
+            )
+
+            return result[0] if result else None
+
+        except Exception as e:
+            print(f"Warning: Grok image generation failed: {e}")
+            return None
+
+    def _build_image_prompt(self, post: GeneratedPost) -> str:
+        """
+        Build Grok prompt based on post template and content.
+
+        Args:
+            post: The GeneratedPost to create a prompt for
+
+        Returns:
+            Prompt string for Grok image generation
+        """
+        template = post.template_used
+        content_preview = post.content[:100]
+
+        # Template-specific image styles
+        if "case_study" in template:
+            return (
+                f"Professional infographic showing business results: {content_preview}. "
+                f"Clean, modern design with charts and metrics. Blue and white color scheme. "
+                f"Business-friendly, data-driven visual."
+            )
+
+        elif "service" in template or "highlight" in template:
+            return (
+                f"Modern tech illustration for AI automation service: {content_preview}. "
+                f"Sleek, professional design. Blue, purple, and cyan gradient color scheme. "
+                f"Technology-focused, futuristic but clean aesthetic."
+            )
+
+        elif "stat" in template or "insight" in template:
+            return (
+                f"Data visualization showing: {content_preview}. "
+                f"Professional chart or infographic. Clean design with bold numbers. "
+                f"Business-friendly colors (blues and oranges)."
+            )
+
+        elif "tech" in template or "tutorial" in template:
+            return (
+                f"Technical illustration showing automation workflow: {content_preview}. "
+                f"Diagram-style with arrows and connected elements. "
+                f"Clean, modern tech aesthetic. Blue and white."
+            )
+
+        elif "behind" in template or "building" in template:
+            return (
+                f"Behind-the-scenes tech workspace illustration: {content_preview}. "
+                f"Authentic, real coding environment. Dark mode IDE, monitors, coffee. "
+                f"Realistic but slightly stylized."
+            )
+
+        elif "before_after" in template:
+            return (
+                f"Before/after comparison illustration: {content_preview}. "
+                f"Split-screen design showing contrast. Left side (before) cluttered/manual, "
+                f"right side (after) clean/automated. Professional infographic style."
+            )
+
+        else:
+            # Default: professional business illustration
+            return (
+                f"Professional business illustration: {content_preview}. "
+                f"Modern, clean design. Technology-focused. Blue and white color scheme."
+            )
 
     def _fill_template(
         self,
@@ -272,6 +388,65 @@ class BusinessContentGenerator:
                 f"{tagline}\n\n"
                 f"{phone}\n\n"
                 f"#{hashtags[0] if hashtags else 'LocalBusiness'} #{hashtags[1] if len(hashtags) > 1 else 'SWFL'}"
+            )
+
+        elif template_name == "case_study_update":
+            # AI automation case study posts
+            case_studies = bank.get("case_studies", [])
+            if case_studies:
+                case_study = random.choice(case_studies)
+                hashtags = self._format_hashtags(biz.get("type", ""), campaign)
+                # Parse case study format: "Business Type: metrics..."
+                parts = case_study.split(":", 1)
+                business_type = parts[0] if len(parts) > 1 else "POC Results"
+                return (
+                    f"Week 1 POC Results: {business_type}\n\n"
+                    f"{parts[1] if len(parts) > 1 else case_study}\n\n"
+                    f"This is the future of local service businesses.\n\n"
+                    f"#{hashtags[0] if hashtags else 'AI'} #{hashtags[1] if len(hashtags) > 1 else 'Automation'}"
+                )
+            # Fallback to generic
+            return "Building AI automation tools. Sharing results soon.\n\n#AI #BuildingInPublic"
+
+        elif template_name == "tech_tutorial":
+            # How-to style posts
+            tips = self._select_random_items(bank.get("tips", ["Build with AI"]), 3)
+            topic = random.choice(["automate lead gen", "set up Voice AI", "build automation workflows"])
+            hashtags = self._format_hashtags(biz.get("type", ""), campaign)
+            return (
+                f"How to {topic}:\n\n"
+                f"1. {tips[0]}\n"
+                f"2. {tips[1] if len(tips) > 1 else 'Test thoroughly'}\n"
+                f"3. {tips[2] if len(tips) > 2 else 'Deploy and monitor'}\n\n"
+                f"Building this for local businesses.\n\n"
+                f"#{hashtags[0] if hashtags else 'AI'} #{hashtags[1] if len(hashtags) > 1 else 'Automation'}"
+            )
+
+        elif template_name == "behind_scenes":
+            # Building in public posts
+            solutions = bank.get("solutions", [])
+            stats = bank.get("stats", [])
+            solution = random.choice(solutions) if solutions else "AI automation"
+            stat = random.choice(stats) if stats else "AI is changing everything"
+            hashtags = self._format_hashtags(biz.get("type", ""), campaign)
+            return (
+                f"Building in public:\n\n"
+                f"Just deployed {solution.lower()}.\n\n"
+                f"{stat}\n\n"
+                f"Real results coming soon.\n\n"
+                f"#{hashtags[0] if hashtags else 'BuildingInPublic'} #{hashtags[1] if len(hashtags) > 1 else 'AI'}"
+            )
+
+        elif template_name == "before_after":
+            # Before/after comparison posts
+            pain = random.choice(bank.get("pain_points", ["Manual work takes forever"]))
+            benefit = random.choice(bank.get("benefits", ["10x faster with AI"]))
+            hashtags = self._format_hashtags(biz.get("type", ""), campaign)
+            return (
+                f"Before: {pain}\n"
+                f"After: {benefit}\n\n"
+                f"This is what automation should feel like.\n\n"
+                f"#{hashtags[0] if hashtags else 'AI'} #{hashtags[1] if len(hashtags) > 1 else 'Automation'}"
             )
 
         # Fallback: use an example if available
@@ -366,7 +541,8 @@ class BusinessContentGenerator:
                 "cta": p.cta,
                 "created_at": p.created_at,
                 "scheduled_for": p.scheduled_for,
-                "posted": p.posted
+                "posted": p.posted,
+                "media_paths": p.media_paths
             }
             for p in posts
         ]
