@@ -89,11 +89,28 @@ class BusinessPostingScheduler:
 
     def get_schedule_config(self, business_id: str) -> BusinessScheduleConfig:
         """Get schedule configuration for a business."""
+        # Check if business has custom posting schedule
+        businesses = self.config.get("businesses", {})
+        biz_config = businesses.get(business_id, {})
+        biz_schedule = biz_config.get("posting_schedule", {})
+
+        # Fall back to global config if business doesn't have custom schedule
         posting_config = self.config.get("posting_config", {})
+
+        posts_per_day = biz_schedule.get("posts_per_day") or posting_config.get("posts_per_business_per_day", 2)
+
+        # Convert optimal_times (hours) to time strings if needed
+        optimal_times = biz_schedule.get("optimal_times")
+        if optimal_times and isinstance(optimal_times[0], int):
+            # Convert hours [6, 9, 12] to time strings ["06:00", "09:00", "12:00"]
+            optimal_times = [f"{h:02d}:00" for h in optimal_times]
+        elif not optimal_times:
+            optimal_times = posting_config.get("optimal_times_est", ["09:00", "15:00"])
+
         return BusinessScheduleConfig(
             business_id=business_id,
-            posts_per_day=posting_config.get("posts_per_business_per_day", 2),
-            optimal_times=posting_config.get("optimal_times_est", ["09:00", "15:00"]),
+            posts_per_day=posts_per_day,
+            optimal_times=optimal_times,
         )
 
     def schedule_day(
@@ -115,16 +132,36 @@ class BusinessPostingScheduler:
         """
         config = self.get_schedule_config(business_id)
 
-        # Generate posts for the day
-        posts = self.generator.generate_batch(
-            business_id,
-            count=config.posts_per_day,
-            campaign=campaign
-        )
+        # Get business-specific image generation percentage
+        businesses = self.config.get("businesses", {})
+        biz_config = businesses.get(business_id, {})
+        biz_schedule = biz_config.get("posting_schedule", {})
+        image_percentage = biz_schedule.get("image_generation_percentage", 0)
 
-        # Schedule at optimal times
+        # Generate posts for the day with image generation
         scheduled_posts = []
-        for i, post in enumerate(posts):
+        templates = list(self.generator.content.get(business_id, {}).get("post_templates", {}).keys())
+
+        for i in range(config.posts_per_day):
+            # Rotate through templates
+            template = templates[i % len(templates)] if templates else None
+
+            # Determine if this post gets an image (based on percentage)
+            generate_image = (i % (100 // max(image_percentage, 1))) < (image_percentage / (100 // max(image_percentage, 1))) if image_percentage > 0 else False
+
+            # For 50%, this simplifies to: every other post (i % 2 == 0)
+            if image_percentage == 50:
+                generate_image = (i % 2 == 0)
+
+            # Generate post
+            post = self.generator.generate_post(
+                business_id,
+                template_type=template,
+                campaign=campaign,
+                generate_image=generate_image
+            )
+
+            # Schedule at optimal time
             if i < len(config.optimal_times):
                 time_str = config.optimal_times[i]
                 hour, minute = map(int, time_str.split(":"))
@@ -132,12 +169,13 @@ class BusinessPostingScheduler:
 
                 post.scheduled_for = scheduled_time.isoformat()
 
-                # Add to x_scheduler queue
+                # Add to x_scheduler queue (with media if available)
                 self.post_scheduler.add_post(
                     text=post.content,
                     priority="normal",
                     campaign=f"{business_id}-{campaign}",
-                    scheduled_time=scheduled_time.strftime("%Y-%m-%d %H:%M")
+                    scheduled_time=scheduled_time.strftime("%Y-%m-%d %H:%M"),
+                    media_paths=post.media_paths
                 )
 
                 scheduled_posts.append(post)
