@@ -1,0 +1,35 @@
+{
+  "template_name": "no_online_transactions_free_setup_v1",
+  "pain_point": "no_online_transactions",
+  "body": "Hi {business_name} - William from Marceau Solutions (239-398-5676). People can't book you online. I'll set up free 24/7 booking for you this week. Interested? Text YES or call. Reply STOP to opt out.",
+  "char_count": 197,
+  "segments": 2,
+  "personalization_fields": ["business_name"],
+  "cta": "Text YES for free setup",
+  "tcpa_compliant": true,
+  "notes": "PHASE 1 OPTIMIZATION: Free setup (no fake social proof)",
+  "expected_response_rate": "10-12%",
+  "best_for": ["gym", "salon", "spa"],
+  "optimization_rationale": [
+    "Free 24/7 booking = high-value offer",
+    "This week = urgency without scarcity lie",
+    "No fake social proof",
+    "Clear value: never miss appointment again"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "{business_name} owner: Losing appointments because people can't book online? I'll connect you to a free scheduling system today. William, Marceau Solutions (239-398-5676). Text YES. Reply STOP to opt out.",
+      "char_count": 199,
+      "angle": "Today = immediate value",
+      "expected_response_rate": "11-13%"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi {business_name} - most customers expect online booking. I'll set yours up for free (takes 10 minutes). No cost. William from Marceau Solutions (239) 398-5676. Want it? Text YES. Reply STOP to opt out.",
+      "char_count": 206,
+      "angle": "Takes 10 minutes = easy decision",
+      "expected_response_rate": "10-12%"
+    }
+  ]
+}

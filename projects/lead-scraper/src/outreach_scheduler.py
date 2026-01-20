@@ -231,14 +231,17 @@ class OutreachScheduler:
 
         # Load leads
         scraper = LeadScraperCLI(output_dir=str(self.output_dir))
-        leads = list(scraper.leads.leads.values())
+
+        # PHASE 1 OPTIMIZATION: Filter to high-response verticals FIRST
+        leads = scraper.leads.filter_high_response_verticals()
+        logger.info(f"Filtered to {len(leads)} high-response vertical leads (gyms, salons, restaurants)")
 
         # Apply filters
         filters = batch.get('filters', {})
         categories = filters.get('categories', [])
         pain_points = filters.get('pain_points', [])
 
-        # Filter by category
+        # Filter by category (if specified)
         if categories:
             leads = [l for l in leads if any(cat.lower() in l.category.lower() for cat in categories)]
 

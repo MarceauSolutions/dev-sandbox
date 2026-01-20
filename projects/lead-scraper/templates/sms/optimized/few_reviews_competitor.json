@@ -1,0 +1,36 @@
+{
+  "template_name": "few_reviews_competitor_v1",
+  "pain_point": "few_reviews",
+  "body": "Hi {business_name} - William, Marceau Solutions (239-398-5676). {competitor_name} has {competitor_review_count} reviews, you have {review_count}. I'll help you catch up for free. Want it? Text YES. Reply STOP to opt out.",
+  "char_count": 210,
+  "segments": 2,
+  "personalization_fields": ["business_name", "competitor_name", "competitor_review_count", "review_count"],
+  "cta": "Text YES",
+  "tcpa_compliant": true,
+  "notes": "PHASE 1 OPTIMIZATION: Hyper-personalized review gap comparison",
+  "expected_response_rate": "12-14%",
+  "best_for": ["gym", "salon", "restaurant"],
+  "optimization_rationale": [
+    "Direct competitor comparison = urgency",
+    "Specific numbers = credibility",
+    "Free help = low friction",
+    "Catch up = competitive framing",
+    "No fake social proof"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "{business_name}: Your competitor {competitor_name} has {competitor_review_count} Google reviews. Most customers pick whoever has more reviews. I'll help you catch up free. William, Marceau Solutions (239-398-5676). Reply STOP to opt out.",
+      "char_count": 223,
+      "angle": "Customer behavior insight",
+      "expected_response_rate": "13-15%"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi {business_name} - {review_count} reviews puts you behind {competitor_name}'s {competitor_review_count}. I'll get you 20+ reviews this month for free. William, Marceau Solutions (239) 398-5676. Text YES. Reply STOP to opt out.",
+      "char_count": 218,
+      "angle": "Specific outcome (20+ reviews)",
+      "expected_response_rate": "12-14%"
+    }
+  ]
+}

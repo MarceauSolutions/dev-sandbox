@@ -49,6 +49,12 @@ class Lead:
     review_count: int = 0
     price_level: str = ""  # $, $$, $$$, $$$$
 
+    # Competitor intelligence (for hyper-personalization)
+    competitor_name: str = ""
+    competitor_rating: float = 0.0
+    competitor_review_count: int = 0
+    competitor_website: str = ""
+
     # Pain points / opportunities
     pain_points: List[str] = field(default_factory=list)
     notes: str = ""
@@ -100,6 +106,10 @@ class Lead:
             "rating": str(self.rating),
             "review_count": str(self.review_count),
             "price_level": self.price_level,
+            "competitor_name": self.competitor_name,
+            "competitor_rating": str(self.competitor_rating),
+            "competitor_review_count": str(self.competitor_review_count),
+            "competitor_website": self.competitor_website,
             "pain_points": "|".join(self.pain_points),
             "notes": self.notes,
             "scraped_at": self.scraped_at,
@@ -207,6 +217,36 @@ class LeadCollection:
         for lead in self.leads.values():
             if any(pp in lead.pain_points for pp in pain_points):
                 results.append(lead)
+        return results
+
+    def filter_high_response_verticals(self) -> List[Lead]:
+        """
+        Filter leads to only high-response verticals.
+
+        Research shows these verticals have 8-12% response rates:
+        - Gyms / Fitness Centers
+        - Salons / Spas / Beauty
+        - Restaurants / Cafes
+
+        Low-response verticals (excluded): Medical, Legal, Corporate
+        """
+        HIGH_RESPONSE_CATEGORIES = [
+            "gym", "fitness", "crossfit", "yoga", "pilates", "martial arts",
+            "salon", "spa", "beauty", "barber", "nail", "hair",
+            "restaurant", "cafe", "coffee", "bar", "pizza", "food"
+        ]
+
+        results = []
+        for lead in self.leads.values():
+            category_lower = lead.category.lower()
+            subcats_lower = [s.lower() for s in lead.subcategories]
+
+            # Check if category or subcategory matches high-response vertical
+            if any(keyword in category_lower for keyword in HIGH_RESPONSE_CATEGORIES):
+                results.append(lead)
+            elif any(any(keyword in sub for keyword in HIGH_RESPONSE_CATEGORIES) for sub in subcats_lower):
+                results.append(lead)
+
         return results
 
     def get_statistics(self) -> Dict[str, Any]:
