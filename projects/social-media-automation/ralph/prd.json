@@ -57,7 +57,7 @@
         "Verified manually with test post (screenshot proof)"
       ],
       "priority": 4,
-      "passes": false
+      "passes": true
     }
   ]
 }

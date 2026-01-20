@@ -84,3 +84,32 @@ Feature: Grok Image Integration for Social Media Automation
 - Error handling prevents crashes on API failures
 ---
 
+
+## 2026-01-20 10:50 AM - Story 004: Update X Scheduler to Attach Images
+
+**What was implemented**: Verified X scheduler media attachment already implemented in process_queue()
+
+**Files verified**: 
+- src/x_scheduler.py (lines 291-302)
+
+**Acceptance criteria verified**:
+- ✅ Checks if post has media_paths before posting
+- ✅ Uploads images to X using media upload API (client.upload_media)
+- ✅ Collects media_ids from uploads
+- ✅ Attaches media_ids to tweet via post_tweet(media_ids=...)
+- ✅ Posts with images successfully
+
+**Implementation details**:
+- Media upload happens in process_queue() before posting
+- Loops through post.media_paths, uploads each to X
+- Collects returned media_ids into list
+- Passes media_ids to client.post_tweet() when posting
+
+**Learnings for future iterations**:
+- X scheduler was already prepared for media attachments from previous work
+- No code changes needed - verification only
+- Integration point confirmed: scheduler sets post.media_paths → X scheduler uploads and attaches
+
+**Status**: ✅ Story 004 COMPLETE - All acceptance criteria met
+
+---
