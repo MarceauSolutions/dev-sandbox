@@ -1,0 +1,27 @@
+{
+  "template_name": "no_online_transactions_v1",
+  "pain_point": "no_online_transactions",
+  "body": "Hi, this is William from Marceau Solutions. {business_name} in {city} has great reviews but no online booking. Just helped 3 Naples gyms add 24/7 scheduling - all saw 40%+ more appointments. Interested? (239) 398-5676. Reply STOP to opt out.",
+  "char_count": 227,
+  "segments": 2,
+  "personalization_fields": ["business_name", "city"],
+  "cta": "Call back or text YES",
+  "tcpa_compliant": true,
+  "notes": "Focuses on appointment booking pain point. Two SMS segments.",
+  "expected_response_rate": "3-5%",
+  "best_for": ["gym", "yoga_studio", "fitness_center", "salon", "spa", "medical"],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "Hi {business_name} owner! William from Marceau Solutions (239-398-5676). I see you have {rating}⭐ reviews but no online booking. Want to see how we added 24/7 scheduling for 3 Naples gyms? All got 40% more appointments. Text YES. Reply STOP to opt out.",
+      "char_count": 238,
+      "angle": "Social proof + specific outcome"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi, William from Marceau Solutions. Do you lose appointments because people can't book {business_name} online? Just set up 24/7 booking for 3 local gyms - all doubled their new member signups. (239) 398-5676. Reply STOP to opt out.",
+      "char_count": 221,
+      "angle": "Question hook + pain amplification"
+    }
+  ]
+}
