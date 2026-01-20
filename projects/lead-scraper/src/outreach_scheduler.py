@@ -35,6 +35,7 @@ class OutreachConfig:
     emails_per_day: int
     sms_per_day: int
     optimal_times: List[int]  # Hours of day (EST)
+    optimal_days: List[int]  # Days of week (0=Mon, 6=Sun)
     target_categories: List[str]
     pain_points: List[str]
     enrich_first: bool = True
@@ -46,7 +47,8 @@ BUSINESS_CONFIGS = {
         business_name="Marceau Solutions (AI Automation)",
         emails_per_day=20,  # Rule of 100 spread across week
         sms_per_day=10,
-        optimal_times=[9, 11, 14, 16],  # Business hours
+        optimal_times=[10, 11, 12, 13, 14],  # 10 AM - 2 PM EST (peak decision-maker availability)
+        optimal_days=[1, 2, 3],  # Tue, Wed, Thu only (avoid Mon morning, Fri afternoon, weekends)
         target_categories=["gym", "restaurant", "medical"],
         pain_points=["no_website", "low_reviews", "no_google_listing"],
         enrich_first=True
@@ -56,7 +58,8 @@ BUSINESS_CONFIGS = {
         business_name="SW Florida Comfort HVAC",
         emails_per_day=15,
         sms_per_day=10,
-        optimal_times=[8, 10, 13, 15],  # Catch decision makers
+        optimal_times=[10, 11, 12, 13, 14],  # 10 AM - 2 PM EST (consistent timing)
+        optimal_days=[1, 2, 3],  # Tue, Wed, Thu only
         target_categories=["restaurant", "gym", "retail"],
         pain_points=["no_website", "low_reviews"],
         enrich_first=True
@@ -121,6 +124,13 @@ class OutreachScheduler:
             logger.error(f"Unknown business: {business_id}")
             return
 
+        # Only schedule for optimal days (Tue-Thu by default)
+        day_of_week = date.weekday()  # 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+        if day_of_week not in config.optimal_days:
+            day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            logger.info(f"Skipping {day_names[day_of_week]} {date.date()} - only schedule on Tue/Wed/Thu")
+            return
+
         logger.info(f"Scheduling outreach for {config.business_name} on {date.date()}")
 
         # Distribute emails across optimal times
@@ -148,7 +158,7 @@ class OutreachScheduler:
         # Add SMS batches (if configured)
         if config.sms_per_day > 0:
             sms_per_slot = config.sms_per_day // 2  # Morning + afternoon
-            for i, hour in enumerate([9, 15]):  # 9 AM and 3 PM for SMS
+            for i, hour in enumerate([10, 13]):  # 10 AM and 1 PM for SMS (within optimal window)
                 scheduled_time = datetime.combine(date.date(), time(hour=hour))
 
                 self.queue.append({
@@ -176,6 +186,13 @@ class OutreachScheduler:
         """
         now = datetime.now()
         processed = 0
+
+        # Validate current day is optimal (Tue-Thu)
+        day_of_week = now.weekday()
+        # Most configs use [1, 2, 3] for Tue-Thu
+        if day_of_week not in [1, 2, 3]:
+            logger.info(f"Skipping queue processing - today is not an optimal day (only Tue-Thu)")
+            return 0
 
         # Find batches ready to send
         ready_batches = [
@@ -374,16 +391,22 @@ def main():
             print(f"  Scheduled: {nb['scheduled_time']}")
 
     elif args.command == "schedule-week":
-        # Schedule full week for business
+        # Schedule full week for business (only optimal days will be scheduled)
         if not args.business:
             print("Error: --business required for schedule-week")
             return 1
 
+        scheduled_days = 0
         for i in range(7):
             date = datetime.now() + timedelta(days=i)
+            # schedule_daily_outreach will skip non-optimal days automatically
             scheduler.schedule_daily_outreach(args.business, date=date)
 
-        print(f"✅ Week scheduled for {args.business}")
+            # Count if this day was actually scheduled (Tue-Thu)
+            if date.weekday() in [1, 2, 3]:
+                scheduled_days += 1
+
+        print(f"✅ Week scheduled for {args.business} ({scheduled_days} optimal days)")
 
     return 0
 
