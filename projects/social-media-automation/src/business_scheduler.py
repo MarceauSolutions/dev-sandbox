@@ -67,6 +67,53 @@ class BusinessPostingScheduler:
         self.config = self._load_config()
         self.schedule_data = self._load_schedule()
 
+    def _generate_post_image(self, post: GeneratedPost) -> Optional[str]:
+        """
+        Generate Grok image for a post using its image_prompt.
+
+        Args:
+            post: GeneratedPost with image_prompt set
+
+        Returns:
+            Path to generated image file, or None if generation failed
+        """
+        if not post.image_prompt:
+            return None
+
+        try:
+            # Import Grok generator from shared utilities
+            import sys
+            sys.path.insert(0, str(PROJECT_ROOT.parent / "execution"))
+            from grok_image_gen import GrokImageGenerator
+
+            grok = GrokImageGenerator()
+
+            # Create output directory
+            output_dir = PROJECT_ROOT / "output" / "images"
+            output_dir.mkdir(parents=True, exist_ok=True)
+
+            # Generate unique filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            image_filename = f"{post.business_id}_{timestamp}.png"
+            image_path = output_dir / image_filename
+
+            # Generate image using post's image_prompt
+            results = grok.generate_image(
+                prompt=post.image_prompt,
+                count=1,
+                output_path=str(image_path)
+            )
+
+            if results and len(results) > 0:
+                return str(results[0])
+            else:
+                return None
+
+        except Exception as e:
+            # Don't crash if image generation fails - just log and continue
+            print(f"Warning: Grok image generation failed for {post.business_id}: {e}")
+            return None
+
     def _load_config(self) -> Dict:
         """Load business configuration."""
         if CONFIG_PATH.exists():
@@ -160,6 +207,12 @@ class BusinessPostingScheduler:
                 campaign=campaign,
                 generate_image=generate_image
             )
+
+            # Generate Grok image if post has image_prompt
+            if post.image_prompt:
+                image_path = self._generate_post_image(post)
+                if image_path:
+                    post.media_paths = [image_path]
 
             # Schedule at optimal time
             if i < len(config.optimal_times):

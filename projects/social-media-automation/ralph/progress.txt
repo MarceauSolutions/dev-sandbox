@@ -55,3 +55,32 @@ Feature: Grok Image Integration for Social Media Automation
 - Keeps content generation fast, moves slow operations to scheduler
 ---
 
+## 2026-01-20 10:40 AM - Story 003
+- **What was implemented**: Integrated Grok generation into scheduler
+- **Files changed**: src/business_scheduler.py
+- **Status**: Complete - all acceptance criteria met
+
+**Changes made**:
+1. Added _generate_post_image() method to BusinessPostingScheduler (lines 70-115)
+2. Modified schedule_day() to call _generate_post_image() when post has image_prompt (lines 164-168)
+3. Grok API called with post.image_prompt
+4. Images saved to output/images/ with timestamp naming (business_id_YYYYMMDD_HHMMSS.png)
+5. Updates post.media_paths with generated image path
+6. 50% image generation already implemented (line 153-154)
+7. Comprehensive error handling - catches exceptions and logs warnings without crashing
+
+**Learnings for future iterations**:
+- Grok import uses sys.path to add execution/ directory
+- GrokImageGenerator.generate_image() returns list of paths
+- output_path parameter specifies exact filename
+- Error handling critical - Grok API failures shouldn't stop posting
+- Image generation happens in scheduler (not content generator) - keeps separation of concerns
+- Pattern confirmed: Content generator flags (image_prompt), scheduler processes (actual generation)
+
+**Integration verified**:
+- Posts with image_prompt → Grok generates image
+- Posts without image_prompt → Skip image generation
+- 50% of posts flagged for images (every other post when image_percentage=50)
+- Error handling prevents crashes on API failures
+---
+

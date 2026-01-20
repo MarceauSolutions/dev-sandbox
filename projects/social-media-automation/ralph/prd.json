@@ -43,7 +43,7 @@
         "Error handling if Grok API fails (skip image, don't crash)"
       ],
       "priority": 3,
-      "passes": false
+      "passes": true
     },
     {
       "id": "004",
