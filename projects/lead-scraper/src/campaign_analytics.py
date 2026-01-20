@@ -404,6 +404,14 @@ class CampaignAnalytics:
         if category in ["hot_lead", "warm_lead"]:
             lead.funnel_stage = "qualified"
             lead.qualified_at = received_at
+
+            # Auto-create ClickUp task for qualified leads (hot/warm only)
+            if not lead.clickup_task_id:  # Don't create duplicate tasks
+                task_id = self._create_clickup_task(lead, category, response_text)
+                if task_id:
+                    lead.clickup_task_id = task_id
+                    print(f"✅ Created ClickUp task for {lead.business_name}: {task_id}")
+
         elif category == "opt_out":
             lead.funnel_stage = "opted_out"
         else:
@@ -465,6 +473,97 @@ class CampaignAnalytics:
         self._save_data()
 
         return lead
+
+    def _create_clickup_task(
+        self,
+        lead: LeadRecord,
+        category: str,
+        response_text: str
+    ) -> Optional[str]:
+        """
+        Create a ClickUp task for a qualified lead (hot/warm only).
+
+        Args:
+            lead: LeadRecord with response
+            category: hot_lead or warm_lead
+            response_text: The lead's response message
+
+        Returns:
+            Task ID if created, None if failed
+        """
+        import requests
+
+        # Get ClickUp credentials from environment
+        api_token = os.getenv("CLICKUP_API_TOKEN")
+        list_id = os.getenv("CLICKUP_LIST_ID")
+
+        if not api_token or not list_id:
+            print("⚠️  ClickUp credentials not configured (CLICKUP_API_TOKEN, CLICKUP_LIST_ID)")
+            return None
+
+        # Determine priority (hot = urgent, warm = high)
+        priority_map = {
+            "hot_lead": 1,  # Urgent
+            "warm_lead": 2,  # High
+        }
+        priority = priority_map.get(category, 3)
+
+        # Create task payload
+        task_name = f"{lead.business_name} - {category.replace('_', ' ').title()}"
+
+        description = f"""**Lead Response Received**
+
+**Business:** {lead.business_name}
+**Phone:** {lead.phone}
+**Category:** {category.replace('_', ' ').title()}
+**Response:** "{response_text}"
+
+**Campaign:** {lead.campaign_id}
+**Touch #{lead.converting_touch_number}** got the response
+**Days to response:** {lead.days_to_first_response:.1f} days
+
+**Next Steps:**
+- [ ] Call/text back within 24 hours
+- [ ] Qualify needs and pain points
+- [ ] Schedule discovery call
+- [ ] Send proposal
+
+---
+*Auto-created by Campaign Analytics*
+"""
+
+        payload = {
+            "name": task_name,
+            "description": description,
+            "priority": priority,
+            "status": "to do",
+            "tags": [category, "sms_outreach", f"touch_{lead.converting_touch_number}"]
+        }
+
+        # API request
+        headers = {
+            "Authorization": api_token,
+            "Content-Type": "application/json"
+        }
+
+        try:
+            response = requests.post(
+                f"https://api.clickup.com/api/v2/list/{list_id}/task",
+                headers=headers,
+                json=payload
+            )
+
+            if response.status_code == 200:
+                task_data = response.json()
+                task_id = task_data.get("id")
+                return task_id
+            else:
+                print(f"❌ ClickUp API error: {response.status_code} - {response.text}")
+                return None
+
+        except Exception as e:
+            print(f"❌ Failed to create ClickUp task: {e}")
+            return None
 
     def record_conversion(self, lead_id: str, value: float = 0.0):
         """Record a conversion (lead became customer)."""
