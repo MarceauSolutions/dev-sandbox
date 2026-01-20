@@ -35,23 +35,26 @@ This document summarizes all optimization work completed today across websites, 
 **Status:** ✅ COMPLETE
 
 **Problems Fixed:**
-- API endpoint mismatch (`/api/form/submit` → `/forms/submit`)
+- API endpoint mismatch (incorrectly changed in `1a283c9`, fixed in `bf3316d`)
 - Missing `business_id` field in forms
 - Broken terms/privacy links
 
 **Solution:**
-- Corrected API endpoint in `form-handler.js`
 - Added `business_id="marceausolutions"` to all forms
 - Created `terms.html` and `privacy.html` pages
+- Ralph testing discovered endpoint bug (was `/forms/submit`, should be `/api/form/submit`)
+- **CRITICAL FIX**: Corrected API endpoint back to `/api/form/submit`
 
 **Result:**
-- Forms now submit to correct endpoint
+- Forms now submit to correct endpoint (`/api/form/submit`)
 - Multi-business routing working
 - Legal pages complete and accessible
+- Ralph confirmed with live test submissions (ClickUp tasks created)
 
 **Commits:**
-- `1a283c9` - fix: Correct API endpoint and add business_id tracking
+- `1a283c9` - fix: Add business_id tracking (introduced endpoint bug)
 - `8c58093` - feat: Add terms and privacy pages
+- `bf3316d` - fix: Correct API endpoint to /api/form/submit ✅
 
 ---
 
@@ -228,12 +231,13 @@ This document summarizes all optimization work completed today across websites, 
 7. CLEANUP-LOG.md
 8. FINAL-OPTIMIZATION-SUMMARY.md (this file)
 
-### Git Commits: 5
-1. `1a283c9` - Form fixes (marceausolutions.com)
+### Git Commits: 6
+1. `1a283c9` - Form fixes + business_id (marceausolutions.com) - introduced endpoint bug
 2. `3208893` - Social media schema fix (dev-sandbox)
 3. `8c58093` - Terms and privacy pages (marceausolutions.com)
 4. `f41526b` - Google Analytics GA4 (marceausolutions.com)
 5. `3b5113c` - Archive duplicates (dev-sandbox)
+6. `bf3316d` - **CRITICAL FIX**: Correct API endpoint (marceausolutions.com) ✅
 
 ---
 
