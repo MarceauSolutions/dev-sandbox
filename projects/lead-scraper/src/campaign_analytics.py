@@ -127,6 +127,36 @@ class TemplateMetrics:
 
 
 @dataclass
+class TemplateScore:
+    """Composite score for template performance."""
+    template_name: str
+
+    # Raw metrics
+    response_rate: float = 0.0
+    qualification_rate: float = 0.0  # (hot + warm) / total_responses
+    conversion_rate: float = 0.0  # converted / qualified
+    opt_out_rate: float = 0.0
+    delivery_rate: float = 0.0
+
+    # Weighted components (0-100 each)
+    response_score: float = 0.0  # 40% weight
+    qualification_score: float = 0.0  # 30% weight
+    conversion_score: float = 0.0  # 20% weight
+    opt_out_score: float = 0.0  # 5% weight (penalty)
+    delivery_score: float = 0.0  # 5% weight
+
+    # Final composite score (0-100)
+    composite_score: float = 0.0
+
+    # Sample size
+    total_sent: int = 0
+    total_responses: int = 0
+
+    # Recommendation
+    recommendation: str = ""  # "Winning template", "Good performer", "Test more", "Archive"
+
+
+@dataclass
 class CampaignMetrics:
     """Aggregate metrics for a campaign."""
     campaign_id: str
@@ -807,6 +837,776 @@ class CampaignAnalytics:
 
         return "\n".join(lines)
 
+    def get_dashboard(self, business_id: Optional[str] = None, days: int = 30) -> Dict[str, Any]:
+        """
+        Generate comprehensive campaign performance dashboard.
+
+        Args:
+            business_id: Filter by business (marceau-solutions, swflorida-hvac, shipping-logistics)
+            days: Time window for trends (7, 30, or 90 days)
+
+        Returns:
+            Dict with dashboard data
+        """
+        # Filter leads by business and date range
+        cutoff_date = datetime.now() - timedelta(days=days)
+        filtered_leads = []
+
+        for lead in self.leads.values():
+            # Filter by business
+            if business_id and lead.sending_business_id != business_id:
+                continue
+
+            # Filter by date range
+            if lead.first_contact_date:
+                try:
+                    contact_dt = datetime.fromisoformat(lead.first_contact_date)
+                    if contact_dt < cutoff_date:
+                        continue
+                except:
+                    pass
+
+            filtered_leads.append(lead)
+
+        # Calculate metrics
+        total_sent = sum(len(lead.touches) for lead in filtered_leads)
+        total_delivered = sum(1 for lead in filtered_leads for t in lead.touches if t.status == "delivered")
+        total_responses = sum(1 for lead in filtered_leads if lead.has_responded)
+
+        hot_leads = sum(1 for lead in filtered_leads if lead.response_category == "hot_lead")
+        warm_leads = sum(1 for lead in filtered_leads if lead.response_category == "warm_lead")
+        cold_leads = sum(1 for lead in filtered_leads if lead.response_category == "cold_lead")
+        opt_outs = sum(1 for lead in filtered_leads if lead.response_category == "opt_out")
+
+        qualified = hot_leads + warm_leads
+        converted = sum(1 for lead in filtered_leads if lead.funnel_stage == "converted")
+
+        # Calculate rates
+        delivery_rate = (total_delivered / total_sent * 100) if total_sent > 0 else 0
+        response_rate = (total_responses / total_sent * 100) if total_sent > 0 else 0
+        qualification_rate = (qualified / total_responses * 100) if total_responses > 0 else 0
+        conversion_rate = (converted / qualified * 100) if qualified > 0 else 0
+        opt_out_rate = (opt_outs / total_sent * 100) if total_sent > 0 else 0
+
+        # Response time analysis
+        response_times = [lead.days_to_first_response for lead in filtered_leads
+                         if lead.has_responded and lead.days_to_first_response > 0]
+        median_time_to_response = sorted(response_times)[len(response_times)//2] * 24 if response_times else 0
+
+        # Template leaderboard (top 3)
+        template_performance = defaultdict(lambda: {"sent": 0, "responses": 0, "rate": 0})
+
+        for lead in filtered_leads:
+            for touch in lead.touches:
+                template = touch.template
+                template_performance[template]["sent"] += 1
+                if touch.response_received:
+                    template_performance[template]["responses"] += 1
+
+        for template, data in template_performance.items():
+            if data["sent"] > 0:
+                data["rate"] = data["responses"] / data["sent"] * 100
+
+        top_templates = sorted(template_performance.items(),
+                              key=lambda x: x[1]["rate"],
+                              reverse=True)[:3]
+
+        # Time-series trends (by week)
+        weeks_data = defaultdict(lambda: {"sent": 0, "responses": 0, "rate": 0})
+
+        for lead in filtered_leads:
+            for touch in lead.touches:
+                if touch.sent_at:
+                    try:
+                        sent_dt = datetime.fromisoformat(touch.sent_at.replace("Z", "+00:00"))
+                        week_key = sent_dt.strftime("%Y-W%U")
+                        weeks_data[week_key]["sent"] += 1
+                        if touch.response_received:
+                            weeks_data[week_key]["responses"] += 1
+                    except:
+                        pass
+
+        for week, data in weeks_data.items():
+            if data["sent"] > 0:
+                data["rate"] = data["responses"] / data["sent"] * 100
+
+        # Business comparison (if no filter)
+        business_comparison = {}
+        if not business_id:
+            for biz_id in ["marceau-solutions", "swflorida-hvac", "shipping-logistics"]:
+                biz_leads = [l for l in filtered_leads if l.sending_business_id == biz_id]
+                if biz_leads:
+                    biz_sent = sum(len(l.touches) for l in biz_leads)
+                    biz_responses = sum(1 for l in biz_leads if l.has_responded)
+                    business_comparison[biz_id] = {
+                        "sent": biz_sent,
+                        "responses": biz_responses,
+                        "response_rate": (biz_responses / biz_sent * 100) if biz_sent > 0 else 0,
+                        "hot_leads": sum(1 for l in biz_leads if l.response_category == "hot_lead"),
+                        "warm_leads": sum(1 for l in biz_leads if l.response_category == "warm_lead")
+                    }
+
+        dashboard = {
+            "business_id": business_id or "all",
+            "time_window_days": days,
+            "summary_metrics": {
+                "total_sent": total_sent,
+                "delivery_rate": round(delivery_rate, 1),
+                "response_rate": round(response_rate, 1),
+                "qualification_rate": round(qualification_rate, 1),
+                "conversion_rate": round(conversion_rate, 1),
+                "opt_out_rate": round(opt_out_rate, 1),
+                "median_time_to_response_hours": round(median_time_to_response, 1)
+            },
+            "breakdown": {
+                "hot_leads": hot_leads,
+                "warm_leads": warm_leads,
+                "cold_leads": cold_leads,
+                "opt_outs": opt_outs
+            },
+            "funnel": {
+                "contacted": len(filtered_leads),
+                "responded": total_responses,
+                "qualified": qualified,
+                "converted": converted
+            },
+            "top_templates": [
+                {
+                    "template": template,
+                    "sent": data["sent"],
+                    "responses": data["responses"],
+                    "rate": round(data["rate"], 1)
+                }
+                for template, data in top_templates
+            ],
+            "trends": {
+                "by_week": dict(sorted(weeks_data.items()))
+            },
+            "business_comparison": business_comparison
+        }
+
+        return dashboard
+
+    def print_dashboard(self, business_id: Optional[str] = None, days: int = 30) -> str:
+        """Generate formatted dashboard report."""
+        dashboard = self.get_dashboard(business_id, days)
+
+        lines = []
+        lines.append("=" * 80)
+        lines.append("CAMPAIGN PERFORMANCE DASHBOARD")
+        lines.append(f"Business: {dashboard['business_id'].upper()}")
+        lines.append(f"Time Window: Last {days} days")
+        lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        lines.append("=" * 80)
+
+        # Summary metrics
+        metrics = dashboard["summary_metrics"]
+        lines.append("\n## KEY METRICS")
+        lines.append("-" * 80)
+        lines.append(f"{'Metric':<30} {'Value':>15} {'Target':>15} {'Status':>10}")
+        lines.append("-" * 80)
+
+        # Define targets based on business
+        targets = {
+            "marceau-solutions": {"response_rate": 12, "qualification_rate": 50, "conversion_rate": 20},
+            "swflorida-hvac": {"response_rate": 8, "qualification_rate": 50, "conversion_rate": 20},
+            "shipping-logistics": {"response_rate": 6, "qualification_rate": 50, "conversion_rate": 20},
+            "all": {"response_rate": 10, "qualification_rate": 50, "conversion_rate": 20}
+        }
+
+        target_set = targets.get(dashboard["business_id"], targets["all"])
+
+        def status_icon(actual, target):
+            if actual >= target:
+                return "✅"
+            elif actual >= target * 0.8:
+                return "⚠️"
+            else:
+                return "❌"
+
+        lines.append(f"{'Total Messages Sent':<30} {metrics['total_sent']:>15,} {'-':>15} {'-':>10}")
+        lines.append(f"{'Delivery Rate':<30} {metrics['delivery_rate']:>14.1f}% {'>95%':>15} {status_icon(metrics['delivery_rate'], 95):>10}")
+        lines.append(f"{'Response Rate':<30} {metrics['response_rate']:>14.1f}% {target_set['response_rate']:>14.0f}% {status_icon(metrics['response_rate'], target_set['response_rate']):>10}")
+        lines.append(f"{'Qualification Rate':<30} {metrics['qualification_rate']:>14.1f}% {target_set['qualification_rate']:>14.0f}% {status_icon(metrics['qualification_rate'], target_set['qualification_rate']):>10}")
+        lines.append(f"{'Conversion Rate':<30} {metrics['conversion_rate']:>14.1f}% {target_set['conversion_rate']:>14.0f}% {status_icon(metrics['conversion_rate'], target_set['conversion_rate']):>10}")
+        lines.append(f"{'Opt-out Rate':<30} {metrics['opt_out_rate']:>14.1f}% {'<2%':>15} {status_icon(2 - metrics['opt_out_rate'], 0):>10}")
+        lines.append(f"{'Median Time to Response':<30} {metrics['median_time_to_response_hours']:>13.1f}h {'-':>15} {'-':>10}")
+
+        # Breakdown
+        breakdown = dashboard["breakdown"]
+        lines.append("\n## RESPONSE BREAKDOWN")
+        lines.append(f"  Hot Leads:  {breakdown['hot_leads']:>3}")
+        lines.append(f"  Warm Leads: {breakdown['warm_leads']:>3}")
+        lines.append(f"  Cold Leads: {breakdown['cold_leads']:>3}")
+        lines.append(f"  Opt-outs:   {breakdown['opt_outs']:>3}")
+
+        # Funnel
+        funnel = dashboard["funnel"]
+        lines.append("\n## CONVERSION FUNNEL")
+        max_width = 50
+        if funnel["contacted"] > 0:
+            for stage, count in [
+                ("Contacted", funnel["contacted"]),
+                ("Responded", funnel["responded"]),
+                ("Qualified", funnel["qualified"]),
+                ("Converted", funnel["converted"])
+            ]:
+                pct = (count / funnel["contacted"]) * 100
+                bar_width = int((count / funnel["contacted"]) * max_width)
+                bar = "█" * bar_width + "░" * (max_width - bar_width)
+                lines.append(f"{stage:<12} {bar} {count:>4} ({pct:>5.1f}%)")
+
+        # Top templates
+        lines.append("\n## TOP 3 TEMPLATES")
+        lines.append(f"{'Template':<35} {'Sent':>6} {'Resp':>6} {'Rate':>8}")
+        lines.append("-" * 60)
+        for template_data in dashboard["top_templates"]:
+            lines.append(f"{template_data['template'][:35]:<35} "
+                        f"{template_data['sent']:>6} "
+                        f"{template_data['responses']:>6} "
+                        f"{template_data['rate']:>7.1f}%")
+
+        # Business comparison (if showing all)
+        if dashboard["business_comparison"]:
+            lines.append("\n## BUSINESS COMPARISON")
+            lines.append(f"{'Business':<25} {'Sent':>8} {'Resp':>8} {'Rate':>8} {'Hot':>5} {'Warm':>5}")
+            lines.append("-" * 70)
+            for biz_id, biz_data in dashboard["business_comparison"].items():
+                lines.append(f"{biz_id:<25} "
+                           f"{biz_data['sent']:>8} "
+                           f"{biz_data['responses']:>8} "
+                           f"{biz_data['response_rate']:>7.1f}% "
+                           f"{biz_data['hot_leads']:>5} "
+                           f"{biz_data['warm_leads']:>5}")
+
+        # Trends
+        lines.append("\n## RESPONSE RATE TRENDS")
+        lines.append(f"{'Week':<12} {'Sent':>6} {'Resp':>6} {'Rate':>8}")
+        lines.append("-" * 40)
+        for week, week_data in list(dashboard["trends"]["by_week"].items())[-4:]:  # Last 4 weeks
+            lines.append(f"{week:<12} "
+                        f"{week_data['sent']:>6} "
+                        f"{week_data['responses']:>6} "
+                        f"{week_data['rate']:>7.1f}%")
+
+        lines.append("\n" + "=" * 80)
+
+        return "\n".join(lines)
+
+    def get_attribution_analysis(self, business_id: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Analyze which touch points drive responses (multi-touch attribution).
+
+        Args:
+            business_id: Filter by business
+
+        Returns:
+            Dict with attribution data
+        """
+        # Filter leads
+        filtered_leads = self.leads.values()
+        if business_id:
+            filtered_leads = [l for l in self.leads.values() if l.sending_business_id == business_id]
+
+        # Only include leads that responded
+        responded_leads = [l for l in filtered_leads if l.has_responded and l.converting_touch_number > 0]
+
+        if not responded_leads:
+            return {
+                "total_responses": 0,
+                "by_touch": {},
+                "recommendations": []
+            }
+
+        # Count responses by touch number
+        responses_by_touch = defaultdict(int)
+        for lead in responded_leads:
+            touch_num = lead.converting_touch_number
+            responses_by_touch[touch_num] += 1
+
+        total_responses = len(responded_leads)
+
+        # Calculate percentages
+        touch_distribution = {}
+        for touch_num, count in responses_by_touch.items():
+            pct = (count / total_responses) * 100
+            touch_distribution[touch_num] = {
+                "count": count,
+                "percentage": round(pct, 1)
+            }
+
+        # Find most effective touch
+        most_effective = max(responses_by_touch.items(), key=lambda x: x[1])
+        most_effective_touch = most_effective[0]
+        most_effective_pct = (most_effective[1] / total_responses) * 100
+
+        # Generate recommendations
+        recommendations = []
+
+        # Recommendation 1: Optimize most effective touch
+        if most_effective_pct > 25:
+            recommendations.append({
+                "priority": "high",
+                "insight": f"Touch #{most_effective_touch} drives {most_effective_pct:.0f}% of all responses",
+                "action": f"Prioritize optimizing the Touch #{most_effective_touch} message template for maximum impact"
+            })
+
+        # Recommendation 2: Drop-off analysis
+        max_touch = max(responses_by_touch.keys())
+        if max_touch >= 3:
+            late_responses = sum(count for touch, count in responses_by_touch.items() if touch >= 3)
+            late_pct = (late_responses / total_responses) * 100
+            if late_pct > 20:
+                recommendations.append({
+                    "priority": "medium",
+                    "insight": f"{late_pct:.0f}% of responses come from touch 3+",
+                    "action": "Don't give up early - persistence pays off"
+                })
+
+        # Recommendation 3: Touch 1 performance
+        touch_1_pct = touch_distribution.get(1, {}).get("percentage", 0)
+        if touch_1_pct < 20:
+            recommendations.append({
+                "priority": "high",
+                "insight": f"Only {touch_1_pct:.0f}% respond to initial message",
+                "action": "Test more compelling intro templates to increase Touch 1 conversion"
+            })
+
+        # Calculate average touch to conversion
+        avg_touch = sum(lead.converting_touch_number for lead in responded_leads) / len(responded_leads)
+
+        return {
+            "business_id": business_id or "all",
+            "total_responses": total_responses,
+            "by_touch": dict(sorted(touch_distribution.items())),
+            "most_effective_touch": most_effective_touch,
+            "most_effective_percentage": round(most_effective_pct, 1),
+            "average_touch_to_conversion": round(avg_touch, 1),
+            "max_touches_needed": max_touch,
+            "recommendations": recommendations
+        }
+
+    def print_attribution(self, business_id: Optional[str] = None) -> str:
+        """Generate formatted attribution report."""
+        data = self.get_attribution_analysis(business_id)
+
+        lines = []
+        lines.append("=" * 80)
+        lines.append("MULTI-TOUCH ATTRIBUTION ANALYSIS")
+        lines.append(f"Business: {data['business_id'].upper()}")
+        lines.append("=" * 80)
+
+        if data["total_responses"] == 0:
+            lines.append("\nNo response data available yet.")
+            return "\n".join(lines)
+
+        lines.append(f"\nTotal Responses: {data['total_responses']}")
+        lines.append(f"Average Touch to Conversion: {data['average_touch_to_conversion']:.1f}")
+        lines.append(f"Max Touches Before Conversion: {data['max_touches_needed']}")
+
+        lines.append("\n## RESPONSES BY TOUCH NUMBER")
+        lines.append(f"{'Touch #':<10} {'Count':>8} {'Percentage':>12} {'Bar':<40}")
+        lines.append("-" * 75)
+
+        max_width = 40
+        for touch_num, touch_data in data["by_touch"].items():
+            count = touch_data["count"]
+            pct = touch_data["percentage"]
+            bar_width = int((pct / 100) * max_width)
+            bar = "█" * bar_width + "░" * (max_width - bar_width)
+
+            icon = "🏆" if touch_num == data["most_effective_touch"] else "  "
+            lines.append(f"{icon} Touch #{touch_num:<6} {count:>8} {pct:>11.1f}% {bar}")
+
+        lines.append(f"\n🏆 MOST EFFECTIVE: Touch #{data['most_effective_touch']} "
+                    f"({data['most_effective_percentage']:.0f}% of all responses)")
+
+        # Drop-off insights
+        lines.append("\n## DROP-OFF INSIGHTS")
+
+        # Touch 1 vs later touches
+        touch_1_pct = data["by_touch"].get(1, {}).get("percentage", 0)
+        later_pct = 100 - touch_1_pct
+
+        lines.append(f"  Initial touch (Touch 1):     {touch_1_pct:.1f}%")
+        lines.append(f"  Follow-up touches (2+):      {later_pct:.1f}%")
+
+        if later_pct > 50:
+            lines.append(f"\n  💡 Insight: {later_pct:.0f}% of responses require follow-up")
+            lines.append(f"     Multi-touch sequences are CRITICAL to success")
+
+        # Recommendations
+        if data["recommendations"]:
+            lines.append("\n## OPTIMIZATION RECOMMENDATIONS")
+            for i, rec in enumerate(data["recommendations"], 1):
+                priority_icon = "🔴" if rec["priority"] == "high" else "🟡"
+                lines.append(f"\n{i}. {priority_icon} {rec['insight']}")
+                lines.append(f"   → ACTION: {rec['action']}")
+
+        lines.append("\n" + "=" * 80)
+
+        return "\n".join(lines)
+
+    def calculate_template_score(self, template_name: str, business_id: Optional[str] = None) -> TemplateScore:
+        """
+        Calculate composite performance score for a template.
+
+        Scoring formula:
+        - Response rate: 40% weight
+        - Qualification rate (hot+warm/responses): 30% weight
+        - Conversion rate (converted/qualified): 20% weight
+        - Opt-out rate: 5% weight (penalty - lower is better)
+        - Delivery rate: 5% weight
+
+        Returns score 0-100.
+        """
+        # Get template metrics
+        template_metrics = None
+        for lead in self.leads.values():
+            if business_id and lead.sending_business_id != business_id:
+                continue
+
+            for touch in lead.touches:
+                if touch.template == template_name:
+                    # Found this template - aggregate metrics
+                    if template_metrics is None:
+                        template_metrics = {
+                            "sent": 0,
+                            "delivered": 0,
+                            "responses": 0,
+                            "hot": 0,
+                            "warm": 0,
+                            "opt_outs": 0,
+                            "qualified": 0,
+                            "converted": 0
+                        }
+
+                    template_metrics["sent"] += 1
+                    if touch.status == "delivered":
+                        template_metrics["delivered"] += 1
+                    if touch.response_received:
+                        template_metrics["responses"] += 1
+                        if touch.response_category == "hot_lead":
+                            template_metrics["hot"] += 1
+                            template_metrics["qualified"] += 1
+                        elif touch.response_category == "warm_lead":
+                            template_metrics["warm"] += 1
+                            template_metrics["qualified"] += 1
+                        elif touch.response_category == "opt_out":
+                            template_metrics["opt_outs"] += 1
+
+                    # Check if lead converted
+                    if lead.funnel_stage in ["meeting", "converted"]:
+                        template_metrics["converted"] += 1
+
+        if template_metrics is None or template_metrics["sent"] == 0:
+            return TemplateScore(template_name=template_name, recommendation="Insufficient data")
+
+        # Calculate raw rates
+        delivery_rate = template_metrics["delivered"] / template_metrics["sent"] if template_metrics["sent"] > 0 else 0
+        response_rate = template_metrics["responses"] / template_metrics["sent"] if template_metrics["sent"] > 0 else 0
+        qualification_rate = (template_metrics["hot"] + template_metrics["warm"]) / template_metrics["responses"] if template_metrics["responses"] > 0 else 0
+        conversion_rate = template_metrics["converted"] / template_metrics["qualified"] if template_metrics["qualified"] > 0 else 0
+        opt_out_rate = template_metrics["opt_outs"] / template_metrics["responses"] if template_metrics["responses"] > 0 else 0
+
+        # Normalize to 0-100 scales
+        # Response rate: 0% = 0, 15% = 100 (15% is excellent for cold outreach)
+        response_score = min((response_rate / 0.15) * 100, 100)
+
+        # Qualification rate: 0% = 0, 60% = 100 (60% hot/warm is excellent)
+        qualification_score = min((qualification_rate / 0.60) * 100, 100)
+
+        # Conversion rate: 0% = 0, 25% = 100 (25% qualified-to-converted is excellent)
+        conversion_score = min((conversion_rate / 0.25) * 100, 100)
+
+        # Opt-out rate: 0% = 100, 5% = 0 (penalty - lower is better)
+        opt_out_score = max(100 - (opt_out_rate / 0.05) * 100, 0)
+
+        # Delivery rate: 90% = 0, 100% = 100
+        delivery_score = max((delivery_rate - 0.90) / 0.10 * 100, 0)
+
+        # Composite score (weighted average)
+        composite = (
+            response_score * 0.40 +
+            qualification_score * 0.30 +
+            conversion_score * 0.20 +
+            opt_out_score * 0.05 +
+            delivery_score * 0.05
+        )
+
+        # Recommendation based on score and sample size
+        if template_metrics["sent"] < 100:
+            recommendation = "Test more (need 100+ sends)"
+        elif composite >= 75:
+            recommendation = "🏆 Winning template - scale up"
+        elif composite >= 60:
+            recommendation = "✅ Good performer - keep using"
+        elif composite >= 50:
+            recommendation = "⚠️ Acceptable - monitor closely"
+        else:
+            recommendation = "❌ Archive - underperforming"
+
+        return TemplateScore(
+            template_name=template_name,
+            response_rate=response_rate,
+            qualification_rate=qualification_rate,
+            conversion_rate=conversion_rate,
+            opt_out_rate=opt_out_rate,
+            delivery_rate=delivery_rate,
+            response_score=response_score,
+            qualification_score=qualification_score,
+            conversion_score=conversion_score,
+            opt_out_score=opt_out_score,
+            delivery_score=delivery_score,
+            composite_score=composite,
+            total_sent=template_metrics["sent"],
+            total_responses=template_metrics["responses"],
+            recommendation=recommendation
+        )
+
+    def get_all_template_scores(self, business_id: Optional[str] = None, sort_by: str = "score") -> List[TemplateScore]:
+        """Get scores for all templates, sorted by performance."""
+        # Collect all unique templates
+        templates = set()
+        for lead in self.leads.values():
+            if business_id and lead.sending_business_id != business_id:
+                continue
+            for touch in lead.touches:
+                templates.add(touch.template)
+
+        # Score each template
+        scores = []
+        for template in templates:
+            score = self.calculate_template_score(template, business_id)
+            if score.total_sent > 0:  # Only include templates that have been used
+                scores.append(score)
+
+        # Sort
+        if sort_by == "score":
+            scores.sort(key=lambda s: s.composite_score, reverse=True)
+        elif sort_by == "responses":
+            scores.sort(key=lambda s: s.total_responses, reverse=True)
+        elif sort_by == "name":
+            scores.sort(key=lambda s: s.template_name)
+
+        return scores
+
+    def print_template_scores(self, business_id: Optional[str] = None, sort_by: str = "score") -> str:
+        """Generate formatted template leaderboard."""
+        scores = self.get_all_template_scores(business_id, sort_by)
+
+        lines = []
+        lines.append("=" * 100)
+        lines.append("TEMPLATE PERFORMANCE LEADERBOARD")
+        if business_id:
+            lines.append(f"Business: {business_id.upper()}")
+        lines.append("=" * 100)
+
+        if not scores:
+            lines.append("\nNo template data available yet.")
+            return "\n".join(lines)
+
+        lines.append(f"\n{'Rank':<6} {'Template':<35} {'Score':>7} {'Sent':>7} {'Resp':>7} {'Qual':>7} {'Conv':>7} {'Recommendation':<25}")
+        lines.append("-" * 100)
+
+        for rank, score in enumerate(scores, 1):
+            medal = "🥇" if rank == 1 else "🥈" if rank == 2 else "🥉" if rank == 3 else "  "
+
+            lines.append(
+                f"{medal} {rank:<4} {score.template_name:<35} "
+                f"{score.composite_score:>6.1f} "
+                f"{score.total_sent:>7} "
+                f"{score.response_rate * 100:>6.1f}% "
+                f"{score.qualification_rate * 100:>6.1f}% "
+                f"{score.conversion_rate * 100:>6.1f}% "
+                f"{score.recommendation}"
+            )
+
+        lines.append("\n## SCORING FORMULA")
+        lines.append("  Response Rate:      40% weight (target: 12-15%)")
+        lines.append("  Qualification Rate: 30% weight (target: 50-60% hot/warm)")
+        lines.append("  Conversion Rate:    20% weight (target: 20-25% qualified→converted)")
+        lines.append("  Opt-out Rate:        5% weight (penalty - target: <2%)")
+        lines.append("  Delivery Rate:       5% weight (target: >95%)")
+
+        lines.append("\n" + "=" * 100)
+
+        return "\n".join(lines)
+
+    def get_cohort_analysis(self, group_by: str = "category", business_id: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Analyze performance by cohort.
+
+        Args:
+            group_by: Dimension to group by (category, pain_point, scrape_date, location)
+            business_id: Filter by business
+
+        Returns:
+            Dict with cohort performance data
+        """
+        cohorts = defaultdict(lambda: {
+            "total_sent": 0,
+            "total_responses": 0,
+            "hot_leads": 0,
+            "warm_leads": 0,
+            "cold_leads": 0,
+            "converted": 0
+        })
+
+        for lead in self.leads.values():
+            if business_id and lead.sending_business_id != business_id:
+                continue
+
+            # Determine cohort key
+            cohort_key = "unknown"
+
+            if group_by == "category":
+                # Extract category from business_name or tags (simplified)
+                business_lower = lead.business_name.lower()
+                if "gym" in business_lower or "fitness" in business_lower:
+                    cohort_key = "gym"
+                elif "salon" in business_lower or "spa" in business_lower or "beauty" in business_lower:
+                    cohort_key = "salon"
+                elif "restaurant" in business_lower or "cafe" in business_lower or "food" in business_lower:
+                    cohort_key = "restaurant"
+                elif "retail" in business_lower or "store" in business_lower:
+                    cohort_key = "retail"
+                elif "ecommerce" in business_lower or "online" in business_lower:
+                    cohort_key = "ecommerce"
+
+            elif group_by == "pain_point":
+                # Get from campaign (would need to track this - simplified)
+                cohort_key = "no_website"  # Placeholder
+
+            elif group_by == "scrape_date":
+                # Group by week
+                if lead.first_contact_date:
+                    try:
+                        date_obj = datetime.fromisoformat(lead.first_contact_date.replace("Z", "+00:00"))
+                        week_start = date_obj - timedelta(days=date_obj.weekday())
+                        cohort_key = week_start.strftime("%Y-%m-%d")
+                    except:
+                        cohort_key = "unknown"
+
+            elif group_by == "location":
+                # Extract from business_name (simplified)
+                business_lower = lead.business_name.lower()
+                if "naples" in business_lower:
+                    cohort_key = "naples"
+                elif "fort myers" in business_lower or "ft myers" in business_lower:
+                    cohort_key = "fort_myers"
+                elif "bonita" in business_lower:
+                    cohort_key = "bonita_springs"
+
+            # Increment cohort metrics
+            if lead.total_touches > 0:
+                cohorts[cohort_key]["total_sent"] += 1
+
+            if lead.has_responded:
+                cohorts[cohort_key]["total_responses"] += 1
+
+                if lead.response_category == "hot_lead":
+                    cohorts[cohort_key]["hot_leads"] += 1
+                elif lead.response_category == "warm_lead":
+                    cohorts[cohort_key]["warm_leads"] += 1
+                else:
+                    cohorts[cohort_key]["cold_leads"] += 1
+
+            if lead.funnel_stage in ["meeting", "converted"]:
+                cohorts[cohort_key]["converted"] += 1
+
+        # Calculate rates
+        cohort_results = {}
+        for cohort, metrics in cohorts.items():
+            response_rate = metrics["total_responses"] / metrics["total_sent"] if metrics["total_sent"] > 0 else 0
+            qualification_rate = (metrics["hot_leads"] + metrics["warm_leads"]) / metrics["total_responses"] if metrics["total_responses"] > 0 else 0
+            conversion_rate = metrics["converted"] / metrics["total_sent"] if metrics["total_sent"] > 0 else 0
+
+            cohort_results[cohort] = {
+                **metrics,
+                "response_rate": response_rate,
+                "qualification_rate": qualification_rate,
+                "conversion_rate": conversion_rate
+            }
+
+        # Sort by response rate
+        sorted_cohorts = sorted(
+            cohort_results.items(),
+            key=lambda x: x[1]["response_rate"],
+            reverse=True
+        )
+
+        return {
+            "group_by": group_by,
+            "business_id": business_id or "all",
+            "cohorts": dict(sorted_cohorts),
+            "best_cohort": sorted_cohorts[0][0] if sorted_cohorts else None,
+            "best_response_rate": sorted_cohorts[0][1]["response_rate"] if sorted_cohorts else 0
+        }
+
+    def print_cohort_analysis(self, group_by: str = "category", business_id: Optional[str] = None) -> str:
+        """Generate formatted cohort analysis report."""
+        data = self.get_cohort_analysis(group_by, business_id)
+
+        lines = []
+        lines.append("=" * 90)
+        lines.append(f"COHORT ANALYSIS: {group_by.upper().replace('_', ' ')}")
+        if business_id:
+            lines.append(f"Business: {business_id.upper()}")
+        lines.append("=" * 90)
+
+        if not data["cohorts"]:
+            lines.append("\nNo cohort data available yet.")
+            return "\n".join(lines)
+
+        lines.append(f"\n{'Cohort':<20} {'Sent':>8} {'Resp':>8} {'Rate':>8} {'Qual':>8} {'Conv':>8} {'Performance':<20}")
+        lines.append("-" * 90)
+
+        for rank, (cohort, metrics) in enumerate(data["cohorts"].items(), 1):
+            icon = "🏆" if cohort == data["best_cohort"] else "  "
+
+            perf = ""
+            if metrics["response_rate"] >= 0.12:
+                perf = "🟢 Excellent"
+            elif metrics["response_rate"] >= 0.08:
+                perf = "🟡 Good"
+            elif metrics["response_rate"] >= 0.05:
+                perf = "🟠 Fair"
+            else:
+                perf = "🔴 Poor"
+
+            lines.append(
+                f"{icon} {cohort:<18} "
+                f"{metrics['total_sent']:>8} "
+                f"{metrics['total_responses']:>8} "
+                f"{metrics['response_rate'] * 100:>7.1f}% "
+                f"{metrics['qualification_rate'] * 100:>7.1f}% "
+                f"{metrics['conversion_rate'] * 100:>7.1f}% "
+                f"{perf}"
+            )
+
+        lines.append(f"\n🏆 BEST PERFORMING COHORT: {data['best_cohort']} ({data['best_response_rate'] * 100:.1f}% response rate)")
+
+        # Recommendations
+        lines.append("\n## OPTIMIZATION RECOMMENDATIONS")
+        best_3 = list(data["cohorts"].items())[:3]
+        if len(best_3) >= 2:
+            top_cohort = best_3[0][0]
+            top_rate = best_3[0][1]["response_rate"]
+            bottom_rate = list(data["cohorts"].values())[-1]["response_rate"]
+
+            if top_rate > bottom_rate * 1.5:
+                lines.append(f"  1. 🔥 PRIORITIZE: Focus 60-70% of outreach on '{top_cohort}' cohort")
+                lines.append(f"     → {top_rate * 100:.0f}% response rate vs {bottom_rate * 100:.0f}% for worst cohort")
+
+            if len(best_3) >= 3:
+                top_3_cohorts = ", ".join([c[0] for c in best_3])
+                lines.append(f"  2. 📊 ALLOCATE: Target top 3 cohorts: {top_3_cohorts}")
+
+        lines.append("\n" + "=" * 90)
+
+        return "\n".join(lines)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Campaign Analytics Engine")
@@ -843,6 +1643,27 @@ def main():
     # Export command
     export_parser = subparsers.add_parser("export", help="Export data")
     export_parser.add_argument("--format", choices=["csv", "json"], default="json")
+    export_parser.add_argument("--business", help="Filter by business ID")
+
+    # Dashboard command
+    dashboard_parser = subparsers.add_parser("dashboard", help="Campaign performance dashboard")
+    dashboard_parser.add_argument("--business", help="Filter by business ID (marceau-solutions, swflorida-hvac, shipping-logistics)")
+    dashboard_parser.add_argument("--days", type=int, default=30, help="Time window for trends (7, 30, or 90 days)")
+    dashboard_parser.add_argument("--export", choices=["csv", "json"], help="Export dashboard data")
+
+    # Attribution command
+    attribution_parser = subparsers.add_parser("attribution", help="Multi-touch attribution analysis")
+    attribution_parser.add_argument("--business", help="Filter by business ID")
+
+    # Template scoring command
+    scoring_parser = subparsers.add_parser("template-scores", help="Template performance scoring (0-100)")
+    scoring_parser.add_argument("--business", help="Filter by business ID")
+    scoring_parser.add_argument("--sort-by", choices=["score", "responses", "name"], default="score", help="Sort templates by")
+
+    # Cohort analysis command
+    cohort_parser = subparsers.add_parser("cohorts", help="Cohort analysis (group by category, pain_point, date, location)")
+    cohort_parser.add_argument("--group-by", choices=["category", "pain_point", "scrape_date", "location"], default="category", help="Dimension to group by")
+    cohort_parser.add_argument("--business", help="Filter by business ID")
 
     args = parser.parse_args()
 
@@ -874,9 +1695,40 @@ def main():
     elif args.command == "convert":
         analytics.record_conversion(args.lead_id, args.value)
 
+    elif args.command == "dashboard":
+        if args.export:
+            dashboard_data = analytics.get_dashboard(business_id=args.business, days=args.days)
+            if args.export == "json":
+                print(json.dumps(dashboard_data, indent=2))
+            else:
+                # CSV export
+                import csv
+                import sys
+                writer = csv.writer(sys.stdout)
+                writer.writerow(["Metric", "Value"])
+                for key, value in dashboard_data["summary_metrics"].items():
+                    writer.writerow([key, value])
+        else:
+            print(analytics.print_dashboard(business_id=args.business, days=args.days))
+
+    elif args.command == "attribution":
+        print(analytics.print_attribution(business_id=args.business))
+
+    elif args.command == "template-scores":
+        print(analytics.print_template_scores(business_id=args.business, sort_by=args.sort_by))
+
+    elif args.command == "cohorts":
+        print(analytics.print_cohort_analysis(group_by=args.group_by, business_id=args.business))
+
     elif args.command == "export":
+        business_filter = getattr(args, 'business', None)
         if args.format == "json":
-            print(json.dumps(analytics._generate_summary(), indent=2))
+            if business_filter:
+                filtered_leads = [l for l in analytics.leads.values() if l.sending_business_id == business_filter]
+                summary = analytics._generate_summary(filtered_leads=filtered_leads)
+            else:
+                summary = analytics._generate_summary()
+            print(json.dumps(summary, indent=2))
         else:
             print("CSV export not yet implemented")
 
