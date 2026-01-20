@@ -37,7 +37,7 @@ load_dotenv()
 # Import our modules
 from src.campaign_analytics import CampaignAnalytics
 from src.campaign_optimizer import CampaignOptimizer
-from src.ab_testing import ABTestManager
+from src.ab_testing import ABTestingFramework
 
 
 class WeeklyReportGenerator:
@@ -47,7 +47,7 @@ class WeeklyReportGenerator:
         self.output_dir = Path(output_dir)
         self.analytics = CampaignAnalytics(output_dir)
         self.optimizer = CampaignOptimizer(output_dir)
-        self.ab_manager = ABTestManager(output_dir)
+        self.ab_manager = ABTestingFramework(output_dir)
 
         # Email config from environment
         self.smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")

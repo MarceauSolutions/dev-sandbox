@@ -26,7 +26,7 @@ from dataclasses import dataclass, asdict
 
 # Import our analytics modules
 from src.campaign_analytics import CampaignAnalytics
-from src.ab_testing import ABTestManager
+from src.ab_testing import ABTestingFramework
 
 
 @dataclass
@@ -46,7 +46,7 @@ class CampaignOptimizer:
     def __init__(self, output_dir: str = "output"):
         self.output_dir = Path(output_dir)
         self.analytics = CampaignAnalytics(output_dir)
-        self.ab_manager = ABTestManager(output_dir)
+        self.ab_manager = ABTestingFramework(output_dir)
 
     def get_recommendations(self, business_id: Optional[str] = None) -> List[Recommendation]:
         """
