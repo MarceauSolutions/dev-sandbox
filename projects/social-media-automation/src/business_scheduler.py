@@ -83,7 +83,7 @@ class BusinessPostingScheduler:
         try:
             # Import Grok generator from shared utilities
             import sys
-            sys.path.insert(0, str(PROJECT_ROOT.parent / "execution"))
+            sys.path.insert(0, str(PROJECT_ROOT.parent.parent / "execution"))
             from grok_image_gen import GrokImageGenerator
 
             grok = GrokImageGenerator()
