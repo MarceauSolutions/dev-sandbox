@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
 """
-Multi-Touch Follow-Up Sequence - Hormozi Framework Implementation.
+Multi-Touch Follow-Up Sequence - Conservative 3-Touch Approach (No False Social Proof)
 
-Implements the "Rule of 100" with 5-7 touchpoints per lead:
-- Day 0: Initial outreach
-- Day 2: Quick follow-up
-- Day 5: Value-add follow-up
-- Day 10: Alternative offer
-- Day 15: Breakup message
-- Day 30: Re-engagement
-- Day 60: Final attempt
+CRITICAL SAFEGUARDS AGAINST SPAM:
+1. Auto-stop on response (mark_response())
+2. Auto-stop on opt-out (mark_response(..., "opted_out"))
+3. Max 3 touches total (vs 7-touch Hormozi)
+4. 3-5 day delays between touches
+5. Different message angles (no repetition)
 
-Research shows:
-- 80% of sales require 5+ follow-ups
-- Most salespeople give up after 1-2
-- The fortune is in the follow-up
+3-Touch Sequence:
+- Day 0: Initial outreach (pain point angle)
+- Day 3: Follow-up #1 (question/curiosity - makes them think)
+- Day 7: Follow-up #2 (scarcity/breakup - final chance)
+
+Key Changes from Original:
+- NO fake social proof ("Just helped 3 Naples gyms...")
+- Use question hooks instead ("How many customers do you lose...")
+- Use scarcity/breakup for final touch
+- All templates TCPA compliant
 
 Usage:
     python -m src.follow_up_sequence status
     python -m src.follow_up_sequence process --dry-run
     python -m src.follow_up_sequence process --for-real
-    python -m src.follow_up_sequence queue --days 3
+    python -m src.follow_up_sequence queue --days 7
 """
 
 import os
@@ -110,93 +114,80 @@ class LeadSequence:
 
 
 # =============================================================================
-# FOLLOW-UP SEQUENCE TEMPLATES (Hormozi Framework)
+# FOLLOW-UP SEQUENCE TEMPLATES (Conservative 3-Touch, No Fake Social Proof)
 # =============================================================================
-# 5-7 touches over 60 days, each with distinct messaging angle
+# CRITICAL: Only 3 touches over 7 days to avoid appearing spammy
+# NO fake social proof - only honest value propositions
 
 FOLLOW_UP_SEQUENCE = [
     # Touch 1: Initial outreach (Day 0) - Uses template from pain point
     {
         "touch_number": 1,
         "days_after_initial": 0,
-        "template": "auto_select",  # Based on pain points
+        "template": "auto_select",  # Based on pain points (no_website_v2_compliant, etc.)
         "strategy": "Initial value proposition",
-        "notes": "First contact - direct value offer"
+        "notes": "First contact - direct value offer (already sent, enrolled into sequence)"
     },
 
-    # Touch 2: Quick Follow-up (Day 2) - "9-word email" SMS version
+    # Touch 2: Follow-up (Day 3) - Question hook (NO social proof)
     {
         "touch_number": 2,
-        "days_after_initial": 2,
-        "template": "still_looking",
-        "strategy": "Quick check-in, no pitch",
-        "notes": "Short, curiosity-based"
+        "days_after_initial": 3,
+        "template": "followup_question",  # Pain-point specific question templates
+        "strategy": "Question hook - makes them think about the problem",
+        "notes": "Different angle from initial - curiosity-based, not salesy"
     },
 
-    # Touch 3: Value Add (Day 5) - Social proof
+    # Touch 3: Breakup (Day 7) - Scarcity + final chance
     {
         "touch_number": 3,
-        "days_after_initial": 5,
-        "template": "social_proof",
-        "strategy": "Share results from similar business",
-        "notes": "Build credibility with proof"
-    },
-
-    # Touch 4: Alternative Angle (Day 10) - Different offer
-    {
-        "touch_number": 4,
-        "days_after_initial": 10,
-        "template": "competitor_hook",
-        "strategy": "Create FOMO with competitor story",
-        "notes": "Shift from direct offer to competitor angle"
-    },
-
-    # Touch 5: Direct Question (Day 15) - Re-engage
-    {
-        "touch_number": 5,
-        "days_after_initial": 15,
-        "template": "direct_question",
-        "strategy": "Ask if they have someone handling this",
-        "notes": "Opens dialogue vs selling"
-    },
-
-    # Touch 6: Breakup Message (Day 30) - Creates urgency
-    {
-        "touch_number": 6,
-        "days_after_initial": 30,
-        "template": "breakup",  # Custom template below
-        "strategy": "Last chance framing",
-        "notes": "Breakup creates urgency, high conversion"
-    },
-
-    # Touch 7: Re-engagement (Day 60) - Final attempt
-    {
-        "touch_number": 7,
-        "days_after_initial": 60,
-        "template": "re_engage",  # Custom template below
-        "strategy": "Fresh start positioning",
-        "notes": "Position as checking back in"
+        "days_after_initial": 7,
+        "template": "followup_breakup",  # Pain-point specific breakup templates
+        "strategy": "Scarcity/breakup - last message",
+        "notes": "Creates urgency with time-limited availability, then exit sequence"
     },
 ]
 
-# Additional templates for follow-up sequence
+# Additional templates for follow-up sequence (NO FAKE SOCIAL PROOF)
+# These are pain-point-specific and use honest value propositions only
 FOLLOW_UP_TEMPLATES = {
-    "breakup": {
-        "body": "Hey, closing out my list of Naples gyms for website help. Last chance if you're interested. -William. Reply STOP to opt out.",
-        "char_count": 119,
-        "notes": "Breakup message creates urgency"
+    # NO_WEBSITE follow-ups
+    "no_website_followup_question": {
+        "body": "Hi $business_name - William from Marceau Solutions again. Quick question: how many customers do you lose each week because you don't show up on Google? (239) 398-5676 - Reply STOP to opt out.",
+        "char_count": 190,
+        "notes": "Question hook - makes them think about the problem"
     },
 
-    "re_engage": {
-        "body": "Hey $business_name, wanted to check back in. Still looking for help with your online presence? -William. Reply STOP to opt out.",
-        "char_count": 124,
-        "notes": "Re-engagement after cool-off period"
+    "no_website_followup_breakup": {
+        "body": "Last message - William from Marceau Solutions. Only taking 2 more website projects this month. If interested, text YES or call (239) 398-5676. Otherwise I'll remove you. Reply STOP to opt out.",
+        "char_count": 202,
+        "notes": "Scarcity + breakup language"
     },
 
-    "value_drop": {
-        "body": "Hi, found 3 things that could help $business_name get more members. Free to share if interested. -William. Reply STOP to opt out.",
-        "char_count": 128,
-        "notes": "Lead with value, not pitch"
+    # NO_ONLINE_TRANSACTIONS follow-ups
+    "no_online_transactions_followup_question": {
+        "body": "Hi $business_name - William again. Quick question: how many appointments do you lose because people can't book online 24/7? (239) 398-5676 - Reply STOP to opt out.",
+        "char_count": 172,
+        "notes": "Question hook for booking pain"
+    },
+
+    "no_online_transactions_followup_breakup": {
+        "body": "Last text - William from Marceau Solutions. Only setting up 2 more online booking systems this month. Interested? Text YES or call (239) 398-5676. Reply STOP to opt out.",
+        "char_count": 183,
+        "notes": "Scarcity for booking systems"
+    },
+
+    # FEW_REVIEWS follow-ups
+    "few_reviews_followup_question": {
+        "body": "Hi $business_name - William here. Quick question: how many customers check your reviews before deciding to call? (239) 398-5676 - Reply STOP to opt out.",
+        "char_count": 161,
+        "notes": "Question hook for review importance"
+    },
+
+    "few_reviews_followup_breakup": {
+        "body": "Final message - William from Marceau Solutions. Only helping 2 more businesses boost reviews this month. Want details? Text YES or call (239) 398-5676. Reply STOP to opt out.",
+        "char_count": 185,
+        "notes": "Scarcity for review help"
     },
 }
 
@@ -269,13 +260,24 @@ class FollowUpSequenceManager:
 
         # Build touchpoint schedule
         touchpoints = []
+
+        # Determine lead's primary pain point for template selection
+        primary_pain_point = lead.pain_points[0] if lead.pain_points else "no_website"
+
         for touch_config in FOLLOW_UP_SEQUENCE:
             scheduled_date = now + timedelta(days=touch_config["days_after_initial"])
 
-            # Auto-select template for first touch based on pain points
+            # Select template based on touch number and pain point
             template = touch_config["template"]
             if template == "auto_select":
+                # Touch 1: Use initial pain-point template
                 template = self.sms_manager.select_template_for_lead(lead)
+            elif template == "followup_question":
+                # Touch 2: Question template for this pain point
+                template = f"{primary_pain_point}_followup_question"
+            elif template == "followup_breakup":
+                # Touch 3: Breakup template for this pain point
+                template = f"{primary_pain_point}_followup_breakup"
 
             touchpoint = {
                 "touch_number": touch_config["touch_number"],
