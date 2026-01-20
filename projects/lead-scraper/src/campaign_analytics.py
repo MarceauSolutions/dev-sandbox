@@ -67,6 +67,7 @@ class LeadRecord:
     business_name: str
     phone: str
     campaign_id: str = ""
+    sending_business_id: str = ""  # NEW: Which business sent this campaign (marceau-solutions, swflorida-hvac, shipping-logistics)
 
     # Funnel tracking
     funnel_stage: str = "contacted"  # contacted, responded, qualified, meeting, converted
@@ -236,16 +237,24 @@ class CampaignAnalytics:
         with open(self.analytics_file, "w") as f:
             json.dump(analytics_data, f, indent=2)
 
-    def _generate_summary(self) -> Dict[str, Any]:
-        """Generate overall summary metrics."""
-        total_sent = sum(c.total_messages_sent for c in self.campaigns.values())
-        total_responses = sum(c.funnel_responded for c in self.campaigns.values())
-        total_converted = sum(c.funnel_converted for c in self.campaigns.values())
-        total_revenue = sum(c.total_revenue for c in self.campaigns.values())
+    def _generate_summary(self, filtered_leads: Optional[List[LeadRecord]] = None) -> Dict[str, Any]:
+        """
+        Generate overall summary metrics.
+
+        Args:
+            filtered_leads: Optional list of leads to include (filters by business_id)
+        """
+        leads_to_use = filtered_leads if filtered_leads is not None else list(self.leads.values())
+
+        # Calculate metrics from filtered leads
+        total_sent = sum(len(lead.touches) for lead in leads_to_use)
+        total_responses = sum(1 for lead in leads_to_use if lead.has_responded)
+        total_converted = sum(1 for lead in leads_to_use if lead.funnel_stage == "converted")
+        total_revenue = sum(lead.conversion_value for lead in leads_to_use)
 
         return {
             "total_campaigns": len(self.campaigns),
-            "total_leads": len(self.leads),
+            "total_leads": len(leads_to_use),
             "total_messages_sent": total_sent,
             "total_responses": total_responses,
             "overall_response_rate": (total_responses / total_sent * 100) if total_sent > 0 else 0,
@@ -302,6 +311,9 @@ class CampaignAnalytics:
             status = record.get("status", "sent")
             message_sid = record.get("message_sid", "")
 
+            # Extract business_id from record
+            sending_business_id = record.get("sending_business_id", "")
+
             # Create or update lead record
             if lead_id not in self.leads:
                 self.leads[lead_id] = LeadRecord(
@@ -309,6 +321,7 @@ class CampaignAnalytics:
                     business_name=business_name,
                     phone=phone,
                     campaign_id=campaign_id,
+                    sending_business_id=sending_business_id,
                     first_contact_date=sent_at[:10] if sent_at else ""
                 )
 
@@ -588,15 +601,28 @@ class CampaignAnalytics:
 
         self._save_data()
 
-    def get_report(self) -> str:
-        """Generate comprehensive analytics report."""
+    def get_report(self, business_id: Optional[str] = None) -> str:
+        """
+        Generate comprehensive analytics report.
+
+        Args:
+            business_id: Filter by business (marceau-solutions, swflorida-hvac, shipping-logistics)
+                        If None, show all businesses with separate sections
+        """
         lines = []
         lines.append("=" * 70)
         lines.append("CAMPAIGN ANALYTICS REPORT")
+        if business_id:
+            lines.append(f"Business Filter: {business_id}")
         lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
         lines.append("=" * 70)
 
-        summary = self._generate_summary()
+        # Filter leads by business_id if specified
+        filtered_leads = self.leads.values()
+        if business_id:
+            filtered_leads = [lead for lead in self.leads.values() if lead.sending_business_id == business_id]
+
+        summary = self._generate_summary(filtered_leads=list(filtered_leads))
 
         lines.append("\n## OVERALL SUMMARY")
         lines.append(f"Total Campaigns: {summary['total_campaigns']}")
@@ -606,6 +632,38 @@ class CampaignAnalytics:
         lines.append(f"Overall Response Rate: {summary['overall_response_rate']:.1f}%")
         lines.append(f"Total Conversions: {summary['total_conversions']}")
         lines.append(f"Total Revenue: ${summary['total_revenue']:,.2f}")
+
+        # If no business filter, show per-business breakdowns
+        if not business_id:
+            # Group leads by business
+            leads_by_business = defaultdict(list)
+            for lead in self.leads.values():
+                biz_id = lead.sending_business_id or "unknown"
+                leads_by_business[biz_id].append(lead)
+
+            if leads_by_business:
+                lines.append("\n## PER-BUSINESS PERFORMANCE")
+                lines.append("-" * 70)
+
+                for biz_id in sorted(leads_by_business.keys()):
+                    biz_leads = leads_by_business[biz_id]
+                    biz_summary = self._generate_summary(filtered_leads=biz_leads)
+
+                    lines.append(f"\n### {biz_id.upper()}")
+                    lines.append(f"Total Contacts: {biz_summary['total_leads']}")
+                    lines.append(f"Messages Sent: {biz_summary['total_messages_sent']}")
+                    lines.append(f"Responses: {biz_summary['total_responses']}")
+                    lines.append(f"Response Rate: {biz_summary['overall_response_rate']:.1f}%")
+
+                    # Hot/Warm/Cold breakdown
+                    hot = sum(1 for lead in biz_leads if lead.response_category == "hot_lead")
+                    warm = sum(1 for lead in biz_leads if lead.response_category == "warm_lead")
+                    cold = sum(1 for lead in biz_leads if lead.response_category == "cold_lead")
+
+                    if hot + warm + cold > 0:
+                        lines.append(f"  Hot Leads: {hot}")
+                        lines.append(f"  Warm Leads: {warm}")
+                        lines.append(f"  Cold Leads: {cold}")
 
         for campaign_id, campaign in self.campaigns.items():
             lines.append(f"\n## CAMPAIGN: {campaign.campaign_name}")
@@ -760,7 +818,8 @@ def main():
     update_parser.add_argument("--campaign-id", help="Campaign ID to assign")
 
     # Report command
-    subparsers.add_parser("report", help="Show comprehensive analytics report")
+    report_parser = subparsers.add_parser("report", help="Show comprehensive analytics report")
+    report_parser.add_argument("--business", help="Filter by business ID (marceau-solutions, swflorida-hvac, shipping-logistics)")
 
     # Templates command
     subparsers.add_parser("templates", help="Show template performance comparison")
@@ -797,7 +856,7 @@ def main():
         analytics.import_from_campaigns(args.campaign_id)
 
     elif args.command == "report":
-        print(analytics.get_report())
+        print(analytics.get_report(business_id=getattr(args, 'business', None)))
 
     elif args.command == "templates":
         print(analytics.get_template_comparison())

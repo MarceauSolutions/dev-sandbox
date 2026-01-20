@@ -49,8 +49,8 @@ BUSINESS_CONFIGS = {
         sms_per_day=10,
         optimal_times=[10, 11, 12, 13, 14],  # 10 AM - 2 PM EST (peak decision-maker availability)
         optimal_days=[1, 2, 3],  # Tue, Wed, Thu only (avoid Mon morning, Fri afternoon, weekends)
-        target_categories=["gym", "restaurant", "medical"],
-        pain_points=["no_website", "low_reviews", "no_google_listing"],
+        target_categories=["gym", "salon", "restaurant"],  # HIGH-RESPONSE VERTICALS: AI automation/website services
+        pain_points=["no_website", "few_reviews", "no_online_transactions"],
         enrich_first=True
     ),
     "swflorida-hvac": OutreachConfig(
@@ -60,8 +60,19 @@ BUSINESS_CONFIGS = {
         sms_per_day=10,
         optimal_times=[10, 11, 12, 13, 14],  # 10 AM - 2 PM EST (consistent timing)
         optimal_days=[1, 2, 3],  # Tue, Wed, Thu only
-        target_categories=["restaurant", "gym", "retail"],
-        pain_points=["no_website", "low_reviews"],
+        target_categories=["restaurant", "gym", "retail", "salon", "spa"],  # Businesses with HVAC needs
+        pain_points=["no_website", "few_reviews"],  # Web presence for HVAC client acquisition
+        enrich_first=True
+    ),
+    "shipping-logistics": OutreachConfig(
+        business_id="shipping-logistics",
+        business_name="Shipping & Logistics Services",
+        emails_per_day=15,
+        sms_per_day=10,
+        optimal_times=[10, 11, 12, 13, 14],  # 10 AM - 2 PM EST
+        optimal_days=[1, 2, 3],  # Tue, Wed, Thu only
+        target_categories=["ecommerce", "retail", "wholesale", "manufacturing"],  # Businesses shipping products
+        pain_points=["no_website", "few_reviews"],  # Web presence for shipping client acquisition
         enrich_first=True
     )
 }

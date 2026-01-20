@@ -71,6 +71,7 @@ class SMSRecord:
     business_name: str
     template_used: str
     message_body: str
+    sending_business_id: str = ""  # NEW: Which business sent this (marceau-solutions, swflorida-hvac, shipping-logistics)
     message_sid: str = ""
     sent_at: str = ""
     status: str = "pending"  # pending, sent, delivered, failed, opted_out
@@ -78,6 +79,60 @@ class SMSRecord:
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+
+# =============================================================================
+# BUSINESS-SPECIFIC TEMPLATE MAPPINGS
+# =============================================================================
+# Each business can only use templates relevant to their services
+# Prevents sending HVAC offers to website leads, or website offers to shipping leads
+
+BUSINESS_TEMPLATE_MAP = {
+    "marceau-solutions": {
+        "allowed_templates": [
+            "no_website_intro",
+            "no_website_v2_compliant",
+            "no_website_followup_question",
+            "no_website_followup_breakup",
+            "few_reviews",
+            "few_reviews_v2_compliant",
+            "few_reviews_followup_question",
+            "few_reviews_followup_breakup",
+            "no_online_transactions",
+            "no_online_transactions_v2_compliant",
+            "no_online_transactions_followup_question",
+            "no_online_transactions_followup_breakup",
+            "competitor_hook",
+            "social_proof",
+            "still_looking"
+        ],
+        "business_name": "Marceau Solutions",
+        "phone": "(239) 398-5676",
+        "services": ["AI automation", "website development", "online booking", "review systems"]
+    },
+    "swflorida-hvac": {
+        "allowed_templates": [
+            "hvac_maintenance",
+            "hvac_energy_savings",
+            "hvac_followup_question",
+            "hvac_followup_breakup"
+        ],
+        "business_name": "SW Florida Comfort HVAC",
+        "phone": "(239) XXX-XXXX",  # TODO: Add real phone
+        "services": ["HVAC maintenance", "AC repair", "energy savings", "commercial HVAC"]
+    },
+    "shipping-logistics": {
+        "allowed_templates": [
+            "shipping_cost_savings",
+            "shipping_fulfillment_speed",
+            "shipping_followup_question",
+            "shipping_followup_breakup"
+        ],
+        "business_name": "Shipping Solutions",
+        "phone": "(239) XXX-XXXX",  # TODO: Add real phone
+        "services": ["shipping cost reduction", "faster fulfillment", "carrier optimization"]
+    }
+}
 
 
 # =============================================================================
@@ -220,7 +275,7 @@ class SMSOutreachManager:
                     # Filter to only known SMSRecord fields to handle any extra fields from sync
                     known_fields = {
                         'lead_id', 'phone', 'business_name', 'template_used',
-                        'message_body', 'message_sid', 'sent_at', 'status', 'error_message'
+                        'message_body', 'sending_business_id', 'message_sid', 'sent_at', 'status', 'error_message'
                     }
                     filtered_record = {k: v for k, v in record.items() if k in known_fields}
                     self.campaigns[record["lead_id"]] = SMSRecord(**filtered_record)
@@ -265,6 +320,30 @@ class SMSOutreachManager:
                 cleaned = '+1' + cleaned
 
         return cleaned
+
+    def validate_template_for_business(self, business_id: str, template_name: str) -> None:
+        """
+        Validate that a template is allowed for a business.
+
+        Args:
+            business_id: Business sending the campaign (marceau-solutions, swflorida-hvac, shipping-logistics)
+            template_name: Template to validate
+
+        Raises:
+            ValueError: If template not allowed for this business
+        """
+        if business_id not in BUSINESS_TEMPLATE_MAP:
+            logger.warning(f"Unknown business_id: {business_id}. Defaulting to marceau-solutions.")
+            business_id = "marceau-solutions"
+
+        allowed_templates = BUSINESS_TEMPLATE_MAP[business_id]["allowed_templates"]
+
+        if template_name not in allowed_templates:
+            business_name = BUSINESS_TEMPLATE_MAP[business_id]["business_name"]
+            raise ValueError(
+                f"Template '{template_name}' is not allowed for {business_name}. "
+                f"Allowed templates: {', '.join(allowed_templates)}"
+            )
 
     def generate_sms(
         self,
@@ -371,7 +450,8 @@ class SMSOutreachManager:
         template_name: Optional[str] = None,
         dry_run: bool = True,
         daily_limit: int = 100,
-        delay_seconds: float = 2.0
+        delay_seconds: float = 2.0,
+        business_id: str = "marceau-solutions"  # NEW: Which business is sending (marceau-solutions, swflorida-hvac, shipping-logistics)
     ) -> Dict[str, Any]:
         """
         Run SMS campaign on a list of leads.
@@ -382,6 +462,7 @@ class SMSOutreachManager:
             dry_run: Preview without sending
             daily_limit: Max messages per run
             delay_seconds: Delay between messages
+            business_id: Which business is sending this campaign
 
         Returns:
             Campaign statistics
@@ -428,6 +509,14 @@ class SMSOutreachManager:
             # Select template
             template = template_name or self.select_template_for_lead(lead)
 
+            # Validate template matches business_id (BUSINESS-SPECIFIC VALIDATION)
+            try:
+                self.validate_template_for_business(business_id, template)
+            except ValueError as e:
+                stats["errors"].append(f"Template validation error for {lead.business_name}: {e}")
+                logger.error(f"  {e}")
+                continue
+
             # Generate message
             try:
                 message_body = self.generate_sms(lead, template)
@@ -453,6 +542,7 @@ class SMSOutreachManager:
                     business_name=lead.business_name,
                     template_used=template,
                     message_body=message_body,
+                    sending_business_id=business_id,  # Track which business sent this
                     message_sid=result.get("message_sid", ""),
                     sent_at=datetime.now().isoformat() if not dry_run else "",
                     status="sent" if not dry_run else "pending"

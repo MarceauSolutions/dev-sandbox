@@ -88,6 +88,7 @@ class LeadSequence:
     lead_id: str
     phone: str
     business_name: str
+    sending_business_id: str = ""  # NEW: Which business is running this sequence
     status: str = "new"  # LeadStatus value
     started_at: str = ""
     last_touch_at: str = ""
@@ -228,6 +229,7 @@ class FollowUpSequenceManager:
                         lead_id=seq_data["lead_id"],
                         phone=seq_data["phone"],
                         business_name=seq_data["business_name"],
+                        sending_business_id=seq_data.get("sending_business_id", ""),
                         status=seq_data.get("status", "new"),
                         started_at=seq_data.get("started_at", ""),
                         last_touch_at=seq_data.get("last_touch_at", ""),
@@ -246,9 +248,13 @@ class FollowUpSequenceManager:
         with open(self.sequences_file, 'w') as f:
             json.dump(data, f, indent=2)
 
-    def enroll_lead(self, lead: Lead) -> LeadSequence:
+    def enroll_lead(self, lead: Lead, business_id: str = "marceau-solutions") -> LeadSequence:
         """
         Enroll a lead into the follow-up sequence.
+
+        Args:
+            lead: Lead object to enroll
+            business_id: Which business is running this sequence
 
         Creates touchpoint schedule based on current date.
         """
@@ -296,6 +302,7 @@ class FollowUpSequenceManager:
             lead_id=lead.id,
             phone=lead.phone or "",
             business_name=lead.business_name,
+            sending_business_id=business_id,
             status="in_sequence",
             started_at=now.isoformat(),
             touchpoints=touchpoints
