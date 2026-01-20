@@ -51,6 +51,7 @@ class GeneratedPost:
     scheduled_for: Optional[str] = None
     posted: bool = False
     media_paths: Optional[List[str]] = None
+    image_prompt: Optional[str] = None  # Grok prompt for image generation
 
 
 class BusinessContentGenerator:
@@ -185,11 +186,10 @@ class BusinessContentGenerator:
             created_at=datetime.now().isoformat()
         )
 
-        # Generate Grok image if requested
+        # Flag post for image generation if requested
         if generate_image:
-            image_path = self._generate_grok_image(post)
-            if image_path:
-                post.media_paths = [image_path]
+            # Build and store image prompt (actual generation happens in scheduler - Story 003)
+            post.image_prompt = self._build_image_prompt(post)
 
         return post
 
@@ -542,7 +542,8 @@ class BusinessContentGenerator:
                 "created_at": p.created_at,
                 "scheduled_for": p.scheduled_for,
                 "posted": p.posted,
-                "media_paths": p.media_paths
+                "media_paths": p.media_paths,
+                "image_prompt": p.image_prompt
             }
             for p in posts
         ]
