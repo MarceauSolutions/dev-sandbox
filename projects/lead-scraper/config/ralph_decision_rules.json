@@ -1,0 +1,226 @@
+{
+  "decision_rules": {
+    "use_ralph_triggers": [
+      {
+        "trigger": "file_count",
+        "threshold": 3,
+        "weight": 0.25,
+        "description": "3+ files to create or modify"
+      },
+      {
+        "trigger": "task_count",
+        "threshold": 3,
+        "weight": 0.25,
+        "description": "3+ discrete related tasks"
+      },
+      {
+        "trigger": "workflow_steps",
+        "threshold": 5,
+        "weight": 0.20,
+        "description": "5+ sequential steps with dependencies"
+      },
+      {
+        "trigger": "pattern_detection",
+        "patterns": [
+          "migration",
+          "refactor",
+          "template",
+          "multi-file",
+          "system",
+          "architecture"
+        ],
+        "weight": 0.15,
+        "description": "Keywords indicating repeatable patterns"
+      },
+      {
+        "trigger": "checkpoint_need",
+        "indicators": [
+          "complex",
+          "review",
+          "validate",
+          "test between"
+        ],
+        "weight": 0.10,
+        "description": "Needs mid-workflow review"
+      },
+      {
+        "trigger": "explicit_request",
+        "phrases": [
+          "use ralph",
+          "ralph can",
+          "autonomous mode",
+          "create prd"
+        ],
+        "weight": 0.05,
+        "description": "User explicitly requests Ralph"
+      }
+    ],
+    "dont_use_ralph_triggers": [
+      {
+        "trigger": "single_file_edit",
+        "indicators": [
+          "fix typo",
+          "change line",
+          "update one file"
+        ],
+        "exclusion_score": -0.5
+      },
+      {
+        "trigger": "quick_question",
+        "indicators": [
+          "what is",
+          "how do i",
+          "explain",
+          "show me"
+        ],
+        "exclusion_score": -0.5
+      },
+      {
+        "trigger": "time_sensitive",
+        "indicators": [
+          "right now",
+          "immediately",
+          "quick",
+          "just show"
+        ],
+        "exclusion_score": -0.3
+      },
+      {
+        "trigger": "exploratory",
+        "indicators": [
+          "research",
+          "explore",
+          "investigate",
+          "find out"
+        ],
+        "exclusion_score": -0.2
+      }
+    ],
+    "complexity_scoring": {
+      "simple": {
+        "range": [1, 3],
+        "description": "Single edit, no Ralph needed",
+        "estimated_time": "5-15 min",
+        "story_count": 1
+      },
+      "medium": {
+        "range": [4, 6],
+        "description": "2-3 files, consider Ralph",
+        "estimated_time": "15-30 min",
+        "story_count": "2-3"
+      },
+      "complex": {
+        "range": [7, 10],
+        "description": "4+ files, definitely use Ralph",
+        "estimated_time": "30-90 min",
+        "story_count": "4-8"
+      },
+      "very_complex": {
+        "range": [10, 20],
+        "description": "Major system changes, Ralph with checkpoints",
+        "estimated_time": "90-180 min",
+        "story_count": "8-20"
+      }
+    },
+    "agent_type_selection": {
+      "general": {
+        "keywords": [
+          "feature",
+          "system",
+          "workflow",
+          "integration"
+        ],
+        "description": "General development agent"
+      },
+      "bash": {
+        "keywords": [
+          "script",
+          "command",
+          "automation",
+          "cli"
+        ],
+        "description": "Bash/CLI specialist agent"
+      },
+      "data": {
+        "keywords": [
+          "database",
+          "migration",
+          "schema",
+          "analytics"
+        ],
+        "description": "Data engineering agent"
+      },
+      "refactor": {
+        "keywords": [
+          "refactor",
+          "optimize",
+          "clean up",
+          "restructure"
+        ],
+        "description": "Code refactoring agent"
+      }
+    },
+    "autonomous_mode_criteria": {
+      "use_autonomous_when": [
+        "Story count <= 8",
+        "No major architectural decisions required",
+        "Clear acceptance criteria",
+        "User trusts process"
+      ],
+      "use_checkpoint_mode_when": [
+        "Story count > 8",
+        "Complex integration points",
+        "User wants review mid-workflow",
+        "High-risk changes"
+      ]
+    }
+  },
+  "examples": {
+    "use_ralph_yes": [
+      {
+        "request": "Add business-specific tracking to all SMS campaigns",
+        "score": 8.5,
+        "stories": 5,
+        "autonomous": true,
+        "reason": "Multi-file changes, template pattern, clear workflow"
+      },
+      {
+        "request": "Build intelligent docket system with CLI",
+        "score": 9.0,
+        "stories": 6,
+        "autonomous": true,
+        "reason": "New system, multiple components, dependencies"
+      },
+      {
+        "request": "Migrate all configs to YAML format",
+        "score": 7.0,
+        "stories": 4,
+        "autonomous": true,
+        "reason": "Migration pattern, multiple files, repeatable"
+      }
+    ],
+    "use_ralph_no": [
+      {
+        "request": "Fix typo in README",
+        "score": 1.0,
+        "stories": 1,
+        "autonomous": false,
+        "reason": "Single file, trivial edit"
+      },
+      {
+        "request": "Explain how the docket system works",
+        "score": 0.5,
+        "stories": 0,
+        "autonomous": false,
+        "reason": "Question, no code changes"
+      },
+      {
+        "request": "Show me current campaign analytics",
+        "score": 0.5,
+        "stories": 0,
+        "autonomous": false,
+        "reason": "Data request, no implementation"
+      }
+    ]
+  }
+}
