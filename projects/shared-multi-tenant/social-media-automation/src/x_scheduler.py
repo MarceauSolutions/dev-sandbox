@@ -78,6 +78,9 @@ class ScheduledPost:
     media_paths: List[str] = field(default_factory=list)
     retry_count: int = 0
     max_retries: int = 3
+    business_id: Optional[str] = None
+    template_type: Optional[str] = None
+    generate_image: bool = False
 
 
 class PostScheduler:
@@ -104,9 +107,52 @@ class PostScheduler:
             try:
                 with open(self.QUEUE_FILE) as f:
                     data = json.load(f)
-                return [ScheduledPost(**post) for post in data]
+                # Migrate old posts to add missing fields
+                migrated_posts = []
+                for post in data:
+                    # Generate ID if missing (from business_scheduler posts)
+                    if 'id' not in post:
+                        import hashlib
+                        # Use text + scheduled_time to generate deterministic ID
+                        content = post.get('text', '') + post.get('scheduled_time', '') + str(datetime.now().timestamp())
+                        post['id'] = hashlib.md5(content.encode()).hexdigest()[:12]
+
+                    # Add default values for new fields if they don't exist (from old x_scheduler posts)
+                    if 'business_id' not in post:
+                        post['business_id'] = None
+                    if 'template_type' not in post:
+                        post['template_type'] = None
+                    if 'generate_image' not in post:
+                        post['generate_image'] = False
+
+                    # Add old fields if missing (from business_scheduler posts)
+                    if 'priority' not in post:
+                        post['priority'] = 'normal'
+                    if 'status' not in post:
+                        post['status'] = 'pending'
+                    if 'created_at' not in post:
+                        post['created_at'] = datetime.now().isoformat()
+                    if 'posted_at' not in post:
+                        post['posted_at'] = None
+                    if 'tweet_id' not in post:
+                        post['tweet_id'] = None
+                    if 'error' not in post:
+                        post['error'] = None
+                    if 'utm_params' not in post:
+                        post['utm_params'] = None
+                    if 'media_paths' not in post:
+                        post['media_paths'] = []
+                    if 'retry_count' not in post:
+                        post['retry_count'] = 0
+                    if 'max_retries' not in post:
+                        post['max_retries'] = 3
+
+                    migrated_posts.append(ScheduledPost(**post))
+                return migrated_posts
             except Exception as e:
                 logger.warning(f"Error loading queue: {e}")
+                import traceback
+                logger.warning(traceback.format_exc())
         return []
 
     def _save_queue(self):
