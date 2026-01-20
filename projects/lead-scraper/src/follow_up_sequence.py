@@ -373,9 +373,10 @@ class FollowUpSequenceManager:
         )
 
         # Update touchpoint
-        if result["status"] in ["sent", "dry_run"]:
-            touchpoint["status"] = "sent"
-            touchpoint["sent_at"] = datetime.now().isoformat() if not dry_run else "DRY_RUN"
+        if result["status"] in ["sent", "dry_run", "queued"]:
+            # Mark as sent for queued messages (will send at 9 AM via Twilio)
+            touchpoint["status"] = "sent" if result["status"] in ["sent", "dry_run"] else "queued"
+            touchpoint["sent_at"] = datetime.now().isoformat() if result["status"] == "sent" else ("DRY_RUN" if result["status"] == "dry_run" else "QUEUED")
             touchpoint["message_sid"] = result.get("message_sid", "")
 
             sequence.last_touch_at = datetime.now().isoformat()
@@ -442,7 +443,7 @@ class FollowUpSequenceManager:
                 dry_run=dry_run
             )
 
-            if result["status"] in ["sent", "dry_run"]:
+            if result["status"] in ["sent", "dry_run", "queued"]:
                 stats["sent"] += 1
                 stats["by_touch_number"][touch_num] = stats["by_touch_number"].get(touch_num, 0) + 1
             else:

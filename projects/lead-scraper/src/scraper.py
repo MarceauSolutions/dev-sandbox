@@ -349,6 +349,7 @@ Environment Variables:
     outreach_parser.add_argument("--for-real", action="store_true", help="Actually send emails")
     outreach_parser.add_argument("--template", "-t", type=str, help="Force specific template")
     outreach_parser.add_argument("--pain-point", "-p", type=str, help="Filter by pain point")
+    outreach_parser.add_argument("--category", "-c", type=str, help="Filter by category (e.g., restaurant, gym)")
     outreach_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit (Rule of 100)")
     outreach_parser.add_argument("--enrich", action="store_true", help="Enrich with Apollo before sending")
     outreach_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
@@ -368,6 +369,7 @@ Environment Variables:
     sms_parser.add_argument("--for-real", action="store_true", help="Actually send SMS messages")
     sms_parser.add_argument("--template", "-t", type=str, help="Force specific template")
     sms_parser.add_argument("--pain-point", "-p", type=str, help="Filter by pain point")
+    sms_parser.add_argument("--category", "-c", type=str, help="Filter by category (e.g., restaurant, gym)")
     sms_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit (Rule of 100)")
     sms_parser.add_argument("--output-dir", "-o", type=str, default="output", help="Output directory")
 
@@ -506,12 +508,20 @@ def main():
         # Get leads
         leads = list(scraper.leads.leads.values())
 
+        # Filter by category if specified
+        if args.category:
+            leads = [l for l in leads if args.category.lower() in l.category.lower()]
+
         # Filter by pain point if specified
         if args.pain_point:
             leads = [l for l in leads if args.pain_point in l.pain_points]
 
         print(f"\n=== Cold Outreach Campaign (Hormozi Framework) ===")
         print(f"Leads available: {len(leads)}")
+        if args.category:
+            print(f"Category filter: {args.category}")
+        if args.pain_point:
+            print(f"Pain point filter: {args.pain_point}")
         print(f"Limit: {args.limit}")
         print(f"Mode: {'DRY RUN' if not args.for_real else 'SENDING FOR REAL'}")
         print()
@@ -592,12 +602,20 @@ def main():
         # Get leads with phone numbers
         leads = [l for l in scraper.leads.leads.values() if l.phone]
 
+        # Filter by category if specified
+        if args.category:
+            leads = [l for l in leads if args.category.lower() in l.category.lower()]
+
         # Filter by pain point if specified
         if args.pain_point:
             leads = [l for l in leads if args.pain_point in l.pain_points]
 
         print(f"\n=== SMS Outreach Campaign (Hormozi Framework) ===")
         print(f"Leads with phone: {len(leads)}")
+        if args.category:
+            print(f"Category filter: {args.category}")
+        if args.pain_point:
+            print(f"Pain point filter: {args.pain_point}")
         print(f"Limit: {args.limit}")
         print(f"Mode: {'DRY RUN' if not args.for_real else 'SENDING FOR REAL'}")
         if args.template:

@@ -133,6 +133,48 @@ SMS_TEMPLATES = {
         "pain_points": ["no_website"],
         "char_count": 152,
         "notes": "Opens conversation"
+    },
+
+    # 7-TOUCH SEQUENCE TEMPLATES (for follow_up_sequence.py)
+
+    # Touch 3: Value-add (free mockup offer)
+    "free_mockup": {
+        "body": "Made a quick mockup for $business_name. Want to see it? Takes 30 seconds. Text YES or call me. -William. Reply STOP to opt out.",
+        "pain_points": ["no_website"],
+        "char_count": 138,
+        "notes": "Touch 3 - Concrete value offer"
+    },
+
+    # Touch 4: Alternative offer (SEO audit)
+    "seo_audit": {
+        "body": "Or if you already have a site, I can send a free SEO audit for $business_name. Just take 5 min to check. Text YES. -William. STOP to opt out.",
+        "pain_points": [],
+        "char_count": 151,
+        "notes": "Touch 4 - Different angle"
+    },
+
+    # Touch 5: Breakup message (Hormozi's favorite)
+    "breakup": {
+        "body": "Should I stop bugging you about $business_name's online presence? If yes, just ignore this. If no, text back. -William. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 153,
+        "notes": "Touch 5 - Permission to stop (gets highest responses)"
+    },
+
+    # Touch 6: Re-engagement (competitor angle)
+    "competitor_launched": {
+        "body": "Saw a competitor near $business_name just launched a new site. Thought you'd want to know. Still interested in catching up? -William. STOP to opt out.",
+        "pain_points": ["no_website"],
+        "char_count": 158,
+        "notes": "Touch 6 - FOMO reactivation"
+    },
+
+    # Touch 7: Final attempt
+    "final_chance": {
+        "body": "Last message - free mockup offer for $business_name expires this week. After that I'm focusing on other businesses. Want it? -William. STOP to opt out.",
+        "pain_points": ["no_website"],
+        "char_count": 158,
+        "notes": "Touch 7 - Final scarcity"
     }
 }
 

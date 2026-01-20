@@ -1,0 +1,63 @@
+{
+  "branchName": "ralph/grok-image-integration",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Create Grok API client in shared utilities",
+      "description": "Add execution/grok_image_gen.py that wraps XAI Grok image generation API",
+      "acceptanceCriteria": [
+        "File execution/grok_image_gen.py created",
+        "GrokImageGenerator class with generate_image() method",
+        "Reads XAI_API_KEY from .env",
+        "Returns list of image paths or raises error",
+        "Has basic error handling for API failures",
+        "Docstrings explain usage"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "002",
+      "title": "Update content generator to support image generation flag",
+      "description": "Modify business_content_generator.py to flag posts for image generation",
+      "acceptanceCriteria": [
+        "generate_post() method has generate_image parameter (default False)",
+        "Post object has image_prompt field (None if no image needed)",
+        "Template types have associated image prompt styles",
+        "No actual image generation yet (just flagging)",
+        "Existing functionality unaffected"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "003",
+      "title": "Integrate Grok generation into scheduler",
+      "description": "Update business_scheduler.py to generate images for flagged posts",
+      "acceptanceCriteria": [
+        "When scheduling posts, check if generate_image=True",
+        "Call Grok API to generate image using post's image_prompt",
+        "Save images to output/images/ with timestamp naming",
+        "Update post's media_paths field with image path",
+        "50% of posts get images (every other post)",
+        "Error handling if Grok API fails (skip image, don't crash)"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "004",
+      "title": "Update X scheduler to attach images to tweets",
+      "description": "Modify x_scheduler.py to upload and attach images when posting",
+      "acceptanceCriteria": [
+        "Check if post has media_paths before posting",
+        "Upload images to X using media upload API",
+        "Attach media_ids to tweet",
+        "Post with image successfully",
+        "Verified manually with test post (screenshot proof)"
+      ],
+      "priority": 4,
+      "passes": false
+    }
+  ]
+}

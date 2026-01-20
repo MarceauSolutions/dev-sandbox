@@ -220,6 +220,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Don't forget this" / "Save this decision" | Create decision record with rationale |
 | "This should be in the SOPs" | Evaluate using SOP-25 → Create SOP if warranted |
 | "We should document [X]" | Determine doc type (Setup Guide/SOP/Decision Record/Workflow) |
+| "Start Ralph for [project]" / "Use Ralph" | Read [project]/ralph/prd.json, implement first incomplete story |
+| "Continue Ralph" / "Next Ralph iteration" | Read updated prd.json/progress.txt, implement next story |
+| "Ralph status" | Show which stories complete/pending in prd.json |
+| "Integrate Ralph correctly" | Set up Ralph structure for autonomous development loops |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 

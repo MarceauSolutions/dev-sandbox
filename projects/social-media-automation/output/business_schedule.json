@@ -55,7 +55,441 @@
       "scheduled_for": "2026-01-19T12:00:00",
       "campaign": "general-awareness",
       "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Cross-Docking that actually works.\n\nClimate-controlled to protect your goods\n99% on-time delivery ra...",
+      "scheduled_for": "2026-01-20T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Struggling to scale your logistics with your business?\n\nThat's why we offer same-day local delivery ...",
+      "scheduled_for": "2026-01-20T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "No AC in this heat? That's an emergency. Call now: (239) 766-6129\n\n(239) 766-6129\n\n#Emergency #SWFL...",
+      "scheduled_for": "2026-01-20T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook...",
+      "scheduled_for": "2026-01-20T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Cross-Docking that actually works.\n\n24/7 secured warehouse access\nDedicated account manager\n99% on-t...",
+      "scheduled_for": "2026-01-21T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "squarefoot-shipping",
+      "content": "Tired of unreliable shipping that costs you customers?\n\nThat's why we offer 3pl services let you foc...",
+      "scheduled_for": "2026-01-21T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "Florida heat won't wait. Neither do we. 24/7 emergency service.\n\n(239) 766-6129\n\n#Emergency #SWFL...",
+      "scheduled_for": "2026-01-21T09:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "swflorida-hvac",
+      "content": "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook...",
+      "scheduled_for": "2026-01-21T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone Systems that actually works.\n\n90%+ call answer rate (vs 40-60% with humans)\nLeads qua...",
+      "scheduled_for": "2026-01-19T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: HVAC Voice AI\n\n 47 calls, 12 appointments, $8K revenue (Week 1)\n\nThis is the fut...",
+      "scheduled_for": "2026-01-19T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to set up Voice AI:\n\n1. Track missed calls - that's your lost revenue\n2. Focus automation on hig...",
+      "scheduled_for": "2026-01-19T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "AI-generated images boost email response 150%\n\nBuilding in public: (239) 398-5676\n\n#Business #SWFL...",
+      "scheduled_for": "2026-01-19T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed ai that sounds human, works like a machine.\n\nLocal service busine...",
+      "scheduled_for": "2026-01-19T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Missing calls when you're on job sites?\n\nVoice AI picks up every call.\n\nAnswers FAQs, books appointm...",
+      "scheduled_for": "2026-01-19T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Too busy working to market your business?\nAfter: No coding knowledge required\n\nThis is what ...",
+      "scheduled_for": "2026-01-19T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Custom Automation Workflows that actually works.\n\nProfessional image even when you're busy\nMeasurabl...",
+      "scheduled_for": "2026-01-19T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: HVAC Voice AI\n\n 47 calls, 12 appointments, $8K revenue (Week 1)\n\nThis is the fut...",
+      "scheduled_for": "2026-01-19T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-21T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Medical office\n\n After-hours AI books appointments, no missed revenue\n\nThis is t...",
+      "scheduled_for": "2026-01-21T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to set up Voice AI:\n\n1. Test templates before scaling automation\n2. Voice AI works best for serv...",
+      "scheduled_for": "2026-01-21T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "AI phone systems cost 90% less than hiring staff\n\nDM for details: (239) 398-5676\n\n#Business #SWFL...",
+      "scheduled_for": "2026-01-21T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed smart follow-up sequences that convert.\n\nCompanies with 24/7 avai...",
+      "scheduled_for": "2026-01-21T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Manual data entry eating your time?\n\nThat's why we offer automated appointment booking (no back-and-...",
+      "scheduled_for": "2026-01-21T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Manually scraping leads = 8 hours for 20 businesses\nAfter: AI scraper = 5 minutes for 50 bus...",
+      "scheduled_for": "2026-01-21T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-21T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Medical office\n\n After-hours AI books appointments, no missed revenue\n\nThis is t...",
+      "scheduled_for": "2026-01-21T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-22T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: E-commerce leads\n\n 50 qualified in 5 minutes vs 8 hours manual\n\nThis is the futu...",
+      "scheduled_for": "2026-01-22T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to automate lead gen:\n\n1. Use AI to book appointments, not just answer calls\n2. AI handles FAQs,...",
+      "scheduled_for": "2026-01-22T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "After-hours calls represent 40% of revenue opportunities\n\nFollowing the POC journey: (239) 398-5676\n...",
+      "scheduled_for": "2026-01-22T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed turn your website into a lead generation engine.\n\nPersonalized ou...",
+      "scheduled_for": "2026-01-22T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Missing calls when you're on job sites?\n\nVoice AI picks up every call.\n\nAnswers FAQs, books appointm...",
+      "scheduled_for": "2026-01-22T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Appointment scheduling back-and-forth wastes time\nAfter: Competitive advantage in your marke...",
+      "scheduled_for": "2026-01-22T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "AI-Powered Cold Outreach that actually works.\n\nAppointments booked automatically\nPay for results, no...",
+      "scheduled_for": "2026-01-22T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Shipping company\n\n Automated quotes = 40% less time on phone\n\nThis is the future...",
+      "scheduled_for": "2026-01-22T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone Systems that actually works.\n\nWorks with your existing tools\nMeasurable results from ...",
+      "scheduled_for": "2026-01-23T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Voice AI for HVAC\n\n\ud83d\udcde 47 calls answered\n\ud83d\udcc5 12 appointments booked\n\ud83d\udcb0 ~$8K recovered...",
+      "scheduled_for": "2026-01-23T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to set up Voice AI:\n\n1. Response speed matters more than perfect answers\n2. Test automation on y...",
+      "scheduled_for": "2026-01-23T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "67% of customers prefer to book appointments online\n\nShare POC results: (239) 398-5676\n\n#Business #S...",
+      "scheduled_for": "2026-01-23T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed ai-generated content for social media.\n\nAI reduces response time ...",
+      "scheduled_for": "2026-01-23T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "No system for tracking leads?\n\nThat's why we offer set it up once, runs forever.\n\n$0 cost per additi...",
+      "scheduled_for": "2026-01-23T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Reviews not turning into customers?\nAfter: Scale infinitely without hiring\n\nThis is what aut...",
+      "scheduled_for": "2026-01-23T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-23T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Real estate agent\n\n Automated follow-up = 2x more showings booked\n\nThis is the f...",
+      "scheduled_for": "2026-01-23T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-26T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Local service business\n\n 90% answer rate vs 40% before AI\n\nThis is the future of...",
+      "scheduled_for": "2026-01-26T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to scrape 100 local business leads in 5 minutes:\n\n1. Google Places API\n2. Filter by category + a...",
+      "scheduled_for": "2026-01-26T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "First business to automate in a market dominates\n\nReal metrics, no BS: (239) 398-5676\n\n#Business #SW...",
+      "scheduled_for": "2026-01-26T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed Voice AI for an HVAC business. First call came in at 11 PM - cust...",
+      "scheduled_for": "2026-01-26T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Missing calls when you're on job sites?\n\nVoice AI picks up every call.\n\nAnswers FAQs, books appointm...",
+      "scheduled_for": "2026-01-26T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Paying staff just to answer phones?\nAfter: $0 cost per additional call (vs $15-30/hour staff...",
+      "scheduled_for": "2026-01-26T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-26T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Medical office\n\n After-hours AI books appointments, no missed revenue\n\nThis is t...",
+      "scheduled_for": "2026-01-26T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional ca...",
+      "scheduled_for": "2026-01-27T06:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Real estate agent\n\n Automated follow-up = 2x more showings booked\n\nThis is the f...",
+      "scheduled_for": "2026-01-27T08:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "How to build automation workflows:\n\n1. Set up automation once, tweak based on data\n2. Monitor AI con...",
+      "scheduled_for": "2026-01-27T10:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "67% of customers prefer to book appointments online\n\nFollowing the POC journey: (239) 398-5676\n\n#Bus...",
+      "scheduled_for": "2026-01-27T12:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Building in public:\n\nJust deployed ai handles initial conversations, you close deals.\n\nAI phone syst...",
+      "scheduled_for": "2026-01-27T14:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Missing calls = missing revenue\n\nThat's why we offer automated sms campaigns with tracking.\n\nAppoint...",
+      "scheduled_for": "2026-01-27T16:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Before: Paying staff just to answer phones?\nAfter: Consistent follow-up every single time\n\nThis is w...",
+      "scheduled_for": "2026-01-27T18:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Lead Generation Automation that actually works.\n\n90%+ call answer rate (vs 40-60% with humans)\nPay f...",
+      "scheduled_for": "2026-01-27T20:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
+    },
+    {
+      "business_id": "marceau-solutions",
+      "content": "Week 1 POC Results: Restaurant\n\n Voice AI handles reservations, staff focuses on service\n\nThis is th...",
+      "scheduled_for": "2026-01-27T22:00:00",
+      "campaign": "general-awareness",
+      "status": "scheduled"
     }
   ],
-  "last_run": "2026-01-18T13:38:24.126048"
+  "last_run": "2026-01-19T16:27:25.896098"
 }
