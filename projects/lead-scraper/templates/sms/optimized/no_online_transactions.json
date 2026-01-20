@@ -4,16 +4,29 @@
   "body": "Hi, this is William from Marceau Solutions. {business_name} in {city} has great reviews but no online booking. Just helped 3 Naples gyms add 24/7 scheduling - all saw 40%+ more appointments. Interested? (239) 398-5676. Reply STOP to opt out.",
   "char_count": 227,
   "segments": 2,
-  "personalization_fields": ["business_name", "city"],
+  "personalization_fields": [
+    "business_name",
+    "city"
+  ],
   "cta": "Call back or text YES",
   "tcpa_compliant": true,
-  "notes": "Focuses on appointment booking pain point. Two SMS segments.",
+  "notes": [
+    "Focuses on appointment booking pain point. Two SMS segments.",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_online_transactions_jan26&utm_content=no_online_transactions_v1"
+  ],
   "expected_response_rate": "3-5%",
-  "best_for": ["gym", "yoga_studio", "fitness_center", "salon", "spa", "medical"],
+  "best_for": [
+    "gym",
+    "yoga_studio",
+    "fitness_center",
+    "salon",
+    "spa",
+    "medical"
+  ],
   "variants": [
     {
       "variant_id": "a",
-      "body": "Hi {business_name} owner! William from Marceau Solutions (239-398-5676). I see you have {rating}⭐ reviews but no online booking. Want to see how we added 24/7 scheduling for 3 Naples gyms? All got 40% more appointments. Text YES. Reply STOP to opt out.",
+      "body": "Hi {business_name} owner! William from Marceau Solutions (239-398-5676). I see you have {rating}\u2b50 reviews but no online booking. Want to see how we added 24/7 scheduling for 3 Naples gyms? All got 40% more appointments. Text YES. Reply STOP to opt out.",
       "char_count": 238,
       "angle": "Social proof + specific outcome"
     },
@@ -23,5 +36,6 @@
       "char_count": 221,
       "angle": "Question hook + pain amplification"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_online_transactions_jan26&utm_content=no_online_transactions_v1"
 }

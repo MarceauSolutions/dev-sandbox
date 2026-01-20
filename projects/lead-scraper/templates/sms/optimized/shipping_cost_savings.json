@@ -4,13 +4,24 @@
   "body": "Hi {business_name} - this is William from {shipping_company_name} (239-398-5676). We help e-commerce businesses cut shipping costs 20-40%. Free rate comparison this week. Interested? Text YES. Reply STOP to opt out.",
   "char_count": 215,
   "segments": 2,
-  "personalization_fields": ["business_name", "shipping_company_name"],
+  "personalization_fields": [
+    "business_name",
+    "shipping_company_name"
+  ],
   "cta": "Text YES for free rate comparison",
   "tcpa_compliant": true,
   "business_id": "shipping-logistics",
-  "notes": "Shipping/logistics template - focuses on cost reduction for e-commerce/retail",
+  "notes": [
+    "Shipping/logistics template - focuses on cost reduction for e-commerce/retail",
+    "UTM tracked link: https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_shipping_costs_jan26&utm_content=shipping_cost_savings_v1"
+  ],
   "expected_response_rate": "6-8%",
-  "best_for": ["ecommerce", "retail", "wholesale", "manufacturing"],
+  "best_for": [
+    "ecommerce",
+    "retail",
+    "wholesale",
+    "manufacturing"
+  ],
   "value_proposition": "20-40% shipping cost reduction through carrier optimization",
   "variants": [
     {
@@ -31,5 +42,6 @@
       "char_count": 215,
       "angle": "Question hook + percentage savings"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_shipping_costs_jan26&utm_content=shipping_cost_savings_v1"
 }

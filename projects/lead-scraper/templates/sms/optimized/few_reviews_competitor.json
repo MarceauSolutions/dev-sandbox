@@ -4,12 +4,24 @@
   "body": "Hi {business_name} - William, Marceau Solutions (239-398-5676). {competitor_name} has {competitor_review_count} reviews, you have {review_count}. I'll help you catch up for free. Want it? Text YES. Reply STOP to opt out.",
   "char_count": 210,
   "segments": 2,
-  "personalization_fields": ["business_name", "competitor_name", "competitor_review_count", "review_count"],
+  "personalization_fields": [
+    "business_name",
+    "competitor_name",
+    "competitor_review_count",
+    "review_count"
+  ],
   "cta": "Text YES",
   "tcpa_compliant": true,
-  "notes": "PHASE 1 OPTIMIZATION: Hyper-personalized review gap comparison",
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Hyper-personalized review gap comparison",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_competitor_v1"
+  ],
   "expected_response_rate": "12-14%",
-  "best_for": ["gym", "salon", "restaurant"],
+  "best_for": [
+    "gym",
+    "salon",
+    "restaurant"
+  ],
   "optimization_rationale": [
     "Direct competitor comparison = urgency",
     "Specific numbers = credibility",
@@ -32,5 +44,6 @@
       "angle": "Specific outcome (20+ reviews)",
       "expected_response_rate": "12-14%"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_competitor_v1"
 }

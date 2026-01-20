@@ -4,12 +4,21 @@
   "body": "Hi {business_name} - William from Marceau Solutions (239-398-5676). People can't book you online. I'll set up free 24/7 booking for you this week. Interested? Text YES or call. Reply STOP to opt out.",
   "char_count": 197,
   "segments": 2,
-  "personalization_fields": ["business_name"],
+  "personalization_fields": [
+    "business_name"
+  ],
   "cta": "Text YES for free setup",
   "tcpa_compliant": true,
-  "notes": "PHASE 1 OPTIMIZATION: Free setup (no fake social proof)",
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Free setup (no fake social proof)",
+    "UTM tracked link: https://marceausolutions.com/get-started?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_online_transactions_jan26&utm_content=no_online_transactions_free_setup_v1"
+  ],
   "expected_response_rate": "10-12%",
-  "best_for": ["gym", "salon", "spa"],
+  "best_for": [
+    "gym",
+    "salon",
+    "spa"
+  ],
   "optimization_rationale": [
     "Free 24/7 booking = high-value offer",
     "This week = urgency without scarcity lie",
@@ -31,5 +40,6 @@
       "angle": "Takes 10 minutes = easy decision",
       "expected_response_rate": "10-12%"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/get-started?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_online_transactions_jan26&utm_content=no_online_transactions_free_setup_v1"
 }

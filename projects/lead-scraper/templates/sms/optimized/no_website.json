@@ -4,16 +4,27 @@
   "body": "Hi, this is William from Marceau Solutions (239-398-5676). I noticed {business_name} doesn't have a website. 80% of customers search online before calling. Just launched sites for 3 Naples gyms - all saw 40%+ more calls. Want to see examples? Reply STOP to opt out.",
   "char_count": 250,
   "segments": 2,
-  "personalization_fields": ["business_name"],
+  "personalization_fields": [
+    "business_name"
+  ],
   "cta": "Reply YES or call back",
   "tcpa_compliant": true,
-  "notes": "TCPA-compliant version of no_website_intro. Adds business name + phone.",
+  "notes": [
+    "TCPA-compliant version of no_website_intro. Adds business name + phone.",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_v2_compliant"
+  ],
   "expected_response_rate": "3-5%",
-  "best_for": ["gym", "contractor", "salon", "restaurant", "local_service"],
+  "best_for": [
+    "gym",
+    "contractor",
+    "salon",
+    "restaurant",
+    "local_service"
+  ],
   "improvements_from_v1": [
     "Added 'from Marceau Solutions' for business identification",
     "Added phone number (239-398-5676) for TCPA compliance",
-    "Changed 'free mockup' → 'see examples' (less vague)",
+    "Changed 'free mockup' \u2192 'see examples' (less vague)",
     "Added social proof '3 Naples gyms saw 40%+ more calls'",
     "Added specific outcome instead of generic offer"
   ],
@@ -36,5 +47,6 @@
       "char_count": 232,
       "angle": "Speed/urgency + specific outcome"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_v2_compliant"
 }

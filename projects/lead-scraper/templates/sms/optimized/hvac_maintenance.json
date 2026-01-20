@@ -4,13 +4,24 @@
   "body": "Hi {business_name} - this is William from SW Florida Comfort HVAC (239-398-5676). Your AC works hard in Florida heat. We offer free HVAC inspection to prevent breakdowns. Interested? Text YES. Reply STOP to opt out.",
   "char_count": 210,
   "segments": 2,
-  "personalization_fields": ["business_name"],
+  "personalization_fields": [
+    "business_name"
+  ],
   "cta": "Text YES for free inspection",
   "tcpa_compliant": true,
   "business_id": "swflorida-hvac",
-  "notes": "HVAC-specific template for SW Florida Comfort HVAC - focuses on maintenance/prevention",
+  "notes": [
+    "HVAC-specific template for SW Florida Comfort HVAC - focuses on maintenance/prevention",
+    "UTM tracked link: https://swfloridahvac.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=hvac_service_needed_jan26&utm_content=hvac_maintenance_v1"
+  ],
   "expected_response_rate": "8-10%",
-  "best_for": ["restaurant", "gym", "retail", "salon", "spa"],
+  "best_for": [
+    "restaurant",
+    "gym",
+    "retail",
+    "salon",
+    "spa"
+  ],
   "value_proposition": "Free HVAC inspection to prevent costly breakdowns during Florida summer",
   "variants": [
     {
@@ -31,5 +42,6 @@
       "char_count": 198,
       "angle": "Cost savings + local focus"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://swfloridahvac.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=hvac_service_needed_jan26&utm_content=hvac_maintenance_v1"
 }

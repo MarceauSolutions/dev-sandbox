@@ -4,13 +4,23 @@
   "body": "Hi {business_name} - William from {shipping_company_name} (239-398-5676). Customers expect 2-day shipping now. We get your orders out same-day for less. Free setup consultation. Want it? Text YES. Reply STOP to opt out.",
   "char_count": 217,
   "segments": 2,
-  "personalization_fields": ["business_name", "shipping_company_name"],
+  "personalization_fields": [
+    "business_name",
+    "shipping_company_name"
+  ],
   "cta": "Text YES for free setup",
   "tcpa_compliant": true,
   "business_id": "shipping-logistics",
-  "notes": "Fulfillment speed focus - appeals to e-commerce businesses losing to Amazon",
+  "notes": [
+    "Fulfillment speed focus - appeals to e-commerce businesses losing to Amazon",
+    "UTM tracked link: https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=slow_fulfillment_jan26&utm_content=shipping_fulfillment_speed_v1"
+  ],
   "expected_response_rate": "6-8%",
-  "best_for": ["ecommerce", "retail", "wholesale"],
+  "best_for": [
+    "ecommerce",
+    "retail",
+    "wholesale"
+  ],
   "value_proposition": "Same-day fulfillment to compete with Amazon Prime expectations",
   "variants": [
     {
@@ -25,5 +35,6 @@
       "char_count": 208,
       "angle": "Cart abandonment pain"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=slow_fulfillment_jan26&utm_content=shipping_fulfillment_speed_v1"
 }

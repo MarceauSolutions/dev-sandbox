@@ -4,13 +4,24 @@
   "body": "Hi {business_name} - William from SW Florida Comfort HVAC (239-398-5676). Your AC uses 40% of your electric bill. We cut that 20-30% with free energy audit. Want to save? Text YES. Reply STOP to opt out.",
   "char_count": 207,
   "segments": 2,
-  "personalization_fields": ["business_name"],
+  "personalization_fields": [
+    "business_name"
+  ],
   "cta": "Text YES for free energy audit",
   "tcpa_compliant": true,
   "business_id": "swflorida-hvac",
-  "notes": "Energy savings focus - appeals to cost-conscious business owners",
+  "notes": [
+    "Energy savings focus - appeals to cost-conscious business owners",
+    "UTM tracked link: https://swfloridahvac.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_energy_costs_jan26&utm_content=hvac_energy_savings_v1"
+  ],
   "expected_response_rate": "8-10%",
-  "best_for": ["restaurant", "gym", "retail", "salon", "spa"],
+  "best_for": [
+    "restaurant",
+    "gym",
+    "retail",
+    "salon",
+    "spa"
+  ],
   "value_proposition": "20-30% energy cost reduction through HVAC optimization",
   "variants": [
     {
@@ -25,5 +36,6 @@
       "char_count": 203,
       "angle": "Waste/urgency focus"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://swfloridahvac.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_energy_costs_jan26&utm_content=hvac_energy_savings_v1"
 }

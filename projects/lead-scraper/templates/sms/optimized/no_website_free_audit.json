@@ -4,12 +4,21 @@
   "body": "Hi, this is William from Marceau Solutions (239-398-5676). I noticed {business_name} has no website. I'll do a free 5-minute audit showing exactly what you're losing each month. Want it? Text YES. Reply STOP to opt out.",
   "char_count": 208,
   "segments": 2,
-  "personalization_fields": ["business_name"],
+  "personalization_fields": [
+    "business_name"
+  ],
   "cta": "Text YES for free audit",
   "tcpa_compliant": true,
-  "notes": "PHASE 1 OPTIMIZATION: Lower-friction offer (free audit vs. generic 'see examples')",
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Lower-friction offer (free audit vs. generic 'see examples')",
+    "UTM tracked link: https://marceausolutions.com/free-audit?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_free_audit_v1"
+  ],
   "expected_response_rate": "10-12%",
-  "best_for": ["gym", "salon", "restaurant"],
+  "best_for": [
+    "gym",
+    "salon",
+    "restaurant"
+  ],
   "optimization_rationale": [
     "Free audit = lower commitment than 'see examples'",
     "Specific deliverable (5-minute, shows $ lost)",
@@ -40,5 +49,6 @@
       "angle": "Free website (no catch = removes skepticism)",
       "expected_response_rate": "11-13%"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/free-audit?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_free_audit_v1"
 }

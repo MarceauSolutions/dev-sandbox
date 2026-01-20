@@ -4,12 +4,24 @@
   "body": "Hi {business_name} - William, Marceau Solutions (239-398-5676). {competitor_name} down the street has {competitor_review_count} reviews and a website. You have {review_count} reviews but no site. Want help? Text YES. Reply STOP to opt out.",
   "char_count": 225,
   "segments": 2,
-  "personalization_fields": ["business_name", "competitor_name", "competitor_review_count", "review_count"],
+  "personalization_fields": [
+    "business_name",
+    "competitor_name",
+    "competitor_review_count",
+    "review_count"
+  ],
   "cta": "Text YES",
   "tcpa_compliant": true,
-  "notes": "PHASE 1 OPTIMIZATION: Hyper-personalized with competitor data",
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Hyper-personalized with competitor data",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_competitor_v1"
+  ],
   "expected_response_rate": "12-14%",
-  "best_for": ["gym", "salon", "restaurant"],
+  "best_for": [
+    "gym",
+    "salon",
+    "restaurant"
+  ],
   "optimization_rationale": [
     "Names specific competitor (ultra-personalized)",
     "Creates urgency via comparison",
@@ -40,5 +52,6 @@
       "angle": "Losing customers to competitor",
       "expected_response_rate": "12-14%"
     }
-  ]
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_competitor_v1"
 }
