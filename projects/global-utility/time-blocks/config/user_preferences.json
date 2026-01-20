@@ -1,0 +1,43 @@
+{
+  "user": "William",
+  "working_hours": {
+    "start": "06:00",
+    "end": "21:00",
+    "description": "All scheduled blocks must fall within these hours"
+  },
+  "recurring_blocks": {
+    "workout": {
+      "time": {
+        "start": "06:00",
+        "end": "07:00"
+      },
+      "days": ["mon", "wed", "fri", "sat"],
+      "category": "exercise",
+      "priority": "high",
+      "notes": "Morning workout to start the day strong"
+    },
+    "reading": {
+      "time": {
+        "start": "20:00",
+        "end": "21:00"
+      },
+      "days": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+      "category": "learning",
+      "priority": "medium",
+      "notes": "Evening reading time - wind down with a good book"
+    },
+    "creative_work": {
+      "time": {
+        "start": "07:30",
+        "end": "09:30"
+      },
+      "days": ["mon", "wed", "fri", "sat"],
+      "category": "work",
+      "priority": "high",
+      "notes": "Creative work time - mind is fresh after workout"
+    }
+  },
+  "timezone": "America/New_York",
+  "created": "2026-01-16",
+  "last_updated": "2026-01-16"
+}

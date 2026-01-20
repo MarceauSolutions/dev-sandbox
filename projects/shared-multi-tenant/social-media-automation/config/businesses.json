@@ -1,0 +1,477 @@
+{
+  "version": "1.1.0",
+  "last_updated": "2026-01-20",
+  "businesses": {
+    "squarefoot-shipping": {
+      "name": "Square Foot Shipping & Storage",
+      "short_name": "Square Foot",
+      "owner": "William George",
+      "type": "logistics",
+      "phone": "(239) 880-3365",
+      "website": "https://wmarceau.github.io/squarefoot-shipping-website/",
+      "service_area": "Southwest Florida",
+      "brand": {
+        "tone": "professional, reliable, efficient",
+        "colors": [
+          "#1e40af",
+          "#3b82f6",
+          "#f97316"
+        ],
+        "tagline": "Your Space, Our Priority"
+      },
+      "services": [
+        {
+          "name": "Warehouse Storage",
+          "description": "Climate-controlled with 24/7 security",
+          "keywords": [
+            "storage",
+            "warehouse",
+            "inventory",
+            "secure"
+          ]
+        },
+        {
+          "name": "Freight Shipping",
+          "description": "LTL and FTL ground freight nationwide",
+          "keywords": [
+            "freight",
+            "shipping",
+            "LTL",
+            "FTL",
+            "trucking"
+          ]
+        },
+        {
+          "name": "Fulfillment Services",
+          "description": "Pick, pack, and ship for e-commerce",
+          "keywords": [
+            "fulfillment",
+            "ecommerce",
+            "pick pack",
+            "3PL"
+          ]
+        },
+        {
+          "name": "Cross-Docking",
+          "description": "Rapid turnaround for time-sensitive loads",
+          "keywords": [
+            "cross-dock",
+            "transload",
+            "rapid"
+          ]
+        },
+        {
+          "name": "Last-Mile Delivery",
+          "description": "Same-day available in SWFL",
+          "keywords": [
+            "delivery",
+            "same-day",
+            "local",
+            "last-mile"
+          ]
+        }
+      ],
+      "target_audience": {
+        "primary": "Small to mid-size businesses needing logistics",
+        "secondary": "E-commerce sellers needing fulfillment",
+        "pain_points": [
+          "Unreliable shipping partners",
+          "High storage costs",
+          "Damaged inventory",
+          "Slow fulfillment times",
+          "No visibility into shipments"
+        ]
+      },
+      "social_accounts": {
+        "x_handle": "@SquareFootShip",
+        "use_main_account": true
+      },
+      "hashtags": {
+        "primary": [
+          "Logistics",
+          "Shipping",
+          "Warehouse",
+          "SWFL",
+          "SmallBusiness"
+        ],
+        "secondary": [
+          "Fulfillment",
+          "Ecommerce",
+          "3PL",
+          "SupplyChain",
+          "BusinessGrowth"
+        ],
+        "local": [
+          "Naples",
+          "FortMyers",
+          "CapeCoral",
+          "SWFL",
+          "FloridaBusiness"
+        ]
+      },
+      "content_themes": {
+        "monday": "logistics_tips",
+        "tuesday": "service_spotlight",
+        "wednesday": "client_success",
+        "thursday": "industry_insights",
+        "friday": "behind_the_scenes"
+      },
+      "cta_options": [
+        "Get a free quote",
+        "Call (239) 880-3365",
+        "Visit our site",
+        "Request a callback"
+      ],
+      "status": "paused"
+    },
+    "swflorida-hvac": {
+      "name": "SW Florida Comfort HVAC",
+      "short_name": "SWFL Comfort",
+      "owner": "William Marceau Sr.",
+      "type": "hvac",
+      "phone": "(239) 766-6129",
+      "website": "https://wmarceau.github.io/swflorida-comfort-hvac/",
+      "service_area": "Naples, Fort Myers, Cape Coral, Bonita Springs, Estero, Marco Island, Lehigh Acres, Sanibel",
+      "brand": {
+        "tone": "trustworthy, expert, friendly, urgent for emergencies",
+        "colors": [
+          "#0369a1",
+          "#0ea5e9",
+          "#f97316"
+        ],
+        "tagline": "Your Comfort, Our Mission"
+      },
+      "services": [
+        {
+          "name": "AC Repair",
+          "description": "Same-day service, all brands, $89 diagnostic",
+          "keywords": [
+            "AC repair",
+            "air conditioning",
+            "cooling",
+            "fix AC"
+          ],
+          "urgency": "high"
+        },
+        {
+          "name": "AC Installation",
+          "description": "Free estimates, 10-year warranties, financing available",
+          "keywords": [
+            "AC install",
+            "new AC",
+            "HVAC install",
+            "replacement"
+          ]
+        },
+        {
+          "name": "Maintenance Plans",
+          "description": "$199/year - 2 tune-ups, priority scheduling, 15% off repairs",
+          "keywords": [
+            "AC maintenance",
+            "tune-up",
+            "service plan",
+            "preventive"
+          ]
+        },
+        {
+          "name": "24/7 Emergency Service",
+          "description": "No overtime charges, always available",
+          "keywords": [
+            "emergency AC",
+            "24/7",
+            "urgent",
+            "AC out"
+          ],
+          "urgency": "critical"
+        },
+        {
+          "name": "Duct Services",
+          "description": "Cleaning, repair, and insulation",
+          "keywords": [
+            "duct cleaning",
+            "air ducts",
+            "ductwork",
+            "air quality"
+          ]
+        },
+        {
+          "name": "Indoor Air Quality",
+          "description": "UV lights, HEPA filtration, dehumidifiers",
+          "keywords": [
+            "air quality",
+            "filtration",
+            "UV",
+            "dehumidifier",
+            "allergens"
+          ]
+        }
+      ],
+      "target_audience": {
+        "primary": "Homeowners in SWFL needing AC service",
+        "secondary": "Property managers and landlords",
+        "pain_points": [
+          "AC broke down in Florida heat",
+          "High energy bills",
+          "Inconsistent cooling",
+          "Old, inefficient system",
+          "Poor air quality",
+          "Previous bad contractor experience"
+        ]
+      },
+      "social_accounts": {
+        "x_handle": "@SWFLComfortHVAC",
+        "use_main_account": true
+      },
+      "hashtags": {
+        "primary": [
+          "HVAC",
+          "ACRepair",
+          "AirConditioning",
+          "FloridaHeat",
+          "HomeComfort"
+        ],
+        "secondary": [
+          "CoolingExperts",
+          "HVACTips",
+          "EnergyEfficiency",
+          "IndoorAirQuality"
+        ],
+        "local": [
+          "Naples",
+          "FortMyers",
+          "CapeCoral",
+          "BonitaSprings",
+          "SWFL"
+        ],
+        "seasonal": [
+          "FloridaSummer",
+          "HeatWave",
+          "StayCool",
+          "BeatTheHeat"
+        ]
+      },
+      "content_themes": {
+        "monday": "hvac_tips",
+        "tuesday": "energy_savings",
+        "wednesday": "customer_testimonials",
+        "thursday": "maintenance_reminders",
+        "friday": "weekend_ready"
+      },
+      "seasonal_focus": {
+        "q1": "Prepare for summer - tune-up season",
+        "q2": "Peak season - emergency readiness",
+        "q3": "Maintenance and efficiency",
+        "q4": "Year-end specials and planning"
+      },
+      "cta_options": [
+        "Schedule service today",
+        "Call (239) 766-6129",
+        "Get a free estimate",
+        "Book your tune-up"
+      ],
+      "urgency_triggers": [
+        "AC out? We're here 24/7",
+        "Florida heat won't wait - neither do we",
+        "Same-day service available",
+        "No overtime charges, ever"
+      ],
+      "status": "paused"
+    },
+    "marceau-solutions": {
+      "name": "Marceau Solutions",
+      "short_name": "Marceau",
+      "owner": "William Marceau Jr.",
+      "type": "ai-automation",
+      "phone": "(239) 398-5676",
+      "website": "https://marceausolutions.com",
+      "service_area": "United States (remote services)",
+      "brand": {
+        "tone": "expert, authentic, building-in-public, results-driven",
+        "colors": [
+          "#3b82f6",
+          "#8b5cf6",
+          "#06b6d4"
+        ],
+        "tagline": "AI Automation for Local Businesses"
+      },
+      "services": [
+        {
+          "name": "Voice AI Phone Systems",
+          "description": "24/7 AI answering service that books appointments and qualifies leads",
+          "keywords": [
+            "voice AI",
+            "phone automation",
+            "AI receptionist",
+            "call answering"
+          ],
+          "highlight": true
+        },
+        {
+          "name": "Lead Generation Automation",
+          "description": "Automated lead scraping and qualification from Google, Yelp, and more",
+          "keywords": [
+            "lead scraping",
+            "lead gen",
+            "automation",
+            "B2B leads"
+          ]
+        },
+        {
+          "name": "AI-Powered Cold Outreach",
+          "description": "Personalized outreach with AI-generated mockup images",
+          "keywords": [
+            "cold outreach",
+            "AI images",
+            "personalization",
+            "Grok"
+          ]
+        },
+        {
+          "name": "Website + Automation Packages",
+          "description": "Professional websites with built-in lead capture automation",
+          "keywords": [
+            "website",
+            "lead capture",
+            "forms",
+            "automation"
+          ]
+        },
+        {
+          "name": "Custom Automation Workflows",
+          "description": "Bespoke AI solutions for your specific business needs",
+          "keywords": [
+            "custom automation",
+            "workflow",
+            "AI integration",
+            "bespoke"
+          ]
+        }
+      ],
+      "target_audience": {
+        "primary": "Local service businesses (HVAC, gyms, restaurants, medical)",
+        "secondary": "E-commerce sellers, B2B service providers",
+        "pain_points": [
+          "Missing calls when busy or after hours",
+          "Spending too much time on manual lead gen",
+          "No website or poor online presence",
+          "Inconsistent follow-up with prospects",
+          "Can't scale without hiring more people",
+          "Too busy delivering service to market effectively"
+        ]
+      },
+      "social_accounts": {
+        "x_handle": "@wmarceau",
+        "use_main_account": true,
+        "strategy": "Building in public on personal account"
+      },
+      "hashtags": {
+        "primary": [
+          "AI",
+          "Automation",
+          "SmallBusiness",
+          "VoiceAI",
+          "LeadGen"
+        ],
+        "secondary": [
+          "BuildingInPublic",
+          "SaaS",
+          "B2B",
+          "GrowthHacking",
+          "AITools"
+        ],
+        "local": [
+          "SWFL",
+          "Naples",
+          "FortMyers"
+        ],
+        "vertical": [
+          "HVAC",
+          "Fitness",
+          "Restaurants",
+          "Medical",
+          "Ecommerce"
+        ]
+      },
+      "content_themes": {
+        "monday": "case_study_updates",
+        "tuesday": "tech_tutorials",
+        "wednesday": "stat_insights",
+        "thursday": "service_highlights",
+        "friday": "behind_the_scenes"
+      },
+      "posting_schedule": {
+        "posts_per_day": 25,
+        "optimal_times": [
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22
+        ],
+        "image_generation_percentage": 50,
+        "content_mix": {
+          "service_highlights": 25,
+          "case_study_updates": 25,
+          "tech_tutorials": 20,
+          "stat_insights": 15,
+          "behind_scenes": 15
+        }
+      },
+      "cta_options": [
+        "Building in public",
+        "DM for details",
+        "Following the POC journey",
+        "Share POC results",
+        "Real metrics, no BS"
+      ],
+      "poc_integration": {
+        "share_metrics": true,
+        "case_studies": [
+          {
+            "business": "SW Florida Comfort HVAC",
+            "focus": "Voice AI call answering and appointment booking",
+            "metrics_to_track": [
+              "calls_answered",
+              "appointments_booked",
+              "revenue_recovered",
+              "answer_rate"
+            ]
+          },
+          {
+            "business": "Square Foot Shipping",
+            "focus": "Lead generation automation and quote automation",
+            "metrics_to_track": [
+              "leads_generated",
+              "quotes_delivered",
+              "time_saved",
+              "deals_closed"
+            ]
+          }
+        ],
+        "update_frequency": "Weekly POC progress posts"
+      },
+      "status": "active"
+    }
+  },
+  "posting_config": {
+    "posts_per_business_per_day": 2,
+    "rotation_strategy": "alternate",
+    "optimal_times_est": [
+      "09:00",
+      "12:00",
+      "15:00",
+      "18:00"
+    ],
+    "weekend_posts": true,
+    "weekend_posts_per_day": 1
+  },
+  "shared_resources": {
+    "utm_source": "twitter",
+    "utm_medium": "social",
+    "tracking_enabled": true
+  }
+}

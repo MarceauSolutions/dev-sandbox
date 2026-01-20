@@ -1,0 +1,66 @@
+{
+  "name": "Weekend",
+  "description": "Relaxed weekend schedule with flexibility (6 AM - 9 PM)",
+  "working_hours": {
+    "start": "06:00",
+    "end": "21:00"
+  },
+  "blocks": [
+    {
+      "start": "06:00",
+      "duration": 60,
+      "activity": "Workout",
+      "category": "exercise",
+      "priority": "high",
+      "notes": "Saturday morning workout (skip on Sunday for rest)",
+      "recurring": true,
+      "days": ["sat"]
+    },
+    {
+      "start": "07:30",
+      "duration": 120,
+      "activity": "Creative Work",
+      "category": "work",
+      "priority": "medium",
+      "notes": "Creative time while mind is fresh - only if motivated"
+    },
+    {
+      "start": "10:00",
+      "duration": 120,
+      "activity": "Personal Projects",
+      "category": "personal",
+      "priority": "low",
+      "notes": "Fun side projects or learning"
+    },
+    {
+      "start": "12:00",
+      "duration": 60,
+      "activity": "Lunch",
+      "category": "meal",
+      "priority": "low"
+    },
+    {
+      "start": "15:00",
+      "duration": 60,
+      "activity": "Dog Park / Training",
+      "category": "personal",
+      "priority": "medium"
+    },
+    {
+      "start": "17:00",
+      "duration": 120,
+      "activity": "Project Building",
+      "category": "work",
+      "priority": "medium",
+      "notes": "Optional - only if motivated"
+    },
+    {
+      "start": "20:00",
+      "duration": 60,
+      "activity": "Reading",
+      "category": "learning",
+      "priority": "medium",
+      "notes": "Wind down with a good book"
+    }
+  ]
+}

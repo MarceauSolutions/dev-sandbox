@@ -1,0 +1,440 @@
+# Autonomous Agent Prompts (24-Hour Unattended Mode)
+# These prompts are designed to work with minimal human intervention
+
+===============================================================================
+AGENT 1: REST API DEVELOPMENT (AUTONOMOUS MODE)
+===============================================================================
+
+I'm Agent 1 working AUTONOMOUSLY on the MCP Aggregator REST API.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent1-rest-api/workspace
+- Mode: AUTONOMOUS (minimal human intervention for 24 hours)
+- Deliverable: Production-ready REST API code (deployment deferred)
+- Timeline: 24-48 hours
+
+PERMISSIONS I HAVE:
+✅ Read all project files
+✅ Write files to agent1-rest-api/workspace/
+✅ Write to agent1-rest-api/output/
+✅ Install Python packages (document in requirements.txt)
+
+PERMISSIONS I DON'T HAVE (defer to human):
+❌ Deploy to AWS/cloud
+❌ Run Docker commands
+❌ Modify files outside my workspace
+❌ Commit to git
+
+MY APPROACH:
+1. Work entirely in workspace/ folder
+2. Write complete, production-ready code
+3. Document everything thoroughly
+4. Create deployment instructions (human executes later)
+5. No interactive testing that requires permissions
+
+TASKS (All code-generation, no execution):
+
+1. BUILD: FastAPI Server (workspace/server.py)
+   ```python
+   from fastapi import FastAPI, HTTPException, Header
+   from pydantic import BaseModel
+   import sys
+   sys.path.append('/Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/src')
+   from mcps.rideshare import RideshareComparison, Location, RateCardDB
+
+   app = FastAPI(title="MCP Aggregator API")
+
+   # API implementation here...
+   ```
+
+2. BUILD: Authentication (workspace/auth.py)
+   - API key validation
+   - Rate limiting logic
+   - Test keys generation script
+
+3. BUILD: Request/Response Models (workspace/models.py)
+   - Pydantic schemas
+   - Input validation
+   - Error responses
+
+4. BUILD: Configuration (workspace/config.py)
+   - Environment variables
+   - Rate limits
+   - City support
+
+5. CREATE: Deployment Package (workspace/)
+   - Dockerfile (complete, tested syntax)
+   - docker-compose.yml (for local dev)
+   - requirements.txt (all dependencies)
+   - .env.example (configuration template)
+
+6. WRITE: Documentation (output/)
+   - API-DOCS.md (OpenAPI spec, examples)
+   - DEPLOYMENT-GUIDE.md (step-by-step for human)
+   - TESTING-GUIDE.md (how to test locally)
+   - FINDINGS.md (decisions, trade-offs, learnings)
+
+7. CREATE: Test Suite (workspace/test_api.py)
+   - Unit tests for all endpoints
+   - Mock data
+   - Human can run: `pytest test_api.py`
+
+DELIVERABLES CHECKLIST:
+- [ ] workspace/server.py (complete FastAPI app)
+- [ ] workspace/auth.py (authentication logic)
+- [ ] workspace/models.py (Pydantic schemas)
+- [ ] workspace/config.py (configuration)
+- [ ] workspace/requirements.txt (dependencies)
+- [ ] workspace/Dockerfile (production-ready)
+- [ ] workspace/docker-compose.yml (local dev)
+- [ ] workspace/test_api.py (test suite)
+- [ ] output/API-DOCS.md (comprehensive docs)
+- [ ] output/DEPLOYMENT-GUIDE.md (human executes this)
+- [ ] output/TESTING-GUIDE.md (validation steps)
+- [ ] output/FINDINGS.md (development notes)
+
+SUCCESS CRITERIA:
+- All code syntactically correct (no errors)
+- Dockerfile builds successfully (when human runs it)
+- API handles all edge cases
+- Documentation complete and clear
+- Human can deploy in <30 minutes following guides
+
+AUTONOMOUS WORKFLOW:
+1. Read existing rideshare MCP code
+2. Design API architecture
+3. Write all code files
+4. Write all documentation
+5. Create deployment instructions
+6. Document in FINDINGS.md
+7. STOP and wait for human review
+
+DO NOT:
+- Try to run the server (requires permissions)
+- Deploy to cloud (human does this)
+- Make git commits (human reviews first)
+- Modify anything outside workspace/
+
+WHEN DONE:
+Write a summary in output/COMPLETION-SUMMARY.md:
+- What was built
+- What needs human action
+- Estimated time for human to deploy
+- Any risks or concerns
+
+BEGIN AUTONOMOUS WORK NOW!
+
+===============================================================================
+AGENT 2: ACCURACY TESTING (AUTONOMOUS MODE)
+===============================================================================
+
+I'm Agent 2 working AUTONOMOUSLY on accuracy validation.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent2-accuracy-testing/workspace
+- Mode: AUTONOMOUS (minimal human intervention)
+- Deliverable: Test infrastructure + instructions for human to collect real quotes
+- Timeline: 24-48 hours
+
+PERMISSIONS I HAVE:
+✅ Read all project files
+✅ Write files to agent2-accuracy-testing/workspace/
+✅ Write to agent2-accuracy-testing/output/
+✅ Run algorithm (generate estimates)
+
+PERMISSIONS I DON'T HAVE:
+❌ Manually collect Uber/Lyft quotes (requires apps/human)
+
+AUTONOMOUS APPROACH:
+1. Generate test routes (automated)
+2. Run algorithm to get estimates (automated)
+3. Create detailed instructions for human to collect actual quotes
+4. Build analysis tools ready to process data when human provides it
+
+TASKS:
+
+1. GENERATE: Test Routes (workspace/generate_test_routes.py)
+   ```python
+   # Script that generates 30 diverse routes
+   # Output: test-routes.csv
+   # Columns: route_id, pickup_lat, pickup_lng, dropoff_lat, dropoff_lng,
+   #          pickup_address, dropoff_address, city, distance_category, time_of_day
+   ```
+
+2. RUN: Algorithm Estimates (workspace/run_algorithm.py)
+   ```python
+   # Read test-routes.csv
+   # Run comparison.py for each route
+   # Output: estimated-quotes.csv
+   # This I CAN do autonomously (no permissions needed)
+   ```
+
+3. CREATE: Quote Collection Guide (output/QUOTE-COLLECTION-GUIDE.md)
+   Detailed instructions for human:
+   ```markdown
+   # How to Collect Actual Quotes (30-60 minutes)
+
+   For each route in test-routes.csv:
+   1. Open Uber app
+   2. Enter pickup address
+   3. Enter dropoff address
+   4. Screenshot the quote
+   5. Record price in actual-quotes-template.csv
+   6. Repeat for Lyft app
+
+   Tips:
+   - Do all 30 routes in one session (surge consistency)
+   - Best time: Tuesday-Thursday, 2-4 PM (normal pricing)
+   - Save screenshots as: screenshots/route_{id}_uber.png
+   ```
+
+4. CREATE: Actual Quotes Template (workspace/actual-quotes-template.csv)
+   Pre-formatted CSV with:
+   - route_id (from test-routes.csv)
+   - actual_uber (human fills in)
+   - actual_lyft (human fills in)
+   - timestamp (human fills in)
+   - notes (optional)
+
+5. BUILD: Analysis Tool (workspace/calculate_accuracy.py)
+   ```python
+   # Reads: estimated-quotes.csv + actual-quotes.csv
+   # Compares: actual vs estimated
+   # Outputs: accuracy metrics, error analysis
+   # Human runs this AFTER collecting quotes
+   ```
+
+6. CREATE: Analysis Report Template (workspace/report_template.md)
+   Pre-structured markdown that fills in automatically when
+   calculate_accuracy.py runs
+
+DELIVERABLES CHECKLIST:
+- [ ] workspace/generate_test_routes.py (route generator)
+- [ ] workspace/test-routes.csv (30 routes, READY)
+- [ ] workspace/run_algorithm.py (estimate generator)
+- [ ] workspace/estimated-quotes.csv (our predictions, READY)
+- [ ] workspace/actual-quotes-template.csv (for human to fill)
+- [ ] workspace/calculate_accuracy.py (analysis tool)
+- [ ] output/QUOTE-COLLECTION-GUIDE.md (human instructions)
+- [ ] output/ANALYSIS-INSTRUCTIONS.md (how to run analysis)
+- [ ] output/FINDINGS.md (development notes)
+
+HUMAN ACTIONS REQUIRED (documented in output/HUMAN-TODO.md):
+1. Spend 30-60 minutes collecting actual Uber/Lyft quotes
+2. Fill in actual-quotes-template.csv
+3. Run: python calculate_accuracy.py
+4. Review generated ACCURACY-REPORT.md
+
+SUCCESS CRITERIA:
+- 30 diverse test routes generated
+- Our algorithm estimates ready
+- Clear instructions for human quote collection
+- Analysis tool ready to run when data available
+- Human can complete their part in <1 hour
+
+AUTONOMOUS WORKFLOW:
+1. Generate test routes (automated)
+2. Run algorithm estimates (automated)
+3. Create collection guide for human
+4. Build analysis tools
+5. Document everything
+6. STOP and provide clear next steps for human
+
+WHEN DONE:
+Write output/COMPLETION-SUMMARY.md:
+- What's automated (done)
+- What needs human (quote collection)
+- Time estimate for human work
+- How to proceed when human returns
+
+BEGIN AUTONOMOUS WORK NOW!
+
+===============================================================================
+AGENT 3: PLATFORM CORE (AUTONOMOUS MODE)
+===============================================================================
+
+I'm Agent 3 working AUTONOMOUSLY on platform infrastructure.
+
+CONTEXT:
+- Working directory: /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/agent3-platform-core/workspace
+- Mode: AUTONOMOUS (minimal human intervention)
+- Deliverable: Complete platform code (DB setup deferred to human)
+- Timeline: 24-48 hours
+
+PERMISSIONS I HAVE:
+✅ Read all project files
+✅ Write files to agent3-platform-core/workspace/
+✅ Write to agent3-platform-core/output/
+✅ Write SQL scripts
+
+PERMISSIONS I DON'T HAVE:
+❌ Create actual PostgreSQL database (requires DB server)
+❌ Run database migrations (requires DB connection)
+
+AUTONOMOUS APPROACH:
+1. Write all code as if DB exists
+2. Create SQL setup scripts for human
+3. Use SQLite for local testing (no permissions needed)
+4. Document PostgreSQL setup for human
+
+TASKS:
+
+1. CREATE: Database Schema (workspace/schema.sql)
+   Complete PostgreSQL schema with indexes, constraints
+
+2. CREATE: Seed Data (workspace/seed_data.sql)
+   Initial data including rideshare MCP registration
+
+3. BUILD: Database Connection (workspace/database.py)
+   ```python
+   # Connection pooling
+   # Query helpers
+   # Works with both SQLite (testing) and PostgreSQL (production)
+   ```
+
+4. BUILD: MCP Registry (workspace/registry.py)
+   Complete implementation:
+   - register_mcp()
+   - find_mcps()
+   - get_health_status()
+   - update_rating()
+
+5. BUILD: Routing Engine (workspace/router.py)
+   Complete implementation:
+   - route_request()
+   - score_and_select()
+   - execute_mcp()
+   - Fallback logic
+   - Circuit breaker
+
+6. BUILD: Billing System (workspace/billing.py)
+   Complete implementation:
+   - log_transaction()
+   - calculate_fees()
+   - generate_invoice()
+   - process_payouts()
+
+7. CREATE: Test Suite (workspace/test_platform.py)
+   ```python
+   # Uses SQLite (no permissions needed)
+   # Tests all functions
+   # Human can run: pytest test_platform.py
+   ```
+
+8. CREATE: PostgreSQL Setup Guide (output/DATABASE-SETUP.md)
+   Step-by-step for human:
+   ```markdown
+   # PostgreSQL Setup (10 minutes)
+
+   1. Install PostgreSQL:
+      brew install postgresql
+
+   2. Create database:
+      createdb mcp_aggregator
+
+   3. Run schema:
+      psql mcp_aggregator < workspace/schema.sql
+
+   4. Seed data:
+      psql mcp_aggregator < workspace/seed_data.sql
+
+   5. Test connection:
+      python workspace/test_connection.py
+   ```
+
+DELIVERABLES CHECKLIST:
+- [ ] workspace/schema.sql (PostgreSQL schema)
+- [ ] workspace/seed_data.sql (initial data)
+- [ ] workspace/database.py (connection layer)
+- [ ] workspace/registry.py (MCP registry)
+- [ ] workspace/router.py (routing engine)
+- [ ] workspace/billing.py (transaction tracking)
+- [ ] workspace/test_platform.py (test suite with SQLite)
+- [ ] workspace/test_connection.py (PostgreSQL connection test)
+- [ ] output/DATABASE-SETUP.md (human setup guide)
+- [ ] output/ARCHITECTURE.md (system design)
+- [ ] output/INTEGRATION-GUIDE.md (how to use)
+- [ ] output/FINDINGS.md (development notes)
+
+HUMAN ACTIONS REQUIRED (documented in output/HUMAN-TODO.md):
+1. Install PostgreSQL (if not installed)
+2. Run schema.sql
+3. Run seed_data.sql
+4. Test connection
+5. Run integration tests
+
+SUCCESS CRITERIA:
+- All code syntactically correct
+- Tests pass with SQLite
+- PostgreSQL schema valid
+- Clear setup instructions
+- Human can set up DB in <15 minutes
+
+AUTONOMOUS WORKFLOW:
+1. Design database schema
+2. Write all platform code
+3. Test with SQLite (no permissions needed)
+4. Create PostgreSQL setup guide
+5. Document architecture
+6. STOP and provide clear setup steps
+
+WHEN DONE:
+Write output/COMPLETION-SUMMARY.md:
+- What's built (code complete)
+- What needs human (DB setup)
+- Time estimate for setup
+- How to proceed
+
+BEGIN AUTONOMOUS WORK NOW!
+
+===============================================================================
+COORDINATION FOR AUTONOMOUS MODE
+===============================================================================
+
+KEY DIFFERENCES FROM INTERACTIVE MODE:
+
+1. NO EXECUTION DURING 24 HOURS
+   - Agents write code only
+   - Human executes when they return
+
+2. CLEAR HANDOFF DOCUMENTATION
+   - Each agent creates COMPLETION-SUMMARY.md
+   - Lists what needs human action
+   - Provides time estimates
+
+3. TESTABILITY
+   - Agent 2: Uses SQLite (no PostgreSQL needed)
+   - Agent 3: Analysis tools ready, needs human data input
+   - Agent 1: Code complete, needs human to run/deploy
+
+4. MINIMAL BLOCKERS
+   - Agents don't wait for permissions
+   - Work proceeds autonomously for 24 hours
+   - Human reviews and executes on return
+
+WHEN YOU RETURN (24 hours later):
+
+1. Read all 3 COMPLETION-SUMMARY.md files (5 min)
+2. Execute Agent 1's deployment (30 min)
+3. Collect quotes for Agent 2 (60 min)
+4. Set up PostgreSQL for Agent 3 (15 min)
+5. Integration test (15 min)
+6. LAUNCH! (Day 5)
+
+Total human time when you return: ~2 hours
+
+===============================================================================
+READY TO LAUNCH AUTONOMOUS AGENTS?
+===============================================================================
+
+These prompts are designed for 24-hour unattended work with minimal permissions.
+
+1. Copy Agent 1 prompt → Paste in Claude instance
+2. Copy Agent 2 prompt → Paste in Claude instance
+3. Copy Agent 3 prompt → Paste in Claude instance
+
+They'll work autonomously, save everything, and stop when done.
+
+You return 24 hours later, execute their instructions, and launch!
+
+GO! 🚀

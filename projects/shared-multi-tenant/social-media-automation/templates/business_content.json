@@ -1,0 +1,447 @@
+{
+  "version": "1.1.0",
+  "last_updated": "2026-01-20",
+
+  "squarefoot-shipping": {
+    "content_bank": {
+      "pain_points": [
+        "Tired of unreliable shipping that costs you customers?",
+        "Is your current warehouse eating into your profits?",
+        "Spending too much time tracking shipments?",
+        "E-commerce orders backing up during peak season?",
+        "Worried about inventory damage in storage?",
+        "Need faster fulfillment but can't afford the overhead?",
+        "Struggling to scale your logistics with your business?"
+      ],
+      "solutions": [
+        "Professional logistics partner = peace of mind",
+        "Climate-controlled storage protects your investment",
+        "Same-day local delivery changes the game",
+        "3PL services let you focus on growing, not shipping",
+        "Real-time tracking means no more guessing",
+        "Scalable warehouse space grows with you"
+      ],
+      "benefits": [
+        "99% on-time delivery rate",
+        "24/7 secured warehouse access",
+        "Same-day fulfillment for SWFL",
+        "No hidden fees, transparent pricing",
+        "Dedicated account manager",
+        "Climate-controlled to protect your goods"
+      ],
+      "stats": [
+        "E-commerce businesses lose 15% of customers to slow shipping",
+        "Proper climate control reduces inventory damage by 40%",
+        "Third-party logistics can cut shipping costs by 25%",
+        "Same-day delivery increases customer satisfaction by 73%",
+        "Efficient fulfillment = 23% higher repeat purchase rate"
+      ],
+      "tips": [
+        "Ship Monday-Wednesday for fastest delivery times",
+        "Climate-controlled storage is essential for Florida humidity",
+        "LTL shipping saves money on partial loads",
+        "Always insure high-value shipments",
+        "Track inventory in real-time to prevent stockouts"
+      ]
+    },
+
+    "post_templates": {
+      "service_highlight": {
+        "format": "{service_name} that actually works.\n\n{benefit_1}\n{benefit_2}\n{benefit_3}\n\n{cta}: {phone}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Warehouse storage that actually works.\n\nClimate-controlled\n24/7 security monitoring\nFlexible space as you grow\n\nGet a free quote: (239) 880-3365\n\n#Logistics #SWFL"
+        ]
+      },
+      "pain_solution": {
+        "format": "{pain_point}\n\nThat's why we offer {solution}.\n\n{benefit}.\n\nCall {phone} for a free quote.\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "E-commerce orders piling up faster than you can ship?\n\nThat's why we offer pick-pack-ship fulfillment.\n\nSame-day processing, nationwide shipping.\n\nCall (239) 880-3365 for a free quote.\n\n#Fulfillment #Ecommerce"
+        ]
+      },
+      "stat_insight": {
+        "format": "{stat}\n\n{insight}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Same-day delivery increases customer satisfaction by 73%.\n\nWe offer same-day in all of SWFL - Naples, Fort Myers, Cape Coral.\n\nCall (239) 880-3365\n\n#Logistics #SmallBusiness"
+        ]
+      },
+      "tip_list": {
+        "format": "{count} {topic}:\n\n1. {tip1}\n2. {tip2}\n3. {tip3}\n\nNeed logistics help? {phone}\n\n#{hashtag1}",
+        "examples": [
+          "3 ways to reduce shipping costs:\n\n1. Consolidate shipments when possible\n2. Use LTL for partial loads\n3. Partner with a local 3PL\n\nNeed logistics help? (239) 880-3365\n\n#Shipping"
+        ]
+      },
+      "local_pride": {
+        "format": "Proudly serving {area} businesses.\n\n{service_list}\n\n{tagline}\n\n{phone}\n\n#{local_hashtag} #{industry_hashtag}",
+        "examples": [
+          "Proudly serving Southwest Florida businesses.\n\nWarehouse Storage\nFreight Shipping\nFulfillment Services\n\nYour Space, Our Priority.\n\n(239) 880-3365\n\n#SWFL #Logistics"
+        ]
+      }
+    },
+
+    "campaigns": {
+      "general-awareness": {
+        "goal": "Build brand awareness for logistics services",
+        "hashtags": ["Logistics", "SWFL", "SmallBusiness", "Shipping"],
+        "cta": "Call (239) 880-3365"
+      },
+      "ecommerce-focus": {
+        "goal": "Target e-commerce sellers needing fulfillment",
+        "hashtags": ["Ecommerce", "Fulfillment", "3PL", "OnlineBusiness"],
+        "cta": "Get a free fulfillment quote"
+      },
+      "local-business": {
+        "goal": "Attract local SWFL businesses",
+        "hashtags": ["Naples", "FortMyers", "CapeCoral", "FloridaBusiness"],
+        "cta": "Visit our local warehouse"
+      }
+    }
+  },
+
+  "swflorida-hvac": {
+    "content_bank": {
+      "pain_points": [
+        "AC struggling to keep up with Florida heat?",
+        "Energy bills through the roof this summer?",
+        "AC making strange noises?",
+        "Some rooms hot, others cold?",
+        "AC running constantly but not cooling?",
+        "Worried your old system will die during a heat wave?",
+        "Allergies acting up? Could be your air quality."
+      ],
+      "solutions": [
+        "Same-day AC repair gets you cool fast",
+        "New high-efficiency system = lower bills",
+        "Annual maintenance prevents breakdowns",
+        "Proper duct sealing fixes hot spots",
+        "24/7 emergency service means never sweat it",
+        "Air quality solutions for healthier breathing"
+      ],
+      "benefits": [
+        "Same-day service, no overtime charges",
+        "$89 diagnostic (waived with repair)",
+        "10-year warranties on new installs",
+        "Financing available for new systems",
+        "24/7 emergency service",
+        "Local family-owned business"
+      ],
+      "stats": [
+        "A tune-up can reduce energy costs by up to 15%",
+        "90% of AC failures are preventable with maintenance",
+        "Florida AC units work 3x harder than national average",
+        "Clean ducts improve airflow efficiency by 20%",
+        "New HVAC systems are 40% more efficient than 10-year-old units"
+      ],
+      "tips": [
+        "Change your filter every 1-3 months",
+        "Keep your outdoor unit clear of debris",
+        "Set thermostat to 78 for best efficiency",
+        "Schedule tune-ups in spring before peak season",
+        "Don't close vents in unused rooms - it strains the system"
+      ],
+      "urgency_posts": [
+        "AC out? Don't sweat it. We're on our way. (239) 766-6129",
+        "Florida heat won't wait. Neither do we. 24/7 emergency service.",
+        "No AC in this heat? That's an emergency. Call now: (239) 766-6129",
+        "Same-day AC repair. No overtime. No excuses. Just cool air."
+      ]
+    },
+
+    "post_templates": {
+      "emergency_ready": {
+        "format": "{hook}\n\n{urgency_message}\n\n{phone}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "AC out? In Florida? That's an emergency.\n\n24/7 service, no overtime charges. We come to you.\n\n(239) 766-6129\n\n#ACRepair #SWFL"
+        ]
+      },
+      "service_promo": {
+        "format": "{service}: {offer}\n\n{details}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook now: (239) 766-6129\n\n#HVAC #Naples"
+        ]
+      },
+      "tip_educational": {
+        "format": "{tip_intro}\n\n{tip_content}\n\n{cta_soft}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Quick HVAC tip:\n\nChange your filter every 1-3 months. A dirty filter makes your system work harder, raising energy bills and causing wear.\n\nNeed a tune-up? (239) 766-6129\n\n#HVACTips #FloridaLiving"
+        ]
+      },
+      "seasonal_reminder": {
+        "format": "{season_hook}\n\n{recommendation}\n\n{benefit}\n\n{cta}\n\n#{hashtag1} #{seasonal_hashtag}",
+        "examples": [
+          "Summer's coming to SWFL.\n\nSchedule your AC tune-up now, before the heat hits.\n\nAvoid breakdowns when you need cooling most.\n\n(239) 766-6129\n\n#HVAC #FloridaSummer"
+        ]
+      },
+      "social_proof": {
+        "format": "\"{testimonial}\"\n\n- {customer_location}\n\n{service_highlight}\n\n{phone}\n\n#{hashtag1} #{local_hashtag}",
+        "examples": [
+          "\"They came same-day and fixed our AC in under 2 hours. Lifesavers!\"\n\n- Naples homeowner\n\nSame-day AC repair, no overtime charges.\n\n(239) 766-6129\n\n#ACRepair #Naples"
+        ]
+      },
+      "stat_hook": {
+        "format": "{stat}\n\n{insight}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "90% of AC breakdowns are preventable with regular maintenance.\n\nDon't wait until it fails. A $199 tune-up can save you $3,000+ in emergency repairs.\n\nSchedule now: (239) 766-6129\n\n#HVAC #PreventiveMaintenance"
+        ]
+      }
+    },
+
+    "campaigns": {
+      "emergency-awareness": {
+        "goal": "Position as the go-to for AC emergencies",
+        "hashtags": ["ACRepair", "EmergencyHVAC", "SWFL", "FloridaHeat"],
+        "cta": "Call (239) 766-6129"
+      },
+      "maintenance-push": {
+        "goal": "Sell maintenance plans and tune-ups",
+        "hashtags": ["HVACMaintenance", "ACTuneUp", "EnergySavings"],
+        "cta": "Book your tune-up today"
+      },
+      "new-install": {
+        "goal": "Generate leads for new AC installations",
+        "hashtags": ["NewAC", "HVACInstall", "EnergyEfficiency"],
+        "cta": "Get a free estimate"
+      },
+      "local-trust": {
+        "goal": "Build trust as local family business",
+        "hashtags": ["Naples", "FortMyers", "LocalBusiness", "FamilyOwned"],
+        "cta": "Your neighbors trust us"
+      }
+    },
+
+    "seasonal_content": {
+      "q1_spring": {
+        "theme": "Pre-summer preparation",
+        "focus": ["tune-ups", "maintenance plans", "efficiency checks"],
+        "urgency": "medium",
+        "messages": [
+          "Summer is coming. Is your AC ready?",
+          "Book your spring tune-up before the rush",
+          "Prevent summer breakdowns with maintenance now"
+        ]
+      },
+      "q2_summer": {
+        "theme": "Peak season / emergency readiness",
+        "focus": ["24/7 service", "same-day repair", "emergency response"],
+        "urgency": "high",
+        "messages": [
+          "AC out? We're available 24/7",
+          "Florida heat emergency? Same-day service.",
+          "Don't suffer in the heat. Call now."
+        ]
+      },
+      "q3_late_summer": {
+        "theme": "System stress / efficiency",
+        "focus": ["efficiency", "energy savings", "system upgrades"],
+        "urgency": "medium",
+        "messages": [
+          "High energy bills? Your AC might be working too hard",
+          "Old system struggling? Time for an upgrade",
+          "Beat the heat AND the energy bill"
+        ]
+      },
+      "q4_fall_winter": {
+        "theme": "Year-end specials / planning",
+        "focus": ["new installs", "financing", "year-end deals"],
+        "urgency": "low",
+        "messages": [
+          "New year, new AC? Financing available",
+          "Year-end specials on new installations",
+          "Start next summer cool - plan your upgrade now"
+        ]
+      }
+    }
+  },
+
+  "marceau-solutions": {
+    "content_bank": {
+      "pain_points": [
+        "Missing calls = missing revenue",
+        "Spending 10+ hours/week on manual lead gen?",
+        "Website not generating quality leads?",
+        "Manually following up with every prospect?",
+        "Can't answer phone when on job sites?",
+        "Losing customers to competitors who respond faster?",
+        "Too busy working to market your business?",
+        "Paying staff just to answer phones?",
+        "Missing calls after hours costs you money",
+        "Manual data entry eating your time?",
+        "Cold outreach gets ignored?",
+        "No system for tracking leads?",
+        "Inconsistent follow-up losing deals?",
+        "Can't scale without hiring more people?",
+        "Competitors have better online presence?",
+        "Reviews not turning into customers?",
+        "No time to respond to all inquiries?",
+        "Every missed call is money left on the table",
+        "Appointment scheduling back-and-forth wastes time",
+        "No website = invisible to 80% of customers"
+      ],
+      "solutions": [
+        "Voice AI answers every call, 24/7",
+        "Automated lead scraping finds qualified prospects in minutes",
+        "AI-powered outreach with personalized images",
+        "Smart follow-up sequences that convert",
+        "Professional website mockups delivered in 48 hours",
+        "Automated appointment booking (no back-and-forth)",
+        "Lead qualification happens while you sleep",
+        "AI handles initial conversations, you close deals",
+        "Custom automation workflows for your business",
+        "One system replaces 5+ manual tools",
+        "Set it up once, runs forever",
+        "AI that sounds human, works like a machine",
+        "Turn your website into a lead generation engine",
+        "Automated SMS campaigns with tracking",
+        "Email automation that feels personal",
+        "CRM integration that actually works",
+        "Real-time lead notifications to your phone",
+        "Multi-channel outreach from one dashboard",
+        "AI-generated content for social media",
+        "Voice AI with your business knowledge built-in"
+      ],
+      "benefits": [
+        "90%+ call answer rate (vs 40-60% with humans)",
+        "10x faster lead generation",
+        "24/7 availability without hiring night staff",
+        "$0 cost per additional call (vs $15-30/hour staff)",
+        "Leads qualified before you talk to them",
+        "Appointments booked automatically",
+        "Response time under 30 seconds",
+        "Zero missed calls = zero missed revenue",
+        "Scale infinitely without hiring",
+        "ROI in first 30 days or money back",
+        "Setup in under 1 week",
+        "No coding knowledge required",
+        "Works with your existing tools",
+        "Personalized to your business",
+        "Measurable results from day one",
+        "Frees you to focus on delivering service",
+        "Consistent follow-up every single time",
+        "Professional image even when you're busy",
+        "Competitive advantage in your market",
+        "Pay for results, not hours"
+      ],
+      "stats": [
+        "Businesses lose 30-40% of calls when busy or after hours",
+        "AI phone systems cost 90% less than hiring staff",
+        "Companies with 24/7 availability convert 2.5x more leads",
+        "80% of customers search online before calling",
+        "Automated follow-up increases conversions by 50%",
+        "Voice AI can handle 100+ calls simultaneously",
+        "Average business spends 15 hours/week on lead gen",
+        "67% of customers prefer to book appointments online",
+        "Businesses with automation grow 3x faster",
+        "AI reduces response time from hours to seconds",
+        "54% of leads go cold without 5-minute response",
+        "Personalized outreach gets 6x higher response rates",
+        "Automation saves avg business $30K/year in labor",
+        "AI-generated images boost email response 150%",
+        "Business websites without chat lose 67% of leads",
+        "After-hours calls represent 40% of revenue opportunities",
+        "Local service businesses miss 60% of calls on busy days",
+        "AI appointment booking reduces no-shows by 35%",
+        "Automated lead scoring improves close rate by 40%",
+        "First business to automate in a market dominates"
+      ],
+      "tips": [
+        "Start with voice AI - highest ROI in 30 days",
+        "Automate lead gen before hiring more sales staff",
+        "Use AI for outreach, humans for closing",
+        "Test automation on your top pain point first",
+        "Track missed calls - that's your lost revenue",
+        "Personalization at scale = AI + templates",
+        "Voice AI works best for service businesses",
+        "Integrate with existing CRM, don't replace it",
+        "Monitor AI conversations weekly for quality",
+        "Set up automation once, tweak based on data",
+        "AI handles FAQs, you handle complex questions",
+        "Response speed matters more than perfect answers",
+        "Use AI to book appointments, not just answer calls",
+        "Multi-touch sequences convert 5x more than one-offs",
+        "Images in outreach double response rates",
+        "Website + automation > website alone",
+        "Focus automation on highest-value activities",
+        "AI voice cloning creates consistent brand experience",
+        "Test templates before scaling automation",
+        "Automation frees time, use it to grow faster"
+      ],
+      "case_studies": [
+        "HVAC Voice AI: 47 calls, 12 appointments, $8K revenue (Week 1)",
+        "E-commerce leads: 50 qualified in 5 minutes vs 8 hours manual",
+        "Gym with no website: Mockup delivered in 48 hours, 3 inquiries in first week",
+        "Shipping company: Automated quotes = 40% less time on phone",
+        "Local service business: 90% answer rate vs 40% before AI",
+        "Restaurant: Voice AI handles reservations, staff focuses on service",
+        "Medical office: After-hours AI books appointments, no missed revenue",
+        "Real estate agent: Automated follow-up = 2x more showings booked"
+      ]
+    },
+
+    "post_templates": {
+      "service_highlight": {
+        "format": "{service_name}\n\n{benefit_1}\n{benefit_2}\n{benefit_3}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Voice AI Phone System\n\nAnswers every call 24/7\nBooks appointments automatically\n$0 per additional call\n\nBuilding for local businesses.\n\n#AI #Automation"
+        ]
+      },
+      "case_study_update": {
+        "format": "{timeframe} POC Results: {business_type}\n\n{metric_1}\n{metric_2}\n{metric_3}\n{metric_4}\n\n{insight}\n\n{tagline}",
+        "examples": [
+          "Week 1 POC Results: Voice AI for HVAC\n\n📞 47 calls answered\n📅 12 appointments booked\n💰 ~$8K recovered revenue\n⏱️ 0 missed calls at night\n\nAll automated. Owner just shows up to jobs.\n\nThis is the future of local service businesses."
+        ]
+      },
+      "tech_tutorial": {
+        "format": "How to {action}:\n\n1. {step1}\n2. {step2}\n3. {step3}\n\n{insight}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "How to scrape 100 local business leads in 5 minutes:\n\n1. Google Places API\n2. Filter by category + area\n3. Extract: name, phone, website, reviews\n4. Auto-qualify based on pain points\n\nBuilt this for my shipping client. 50+ qualified leads in first run.\n\n#LeadGen #Automation"
+        ]
+      },
+      "stat_insight": {
+        "format": "{stat}\n\n{implication}\n\n{solution}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Businesses lose 30-40% of calls when busy or after hours.\n\nThat's 30-40% of your revenue walking to competitors.\n\nVoice AI answers every call. $0 per call. 24/7.\n\n#AI #SmallBusiness"
+        ]
+      },
+      "behind_scenes": {
+        "format": "{hook}\n\n{story}\n\n{learning}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Building in public:\n\nJust deployed Voice AI for an HVAC business. First call came in at 11 PM - customer's AC died.\n\nAI booked emergency appointment for 7 AM. $600 job.\n\nOwner would've missed that call sleeping.\n\n#BuildingInPublic #AI"
+        ]
+      },
+      "pain_solution": {
+        "format": "{pain_point}\n\n{solution_intro}\n\n{how_it_works}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Missing calls when you're on job sites?\n\nVoice AI picks up every call.\n\nAnswers FAQs, books appointments, transfers urgent calls to you.\n\nBuilding this for local service businesses.\n\n#Automation #SmallBusiness"
+        ]
+      },
+      "before_after": {
+        "format": "Before: {before_scenario}\nAfter: {after_scenario}\n\n{impact}\n\n{cta}\n\n#{hashtag1} #{hashtag2}",
+        "examples": [
+          "Before: Manually scraping leads = 8 hours for 20 businesses\nAfter: AI scraper = 5 minutes for 50 businesses\n\n10x faster. Better qualification. Zero manual work.\n\nThis is what automation should feel like.\n\n#AI #LeadGen"
+        ]
+      }
+    },
+
+    "campaigns": {
+      "general-awareness": {
+        "goal": "Build audience as AI automation expert",
+        "hashtags": ["AI", "Automation", "SmallBusiness", "VoiceAI", "LeadGen"],
+        "cta": "Building in public"
+      },
+      "voice-ai-focus": {
+        "goal": "Showcase Voice AI capabilities and POC results",
+        "hashtags": ["VoiceAI", "AI", "CustomerService", "Automation"],
+        "cta": "Share POC metrics and learnings"
+      },
+      "lead-gen-focus": {
+        "goal": "Demonstrate lead generation automation value",
+        "hashtags": ["LeadGen", "Automation", "B2B", "GrowthHacking"],
+        "cta": "Show time savings and ROI"
+      },
+      "building-in-public": {
+        "goal": "Share journey building POCs and products",
+        "hashtags": ["BuildingInPublic", "AI", "SaaS", "Entrepreneurship"],
+        "cta": "Authentic progress updates"
+      }
+    }
+  }
+}

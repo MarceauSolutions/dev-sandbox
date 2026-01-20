@@ -1,0 +1,41 @@
+{
+  "template_name": "few_reviews_v1",
+  "pain_point": "few_reviews",
+  "body": "Hi, this is William from Marceau Solutions. {business_name} has only {review_count} reviews - most customers check reviews before calling. Just helped 3 Naples businesses go from 10 \u2192 50+ reviews in 30 days. Want details? (239) 398-5676. Reply STOP to opt out.",
+  "char_count": 243,
+  "segments": 2,
+  "personalization_fields": [
+    "business_name",
+    "review_count"
+  ],
+  "cta": "Call or text for details",
+  "tcpa_compliant": true,
+  "notes": [
+    "Focuses on review count/reputation. Requires review_count field.",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_v1"
+  ],
+  "expected_response_rate": "3-5%",
+  "best_for": [
+    "gym",
+    "restaurant",
+    "salon",
+    "spa",
+    "contractor",
+    "medical"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "Hi {business_name}! William from Marceau Solutions (239-398-5676). Great service but only {review_count} reviews? We helped 3 local businesses get 40+ reviews in 30 days. 85% of customers check reviews first. Interested? Text YES. Reply STOP to opt out.",
+      "char_count": 236,
+      "angle": "Compliment + specific outcome"
+    },
+    {
+      "variant_id": "b",
+      "body": "Do you lose customers because {business_name} has few reviews? Most check Google/Yelp before calling. We helped 3 Naples businesses go from 10 \u2192 50+ reviews fast. William, Marceau Solutions (239-398-5676). Reply STOP to opt out.",
+      "char_count": 221,
+      "angle": "Question hook + urgency"
+    }
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_v1"
+}

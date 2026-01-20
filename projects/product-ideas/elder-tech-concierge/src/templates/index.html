@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Elder Tech">
+    <title>Elder Tech Assistant</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/icon-192.png">
+
+    <!-- iOS PWA Settings -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2563eb">
+
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Prevent zoom on double-tap -->
+    <meta name="touch-action" content="manipulation">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>ELDER TECH ASSISTANT</h1>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span class="status-text">Ready to help</span>
+            </div>
+        </header>
+
+        <!-- Main Action Grid -->
+        <main class="main-grid">
+            <!-- Row 1: Family and Messages -->
+            <button class="action-button primary" id="btnCallFamily" aria-label="Call Family">
+                <span class="button-icon">&#128222;</span>
+                <span class="button-text">CALL<br>FAMILY</span>
+            </button>
+
+            <button class="action-button primary" id="btnSendText" aria-label="Send Text Message">
+                <span class="button-icon">&#128172;</span>
+                <span class="button-text">TEXT<br>MESSAGE</span>
+            </button>
+
+            <!-- Row 2: Email and Calendar -->
+            <button class="action-button secondary" id="btnReadEmails" aria-label="Read Emails">
+                <span class="button-icon">&#128231;</span>
+                <span class="button-text">READ<br>EMAILS</span>
+            </button>
+
+            <button class="action-button secondary" id="btnViewCalendar" aria-label="Today's Schedule">
+                <span class="button-icon">&#128197;</span>
+                <span class="button-text">TODAY'S<br>SCHEDULE</span>
+            </button>
+
+            <!-- Row 3: Voice Assistant (Full Width) -->
+            <button class="action-button voice-button" id="btnVoiceAssistant" aria-label="Tap to Speak to Claude">
+                <span class="button-icon">&#127908;</span>
+                <span class="button-text">TAP TO SPEAK TO CLAUDE</span>
+                <span class="voice-hint">Press and speak your question</span>
+            </button>
+
+            <!-- Row 4: Emergency (Full Width) -->
+            <button class="action-button emergency-button" id="btnEmergency" aria-label="Emergency - Call for Help">
+                <span class="button-icon">&#128680;</span>
+                <span class="button-text">EMERGENCY - CALL FOR HELP</span>
+            </button>
+        </main>
+
+        <!-- Response Area -->
+        <div class="response-area" id="responseArea" aria-live="polite">
+            <div class="response-content" id="responseContent">
+                <p class="welcome-message">Hello! I'm here to help you. Tap any button above, or tap the microphone to talk to me.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Contact Selection -->
+    <div class="modal" id="contactModal" aria-hidden="true">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Select Contact</h2>
+            <div class="contact-list" id="contactList">
+                <!-- Contacts will be populated dynamically -->
+            </div>
+            <button class="modal-cancel" id="modalCancel">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- Modal for Text Input -->
+    <div class="modal" id="textInputModal" aria-hidden="true">
+        <div class="modal-content">
+            <h2 class="modal-title">What would you like to say?</h2>
+            <textarea class="text-input" id="messageInput" rows="4" placeholder="Type your message here..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-button confirm" id="sendMessageBtn">SEND MESSAGE</button>
+                <button class="modal-button cancel" id="cancelMessageBtn">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Confirmation -->
+    <div class="modal" id="confirmModal" aria-hidden="true">
+        <div class="modal-content">
+            <h2 class="modal-title" id="confirmTitle">Confirm</h2>
+            <p class="confirm-message" id="confirmMessage"></p>
+            <div class="modal-buttons">
+                <button class="modal-button confirm" id="confirmYes">YES</button>
+                <button class="modal-button cancel" id="confirmNo">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Please wait...</p>
+    </div>
+
+    <script>
+        // ====================================================================
+        // ELDER TECH ASSISTANT - Frontend JavaScript
+        // ====================================================================
+
+        // Configuration
+        const CONFIG = {
+            speechRate: {{ config.speech_rate | default(0.8) }},
+            voiceVolume: {{ config.voice_volume | default(1.0) }},
+            apiBase: '',
+            contacts: {{ config.contacts | tojson | default('[]') }}
+        };
+
+        // State
+        const STATE = {
+            isListening: false,
+            isSpeaking: false,
+            currentAction: null,
+            selectedContact: null,
+            recognition: null
+        };
+
+        // ====================================================================
+        // SPEECH SYNTHESIS (Text-to-Speech)
+        // ====================================================================
+
+        function speak(text, callback) {
+            if (!text) return;
+
+            // Cancel any current speech
+            window.speechSynthesis.cancel();
+
+            STATE.isSpeaking = true;
+            updateStatus('Speaking...');
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = CONFIG.speechRate;
+            utterance.volume = CONFIG.voiceVolume;
+            utterance.pitch = 1.0;
+
+            // Try to find a clear English voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v =>
+                v.lang.startsWith('en') && v.name.includes('Samantha')
+            ) || voices.find(v =>
+                v.lang.startsWith('en-US')
+            );
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+
+            utterance.onend = () => {
+                STATE.isSpeaking = false;
+                updateStatus('Ready to help');
+                if (callback) callback();
+            };
+
+            utterance.onerror = () => {
+                STATE.isSpeaking = false;
+                updateStatus('Ready to help');
+                if (callback) callback();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // ====================================================================
+        // SPEECH RECOGNITION (Voice Input)
+        // ====================================================================
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                console.warn('Speech recognition not supported');
+                return;
+            }
+
+            STATE.recognition = new SpeechRecognition();
+            STATE.recognition.continuous = false;
+            STATE.recognition.interimResults = false;
+            STATE.recognition.lang = 'en-US';
+
+            STATE.recognition.onstart = () => {
+                STATE.isListening = true;
+                updateStatus('Listening...');
+                document.getElementById('btnVoiceAssistant').classList.add('listening');
+            };
+
+            STATE.recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                handleVoiceInput(transcript);
+            };
+
+            STATE.recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                STATE.isListening = false;
+                document.getElementById('btnVoiceAssistant').classList.remove('listening');
+
+                if (event.error === 'no-speech') {
+                    speak("I didn't hear anything. Please try again.");
+                } else {
+                    updateStatus('Ready to help');
+                }
+            };
+
+            STATE.recognition.onend = () => {
+                STATE.isListening = false;
+                document.getElementById('btnVoiceAssistant').classList.remove('listening');
+                updateStatus('Ready to help');
+            };
+        }
+
+        function startListening() {
+            if (STATE.recognition && !STATE.isListening && !STATE.isSpeaking) {
+                try {
+                    STATE.recognition.start();
+                } catch (e) {
+                    console.error('Could not start recognition:', e);
+                }
+            }
+        }
+
+        async function handleVoiceInput(transcript) {
+            updateResponse(`You said: "${transcript}"`);
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: transcript })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateResponse(data.response);
+                    speak(data.response);
+
+                    // Handle suggested actions
+                    if (data.action) {
+                        handleSuggestedAction(data.action);
+                    }
+                } else {
+                    speak(data.response || "I'm sorry, I had trouble understanding. Could you try again?");
+                }
+            } catch (error) {
+                speak("I'm having trouble connecting. Let's try again in a moment.");
+            }
+        }
+
+        function handleSuggestedAction(action) {
+            setTimeout(() => {
+                switch (action) {
+                    case 'send_sms':
+                        showContactModal('text');
+                        break;
+                    case 'read_emails':
+                        readEmails();
+                        break;
+                    case 'check_calendar':
+                        viewCalendar();
+                        break;
+                    case 'call_family':
+                        showContactModal('call');
+                        break;
+                    case 'emergency':
+                        confirmEmergency();
+                        break;
+                }
+            }, 1000);
+        }
+
+        // ====================================================================
+        // UI HELPERS
+        // ====================================================================
+
+        function updateStatus(text) {
+            const statusText = document.querySelector('.status-text');
+            if (statusText) {
+                statusText.textContent = text;
+            }
+        }
+
+        function updateResponse(text) {
+            const responseContent = document.getElementById('responseContent');
+            if (responseContent) {
+                responseContent.innerHTML = `<p>${text}</p>`;
+            }
+        }
+
+        function showLoading(show = true) {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.setAttribute('aria-hidden', !show);
+            overlay.style.display = show ? 'flex' : 'none';
+        }
+
+        function showModal(modalId, show = true) {
+            const modal = document.getElementById(modalId);
+            modal.setAttribute('aria-hidden', !show);
+            modal.style.display = show ? 'flex' : 'none';
+        }
+
+        // ====================================================================
+        // CONTACT MODAL
+        // ====================================================================
+
+        function showContactModal(action) {
+            STATE.currentAction = action;
+            const title = action === 'call' ? 'Who would you like to call?' : 'Who would you like to text?';
+            document.getElementById('modalTitle').textContent = title;
+
+            // Populate contact list
+            const contactList = document.getElementById('contactList');
+            contactList.innerHTML = '';
+
+            // Add configured contacts
+            CONFIG.contacts.forEach(name => {
+                const btn = document.createElement('button');
+                btn.className = 'contact-button';
+                btn.textContent = name;
+                btn.onclick = () => selectContact(name);
+                contactList.appendChild(btn);
+            });
+
+            // Add emergency option for calls
+            if (action === 'call') {
+                const emergencyBtn = document.createElement('button');
+                emergencyBtn.className = 'contact-button emergency';
+                emergencyBtn.textContent = '911 Emergency';
+                emergencyBtn.onclick = () => {
+                    showModal('contactModal', false);
+                    window.location.href = 'tel:911';
+                };
+                contactList.appendChild(emergencyBtn);
+            }
+
+            showModal('contactModal', true);
+            speak(title);
+        }
+
+        async function selectContact(name) {
+            STATE.selectedContact = name;
+            showModal('contactModal', false);
+
+            if (STATE.currentAction === 'call') {
+                // Initiate call
+                try {
+                    const response = await fetch('/api/call', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contact: name })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        speak(data.spoken_response, () => {
+                            window.location.href = data.tel_link;
+                        });
+                    } else {
+                        speak(data.spoken_response);
+                    }
+                } catch (error) {
+                    speak("I couldn't connect that call. Would you like to try again?");
+                }
+            } else if (STATE.currentAction === 'text') {
+                // Show text input
+                speak(`What would you like to say to ${name}?`);
+                showModal('textInputModal', true);
+            }
+        }
+
+        // ====================================================================
+        // ACTIONS
+        // ====================================================================
+
+        async function sendTextMessage() {
+            const message = document.getElementById('messageInput').value.trim();
+
+            if (!message) {
+                speak("Please type a message first.");
+                return;
+            }
+
+            showModal('textInputModal', false);
+            showLoading(true);
+
+            try {
+                const response = await fetch('/api/sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: STATE.selectedContact,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                showLoading(false);
+                updateResponse(data.spoken_response);
+                speak(data.spoken_response);
+
+                // Clear the input
+                document.getElementById('messageInput').value = '';
+
+            } catch (error) {
+                showLoading(false);
+                speak("I couldn't send that message. Would you like to try again?");
+            }
+        }
+
+        async function readEmails() {
+            showLoading(true);
+            updateStatus('Checking emails...');
+
+            try {
+                const response = await fetch('/api/emails?hours=24&limit=5');
+                const data = await response.json();
+
+                showLoading(false);
+
+                if (data.success) {
+                    updateResponse(data.spoken_response);
+                    speak(data.spoken_response);
+                } else {
+                    speak(data.spoken_response || "I couldn't check your emails right now.");
+                }
+            } catch (error) {
+                showLoading(false);
+                speak("I'm having trouble checking your emails. Let's try again later.");
+            }
+        }
+
+        async function viewCalendar() {
+            showLoading(true);
+            updateStatus('Checking calendar...');
+
+            try {
+                const response = await fetch('/api/calendar?period=today');
+                const data = await response.json();
+
+                showLoading(false);
+
+                if (data.success) {
+                    updateResponse(data.spoken_response);
+                    speak(data.spoken_response);
+                } else {
+                    speak(data.spoken_response || "I couldn't check your calendar right now.");
+                }
+            } catch (error) {
+                showLoading(false);
+                speak("I'm having trouble checking your calendar. Let's try again later.");
+            }
+        }
+
+        function confirmEmergency() {
+            document.getElementById('confirmTitle').textContent = 'Emergency Alert';
+            document.getElementById('confirmMessage').textContent =
+                'This will send an emergency alert to your emergency contacts. Do you want to continue?';
+
+            document.getElementById('confirmYes').onclick = sendEmergencyAlert;
+            document.getElementById('confirmNo').onclick = () => {
+                showModal('confirmModal', false);
+                speak("Okay, I've cancelled the emergency alert.");
+            };
+
+            showModal('confirmModal', true);
+            speak("Are you sure you want to send an emergency alert to your contacts?");
+        }
+
+        async function sendEmergencyAlert() {
+            showModal('confirmModal', false);
+            showLoading(true);
+            updateStatus('Sending emergency alert...');
+
+            try {
+                const response = await fetch('/api/emergency', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                showLoading(false);
+
+                if (data.success) {
+                    updateResponse(data.spoken_response);
+                    speak(data.spoken_response);
+                } else {
+                    speak(data.spoken_response || "I couldn't send the emergency alert. Would you like me to call 911?");
+                }
+            } catch (error) {
+                showLoading(false);
+                speak("I couldn't send the emergency alert. Would you like me to call 911 instead?");
+            }
+        }
+
+        // ====================================================================
+        // EVENT LISTENERS
+        // ====================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize speech recognition
+            initSpeechRecognition();
+
+            // Load voices
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+
+            // Button click handlers
+            document.getElementById('btnCallFamily').addEventListener('click', () => {
+                showContactModal('call');
+            });
+
+            document.getElementById('btnSendText').addEventListener('click', () => {
+                showContactModal('text');
+            });
+
+            document.getElementById('btnReadEmails').addEventListener('click', readEmails);
+
+            document.getElementById('btnViewCalendar').addEventListener('click', viewCalendar);
+
+            document.getElementById('btnVoiceAssistant').addEventListener('click', () => {
+                if (!STATE.isSpeaking) {
+                    startListening();
+                }
+            });
+
+            document.getElementById('btnEmergency').addEventListener('click', confirmEmergency);
+
+            // Modal handlers
+            document.getElementById('modalCancel').addEventListener('click', () => {
+                showModal('contactModal', false);
+            });
+
+            document.getElementById('sendMessageBtn').addEventListener('click', sendTextMessage);
+
+            document.getElementById('cancelMessageBtn').addEventListener('click', () => {
+                showModal('textInputModal', false);
+                document.getElementById('messageInput').value = '';
+            });
+
+            // Welcome message
+            setTimeout(() => {
+                speak("Hello! I'm here to help you. Tap any button, or tap the microphone to talk to me.");
+            }, 500);
+        });
+    </script>
+</body>
+</html>

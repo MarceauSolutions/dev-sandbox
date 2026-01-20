@@ -1,0 +1,43 @@
+{
+  "id": "script_20260116_210914_9458",
+  "title": "Educational: Quick Workout Tip",
+  "platform": "x",
+  "duration_range": "15-60s",
+  "duration_target": 30,
+  "style": "educational",
+  "hook": "I've been coaching for 10 years and this is the #1 mistake I see...",
+  "main_content": [
+    {
+      "point": "The Problem",
+      "script": "So you've been doing quick workout tip for weeks but seeing zero results? Here's the real problem...",
+      "visual": "Talking head, emphatic expression",
+      "duration": "10s"
+    },
+    {
+      "point": "The Fix",
+      "script": "The fix is actually simple - watch this: [SHOW PROPER FORM]",
+      "visual": "Demonstrate correct technique",
+      "duration": "10s"
+    }
+  ],
+  "cta": "Drop a comment if you want a full breakdown",
+  "b_roll_suggestions": [
+    "Hands gripping weights/bars (detail shot)",
+    "Wide shot establishing the workout space",
+    "Mirror reflection workout shot",
+    "Common mistake demonstration for quick workout tip",
+    "Correct form highlight for quick workout tip",
+    "Quick cuts between angles (2-3 second clips)",
+    "Dynamic transitions",
+    "Text overlay moments"
+  ],
+  "hashtags": [
+    "Quickworkouttip",
+    "Gains"
+  ],
+  "created_at": "2026-01-16T21:09:14.315749",
+  "status": "pending",
+  "filmed_at": null,
+  "posted_at": null,
+  "notes": "Platform notes: Fast-paced, hook in first 2 seconds, punchy delivery"
+}

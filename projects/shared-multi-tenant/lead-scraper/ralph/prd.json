@@ -1,0 +1,143 @@
+{
+  "branchName": "ralph/outreach-optimization",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Analyze current campaign performance and identify failure points",
+      "description": "Deep dive into wave_1_no_website_jan15 campaign (98 sent, 0 responses) to understand why response rate is 0%. Identify messaging, timing, targeting, or compliance issues.",
+      "acceptanceCriteria": [
+        "Read campaign_analytics.json and outreach_history.json",
+        "Analyze SMS message templates used",
+        "Check delivery status and timing",
+        "Identify potential issues (message quality, timing, targeting, TCPA compliance)",
+        "Create analysis report in ralph/campaign_analysis.md"
+      ],
+      "priority": 1,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Foundation for optimization - must understand why 0% response rate"
+    },
+    {
+      "id": "002",
+      "title": "Create pain-point-specific message templates",
+      "description": "Create targeted templates for top 3 pain points: no_online_transactions (160 leads), few_reviews (104 leads), no_website (40 leads). Each template should be compelling and specific to the pain point.",
+      "acceptanceCriteria": [
+        "Create template for no_online_transactions pain point",
+        "Create template for few_reviews pain point",
+        "Create template for no_website pain point",
+        "Each template under 160 chars (SMS limit)",
+        "Include personalization ({business_name}, {city})",
+        "Include clear CTA",
+        "TCPA compliant (business number, opt-out, sender ID)",
+        "Templates saved to templates/sms/ directory"
+      ],
+      "priority": 2,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Targeted messaging should improve response rates"
+    },
+    {
+      "id": "003",
+      "title": "Implement A/B testing framework for message templates",
+      "description": "Add ability to test multiple message variants against each other to find winning templates",
+      "acceptanceCriteria": [
+        "Create a_b_test.py module in src/",
+        "Support splitting leads into control/variant groups",
+        "Track response rate per variant",
+        "Calculate statistical significance (85% confidence threshold)",
+        "Generate A/B test report showing winner",
+        "Minimum 50 contacts per variant before declaring winner"
+      ],
+      "priority": 3,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Data-driven template optimization"
+    },
+    {
+      "id": "004",
+      "title": "Add optimal send time scheduling based on business hours",
+      "description": "Instead of sending all at once, schedule messages during business hours (Tue-Thu, 10 AM - 2 PM) when decision-makers are most likely to respond",
+      "acceptanceCriteria": [
+        "Update outreach_scheduler.py with time-slot logic",
+        "Default schedule: Tue-Thu, 10 AM - 2 PM local time",
+        "Spread sends across multiple days (not all at once)",
+        "Avoid Mon morning, Fri afternoon, weekends",
+        "Store scheduled_send_time in outreach queue",
+        "Process queue respects scheduled times"
+      ],
+      "priority": 4,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Timing can dramatically impact response rates"
+    },
+    {
+      "id": "005",
+      "title": "Implement automatic follow-up sequence for non-responders",
+      "description": "After 3-5 days, send follow-up message to non-responders using different angle (question hook instead of pain point, then scarcity/breakup)",
+      "acceptanceCriteria": [
+        "Update follow_up_sequences.json structure to support auto-enrollment",
+        "Auto-enroll leads in follow-up after initial message",
+        "Wait 3 days before follow-up #1, 7 days before follow-up #2",
+        "Use different message angles: question hook (day 3), scarcity/breakup (day 7)",
+        "Stop follow-up if lead responds or opts out",
+        "Max 3 touches total (initial + 2 follow-ups = 3 touches)",
+        "Track which touch number got the response",
+        "NO FAKE SOCIAL PROOF - only honest value propositions"
+      ],
+      "priority": 5,
+      "passes": true,
+      "checkpoint": true,
+      "risk_level": "high",
+      "notes": "CHECKPOINT COMPLETE: Conservative 3-touch approach with honest messaging. Critical spam safeguards: auto-stop on response/opt-out, max 3 touches, 3-5 day delays."
+    },
+    {
+      "id": "006",
+      "title": "Add response categorization and auto-routing to ClickUp",
+      "description": "When leads respond, categorize their response (hot/warm/cold/question) and auto-create ClickUp tasks for hot leads",
+      "acceptanceCriteria": [
+        "Add response categorization logic in sms_outreach.py",
+        "Categories: hot_lead, warm_lead, question, not_interested, wrong_number",
+        "Hot lead keywords: 'yes', 'interested', 'tell me more', 'call me'",
+        "Auto-create ClickUp task for hot_lead and question categories",
+        "Update campaign_analytics.py to track by response category",
+        "Don't create ClickUp tasks for not_interested or wrong_number"
+      ],
+      "priority": 6,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Sales pipeline automation - Auto-creates ClickUp tasks for hot/warm leads with full context"
+    },
+    {
+      "id": "007",
+      "title": "Create campaign performance dashboard script",
+      "description": "Generate visual report showing campaign metrics: response rate by template, by pain point, by send time, conversion funnel",
+      "acceptanceCriteria": [
+        "Add dashboard.py to src/",
+        "Show response rate by template (table)",
+        "Show response rate by pain point (table)",
+        "Show response rate by day of week and hour (heatmap data)",
+        "Show conversion funnel (contacted → responded → qualified → meeting → closed)",
+        "Identify top-performing template and recommend scaling it",
+        "Export to dashboard.txt in output/"
+      ],
+      "priority": 7,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Data visibility for ongoing optimization - Already implemented in campaign_analytics.py (report, templates, funnel commands)"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-20",
+    "last_updated": "2026-01-20",
+    "total_stories": 7,
+    "completed_stories": 0,
+    "objective": "Optimize cold outreach from 0% to 3-5% response rate through targeted messaging, timing, and follow-up automation"
+  }
+}

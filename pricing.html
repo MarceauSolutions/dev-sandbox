@@ -343,13 +343,23 @@
     <div class="container">
         <header>
             <div class="logo">Marceau Solutions</div>
-            <h1>Complete <em>Website + Automation</em><br>For Local Service Businesses</h1>
-            <p class="subtitle">Stop losing customers to missed calls and manual processes. Get a professional website plus intelligent automation that captures leads 24/7 and converts them automatically.</p>
+            <h1>Choose Your <em>AI Automation</em> Tier</h1>
+            <p class="subtitle">Tiered AI automation for local service businesses. Select the path that matches your situation.</p>
+
+            <!-- Two-Path Navigation -->
+            <div style="display: flex; gap: 1.5rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                <a href="#automation-only" style="display: inline-block; padding: 1.25rem 2rem; background: #fbbf24; color: #000; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; transition: transform 0.2s, box-shadow 0.2s; text-align: center; min-width: 280px;">
+                    ✅ I Have a Website<br><span style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">See Automation-Only Pricing</span>
+                </a>
+                <a href="#bundled-packages" style="display: inline-block; padding: 1.25rem 2rem; background: rgba(255,255,255,0.1); border: 2px solid #fbbf24; color: #fbbf24; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; transition: transform 0.2s, box-shadow 0.2s; text-align: center; min-width: 280px;">
+                    🌐 I Need a Website<br><span style="font-size: 0.85rem; font-weight: 400; opacity: 0.8;">See Complete Packages</span>
+                </a>
+            </div>
         </header>
 
-        <!-- Main Pricing Tiers -->
+        <!-- Main Pricing Tiers (Bundled Packages) -->
+        <div id="bundled-packages"></div>
         <div class="pricing-grid">
-            <!-- Digital Storefront -->
             <div class="pricing-card">
                 <h3 class="tier-name">Digital Storefront</h3>
                 <p class="tier-description">Perfect for small local businesses starting their digital transformation</p>
@@ -694,6 +704,7 @@
         </section>
 
         <!-- Automation-Only Section -->
+        <div id="automation-only"></div>
         <section class="retainers-section" style="border-top: 2px solid rgba(251, 191, 36, 0.3);">
             <h2>Already Have a Website?</h2>
             <p class="subtitle">Get automation-only pricing for businesses with existing websites</p>

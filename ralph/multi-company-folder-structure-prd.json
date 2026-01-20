@@ -1,0 +1,257 @@
+{
+  "metadata": {
+    "prd_name": "Multi-Company Folder Structure Optimization",
+    "objective": "Restructure dev-sandbox to clearly separate 3 companies (marceau-solutions, swflorida-hvac, square-foot-shipping) with dedicated folders for each company's projects, documentation, and assets to eliminate confusion when working on multiple companies simultaneously",
+    "total_stories": 5,
+    "completed_stories": 2,
+    "autonomous_mode": true,
+    "checkpoint_stories": [
+      3
+    ]
+  },
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Design optimal folder structure for 3-company organization",
+      "description": "Analyze current dev-sandbox structure and design new organization that groups all company-specific assets (projects, docs, templates, output) under company folders while maintaining shared/global resources in root. Create migration plan.",
+      "acceptance_criteria": [
+        "Proposed structure clearly separates marceau-solutions, swflorida-hvac, square-foot-shipping",
+        "Each company folder contains: projects/, docs/, output/, templates/",
+        "Shared resources (execution/, methods/, global docs) stay in root",
+        "Git repository structure preserved (no nested .git)",
+        "All existing files mapped to new locations (migration plan)",
+        "Symlinks or references documented for cross-company dependencies"
+      ],
+      "current_structure": {
+        "projects/": "Mixed - ai-customer-service (voice AI for all 3), lead-scraper (all 3), social-media-automation (all 3)",
+        "docs/": "Global documentation",
+        "execution/": "Shared utilities",
+        "methods/": "Internal frameworks",
+        "templates/": "Mixed company templates"
+      },
+      "proposed_structure": {
+        "NOTE": "PRESERVE DOE ARCHITECTURE - dev-sandbox is DEVELOPMENT workspace, deploy to skills for production",
+        "projects/": {
+          "NOTE": "Keep projects/ at root - this is the DEVELOPMENT workspace per DOE",
+          "shared-multi-tenant/": {
+            "lead-scraper/": "Used by all 3 businesses with business_id separation",
+            "social-media-automation/": "Used by all 3 with business separation",
+            "ai-customer-service/": "Voice AI for all 3 businesses",
+            "personal-assistant/": "Global digest/calendar"
+          },
+          "marceau-solutions/": {
+            "NOTE": "Company-specific projects that ONLY marceau uses",
+            "future-projects/": "Placeholder for marceau-only projects"
+          },
+          "swflorida-hvac/": {
+            "NOTE": "Company-specific projects that ONLY HVAC uses",
+            "future-projects/": "Placeholder"
+          },
+          "square-foot-shipping/": {
+            "NOTE": "Company-specific projects that ONLY shipping uses",
+            "future-projects/": "Placeholder"
+          }
+        },
+        "execution/": "UNCHANGED - Shared utilities (DOE Execution layer)",
+        "directives/": "UNCHANGED - DOE Directive layer",
+        "methods/": "UNCHANGED - Internal frameworks",
+        "docs/": {
+          "NOTE": "Add company-specific subdirs for business docs",
+          "companies/": {
+            "marceau-solutions/": "Marceau business docs, market analysis",
+            "swflorida-hvac/": "HVAC business docs",
+            "square-foot-shipping/": "Shipping business docs"
+          },
+          "global/": "Architecture, SOPs, deployment guides (stays at root)"
+        },
+        "output/": {
+          "NOTE": "Already separated by business_id in lead-scraper, just add company-specific outputs",
+          "companies/": {
+            "marceau-solutions/": "Marceau-specific output (if any)",
+            "swflorida-hvac/": "HVAC-specific",
+            "square-foot-shipping/": "Shipping-specific"
+          }
+        },
+        "templates/": {
+          "NOTE": "Add company-specific template subdirs",
+          "companies/": {
+            "marceau-solutions/": "Marceau templates (SMS, email, forms)",
+            "swflorida-hvac/": "HVAC templates",
+            "square-foot-shipping/": "Shipping templates"
+          },
+          "shared/": "Global templates"
+        }
+      },
+      "passes": true
+    },
+    {
+      "story_id": "002",
+      "title": "Categorize existing projects by company ownership",
+      "description": "Audit all projects in dev-sandbox and categorize as: company-specific (1 owner), shared-multi-tenant (used by all 3), or global-utility. Create mapping for where each should live in new structure.",
+      "acceptance_criteria": [
+        "All projects categorized with ownership tags",
+        "Company-specific: Move to companies/{company}/projects/",
+        "Shared multi-tenant: Move to shared/projects/ with business_id separation",
+        "Global utilities: Stay in execution/",
+        "Documentation categorized (company-specific vs global)",
+        "Output files categorized (split by business_id)",
+        "Templates categorized (company-specific vs shared)"
+      ],
+      "project_categorization": {
+        "company_specific": {
+          "marceau-solutions": [
+            "None yet - all current projects are shared"
+          ],
+          "swflorida-hvac": [
+            "None yet - all current projects are shared"
+          ],
+          "square-foot-shipping": [
+            "None yet - all current projects are shared"
+          ]
+        },
+        "shared_multi_tenant": [
+          "lead-scraper (has business_id separation)",
+          "social-media-automation (has business separation)",
+          "ai-customer-service (voice AI for all 3 businesses)",
+          "personal-assistant (digest, calendar - global)"
+        ],
+        "global_utility": [
+          "execution/* (shared Python utilities)",
+          "methods/* (internal frameworks)",
+          "deploy_to_skills.py"
+        ]
+      },
+      "files_to_create": [
+        "MIGRATION_PLAN.md"
+      ],
+      "passes": true
+    },
+    {
+      "story_id": "003",
+      "title": "Create new folder structure and migration script",
+      "description": "Build new companies/ and shared/ folder structure. Create automated migration script that moves files to new locations, updates imports, creates symlinks where needed, and preserves git history.",
+      "acceptance_criteria": [
+        "companies/marceau-solutions/, companies/swflorida-hvac/, companies/square-foot-shipping/ created",
+        "shared/projects/, shared/execution/, shared/methods/, shared/docs/ created",
+        "Migration script: python migrate_to_company_structure.py --dry-run (shows what would move)",
+        "Migration script: python migrate_to_company_structure.py --execute (actually moves files)",
+        "Script updates relative imports (from projects/x to shared/projects/x or companies/y/projects/x)",
+        "Script creates README.md in each company folder explaining structure",
+        "Git history preserved (no force pushes)",
+        "Rollback script available in case of issues"
+      ],
+      "files_to_create": [
+        "migrate_to_company_structure.py",
+        "rollback_migration.py",
+        "companies/marceau-solutions/README.md",
+        "companies/swflorida-hvac/README.md",
+        "companies/square-foot-shipping/README.md",
+        "shared/README.md"
+      ],
+      "checkpoint": true,
+      "notes": "CHECKPOINT: Review migration plan and new structure before executing file moves",
+      "passes": false
+    },
+    {
+      "story_id": "004",
+      "title": "Migrate company-specific documentation and output",
+      "description": "Split documentation and output files by company. Move company-specific docs to companies/{company}/docs/, split output files by business_id, organize templates by company.",
+      "acceptance_criteria": [
+        "companies/marceau-solutions/docs/ contains: AI automation docs, market analysis, strategy docs",
+        "companies/swflorida-hvac/docs/ contains: HVAC business plan, social media ready docs",
+        "companies/square-foot-shipping/docs/ contains: Logistics business docs",
+        "Output files split: companies/marceau-solutions/output/lead_intake_marceau.json",
+        "Templates organized: companies/marceau-solutions/templates/sms/",
+        "Shared docs stay in shared/docs/ (architecture, SOPs, global guides)",
+        "Cross-references updated (links in docs point to new locations)"
+      ],
+      "documentation_mapping": {
+        "marceau_specific": [
+          "docs/AI-VOICE-SERVICE-ECONOMICS.md \u2192 companies/marceau-solutions/docs/",
+          "projects/fitness-influencer/market-analysis/ \u2192 companies/marceau-solutions/docs/market-analysis/",
+          "projects/personal-assistant/output/ai-*.md \u2192 companies/marceau-solutions/docs/"
+        ],
+        "hvac_specific": [
+          "Future: HVAC business plan, service pricing, social media ready docs"
+        ],
+        "shipping_specific": [
+          "Future: Logistics docs"
+        ],
+        "global_shared": [
+          "CLAUDE.md",
+          "docs/architecture-guide.md",
+          "docs/deployment.md",
+          "docs/testing-strategy.md",
+          "All SOPs and workflows"
+        ]
+      },
+      "passes": false
+    },
+    {
+      "story_id": "005",
+      "title": "Update all scripts, imports, and documentation references",
+      "description": "Update all Python imports, file paths, and documentation links to reflect new folder structure. Test that all projects still work after migration. Update CLAUDE.md with new structure guide.",
+      "acceptance_criteria": [
+        "All Python imports updated (from projects/x to shared/projects/x or companies/y/projects/x)",
+        "All file path references updated in scripts",
+        "deploy_to_skills.py updated with new paths",
+        "CLAUDE.md updated with new folder structure documentation",
+        "All projects tested: python -m shared.projects.lead-scraper.src.lead_intake stats (works)",
+        "Git status clean (no broken imports or missing files)",
+        "FOLDER_STRUCTURE.md created explaining new organization",
+        "Quick reference commands updated for new paths"
+      ],
+      "files_to_modify": [
+        "CLAUDE.md (add folder structure section)",
+        "deploy_to_skills.py (update project paths)",
+        "All project imports (automated via migration script)"
+      ],
+      "files_to_create": [
+        "FOLDER_STRUCTURE.md",
+        "companies/marceau-solutions/QUICK_START.md",
+        "companies/swflorida-hvac/QUICK_START.md",
+        "companies/square-foot-shipping/QUICK_START.md"
+      ],
+      "testing_checklist": [
+        "Lead scraper works for all 3 businesses",
+        "Social media automation works for all 3",
+        "Voice AI tracking works for all 3",
+        "CRM sync works",
+        "Campaign analytics works",
+        "Weekly reports work",
+        "All CLI commands work with new paths"
+      ],
+      "passes": false
+    }
+  ],
+  "technical_notes": {
+    "git_safety": {
+      "rule_1": "NO nested .git repositories - maintain single root .git",
+      "rule_2": "Use git mv for file moves (preserves history)",
+      "rule_3": "Create migration as single atomic commit",
+      "rule_4": "Test thoroughly before committing"
+    },
+    "import_strategy": {
+      "company_specific": "from companies.marceau_solutions.projects.x import y",
+      "shared_multi_tenant": "from shared.projects.lead_scraper.src import x",
+      "global_utility": "from shared.execution import x (unchanged)"
+    },
+    "symlink_strategy": {
+      "shared_templates": "companies/marceau-solutions/templates/shared/ \u2192 symlink to shared/templates/",
+      "shared_execution": "All companies reference shared/execution/ (no symlinks needed)",
+      "cross_company_refs": "Document in README, avoid symlinks where possible"
+    },
+    "business_id_mapping": {
+      "marceau-solutions": "AI automation, lead gen, websites",
+      "swflorida-hvac": "HVAC services",
+      "square-foot-shipping": "Logistics/freight services"
+    }
+  },
+  "success_metrics": {
+    "clarity": "Developer can instantly know which folder to access for each company",
+    "isolation": "Company-specific work doesn't pollute other companies' folders",
+    "shared_efficiency": "Multi-tenant projects (lead-scraper, social) work seamlessly for all 3",
+    "git_safety": "Single .git repo, no nested repos, clean history",
+    "backward_compatibility": "All existing commands/workflows work with minimal changes"
+  }
+}

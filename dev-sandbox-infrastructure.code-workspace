@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "name": "Documentation",
+      "path": "docs"
+    },
+    {
+      "name": "Directives",
+      "path": "directives"
+    },
+    {
+      "name": "Methods",
+      "path": "methods"
+    },
+    {
+      "name": "Execution",
+      "path": "execution"
+    },
+    {
+      "name": "Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    },
+    "search.exclude": {
+      "**/archived": true
+    }
+  }
+}

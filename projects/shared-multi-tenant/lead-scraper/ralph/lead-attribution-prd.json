@@ -1,0 +1,240 @@
+{
+  "metadata": {
+    "prd_name": "Multi-Channel Lead Attribution & Tracking System",
+    "objective": "Build comprehensive lead tracking across all touchpoints (form submissions, voice AI, cold outreach, social media) with source attribution, CRM integration, and conversion optimization to prevent leads from falling through cracks",
+    "total_stories": 8,
+    "completed_stories": 8,
+    "autonomous_mode": true,
+    "checkpoint_stories": [3, 6]
+  },
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Build unified lead intake system with source tracking",
+      "description": "Create centralized lead_intake.json that captures ALL lead sources (form submissions, voice AI calls, SMS replies, social media engagement) with source attribution fields. Each lead gets unique ID, timestamp, source channel, business_id, and status tracking.",
+      "acceptance_criteria": [
+        "output/lead_intake.json schema: {lead_id, timestamp, business_id, source_channel, source_detail, contact_info, status, crm_synced}",
+        "source_channel enum: ['form_submission', 'voice_ai_call', 'sms_reply', 'social_media_click', 'direct_inquiry', 'referral']",
+        "source_detail captures: UTM params for forms, campaign_id for SMS, post_id for social, call_sid for voice AI",
+        "Status tracking: new -> contacted -> qualified -> converted -> won/lost",
+        "Deduplication: Same phone/email within 30 days = update existing lead, don't create duplicate"
+      ],
+      "files_to_create": [
+        "src/lead_intake.py"
+      ],
+      "integration_points": {
+        "form_submissions": "Google Sheets webhook -> lead_intake.add_lead(source='form_submission', utm_params)",
+        "voice_ai": "Twilio call completed -> lead_intake.add_lead(source='voice_ai_call', call_sid)",
+        "sms_replies": "campaign_analytics response tracking -> lead_intake.add_lead(source='sms_reply', campaign_id)",
+        "social_media": "UTM tracking on social posts -> form submission includes utm_source=twitter/linkedin/facebook"
+      },
+      "passes": true
+    },
+    {
+      "story_id": "002",
+      "title": "Implement UTM parameter tracking for source attribution",
+      "description": "Add UTM tracking to ALL outbound links (cold outreach SMS, social media posts, voice AI follow-ups) so form submissions can be traced back to exact source. Parse UTM params from form submissions and store in lead_intake.",
+      "acceptance_criteria": [
+        "UTM structure: utm_source (sms/social/voice), utm_medium (cold_outreach/organic/paid), utm_campaign (campaign_id), utm_content (template_name/post_id)",
+        "All SMS templates updated with UTM-tracked links: 'Visit marceausolutions.com/demo?utm_source=sms&utm_campaign=no_website_jan20&utm_content=intro'",
+        "Social media scheduler generates UTM links: 'marceausolutions.com?utm_source=twitter&utm_campaign=ai_automation_jan20&utm_content=post_123'",
+        "Form submission handler extracts UTM params from referrer or URL",
+        "Voice AI scripts include tracked links: 'I'll text you a link: [URL with utm_source=voice]'",
+        "python -m src.utm_tracker report -> shows: 50% leads from SMS, 30% social, 20% voice AI"
+      ],
+      "files_to_create": [
+        "src/utm_tracker.py"
+      ],
+      "files_to_modify": [
+        "templates/sms/*.json (add UTM params to all links)",
+        "projects/social-media-automation/src/business_content_generator.py (add UTM to generated posts)"
+      ],
+      "utm_examples": {
+        "cold_sms": "marceausolutions.com/free-audit?utm_source=sms&utm_medium=cold_outreach&utm_campaign=naples_gyms_jan20&utm_content=no_website_intro",
+        "social_post": "marceausolutions.com?utm_source=twitter&utm_medium=organic&utm_campaign=ai_automation&utm_content=case_study_post",
+        "voice_ai": "marceausolutions.com/callback?utm_source=voice&utm_medium=inbound&utm_campaign=hvac_demo&utm_content=call_123"
+      },
+      "passes": true
+    },
+    {
+      "story_id": "003",
+      "title": "Build form submission tracking across all 3 business websites",
+      "description": "Ensure form submissions for marceau-solutions, swflorida-hvac, shipping-logistics all flow into lead_intake.json with proper business_id tagging. Parse UTM params, deduplicate, and trigger CRM sync.",
+      "acceptance_criteria": [
+        "Google Sheets webhooks configured for all 3 businesses (or unified form handler)",
+        "Form handler extracts: name, email, phone, message, utm_source, utm_medium, utm_campaign, utm_content, business_id",
+        "Deduplication: Check if phone/email exists in lead_intake.json within last 30 days",
+        "If duplicate: Update existing lead with new touchpoint (append to history)",
+        "If new: Create lead with status='new', trigger CRM sync",
+        "python -m src.form_tracker report --business marceau-solutions -> shows form submissions by source"
+      ],
+      "files_to_create": [
+        "src/form_tracker.py"
+      ],
+      "checkpoint": true,
+      "notes": "CHECKPOINT: Review unified intake, UTM tracking, form submissions before CRM/voice AI integration",
+      "passes": true
+    },
+    {
+      "story_id": "004",
+      "title": "Integrate voice AI call tracking with lead intake",
+      "description": "When voice AI call completes (Twilio webhook), capture call as lead in lead_intake.json. Track: caller phone, business called, call outcome (appointment booked, callback requested, question answered, not interested), call recording SID.",
+      "acceptance_criteria": [
+        "Twilio webhook: call.completed -> lead_intake.add_lead(source='voice_ai_call', phone=caller, business_id=called_business)",
+        "Call outcomes tracked: appointment_booked, callback_requested, info_only, not_interested, wrong_number",
+        "If appointment booked or callback requested -> status='hot_lead', priority='high', trigger CRM sync immediately",
+        "Link to call recording: Store call_sid, generate URL to Twilio recording",
+        "python -m src.voice_ai_tracker report -> shows: 47 calls, 12 appointments, 8 callbacks, conversion rate"
+      ],
+      "files_to_create": [
+        "src/voice_ai_tracker.py"
+      ],
+      "files_to_modify": [
+        "projects/ai-customer-service/src/twilio_handler.py (add lead_intake webhook on call completion)"
+      ],
+      "voice_ai_outcomes": {
+        "appointment_booked": "Hot lead - sync to CRM immediately, status='converted'",
+        "callback_requested": "Warm lead - add to follow-up queue, status='qualified'",
+        "info_only": "Cold lead - add to nurture sequence, status='contacted'",
+        "not_interested": "Lost - archive, status='lost'"
+      },
+      "passes": true
+    },
+    {
+      "story_id": "005",
+      "title": "Track social media campaign leads (ready for HVAC + Shipping)",
+      "description": "Build social media lead tracking for all 3 businesses (marceau already posting, HVAC and shipping ready but not launched). Track: clicks from social posts -> website visits -> form submissions. Ready to activate for swflorida-hvac and shipping-logistics when campaigns launch.",
+      "acceptance_criteria": [
+        "Social post scheduler generates UTM-tracked links for ALL 3 businesses",
+        "Link shortener (bit.ly or custom) tracks clicks per post",
+        "python -m src.social_media_tracker clicks --business swflorida-hvac -> shows click data (ready for when campaign starts)",
+        "Form submissions with utm_source=twitter/linkedin/facebook tagged as social media leads",
+        "python -m src.social_media_tracker conversion-rate -> shows: clicks vs form fills per business",
+        "Report shows: 'swflorida-hvac: 0 posts (campaign not started), shipping-logistics: 0 posts (ready to launch)'"
+      ],
+      "files_to_create": [
+        "src/social_media_tracker.py"
+      ],
+      "files_to_modify": [
+        "projects/social-media-automation/src/business_scheduler.py (add UTM tracking to ALL posts)"
+      ],
+      "businesses": {
+        "marceau-solutions": "ACTIVE - currently posting 25x/day with UTM tracking",
+        "swflorida-hvac": "READY - templates exist, scheduler configured, waiting to launch",
+        "shipping-logistics": "READY - templates exist, scheduler configured, waiting to launch"
+      },
+      "passes": true
+    },
+    {
+      "story_id": "006",
+      "title": "Build CRM sync automation (ClickUp integration)",
+      "description": "Auto-sync qualified leads to ClickUp CRM. Rules: Hot leads (voice AI appointments, callback requests, form submissions with 'urgent' keyword) sync immediately. Warm/cold leads sync daily batch. Prevent duplicates.",
+      "acceptance_criteria": [
+        "ClickUp API integration: Create task in 'Leads' list when lead status = 'qualified' or 'hot_lead'",
+        "Task fields: Lead name, phone, email, source (SMS/Voice/Social/Form), business_id, UTM campaign, priority",
+        "Deduplication: Check ClickUp for existing task with same phone/email before creating",
+        "If exists in ClickUp: Add comment with new touchpoint ('Lead responded to SMS campaign X')",
+        "python -m src.crm_sync sync --dry-run -> shows what would sync",
+        "python -m src.crm_sync sync --for-real -> syncs qualified leads to ClickUp",
+        "Sync log: output/crm_sync_log.json tracks all syncs to prevent duplicates"
+      ],
+      "files_to_create": [
+        "src/crm_sync.py"
+      ],
+      "sync_rules": {
+        "hot_lead": "Immediate sync (voice AI appointment, callback request, form 'urgent' keyword)",
+        "qualified": "Daily batch sync at 9 AM",
+        "contacted": "Manual review - don't auto-sync yet",
+        "lost": "Archive - don't sync"
+      },
+      "checkpoint": true,
+      "notes": "CHECKPOINT: Review lead intake, tracking, and CRM integration before analytics/reporting",
+      "passes": true
+    },
+    {
+      "story_id": "007",
+      "title": "Build lead attribution analytics and reporting",
+      "description": "Comprehensive reporting on lead sources, conversion rates, and attribution. Answer: Which channel drives most qualified leads? What's conversion rate per source? Are we missing leads anywhere?",
+      "acceptance_criteria": [
+        "python -m src.lead_analytics report -> shows all-time stats by source",
+        "Metrics per source: Total leads, Qualified %, Converted %, Avg time to conversion",
+        "Funnel visualization: Source -> Contact -> Qualified -> Converted",
+        "Attribution report: 'SMS: 50 leads (60% qualified, 20% converted), Voice AI: 30 leads (80% qualified, 40% converted), Social: 20 leads (40% qualified, 10% converted)'",
+        "Multi-touch attribution: If lead came from SMS, then called voice AI, then filled form -> credit all 3 touchpoints",
+        "Identifies gaps: 'Warning: 15 voice AI calls with no follow-up action (potential lost leads)'"
+      ],
+      "files_to_create": [
+        "src/lead_analytics.py"
+      ],
+      "reports": {
+        "source_performance": "Which channel is best? (conversion rate, quality)",
+        "business_comparison": "marceau vs hvac vs shipping lead quality",
+        "lost_lead_detection": "Leads that went cold (no activity in 14 days)",
+        "multi_touch_attribution": "How many touchpoints before conversion?"
+      },
+      "passes": true
+    },
+    {
+      "story_id": "008",
+      "title": "Build lead gap detection and alert system",
+      "description": "Automated system to detect leads falling through cracks: No follow-up within 24 hours, no CRM sync after 48 hours, voice AI callback requested but not scheduled, form submission with no outreach. Alert William via SMS/email.",
+      "acceptance_criteria": [
+        "Daily scan of lead_intake.json for gaps",
+        "Gap types: 'No follow-up within 24h', 'Hot lead not in CRM', 'Callback requested 3 days ago (not scheduled)', 'Form submit - no contact attempt'",
+        "python -m src.lead_gap_detector scan -> shows all current gaps",
+        "Alert system: If critical gap (hot lead not followed up), send SMS to William: 'ALERT: Hot lead from voice AI (appointment request) - not in CRM - 48 hours old'",
+        "Weekly report: 'Prevented 5 leads from falling through cracks this week'",
+        "Auto-remediation (optional): If callback requested but not scheduled -> add to ClickUp with HIGH priority"
+      ],
+      "files_to_create": [
+        "src/lead_gap_detector.py"
+      ],
+      "alert_rules": {
+        "critical": "Hot lead >24h old, not in CRM -> SMS + Email alert",
+        "high": "Qualified lead >48h old, no follow-up -> Email alert",
+        "medium": "Cold lead >7 days old, no activity -> Daily digest",
+        "low": "Lead >30 days old, never converted -> Archive recommendation"
+      },
+      "passes": true
+    }
+  ],
+  "technical_notes": {
+    "data_sources": {
+      "lead_intake.json": "Unified lead database - all sources flow here",
+      "crm_sync_log.json": "Track what's been synced to ClickUp (prevent duplicates)",
+      "utm_tracking.json": "Click tracking and attribution data",
+      "form_submissions.json": "Raw form data from Google Sheets",
+      "voice_ai_calls.json": "Twilio call logs and outcomes"
+    },
+    "deduplication_strategy": {
+      "primary_key": "phone number (normalized: +1XXXXXXXXXX)",
+      "secondary_key": "email (lowercase, trimmed)",
+      "time_window": "30 days - if same contact within 30 days, update existing lead",
+      "multi_touch": "Append new touchpoints to lead history array"
+    },
+    "utm_parameter_standards": {
+      "utm_source": "sms, twitter, linkedin, facebook, voice, email, referral",
+      "utm_medium": "cold_outreach, organic, paid, inbound",
+      "utm_campaign": "campaign_id or descriptive name",
+      "utm_content": "template_name, post_id, or variation identifier"
+    },
+    "crm_integration": {
+      "platform": "ClickUp",
+      "api_endpoint": "https://api.clickup.com/api/v2/",
+      "list_id": "From CLICKUP_LIST_ID env var",
+      "sync_frequency": "Hot leads: immediate, Qualified: daily 9 AM, Cold: manual"
+    },
+    "business_separation": {
+      "marceau-solutions": "AI automation, lead gen, websites",
+      "swflorida-hvac": "HVAC services (social media ready, not launched)",
+      "shipping-logistics": "Logistics services (social media ready, not launched)"
+    }
+  },
+  "success_metrics": {
+    "lead_capture_rate": "100% of leads from all channels captured in lead_intake.json",
+    "crm_sync_rate": ">95% of qualified leads synced within 24 hours",
+    "attribution_accuracy": "Can trace 100% of leads back to source channel",
+    "gap_detection": "<1% of leads fall through cracks (missed follow-ups)",
+    "conversion_lift": "+15% conversion rate from better lead management"
+  }
+}

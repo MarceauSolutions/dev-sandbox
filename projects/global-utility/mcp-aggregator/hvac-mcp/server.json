@@ -1,0 +1,47 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wmarceau/hvac-quotes",
+  "description": "HVAC equipment RFQ management - submit quotes to distributors",
+  "repository": {
+    "url": "https://github.com/wmarceau/hvac-quotes-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "hvac-quotes-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtime": "python",
+      "environmentVariables": [
+        {
+          "name": "HVAC_MOCK_EMAIL",
+          "description": "Set to 'false' to send real emails via SMTP (default: 'true' for testing)"
+        },
+        {
+          "name": "SMTP_HOST",
+          "description": "SMTP server hostname (for real email mode)"
+        },
+        {
+          "name": "SMTP_PORT",
+          "description": "SMTP server port (default: 587)"
+        },
+        {
+          "name": "SMTP_USER",
+          "description": "SMTP username"
+        },
+        {
+          "name": "SMTP_PASS",
+          "description": "SMTP password"
+        },
+        {
+          "name": "SMTP_FROM",
+          "description": "From email address for RFQs"
+        }
+      ]
+    }
+  ]
+}

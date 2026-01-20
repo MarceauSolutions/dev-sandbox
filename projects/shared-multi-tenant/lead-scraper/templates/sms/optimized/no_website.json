@@ -1,0 +1,52 @@
+{
+  "template_name": "no_website_v2_compliant",
+  "pain_point": "no_website",
+  "body": "Hi, this is William from Marceau Solutions (239-398-5676). I noticed {business_name} doesn't have a website. 80% of customers search online before calling. Just launched sites for 3 Naples gyms - all saw 40%+ more calls. Want to see examples? Reply STOP to opt out.",
+  "char_count": 250,
+  "segments": 2,
+  "personalization_fields": [
+    "business_name"
+  ],
+  "cta": "Reply YES or call back",
+  "tcpa_compliant": true,
+  "notes": [
+    "TCPA-compliant version of no_website_intro. Adds business name + phone.",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_v2_compliant"
+  ],
+  "expected_response_rate": "3-5%",
+  "best_for": [
+    "gym",
+    "contractor",
+    "salon",
+    "restaurant",
+    "local_service"
+  ],
+  "improvements_from_v1": [
+    "Added 'from Marceau Solutions' for business identification",
+    "Added phone number (239-398-5676) for TCPA compliance",
+    "Changed 'free mockup' \u2192 'see examples' (less vague)",
+    "Added social proof '3 Naples gyms saw 40%+ more calls'",
+    "Added specific outcome instead of generic offer"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "Hi {business_name} owner! William from Marceau Solutions. You don't have a website yet 80% of customers search online first. We just launched sites for 3 local gyms - all doubled their calls in 2 weeks. (239) 398-5676. Text YES. Reply STOP to opt out.",
+      "char_count": 238,
+      "angle": "Direct + specific timeframe"
+    },
+    {
+      "variant_id": "b",
+      "body": "Do you lose customers because {business_name} has no website? Most people Google before calling. We built websites for 3 Naples gyms that brought 40% more calls within a month. William, Marceau Solutions (239-398-5676). Reply STOP to opt out.",
+      "char_count": 231,
+      "angle": "Question hook + urgency"
+    },
+    {
+      "variant_id": "c",
+      "body": "Hi, William from Marceau Solutions here. {business_name} gets great reviews but has no website. We can have yours live in 48 hours - like the 3 Naples gyms we just launched. All saw instant results. (239) 398-5676. Reply STOP to opt out.",
+      "char_count": 232,
+      "angle": "Speed/urgency + specific outcome"
+    }
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_v2_compliant"
+}

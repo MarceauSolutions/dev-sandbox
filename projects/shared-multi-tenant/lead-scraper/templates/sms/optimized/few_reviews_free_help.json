@@ -1,0 +1,47 @@
+{
+  "template_name": "few_reviews_free_help_v1",
+  "pain_point": "few_reviews",
+  "body": "Hi {business_name} - William from Marceau Solutions (239-398-5676). I see you only have {review_count} Google reviews. I'll show you a free system to get 10+ reviews this month. Want it? Text YES. Reply STOP to opt out.",
+  "char_count": 210,
+  "segments": 2,
+  "personalization_fields": [
+    "business_name",
+    "review_count"
+  ],
+  "cta": "Text YES for free system",
+  "tcpa_compliant": true,
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Free system (no fake social proof)",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_free_help_v1"
+  ],
+  "expected_response_rate": "10-12%",
+  "best_for": [
+    "gym",
+    "salon",
+    "restaurant"
+  ],
+  "optimization_rationale": [
+    "Specific outcome: '10+ reviews this month'",
+    "Free system = tangible deliverable",
+    "Personalized with actual review count",
+    "No fake social proof claims",
+    "Clear value proposition"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "Quick question {business_name}: Ready to get 20+ Google reviews in 30 days? I'll set up the automated system for free. William, Marceau Solutions (239-398-5676). Text YES or call. Reply STOP to opt out.",
+      "char_count": 201,
+      "angle": "Automated system (hands-off appeal)",
+      "expected_response_rate": "11-13%"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi {business_name} - {review_count} reviews is low. Customers skip businesses under 20 reviews. I'll help you get there free. No strings. William, Marceau Solutions (239) 398-5676. Text YES. Reply STOP to opt out.",
+      "char_count": 208,
+      "angle": "Pain amplification + free help",
+      "expected_response_rate": "10-12%"
+    }
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=few_reviews_jan26&utm_content=few_reviews_free_help_v1"
+}

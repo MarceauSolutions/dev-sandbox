@@ -1,0 +1,57 @@
+{
+  "template_name": "no_website_competitor_v1",
+  "pain_point": "no_website",
+  "body": "Hi {business_name} - William, Marceau Solutions (239-398-5676). {competitor_name} down the street has {competitor_review_count} reviews and a website. You have {review_count} reviews but no site. Want help? Text YES. Reply STOP to opt out.",
+  "char_count": 225,
+  "segments": 2,
+  "personalization_fields": [
+    "business_name",
+    "competitor_name",
+    "competitor_review_count",
+    "review_count"
+  ],
+  "cta": "Text YES",
+  "tcpa_compliant": true,
+  "notes": [
+    "PHASE 1 OPTIMIZATION: Hyper-personalized with competitor data",
+    "UTM tracked link: https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_competitor_v1"
+  ],
+  "expected_response_rate": "12-14%",
+  "best_for": [
+    "gym",
+    "salon",
+    "restaurant"
+  ],
+  "optimization_rationale": [
+    "Names specific competitor (ultra-personalized)",
+    "Creates urgency via comparison",
+    "Highlights their advantage (reviews) + gap (no website)",
+    "Competitor mention = 'I actually looked at your business'",
+    "No fake social proof",
+    "Simple offer: Want help?"
+  ],
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "{business_name}: I searched for gyms in {city}. {competitor_name} showed up first (has website). You didn't. I can fix that free. William, Marceau Solutions (239-398-5676). Text YES. Reply STOP to opt out.",
+      "char_count": 199,
+      "angle": "Search result comparison (pain point)",
+      "expected_response_rate": "13-15%"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi {business_name} - your competitor {competitor_name} has {competitor_review_count} reviews. You have {review_count}. Let's close that gap. Free help. William, Marceau Solutions (239) 398-5676. Interested? Reply STOP to opt out.",
+      "char_count": 217,
+      "angle": "Review gap (competitive pressure)",
+      "expected_response_rate": "11-13%"
+    },
+    {
+      "variant_id": "c",
+      "body": "Quick question for {business_name}: How many customers choose {competitor_name} because they show up on Google and you don't? I'll fix it for free. William, Marceau Solutions (239-398-5676). Reply STOP to opt out.",
+      "char_count": 214,
+      "angle": "Losing customers to competitor",
+      "expected_response_rate": "12-14%"
+    }
+  ],
+  "utm_tracked_link": "https://marceausolutions.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=no_website_jan26&utm_content=no_website_competitor_v1"
+}

@@ -1,0 +1,43 @@
+{
+  "folders": [
+    {
+      "name": "\ud83c\udf10 Shared (Multi-Tenant)",
+      "path": "projects/shared-multi-tenant"
+    },
+    {
+      "name": "\ud83c\udfaf Marceau Solutions",
+      "path": "projects/marceau-solutions"
+    },
+    {
+      "name": "\u2744\ufe0f SW Florida HVAC",
+      "path": "projects/swflorida-hvac"
+    },
+    {
+      "name": "\ud83d\udce6 Square Foot Shipping",
+      "path": "projects/square-foot-shipping"
+    },
+    {
+      "name": "\ud83d\udd27 Global Utilities",
+      "path": "projects/global-utility"
+    },
+    {
+      "name": "\ud83d\udca1 Product Ideas",
+      "path": "projects/product-ideas"
+    },
+    {
+      "name": "\ud83d\udcda Infrastructure",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    },
+    "search.exclude": {
+      "**/archived": true
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "templates": {
+    "pain_point": {
+      "name": "Pain Point → Solution",
+      "format": "{pain_point} keeping you up at night?\n\n{solution} does {benefit} in {timeframe}.\n\nCheck it out: {link}\n\n#{hashtag1} #{hashtag2}",
+      "placeholders": ["pain_point", "solution", "benefit", "timeframe", "link", "hashtag1", "hashtag2"],
+      "example": "Lead generation keeping you up at night?\n\nOur AI-powered landing page builder converts 3x better.\n\nCheck it out: https://marceausolutions.com/fitness\n\n#FitnessCoach #BusinessGrowth"
+    },
+    "social_proof": {
+      "name": "Testimonial",
+      "format": "\"{quote}\" - {name}, {title}\n\nSee how {product} helped {customer} achieve {result}.\n\n{link}",
+      "placeholders": ["quote", "name", "title", "product", "customer", "result", "link"],
+      "example": "\"Doubled my client bookings in 30 days\" - Sarah M., Fitness Coach\n\nSee how our landing page builder helped Sarah achieve 2x growth.\n\nhttps://marceausolutions.com/fitness"
+    },
+    "value_list": {
+      "name": "Value-First List",
+      "format": "{number} {thing} that {outcome}:\n\n1. {tip1}\n2. {tip2}\n3. {tip3}\n\nWant more? {link}",
+      "placeholders": ["number", "thing", "outcome", "tip1", "tip2", "tip3", "link"],
+      "example": "3 landing page mistakes killing your conversions:\n\n1. No clear CTA above the fold\n2. Too many form fields\n3. Missing social proof\n\nWant more? https://marceausolutions.com/fitness"
+    },
+    "question_hook": {
+      "name": "Question Hook",
+      "format": "What if you could {benefit} without {pain_point}?\n\n{solution} makes it possible.\n\n{link}",
+      "placeholders": ["benefit", "pain_point", "solution", "link"],
+      "example": "What if you could double your client bookings without spending more on ads?\n\nOur AI landing page builder makes it possible.\n\nhttps://marceausolutions.com/fitness"
+    },
+    "stat_driven": {
+      "name": "Statistic-Driven",
+      "format": "{stat}.\n\nThat's why {solution} exists.\n\n{benefit}.\n\n{link}",
+      "placeholders": ["stat", "solution", "benefit", "link"],
+      "example": "80% of fitness coaches lose clients because their website doesn't convert.\n\nThat's why we built an AI landing page builder specifically for fitness pros.\n\nGet a free mockup in 60 seconds.\n\nhttps://marceausolutions.com/fitness"
+    },
+    "before_after": {
+      "name": "Before/After",
+      "format": "Before: {before}\n\nAfter: {after}\n\nThe difference? {solution}.\n\n{link}",
+      "placeholders": ["before", "after", "solution", "link"],
+      "example": "Before: Spending hours tweaking your website\n\nAfter: AI generates a high-converting page in 60 seconds\n\nThe difference? Our landing page builder.\n\nhttps://marceausolutions.com/fitness"
+    },
+    "announcement": {
+      "name": "Product Announcement",
+      "format": "Introducing: {product}\n\n{description}\n\n{cta}: {link}",
+      "placeholders": ["product", "description", "cta", "link"],
+      "example": "Introducing: AI Landing Page Builder for Fitness Coaches\n\nGenerate high-converting pages in 60 seconds, no coding required.\n\nTry it free: https://marceausolutions.com/fitness"
+    }
+  },
+  "campaigns": {
+    "fitness-launch": {
+      "name": "Fitness Influencer Landing Page Launch",
+      "landing_page": "https://marceausolutions.com/fitness",
+      "hashtags": ["FitnessCoach", "FitnessBusiness", "PersonalTrainer", "FitnessMarketing"],
+      "target_audience": "Fitness coaches and personal trainers",
+      "goal": "Drive signups for landing page builder demo"
+    }
+  },
+  "hashtag_sets": {
+    "fitness": ["FitnessCoach", "FitnessBusiness", "PersonalTrainer", "FitnessMarketing", "OnlineCoach"],
+    "business": ["SmallBusiness", "Entrepreneur", "BusinessGrowth", "Marketing", "StartupLife"],
+    "tech": ["AI", "Automation", "NoCode", "SaaS", "ProductivityTools"]
+  },
+  "best_practices": {
+    "character_limit": 280,
+    "ideal_length": "200-250 characters (leaves room for engagement)",
+    "hashtag_count": "1-2 hashtags max for better reach",
+    "cta_examples": ["Check it out", "Try it free", "Learn more", "Get started", "See how"],
+    "link_placement": "End of tweet for better click-through",
+    "posting_frequency": "3-5 posts per day across optimal times"
+  }
+}

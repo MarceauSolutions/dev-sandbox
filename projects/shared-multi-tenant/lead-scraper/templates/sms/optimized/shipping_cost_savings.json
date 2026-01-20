@@ -1,0 +1,47 @@
+{
+  "template_name": "shipping_cost_savings_v1",
+  "pain_point": "high_shipping_costs",
+  "body": "Hi {business_name} - this is William from {shipping_company_name} (239-398-5676). We help e-commerce businesses cut shipping costs 20-40%. Free rate comparison this week. Interested? Text YES. Reply STOP to opt out.",
+  "char_count": 215,
+  "segments": 2,
+  "personalization_fields": [
+    "business_name",
+    "shipping_company_name"
+  ],
+  "cta": "Text YES for free rate comparison",
+  "tcpa_compliant": true,
+  "business_id": "shipping-logistics",
+  "notes": [
+    "Shipping/logistics template - focuses on cost reduction for e-commerce/retail",
+    "UTM tracked link: https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_shipping_costs_jan26&utm_content=shipping_cost_savings_v1"
+  ],
+  "expected_response_rate": "6-8%",
+  "best_for": [
+    "ecommerce",
+    "retail",
+    "wholesale",
+    "manufacturing"
+  ],
+  "value_proposition": "20-40% shipping cost reduction through carrier optimization",
+  "variants": [
+    {
+      "variant_id": "a",
+      "body": "{business_name} owner: Most e-commerce businesses overpay 30% on shipping. We negotiate better rates with all carriers. Free comparison. William, {shipping_company_name} (239-398-5676). Text YES. Reply STOP to opt out.",
+      "char_count": 220,
+      "angle": "Overpaying pain point"
+    },
+    {
+      "variant_id": "b",
+      "body": "Hi {business_name} - shipping costs eating profits? We just saved 3 Florida retailers $2K+/month on fulfillment. Free audit from {shipping_company_name}. William (239) 398-5676. Want details? Text YES. Reply STOP to opt out.",
+      "char_count": 223,
+      "angle": "Social proof + specific savings"
+    },
+    {
+      "variant_id": "c",
+      "body": "Quick question {business_name}: How much do you spend monthly on shipping? We can probably cut that 25-35%. Free analysis. William, {shipping_company_name} (239-398-5676). Text YES or call. Reply STOP to opt out.",
+      "char_count": 215,
+      "angle": "Question hook + percentage savings"
+    }
+  ],
+  "utm_tracked_link": "https://swfllogistics.com/contact?utm_source=sms&utm_medium=cold_outreach&utm_campaign=high_shipping_costs_jan26&utm_content=shipping_cost_savings_v1"
+}

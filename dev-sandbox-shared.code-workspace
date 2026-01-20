@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "Shared Multi-Tenant",
+      "path": "projects/shared-multi-tenant"
+    },
+    {
+      "name": "Infrastructure",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    },
+    "search.exclude": {
+      "**/archived": true
+    }
+  }
+}

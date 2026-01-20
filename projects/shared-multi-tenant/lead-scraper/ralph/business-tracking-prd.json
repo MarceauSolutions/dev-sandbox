@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "prd_name": "Business-Specific Campaign Tracking & Offer Matching",
+    "objective": "Ensure each business (marceau-solutions, swflorida-hvac, shipping-logistics) only sends relevant offers to their target leads, with separate performance tracking",
+    "total_stories": 5,
+    "completed_stories": 5,
+    "autonomous_mode": true,
+    "checkpoint_stories": [3]
+  },
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Add business_id tracking to all campaign data",
+      "description": "Update campaign analytics, SMS manager, and follow-up sequences to track which business sent each campaign. Add sending_business_id field to LeadRecord, campaign logs, and analytics reports.",
+      "acceptance_criteria": [
+        "LeadRecord has sending_business_id field (already added)",
+        "SMS campaigns log business_id in sms_campaigns.json",
+        "Follow-up sequences track business_id per lead",
+        "Analytics can filter/group by business_id",
+        "History files include business_id in all campaign records"
+      ],
+      "files_to_modify": [
+        "src/campaign_analytics.py",
+        "src/sms_outreach.py",
+        "src/follow_up_sequence.py"
+      ],
+      "passes": true
+    },
+    {
+      "story_id": "002",
+      "title": "Create business-specific template mappings",
+      "description": "Define which templates each business can use. Marceau Solutions = AI/website templates, HVAC = HVAC service templates, Shipping = logistics templates. Prevent cross-business template usage.",
+      "acceptance_criteria": [
+        "BUSINESS_TEMPLATE_MAP created in constants/config",
+        "marceau-solutions: no_website, few_reviews, no_online_transactions templates",
+        "swflorida-hvac: HVAC-specific templates (create if needed)",
+        "shipping-logistics: shipping/logistics templates (create if needed)",
+        "SMS manager validates template matches business_id before sending",
+        "Error raised if wrong template used for business"
+      ],
+      "files_to_modify": [
+        "src/sms_outreach.py",
+        "templates/sms/optimized/ (add HVAC/shipping templates)"
+      ],
+      "passes": true
+    },
+    {
+      "story_id": "003",
+      "title": "Update analytics reports to show per-business performance",
+      "description": "Add business-level aggregation to campaign_analytics report command. Show separate metrics for each business: response rates, funnel metrics, template performance by business.",
+      "acceptance_criteria": [
+        "python -m src.campaign_analytics report --business marceau-solutions shows only Marceau campaigns",
+        "python -m src.campaign_analytics report (no filter) shows all businesses separately",
+        "Each business section shows: total contacts, responses, response rate, hot/warm/cold breakdown",
+        "Template performance grouped by business",
+        "Funnel metrics calculated per business"
+      ],
+      "files_to_modify": [
+        "src/campaign_analytics.py (add business filtering/grouping)"
+      ],
+      "checkpoint": true,
+      "notes": "CHECKPOINT: Review analytics output before proceeding to ensure tracking is working correctly",
+      "passes": true
+    },
+    {
+      "story_id": "004",
+      "title": "Create HVAC-specific outreach templates",
+      "description": "Create SMS templates for SW Florida HVAC targeting restaurants, gyms, retail. Focus on HVAC maintenance, energy savings, customer comfort as value props (NOT website building).",
+      "acceptance_criteria": [
+        "templates/sms/optimized/hvac_maintenance.json created",
+        "templates/sms/optimized/hvac_energy_savings.json created",
+        "Templates mention HVAC services, energy bills, AC maintenance",
+        "NO mention of websites, AI automation, or shipping",
+        "TCPA compliant with business name 'SW Florida Comfort HVAC'",
+        "Expected 8-10% response rate (realistic for HVAC cold outreach)"
+      ],
+      "files_to_create": [
+        "templates/sms/optimized/hvac_maintenance.json",
+        "templates/sms/optimized/hvac_energy_savings.json"
+      ],
+      "passes": true
+    },
+    {
+      "story_id": "005",
+      "title": "Create shipping/logistics outreach templates",
+      "description": "Create SMS templates for shipping client targeting e-commerce, retail, wholesale. Focus on shipping costs, fulfillment speed, carrier options as value props (NOT website building or HVAC).",
+      "acceptance_criteria": [
+        "templates/sms/optimized/shipping_cost_savings.json created",
+        "templates/sms/optimized/shipping_fulfillment_speed.json created",
+        "Templates mention shipping rates, fulfillment, logistics optimization",
+        "NO mention of websites, AI automation, or HVAC",
+        "TCPA compliant with business name from config",
+        "Expected 6-8% response rate (realistic for logistics cold outreach)"
+      ],
+      "files_to_create": [
+        "templates/sms/optimized/shipping_cost_savings.json",
+        "templates/sms/optimized/shipping_fulfillment_speed.json"
+      ],
+      "passes": true
+    }
+  ],
+  "technical_notes": {
+    "business_configs": {
+      "marceau-solutions": {
+        "target_categories": ["gym", "salon", "restaurant"],
+        "templates": ["no_website_*", "few_reviews_*", "no_online_transactions_*"],
+        "value_props": ["AI automation", "website services", "online booking", "review systems"]
+      },
+      "swflorida-hvac": {
+        "target_categories": ["restaurant", "gym", "retail", "salon", "spa"],
+        "templates": ["hvac_maintenance", "hvac_energy_savings"],
+        "value_props": ["HVAC maintenance", "energy savings", "AC repair", "customer comfort"]
+      },
+      "shipping-logistics": {
+        "target_categories": ["ecommerce", "retail", "wholesale", "manufacturing"],
+        "templates": ["shipping_cost_savings", "shipping_fulfillment_speed"],
+        "value_props": ["shipping cost reduction", "faster fulfillment", "carrier optimization"]
+      }
+    },
+    "tracking_schema": {
+      "sms_campaigns.json": "Add business_id to each campaign record",
+      "campaign_analytics.json": "Group metrics by business_id",
+      "outreach_history.json": "Track business_id in all campaign entries"
+    },
+    "validation": {
+      "before_send": "Check template matches business_id",
+      "before_analytics": "Verify business_id present in all records"
+    }
+  }
+}

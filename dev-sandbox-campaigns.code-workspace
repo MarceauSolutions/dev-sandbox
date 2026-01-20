@@ -1,0 +1,31 @@
+{
+  "folders": [
+    {
+      "name": "Lead Scraper (Shared)",
+      "path": "projects/shared-multi-tenant/lead-scraper"
+    },
+    {
+      "name": "Social Media (Shared)",
+      "path": "projects/shared-multi-tenant/social-media-automation"
+    },
+    {
+      "name": "Voice AI (Shared)",
+      "path": "projects/shared-multi-tenant/ai-customer-service"
+    },
+    {
+      "name": "Infrastructure",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.pytest_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    },
+    "search.exclude": {
+      "**/archived": true
+    }
+  }
+}

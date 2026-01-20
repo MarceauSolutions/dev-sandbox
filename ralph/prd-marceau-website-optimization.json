@@ -1,0 +1,356 @@
+{
+  "metadata": {
+    "prd_name": "marceausolutions.com Website Optimization",
+    "created": "2026-01-20",
+    "priority": "high",
+    "estimated_duration": "3-5 days",
+    "target_launch": "2026-01-27"
+  },
+
+  "executive_summary": {
+    "problem": "Current marceausolutions.com website messaging bundles 'Website + AI Automation' as a single offering, but the new business model is 'Tiered AI Automation with OPTIONAL website integration'. The pricing page already has automation-only tiers, but the homepage and messaging don't clearly communicate this flexibility.",
+    "solution": "Reposition website messaging to lead with tiered AI automation, make website integration clearly optional, and ensure all messaging aligns with retainer plans (Partner and Maintenance).",
+    "business_value": "Clear messaging that matches actual business model increases conversion by eliminating confusion about what customers must purchase. Prospects with existing websites won't be turned away by bundled messaging.",
+    "success_metrics": [
+      "Homepage clearly presents AI automation tiers FIRST",
+      "Website integration positioned as optional add-on",
+      "Retainer plans (Partner $2,247/mo, Maintenance $747/mo) prominently featured",
+      "All CTAs direct to appropriate pricing tier",
+      "Zero references to mandatory bundling"
+    ]
+  },
+
+  "current_state_analysis": {
+    "homepage_analysis": {
+      "file": "index.html",
+      "current_headline": "Website + AI Automation For Local Service Businesses",
+      "issue": "Bundles website and automation in headline, implying both are required",
+      "current_messaging": [
+        "Stop losing customers to missed calls and manual processes",
+        "Get a professional website plus intelligent automation"
+      ],
+      "what_works": [
+        "Early access form captures leads effectively",
+        "Clean, modern design with good UX",
+        "Professional branding and color scheme"
+      ],
+      "what_needs_change": [
+        "Headline bundles website + automation (should lead with automation)",
+        "Subheadline says 'Get a professional website plus...' (should be 'automation with optional website')",
+        "Project cards (Fitness, Interview, Amazon, MedTech) don't align with local service business focus",
+        "No mention of tiered pricing or retainer options",
+        "No clear path to 'automation-only' for existing website owners"
+      ]
+    },
+    "pricing_analysis": {
+      "file": "pricing.html",
+      "current_headline": "Complete Website + Automation For Local Service Businesses",
+      "issue": "Still positions as bundled offering in main section, though automation-only section exists at bottom",
+      "structure": {
+        "section_1": "Bundled Tiers (Digital Storefront $4,997, Growth System $9,997, Enterprise $19,997)",
+        "section_2": "Retainers (Maintenance $747/mo, Partner $2,247/mo)",
+        "section_3": "Automation-Only (Starter $2,997, Growth $6,997, Enterprise $14,997)"
+      },
+      "what_works": [
+        "Automation-only section already exists (lines 697-854)",
+        "Retainer plans clearly defined (lines 613-694)",
+        "Good feature comparison between tiers",
+        "Clear timelines and deliverables"
+      ],
+      "what_needs_change": [
+        "Headline still emphasizes bundled offering",
+        "Automation-only section buried at bottom (should be promoted)",
+        "Unclear navigation - should let user choose 'I have a website' upfront",
+        "Retainers could be more prominent (they're key to revenue model)"
+      ]
+    },
+    "contact_analysis": {
+      "file": "contact.html",
+      "status": "Mostly aligned - form works well",
+      "issue": "Interest dropdown still references old projects (Fitness, Interview, Amazon, MedTech) instead of AI automation tiers",
+      "what_needs_change": [
+        "Update interest dropdown to match new service tiers",
+        "Add option for 'automation-only' vs 'bundled with website'"
+      ]
+    },
+    "video_investigation": {
+      "result": "NO BROKEN VIDEO FOUND",
+      "explanation": "The word 'video' appears twice in pricing.html as text: '2-hour training + video library' (feature description). There are no <video>, <iframe>, or embedded video elements in any of the website files. The user's concern about a broken video is likely a false alarm or refers to a different page not yet examined."
+    }
+  },
+
+  "target_state_vision": {
+    "new_homepage_headline": "AI Automation That Runs Your Business 24/7",
+    "new_homepage_subheadline": "Tiered AI automation for local service businesses. Voice AI, lead capture, follow-ups, CRM. Website included if you don't have one.",
+    "new_value_proposition": [
+      "Lead with automation capabilities (Voice AI, booking, quotes, follow-ups)",
+      "Emphasize tiers (Starter, Growth, Enterprise)",
+      "Website is a bonus, not the focus",
+      "Retainer plans positioned as growth partnerships"
+    ],
+    "homepage_structure": {
+      "hero_section": "Headline about AI automation tiers + CTA to pricing",
+      "problem_section": "Stop losing customers to missed calls, manual processes",
+      "solution_section": "3-card overview of automation tiers (not bundled packages)",
+      "social_proof": "Results from POCs (HVAC, shipping, etc.)",
+      "retainer_upsell": "Partner with us for ongoing optimization",
+      "cta_section": "Choose your tier"
+    },
+    "pricing_structure": {
+      "approach": "Two-path navigation - let customer choose upfront",
+      "path_1": "I have a website → Automation-Only pricing",
+      "path_2": "I need a website → Bundled pricing",
+      "retainers": "Featured prominently as 'maximize your ROI' after initial tiers"
+    }
+  },
+
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Homepage Messaging Overhaul",
+      "description": "Update index.html to lead with tiered AI automation, make website integration optional",
+      "priority": "critical",
+      "estimated_hours": 3,
+      "acceptance_criteria": [
+        "Headline changed to 'AI Automation That Runs Your Business 24/7'",
+        "Subheadline mentions 'tiered AI automation' with 'website included if you don't have one'",
+        "Problem/solution section focuses on automation capabilities (Voice AI, lead capture, CRM)",
+        "Remove or replace project cards (Fitness, Interview, Amazon, MedTech) with automation tier previews",
+        "Add social proof from HVAC/shipping POCs if available",
+        "Update CTA buttons to 'Choose Your Tier' linking to pricing",
+        "Add section highlighting retainer plans (Partner and Maintenance)"
+      ],
+      "files_to_modify": [
+        "index.html (lines 40-60: headline and subheadline)",
+        "index.html (lines 90-250: project cards section - replace with automation tiers)",
+        "index.html (add new section: retainer plans)"
+      ],
+      "mockup_headlines": {
+        "h1": "AI Automation That Runs Your Business 24/7",
+        "subtitle": "Tiered AI automation for local service businesses. Capture every lead, automate follow-ups, never miss a call. Website included if you need one.",
+        "cta": "Choose Your Automation Tier"
+      }
+    },
+    {
+      "story_id": "002",
+      "title": "Pricing Page Two-Path Navigation",
+      "description": "Add upfront choice: 'I have a website' vs 'I need a website' to guide customers to correct pricing section",
+      "priority": "critical",
+      "estimated_hours": 2,
+      "acceptance_criteria": [
+        "Add hero section with two large buttons: 'I Have a Website' and 'I Need a Website'",
+        "'I Have a Website' button scrolls to automation-only section",
+        "'I Need a Website' button scrolls to bundled packages section",
+        "Update main headline to 'Choose Your AI Automation Tier'",
+        "Move automation-only section ABOVE bundled section (or make equal prominence)",
+        "Ensure both paths lead to same retainer plans section at bottom"
+      ],
+      "files_to_modify": [
+        "pricing.html (lines 344-348: update headline)",
+        "pricing.html (add new hero section with two-path buttons)",
+        "pricing.html (lines 697-854: automation-only section - move up or make prominent)"
+      ],
+      "wireframe_concept": {
+        "hero": {
+          "headline": "Choose Your AI Automation Tier",
+          "subtitle": "Select the path that matches your current situation",
+          "button_1": "I Have a Website → See Automation-Only Pricing",
+          "button_2": "I Need a Website → See Complete Packages"
+        }
+      }
+    },
+    {
+      "story_id": "003",
+      "title": "Contact Form Interest Dropdown Update",
+      "description": "Update contact.html interest dropdown to match new automation tiers instead of old projects",
+      "priority": "medium",
+      "estimated_hours": 1,
+      "acceptance_criteria": [
+        "Remove old options: Fitness Influencer AI, Interview Prep AI, Amazon Seller AI, MedTech",
+        "Add new options aligned with automation tiers",
+        "Include option to specify 'automation-only' vs 'bundled with website'"
+      ],
+      "files_to_modify": [
+        "contact.html (lines 340-350: interest dropdown)"
+      ],
+      "new_dropdown_options": [
+        "Automation Starter (I have a website) - $2,997",
+        "Automation Growth (I have a website) - $6,997",
+        "Automation Enterprise (I have a website) - $14,997",
+        "Digital Storefront (Need website + automation) - $4,997",
+        "Growth System (Need website + automation) - $9,997",
+        "Enterprise Package (Need website + automation) - $19,997",
+        "Retainer Plans (Maintenance or Partner)",
+        "Custom Solution / Not Sure Yet",
+        "Other / General Inquiry"
+      ]
+    },
+    {
+      "story_id": "004",
+      "title": "Retainer Plans Prominence Boost",
+      "description": "Make Partner ($2,247/mo) and Maintenance ($747/mo) retainer plans more prominent throughout site",
+      "priority": "high",
+      "estimated_hours": 2,
+      "acceptance_criteria": [
+        "Add retainer upsell section to homepage",
+        "Add 'Recommended for Enterprise' badge to Partner Retainer on pricing page",
+        "Add FAQ answer explaining when retainers are required vs optional",
+        "Ensure Enterprise Package shows 'Partner Retainer required first 6 months' clearly"
+      ],
+      "files_to_modify": [
+        "index.html (add new section: 'Maximize Your ROI with Ongoing Partnership')",
+        "pricing.html (lines 613-694: add visual emphasis to retainers)",
+        "pricing.html (lines 856-894: FAQ section - add retainer question)"
+      ],
+      "messaging_framework": {
+        "maintenance_retainer": "Keep your automation running smoothly - bug fixes, updates, quarterly check-ins",
+        "partner_retainer": "Continuous optimization and strategic partnership - we're invested in your growth",
+        "positioning": "Retainers aren't just support - they're growth accelerators"
+      }
+    },
+    {
+      "story_id": "005",
+      "title": "Remove or Repurpose Project Cards (Optional)",
+      "description": "Decide what to do with Fitness Influencer, Interview Prep, Amazon Seller, MedTech project cards on homepage",
+      "priority": "low",
+      "estimated_hours": 1,
+      "acceptance_criteria": [
+        "Option A: Remove entirely - focus only on local service business automation",
+        "Option B: Move to separate 'Other AI Solutions' page",
+        "Option C: Replace with case studies from HVAC/shipping POCs"
+      ],
+      "recommendation": "Option C - Replace with real case study cards showing HVAC Voice AI results, shipping lead gen results. More credible than generic projects.",
+      "files_to_modify": [
+        "index.html (lines 90-250: project cards section)"
+      ],
+      "case_study_suggestions": [
+        {
+          "title": "HVAC Voice AI",
+          "stat": "47 calls answered, 12 appointments booked, $8K revenue - Week 1",
+          "description": "24/7 call answering system for Naples HVAC company"
+        },
+        {
+          "title": "E-commerce Lead Gen",
+          "stat": "50 qualified leads in 5 minutes",
+          "description": "Automated lead scraping and qualification for shipping logistics"
+        }
+      ]
+    },
+    {
+      "story_id": "006",
+      "title": "Verify No Broken Videos (Investigation Complete)",
+      "description": "User mentioned 'the video doesn't work on one of the pages' - investigate and fix if found",
+      "priority": "low",
+      "estimated_hours": 0.5,
+      "acceptance_criteria": [
+        "Search all HTML files for <video>, <iframe>, embedded video elements",
+        "If broken video found, either fix embed or remove",
+        "Document findings"
+      ],
+      "investigation_result": {
+        "status": "COMPLETE - NO BROKEN VIDEO FOUND",
+        "findings": "The word 'video' only appears as text in pricing.html: '2-hour training + video library' (lines 505, 777). No actual video elements exist. No action needed.",
+        "conclusion": "User's concern about broken video is likely a false alarm or refers to a page not yet examined. No fixes required."
+      },
+      "files_searched": [
+        "index.html",
+        "pricing.html",
+        "contact.html",
+        "terms.html"
+      ]
+    }
+  ],
+
+  "execution_plan": {
+    "phase_1_critical": {
+      "stories": ["001", "002"],
+      "duration": "Day 1-2",
+      "deliverable": "Homepage and pricing page aligned with new business model",
+      "testing": "Review updated messaging, ensure CTAs link to correct sections"
+    },
+    "phase_2_high": {
+      "stories": ["003", "004"],
+      "duration": "Day 3",
+      "deliverable": "Contact form updated, retainer plans more prominent",
+      "testing": "Submit test inquiries, verify dropdown options make sense"
+    },
+    "phase_3_optional": {
+      "stories": ["005", "006"],
+      "duration": "Day 4-5",
+      "deliverable": "Project cards replaced with case studies, video investigation closed",
+      "testing": "Review final site for consistency"
+    }
+  },
+
+  "messaging_framework": {
+    "core_value_proposition": "Tiered AI automation that captures every lead, automates follow-ups, and runs your business 24/7. Website included if you need one.",
+    "target_audience": "Local service businesses (HVAC, plumbing, gyms, restaurants, professional services)",
+    "key_differentiators": [
+      "Tiered pricing (choose what you need)",
+      "Automation-first (website is optional)",
+      "Retainer partnerships (we grow with you)",
+      "Proven POC results (HVAC, e-commerce)"
+    ],
+    "tone": "Direct, results-focused, no fluff. Show ROI immediately.",
+    "headlines_to_avoid": [
+      "Website + AI Automation" (implies bundling required)",
+      "Complete package" (sounds all-or-nothing)",
+      "Custom solutions" (too vague)"
+    ],
+    "headlines_to_use": [
+      "AI Automation That Runs Your Business 24/7",
+      "Tiered AI Automation for Local Service Businesses",
+      "Capture Every Lead. Automate Everything. Grow Faster.",
+      "Choose Your Automation Tier. Scale with Retainer Plans."
+    ]
+  },
+
+  "sop_alignment": {
+    "applicable_sops": [
+      "SOP 0: Project Kickoff (this is a website optimization, not new project)",
+      "SOP 6: Workflow Creation (document homepage update process)",
+      "SOP 20: Internal Method Development (if needed for messaging framework)"
+    ],
+    "target_market_research": {
+      "completed": "YES - POCs running for HVAC and shipping",
+      "market_fit": "Local service businesses with missed call problems",
+      "pricing_validation": "Automation-only tiers already exist on pricing page"
+    }
+  },
+
+  "risks_and_mitigations": {
+    "risk_1": {
+      "risk": "Customers confused by two paths (automation-only vs bundled)",
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "Add clear upfront choice buttons on pricing page, explain difference in FAQ"
+    },
+    "risk_2": {
+      "risk": "Removing project cards (Fitness, Interview, etc.) loses credibility",
+      "likelihood": "low",
+      "impact": "low",
+      "mitigation": "Replace with real case study cards from HVAC/shipping POCs - more credible"
+    },
+    "risk_3": {
+      "risk": "Retainer plans feel too expensive",
+      "likelihood": "medium",
+      "impact": "medium",
+      "mitigation": "Position as growth partnerships, show ROI examples, make optional (except Enterprise)"
+    }
+  },
+
+  "success_criteria": {
+    "messaging_clarity": "Visitor lands on homepage and immediately understands: 'This is tiered AI automation, website optional'",
+    "pricing_navigation": "Visitor with existing website finds automation-only pricing in <30 seconds",
+    "retainer_visibility": "Partner and Maintenance plans are clearly visible, not buried",
+    "conversion_optimization": "CTAs lead to appropriate tier based on customer situation",
+    "brand_consistency": "All pages use same messaging framework (automation-first, tiered, optional website)"
+  },
+
+  "open_questions": [
+    "Should we create a separate landing page for 'automation-only' to run targeted ads?",
+    "Do we have permission to use HVAC/shipping POC results as case studies publicly?",
+    "Should retainer pricing be negotiable or fixed?",
+    "Is there a preferred CTA (email wmarceau@ vs calendly link vs phone)?"
+  ]
+}

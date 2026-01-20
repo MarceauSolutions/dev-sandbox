@@ -1,0 +1,40 @@
+{
+  "leads": [
+    {
+      "call_sid": "CA8926e74616efabce6bd36483e8768917",
+      "caller_number": "Unknown",
+      "caller_name": null,
+      "business_name": "restaurant (unnamed)",
+      "email": null,
+      "intent": "service_inquiry",
+      "quality": "warm",
+      "confidence": 0.75,
+      "key_phrases": [
+        "interested in AI services",
+        "for my restaurant"
+      ],
+      "next_action": "Follow up immediately to gather more details about their restaurant, specific AI needs, timeline, and contact information",
+      "detected_at": "2026-01-19T19:42:02.751458",
+      "transcript_summary": "Caller expressed interest in AI services for their restaurant business. This is a genuine service inquiry with clear business application, though contact details and specific needs weren't captured."
+    },
+    {
+      "call_sid": "CA0fca7628721322da41e32a640f595679",
+      "caller_number": "Unknown",
+      "caller_name": null,
+      "business_name": null,
+      "email": null,
+      "intent": "service_inquiry",
+      "quality": "warm",
+      "confidence": 0.7,
+      "key_phrases": [
+        "help with my business needs",
+        "I want to talk about having some help"
+      ],
+      "next_action": "William should return the call immediately to gather more details about their business needs, qualify the opportunity, and understand their specific requirements",
+      "detected_at": "2026-01-19T19:42:07.782668",
+      "transcript_summary": "Caller is seeking William to discuss business assistance or services but provided minimal details. This appears to be a legitimate business inquiry that requires follow-up to determine specific needs and opportunity potential."
+    }
+  ],
+  "last_updated": "2026-01-20T10:00:16.531700",
+  "total_count": 2
+}
