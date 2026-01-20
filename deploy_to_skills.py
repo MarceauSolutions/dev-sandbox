@@ -43,214 +43,261 @@ DIRECTIVES_DIR = DEV_SANDBOX / "directives"
 SKILLS_DIR = DEV_SANDBOX / ".claude" / "skills"
 PROJECTS_DIR = DEV_SANDBOX / "projects"
 
-# Project configurations
-PROJECTS = {
-    "interview-prep": {
-        "skill_name": "interview-prep",
-        "src_dir": DEV_SANDBOX / "interview-prep-pptx" / "src",
-        "skill_md": DEV_SANDBOX / "interview-prep-pptx" / "SKILL.md",
-        "directive": "interview_prep.md",
-        "scripts": [
-            "interview_research.py",
-            "interview_prep_api.py",
-            "pptx_generator.py",
-            "pptx_editor.py",
-            "session_manager.py",
-            "template_manager.py",
-            "live_editor.py",
-            "grok_image_gen.py",
-            "mock_interview.py",
-            "pdf_outputs.py",
-            "intent_router.py"
-        ],
-        "description": "Interview Prep AI Assistant",
-        "frontend": {
-            "dir": DEV_SANDBOX / "interview-prep-pptx",
-            "deploy_method": "railway",  # railway, git-push, or manual
-            "test_command": "python src/api.py",
-            "deploy_command": "railway up"
+
+# Project discovery and configuration
+def discover_projects():
+    """Auto-discover all projects in nested category structure.
+
+    Scans all category folders for valid projects (those with VERSION or SKILL.md files).
+    Returns a dict with base configuration for each discovered project.
+    Manual overrides can be merged in for projects with special needs.
+    """
+    discovered = {}
+
+    # Category folders to scan (for categorized structure)
+    categories = [
+        "shared-multi-tenant",
+        "marceau-solutions",
+        "swflorida-hvac",
+        "square-foot-shipping",
+        "global-utility",
+        "product-ideas",
+        "archived"
+    ]
+
+    # First, check for categorized structure (future state after migration)
+    categorized_structure_exists = any((PROJECTS_DIR / cat).exists() for cat in categories)
+
+    if categorized_structure_exists:
+        # Scan categorized folders
+        for category in categories:
+            category_path = PROJECTS_DIR / category
+            if not category_path.exists():
+                continue
+
+            for project_dir in category_path.iterdir():
+                if not project_dir.is_dir():
+                    continue
+
+                # Check if it's a valid project (has VERSION or SKILL.md)
+                has_version = (project_dir / "VERSION").exists()
+                has_skill = (project_dir / "SKILL.md").exists()
+
+                if not (has_version or has_skill):
+                    continue
+
+                project_name = project_dir.name
+                src_dir = project_dir / "src"
+
+                # Auto-detect scripts in src/ directory
+                scripts = []
+                if src_dir.exists():
+                    scripts = [f.name for f in src_dir.glob("*.py") if f.is_file()]
+
+                # Base configuration from auto-discovery
+                discovered[project_name] = {
+                    "skill_name": project_name,
+                    "src_dir": src_dir,
+                    "skill_md": project_dir / "SKILL.md",
+                    "directive": None,
+                    "scripts": scripts,
+                    "description": f"{project_name.replace('-', ' ').title()}",
+                    "category": category,
+                    "project_dir": project_dir
+                }
+    else:
+        # Fallback: Scan flat projects/ directory (current state before migration)
+        if PROJECTS_DIR.exists():
+            for project_dir in PROJECTS_DIR.iterdir():
+                if not project_dir.is_dir():
+                    continue
+
+                # Skip category folders if they exist (hybrid state during migration)
+                if project_dir.name in categories:
+                    continue
+
+                # Check if it's a valid project (has VERSION or SKILL.md)
+                has_version = (project_dir / "VERSION").exists()
+                has_skill = (project_dir / "SKILL.md").exists()
+
+                if not (has_version or has_skill):
+                    continue
+
+                project_name = project_dir.name
+                src_dir = project_dir / "src"
+
+                # Auto-detect scripts in src/ directory
+                scripts = []
+                if src_dir.exists():
+                    scripts = [f.name for f in src_dir.glob("*.py") if f.is_file()]
+
+                # Base configuration from auto-discovery
+                discovered[project_name] = {
+                    "skill_name": project_name,
+                    "src_dir": src_dir,
+                    "skill_md": project_dir / "SKILL.md",
+                    "directive": None,
+                    "scripts": scripts,
+                    "description": f"{project_name.replace('-', ' ').title()}",
+                    "category": "unknown",  # Will be set after migration
+                    "project_dir": project_dir
+                }
+
+    # Manual configuration overrides for projects with special needs
+    manual_configs = {
+        # Interview Prep - Standalone project with frontend deployment
+        "interview-prep": {
+            "skill_name": "interview-prep",
+            "src_dir": DEV_SANDBOX / "interview-prep-pptx" / "src",
+            "skill_md": DEV_SANDBOX / "interview-prep-pptx" / "SKILL.md",
+            "directive": "interview_prep.md",
+            "scripts": [
+                "interview_research.py",
+                "interview_prep_api.py",
+                "generate_pptx.py"
+            ],
+            "description": "Interview Prep - AI-powered company research and presentation generation",
+            "frontend": {
+                "dir": DEV_SANDBOX / "interview-prep-pptx",
+                "deploy_method": "railway",
+                "test_command": "python src/api.py",
+                "deploy_command": "railway up"
+            }
+        },
+        # Fitness Influencer - MCP with deployment channels
+        "fitness-influencer": {
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "fitness-influencer-mcp",
+                "mcp_registry": "io.github.wmarceau/fitness-influencer",
+                "openrouter": True
+            },
+            "skill_name": "fitness-influencer-operations",
+            "description": "Fitness Influencer AI Operations - Video editing and content creation"
+        },
+        # Amazon Seller - MCP with deployment channels
+        "amazon-seller": {
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "amazon-seller-mcp",
+                "mcp_registry": "io.github.wmarceau/amazon-seller",
+                "openrouter": True
+            },
+            "skill_name": "amazon-seller-operations",
+            "description": "Amazon Seller AI Operations - Inventory management, cost optimization, review management"
+        },
+        # Personal Assistant - MCP with deployment channels
+        "personal-assistant": {
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "wmarceau-personal-assistant-mcp",
+                "mcp_registry": "io.github.wmarceau/personal-assistant",
+                "openrouter": True
+            },
+            "description": "William's Personal AI Assistant - unified access to dev-sandbox capabilities"
+        },
+        # MD to PDF - MCP with deployment channels
+        "md-to-pdf": {
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "md-to-pdf-mcp",
+                "mcp_registry": "io.github.wmarceau/md-to-pdf",
+                "openrouter": True
+            },
+            "description": "Markdown to PDF converter with custom styling"
+        },
+        # Twilio MCP - MCP with deployment channels
+        "twilio-mcp": {
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "twilio-mcp",
+                "mcp_registry": "io.github.wmarceau/twilio",
+                "openrouter": True
+            },
+            "description": "Twilio MCP - SMS and voice communication integration"
+        },
+        # Rideshare Comparison - Special src_dir location + deployment channels
+        "mcp-aggregator-rideshare": {
+            "skill_name": "rideshare-comparison",
+            "src_dir": PROJECTS_DIR / "mcp-aggregator" / "use-cases" / "rideshare" / "mcp-server",
+            "skill_md": PROJECTS_DIR / "mcp-aggregator" / "use-cases" / "rideshare" / "SKILL.md",
+            "scripts": ["rideshare_mcp.py"],
+            "description": "Rideshare Comparison MCP - Compare Uber, Lyft, and Via prices",
+            "deployment_channels": {
+                "local": True,
+                "github": "wmarceau/rideshare-comparison-mcp",
+                "pypi": "rideshare-comparison-mcp",
+                "mcp_registry": "io.github.wmarceau/rideshare-comparison",
+                "openrouter": True
+            }
+        },
+        # HVAC Quote Comparison - Special src_dir location + deployment channels
+        "mcp-aggregator-hvac": {
+            "skill_name": "hvac-quote-comparison",
+            "src_dir": PROJECTS_DIR / "mcp-aggregator" / "use-cases" / "hvac" / "mcp-server",
+            "skill_md": PROJECTS_DIR / "mcp-aggregator" / "use-cases" / "hvac" / "SKILL.md",
+            "scripts": ["hvac_mcp.py"],
+            "description": "HVAC equipment quote comparison MCP",
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "hvac-mcp",
+                "mcp_registry": "io.github.wmarceau/hvac",
+                "openrouter": True
+            }
+        },
+        # MCP Aggregator - Special src_dir location + deployment channels
+        "mcp-aggregator": {
+            "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
+            "scripts": ["aggregator_mcp.py"],
+            "description": "Universal MCP Aggregator Platform",
+            "deployment_channels": {
+                "local": True,
+                "github": False,
+                "pypi": "mcp-aggregator",
+                "mcp_registry": "io.github.wmarceau/mcp-aggregator",
+                "openrouter": True
+            }
+        },
+        # Social Media Automation - Detailed description
+        "social-media-automation": {
+            "description": "Social Media Automation - Multi-business content generation and posting"
+        },
+        # AI Customer Service - Detailed description
+        "ai-customer-service": {
+            "description": "AI Customer Service - Voice AI phone systems for businesses"
+        },
+        # Time Blocks - Local only deployment
+        "time-blocks": {
+            "description": "Time Blocks - Personal productivity and calendar scheduling",
+            "deployment_target": "local-only"
+        },
+        # Lead Scraper - Local only deployment
+        "lead-scraper": {
+            "description": "Lead Scraper - Local business lead generation for cold outreach",
+            "deployment_target": "local-only"
         }
-    },
-    "fitness-influencer": {
-        "skill_name": "fitness-influencer-operations",
-        "src_dir": PROJECTS_DIR / "fitness-influencer" / "src",
-        "skill_md": SKILLS_DIR / "fitness-influencer-operations" / "SKILL.md",
-        "directive": "fitness_influencer_operations.md",
-        "scripts": [
-            "video_jumpcut.py",
-            "educational_graphics.py",
-            "gmail_monitor.py",
-            "revenue_analytics.py",
-            "grok_image_gen.py",
-            "twilio_sms.py",
-            "workout_plan_generator.py",
-            "nutrition_guide_generator.py"
-        ],
-        "description": "Fitness Influencer AI Operations"
-    },
-    "amazon-seller": {
-        "skill_name": "amazon-seller-operations",
-        "src_dir": PROJECTS_DIR / "amazon-seller" / "src",
-        "skill_md": SKILLS_DIR / "amazon-seller-operations" / "SKILL.md",
-        "directive": "amazon_seller_operations.md",
-        "scripts": [
-            "amazon_sp_api.py",
-            "amazon_fee_calculator.py",
-            "amazon_inventory_optimizer.py",
-            "gmail_monitor.py",
-            "revenue_analytics.py",
-            "twilio_sms.py"
-        ],
-        "description": "Amazon Seller AI Operations"
-    },
-    "naples-weather": {
-        "skill_name": "naples-weather-report",
-        "src_dir": PROJECTS_DIR / "naples-weather" / "src",
-        "skill_md": SKILLS_DIR / "naples-weather-report" / "SKILL.md",
-        "directive": "generate_naples_weather_report.md",
-        "scripts": [
-            "fetch_naples_weather.py",
-            "generate_weather_report.py",
-            "markdown_to_pdf.py"
-        ],
-        "description": "Naples Weather Report Generator"
-    },
-    "personal-assistant": {
-        "skill_name": "personal-assistant",
-        "src_dir": PROJECTS_DIR / "personal-assistant" / "src",
-        "skill_md": SKILLS_DIR / "personal-assistant" / "SKILL.md",
-        "directive": None,  # No directive - this is a meta-skill
-        "scripts": [],  # Aggregates other project scripts
-        "description": "William's Personal AI Assistant (Aggregates all skills)",
-        "deployment_target": "local-only"  # No Railway/GitHub deployment
-    },
-    "website-builder": {
-        "skill_name": "website-builder",
-        "src_dir": PROJECTS_DIR / "website-builder" / "src",
-        "skill_md": SKILLS_DIR / "website-builder" / "SKILL.md",
-        "directive": "website_builder.md",
-        "scripts": [
-            "research_engine.py",
-            "content_generator.py",
-            "site_builder.py",
-            "website_builder_api.py"
-        ],
-        "description": "AI Website Builder - Research & Generate Websites",
-        "frontend": {
-            "dir": PROJECTS_DIR / "website-builder",
-            "deploy_method": "railway",
-            "deploy_command": "railway up"
-        }
-    },
-    "email-analyzer": {
-        "skill_name": "email-analyzer",
-        "src_dir": DEV_SANDBOX / "email-analyzer" / "src",
-        "skill_md": DEV_SANDBOX / "email-analyzer" / "SKILL.md",
-        "directive": "email_analyzer.md",
-        "scripts": [],  # Future: Python automation scripts
-        "description": "Email Analysis - Extract, summarize, and compare email offers",
-        "deployment_target": "workflows-only"  # Documentation-based, no code deployment yet
-    },
-    "hvac-distributors": {
-        "skill_name": "hvac-distributors",
-        "src_dir": PROJECTS_DIR / "hvac-distributors" / "src",
-        "skill_md": PROJECTS_DIR / "hvac-distributors" / "SKILL.md",
-        "directive": "hvac_distributors.md",
-        "scripts": [
-            "hvac_cli.py",
-            "hvac_mcp.py",
-            "rfq_manager.py",
-            "models.py",
-            "distributor_db.py",
-            "quote_tracker.py",
-            "email_sender.py",
-            "email_receiver.py"
-        ],
-        "description": "HVAC Distributor RFQ System - Submit RFQs and compare quotes",
-        "deployment_channels": {
-            "local": True,
-            "github": False,
-            "pypi": "hvac-quotes-mcp",
-            "mcp_registry": "io.github.wmarceau/hvac-quotes",
-            "openrouter": True
-        }
-    },
-    # MCP Aggregator - Rideshare Comparison
-    "mcp-aggregator-rideshare": {
-        "skill_name": "rideshare-comparison",
-        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
-        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
-        "directive": "uber_lyft_comparison.md",
-        "scripts": ["rideshare_mcp.py"],
-        "description": "Uber/Lyft price comparison MCP",
-        "deployment_channels": {
-            "local": True,
-            "github": False,
-            "pypi": "rideshare-comparison-mcp",
-            "mcp_registry": "io.github.wmarceau/rideshare-comparison",
-            "openrouter": True
-        }
-    },
-    # MCP Aggregator - HVAC Quotes
-    "mcp-aggregator-hvac": {
-        "skill_name": "hvac-quotes",
-        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
-        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
-        "directive": "hvac_distributors.md",
-        "scripts": ["hvac_mcp.py"],
-        "description": "HVAC equipment quote comparison MCP",
-        "deployment_channels": {
-            "local": True,
-            "github": False,
-            "pypi": "hvac-mcp",
-            "mcp_registry": "io.github.wmarceau/hvac",
-            "openrouter": True
-        }
-    },
-    # MCP Aggregator - Platform Core
-    "mcp-aggregator": {
-        "skill_name": "mcp-aggregator",
-        "src_dir": PROJECTS_DIR / "mcp-aggregator" / "mcp-server",
-        "skill_md": PROJECTS_DIR / "mcp-aggregator" / "SKILL.md",
-        "directive": None,
-        "scripts": ["aggregator_mcp.py"],
-        "description": "Universal MCP Aggregator Platform",
-        "deployment_channels": {
-            "local": True,
-            "github": False,
-            "pypi": "mcp-aggregator",
-            "mcp_registry": "io.github.wmarceau/mcp-aggregator",
-            "openrouter": True
-        }
-    },
-    # Time Blocks - Personal Productivity
-    "time-blocks": {
-        "skill_name": "time-blocks",
-        "src_dir": PROJECTS_DIR / "time-blocks" / "src",
-        "skill_md": PROJECTS_DIR / "time-blocks" / "SKILL.md",
-        "directive": None,
-        "scripts": ["time_blocks.py"],
-        "description": "Time Blocks - Personal productivity and calendar scheduling",
-        "deployment_target": "local-only"
-    },
-    # Lead Scraper - Business Lead Generation
-    "lead-scraper": {
-        "skill_name": "lead-scraper",
-        "src_dir": PROJECTS_DIR / "lead-scraper" / "src",
-        "skill_md": PROJECTS_DIR / "lead-scraper" / "SKILL.md",
-        "directive": None,
-        "scripts": [
-            "scraper.py",
-            "config.py",
-            "models.py",
-            "google_places.py",
-            "yelp.py",
-            "enrichment.py"
-        ],
-        "description": "Lead Scraper - Local business lead generation for cold outreach",
-        "deployment_target": "local-only"
     }
-}
+
+    # Merge manual configs into discovered projects
+    for project, config in manual_configs.items():
+        if project in discovered:
+            # Merge manual config into discovered
+            discovered[project].update(config)
+        else:
+            # Add manual-only project (e.g., interview-prep which is outside projects/)
+            discovered[project] = config
+
+    return discovered
+
+
+# Initialize PROJECTS with discovered + manual configs
+PROJECTS = discover_projects()
 
 
 def get_version(project_name: str) -> str:
@@ -316,11 +363,12 @@ def list_projects():
     print("=" * 60 + "\n")
 
     for name, config in PROJECTS.items():
-        status = "✓" if config["src_dir"].exists() else "✗"
+        src_dir = config.get("src_dir")
+        status = "✓" if (src_dir and src_dir.exists()) else "✗"
         dev_ver = get_version(name)
         prod_ver = get_deployed_version(name)
         print(f"  {status} {name}")
-        print(f"      Skill: {config['skill_name']}")
+        print(f"      Skill: {config.get('skill_name', name)}")
         print(f"      Dev: {dev_ver} | Prod: {prod_ver}")
         print()
 
