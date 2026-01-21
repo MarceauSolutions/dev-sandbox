@@ -151,7 +151,65 @@ Claude:
 
 ## 🟢 Low Priority (Nice to Have)
 
-### 7. Apollo Search Quality Improvements
+### 7. ClickUp Integration Migration
+**Status**: Deferred (low priority cleanup)
+**Trigger**: When working on ClickUp features OR during next cleanup sprint
+**Request**: Move ClickUp from `execution/` to `projects/shared/clickup-crm/`
+
+**Current State**:
+- `execution/clickup_api.py` - Should be in `projects/shared/clickup-crm/src/`
+- Used by lead-scraper and other projects
+- Works fine in current location
+
+**Migration Steps**:
+- [ ] Create `projects/shared/clickup-crm/` structure
+- [ ] Move `execution/clickup_api.py` → `projects/shared/clickup-crm/src/clickup_api.py`
+- [ ] Update all imports in projects that use it
+- [ ] Test all dependent projects
+- [ ] Document in `clickup-crm/README.md`
+
+**Blocked By**: Nothing - just low priority since it works fine where it is
+
+---
+
+### 8. Execution Folder Audit & Migration
+**Status**: Deferred (large cleanup effort)
+**Trigger**: When 3+ projects need same utility OR during major refactor
+**Request**: Migrate 60+ files from `execution/` to project-specific locations
+
+**Analysis Complete**: `docs/restructuring/EXECUTION-FOLDER-AUDIT.md`
+
+**Categories Identified**:
+- Amazon Seller: 9 files → `projects/marceau-solutions/amazon-seller/src/`
+- Interview Prep: 13 files → `projects/marceau-solutions/interview-prep/src/`
+- Fitness Influencer: 8 files → `projects/marceau-solutions/fitness-influencer/backend/`
+- Shared utilities: Keep in `execution/` (gmail, twilio, etc.)
+
+**Decision**: Migrate incrementally as we work on each project, not all at once
+
+---
+
+### 9. Website Submodule Health Check
+**Status**: Routine maintenance
+**Trigger**: Weekly OR before deploying website changes
+**Request**: Verify website submodules are in sync
+
+**Commands**:
+```bash
+cd /Users/williammarceaujr./dev-sandbox
+git submodule status  # Should show clean commits
+git submodule update --remote --merge  # Pull latest from production repos
+```
+
+**What to Check**:
+- No detached HEAD states
+- Submodules point to latest commits
+- Production repos (~/) match submodule state
+- No uncommitted changes in website folders
+
+---
+
+### 10. Apollo Search Quality Improvements
 **Status**: In progress (part of item #1)
 **Request**: Iterative search refinement + excluded terms
 
@@ -174,7 +232,7 @@ excluded_titles = [
 
 ---
 
-### 8. Multi-Company Context Detection
+### 11. Multi-Company Context Detection
 **Status**: Planning
 **Request**: Auto-detect which company based on prompt
 
@@ -249,6 +307,8 @@ Each company has:
 
 ---
 
-**Last Updated**: 2026-01-21
-**Active Items**: 8
+**Last Updated**: 2026-01-21 (15:06)
+**Active Items**: 11 (added 3 from hybrid architecture session)
 **Completed Items**: 4
+
+**Session Notes**: Added items #7-9 from hybrid architecture implementation session - ClickUp migration, execution folder audit, and website submodule maintenance
