@@ -56,7 +56,7 @@ def discover_projects():
 
     # Category folders to scan (for categorized structure)
     categories = [
-        "shared-multi-tenant",
+        "shared",
         "marceau-solutions",
         "swflorida-hvac",
         "square-foot-shipping",

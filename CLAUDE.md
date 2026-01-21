@@ -247,13 +247,13 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - **Goal: Reuse existing work, don't reinvent the wheel**
 
    **Quick Reference - Common Tools:**
-   - **Email/Gmail:** `execution/gmail_monitor.py` OR `projects/shared-multi-tenant/personal-assistant/src/digest_aggregator.py`
+   - **Email/Gmail:** `execution/gmail_monitor.py` OR `projects/shared/personal-assistant/src/digest_aggregator.py`
    - **SMS:** `execution/twilio_sms.py`
-   - **Lead Management:** `projects/shared-multi-tenant/lead-scraper/`
+   - **Lead Management:** `projects/shared/lead-scraper/`
    - **Social Media:** `projects/social-media-automation/`
    - **Video Generation:** Shotstack (documented), Creatomate (researched)
    - **Image Generation:** Grok/XAI API (execution/grok_image_gen.py if created)
-   - **Apollo.io:** `projects/shared-multi-tenant/lead-scraper/` (has Apollo integration)
+   - **Apollo.io:** `projects/shared/lead-scraper/` (has Apollo integration)
 
 3. **Build workflows as you work** - Document procedures while completing tasks
    - Create workflows in `[project]/workflows/` as tasks are completed

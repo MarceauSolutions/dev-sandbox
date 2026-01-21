@@ -14,7 +14,7 @@
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper</string>
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -88,10 +88,10 @@
 
     <!-- Logging -->
     <key>StandardOutPath</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/logs/campaign-launcher.log</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/logs/campaign-launcher.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/logs/campaign-launcher-error.log</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/logs/campaign-launcher-error.log</string>
 
     <!-- Don't run on load (only on schedule) -->
     <key>RunAtLoad</key>

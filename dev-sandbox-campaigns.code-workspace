@@ -2,15 +2,15 @@
   "folders": [
     {
       "name": "Lead Scraper (Shared)",
-      "path": "projects/shared-multi-tenant/lead-scraper"
+      "path": "projects/shared/lead-scraper"
     },
     {
       "name": "Social Media (Shared)",
-      "path": "projects/shared-multi-tenant/social-media-automation"
+      "path": "projects/shared/social-media-automation"
     },
     {
       "name": "Voice AI (Shared)",
-      "path": "projects/shared-multi-tenant/ai-customer-service"
+      "path": "projects/shared/ai-customer-service"
     },
     {
       "name": "Infrastructure",

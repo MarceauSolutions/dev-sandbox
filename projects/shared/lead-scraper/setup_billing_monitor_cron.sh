@@ -22,7 +22,7 @@ set -e  # Exit on error
 # Configuration
 # =============================================================================
 
-PROJECT_DIR="/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper"
+PROJECT_DIR="/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper"
 SCRIPT="google_cloud_cost_monitor.py"
 PYTHON_PATH="/usr/local/bin/python3"
 LOG_FILE="/tmp/google-billing-monitor.log"

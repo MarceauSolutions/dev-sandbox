@@ -2,7 +2,7 @@
   "folders": [
     {
       "name": "Shared Multi-Tenant",
-      "path": "projects/shared-multi-tenant"
+      "path": "projects/shared"
     },
     {
       "name": "Infrastructure",
