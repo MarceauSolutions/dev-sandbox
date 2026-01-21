@@ -423,14 +423,14 @@ def sync_all_execution():
 
 
 def deploy_to_local_workspace(project_name: str, version: str = None):
-    """Deploy project to a local Skills workspace (~/{project}-prod/)."""
+    """Deploy project to a local Skills workspace (~/production/{project}-prod/)."""
     if project_name not in PROJECTS:
         print(f"❌ Unknown project: {project_name}")
         return False
 
     config = PROJECTS[project_name]
     skill_name = config["skill_name"]
-    workspace_path = Path.home() / f"{project_name}-prod"
+    workspace_path = Path.home() / "production" / f"{project_name}-prod"
 
     # Get version
     if version is None:
