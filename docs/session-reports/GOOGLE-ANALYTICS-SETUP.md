@@ -42,7 +42,7 @@
 ```
 Found references to:
 - /projects/swflorida-hvac/ (business config, not website)
-- /projects/shared-multi-tenant/ai-customer-service/businesses/swflorida_hvac.py
+- /projects/shared/ai-customer-service/businesses/swflorida_hvac.py
 - /output/form_submissions/swfloridacomfort/ (form data)
 - /docs/companies/swflorida-hvac/
 ```

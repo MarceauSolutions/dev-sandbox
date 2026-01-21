@@ -172,7 +172,7 @@ grep -r "import execution.clickup" projects/ --include="*.py"
 The company-centric migration focused on:
 1. Consolidating company folders (websites + projects)
 2. Moving external folders into dev-sandbox
-3. Renaming shared-multi-tenant → shared
+3. Renaming shared → shared
 
 It **did not** migrate individual execution scripts to project structure because:
 - Not all execution scripts are ready to be projects

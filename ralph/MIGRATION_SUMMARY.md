@@ -28,7 +28,7 @@ Ralph has completed Stories 001-002 (design and categorization). Story 003 will 
 ### 1. Shared Multi-Tenant (4 projects)
 Used by ALL 3 companies with business_id separation.
 ```
-projects/shared-multi-tenant/
+projects/shared/
 ├── lead-scraper/              (all 3 companies)
 ├── social-media-automation/   (all 3 companies)
 ├── ai-customer-service/       (voice AI for all 3)

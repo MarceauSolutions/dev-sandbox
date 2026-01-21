@@ -51,7 +51,7 @@
 ### This Week (3-5 Hours)
 
 - [ ] **Implement API caching**
-  - File: `/projects/shared-multi-tenant/lead-scraper/src/google_places.py`
+  - File: `/projects/shared/lead-scraper/src/google_places.py`
   - Add: 30-day cache for Place Details
   - Test: Run on 10 sample leads
   - Expected: 80% cost reduction

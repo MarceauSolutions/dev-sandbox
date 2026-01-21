@@ -82,7 +82,7 @@ Reply STOP to opt out.
 
 #### Action 1.1: Validate "No Website" Leads
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Check if businesses actually have websites
 python -m src.scraper validate-websites --sample 100 --pain-point no_website
@@ -326,7 +326,7 @@ Worst Cohorts:
 
 ### Morning (15 minutes)
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # 1. Dashboard review
 python -m src.campaign_analytics dashboard --days 1

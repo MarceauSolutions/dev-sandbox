@@ -72,7 +72,7 @@ Users can say:
 ### Based On
 
 - **Amazon Seller MCP** - Reference implementation pattern
-- **Existing Apollo Client** - `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/apollo.py`
+- **Existing Apollo Client** - `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/apollo.py`
 
 ### Dependencies
 

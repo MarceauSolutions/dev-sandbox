@@ -33,7 +33,7 @@
         "NOTE": "PRESERVE DOE ARCHITECTURE - dev-sandbox is DEVELOPMENT workspace, deploy to skills for production",
         "projects/": {
           "NOTE": "Keep projects/ at root - this is the DEVELOPMENT workspace per DOE",
-          "shared-multi-tenant/": {
+          "shared/": {
             "lead-scraper/": "Used by all 3 businesses with business_id separation",
             "social-media-automation/": "Used by all 3 with business separation",
             "ai-customer-service/": "Voice AI for all 3 businesses",
@@ -87,7 +87,7 @@
     {
       "story_id": "002",
       "title": "Categorize existing projects by company ownership",
-      "description": "Audit all projects in dev-sandbox and categorize as: company-specific (1 owner), shared-multi-tenant (used by all 3), or global-utility. Create mapping for where each should live in new structure.",
+      "description": "Audit all projects in dev-sandbox and categorize as: company-specific (1 owner), shared (used by all 3), or global-utility. Create mapping for where each should live in new structure.",
       "acceptance_criteria": [
         "All projects categorized with ownership tags",
         "Company-specific: Move to companies/{company}/projects/",

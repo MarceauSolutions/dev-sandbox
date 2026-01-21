@@ -30,10 +30,10 @@ BASE_DIR = Path("/Users/williammarceaujr./dev-sandbox")
 # Migration mapping: old_path -> new_path
 PROJECT_MIGRATIONS = {
     # SHARED MULTI-TENANT (4 projects)
-    "projects/lead-scraper": "projects/shared-multi-tenant/lead-scraper",
-    "projects/social-media-automation": "projects/shared-multi-tenant/social-media-automation",
-    "projects/ai-customer-service": "projects/shared-multi-tenant/ai-customer-service",
-    "projects/personal-assistant": "projects/shared-multi-tenant/personal-assistant",
+    "projects/lead-scraper": "projects/shared/lead-scraper",
+    "projects/social-media-automation": "projects/shared/social-media-automation",
+    "projects/ai-customer-service": "projects/shared/ai-customer-service",
+    "projects/personal-assistant": "projects/shared/personal-assistant",
 
     # MARCEAU SOLUTIONS (8 projects)
     "projects/fitness-influencer": "projects/marceau-solutions/fitness-influencer",
@@ -100,7 +100,7 @@ OUTPUT_MIGRATIONS = {
 # Directories to create
 DIRECTORIES_TO_CREATE = [
     # Project directories
-    "projects/shared-multi-tenant",
+    "projects/shared",
     "projects/marceau-solutions",
     "projects/swflorida-hvac",
     "projects/square-foot-shipping",
@@ -164,7 +164,7 @@ COMPANY_READMES = {
 See `projects/product-ideas/` for future revenue products.
 
 ### Shared Multi-Tenant Tools
-See `projects/shared-multi-tenant/` for tools used across all 3 companies:
+See `projects/shared/` for tools used across all 3 companies:
 - lead-scraper (lead generation)
 - social-media-automation (social posting)
 - ai-customer-service (voice AI)
@@ -195,7 +195,7 @@ Company-specific outputs: `output/companies/marceau-solutions/`
 - Social media automation (HVAC-specific)
 
 ### Shared Multi-Tenant Tools
-See `projects/shared-multi-tenant/` for tools used across all 3 companies:
+See `projects/shared/` for tools used across all 3 companies:
 - lead-scraper (lead generation)
 - social-media-automation (social posting)
 - ai-customer-service (voice AI for phone quotes)
@@ -223,7 +223,7 @@ Company-specific outputs: `output/companies/swflorida-hvac/`
 - Logistics optimization tools
 
 ### Shared Multi-Tenant Tools
-See `projects/shared-multi-tenant/` for tools used across all 3 companies:
+See `projects/shared/` for tools used across all 3 companies:
 - lead-scraper (lead generation)
 - social-media-automation (social posting)
 - ai-customer-service (voice AI for shipping quotes)
@@ -239,7 +239,7 @@ Company-specific templates: `templates/companies/square-foot-shipping/`
 Company-specific outputs: `output/companies/square-foot-shipping/`
 """,
 
-    "projects/shared-multi-tenant/README.md": """# Shared Multi-Tenant Projects
+    "projects/shared/README.md": """# Shared Multi-Tenant Projects
 
 **Used by ALL 3 companies:**
 - Marceau Solutions

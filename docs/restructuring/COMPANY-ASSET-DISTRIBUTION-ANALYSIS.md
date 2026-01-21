@@ -71,7 +71,7 @@
 
 ### 4. Shared Multi-Tenant Tools (All Companies)
 
-**Location**: `dev-sandbox/projects/shared-multi-tenant/`
+**Location**: `dev-sandbox/projects/shared/`
 
 **Tools**:
 - lead-scraper (critical automation tool - Apollo CSV import, SMS outreach)
@@ -125,7 +125,7 @@
 
 **Risks**:
 - ⚠️ **Path changes for automation tools** (lead-scraper, SMS outreach, campaign analytics)
-  - Current: `projects/shared-multi-tenant/lead-scraper/`
+  - Current: `projects/shared/lead-scraper/`
   - After: `projects/shared/lead-scraper/`
   - **Impact**: All commands need path update
   - **Mitigation**: Test suite (`verify-automation-tools.sh`) verifies before/after
@@ -303,7 +303,7 @@ If the time/risk trade-off isn't worth it right now:
   - Lead gen project
 
 ### Shared Multi-Tenant (4 tools)
-- **Location** (`dev-sandbox/projects/shared-multi-tenant/`):
+- **Location** (`dev-sandbox/projects/shared/`):
   - lead-scraper/ (Apollo CSV, SMS outreach, campaign analytics)
   - ai-customer-service/ (Voice AI)
   - social-media-automation/ (X posting)

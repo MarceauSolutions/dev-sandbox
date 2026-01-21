@@ -21,7 +21,7 @@ Stories 001 and 002 are complete:
 ### New Folder Structure
 ```
 projects/
-├── shared-multi-tenant/        # NEW
+├── shared/        # NEW
 ├── marceau-solutions/          # NEW
 ├── swflorida-hvac/             # NEW
 ├── shipping-logistics/         # NEW
@@ -49,7 +49,7 @@ templates/companies/            # NEW
    - Restores original structure
 
 ### README Files
-- `projects/shared-multi-tenant/README.md`
+- `projects/shared/README.md`
 - `projects/marceau-solutions/README.md`
 - `projects/swflorida-hvac/README.md`
 - `projects/shipping-logistics/README.md`
@@ -65,10 +65,10 @@ templates/companies/            # NEW
 
 ### Shared Multi-Tenant (4 projects → used by ALL 3 companies)
 ```
-projects/lead-scraper/              → projects/shared-multi-tenant/lead-scraper/
-projects/social-media-automation/   → projects/shared-multi-tenant/social-media-automation/
-projects/ai-customer-service/       → projects/shared-multi-tenant/ai-customer-service/
-projects/personal-assistant/        → projects/shared-multi-tenant/personal-assistant/
+projects/lead-scraper/              → projects/shared/lead-scraper/
+projects/social-media-automation/   → projects/shared/social-media-automation/
+projects/ai-customer-service/       → projects/shared/ai-customer-service/
+projects/personal-assistant/        → projects/shared/personal-assistant/
 ```
 
 ### Marceau Solutions (8 projects → AI automation business)

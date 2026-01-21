@@ -23,22 +23,22 @@
 ### SHARED MULTI-TENANT (4 projects)
 *Used by ALL 3 companies - business_id separation in code/data*
 
-1. **lead-scraper** → `projects/shared-multi-tenant/lead-scraper/`
+1. **lead-scraper** → `projects/shared/lead-scraper/`
    - Lead generation for all 3 businesses
    - Has business_id separation in code
    - Used by: Marceau, HVAC, Shipping
 
-2. **social-media-automation** → `projects/shared-multi-tenant/social-media-automation/`
+2. **social-media-automation** → `projects/shared/social-media-automation/`
    - Social posting for all 3 businesses
    - Business separation already exists
    - Used by: Marceau, HVAC, Shipping
 
-3. **ai-customer-service** → `projects/shared-multi-tenant/ai-customer-service/`
+3. **ai-customer-service** → `projects/shared/ai-customer-service/`
    - Voice AI phone ordering for all 3 businesses
    - Restaurant phone ordering system (can be adapted for HVAC quotes, shipping quotes)
    - Used by: Marceau, HVAC, Shipping
 
-4. **personal-assistant** → `projects/shared-multi-tenant/personal-assistant/`
+4. **personal-assistant** → `projects/shared/personal-assistant/`
    - William's personal digest/calendar system
    - Global utility - no business affiliation
    - Used by: All (personal productivity)
@@ -193,10 +193,10 @@
 
 ### Shared Multi-Tenant (4 projects)
 ```
-projects/lead-scraper/              → projects/shared-multi-tenant/lead-scraper/
-projects/social-media-automation/   → projects/shared-multi-tenant/social-media-automation/
-projects/ai-customer-service/       → projects/shared-multi-tenant/ai-customer-service/
-projects/personal-assistant/        → projects/shared-multi-tenant/personal-assistant/
+projects/lead-scraper/              → projects/shared/lead-scraper/
+projects/social-media-automation/   → projects/shared/social-media-automation/
+projects/ai-customer-service/       → projects/shared/ai-customer-service/
+projects/personal-assistant/        → projects/shared/personal-assistant/
 ```
 
 ### Marceau Solutions (8 projects)
@@ -437,7 +437,7 @@ output/
 
 | Category | Count | Destination |
 |----------|-------|-------------|
-| **Shared Multi-Tenant** | 4 | `projects/shared-multi-tenant/` |
+| **Shared Multi-Tenant** | 4 | `projects/shared/` |
 | **Marceau Solutions** | 8 | `projects/marceau-solutions/` |
 | **SW Florida HVAC** | 1 | `projects/swflorida-hvac/` |
 | **Shipping Logistics** | 0 | `projects/shipping-logistics/` (placeholder) |

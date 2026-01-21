@@ -322,7 +322,7 @@ To ensure alerts don't get lost in inbox:
 
 The handler script polls Pub/Sub for billing alerts and sends SMS via Twilio.
 
-**Created:** `/projects/shared-multi-tenant/lead-scraper/src/google_cloud_cost_monitor.py`
+**Created:** `/projects/shared/lead-scraper/src/google_cloud_cost_monitor.py`
 
 **See:** [Automated Cost Monitoring](#automated-cost-monitoring) for full implementation
 
@@ -341,7 +341,7 @@ Automated script that:
 ### Script Location
 
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/google_cloud_cost_monitor.py
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/google_cloud_cost_monitor.py
 ```
 
 ### Features
@@ -447,7 +447,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
        <key>ProgramArguments</key>
        <array>
            <string>/usr/local/bin/python3</string>
-           <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/google_cloud_cost_monitor.py</string>
+           <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/google_cloud_cost_monitor.py</string>
            <string>--once</string>
        </array>
 
@@ -466,7 +466,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
        <string>/tmp/google-billing-monitor.error.log</string>
 
        <key>WorkingDirectory</key>
-       <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper</string>
+       <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper</string>
 
        <key>EnvironmentVariables</key>
        <dict>
@@ -511,7 +511,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
 
    ```cron
    # Google Cloud Billing Monitor - Daily at 9 AM
-   0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /usr/local/bin/python3 -m src.google_cloud_cost_monitor --once >> /tmp/google-billing-monitor.log 2>&1
+   0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /usr/local/bin/python3 -m src.google_cloud_cost_monitor --once >> /tmp/google-billing-monitor.log 2>&1
    ```
 
 3. **Verify cron is running:**
@@ -523,7 +523,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
 4. **Test manually:**
 
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.google_cloud_cost_monitor --once
    ```
 
@@ -627,7 +627,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
    launchctl start com.marceausolutions.google-billing-monitor
 
    # OR cron
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.google_cloud_cost_monitor --once
    ```
 
@@ -743,7 +743,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
 
 3. **Test manual execution:**
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.google_cloud_cost_monitor --once
    ```
    - If this works, issue is with cron/launchd configuration
@@ -769,7 +769,7 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
 
 1. **Verify Twilio credentials:**
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -c "
    import os
    from dotenv import load_dotenv
@@ -899,8 +899,8 @@ GOOGLE_BILLING_ACCOUNT_ID=your-billing-account-id
 
 ### Scripts & Tools
 
-- `/projects/shared-multi-tenant/lead-scraper/src/google_cloud_cost_monitor.py` - Automated monitoring
-- `/projects/shared-multi-tenant/lead-scraper/src/check_google_api_costs.py` - Usage estimator
+- `/projects/shared/lead-scraper/src/google_cloud_cost_monitor.py` - Automated monitoring
+- `/projects/shared/lead-scraper/src/check_google_api_costs.py` - Usage estimator
 - `/projects/personal-assistant/src/morning_digest.py` - Include costs in daily digest
 
 ---

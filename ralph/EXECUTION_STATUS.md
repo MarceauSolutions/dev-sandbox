@@ -31,7 +31,7 @@
 - Created detailed migration plan with success criteria
 
 ### Key Decisions
-- **6 categories:** shared-multi-tenant, marceau-solutions, swflorida-hvac, shipping-logistics, global-utility, product-ideas
+- **6 categories:** shared, marceau-solutions, swflorida-hvac, shipping-logistics, global-utility, product-ideas
 - **DOE unchanged:** execution/, directives/, methods/ stay at root
 - **Single git repo:** No nested repos, use git mv for history
 - **Company separation:** docs/companies/, output/companies/, templates/companies/
@@ -81,7 +81,7 @@
    - Restores original structure ✅
 
 3. **Folder structure (planned)**
-   - `projects/shared-multi-tenant/`
+   - `projects/shared/`
    - `projects/marceau-solutions/`
    - `projects/swflorida-hvac/`
    - `projects/square-foot-shipping/` (RENAMED from shipping-logistics)
@@ -93,7 +93,7 @@
    - `templates/companies/`
 
 4. **README files** for each new folder ✅
-   - `projects/shared-multi-tenant/README.md`
+   - `projects/shared/README.md`
    - `projects/marceau-solutions/README.md`
    - `projects/swflorida-hvac/README.md`
    - `projects/square-foot-shipping/README.md`
@@ -209,7 +209,7 @@ dev-sandbox/
 ### Pending (Story 003 execution)
 - ⏳ Execute migration (awaiting user command)
 - ⏳ README files will be created during execution:
-  - `projects/shared-multi-tenant/README.md`
+  - `projects/shared/README.md`
   - `projects/marceau-solutions/README.md`
   - `projects/swflorida-hvac/README.md`
   - `projects/square-foot-shipping/README.md`

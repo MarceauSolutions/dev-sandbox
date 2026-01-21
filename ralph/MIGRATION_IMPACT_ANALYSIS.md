@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The proposed migration from flat `projects/` structure to categorized structure (`projects/shared-multi-tenant/`, `projects/marceau-solutions/`, etc.) will affect:
+The proposed migration from flat `projects/` structure to categorized structure (`projects/shared/`, `projects/marceau-solutions/`, etc.) will affect:
 
 - ✅ **0 SOPs** require updates (paths are relative or abstract)
 - ⚠️ **3 files** require path updates (deploy_to_skills.py, CLAUDE.md, docs/projects.md)
@@ -37,7 +37,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 
 After migration becomes:
 ```
-projects/shared-multi-tenant/lead-scraper/src/
+projects/shared/lead-scraper/src/
 projects/marceau-solutions/fitness-influencer/src/
 ```
 Still matches pattern `projects/[project]/src/`!
@@ -47,12 +47,12 @@ All doc paths are absolute from root:
 - `docs/architecture-guide.md` ✅ unchanged
 - `templates/project-kickoff-questionnaire.md` ✅ unchanged
 - `directives/` ✅ unchanged
-- `projects/social-media-automation/DOCKET.md` → becomes `projects/shared-multi-tenant/social-media-automation/DOCKET.md`
+- `projects/social-media-automation/DOCKET.md` → becomes `projects/shared/social-media-automation/DOCKET.md`
 
 **Action Required:** Update line 69 only:
 ```diff
 - | **Deferred features/reminders** | `projects/social-media-automation/DOCKET.md` ⭐ |
-+ | **Deferred features/reminders** | `projects/shared-multi-tenant/social-media-automation/DOCKET.md` ⭐ |
++ | **Deferred features/reminders** | `projects/shared/social-media-automation/DOCKET.md` ⭐ |
 ```
 
 #### ✅ NO CHANGE: Development Pipeline (Lines 75-138)
@@ -69,7 +69,7 @@ Pipeline steps are conceptual:
 python deploy_to_skills.py --project lead-scraper  # Still works
 ```
 
-The script will just look in `projects/shared-multi-tenant/lead-scraper/` instead of `projects/lead-scraper/`
+The script will just look in `projects/shared/lead-scraper/` instead of `projects/lead-scraper/`
 
 **Action Required:** Update deploy_to_skills.py project discovery logic (Story 005)
 
@@ -102,7 +102,7 @@ Where do NEW projects go?
 **Option A (Recommended):** Update SOP to ask which category:
 ```markdown
 2. **Create project folder**: Choose category:
-   - Shared (multiple businesses): `projects/shared-multi-tenant/[project]/`
+   - Shared (multiple businesses): `projects/shared/[project]/`
    - Marceau-specific: `projects/marceau-solutions/[project]/`
    - HVAC-specific: `projects/swflorida-hvac/[project]/`
    - Shipping-specific: `projects/square-foot-shipping/[project]/`
@@ -158,7 +158,7 @@ Where do NEW projects go?
 cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
 
 # After migration
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 ```
 
 **Fix:** Use environment variable or relative reference
@@ -182,7 +182,7 @@ All patterns are **semantic** (what to do), not **path-based** (where files are)
 | "Run SMS campaign" | None - uses SOP 18 which handles paths | ✅ None |
 | "Deploy to skills" | None - uses deploy_to_skills.py | ✅ None |
 | "Run multi-agent testing" | None - project name based | ✅ None |
-| "Check the docket" | Path reference: `projects/social-media-automation/DOCKET.md` | ⚠️ Update to `projects/shared-multi-tenant/social-media-automation/DOCKET.md` |
+| "Check the docket" | Path reference: `projects/social-media-automation/DOCKET.md` | ⚠️ Update to `projects/shared/social-media-automation/DOCKET.md` |
 | "Show campaign analytics" | None - uses python -m | ✅ None |
 
 **Actions Required:**
@@ -205,7 +205,7 @@ for project_dir in Path("projects").iterdir():
 ```python
 # Must scan NESTED directories
 categories = [
-    "shared-multi-tenant",
+    "shared",
     "marceau-solutions",
     "swflorida-hvac",
     "square-foot-shipping",

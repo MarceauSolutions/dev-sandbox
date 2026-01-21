@@ -130,7 +130,7 @@ AUTOMATED DAILY LAUNCH
 ### Test Now (Dry Run)
 
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Test single campaign
 python -m src.campaign_auto_launcher --business swflorida-hvac --dry-run --limit 5

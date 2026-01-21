@@ -267,7 +267,7 @@ Each company has:
 
 ### ✅ Apollo Pipeline Integration
 **Completed**: 2026-01-21
-**Deliverable**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/apollo_pipeline.py`
+**Deliverable**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/apollo_pipeline.py`
 - Automated workflow: Search → Score → Filter → Enrich → SMS → Follow-up
 - 80-90% credit savings strategy
 - CLI interface

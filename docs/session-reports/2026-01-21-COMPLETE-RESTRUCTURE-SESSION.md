@@ -12,7 +12,7 @@
 **Time**: 21 seconds (autonomous execution)
 
 **Migrated 8 folders**:
-- Renamed `shared-multi-tenant/` → `shared/`
+- Renamed `shared/` → `shared/`
 - Moved 3 websites into company folders
 - Consolidated fitness-influencer (backend, frontend, mcp)
 - Moved square-foot-shipping lead-gen
@@ -139,7 +139,7 @@
 ### Folder Moves (Git mv)
 ```
 Before:
-~/dev-sandbox/projects/shared-multi-tenant/
+~/dev-sandbox/projects/shared/
 ~/websites/marceausolutions.com
 ~/websites/swflorida-comfort-hvac
 ~/websites/squarefoot-shipping-website

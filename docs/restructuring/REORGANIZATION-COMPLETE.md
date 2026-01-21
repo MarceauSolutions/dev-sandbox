@@ -14,13 +14,13 @@
 - ❌ `projects/social-media-automation/` - Documentation duplicate
 
 **Preserved:**
-- ✅ `projects/shared-multi-tenant/lead-scraper/` - **Active lead scraper** (all working code)
-- ✅ `projects/shared-multi-tenant/social-media-automation/` - **Active social automation** (all working code + unique docs)
+- ✅ `projects/shared/lead-scraper/` - **Active lead scraper** (all working code)
+- ✅ `projects/shared/social-media-automation/` - **Active social automation** (all working code + unique docs)
 
 ### 2. Created Clear Import Structure
 
 ```
-projects/shared-multi-tenant/lead-scraper/
+projects/shared/lead-scraper/
 ├── input/                           ← NEW
 │   └── apollo/                      ← 📍 DROP YOUR APOLLO CSV HERE
 │       └── README.md                ← Import instructions
@@ -51,7 +51,7 @@ All templates are under 160 characters and include STOP opt-out.
 
 - [FOLDER-STRUCTURE.md](FOLDER-STRUCTURE.md) - Complete directory map
 - [FOLDER-STRUCTURE-APPENDIX.md](FOLDER-STRUCTURE-APPENDIX.md) - Quick reference guide
-- [input/apollo/README.md](projects/shared-multi-tenant/lead-scraper/input/apollo/README.md) - Apollo import instructions
+- [input/apollo/README.md](projects/shared/lead-scraper/input/apollo/README.md) - Apollo import instructions
 
 ---
 
@@ -59,7 +59,7 @@ All templates are under 160 characters and include STOP opt-out.
 
 **📍 EXACT LOCATION:**
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/input/apollo/
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/input/apollo/
 ```
 
 **File naming:**
@@ -71,7 +71,7 @@ apollo_enriched_2026-01-21.csv       ← After contact enrichment
 
 **Quick navigation from Finder:**
 1. Go to `/Users/williammarceaujr./dev-sandbox/`
-2. Open `projects/` → `shared-multi-tenant/` → `lead-scraper/` → `input/` → `apollo/`
+2. Open `projects/` → `shared/` → `lead-scraper/` → `input/` → `apollo/`
 3. Drop CSV file here
 
 ---
@@ -80,7 +80,7 @@ apollo_enriched_2026-01-21.csv       ← After contact enrichment
 
 ```
 projects/
-├── shared-multi-tenant/          ← MULTI-COMPANY TOOLS
+├── shared/          ← MULTI-COMPANY TOOLS
 │   ├── lead-scraper/             ← 📍 Lead generation (Apollo CSV goes here)
 │   ├── ai-customer-service/      ← Voice AI systems
 │   ├── personal-assistant/       ← Morning digest, calendar
@@ -117,18 +117,18 @@ projects/
 
 2. **Drop CSV in import directory**:
    ```
-   projects/shared-multi-tenant/lead-scraper/input/apollo/apollo_export_2026-01-21.csv
+   projects/shared/lead-scraper/input/apollo/apollo_export_2026-01-21.csv
    ```
 
 3. **Optional: Manual scoring** (saves 80% of credits):
    - Open CSV in Excel
    - Visit top 50 websites
-   - Score 1-10 using [APOLLO-SCORING-GUIDE.md](projects/shared-multi-tenant/lead-scraper/APOLLO-SCORING-GUIDE.md)
+   - Score 1-10 using [APOLLO-SCORING-GUIDE.md](projects/shared/lead-scraper/APOLLO-SCORING-GUIDE.md)
    - Save as `apollo_scored_2026-01-21.csv`
 
 4. **Import to lead database**:
    ```bash
-   cd projects/shared-multi-tenant/lead-scraper
+   cd projects/shared/lead-scraper
    python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21.csv
    # OR for credit efficiency:
    python -m src.apollo_import import --input input/apollo/apollo_scored_2026-01-21.csv --min-score 8
@@ -157,13 +157,13 @@ find . -name ".git" -type d
 
 **Verify Apollo import location exists**:
 ```bash
-ls -la projects/shared-multi-tenant/lead-scraper/input/apollo/
+ls -la projects/shared/lead-scraper/input/apollo/
 # Should show: README.md
 ```
 
 **Verify templates exist**:
 ```bash
-ls -1 projects/shared-multi-tenant/lead-scraper/templates/sms/intro/
+ls -1 projects/shared/lead-scraper/templates/sms/intro/
 # Should show: 6 txt files (3 marceau, 3 hvac)
 ```
 
@@ -172,7 +172,7 @@ ls -1 projects/shared-multi-tenant/lead-scraper/templates/sms/intro/
 ## Summary
 
 ✅ Duplicates removed (lead-scraper, social-media-automation)
-✅ Single source of truth established (shared-multi-tenant)
+✅ Single source of truth established (shared)
 ✅ Apollo CSV import location created with instructions
 ✅ 6 SMS templates created (Ralph deliverables)
 ✅ Comprehensive navigation documentation added

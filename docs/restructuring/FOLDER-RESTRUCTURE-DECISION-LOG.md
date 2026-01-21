@@ -50,10 +50,10 @@
 
 #### Impact on Automation Tools
 **ZERO IMPACT** - All automation tools remained in `dev-sandbox/projects/`:
-- ✅ Lead scraper: `projects/shared-multi-tenant/lead-scraper/`
-- ✅ AI customer service: `projects/shared-multi-tenant/ai-customer-service/`
-- ✅ Social media automation: `projects/shared-multi-tenant/social-media-automation/`
-- ✅ Personal assistant: `projects/shared-multi-tenant/personal-assistant/`
+- ✅ Lead scraper: `projects/shared/lead-scraper/`
+- ✅ AI customer service: `projects/shared/ai-customer-service/`
+- ✅ Social media automation: `projects/shared/social-media-automation/`
+- ✅ Personal assistant: `projects/shared/personal-assistant/`
 - ✅ Cold outreach: Uses lead-scraper + Twilio (unchanged)
 - ✅ Response tracking: `src/campaign_analytics.py` (unchanged)
 
@@ -120,11 +120,11 @@ dev-sandbox/projects/
 **BEFORE proceeding, verify these automation tools will still work:**
 
 ##### 1. Lead Scraping Tool
-**Current Location**: `projects/shared-multi-tenant/lead-scraper/`
+**Current Location**: `projects/shared/lead-scraper/`
 **Proposed Location**: `projects/shared/lead-scraper/`
 **Commands Used**:
 ```bash
-cd ~/dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd ~/dev-sandbox/projects/shared/lead-scraper
 python -m src.scraper search --query "gyms Naples FL"
 python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21.csv
 ```
@@ -137,7 +137,7 @@ python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21
 - [ ] Webhooks still work?
 
 ##### 2. Cold Outreach Automation
-**Current Location**: `projects/shared-multi-tenant/lead-scraper/src/`
+**Current Location**: `projects/shared/lead-scraper/src/`
 **Files**:
 - `sms_outreach.py`
 - `follow_up_sequence.py`
@@ -159,7 +159,7 @@ python -m src.campaign_analytics report
 - [ ] Twilio credentials still accessible (`.env`)?
 
 ##### 3. Response Tracking
-**Current Location**: `projects/shared-multi-tenant/lead-scraper/output/`
+**Current Location**: `projects/shared/lead-scraper/output/`
 **Files**:
 - `sms_campaigns.json`
 - `campaign_analytics.json`
@@ -179,12 +179,12 @@ python -m src.campaign_analytics templates
 - [ ] ClickUp integration still works?
 
 ##### 4. AI Customer Service (Voice AI)
-**Current Location**: `projects/shared-multi-tenant/ai-customer-service/`
+**Current Location**: `projects/shared/ai-customer-service/`
 **Proposed Location**: `projects/shared/ai-customer-service/`
 
 **Commands Used**:
 ```bash
-cd projects/shared-multi-tenant/ai-customer-service
+cd projects/shared/ai-customer-service
 python -m src.main
 python scripts/start_server.py
 ```
@@ -196,7 +196,7 @@ python scripts/start_server.py
 - [ ] Call logs still accessible?
 
 ##### 5. Social Media Automation
-**Current Location**: `projects/shared-multi-tenant/social-media-automation/`
+**Current Location**: `projects/shared/social-media-automation/`
 **Proposed Location**: `projects/shared/social-media-automation/`
 
 **Commands Used**:
@@ -212,7 +212,7 @@ python -m src.x_scheduler process
 - [ ] Multi-business automation works?
 
 ##### 6. Personal Assistant (Morning Digest)
-**Current Location**: `projects/shared-multi-tenant/personal-assistant/`
+**Current Location**: `projects/shared/personal-assistant/`
 **Proposed Location**: `projects/shared/personal-assistant/`
 
 **Commands Used**:
@@ -309,7 +309,7 @@ This is the MASTER LIST of automation tools that MUST work after any restructure
 
 | Tool | Location | Commands | Critical Files |
 |------|----------|----------|----------------|
-| Lead Scraper | `projects/shared-multi-tenant/lead-scraper/` | `python -m src.scraper search` | `src/scraper.py`, `src/apollo_import.py` |
+| Lead Scraper | `projects/shared/lead-scraper/` | `python -m src.scraper search` | `src/scraper.py`, `src/apollo_import.py` |
 | Apollo Import | `lead-scraper/` | `python -m src.apollo_import import` | `input/apollo/`, `src/apollo_import.py` |
 | SMS Outreach | `lead-scraper/` | `python -m src.scraper sms` | `src/sms_outreach.py`, `templates/sms/` |
 | Follow-up Sequences | `lead-scraper/` | `python -m src.follow_up_sequence process-due` | `src/follow_up_sequence.py` |
@@ -320,7 +320,7 @@ This is the MASTER LIST of automation tools that MUST work after any restructure
 
 | Tool | Location | Commands | Critical Files |
 |------|----------|----------|----------------|
-| AI Customer Service | `projects/shared-multi-tenant/ai-customer-service/` | `python -m src.main` | `src/main.py`, `src/voice_engine.py` |
+| AI Customer Service | `projects/shared/ai-customer-service/` | `python -m src.main` | `src/main.py`, `src/voice_engine.py` |
 | Voice Styles | `ai-customer-service/` | N/A (imported) | `src/voice_styles.py`, `src/business_voice_engine.py` |
 | Twilio Handler | `ai-customer-service/` | `python scripts/start_server.py` | `src/twilio_handler.py` |
 | Call Insights | `ai-customer-service/` | N/A (imported) | `src/call_insights.py` |
@@ -329,7 +329,7 @@ This is the MASTER LIST of automation tools that MUST work after any restructure
 
 | Tool | Location | Commands | Critical Files |
 |------|----------|----------|----------------|
-| Social Media Automation | `projects/shared-multi-tenant/social-media-automation/` | `python -m src.business_scheduler schedule-day` | `src/business_scheduler.py` |
+| Social Media Automation | `projects/shared/social-media-automation/` | `python -m src.business_scheduler schedule-day` | `src/business_scheduler.py` |
 | X Scheduler | `social-media-automation/` | `python -m src.x_scheduler process` | `src/x_scheduler.py` |
 | Business Content Gen | `social-media-automation/` | `python -m src.business_content_generator generate` | `src/business_content_generator.py` |
 | Content Templates | `social-media-automation/` | N/A (data) | `templates/business_content.json` |
@@ -338,7 +338,7 @@ This is the MASTER LIST of automation tools that MUST work after any restructure
 
 | Tool | Location | Commands | Critical Files |
 |------|----------|----------|----------------|
-| Morning Digest | `projects/shared-multi-tenant/personal-assistant/` | `python -m src.morning_digest` | `src/morning_digest.py` |
+| Morning Digest | `projects/shared/personal-assistant/` | `python -m src.morning_digest` | `src/morning_digest.py` |
 | Digest Aggregator | `personal-assistant/` | `python -m src.digest_aggregator --hours 24` | `src/digest_aggregator.py` |
 | Routine Scheduler | `personal-assistant/` | `python -m src.routine_scheduler --create-all` | `src/routine_scheduler.py` |
 
@@ -412,7 +412,7 @@ projects/shared/lead-scraper/output/
 
 ```bash
 # 1. Lead Scraper
-cd ~/dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd ~/dev-sandbox/projects/shared/lead-scraper
 python -m src.scraper search --query "test" --limit 1
 echo "✅ Lead scraper works" || echo "❌ STOP - Lead scraper broken"
 
@@ -429,17 +429,17 @@ python -m src.campaign_analytics report
 echo "✅ Analytics works" || echo "❌ STOP - Analytics broken"
 
 # 5. AI Customer Service
-cd ~/dev-sandbox/projects/shared-multi-tenant/ai-customer-service
+cd ~/dev-sandbox/projects/shared/ai-customer-service
 python -m src.main --help
 echo "✅ AI service accessible" || echo "❌ STOP - AI service broken"
 
 # 6. Social Media
-cd ~/dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd ~/dev-sandbox/projects/shared/social-media-automation
 python -m src.business_scheduler --help
 echo "✅ Social media works" || echo "❌ STOP - Social media broken"
 
 # 7. Personal Assistant
-cd ~/dev-sandbox/projects/shared-multi-tenant/personal-assistant
+cd ~/dev-sandbox/projects/shared/personal-assistant
 python -m src.morning_digest --preview
 echo "✅ Morning digest works" || echo "❌ STOP - Digest broken"
 ```

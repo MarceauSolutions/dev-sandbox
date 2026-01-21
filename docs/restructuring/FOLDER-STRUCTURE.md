@@ -7,7 +7,7 @@
 
 ## Core Principle
 
-**All shared/multi-tenant tools live under `projects/shared-multi-tenant/`**
+**All shared/multi-tenant tools live under `projects/shared/`**
 
 Individual company-specific projects live under their respective folders (e.g., `projects/marceau-solutions/`, `projects/swflorida-hvac/`).
 
@@ -20,7 +20,7 @@ Individual company-specific projects live under their respective folders (e.g., 
 │
 ├── projects/
 │   │
-│   ├── shared-multi-tenant/          ← MULTI-COMPANY TOOLS (used by 2+ businesses)
+│   ├── shared/          ← MULTI-COMPANY TOOLS (used by 2+ businesses)
 │   │   ├── lead-scraper/             ← Lead generation & cold outreach
 │   │   │   ├── input/
 │   │   │   │   └── apollo/           ← 📍 DROP APOLLO CSV FILES HERE

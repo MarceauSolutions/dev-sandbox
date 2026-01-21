@@ -8,7 +8,7 @@
 
 ```bash
 # Navigate to project
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Morning dashboard (daily at 9 AM)
 python -m src.campaign_monitor dashboard
@@ -128,10 +128,10 @@ crontab -e
 # Add these lines:
 
 # Process overdue follow-ups daily at 9 AM
-0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
+0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
 
 # Email summary daily at 8 AM
-0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
+0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
 ```
 
 ---
@@ -219,4 +219,4 @@ cat output/sms_replies.json | jq '.replies[]'
 
 **Last Updated**: 2026-01-21
 **Owner**: William Marceau
-**Project**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper`
+**Project**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper`

@@ -48,7 +48,7 @@
 
 5. **Import CSV to lead scraper**:
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.apollo_import --file apollo_export.csv --output leads_to_score.json
    ```
 

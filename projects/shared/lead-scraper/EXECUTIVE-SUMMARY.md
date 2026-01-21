@@ -249,7 +249,7 @@ Touch 7 (Day 60): Breakup
 
 **Morning Routine**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # 1. Dashboard
 python -m src.campaign_analytics dashboard --days 1

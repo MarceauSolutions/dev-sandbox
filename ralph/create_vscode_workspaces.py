@@ -44,7 +44,7 @@ def main():
     create_workspace(
         "dev-sandbox-all-companies",
         [
-            {"name": "🌐 Shared (Multi-Tenant)", "path": "projects/shared-multi-tenant"},
+            {"name": "🌐 Shared (Multi-Tenant)", "path": "projects/shared"},
             {"name": "🎯 Marceau Solutions", "path": "projects/marceau-solutions"},
             {"name": "❄️ SW Florida HVAC", "path": "projects/swflorida-hvac"},
             {"name": "📦 Square Foot Shipping", "path": "projects/square-foot-shipping"},
@@ -59,7 +59,7 @@ def main():
         "dev-sandbox-marceau",
         [
             {"name": "Marceau Projects", "path": "projects/marceau-solutions"},
-            {"name": "Shared Systems", "path": "projects/shared-multi-tenant"},
+            {"name": "Shared Systems", "path": "projects/shared"},
             {"name": "Infrastructure", "path": "."}
         ]
     )
@@ -68,7 +68,7 @@ def main():
     create_workspace(
         "dev-sandbox-shared",
         [
-            {"name": "Shared Multi-Tenant", "path": "projects/shared-multi-tenant"},
+            {"name": "Shared Multi-Tenant", "path": "projects/shared"},
             {"name": "Infrastructure", "path": "."}
         ]
     )
@@ -89,9 +89,9 @@ def main():
     create_workspace(
         "dev-sandbox-campaigns",
         [
-            {"name": "Lead Scraper (Shared)", "path": "projects/shared-multi-tenant/lead-scraper"},
-            {"name": "Social Media (Shared)", "path": "projects/shared-multi-tenant/social-media-automation"},
-            {"name": "Voice AI (Shared)", "path": "projects/shared-multi-tenant/ai-customer-service"},
+            {"name": "Lead Scraper (Shared)", "path": "projects/shared/lead-scraper"},
+            {"name": "Social Media (Shared)", "path": "projects/shared/social-media-automation"},
+            {"name": "Voice AI (Shared)", "path": "projects/shared/ai-customer-service"},
             {"name": "Infrastructure", "path": "."}
         ]
     )

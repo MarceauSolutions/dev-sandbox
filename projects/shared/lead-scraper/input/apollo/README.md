@@ -25,7 +25,7 @@ If using credit-efficient workflow:
 
 ### Step 4: Import to Lead Database
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Import all leads (no filtering)
 python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21.csv

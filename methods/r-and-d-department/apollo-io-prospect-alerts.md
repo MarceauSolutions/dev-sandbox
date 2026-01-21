@@ -15,7 +15,7 @@ Apollo.io offers **real-time prospect alerts** that could enhance our current le
 ## Current State
 
 **What We Have:**
-- ✅ Apollo.io API integration (`projects/shared-multi-tenant/lead-scraper/src/apollo.py`)
+- ✅ Apollo.io API integration (`projects/shared/lead-scraper/src/apollo.py`)
 - ✅ Lead enrichment via Apollo API
 - ✅ Manual lead scraping workflows
 - ✅ Environment variable: `APOLLO_API_KEY` configured
@@ -152,7 +152,7 @@ Apollo.io supports webhooks for:
 
 ### Step 2: Create Webhook Endpoint
 
-**File:** `projects/shared-multi-tenant/lead-scraper/src/apollo_webhook_handler.py`
+**File:** `projects/shared/lead-scraper/src/apollo_webhook_handler.py`
 
 ```python
 from fastapi import APIRouter, Request
@@ -370,11 +370,11 @@ Same enrichment + outreach workflow
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Apollo API Client | `projects/shared-multi-tenant/lead-scraper/src/apollo.py` | ✅ Exists |
-| Webhook Handler | `projects/shared-multi-tenant/lead-scraper/src/apollo_webhook_handler.py` | 📋 To create |
-| Lead Model | `projects/shared-multi-tenant/lead-scraper/src/models.py` | ✅ Exists |
-| Enrichment | `projects/shared-multi-tenant/lead-scraper/src/enrichment.py` | ✅ Exists |
-| Follow-up Sequences | `projects/shared-multi-tenant/lead-scraper/src/follow_up_sequence.py` | ✅ Exists |
+| Apollo API Client | `projects/shared/lead-scraper/src/apollo.py` | ✅ Exists |
+| Webhook Handler | `projects/shared/lead-scraper/src/apollo_webhook_handler.py` | 📋 To create |
+| Lead Model | `projects/shared/lead-scraper/src/models.py` | ✅ Exists |
+| Enrichment | `projects/shared/lead-scraper/src/enrichment.py` | ✅ Exists |
+| Follow-up Sequences | `projects/shared/lead-scraper/src/follow_up_sequence.py` | ✅ Exists |
 
 ---
 
@@ -383,7 +383,7 @@ Same enrichment + outreach workflow
 - **Apollo API docs:** https://apolloio.github.io/apollo-api-docs/
 - **Apollo webhooks:** https://knowledge.apollo.io/hc/en-us/articles/4408971016077-Webhooks
 - **Email source:** Apollo <hello@mail.apollo.io> Jan 21, 2026
-- **Current integration:** `projects/shared-multi-tenant/lead-scraper/src/apollo.py`
+- **Current integration:** `projects/shared/lead-scraper/src/apollo.py`
 
 ---
 

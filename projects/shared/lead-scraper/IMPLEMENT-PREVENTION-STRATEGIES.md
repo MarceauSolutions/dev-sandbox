@@ -113,14 +113,14 @@ if __name__ == "__main__":
 crontab -e
 
 # Add this line (runs at 10 AM, 1 hour after expected 9 AM run)
-0 10 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /opt/anaconda3/bin/python -m src.check_followup_health >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/health_check.log 2>&1
+0 10 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /opt/anaconda3/bin/python -m src.check_followup_health >> /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/health_check.log 2>&1
 ```
 
 ### Test It
 
 ```bash
 # 1. Run follow-up processor manually
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.follow_up_sequence process --for-real
 
 # 2. Check heartbeat was created
@@ -150,11 +150,11 @@ crontab -e
 # 0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper && ...
 
 # WITH 3 jobs (9 AM, 1 PM, 5 PM):
-0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/followup.log 2>&1
+0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/followup.log 2>&1
 
-0 13 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/followup.log 2>&1
+0 13 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/followup.log 2>&1
 
-0 17 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/followup.log 2>&1
+0 17 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /opt/anaconda3/bin/python -m src.follow_up_sequence process --for-real >> /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/followup.log 2>&1
 ```
 
 ### Why This Works

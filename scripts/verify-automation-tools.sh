@@ -51,10 +51,10 @@ run_test() {
   fi
 }
 
-# Detect current structure (shared-multi-tenant vs shared)
-if [ -d ~/dev-sandbox/projects/shared-multi-tenant ]; then
-  SHARED_PATH="shared-multi-tenant"
-  echo -e "${BLUE}Detected structure:${NC} shared-multi-tenant/"
+# Detect current structure (shared vs shared)
+if [ -d ~/dev-sandbox/projects/shared ]; then
+  SHARED_PATH="shared"
+  echo -e "${BLUE}Detected structure:${NC} shared/"
 elif [ -d ~/dev-sandbox/projects/shared ]; then
   SHARED_PATH="shared"
   echo -e "${BLUE}Detected structure:${NC} shared/"

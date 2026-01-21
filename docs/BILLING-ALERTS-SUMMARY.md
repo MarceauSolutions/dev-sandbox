@@ -22,7 +22,7 @@
 - Complete testing procedures
 
 ### 2. Automated Monitoring Script
-**File:** `/projects/shared-multi-tenant/lead-scraper/src/google_cloud_cost_monitor.py` (650+ lines)
+**File:** `/projects/shared/lead-scraper/src/google_cloud_cost_monitor.py` (650+ lines)
 
 **Features:**
 - Daily automated billing checks
@@ -43,7 +43,7 @@ $100  (100%) → Email + SMS + Critical alert
 ```
 
 ### 3. Automated Cron Setup Script
-**File:** `/projects/shared-multi-tenant/lead-scraper/setup_billing_monitor_cron.sh` (300+ lines)
+**File:** `/projects/shared/lead-scraper/setup_billing_monitor_cron.sh` (300+ lines)
 
 **Features:**
 - Detects OS (macOS vs Linux) automatically
@@ -55,7 +55,7 @@ $100  (100%) → Email + SMS + Critical alert
 - Provides management commands
 
 ### 4. Quick Start Guide
-**File:** `/projects/shared-multi-tenant/lead-scraper/BILLING-MONITOR-QUICK-START.md`
+**File:** `/projects/shared/lead-scraper/BILLING-MONITOR-QUICK-START.md`
 
 **5-minute setup:**
 ```bash
@@ -244,7 +244,7 @@ dev-sandbox/
 │   ├── BILLING-ALERTS-SUMMARY.md               ← This file
 │   └── GOOGLE-CLOUD-COST-ANALYSIS.md           ← Root cause of $100 charge
 │
-└── projects/shared-multi-tenant/lead-scraper/
+└── projects/shared/lead-scraper/
     ├── src/
     │   ├── google_cloud_cost_monitor.py        ← Main monitoring script (650+ lines)
     │   └── check_google_api_costs.py           ← Existing usage estimator
@@ -294,7 +294,7 @@ NOTIFICATION_PHONE=+12393985676
 
 1. **Test SMS alerts:**
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.google_cloud_cost_monitor --test-sms
    ```
    - Verify SMS received at +1 239 398 5676

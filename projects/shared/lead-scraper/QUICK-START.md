@@ -8,7 +8,7 @@
 
 ### Daily Health Check (2 minutes)
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Dashboard (last 24 hours)
 python -m src.campaign_analytics dashboard --days 1
@@ -184,7 +184,7 @@ See **OPTIMIZATION-PLAYBOOK.md** for complete step-by-step plan.
 ## 📁 File Structure
 
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 ├── QUICK-START.md              ← YOU ARE HERE (daily reference)
 ├── EXECUTIVE-SUMMARY.md         ← 5-min overview
 ├── OPTIMIZATION-PLAYBOOK.md     ← Complete 90-day plan

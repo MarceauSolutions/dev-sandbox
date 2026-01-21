@@ -57,7 +57,7 @@ dev-sandbox/
 ├── deploy_to_skills.py          # UPDATED - Paths updated
 │
 ├── projects/                    # REORGANIZED by ownership
-│   ├── shared-multi-tenant/     # NEW: Projects used by ALL 3 companies
+│   ├── shared/     # NEW: Projects used by ALL 3 companies
 │   │   ├── lead-scraper/        (has business_id separation in code)
 │   │   ├── social-media-automation/
 │   │   ├── ai-customer-service/ (voice AI for all 3)
@@ -301,7 +301,7 @@ python deploy_to_skills.py --project fitness-influencer --version 1.0.0
 
 ### What Changes
 - Internal paths in deploy_to_skills.py config
-- Example: `projects/lead-scraper/` → `projects/shared-multi-tenant/lead-scraper/`
+- Example: `projects/lead-scraper/` → `projects/shared/lead-scraper/`
 
 ### What Stays Same
 - Deployment destinations (~/[project]-prod/)

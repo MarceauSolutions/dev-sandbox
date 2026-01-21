@@ -4,7 +4,7 @@
 
 **Date**: 2026-01-21
 
-**Workspace**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/`
+**Workspace**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/`
 
 ---
 
@@ -188,7 +188,7 @@ Hi, this is William. I noticed [Business Name] doesn't have a website.
 **1. Fix Website Detection Logic**
 ```bash
 # Test website detection accuracy
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.scraper validate-websites --sample 50
 
 # Expected: Report % of "no_website" leads that actually HAVE websites
@@ -399,7 +399,7 @@ python -m src.follow_up_sequence status
 
 **Validate current "no website" leads**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Sample check 50 leads
 python -c "
@@ -441,7 +441,7 @@ for biz in errors:
 **Add to `templates/sms/` directory**:
 
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Create new template file
 cat > templates/sms/intro/social_proof_intro.txt << 'EOF'
@@ -760,7 +760,7 @@ Your cold outreach system has **enterprise-grade analytics** already built:
 ## Files in This Workspace
 
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 ├── AGENT2-FINDINGS.md (THIS FILE)
 └── (No new code files created - system already complete)
 ```

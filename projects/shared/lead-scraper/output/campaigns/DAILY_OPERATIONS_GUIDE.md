@@ -8,7 +8,7 @@ Quick reference for managing multi-business outreach campaigns.
 
 ### 1. Check Dashboard
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.campaign_dashboard
 ```
 
@@ -328,7 +328,7 @@ python -m src.follow_up_sequence response "<phone>" --type responded --notes "No
 
 ```bash
 # PROJECT ROOT
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # DASHBOARD
 python -m src.campaign_dashboard
@@ -357,4 +357,4 @@ python -m src.opt_out_manager check "+12393985676"
 
 **Last Updated**: January 21, 2026
 **Owner**: William Marceau
-**Support**: See `/projects/shared-multi-tenant/lead-scraper/workflows/` for detailed SOPs
+**Support**: See `/projects/shared/lead-scraper/workflows/` for detailed SOPs

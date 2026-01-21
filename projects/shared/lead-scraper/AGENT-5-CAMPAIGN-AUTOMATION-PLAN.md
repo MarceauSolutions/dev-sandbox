@@ -318,7 +318,7 @@ for response in responses:
 
 ## Implementation: Auto-Launch Script
 
-Created: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/campaign_auto_launcher.py`
+Created: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/campaign_auto_launcher.py`
 
 **Features**:
 1. ✅ Pre-flight health checks (Agent 1)
@@ -370,7 +370,7 @@ python -m src.campaign_auto_launcher --for-real
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper</string>
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -442,10 +442,10 @@ python -m src.campaign_auto_launcher --for-real
     </array>
 
     <key>StandardOutPath</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/logs/campaign-launcher.log</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/logs/campaign-launcher.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/logs/campaign-launcher-error.log</string>
+    <string>/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/logs/campaign-launcher-error.log</string>
 
     <key>RunAtLoad</key>
     <false/>
@@ -479,13 +479,13 @@ crontab -e
 
 # Add these lines:
 # Monday/Wednesday/Friday 8 AM - HVAC
-0 8 * * 1,3,5 cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business swflorida-hvac --for-real >> output/logs/campaign-launcher.log 2>&1
+0 8 * * 1,3,5 cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business swflorida-hvac --for-real >> output/logs/campaign-launcher.log 2>&1
 
 # Tuesday/Thursday 8 AM - Marceau Solutions
-0 8 * * 2,4 cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business marceau-solutions --for-real >> output/logs/campaign-launcher.log 2>&1
+0 8 * * 2,4 cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business marceau-solutions --for-real >> output/logs/campaign-launcher.log 2>&1
 
 # Saturday 10 AM - Marceau Solutions (light)
-0 10 * * 6 cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business marceau-solutions --limit 50 --for-real >> output/logs/campaign-launcher.log 2>&1
+0 10 * * 6 cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && /usr/bin/python3 -m src.campaign_auto_launcher --business marceau-solutions --limit 50 --for-real >> output/logs/campaign-launcher.log 2>&1
 ```
 
 ---

@@ -44,7 +44,7 @@
 
 **Steps** (5 minutes):
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Test the validator
 python -m src.website_validator
@@ -286,7 +286,7 @@ python -m src.campaign_analytics cohort-analysis \
 
 **Test Website Validator**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.website_validator
 ```
 

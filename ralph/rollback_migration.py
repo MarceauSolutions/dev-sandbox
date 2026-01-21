@@ -28,10 +28,10 @@ BASE_DIR = Path("/Users/williammarceaujr./dev-sandbox")
 # (This is the inverse of migrate_to_company_structure.py)
 PROJECT_ROLLBACKS = {
     # SHARED MULTI-TENANT (4 projects)
-    "projects/shared-multi-tenant/lead-scraper": "projects/lead-scraper",
-    "projects/shared-multi-tenant/social-media-automation": "projects/social-media-automation",
-    "projects/shared-multi-tenant/ai-customer-service": "projects/ai-customer-service",
-    "projects/shared-multi-tenant/personal-assistant": "projects/personal-assistant",
+    "projects/shared/lead-scraper": "projects/lead-scraper",
+    "projects/shared/social-media-automation": "projects/social-media-automation",
+    "projects/shared/ai-customer-service": "projects/ai-customer-service",
+    "projects/shared/personal-assistant": "projects/personal-assistant",
 
     # MARCEAU SOLUTIONS (8 projects)
     "projects/marceau-solutions/fitness-influencer": "projects/fitness-influencer",
@@ -97,7 +97,7 @@ OUTPUT_ROLLBACKS = {
 
 # Empty directories to remove after rollback
 DIRECTORIES_TO_REMOVE = [
-    "projects/shared-multi-tenant",
+    "projects/shared",
     "projects/marceau-solutions",
     "projects/swflorida-hvac",
     "projects/square-foot-shipping",
@@ -138,7 +138,7 @@ README_FILES_TO_REMOVE = [
     "projects/marceau-solutions/README.md",
     "projects/swflorida-hvac/README.md",
     "projects/square-foot-shipping/README.md",
-    "projects/shared-multi-tenant/README.md",
+    "projects/shared/README.md",
     "projects/global-utility/README.md",
     "projects/product-ideas/README.md",
 ]

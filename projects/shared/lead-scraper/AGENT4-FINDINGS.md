@@ -223,7 +223,7 @@ Template sent (`templates/sms/optimized/no_website.json`):
 
 ```bash
 # 1. Start webhook server
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.twilio_webhook serve --port 5001
 
 # 2. In another terminal, simulate response

@@ -94,7 +94,7 @@ GOOGLE_PROJECT_ID: fitness-influencer-assistant
 - Additional duplicates: 5 (double-counted)
 - Other sources: 160 leads from Yelp (free API, no cost)
 
-**Implementation:** `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/src/google_places.py`
+**Implementation:** `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/src/google_places.py`
 
 **Methods Used:**
 1. **Nearby Search** - $32 per 1,000 requests
@@ -248,7 +248,7 @@ Cost: ~$20.04 (well under $200 free tier)
 
 **Implementation:**
 ```python
-# Add to /projects/shared-multi-tenant/lead-scraper/src/google_places.py
+# Add to /projects/shared/lead-scraper/src/google_places.py
 
 import shelve
 from pathlib import Path
@@ -446,7 +446,7 @@ radius_meters=10000  # 10km instead of 25km
 
 ### Daily Checks (Automated)
 
-**Create:** `/projects/shared-multi-tenant/lead-scraper/src/check_google_api_costs.py`
+**Create:** `/projects/shared/lead-scraper/src/check_google_api_costs.py`
 
 ```python
 """

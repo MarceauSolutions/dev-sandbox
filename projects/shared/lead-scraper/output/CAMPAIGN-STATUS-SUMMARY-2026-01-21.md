@@ -40,7 +40,7 @@
 
 **Action Required** (TODAY):
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.follow_up_sequence process --for-real
 ```
 
@@ -282,7 +282,7 @@ Touch 5:             0 sent
 
 1. ✅ **CRITICAL**: Process 97 overdue follow-ups
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    python -m src.follow_up_sequence process --for-real
    ```
    Expected: 97 messages sent immediately
@@ -442,4 +442,4 @@ python -m src.campaign_analytics funnel
 **Report Generated**: 2026-01-21 11:45:13
 **Next Update**: Daily (automated via cron)
 **Contact**: William Marceau
-**Location**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/CAMPAIGN-STATUS-SUMMARY-2026-01-21.md`
+**Location**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/CAMPAIGN-STATUS-SUMMARY-2026-01-21.md`

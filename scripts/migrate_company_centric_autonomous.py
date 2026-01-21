@@ -107,7 +107,7 @@ class PreFlightValidator:
         self.logger.log("Stopping all automation...")
 
         # Unload launchd jobs
-        plist_path = Path.home() / "dev-sandbox/projects/shared-multi-tenant/lead-scraper/launchd/com.marceausolutions.campaign-launcher.plist"
+        plist_path = Path.home() / "dev-sandbox/projects/shared/lead-scraper/launchd/com.marceausolutions.campaign-launcher.plist"
         if plist_path.exists():
             self.runner.run(f"launchctl unload {plist_path}", check=False)
             self.logger.log(f"✓ Unloaded: {plist_path.name}")
@@ -154,7 +154,7 @@ class FolderMigrator:
         return [
             # Shared tools rename
             (
-                Path("projects/shared-multi-tenant"),
+                Path("projects/shared"),
                 Path("projects/shared")
             ),
 
@@ -262,7 +262,7 @@ class ImportUpdater:
         self.replacements = [
             ("projects.shared_multi_tenant", "projects.shared"),
             ("from shared_multi_tenant", "from shared"),
-            ("shared-multi-tenant/", "shared/"),
+            ("shared/", "shared/"),
         ]
 
     def find_python_files(self) -> List[Path]:
@@ -328,7 +328,7 @@ class ConfigUpdater:
         original = content
 
         # Update category list
-        content = content.replace('"shared-multi-tenant"', '"shared"')
+        content = content.replace('"shared"', '"shared"')
 
         if content != original and not dry_run:
             file_path.write_text(content)
@@ -344,8 +344,8 @@ class ConfigUpdater:
             content = plist_path.read_text()
             original = content
 
-            content = content.replace("shared-multi-tenant", "shared")
-            content = content.replace("/shared-multi-tenant/", "/shared/")
+            content = content.replace("shared", "shared")
+            content = content.replace("/shared/", "/shared/")
 
             if content != original and not dry_run:
                 plist_path.write_text(content)
@@ -366,10 +366,10 @@ class ConfigUpdater:
                 original = content
 
                 content = content.replace(
-                    "cd ~/dev-sandbox/projects/shared-multi-tenant/",
+                    "cd ~/dev-sandbox/projects/shared/",
                     "cd ~/dev-sandbox/projects/shared/"
                 )
-                content = content.replace("/shared-multi-tenant/", "/shared/")
+                content = content.replace("/shared/", "/shared/")
 
                 if content != original and not dry_run:
                     script_path.write_text(content)
@@ -384,7 +384,7 @@ class ConfigUpdater:
             original = content
 
             content = content.replace(
-                '"path": "projects/shared-multi-tenant',
+                '"path": "projects/shared',
                 '"path": "projects/shared'
             )
 
@@ -405,15 +405,15 @@ class ConfigUpdater:
         original = content
 
         # Update path detection to check for 'shared' first
-        old_detection = '''if [ -d ~/dev-sandbox/projects/shared-multi-tenant ]; then
-  SHARED_PATH="shared-multi-tenant"
+        old_detection = '''if [ -d ~/dev-sandbox/projects/shared ]; then
+  SHARED_PATH="shared"
 elif [ -d ~/dev-sandbox/projects/shared ]; then
   SHARED_PATH="shared"'''
 
         new_detection = '''if [ -d ~/dev-sandbox/projects/shared ]; then
   SHARED_PATH="shared"
-elif [ -d ~/dev-sandbox/projects/shared-multi-tenant ]; then
-  SHARED_PATH="shared-multi-tenant"'''
+elif [ -d ~/dev-sandbox/projects/shared ]; then
+  SHARED_PATH="shared"'''
 
         content = content.replace(old_detection, new_detection)
 
@@ -446,8 +446,8 @@ class DocumentationUpdater:
         original = content
 
         replacements = [
-            ("projects/shared-multi-tenant/", "projects/shared/"),
-            ("cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/",
+            ("projects/shared/", "projects/shared/"),
+            ("cd /Users/williammarceaujr./dev-sandbox/projects/shared/",
              "cd /Users/williammarceaujr./dev-sandbox/projects/shared/"),
         ]
 
@@ -470,11 +470,11 @@ class DocumentationUpdater:
             original = content
 
             content = content.replace(
-                "~/dev-sandbox/projects/shared-multi-tenant/",
+                "~/dev-sandbox/projects/shared/",
                 "~/dev-sandbox/projects/shared/"
             )
             content = content.replace(
-                "cd projects/shared-multi-tenant/",
+                "cd projects/shared/",
                 "cd projects/shared/"
             )
 
@@ -592,7 +592,7 @@ class MigrationCommitter:
 
         commit_msg = f"""feat: Company-centric restructure complete
 
-- Renamed shared-multi-tenant/ → shared/
+- Renamed shared/ → shared/
 - Consolidated all company assets into single folders
 - Updated 73+ Python imports
 - Updated deploy_to_skills.py category detection
@@ -636,7 +636,7 @@ class RollbackManager:
         # Restore automation
         self.runner.run("crontab crontab-backup.txt 2>/dev/null || true", check=False)
 
-        plist_path = Path.home() / "dev-sandbox/projects/shared-multi-tenant/lead-scraper/launchd/com.marceausolutions.campaign-launcher.plist"
+        plist_path = Path.home() / "dev-sandbox/projects/shared/lead-scraper/launchd/com.marceausolutions.campaign-launcher.plist"
         if plist_path.exists():
             self.runner.run(f"launchctl load {plist_path}", check=False)
 

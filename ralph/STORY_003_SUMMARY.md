@@ -57,7 +57,7 @@ Successfully tested with `--dry-run` mode. Here's what will happen:
 ### Phase 1: Directory Structure (35 directories)
 ```
 projects/
-├── shared-multi-tenant/
+├── shared/
 ├── marceau-solutions/
 ├── swflorida-hvac/
 ├── square-foot-shipping/
@@ -98,7 +98,7 @@ templates/companies/
 ```
 
 ### Phase 2: README Files (6 files)
-- `projects/shared-multi-tenant/README.md` - Explains multi-tenant projects
+- `projects/shared/README.md` - Explains multi-tenant projects
 - `projects/marceau-solutions/README.md` - Lists Marceau projects
 - `projects/swflorida-hvac/README.md` - Lists HVAC projects
 - `projects/square-foot-shipping/README.md` - Lists shipping projects (placeholder)
@@ -109,10 +109,10 @@ templates/companies/
 
 **Shared Multi-Tenant (4 projects):**
 ```
-projects/lead-scraper/              → projects/shared-multi-tenant/lead-scraper/
-projects/social-media-automation/   → projects/shared-multi-tenant/social-media-automation/
-projects/ai-customer-service/       → projects/shared-multi-tenant/ai-customer-service/
-projects/personal-assistant/        → projects/shared-multi-tenant/personal-assistant/
+projects/lead-scraper/              → projects/shared/lead-scraper/
+projects/social-media-automation/   → projects/shared/social-media-automation/
+projects/ai-customer-service/       → projects/shared/ai-customer-service/
+projects/personal-assistant/        → projects/shared/personal-assistant/
 ```
 
 **Marceau Solutions (7 projects):**
@@ -307,7 +307,7 @@ Story 003 acceptance criteria from PRD:
 - ✅ `companies/marceau-solutions/`, `companies/swflorida-hvac/`, `companies/square-foot-shipping/` created
   - **Note:** Actually using `projects/[company]/` structure per design
 - ✅ `shared/projects/`, `shared/execution/`, `shared/methods/`, `shared/docs/` created
-  - **Note:** Using `projects/shared-multi-tenant/` per design, execution/methods stay at root
+  - **Note:** Using `projects/shared/` per design, execution/methods stay at root
 - ✅ Migration script: `python migrate_to_company_structure.py --dry-run` (shows what would move)
 - ✅ Migration script: `python migrate_to_company_structure.py --execute` (actually moves files)
 - ✅ Script updates relative imports

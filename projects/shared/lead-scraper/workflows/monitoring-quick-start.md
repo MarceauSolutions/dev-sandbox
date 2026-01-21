@@ -8,7 +8,7 @@
 
 ```bash
 # Navigate to project
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # View real-time dashboard
 python -m src.campaign_monitor dashboard
@@ -112,7 +112,7 @@ crontab -e
 
 Add this line:
 ```
-0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
+0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
 ```
 
 This automatically processes overdue follow-ups daily.
@@ -183,7 +183,7 @@ Get daily summary emailed to you:
 python -m src.campaign_monitor email-summary
 
 # Automated daily (add to crontab)
-0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
+0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
 ```
 
 Email includes:

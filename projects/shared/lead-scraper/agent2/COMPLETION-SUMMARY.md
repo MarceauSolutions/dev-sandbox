@@ -6,7 +6,7 @@
 
 **Completion Time**: 2026-01-21 11:57 AM - 12:01 PM EST
 
-**Workspace**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/`
+**Workspace**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/`
 
 ---
 
@@ -838,7 +838,7 @@ python -m src.campaign_optimizer suggest-tests [--business BUSINESS_ID]
 ### Created by Agent 2
 
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 ├── agent2/
 │   └── COMPLETION-SUMMARY.md       ← This file (comprehensive report)
 │
@@ -998,7 +998,7 @@ Fix those (using the 90-day playbook), and you'll hit 12% positive response rate
 **Document Version**: 1.0
 **Created**: 2026-01-21 12:01 PM EST
 **Author**: Agent 2 (Response Tracking Optimization System)
-**Location**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/agent2/COMPLETION-SUMMARY.md`
+**Location**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/agent2/COMPLETION-SUMMARY.md`
 
 ---
 

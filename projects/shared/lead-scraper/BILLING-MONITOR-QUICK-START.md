@@ -8,7 +8,7 @@
 
 ```bash
 # 1. Navigate to project
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # 2. Test the monitor (manual check)
 python -m src.google_cloud_cost_monitor
@@ -183,7 +183,7 @@ pip install twilio google-cloud-billing google-cloud-pubsub python-dotenv
 
 **Run script manually to see errors:**
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.google_cloud_cost_monitor --once
 ```
 

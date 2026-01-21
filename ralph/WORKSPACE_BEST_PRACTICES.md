@@ -14,7 +14,7 @@
 | Task | Open in VSCode | Why |
 |------|---------------|-----|
 | **Working on single company** | `projects/marceau-solutions/` | Focused context, faster search, less clutter |
-| **Working on single project** | `projects/shared-multi-tenant/lead-scraper/` | Maximum focus, project-specific terminal |
+| **Working on single project** | `projects/shared/lead-scraper/` | Maximum focus, project-specific terminal |
 | **Working across companies** | Root (`dev-sandbox/`) | Full access, can navigate between companies |
 | **Updating SOPs/docs** | Root (`dev-sandbox/`) | Need access to docs/, directives/, methods/ |
 | **Debugging deployment** | Root (`dev-sandbox/`) | Need deploy_to_skills.py + all projects |
@@ -61,10 +61,10 @@ Claude: Knows to look in marceau-solutions/fitness-influencer/src/
 **Best Practice:**
 ```bash
 # Option A: Open the specific project (RECOMMENDED)
-code /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+code /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 
-# Option B: Open shared-multi-tenant category
-code /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/
+# Option B: Open shared category
+code /Users/williammarceaujr./dev-sandbox/projects/shared/
 ```
 
 **Why Option A (single project):**
@@ -94,7 +94,7 @@ Claude: Focused on lead-scraper/src/, no distractions
 code /Users/williammarceaujr./dev-sandbox/
 
 # Open terminal in lead-scraper
-cd projects/shared-multi-tenant/lead-scraper/
+cd projects/shared/lead-scraper/
 ```
 
 **Why root:**
@@ -128,7 +128,7 @@ code /Users/williammarceaujr./dev-sandbox/
 **Claude Communication:**
 ```
 User: "Update SOP 18 with new campaign workflow"
-Claude: Needs to see CLAUDE.md, docs/, and projects/shared-multi-tenant/lead-scraper/
+Claude: Needs to see CLAUDE.md, docs/, and projects/shared/lead-scraper/
 ```
 
 ---
@@ -160,7 +160,7 @@ After determining app type and company (SOP 0), create project in correct catego
 
 | Category | When to Use | Example |
 |----------|-------------|---------|
-| `shared-multi-tenant/` | Used by 2+ businesses | lead-scraper, voice AI |
+| `shared/` | Used by 2+ businesses | lead-scraper, voice AI |
 | `marceau-solutions/` | Marceau-only service | fitness-influencer, website-builder |
 | `swflorida-hvac/` | HVAC-only | hvac-distributors |
 | `square-foot-shipping/` | Shipping-only | (none yet) |
@@ -213,7 +213,7 @@ For tasks spanning multiple companies, create a VSCode workspace file:
   "folders": [
     {
       "name": "Shared (Multi-Tenant)",
-      "path": "projects/shared-multi-tenant"
+      "path": "projects/shared"
     },
     {
       "name": "Marceau Solutions",
@@ -265,7 +265,7 @@ code dev-sandbox-all-companies.code-workspace
 code /Users/williammarceaujr./dev-sandbox/
 
 # But terminal in specific project
-cd projects/shared-multi-tenant/lead-scraper/
+cd projects/shared/lead-scraper/
 
 # Run commands relative to project
 python -m src.scraper sms --dry-run
@@ -293,7 +293,7 @@ Claude: Sets mental context, prioritizes fitness-influencer/ files in searches
 
 ```
 User: "I need to update lead scraping for all 3 businesses"
-Claude: Knows to check shared-multi-tenant/lead-scraper/ and business configs
+Claude: Knows to check shared/lead-scraper/ and business configs
 ```
 
 ### File References
@@ -302,7 +302,7 @@ Claude: Knows to check shared-multi-tenant/lead-scraper/ and business configs
 
 ```
 User: "Update the lead scraper's campaign analytics"
-Claude: Looks in projects/shared-multi-tenant/lead-scraper/src/campaign_analytics.py
+Claude: Looks in projects/shared/lead-scraper/src/campaign_analytics.py
 ```
 
 **NOT:**
@@ -339,7 +339,7 @@ For large multi-company features:
 git checkout -b feature/multi-company-lead-attribution
 
 # Work across companies
-# projects/shared-multi-tenant/lead-scraper/
+# projects/shared/lead-scraper/
 # projects/marceau-solutions/
 # projects/swflorida-hvac/
 
@@ -356,7 +356,7 @@ git commit -m "feat: Unified lead attribution across all 3 companies"
 | User Says | Claude Interprets | Opens/Searches |
 |-----------|-------------------|----------------|
 | "Work on Marceau today" | Focus on marceau-solutions/ | projects/marceau-solutions/ |
-| "Update shared lead scraper" | Multi-tenant system | projects/shared-multi-tenant/lead-scraper/ |
+| "Update shared lead scraper" | Multi-tenant system | projects/shared/lead-scraper/ |
 | "Check HVAC projects" | HVAC-specific work | projects/swflorida-hvac/ |
 | "Compare all 3 businesses" | Cross-company analysis | Root (all categories) |
 | "Update global docs" | Infrastructure | docs/, directives/, methods/ |
@@ -371,7 +371,7 @@ Claude: "Which one - the shared multi-tenant version, or Marceau-specific?"
 
 Better:
 User: "Update the shared social media automation"
-Claude: ✅ projects/shared-multi-tenant/social-media-automation/
+Claude: ✅ projects/shared/social-media-automation/
 ```
 
 ---
@@ -426,7 +426,7 @@ START: What am I doing today?
 │        └─ NO → Open projects/[company]/ (compare projects)
 │
 ├─ Working on shared system (lead-scraper, social-media)?
-│  └─ YES → Open projects/shared-multi-tenant/[project]/
+│  └─ YES → Open projects/shared/[project]/
 │
 ├─ Working on infrastructure (docs, SOPs, deploy)?
 │  └─ YES → Open ROOT
@@ -455,7 +455,7 @@ code /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/
 # - Can see website-builder messaging
 
 # Terminal
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 # (SMS templates are in shared lead-scraper, but Marceau context helps)
 ```
 
@@ -465,7 +465,7 @@ cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scrape
 
 Claude:
 1. Looks at marceau-solutions/fitness-influencer/ for tone
-2. Creates template in shared-multi-tenant/lead-scraper/templates/sms/
+2. Creates template in shared/lead-scraper/templates/sms/
 3. Tags with business_id = "marceau-solutions"
 ```
 
@@ -524,7 +524,7 @@ Claude:
 ### First 2 Weeks After Migration
 
 **Expect muscle memory issues:**
-- Typing `cd projects/lead-scraper` instead of `cd projects/shared-multi-tenant/lead-scraper`
+- Typing `cd projects/lead-scraper` instead of `cd projects/shared/lead-scraper`
 - Opening root when you only need one company
 - Forgetting which category a project belongs to
 
@@ -533,7 +533,7 @@ Claude:
 ```bash
 # Add to ~/.zshrc or ~/.bashrc
 alias goto-marceau="cd /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions"
-alias goto-shared="cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant"
+alias goto-shared="cd /Users/williammarceaujr./dev-sandbox/projects/shared"
 alias goto-hvac="cd /Users/williammarceaujr./dev-sandbox/projects/swflorida-hvac"
 alias goto-shipping="cd /Users/williammarceaujr./dev-sandbox/projects/square-foot-shipping"
 ```
@@ -541,7 +541,7 @@ alias goto-shipping="cd /Users/williammarceaujr./dev-sandbox/projects/square-foo
 2. Create README.md at old locations:
 ```bash
 # projects/lead-scraper/README.md (if someone tries old path)
-echo "⚠️ MOVED: This project is now at projects/shared-multi-tenant/lead-scraper/" > projects/lead-scraper-MOVED.txt
+echo "⚠️ MOVED: This project is now at projects/shared/lead-scraper/" > projects/lead-scraper-MOVED.txt
 ```
 
 3. VSCode Recent Projects (first 2 weeks):

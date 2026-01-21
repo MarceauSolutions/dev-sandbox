@@ -199,7 +199,7 @@ Reply STOP to opt out.
 #### Preview Mode (Dry Run)
 ```bash
 # Preview both campaigns
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.launch_multi_business_campaigns --dry-run --limit 5
 
 # Preview specific business
@@ -405,4 +405,4 @@ If opt-out rate >2% or complaints:
 
 **Campaign Owner**: William Marceau
 **Launch Date**: TBD (awaiting real HVAC phone number + final approval)
-**Documentation**: `/projects/shared-multi-tenant/lead-scraper/output/campaigns/`
+**Documentation**: `/projects/shared/lead-scraper/output/campaigns/`

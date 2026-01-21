@@ -47,7 +47,7 @@ Automated SMS campaign launch system for Southwest Florida Comfort (HVAC) and Ma
 ### Step 1: Test Dry Run
 
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 
 # Test single business dry run
 python -m src.campaign_auto_launcher --business swflorida-hvac --dry-run --limit 5

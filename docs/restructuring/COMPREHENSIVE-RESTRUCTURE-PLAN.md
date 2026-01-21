@@ -353,7 +353,7 @@ from projects.shared.lead_scraper import LeadScraper
 ✅ **Category Detection Logic**:
 ```python
 categories = [
-    "shared-multi-tenant",  # ← MUST CHANGE TO "shared"
+    "shared",  # ← MUST CHANGE TO "shared"
     "marceau-solutions",
     "swflorida-hvac",
     "square-foot-shipping",
@@ -414,7 +414,7 @@ categories = [
 │       ├── marceau-solutions/           # 9 projects here
 │       ├── swflorida-hvac/              # 1 project here
 │       ├── square-foot-shipping/        # Empty placeholder
-│       └── shared-multi-tenant/         # Shared tools
+│       └── shared/         # Shared tools
 │
 ├── websites/
 │   ├── marceausolutions.com/            # Website separate
@@ -459,7 +459,7 @@ categories = [
 │   ├── website/                         # ← MOVED from ~/websites/
 │   └── lead-gen/                        # ← MOVED from ~/active-projects/
 │
-├── shared/                              # ← RENAMED from shared-multi-tenant/
+├── shared/                              # ← RENAMED from shared/
 │   ├── lead-scraper/                    # All companies use
 │   ├── ai-customer-service/             # All companies use
 │   ├── social-media-automation/         # All companies use
@@ -537,7 +537,7 @@ git push -u origin main
    - `crontab -l > pre-migration-crontab.txt`
    - `launchctl list | grep marceau > pre-migration-launchd.txt`
 3. ✅ Run pre-migration tests: `bash verify-automation-tools.sh` (ALL MUST PASS)
-4. ✅ Inventory data files: `find projects/shared-multi-tenant -name "*.json" > pre-migration-data-files.txt`
+4. ✅ Inventory data files: `find projects/shared -name "*.json" > pre-migration-data-files.txt`
 
 **Afternoon (1 PM - 5 PM)**:
 5. ✅ Create migration script: `scripts/migrate_company_centric.py`

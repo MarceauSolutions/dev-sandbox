@@ -20,7 +20,7 @@
 **Check if swflorida-hvac is configured:**
 
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 
 # Check current configuration
 python -m src.business_scheduler status
@@ -119,19 +119,19 @@ crontab -e
 # Add these lines for HVAC posting (4 times daily):
 
 # HVAC Morning Post (7 AM)
-0 7 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_morning.log 2>&1
+0 7 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_morning.log 2>&1
 
 # HVAC Midday Post (12 PM)
-0 12 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_midday.log 2>&1
+0 12 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_midday.log 2>&1
 
 # HVAC Afternoon Post (5 PM)
-0 17 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_afternoon.log 2>&1
+0 17 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_afternoon.log 2>&1
 
 # HVAC Evening Post (9 PM)
-0 21 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_evening.log 2>&1
+0 21 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && python -m src.x_scheduler process --business swflorida-hvac --limit 1 >> logs/hvac_evening.log 2>&1
 
 # Weekly batch generation (Sunday 6 AM)
-0 6 * * 0 cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && python -m src.business_scheduler schedule-batch --business swflorida-hvac --count 28 >> logs/hvac_weekly_gen.log 2>&1
+0 6 * * 0 cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && python -m src.business_scheduler schedule-batch --business swflorida-hvac --count 28 >> logs/hvac_weekly_gen.log 2>&1
 ```
 
 **Save and verify:**
@@ -228,7 +228,7 @@ python -m src.x_scheduler history --business swflorida-hvac --count 28
 
 ```bash
 # Navigate to project
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 
 # Check status
 python -m src.business_scheduler status

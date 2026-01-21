@@ -153,7 +153,7 @@ After migration executes, verify:
 | What William Says | What Claude Does |
 |-------------------|------------------|
 | "Work on Marceau today" | Opens context for projects/marceau-solutions/ |
-| "Update shared lead scraper" | Focuses on projects/shared-multi-tenant/lead-scraper/ |
+| "Update shared lead scraper" | Focuses on projects/shared/lead-scraper/ |
 | "Check HVAC projects" | Looks in projects/swflorida-hvac/ |
 | "Compare all 3 businesses" | Opens root, compares across categories |
 | "Which folder should I open?" | Recommends based on task (see WORKSPACE_BEST_PRACTICES.md) |

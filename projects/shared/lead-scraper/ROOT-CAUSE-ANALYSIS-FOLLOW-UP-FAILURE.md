@@ -68,7 +68,7 @@
 
 ### Evidence from Logs
 
-**File**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/output/followup.log`
+**File**: `/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output/followup.log`
 **Size**: 159 KB
 **First Entry**: `2026-01-20 09:00:00,994`
 **Last Entry**: `2026-01-20 09:03:42,708`
@@ -564,8 +564,8 @@ $ cat output/followup_dashboard.json
 ### Social Media (Works) ✅
 ```bash
 # 9 jobs, every 2 hours, 6 AM - 10 PM
-0 6 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && /opt/anaconda3/bin/python -m src.business_scheduler daily-run >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation/output/posting.log 2>&1
-0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation && /opt/anaconda3/bin/python -m src.business_scheduler process >> /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation/output/posting.log 2>&1
+0 6 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && /opt/anaconda3/bin/python -m src.business_scheduler daily-run >> /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation/output/posting.log 2>&1
+0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation && /opt/anaconda3/bin/python -m src.business_scheduler process >> /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation/output/posting.log 2>&1
 # ... (7 more)
 ```
 

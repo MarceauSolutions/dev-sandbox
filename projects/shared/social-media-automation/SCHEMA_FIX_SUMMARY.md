@@ -23,7 +23,7 @@ WARNING: Error loading queue: ScheduledPost.__init__() got an unexpected keyword
 
 ### 1. Updated ScheduledPost Dataclass
 
-**File**: `/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation/src/x_scheduler.py`
+**File**: `/Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation/src/x_scheduler.py`
 
 Added three missing fields to the dataclass (lines 81-83):
 ```python
@@ -54,7 +54,7 @@ Enhanced `_load_queue()` method to handle both old and new post formats:
 
 **New path** (correct):
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+/Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 ```
 
 **Script**: `update_cron_jobs.sh` - Updates all 9 cron jobs to use correct path

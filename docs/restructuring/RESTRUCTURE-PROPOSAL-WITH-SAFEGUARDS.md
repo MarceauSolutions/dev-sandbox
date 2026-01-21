@@ -26,7 +26,7 @@ I've created a comprehensive plan for company-centric restructuring, BUT I'm put
 I've created a complete inventory of ALL automation tools and a test suite:
 
 **Critical Automation Tools** (MUST work after restructure):
-- ✅ Lead scraper (`projects/shared-multi-tenant/lead-scraper/`)
+- ✅ Lead scraper (`projects/shared/lead-scraper/`)
 - ✅ Apollo CSV import
 - ✅ SMS cold outreach
 - ✅ Follow-up sequences (7-touch Hormozi framework)
@@ -140,10 +140,10 @@ dev-sandbox/projects/
 │   └── lead-gen/                # From ~/active-projects/
 │
 ├── shared/                      # SHARED TOOLS (all companies use)
-│   ├── lead-scraper/            # ⬅️ MOVED from shared-multi-tenant/
-│   ├── ai-customer-service/     # ⬅️ MOVED from shared-multi-tenant/
-│   ├── social-media-automation/ # ⬅️ MOVED from shared-multi-tenant/
-│   └── personal-assistant/      # ⬅️ MOVED from shared-multi-tenant/
+│   ├── lead-scraper/            # ⬅️ MOVED from shared/
+│   ├── ai-customer-service/     # ⬅️ MOVED from shared/
+│   ├── social-media-automation/ # ⬅️ MOVED from shared/
+│   └── personal-assistant/      # ⬅️ MOVED from shared/
 │
 └── global-utility/              # GLOBAL TOOLS (no company affiliation)
     ├── md-to-pdf/
@@ -179,13 +179,13 @@ dev-sandbox/projects/
 
 #### Lead Scraper
 
-**Current Path**: `projects/shared-multi-tenant/lead-scraper/`
+**Current Path**: `projects/shared/lead-scraper/`
 **New Path**: `projects/shared/lead-scraper/`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd ~/dev-sandbox/projects/shared/lead-scraper
 python -m src.scraper search --query "gyms Naples FL"
 python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21.csv
 
@@ -198,20 +198,20 @@ python -m src.apollo_import import --input input/apollo/apollo_export_2026-01-21
 **Impact**: Path change only. Commands work identically.
 
 **Apollo CSV Location**:
-- BEFORE: `projects/shared-multi-tenant/lead-scraper/input/apollo/`
+- BEFORE: `projects/shared/lead-scraper/input/apollo/`
 - AFTER: `projects/shared/lead-scraper/input/apollo/`
 
 **Verification**: Test suite checks import works from new path.
 
 #### Cold Outreach (SMS)
 
-**Current Path**: `projects/shared-multi-tenant/lead-scraper/src/sms_outreach.py`
+**Current Path**: `projects/shared/lead-scraper/src/sms_outreach.py`
 **New Path**: `projects/shared/lead-scraper/src/sms_outreach.py`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd ~/dev-sandbox/projects/shared/lead-scraper
 python -m src.scraper sms --for-real --limit 10 --template no_website_intro
 
 # AFTER
@@ -222,20 +222,20 @@ python -m src.scraper sms --for-real --limit 10 --template no_website_intro
 **Impact**: Path change only. Twilio credentials still read from `.env`.
 
 **Templates Location**:
-- BEFORE: `projects/shared-multi-tenant/lead-scraper/templates/sms/`
+- BEFORE: `projects/shared/lead-scraper/templates/sms/`
 - AFTER: `projects/shared/lead-scraper/templates/sms/`
 
 **Verification**: Test suite checks SMS dry-run works from new path.
 
 #### Campaign Analytics & Response Tracking
 
-**Current Path**: `projects/shared-multi-tenant/lead-scraper/src/campaign_analytics.py`
+**Current Path**: `projects/shared/lead-scraper/src/campaign_analytics.py`
 **New Path**: `projects/shared/lead-scraper/src/campaign_analytics.py`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd ~/dev-sandbox/projects/shared/lead-scraper
 python -m src.campaign_analytics report
 python -m src.campaign_analytics response --phone "+1XXX" --category hot_lead
 
@@ -248,20 +248,20 @@ python -m src.campaign_analytics response --phone "+1XXX" --category hot_lead
 **Impact**: Path change only. Output data still in `output/`.
 
 **Data Files**:
-- BEFORE: `projects/shared-multi-tenant/lead-scraper/output/sms_campaigns.json`
+- BEFORE: `projects/shared/lead-scraper/output/sms_campaigns.json`
 - AFTER: `projects/shared/lead-scraper/output/sms_campaigns.json`
 
 **Verification**: Test suite checks analytics report runs.
 
 #### AI Customer Service (Voice AI)
 
-**Current Path**: `projects/shared-multi-tenant/ai-customer-service/`
+**Current Path**: `projects/shared/ai-customer-service/`
 **New Path**: `projects/shared/ai-customer-service/`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/ai-customer-service
+cd ~/dev-sandbox/projects/shared/ai-customer-service
 python scripts/start_server.py
 
 # AFTER
@@ -275,13 +275,13 @@ python scripts/start_server.py
 
 #### Social Media Automation
 
-**Current Path**: `projects/shared-multi-tenant/social-media-automation/`
+**Current Path**: `projects/shared/social-media-automation/`
 **New Path**: `projects/shared/social-media-automation/`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd ~/dev-sandbox/projects/shared/social-media-automation
 python -m src.business_scheduler schedule-day --date 2026-01-20
 python -m src.x_scheduler process
 
@@ -297,13 +297,13 @@ python -m src.x_scheduler process
 
 #### Personal Assistant (Morning Digest)
 
-**Current Path**: `projects/shared-multi-tenant/personal-assistant/`
+**Current Path**: `projects/shared/personal-assistant/`
 **New Path**: `projects/shared/personal-assistant/`
 
 **Commands That Change**:
 ```bash
 # BEFORE
-cd ~/dev-sandbox/projects/shared-multi-tenant/personal-assistant
+cd ~/dev-sandbox/projects/shared/personal-assistant
 python -m src.morning_digest --preview
 
 # AFTER
@@ -359,7 +359,7 @@ bash verify-automation-tools.sh
 Detailed steps in the Plan agent's output (agentId: a827412).
 
 **Key moves**:
-1. Rename `shared-multi-tenant/` → `shared/`
+1. Rename `shared/` → `shared/`
 2. Consolidate fitness-influencer (backend + frontend + mcp)
 3. Move websites into company folders
 4. Consolidate square-foot-shipping

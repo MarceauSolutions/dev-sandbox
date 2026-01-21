@@ -289,7 +289,7 @@ python -m src.campaign_analytics report --business marceau-solutions
 
 ### Documentation Index:
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper/
+/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/
 
 Agent 1 (Automation):
 ├── ROOT-CAUSE-ANALYSIS-FOLLOW-UP-FAILURE.md
@@ -345,7 +345,7 @@ Multi-Company:
 
 **Test Website Validator**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.website_validator
 ```
 

@@ -36,7 +36,7 @@ python migrate_company_centric_autonomous.py --execute
 - Commits current state
 
 **Phase 2: Folder Migrations** (1-2 hours)
-- Renames `shared-multi-tenant/` → `shared/`
+- Renames `shared/` → `shared/`
 - Moves 3 websites into company folders
 - Consolidates fitness-influencer (backend + frontend + mcp)
 - Consolidates square-foot-shipping
@@ -106,7 +106,7 @@ Automatic rollback:
 
 ### 8 Major Folder Moves
 
-1. `projects/shared-multi-tenant/` → `projects/shared/`
+1. `projects/shared/` → `projects/shared/`
 2. `~/websites/marceausolutions.com/` → `projects/marceau-solutions/website/`
 3. `~/websites/swflorida-comfort-hvac/` → `projects/swflorida-hvac/website/`
 4. `~/websites/squarefoot-shipping-website/` → `projects/square-foot-shipping/website/`
@@ -204,7 +204,7 @@ PHASE 1: PRE-FLIGHT VALIDATION
 ============================================================
 PHASE 2: FOLDER MIGRATIONS
 ============================================================
-[2026-01-21 10:11:00] [INFO] ✓ git mv: projects/shared-multi-tenant → projects/shared
+[2026-01-21 10:11:00] [INFO] ✓ git mv: projects/shared → projects/shared
 [2026-01-21 10:15:00] [INFO] ✓ moved: ~/websites/marceausolutions.com → projects/marceau-solutions/website
 ... (6 more migrations)
 

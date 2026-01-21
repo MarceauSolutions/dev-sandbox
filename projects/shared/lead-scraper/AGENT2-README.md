@@ -115,7 +115,7 @@ LOST VALUE: ~$4,200 (14 potential customers @ $300 avg)
 
 2. **Run Diagnostics** (10 minutes)
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    
    # Check dashboard
    python -m src.campaign_analytics dashboard --days 7

@@ -50,7 +50,7 @@ def discover_projects():
     projects = {}
 
     categories = [
-        "shared-multi-tenant",
+        "shared",
         "marceau-solutions",
         "swflorida-hvac",
         "square-foot-shipping",
@@ -107,8 +107,8 @@ PROJECTS = {
         ...
     },
     "lead-scraper": {
-        "category": "shared-multi-tenant",  # NEW
-        "src_dir": PROJECTS_DIR / "shared-multi-tenant" / "lead-scraper" / "src",  # UPDATED
+        "category": "shared",  # NEW
+        "src_dir": PROJECTS_DIR / "shared" / "lead-scraper" / "src",  # UPDATED
         ...
     },
     # ... 25 more projects
@@ -135,7 +135,7 @@ def discover_projects():
     discovered = {}
 
     # Auto-discover from categories
-    categories = ["shared-multi-tenant", "marceau-solutions", "swflorida-hvac",
+    categories = ["shared", "marceau-solutions", "swflorida-hvac",
                   "square-foot-shipping", "global-utility", "product-ideas", "archived"]
 
     for category in categories:
@@ -196,11 +196,11 @@ PROJECTS = discover_projects()
 
 **1. Simulate new structure:**
 ```bash
-mkdir -p /tmp/migration-test/projects/shared-multi-tenant
+mkdir -p /tmp/migration-test/projects/shared
 mkdir -p /tmp/migration-test/projects/marceau-solutions
 
 # Copy 2 test projects
-cp -r projects/lead-scraper /tmp/migration-test/projects/shared-multi-tenant/
+cp -r projects/lead-scraper /tmp/migration-test/projects/shared/
 cp -r projects/fitness-influencer /tmp/migration-test/projects/marceau-solutions/
 ```
 
@@ -215,7 +215,7 @@ python deploy_to_skills.py --list
 **3. Verify deployment:**
 ```bash
 python deploy_to_skills.py --project lead-scraper --dry-run
-# Should find project in shared-multi-tenant/lead-scraper/
+# Should find project in shared/lead-scraper/
 ```
 
 **4. Clean up:**

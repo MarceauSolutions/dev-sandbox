@@ -25,7 +25,7 @@ Agent 5 has designed and implemented a **fully automated SMS campaign launch sys
 ## Complete File Structure
 
 ```
-projects/shared-multi-tenant/lead-scraper/
+projects/shared/lead-scraper/
 ├── src/
 │   └── campaign_auto_launcher.py          ✅ NEW - Main automation script
 ├── launchd/

@@ -4,13 +4,13 @@
 
 ### Apollo CSV Export
 ```
-projects/shared-multi-tenant/lead-scraper/input/apollo/
+projects/shared/lead-scraper/input/apollo/
 └── apollo_export_2026-01-21.csv  ← DROP HERE
 ```
 
 ### New SMS Template
 ```
-projects/shared-multi-tenant/lead-scraper/templates/sms/intro/
+projects/shared/lead-scraper/templates/sms/intro/
 └── new_template.txt  ← CREATE HERE
 ```
 
@@ -18,11 +18,11 @@ projects/shared-multi-tenant/lead-scraper/templates/sms/intro/
 
 | Resource | Path |
 |----------|------|
-| Lead Database | `projects/shared-multi-tenant/lead-scraper/output/leads.json` |
-| Campaign Sequences | `projects/shared-multi-tenant/lead-scraper/output/follow_up_sequences.json` |
-| A/B Tests | `projects/shared-multi-tenant/lead-scraper/config/ab_tests.json` |
-| Apollo Import | `projects/shared-multi-tenant/lead-scraper/input/apollo/` ← CSV HERE |
-| SMS Templates | `projects/shared-multi-tenant/lead-scraper/templates/sms/intro/` |
+| Lead Database | `projects/shared/lead-scraper/output/leads.json` |
+| Campaign Sequences | `projects/shared/lead-scraper/output/follow_up_sequences.json` |
+| A/B Tests | `projects/shared/lead-scraper/config/ab_tests.json` |
+| Apollo Import | `projects/shared/lead-scraper/input/apollo/` ← CSV HERE |
+| SMS Templates | `projects/shared/lead-scraper/templates/sms/intro/` |
 | All API Keys | `.env` (root) |
 
 ## Templates Created (Ralph Deliverables)
@@ -40,21 +40,21 @@ projects/shared-multi-tenant/lead-scraper/templates/sms/intro/
 ## Duplicates Removed
 
 ❌ `projects/lead-scraper/` - Empty, deleted
-❌ `projects/social-media-automation/` - Docs moved to shared-multi-tenant, deleted
+❌ `projects/social-media-automation/` - Docs moved to shared, deleted
 
 ✅ Single Source of Truth:
-- `projects/shared-multi-tenant/lead-scraper/` - ACTIVE
-- `projects/shared-multi-tenant/social-media-automation/` - ACTIVE
+- `projects/shared/lead-scraper/` - ACTIVE
+- `projects/shared/social-media-automation/` - ACTIVE
 
 ## Usage: Import Apollo CSV
 
 ```bash
 # 1. Download from Apollo.io → save to Downloads
 # 2. Move to import directory
-mv ~/Downloads/apollo_export.csv projects/shared-multi-tenant/lead-scraper/input/apollo/
+mv ~/Downloads/apollo_export.csv projects/shared/lead-scraper/input/apollo/
 
 # 3. Import
-cd projects/shared-multi-tenant/lead-scraper
+cd projects/shared/lead-scraper
 python -m src.apollo_import import --input input/apollo/apollo_export.csv
 ```
 

@@ -30,13 +30,13 @@ python -m src.x_scheduler stats
 ./update_cron_jobs.sh
 # OR manually edit crontab:
 crontab -e
-# Update paths to: /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+# Update paths to: /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 ```
 
 **Verification**:
 ```bash
 crontab -l | grep social-media
-# All paths should point to shared-multi-tenant/social-media-automation
+# All paths should point to shared/social-media-automation
 ```
 
 ### Issue: Posts stuck in "pending" status
@@ -88,7 +88,7 @@ python -c "import json; json.load(open('output/scheduled_posts.json'))"
 
 ### Check Queue Status
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 
 # Overall status
 python -m src.business_scheduler status
@@ -155,7 +155,7 @@ python -m src.x_scheduler clear
 ## File Locations
 
 ```
-/Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation/
+/Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation/
 ├── src/
 │   ├── x_scheduler.py          # Queue management
 │   ├── business_scheduler.py   # Multi-business orchestration
@@ -174,7 +174,7 @@ python -m src.x_scheduler clear
 
 ```bash
 #!/bin/bash
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/social-media-automation
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/social-media-automation
 
 echo "=== Queue Health Check ==="
 python -m src.x_scheduler stats 2>/dev/null | grep "Total posts"

@@ -10,7 +10,7 @@
 
 ```bash
 # Morning dashboard check (daily at 9 AM)
-cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.campaign_monitor dashboard
 
 # Check overdue follow-ups
@@ -252,7 +252,7 @@ Set up daily cron job:
 crontab -e
 
 # Add this line:
-0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
+0 9 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.follow_up_sequence process --for-real >> logs/followup-cron.log 2>&1
 ```
 
 ---
@@ -264,7 +264,7 @@ crontab -e
 Add to crontab:
 ```bash
 # Daily summary at 8 AM
-0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared-multi-tenant/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
+0 8 * * * cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper && python -m src.campaign_monitor email-summary >> logs/monitor-cron.log 2>&1
 ```
 
 Email includes:
