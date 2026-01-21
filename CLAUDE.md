@@ -119,7 +119,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 5. DEPLOY when ALL testing complete (Step 3 finished)
    └── Prerequisites: ✅ Manual testing, ✅ Multi-agent (if complex), ✅ Pre-deployment verification
    └── python deploy_to_skills.py --project [name] --version X.Y.Z
-   └── Creates separate repo: /Users/williammarceaujr./[name]-prod/
+   └── Creates separate repo: ~/production/[name]-prod/
    └── NOT nested in dev-sandbox (see repository-management.md)
    └── NEVER deploy before Step 3 (testing) is complete!
 
@@ -715,7 +715,7 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
    ```bash
    python deploy_to_skills.py --project [name] --version X.Y.Z
    ```
-   - Creates `/Users/williammarceaujr./[name]-prod/` with separate git repo
+   - Creates `~/production/[name]-prod/` with separate git repo
    - Copies necessary files
    - Commits and tags version
 
@@ -751,9 +751,10 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
    ```
 
 2. **If nested repos found**:
-   - Move to parent: `mv dev-sandbox/[nested-repo] /Users/williammarceaujr./[nested-repo]`
+   - Move to appropriate category: `mv dev-sandbox/[nested-repo] ~/[category]/[nested-repo]`
+   - Categories: production/, websites/, active-projects/, legacy/, archived/
    - Verify: Re-run find command
-   - Commit change: `git add -A && git commit -m "fix: Move nested repo to parent"`
+   - Commit change: `git add -A && git commit -m "fix: Move nested repo to [category]"`
 
 3. **Verify git status**:
    ```bash
