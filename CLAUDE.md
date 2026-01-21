@@ -218,6 +218,10 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Multiple ways to do this..." | **AUTO**: Launch SOP 9 (3-4 architecture agents) |
 | Complex feature completed | **AUTO**: Launch SOP 2 (4 testing agents) after manual pass |
 | "Check the docket" / "What's deferred?" | Review DOCKET.md, report items with met triggers |
+| "Create a new company" / "Add company [Name]" | Run `./scripts/create-company-folder.sh "Company Name"` |
+| "Add [project] to [company]" / "Create [tool] for [company]" | Run `./scripts/add-company-project.sh company-name "project-name" type` |
+| "Add a website for [company]" | Follow hybrid architecture website submodule setup (see FOLDER-STRUCTURE-GUIDE.md) |
+| "Add a shared tool" / "Multi-tenant [tool]" | Create in `projects/shared/[tool-name]/` (used by 2+ companies) |
 | "Document this setup" / "Save this config" | Use SOP-25 decision tree → Create setup guide |
 | "Don't forget this" / "Save this decision" | Create decision record with rationale |
 | "This should be in the SOPs" | Evaluate using SOP-25 → Create SOP if warranted |
