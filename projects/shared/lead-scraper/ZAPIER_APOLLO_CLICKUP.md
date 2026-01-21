@@ -1,8 +1,9 @@
 # Zapier Integration: Apollo.io → ClickUp
 
-**Purpose**: Automatically create ClickUp tasks when Apollo enriches leads
+**Purpose**: Automatically create ClickUp tasks when new contacts are added to Apollo
 
 **Date Created**: 2026-01-21
+**Last Updated**: 2026-01-21
 
 ---
 
@@ -11,8 +12,8 @@
 ```
 Apollo.io              Zapier              ClickUp
     ↓                    ↓                   ↓
-New Enriched    →   Transform Data   →  Create Task
-Contact              Filter Quality      in Pipeline
+New Contact     →   Filter/Transform  →  Create Task
+(Instant)            by Quality          in Pipeline
 ```
 
 ---
@@ -24,28 +25,40 @@ Contact              Filter Quality      in Pipeline
 1. Go to Zapier: https://zapier.com/apps/apollo/integrations
 2. Click "Make a Zap"
 3. Select Trigger App: **Apollo.io**
-4. Select Trigger Event: **New Enriched Contact**
-5. Connect Apollo.io account (use API key from .env)
-6. Test trigger (should retrieve recent enriched contacts)
+4. Select Trigger Event: **New Contact** (Instant)
+   - Note: "New Contact" triggers when a contact is added to Apollo
+   - There may be up to 30 min delay while Apollo verifies contact info
+5. Connect Apollo.io account:
+   - In Apollo: Settings → Integrations → API → API keys
+   - Create new key named "Zapier" (set as master key)
+   - Copy and paste into Zapier
+6. Test trigger (should retrieve recent contacts)
 
 ### Step 2: Add Filter (Optional but Recommended)
 
 **Purpose**: Only create ClickUp tasks for high-quality leads
 
-1. Click "+ Add Step" → Choose "Filter"
+1. Click "+ Add Step" → Choose "Filter by Zapier"
 2. Add Filter Conditions:
+
+   **Option A - Filter by email presence (recommended for quality)**:
    ```
-   Field: Lead Score
-   Condition: Greater than or equal to
-   Value: 8.0
+   Field: Email
+   Condition: Exists
    ```
 
-   OR
-
+   **Option B - Filter by specific saved search/list**:
    ```
-   Field: Tags
-   Condition: Contains
-   Value: hot_lead,callback_requested
+   Field: Contact Stage
+   Condition: Text Contains
+   Value: [your stage name]
+   ```
+
+   **Option C - Multiple conditions**:
+   ```
+   Condition 1: Email (Exists)
+   AND
+   Condition 2: Phone (Exists)
    ```
 
 3. Continue only if filter passes
@@ -57,39 +70,31 @@ Contact              Filter Quality      in Pipeline
 3. Connect ClickUp account
 4. Configure Task Settings:
    - **List**: "Leads Pipeline" (or your preferred list)
-   - **Task Name**: `{{apollo_name}} - {{apollo_company}}`
+   - **Task Name**: `{{First Name}} {{Last Name}} - {{Organization Name}}`
    - **Description**:
      ```
-     Lead from Apollo.io enrichment
+     Lead from Apollo.io
 
      **Contact Info:**
-     - Email: {{apollo_email}}
-     - Phone: {{apollo_phone}}
-     - Title: {{apollo_title}}
+     - Email: {{Email}}
+     - Phone: {{Phone Number}} / {{Corporate Phone}} / {{Mobile Phone}}
+     - Title: {{Title}}
 
      **Company Info:**
-     - Company: {{apollo_company}}
-     - Location: {{apollo_location}}
-     - Industry: {{apollo_industry}}
-     - Employee Count: {{apollo_employee_count}}
+     - Company: {{Organization Name}}
+     - Website: {{Website URL}}
 
-     **Lead Score:** {{apollo_lead_score}} / 10
-
-     **Enriched:** {{apollo_enriched_date}}
+     **Source:** Apollo.io - New Contact Trigger
      ```
    - **Assignee**: (Your ClickUp user)
    - **Status**: "New Lead"
-   - **Priority**: Based on lead score:
-     - Score 9-10 → High Priority
-     - Score 8-9 → Normal Priority
-     - Score < 8 → Low Priority
-   - **Tags**: `{{apollo_campaign}}, apollo-enriched`
+   - **Priority**: Normal (or set manually based on your criteria)
+   - **Tags**: `apollo, new-lead`
 
-5. Map Custom Fields:
-   - **Email** (custom field) → `{{apollo_email}}`
-   - **Phone** (custom field) → `{{apollo_phone}}`
-   - **Company** (custom field) → `{{apollo_company}}`
-   - **Lead Score** (custom field) → `{{apollo_lead_score}}`
+5. Map Custom Fields (if you have them in ClickUp):
+   - **Email** (custom field) → `{{Email}}`
+   - **Phone** (custom field) → `{{Phone Number}}` or `{{Mobile Phone}}`
+   - **Company** (custom field) → `{{Organization Name}}`
    - **Source** (custom field) → "Apollo.io"
 
 ### Step 4: Test and Activate
@@ -103,62 +108,79 @@ Contact              Filter Quality      in Pipeline
 
 ## Field Mapping Reference
 
-| Apollo Field | ClickUp Field | Notes |
-|--------------|---------------|-------|
-| `name` | Task Name | Combined with company name |
-| `email` | Custom Field: Email | Store for outreach |
-| `phone` | Custom Field: Phone | Store for SMS/calls |
-| `title` | Description | Job title of contact |
-| `company_name` | Custom Field: Company | Company name |
-| `location` | Description | Geographic location |
-| `industry` | Description | Industry category |
-| `employee_count` | Description | Company size |
-| `lead_score` | Custom Field: Lead Score | Quality score (0-10) |
-| `enriched_date` | Description | When enriched |
-| `campaign` | Tags | Campaign identifier |
+### Apollo Contact Fields Available in Zapier
+
+| Apollo Field | Zapier Variable | ClickUp Mapping | Notes |
+|--------------|-----------------|-----------------|-------|
+| First Name | `{{First Name}}` | Task Name | Contact's first name |
+| Last Name | `{{Last Name}}` | Task Name | Contact's last name |
+| Email | `{{Email}}` | Custom Field: Email | Primary email address |
+| Title | `{{Title}}` | Description | Job title |
+| Organization Name | `{{Organization Name}}` | Custom Field: Company | Company name |
+| Phone Number | `{{Phone Number}}` | Custom Field: Phone | Direct phone |
+| Corporate Phone | `{{Corporate Phone}}` | Description | Company phone |
+| Mobile Phone | `{{Mobile Phone}}` | Custom Field: Phone | Cell number |
+| Home Phone | `{{Home Phone}}` | Description | Personal phone |
+| Website URL | `{{Website URL}}` | Description | Contact/company website |
+| Address | `{{Address}}` | Description | Full address |
+| Account ID | `{{Account ID}}` | Description | Apollo internal ID |
+
+### Apollo Account Fields (if using "New Account" trigger)
+
+| Apollo Field | Zapier Variable | Notes |
+|--------------|-----------------|-------|
+| Company Name | `{{Name}}` | Account/company name |
+| Domain | `{{Domain}}` | Company website domain |
+| Phone | `{{Phone}}` | Company phone number |
+| Raw Address | `{{Raw Address}}` | Company address |
+| Account ID | `{{ID}}` | Apollo internal ID |
 
 ---
 
 ## Advanced Configuration
-
-### Priority Assignment (Based on Lead Score)
-
-Use Zapier's "Formatter" step to convert lead score to priority:
-
-1. Add "Formatter by Zapier" step
-2. Select: **Numbers → Perform Math Operation**
-3. Input: `{{apollo_lead_score}}`
-4. Operation: Convert to priority
-5. Output mapping:
-   - 9-10 → "urgent" (High Priority)
-   - 8-9 → "high" (Normal Priority)
-   - 7-8 → "normal" (Low Priority)
-   - < 7 → Don't create task (use Filter)
 
 ### Multi-Condition Filters
 
 Create sophisticated filtering logic:
 
 ```
-Condition 1: Lead Score ≥ 8
+Condition 1: Email (Exists)
 AND
-Condition 2: Campaign contains "Naples"
+Condition 2: Organization Name (Text Contains) "Naples"
 AND
-Condition 3: Phone is not empty
+Condition 3: Phone Number (Exists)
 ```
 
-This ensures only qualified, local leads with contact info create tasks.
+This ensures only contacts with valid contact info create tasks.
 
-### Automated Task Assignment
+### Using Formatter for Task Names
 
-Route leads to team members based on campaign:
+Use Zapier's "Formatter" step to create clean task names:
+
+1. Add "Formatter by Zapier" step
+2. Select: **Text → Concatenate**
+3. Inputs: `{{First Name}}`, ` `, `{{Last Name}}`, ` - `, `{{Organization Name}}`
+4. Use output as Task Name in ClickUp
+
+### Automated Task Assignment by Industry
+
+Use Zapier Paths to route leads:
 
 ```
-If Campaign contains "HVAC" → Assign to Sarah
-If Campaign contains "Restaurant" → Assign to Mike
-If Campaign contains "Fitness" → Assign to Alex
-Else → Assign to William
+Path A: If Organization Name contains "HVAC" → Assign to Sarah
+Path B: If Organization Name contains "Restaurant" → Assign to Mike
+Path C: If Organization Name contains "Fitness" → Assign to Alex
+Default: Assign to William
 ```
+
+### Available Apollo Triggers
+
+| Trigger | When it Fires | Use Case |
+|---------|---------------|----------|
+| **New Contact** (Instant) | Contact added to Apollo | Main trigger for lead pipeline |
+| **New Account** (Instant) | Company account created | Track new companies |
+| **Contact Updated** | Existing contact modified | Sync updates to ClickUp |
+| **Account Updated** | Company info changed | Keep company data current |
 
 ---
 
@@ -295,26 +317,43 @@ Track these to measure integration effectiveness:
 
 ## Next Steps
 
-1. ✅ Create Zapier account
-2. ✅ Connect Apollo.io
-3. ✅ Connect ClickUp
-4. ✅ Configure Zap with filters
-5. ✅ Test with sample lead
-6. ✅ Activate Zap
-7. ⏳ Monitor for 7 days
-8. ⏳ Optimize based on results
+1. ⬜ Create Zapier account (https://zapier.com)
+2. ⬜ Get Apollo API key (Settings → Integrations → API → Create master key)
+3. ⬜ Connect Apollo.io to Zapier
+4. ⬜ Connect ClickUp to Zapier
+5. ⬜ Select "New Contact" trigger
+6. ⬜ Add filter (Email exists + Phone exists)
+7. ⬜ Configure ClickUp "Create Task" action
+8. ⬜ Map fields (see Field Mapping Reference above)
+9. ⬜ Test with sample lead
+10. ⬜ Activate Zap
+11. ⬜ Monitor for 7 days
+12. ⬜ Optimize based on results
 
 ---
 
 ## Resources
 
-- **Zapier Apollo Integration**: https://zapier.com/apps/apollo/integrations/clickup
+- **Zapier Apollo Integration**: https://zapier.com/apps/apollo/integrations
+- **Apollo Zapier Docs**: https://knowledge.apollo.io/hc/en-us/articles/4415362778509-Zapier-Integration-Overview
 - **ClickUp API Docs**: https://clickup.com/api
-- **Apollo Webhook Docs**: https://apolloio.github.io/apollo-api-docs/
+- **Apollo API Docs**: https://apolloio.github.io/apollo-api-docs/
 - **Our ClickUp Setup**: `execution/clickup_api.py`
 
 ---
 
+## Troubleshooting
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| No contacts triggering | No new contacts in Apollo | Add a contact manually to test |
+| 30+ min delay | Apollo verifies contact info first | Normal behavior - wait for verification |
+| Missing phone/email | Contact not enriched | Only enriched contacts have full data |
+| API key invalid | Wrong key type | Use "master key" not limited key |
+| Duplicate tasks | Multiple Zaps or re-triggers | Check for duplicate Zaps |
+
+---
+
 **Status**: Ready to implement
-**Estimated Setup Time**: 30 minutes
-**Monthly Cost**: $19.99 (Zapier Starter)
+**Estimated Setup Time**: 15-30 minutes
+**Monthly Cost**: Free tier (100 tasks) or $19.99 (Zapier Starter for 750 tasks)
