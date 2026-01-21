@@ -144,8 +144,10 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 
 **Repository structure**:
 - **dev-sandbox/**: Development workspace (ONE git repo)
-- **[project]-prod/**: Deployed skills (SEPARATE git repos, siblings to dev-sandbox)
-- **Never nest repos**: `find . -name ".git" -type d` should only show `./.git`
+- **production/[project]-prod/**: Deployed skills (SEPARATE git repos)
+- **websites/[site]/**: Company & client websites (SEPARATE git repos)
+- **active-projects/[project]/**: Standalone GitHub projects (SEPARATE git repos)
+- **Never nest repos**: Within dev-sandbox, `find . -name ".git" -type d` should only show `./.git`
 
 ### Key Commands
 
@@ -374,8 +376,11 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **Project development** | `projects/[name]/` | ✅ dev-sandbox (NO separate git!) |
 | **Client demo outputs** | `projects/[name]/demos/client-[name]/` | ✅ Optional (check sensitivity) |
 | **Reference examples** | `projects/[name]/samples/` | ✅ dev-sandbox |
-| **Deployed skills** | `/Users/williammarceaujr./[name]-prod/` | ✅ Separate repo |
-| **Standalone projects** | `/Users/williammarceaujr./[name]/` | ✅ Separate repo |
+| **Deployed skills** | `~/production/[name]-prod/` | ✅ Separate repo |
+| **Company websites** | `~/websites/[name]/` | ✅ Separate repo |
+| **Standalone GitHub projects** | `~/active-projects/[name]/` | ✅ Separate repo |
+| **Legacy/Pre-Claude work** | `~/legacy/` | ❌ Archive only |
+| **Archived projects** | `~/archived/` | ❌ Archive only |
 | **Temporary/test files** | `.tmp/` | ❌ NOT tracked (ephemeral workspace) |
 
 **Critical**:
@@ -389,6 +394,41 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 - Files that serve a single-use purpose
 - **Auto-cleanup**: Delete files after their intended purpose to prevent clutter
 - **Not tracked**: `.tmp/` is in `.gitignore` and should never be committed
+
+## Home Directory Organization
+
+The home directory (`~/`) is organized into 6 main categories for clarity and easy navigation:
+
+| Directory | Purpose | Examples | Git Repos? |
+|-----------|---------|----------|------------|
+| **dev-sandbox/** | Active development workspace | All current projects in `projects/` | ✅ ONE repo (parent tracks all) |
+| **production/** | Deployed production skills | `*-prod/` repos from `deploy_to_skills.py` | ✅ Separate repos (6 repos) |
+| **websites/** | Company & client websites | marceausolutions.com, swflorida-comfort-hvac | ✅ Separate repos (5 sites) |
+| **active-projects/** | Standalone GitHub projects | fitness-influencer-backend/frontend | ✅ Separate repos (3 projects) |
+| **legacy/** | Pre-Claude work (Anaconda era) | Jupyter notebooks, IntroToMLForBME | ❌ Archive only |
+| **archived/** | Deprecated/unused projects | Old planning docs, empty folders | ❌ Archive only |
+
+**Navigation Tips**:
+```bash
+# Jump to active development
+cd ~/dev-sandbox
+
+# Check deployed production versions
+ls ~/production
+
+# Work on company website
+cd ~/websites/marceausolutions.com
+
+# Review legacy data science work
+cd ~/legacy/notebooks
+```
+
+**Maintenance**:
+- **Weekly**: Verify `dev-sandbox/` has no nested repos (SOP 4)
+- **Monthly**: Review `archived/` for items that can be deleted
+- **As needed**: Move new `-prod/` deployments to `production/`
+
+**Reorganization**: Last updated 2026-01-21 (removed duplicates, categorized all folders)
 
 ## Credentials & API Keys
 
