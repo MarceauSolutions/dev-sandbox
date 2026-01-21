@@ -1,19 +1,19 @@
-# Folder Structure Guide
+# Folder Structure Guide (Hybrid Architecture)
 
-**Purpose**: Maintain consistent company-centric folder organization as new companies and projects are added
+**Purpose**: Maintain consistent company-centric folder organization with proper website deployment as new companies and projects are added
 
-**Last Updated**: 2026-01-21
+**Last Updated**: 2026-01-21 (Updated for hybrid architecture with submodules)
 
 ---
 
-## Current Structure Pattern
+## Current Structure Pattern (Hybrid)
 
 ```
 projects/
 ├── [company-name]/                 ← One folder per company
 │   ├── README.md                   ← Company overview
-│   ├── website/                    ← Company website (if applicable)
-│   ├── [project-1]/                ← Company-specific projects
+│   ├── website/                    ← Git submodule → production repo (if hosted)
+│   ├── [project-1]/                ← Company-specific projects (regular folders)
 │   ├── [project-2]/
 │   └── [project-n]/
 │
@@ -23,6 +23,8 @@ projects/
     ├── social-media-automation/
     └── personal-assistant/
 ```
+
+**Key Point**: Websites are git submodules, everything else is regular folders.
 
 ---
 
@@ -41,16 +43,26 @@ projects/
 ### Question 2: Do we have a folder for this company?
 
 **YES** (company folder exists):
-→ Put in `projects/[company-name]/[project-name]/`
+→ Go to Question 3
 
 **NO** (new company):
-→ Create new company folder using template (see below)
+→ Create new company folder (see "Creating a New Company" section)
+
+---
+
+### Question 3: Is this a website or a project?
+
+**WEBSITE** (needs public hosting):
+→ Create as git submodule (see "Adding a Website" section)
+
+**PROJECT** (automation, tool, backend, etc.):
+→ Create as regular folder in `projects/[company-name]/[project-name]/`
 
 ---
 
 ## Creating a New Company Folder
 
-### Step 1: Use the Template Script
+### Quick Start
 
 ```bash
 cd /Users/williammarceaujr./dev-sandbox
@@ -64,14 +76,114 @@ projects/company-name/
 └── .gitkeep                        ← Ensures folder is tracked by git
 ```
 
-### Step 2: Add First Project
+Then choose whether to add a website (submodule) or project (regular folder).
+
+---
+
+## Adding a Website (Git Submodule)
+
+**When to use**: Company needs a public website hosted on GitHub Pages, Netlify, or Vercel
+
+### Step 1: Create Production Repo on GitHub
+
+```bash
+# Create the repo (public for GitHub Pages)
+gh repo create [CompanyOrg]/company-website --public --description "Company website"
+
+# Example:
+# gh repo create MarceauSolutions/naples-dental-group-website --public
+```
+
+### Step 2: Clone Production Repo (Outside dev-sandbox)
+
+```bash
+cd ~
+gh repo clone [CompanyOrg]/company-website
+
+# Example:
+# gh repo clone MarceauSolutions/naples-dental-group-website
+```
+
+### Step 3: Add Initial Website Files
+
+```bash
+cd ~/company-website
+
+# Copy template
+cp -r /Users/williammarceaujr./dev-sandbox/.demo-structure-template/website-template/* .
+
+# Customize for company
+vim index.html  # Update company name, info, etc.
+
+# Commit and push
+git add .
+git commit -m "Initial website structure
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+### Step 4: Add as Submodule in dev-sandbox
+
+```bash
+cd /Users/williammarceaujr./dev-sandbox
+
+# Add submodule
+git submodule add https://github.com/[CompanyOrg]/company-website projects/company-name/website
+
+# Example:
+# git submodule add https://github.com/MarceauSolutions/naples-dental-group-website projects/naples-dental-group/website
+
+# Commit the submodule
+git commit -m "Add [Company] website as submodule"
+git push origin main
+```
+
+### Step 5: Configure GitHub Pages (If Using)
+
+```bash
+# Enable GitHub Pages on production repo
+gh repo edit [CompanyOrg]/company-website --enable-pages --pages-branch main
+
+# Or do it via GitHub web UI:
+# 1. Go to repo settings
+# 2. Pages section
+# 3. Source: main branch
+# 4. Save
+```
+
+### Result
+
+```
+dev-sandbox/projects/company-name/
+└── website/  ← Git submodule pointing to production repo
+
+~/company-website/  ← Production repo (outside dev-sandbox)
+└── [website files tracked here]
+```
+
+**Benefits**:
+- Work in dev-sandbox context (alongside other company projects)
+- Website deploys automatically to GitHub Pages
+- Clean separation: development (dev-sandbox) vs production (website repo)
+
+---
+
+## Adding a Project (Regular Folder)
+
+**When to use**: Automation, backend service, MCP server, tool - anything that's NOT a website
+
+### Step 1: Create Project Folder
 
 ```bash
 cd projects/company-name
 mkdir [project-name]
 cd [project-name]
+```
 
-# Copy project template structure
+### Step 2: Copy Template Structure
+
+```bash
 cp -r ../../.demo-structure-template/project-template/* .
 ```
 
@@ -86,375 +198,279 @@ projects/company-name/[project-name]/
 └── README.md                       ← Project documentation
 ```
 
-### Step 3: Add Website (if applicable)
-
-If the company has a website:
+### Step 3: Commit to dev-sandbox
 
 ```bash
-cd projects/company-name
-mkdir website
-cd website
-
-# Copy website template structure
-cp -r ../../.demo-structure-template/website-template/* .
+cd /Users/williammarceaujr./dev-sandbox
+git add projects/company-name/[project-name]
+git commit -m "feat: Add [project-name] for [Company Name]"
+git push origin main
 ```
 
-This creates:
-```
-projects/company-name/website/
-├── index.html                      ← Homepage
-├── contact.html                    ← Contact form
-├── assets/                         ← CSS, JS, images
-├── forms/                          ← Form handlers
-└── README.md                       ← Website documentation
-```
+**Result**: Regular folder tracked in dev-sandbox repo (NOT a submodule)
 
 ---
 
-## Manual Creation (Without Scripts)
+## Complete Example: Adding Naples Dental Group
 
-If you prefer manual creation:
-
-### Step 1: Create Company Folder
+### Scenario: New client "Naples Dental Group" needs website + lead automation
 
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects
-mkdir [company-name]
-cd [company-name]
+# 1. Create company folder
+cd /Users/williammarceaujr./dev-sandbox
+./scripts/create-company-folder.sh "Naples Dental Group"
+
+# 2. Create website as submodule
+gh repo create NaplesDentalGroup/naples-dental-group-website --public
+cd ~
+gh repo clone NaplesDentalGroup/naples-dental-group-website
+cd naples-dental-group-website
+cp -r /Users/williammarceaujr./dev-sandbox/.demo-structure-template/website-template/* .
+# Customize index.html, contact.html for dental practice
+git add .
+git commit -m "Initial dental practice website"
+git push origin main
+
+# 3. Add website as submodule
+cd /Users/williammarceaujr./dev-sandbox
+git submodule add https://github.com/NaplesDentalGroup/naples-dental-group-website projects/naples-dental-group/website
+git commit -m "Add Naples Dental Group website as submodule"
+
+# 4. Add lead automation project (regular folder)
+cd projects/naples-dental-group
+mkdir lead-automation
+cd lead-automation
+cp -r ../../.demo-structure-template/project-template/* .
+# Build the automation tool
+cd /Users/williammarceaujr./dev-sandbox
+git add projects/naples-dental-group/lead-automation
+git commit -m "feat: Add lead automation for Naples Dental Group"
+
+# 5. Push everything
+git push origin main
 ```
-
-### Step 2: Create README.md
-
-Copy this template:
-
-```markdown
-# [Company Name]
-
-**Business Type**: [e.g., HVAC Services, E-commerce, SaaS]
-**Primary Contact**: [Name, Email, Phone]
-**Website**: [URL if exists]
-
-## Overview
-
-[Brief description of company and relationship]
-
-## Projects
-
-### [Project 1 Name]
-- **Purpose**: [What this project does]
-- **Status**: [Development, Production, Archived]
-- **Version**: [Current version]
-
-### website/
-- **Purpose**: Company website and landing pages
-- **URL**: [Live URL]
-- **Stack**: [HTML/CSS/JS, React, etc.]
-
-## Business Context
-
-**Industry**: [Industry]
-**Target Market**: [B2B, B2C, Local, National]
-**Revenue Model**: [How they make money]
-
-## Automation Tools Used
-
-- [ ] Lead Scraper (projects/shared/lead-scraper)
-- [ ] AI Customer Service (projects/shared/ai-customer-service)
-- [ ] Social Media Automation (projects/shared/social-media-automation)
-- [ ] Personal Assistant (projects/shared/personal-assistant)
-
-## Notes
-
-[Any important context about this company or relationship]
-```
-
-### Step 3: Add Projects as Needed
-
-For each project under this company:
-
-```bash
-mkdir [project-name]
-cd [project-name]
-
-# Create basic structure
-mkdir src workflows
-touch VERSION CHANGELOG.md README.md SKILL.md
-echo "1.0.0-dev" > VERSION
-```
-
----
-
-## Examples: Current Companies
-
-### Marceau Solutions (Our Company)
-```
-projects/marceau-solutions/
-├── README.md
-├── website/                        ← marceausolutions.com
-├── amazon-seller/                  ← MCP for Amazon Seller Central
-├── fitness-influencer/             ← Fitness creator tools
-│   ├── backend/
-│   ├── frontend/
-│   └── mcp/
-├── interview-prep/                 ← Interview prep PPTX generator
-├── website-builder/                ← Website generation tool
-└── [8 other projects]
-```
-
-### SW Florida Comfort HVAC (Client)
-```
-projects/swflorida-hvac/
-├── README.md
-├── website/                        ← swflorida-comfort-hvac.com
-└── hvac-distributors/              ← Distributor comparison tool
-```
-
-### SquareFoot Shipping (Client)
-```
-projects/square-foot-shipping/
-├── README.md
-├── website/                        ← squarefoot-shipping.com
-└── lead-gen/                       ← Lead generation automation
-```
-
----
-
-## Project Types & Where They Go
-
-### Type 1: Company Website
-**Location**: `projects/[company-name]/website/`
-**Contents**: HTML, CSS, JS, contact forms, landing pages
-**Example**: `projects/swflorida-hvac/website/`
-
-### Type 2: Custom Automation (Company-Specific)
-**Location**: `projects/[company-name]/[automation-name]/`
-**Contents**: Python scripts, workflows, config
-**Example**: `projects/swflorida-hvac/hvac-distributors/`
-
-### Type 3: SaaS Product (Internal Product)
-**Location**: `projects/marceau-solutions/[product-name]/`
-**Contents**: Full application code (backend, frontend, etc.)
-**Example**: `projects/marceau-solutions/fitness-influencer/`
-
-### Type 4: MCP Server (Claude Integration)
-**Location**: `projects/marceau-solutions/[mcp-name]/` or `projects/[company]/[mcp-name]/`
-**Contents**: MCP server code, PyPI package structure
-**Example**: `projects/marceau-solutions/amazon-seller/`
-
-### Type 5: Multi-Tenant Tool (Shared)
-**Location**: `projects/shared/[tool-name]/`
-**Contents**: Python scripts with business_id separation
-**Example**: `projects/shared/lead-scraper/`
-**When to use**: Tool is used by 2+ companies with business_id parameter
-
----
-
-## Adding a Project to deploy_to_skills.py
-
-When creating a new project that will be deployed as a skill:
-
-### Step 1: Add to deploy_to_skills.py
-
-Edit `/Users/williammarceaujr./dev-sandbox/deploy_to_skills.py`:
-
-```python
-PROJECTS = {
-    # ... existing projects ...
-
-    "[project-name]": {
-        "path": "projects/[company-name]/[project-name]",
-        "skill_name": "[project-name]",
-        "category": "[company-name]",  # or "shared" for multi-tenant
-        "prod_path": Path.home() / "[project-name]-prod",
-        "files_to_copy": ["src", "workflows", "VERSION", "CHANGELOG.md", "SKILL.md", "README.md"],
-    },
-}
-```
-
-### Step 2: Verify Detection
-
-```bash
-python deploy_to_skills.py --list
-# Should show your new project
-```
-
----
-
-## Updating CLAUDE.md for New Companies
-
-When adding a new company, update the "Where to Put Things" section in CLAUDE.md:
-
-```markdown
-## Current Companies
-
-1. **Marceau Solutions** (Our Company)
-   - Location: `projects/marceau-solutions/`
-   - Assets: Website + 11 internal products
-
-2. **SW Florida Comfort HVAC** (Client)
-   - Location: `projects/swflorida-hvac/`
-   - Assets: Website + HVAC distributor tool
-
-3. **SquareFoot Shipping** (Client)
-   - Location: `projects/square-foot-shipping/`
-   - Assets: Website + lead generation
-
-4. **[NEW COMPANY]** (Client/Partner)
-   - Location: `projects/[new-company]/`
-   - Assets: [List what's included]
-```
-
----
-
-## Common Scenarios
-
-### Scenario 1: New Client Onboarding
-
-**Situation**: Just signed "Naples Dental Group" as a new client
-
-**Steps**:
-1. Create company folder: `./scripts/create-company-folder.sh "Naples Dental Group"`
-2. Add their website: `cd projects/naples-dental-group && mkdir website`
-3. Build first project: `mkdir lead-gen && cd lead-gen && [create project structure]`
-4. Update their README.md with business context
-5. Add to deploy_to_skills.py if deploying
 
 **Result**:
 ```
 projects/naples-dental-group/
 ├── README.md
-├── website/
-└── lead-gen/
+├── website/                        ← Submodule → NaplesDentalGroup/naples-dental-group-website
+└── lead-automation/                ← Regular folder in dev-sandbox
 ```
 
 ---
 
-### Scenario 2: New Internal Product
+## Working with Websites (Submodules)
 
-**Situation**: Building new "Email Marketing Automation" tool for Marceau Solutions
-
-**Steps**:
-1. `cd projects/marceau-solutions`
-2. `mkdir email-marketing && cd email-marketing`
-3. Copy project template structure
-4. Start coding in `src/`
-5. Add to deploy_to_skills.py when ready
-
-**Result**:
-```
-projects/marceau-solutions/
-├── [existing projects...]
-└── email-marketing/          ← NEW
-    ├── src/
-    ├── workflows/
-    └── [standard project files]
-```
-
----
-
-### Scenario 3: Multi-Tenant Tool
-
-**Situation**: Built lead scraper that 3 companies use
-
-**Steps**:
-1. Start in company-specific location: `projects/[company-name]/lead-gen/`
-2. When 2nd company needs it, move to shared: `projects/shared/lead-scraper/`
-3. Add business_id parameter to all functions
-4. Update all 3 companies to call shared tool with their business_id
-
-**Result**:
-```
-projects/shared/lead-scraper/
-└── src/
-    └── scraper.py    # Has business_id parameter
-```
-
----
-
-## Checklist for New Company
-
-When adding a new company, use this checklist:
-
-- [ ] Create company folder: `projects/[company-name]/`
-- [ ] Create README.md with business context
-- [ ] Add website folder (if applicable): `projects/[company-name]/website/`
-- [ ] Add first project folder
-- [ ] Update CLAUDE.md "Current Companies" section
-- [ ] Add to deploy_to_skills.py (if deploying)
-- [ ] Configure business_id in shared tools (if using multi-tenant tools)
-- [ ] Add company to `.env` if they need separate API keys
-- [ ] Git commit: `git add projects/[company-name] && git commit -m "feat: Add [Company Name] to portfolio"`
-
----
-
-## Maintaining the Pattern
-
-### DO:
-✅ Group all company assets in single folder
-✅ Use kebab-case for folder names (`sw-florida-hvac`)
-✅ Create README.md for each company explaining context
-✅ Put websites in `[company]/website/` subfolder
-✅ Use `projects/shared/` for multi-tenant tools only
-
-### DON'T:
-❌ Scatter company assets across multiple locations
-❌ Put company-specific code in `projects/shared/`
-❌ Create nested git repositories (no `git init` inside projects/)
-❌ Use spaces in folder names ("SW Florida HVAC" → "swflorida-hvac")
-
----
-
-## Quick Reference Commands
+### Editing a Website
 
 ```bash
-# List all companies
-ls -d projects/*/
+# Navigate to website in company folder
+cd /Users/williammarceaujr./dev-sandbox/projects/company-name/website
 
-# Create new company
-./scripts/create-company-folder.sh "Company Name"
+# Pull latest from production
+git pull origin main
 
-# Create new project in existing company
-cd projects/[company-name]
-mkdir [project-name] && cd [project-name]
-cp -r ../../.demo-structure-template/project-template/* .
+# Make changes
+vim index.html
 
-# Check deploy_to_skills.py recognizes new project
-python deploy_to_skills.py --list
+# Commit to PRODUCTION repo (because it's a submodule)
+git add .
+git commit -m "feat: Update homepage hero section"
+git push origin main
+# ↑ This deploys to GitHub Pages automatically
 
-# Verify no nested repos
-find . -name '.git' -type d
-# Should only show: ./.git
+# Update dev-sandbox submodule reference
+cd /Users/williammarceaujr./dev-sandbox
+git add projects/company-name/website
+git commit -m "chore: Update website submodule"
+git push origin main
+```
+
+### Updating All Website Submodules
+
+```bash
+cd /Users/williammarceaujr./dev-sandbox
+
+# Pull latest from all submodules
+git submodule update --remote --merge
+
+# Commit the updates
+git add .
+git commit -m "chore: Update all website submodules"
+git push origin main
 ```
 
 ---
 
-## Template Files Location
+## Working with Projects (Regular Folders)
 
-All templates are stored in:
+### Editing a Project
+
+```bash
+# Navigate to project
+cd /Users/williammarceaujr./dev-sandbox/projects/company-name/project-name
+
+# Make changes
+vim src/main.py
+
+# Commit to dev-sandbox (normal git workflow)
+cd /Users/williammarceaujr./dev-sandbox
+git add projects/company-name/project-name
+git commit -m "feat: Add new feature"
+git push origin main
 ```
-.demo-structure-template/
-├── project-template/           ← For new projects
-│   ├── src/
-│   ├── workflows/
-│   ├── VERSION
-│   ├── CHANGELOG.md
-│   ├── SKILL.md
-│   └── README.md
-│
-├── website-template/           ← For new company websites
-│   ├── index.html
-│   ├── contact.html
-│   ├── assets/
-│   └── README.md
-│
-└── company-readme-template.md  ← For new company README
+
+**No submodule complexity** - just regular git workflow.
+
+---
+
+## When to Use Submodules vs Regular Folders
+
+### Use Git Submodule When:
+✅ Public website that needs hosting (GitHub Pages, Netlify, Vercel)
+✅ Website needs to be deployed from its own repo
+✅ Want clean separation between website and dev code
+✅ Multiple people working on just the website
+
+### Use Regular Folder When:
+✅ Automation/backend/tool/MCP server
+✅ Internal tool that doesn't need separate hosting
+✅ Anything that's not a public-facing website
+✅ Mockups or non-production sites
+
+**Rule of Thumb**: Only websites are submodules, everything else is regular folders.
+
+---
+
+## Cloning dev-sandbox on New Machine
+
+When cloning dev-sandbox fresh:
+
+```bash
+# Clone dev-sandbox
+git clone https://github.com/MarceauSolutions/dev-sandbox.git
+cd dev-sandbox
+
+# Initialize all submodules (pulls all websites)
+git submodule init
+git submodule update --recursive
+
+# Now all websites are present
+ls projects/marceau-solutions/website  # Works!
+```
+
+---
+
+## Checklist: Adding New Company
+
+- [ ] Create company folder: `./scripts/create-company-folder.sh "Company Name"`
+- [ ] Update company README.md with business context
+- [ ] **If website needed**:
+  - [ ] Create GitHub repo: `gh repo create [Org]/company-website --public`
+  - [ ] Clone outside dev-sandbox: `cd ~ && gh repo clone [Org]/company-website`
+  - [ ] Add initial files and push
+  - [ ] Add as submodule: `git submodule add https://github.com/[Org]/company-website projects/company-name/website`
+  - [ ] Enable GitHub Pages on website repo
+- [ ] **If projects needed**:
+  - [ ] Create project folders in `projects/company-name/[project-name]/`
+  - [ ] Use template structure
+  - [ ] Commit to dev-sandbox
+- [ ] Add to `CLAUDE.md` "Current Companies" section
+- [ ] Add to deploy_to_skills.py if deploying any projects
+- [ ] Configure business_id in shared tools if using multi-tenant tools
+- [ ] Git commit: `git add projects/company-name && git commit -m "feat: Add [Company Name] to portfolio"`
+
+---
+
+## Verification Commands
+
+### Check all submodules
+```bash
+git submodule status
+# Shows all website submodules with their commit hashes
+```
+
+### List all companies
+```bash
+ls -d projects/*/
+# Shows: projects/marceau-solutions/ projects/swflorida-hvac/ etc.
+```
+
+### Check if website is submodule
+```bash
+cd projects/company-name/website
+git remote -v
+# Should show the production website repo, not dev-sandbox
+```
+
+### Verify no nested repos (except submodules)
+```bash
+find . -name '.git' -type d
+# Should show:
+# ./.git (main dev-sandbox repo)
+# ./projects/*/website/.git (submodules - these are OK)
+```
+
+---
+
+## Common Mistakes to Avoid
+
+❌ **Don't create websites as regular folders if they need hosting**
+- Use git submodules for production websites
+
+❌ **Don't create projects as submodules**
+- Only websites should be submodules
+- Projects, automation, tools = regular folders
+
+❌ **Don't forget to update submodule reference in dev-sandbox**
+- After pushing website changes, commit the submodule update in dev-sandbox
+
+❌ **Don't clone production website repos inside dev-sandbox**
+- Clone them outside (~/company-website)
+- Then add as submodule
+
+---
+
+## Quick Reference
+
+### New Company with Website
+```bash
+./scripts/create-company-folder.sh "Company"
+gh repo create Org/company-website --public
+cd ~ && gh repo clone Org/company-website
+# Add files, commit, push
+cd ~/dev-sandbox
+git submodule add https://github.com/Org/company-website projects/company/website
+```
+
+### New Company with Project (No Website)
+```bash
+./scripts/create-company-folder.sh "Company"
+cd projects/company && mkdir project-name
+cp -r ../.demo-structure-template/project-template/* project-name/
+cd ~/dev-sandbox && git add projects/company && git commit -m "Add company"
+```
+
+### Edit Website
+```bash
+cd projects/company/website
+# Edit, commit, push (goes to production repo)
+cd ~/dev-sandbox && git add projects/company/website && git commit -m "Update submodule"
+```
+
+### Edit Project
+```bash
+cd projects/company/project
+# Edit files
+cd ~/dev-sandbox && git add . && git commit -m "Update project"
 ```
 
 ---
 
 ## See Also
 
+- `docs/HYBRID-ARCHITECTURE-SOLUTION.md` - Why we use this architecture
+- `docs/COMPANY-LIFECYCLE-MANAGEMENT.md` - Managing company status changes
 - `CLAUDE.md` - Operating principles and SOPs
-- `docs/architecture-guide.md` - Code organization rules
-- `docs/repository-management.md` - Git structure guidelines
-- `scripts/create-company-folder.sh` - Company folder creation script
+- `.demo-structure-template/` - Templates for new companies and projects
