@@ -50,3 +50,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# MCP Registry tokens
+.mcpregistry_*_token
+.archive/
