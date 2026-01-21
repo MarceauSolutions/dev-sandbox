@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Opt-In - Marceau Solutions LLC</title>
+    <style> /* Same CSS */ </style>
+</head>
+<body>
+    <header>
+        <img src="logo_primary.png" alt="Marceau Solutions Logo">
+        <nav>
+            <ul>
+                 <li><a href="index.html">Home</a></li>
+                <li><a href="opt-in.html">SMS Opt-In</a></li>
+                <li><a href="privacy.html">Privacy</a></li>
+                <li><a href="terms.html">Terms</a></li>
+                <li><a href="compliance.html">Compliance</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h1>SMS Opt-In</h1>
+        <p>Sign up for AI automation updates via SMS.</p>
+        <form id="optInForm">
+            <input type="tel" id="phone" placeholder="Mobile Phone Number" required>
+            <label><input type="checkbox" id="consent"> I consent to receive SMS from Marceau Solutions LLC. Msg & data rates may apply. Reply STOP to opt-out. See <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms</a>.</label>
+            <button type="submit" class="cta">Subscribe</button>
+        </form>
+    </section>
+    <footer> <!-- Same --> </footer>
+    <script>
+        document.getElementById('optInForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (document.getElementById('consent').checked) {
+                alert('Subscribed! Confirmation sent.');
+            } else {
+                alert('Please check consent box.');
+            }
+        });
+    </script>
+</body>
+</html>
