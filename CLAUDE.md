@@ -237,12 +237,21 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - Deploy ONLY when all three layers are complete
 
 2. **Check for existing tools first** - BEFORE creating anything new:
-   - Search `projects/` for similar capabilities (e.g., email-analyzer for email tasks)
-   - Check `execution/` for shared utilities
+   - Search `projects/` for similar capabilities
+   - Check `execution/` for shared utilities (gmail_monitor.py, twilio_sms.py, etc.)
    - Check `[project]/workflows/` for documented procedures
    - Run: `ls projects/` to see all available projects
    - Run: `grep -r "keyword" projects/` to find relevant functionality
    - **Goal: Reuse existing work, don't reinvent the wheel**
+
+   **Quick Reference - Common Tools:**
+   - **Email/Gmail:** `execution/gmail_monitor.py` OR `projects/shared-multi-tenant/personal-assistant/src/digest_aggregator.py`
+   - **SMS:** `execution/twilio_sms.py`
+   - **Lead Management:** `projects/shared-multi-tenant/lead-scraper/`
+   - **Social Media:** `projects/social-media-automation/`
+   - **Video Generation:** Shotstack (documented), Creatomate (researched)
+   - **Image Generation:** Grok/XAI API (execution/grok_image_gen.py if created)
+   - **Apollo.io:** `projects/shared-multi-tenant/lead-scraper/` (has Apollo integration)
 
 3. **Build workflows as you work** - Document procedures while completing tasks
    - Create workflows in `[project]/workflows/` as tasks are completed
