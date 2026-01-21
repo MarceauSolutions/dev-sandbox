@@ -372,21 +372,22 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **Session learnings** | `docs/session-history.md` | ✅ dev-sandbox |
 | **Deployment config** | `deploy_to_skills.py` | ✅ dev-sandbox |
 | **Shared utilities (2+ projects)** | `execution/` | ✅ dev-sandbox |
-| **Project-specific code** | `projects/[name]/src/` | ✅ dev-sandbox (NO separate git!) |
-| **Project development** | `projects/[name]/` | ✅ dev-sandbox (NO separate git!) |
-| **Client demo outputs** | `projects/[name]/demos/client-[name]/` | ✅ Optional (check sensitivity) |
-| **Reference examples** | `projects/[name]/samples/` | ✅ dev-sandbox |
-| **Deployed skills** | `~/production/[name]-prod/` | ✅ Separate repo |
-| **Company websites** | `~/websites/[name]/` | ✅ Separate repo |
-| **Standalone GitHub projects** | `~/active-projects/[name]/` | ✅ Separate repo |
-| **Legacy/Pre-Claude work** | `~/legacy/` | ❌ Archive only |
-| **Archived projects** | `~/archived/` | ❌ Archive only |
+| **Multi-tenant projects (2+ companies)** | `projects/shared/[name]/` | ✅ dev-sandbox |
+| **Company-specific code** | `projects/[company]/[project]/src/` | ✅ dev-sandbox (NO separate git!) |
+| **Company websites (production)** | `projects/[company]/website/` | ✅ Git submodule (separate repo) |
+| **Project development** | `projects/[company]/[project]/` | ✅ dev-sandbox (NO separate git!) |
+| **Client demo outputs** | `projects/[company]/demos/client-[name]/` | ✅ Optional (check sensitivity) |
+| **Reference examples** | `projects/[company]/samples/` | ✅ dev-sandbox |
+| **Deployed skills** | `/Users/williammarceaujr./[name]-prod/` | ✅ Separate repo |
 | **Temporary/test files** | `.tmp/` | ❌ NOT tracked (ephemeral workspace) |
 
-**Critical**:
-- Never initialize git inside `projects/` - the parent dev-sandbox repo tracks everything
-- Code organization: `execution/` for shared (2+ projects), `projects/[name]/src/` for project-specific
-- See `docs/repository-management.md` for git structure, `docs/architecture-guide.md` for code organization
+**Critical - Hybrid Architecture**:
+- Company-centric: All company assets in `projects/[company]/`
+- Websites: Git submodules (production repos for hosting)
+- Projects: Regular folders (tracked in dev-sandbox)
+- Shared tools: `projects/shared/` for multi-tenant (2+ companies)
+- See `docs/FOLDER-STRUCTURE-GUIDE.md` for decision tree
+- See `docs/HYBRID-ARCHITECTURE-QUICK-REF.md` for workflows
 
 **Temporary files policy**: The `.tmp/` directory is for ephemeral work only:
 - Testing and experimentation files
@@ -395,18 +396,17 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 - **Auto-cleanup**: Delete files after their intended purpose to prevent clutter
 - **Not tracked**: `.tmp/` is in `.gitignore` and should never be committed
 
-## Home Directory Organization
+## Home Directory Organization (Hybrid Architecture)
 
-The home directory (`~/`) is organized into 6 main categories for clarity and easy navigation:
+**Hybrid approach**: Company-centric folders in dev-sandbox + website git submodules for production hosting
 
 | Directory | Purpose | Examples | Git Repos? |
 |-----------|---------|----------|------------|
-| **dev-sandbox/** | Active development workspace | All current projects in `projects/` | ✅ ONE repo (parent tracks all) |
-| **production/** | Deployed production skills | `*-prod/` repos from `deploy_to_skills.py` | ✅ Separate repos (6 repos) |
-| **websites/** | Company & client websites | marceausolutions.com, swflorida-comfort-hvac | ✅ Separate repos (5 sites) |
-| **active-projects/** | Standalone GitHub projects | fitness-influencer-backend/frontend | ✅ Separate repos (3 projects) |
-| **legacy/** | Pre-Claude work (Anaconda era) | Jupyter notebooks, IntroToMLForBME | ❌ Archive only |
-| **archived/** | Deprecated/unused projects | Old planning docs, empty folders | ❌ Archive only |
+| **dev-sandbox/** | Active development workspace | `projects/marceau-solutions/`, `projects/shared/` | ✅ ONE repo (parent tracks all except websites) |
+| **dev-sandbox/projects/[company]/website/** | Website submodules (WITHIN dev-sandbox) | marceausolutions.com, swflorida-comfort-hvac | ✅ Git submodules → separate production repos |
+| **[project]-prod/** | Deployed production skills | `lead-scraper-prod/`, `interview-prep-prod/` | ✅ Separate repos (siblings to dev-sandbox) |
+| **~/marceausolutions.com/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
+| **~/swflorida-comfort-hvac/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
 
 **Navigation Tips**:
 ```bash
@@ -551,45 +551,64 @@ python -m src.digest_aggregator --hours 1
 **When**: Starting a new AI assistant or automation project (AFTER completing SOP 0)
 
 **Steps**:
-1. **Create directive**: `directives/[project-name].md`
+1. **Determine location** using folder structure decision tree:
+   - **Company-specific** → `projects/[company-name]/[project-name]/`
+   - **Multi-tenant (2+ companies)** → `projects/shared/[project-name]/`
+   - See: `docs/FOLDER-STRUCTURE-GUIDE.md` for decision tree
+
+2. **Use automated scripts**:
+   ```bash
+   # For company-specific project
+   ./scripts/add-company-project.sh company-name "project-name" tool
+
+   # For shared/multi-tenant project
+   mkdir -p projects/shared/[project-name]
+   # Then manually create structure below
+   ```
+
+3. **Create directive (if needed)**: `directives/[project-name].md`
    - Define capabilities and SOPs
    - Document edge cases and error handling
    - Include tool usage patterns
 
-2. **Create project folder**: `dev-sandbox/projects/[project-name]/`
-   - **DO NOT** run `git init` inside this folder
-   - Create structure:
+4. **Create project structure**:
+   - **DO NOT** run `git init` inside folder
+   - Structure (same for company-specific or shared):
      ```
-     projects/[project-name]/
+     projects/[location]/[project-name]/
      ├── src/              # Python scripts
      ├── workflows/        # Task procedures (markdown)
      ├── VERSION           # e.g., "1.0.0-dev"
      ├── CHANGELOG.md      # Version history
-     ├── SKILL.md          # Skill definition
+     ├── SKILL.md          # Skill definition (if deploying)
      └── README.md         # Project documentation
      ```
 
-3. **Develop iteratively**:
-   - Write project-specific scripts in `src/`
+5. **Develop iteratively**:
+   - Write code in `src/`
    - Use shared utilities from `execution/` (if needed)
-   - Extract to `execution/` only when 2+ projects use same code
+   - Extract to `execution/` only when 3+ projects use same code
    - Document workflows as you complete tasks
    - Update directive with learnings
-   - See: `docs/architecture-guide.md` for code organization decisions
 
-4. **Commit to dev-sandbox**:
+6. **Commit to dev-sandbox**:
    ```bash
    cd /Users/williammarceaujr./dev-sandbox
-   git add projects/[project-name]/
-   git commit -m "feat: Initial [project-name] structure"
+   git add projects/[location]/[project-name]/
+   git commit -m "feat([company]): Initial [project-name] structure"
+   git push origin main
    ```
 
-5. **Deploy when ready**:
+7. **Deploy when ready**:
    ```bash
    python deploy_to_skills.py --project [project-name] --version 1.0.0
    ```
 
-**References**: `docs/deployment.md`, `docs/repository-management.md`
+**References**:
+- `docs/FOLDER-STRUCTURE-GUIDE.md` - Where to put new code
+- `docs/HYBRID-ARCHITECTURE-QUICK-REF.md` - Quick reference
+- `scripts/add-company-project.sh` - Automated project creation
+- `docs/deployment.md` - Deployment pipeline
 
 ---
 

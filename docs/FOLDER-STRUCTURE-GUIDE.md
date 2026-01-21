@@ -35,8 +35,16 @@ projects/
 **For a specific company** (e.g., gym software for "FitLife Gym"):
 → Go to Question 2
 
-**Multi-tenant** (e.g., lead scraper used by 3+ companies):
+**Multi-tenant** (used by 2+ companies):
 → Put in `projects/shared/[project-name]/`
+→ Examples:
+  - `lead-scraper` - Used by Naples Dental Group, SW Florida HVAC, Square Foot Shipping
+  - `ai-customer-service` - Voice AI used by multiple businesses
+  - `social-media-automation` - Content scheduling for multiple brands
+  - `personal-assistant` - Serves all companies with unified dashboard
+→ Structure: Same as company projects (src/, workflows/, VERSION, CHANGELOG.md)
+→ Deploy via: `python deploy_to_skills.py --project [name] --version X.Y.Z`
+→ See: CLAUDE.md SOPs 1-7 for development/deployment pipeline
 
 ---
 
