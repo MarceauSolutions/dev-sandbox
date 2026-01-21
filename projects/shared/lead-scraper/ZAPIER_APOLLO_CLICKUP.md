@@ -7,18 +7,167 @@
 
 ---
 
+## Two Ways to Use Apollo Filters
+
+Apollo filtering can happen at **three levels**. Use them together for best results:
+
+| Level | Where | Cost | Best For |
+|-------|-------|------|----------|
+| **1. Apollo UI** | Apollo.io web interface | Free | Manual searches, saved searches |
+| **2. Apollo API** | `src/apollo.py` programmatic | Free | Automated pipelines, bulk searches |
+| **3. Zapier** | Zapier filter step | Uses task quota | Last-resort filtering |
+
+**Recommendation**: Filter at Level 1 or 2 FIRST, then Zapier only triggers for pre-qualified leads.
+
+---
+
 ## Integration Flow
 
 ```
-Apollo.io              Zapier              ClickUp
-    ↓                    ↓                   ↓
-New Contact     →   Filter/Transform  →  Create Task
-(Instant)            by Quality          in Pipeline
+Apollo.io                    Zapier              ClickUp
+    ↓                          ↓                   ↓
+Filtered Search       →   New Contact      →  Create Task
+(UI or API)              (Instant trigger)    in Pipeline
+    ↓
+Only qualified
+leads added
 ```
 
 ---
 
-## Setup Steps
+## Option A: Apollo UI Filtering (Manual)
+
+### Step 1: Create Saved Search in Apollo UI
+
+1. Go to Apollo.io → People Search
+2. Apply these filters in the UI:
+
+| Filter | Setting | Why |
+|--------|---------|-----|
+| **Email Status** | Verified | Only deliverable emails |
+| **Phone** | Has Mobile Phone | Callable contacts |
+| **Location** | Naples, FL (your target) | Geographic targeting |
+| **# Employees** | 1-50 | Small business focus |
+| **Job Titles** | Owner, CEO, Founder, Manager | Decision-makers |
+| **Seniority** | Owner, Founder, C-Suite | Top decision-makers |
+
+3. Click **Save Search** → Name it (e.g., "Naples Gyms Qualified")
+4. Use this saved search to find leads manually
+5. Add qualified leads to a List called "Send to ClickUp"
+
+### Step 2: Zapier Triggers from List
+
+Zapier's "New Contact" trigger fires when contacts are added to Apollo - including when you add them to a List from your saved search.
+
+---
+
+## Option B: Apollo API Filtering (Automated)
+
+Use our enhanced Apollo client with full filter support. See `APOLLO_SEARCH_FILTERS.md` for complete reference.
+
+### Quick Start with Search Profiles
+
+```python
+from src.apollo import ApolloClient, SearchProfiles
+
+client = ApolloClient()
+
+# Pre-built Naples profiles
+results = client.search_with_profile("naples_gyms")
+results = client.search_with_profile("naples_hvac")
+results = client.search_with_profile("naples_restaurants")
+
+# Generic profile with location
+results = client.search_with_profile(
+    "small_business_owners",
+    location="Naples, FL",
+    industry_keyword="gym"
+)
+
+# Verified emails only
+results = client.search_with_profile(
+    "verified_contacts_only",
+    location="Naples, FL",
+    industry_keyword="fitness"
+)
+```
+
+### Custom Filters (Full Control)
+
+```python
+from src.apollo import (
+    ApolloClient,
+    PeopleSearchFilters,
+    Seniority,
+    EmailStatus,
+    EmployeeRange
+)
+
+client = ApolloClient()
+
+# Build custom filter with all options
+filters = PeopleSearchFilters(
+    # Person filters
+    person_seniorities=[Seniority.OWNER, Seniority.FOUNDER, Seniority.C_SUITE],
+    person_locations=["Naples, FL"],
+
+    # Contact quality
+    contact_email_status=[EmailStatus.VERIFIED],  # Only verified emails
+
+    # Organization filters
+    organization_num_employees_ranges=[EmployeeRange.MICRO, EmployeeRange.SMALL],
+
+    # Industry
+    q_keywords="gym fitness",
+    q_organization_keyword_tags=["fitness", "gym", "health club"],
+
+    # Pagination
+    per_page=100
+)
+
+results = client.search_people_advanced(filters)
+```
+
+### Available API Filters
+
+| Category | Filters |
+|----------|---------|
+| **Person** | `person_titles`, `person_not_titles`, `person_seniorities`, `person_locations`, `person_departments` |
+| **Contact Quality** | `contact_email_status` (verified/guessed/bounced), `has_email`, `has_phone` |
+| **Organization** | `organization_locations`, `organization_domains`, `organization_num_employees_ranges`, `organization_not_locations` |
+| **Industry** | `q_keywords`, `q_organization_keyword_tags` |
+| **Technology** | `currently_using_any_of_technology_uids`, `not_using_any_of_technology_uids` |
+| **Revenue** | `revenue_range` (Under 1M through Over 1B) |
+| **Prospecting** | `prospected_by_current_team`, `revealed_for_current_team` |
+
+### Seniority Values
+
+```python
+Seniority.OWNER      # Business owners
+Seniority.FOUNDER    # Founders
+Seniority.C_SUITE    # CEO, CFO, CTO, etc.
+Seniority.VP         # Vice Presidents
+Seniority.DIRECTOR   # Directors
+Seniority.MANAGER    # Managers
+Seniority.SENIOR     # Senior staff
+Seniority.ENTRY      # Entry level
+```
+
+### Employee Range Values
+
+```python
+EmployeeRange.SOLO       # 1 employee
+EmployeeRange.MICRO      # 1-10 employees
+EmployeeRange.SMALL      # 11-50 employees
+EmployeeRange.MEDIUM     # 51-200 employees
+EmployeeRange.LARGE      # 201-500 employees
+```
+
+---
+
+## Zapier Setup (After Apollo Filtering)
+
+Since leads are pre-filtered in Apollo (UI or API), Zapier setup is simple:
 
 ### Step 1: Connect Apollo.io to Zapier
 
@@ -26,70 +175,21 @@ New Contact     →   Filter/Transform  →  Create Task
 2. Click "Make a Zap"
 3. Select Trigger App: **Apollo.io**
 4. Select Trigger Event: **New Contact** (Instant)
-   - Note: "New Contact" triggers when a contact is added to Apollo
-   - There may be up to 30 min delay while Apollo verifies contact info
+   - Note: There may be up to 30 min delay while Apollo verifies contact info
 5. Connect Apollo.io account:
    - In Apollo: Settings → Integrations → API → API keys
    - Create new key named "Zapier" (set as master key)
    - Copy and paste into Zapier
 6. Test trigger (should retrieve recent contacts)
 
-### Step 2: Configure Apollo Filters (FREE - Do This First!)
+### Step 2: Skip Zapier Filters (Already Done in Apollo!)
 
-**Important**: Apollo has powerful built-in filtering - use it BEFORE data hits Zapier to avoid unnecessary Zapier tasks.
+Since you've filtered in Apollo (UI or API), you likely don't need Zapier filters.
 
-#### Apollo's Free Filtering Capabilities:
-
-| Filter | Where to Set | What it Does |
-|--------|--------------|--------------|
-| **Email Status** | Search filters → "Email Status" | Only include verified emails |
-| **Phone Available** | Search filters → "Mobile Phone" or "Direct Dial" | Only contacts with phone numbers |
-| **Location** | Search filters → Location | Geographic targeting (Naples, FL) |
-| **Industry** | Search filters → Industry | Target specific verticals |
-| **Employee Count** | Search filters → "# Employees" | Company size filtering |
-| **Job Titles** | Search filters → "Job Titles" | Decision-maker targeting |
-| **Contact Stage** | Lists/Sequences | Only contacts at specific stages |
-
-#### Recommended Apollo Setup:
-
-1. **Create a Saved Search in Apollo** with your quality filters:
-   ```
-   ✓ Email Status: Verified
-   ✓ Mobile Phone: Has mobile phone
-   ✓ Location: Naples, FL (or your target area)
-   ✓ Employee Count: 1-50 (small businesses)
-   ✓ Industry: Your target industries
-   ```
-
-2. **Use Lists for Zapier triggers**:
-   - Only contacts you ADD to a specific List will trigger Zapier
-   - This gives you manual control over what goes to ClickUp
-   - Create a list called "Send to ClickUp"
-
-3. **Zapier triggers from your filtered data** - not raw Apollo database
-
-#### Why This Matters:
-
-| Approach | Zapier Tasks Used | Quality |
-|----------|-------------------|---------|
-| No Apollo filters | 100% of contacts | Mixed |
-| Apollo filters first | Only qualified leads | High |
-
-**Result**: Fewer Zapier tasks = stay on free tier longer + higher quality leads in ClickUp
-
-### Step 2b: Add Zapier Filter (Optional - Only If Needed)
-
-If Apollo's filters don't cover a specific condition, add a Zapier filter:
-
-1. Click "+ Add Step" → Choose "Filter by Zapier"
-2. Example conditions you CAN'T filter in Apollo:
-   ```
-   Field: Title
-   Condition: Text Contains
-   Value: Owner, Manager, Director
-   ```
-
-Most filtering should happen in Apollo (free) not Zapier (uses task quota).
+**Only add a Zapier filter if** you need logic Apollo can't do:
+- Complex text matching on titles
+- Time-based conditions
+- Multi-field conditional logic
 
 ### Step 3: Add ClickUp Action
 
@@ -116,7 +216,7 @@ Most filtering should happen in Apollo (free) not Zapier (uses task quota).
      ```
    - **Assignee**: (Your ClickUp user)
    - **Status**: "New Lead"
-   - **Priority**: Normal (or set manually based on your criteria)
+   - **Priority**: Normal
    - **Tags**: `apollo, new-lead`
 
 5. Map Custom Fields (if you have them in ClickUp):
@@ -165,54 +265,54 @@ Most filtering should happen in Apollo (free) not Zapier (uses task quota).
 
 ---
 
-## Advanced Configuration
+## Filter Comparison: UI vs API vs Zapier
 
-### Apollo Free Features to Leverage (Before Zapier)
+| Filter | Apollo UI | Apollo API (`src/apollo.py`) | Zapier |
+|--------|-----------|------------------------------|--------|
+| Email Status | ✅ Email Status dropdown | ✅ `contact_email_status=[EmailStatus.VERIFIED]` | ❌ Not available |
+| Phone Available | ✅ Has Mobile Phone checkbox | ✅ `has_phone=True` | ⚠️ Check if field exists |
+| Location | ✅ Location filter | ✅ `person_locations=["Naples, FL"]` | ⚠️ Text contains |
+| Employee Count | ✅ # Employees slider | ✅ `organization_num_employees_ranges=[EmployeeRange.SMALL]` | ❌ Not available |
+| Seniority | ✅ Seniority dropdown | ✅ `person_seniorities=[Seniority.OWNER]` | ❌ Not available |
+| Job Titles | ✅ Job Titles field | ✅ `person_titles=["owner", "ceo"]` | ⚠️ Text contains |
+| Industry Tags | ✅ Industry dropdown | ✅ `q_organization_keyword_tags=["fitness"]` | ❌ Not available |
+| Technologies | ✅ Technologies filter | ✅ `not_using_any_of_technology_uids=["shopify"]` | ❌ Not available |
+| Revenue | ✅ Revenue filter | ✅ `revenue_range=RevenueRange.R_1M_10M` | ❌ Not available |
+| **Cost** | **Free** | **Free** | **Uses task quota** |
 
-**Do these in Apollo FIRST** - all free:
+**Conclusion**: Do filtering in Apollo (UI or API), not Zapier.
 
-| Feature | How to Use | Benefit |
-|---------|------------|---------|
-| **Saved Searches** | Create filtered searches, save them | Reusable targeting criteria |
-| **Email Verification** | Filter by "Email Status: Verified" | Only valid emails |
-| **Phone Filters** | Filter by "Has Mobile" or "Has Direct Dial" | Only callable contacts |
-| **Lists** | Add contacts to named lists | Organize by campaign/stage |
-| **Tags** | Tag contacts in Apollo | Categorize leads |
-| **Contact Stages** | Set stages (New, Contacted, Qualified) | Track pipeline in Apollo |
-| **Sequences** | Automated email follow-ups | Built-in outreach (no Zapier needed) |
-| **Enrichment** | Auto-enriches contact data | Better data quality |
-| **Account Matching** | Links contacts to companies | Company-level insights |
+---
 
-**Pro tip**: Use Apollo's Sequences for email outreach instead of building it through Zapier. Only use Zapier for the Apollo → ClickUp sync.
+## Recommended Workflow
 
-### Using Formatter for Task Names
+### For Manual/Low-Volume
 
-Use Zapier's "Formatter" step to create clean task names:
+1. Create saved search in Apollo UI with quality filters
+2. Review results manually
+3. Add qualified leads to "Send to ClickUp" list
+4. Zapier triggers → Creates ClickUp task
+5. Work leads in ClickUp
 
-1. Add "Formatter by Zapier" step
-2. Select: **Text → Concatenate**
-3. Inputs: `{{First Name}}`, ` `, `{{Last Name}}`, ` - `, `{{Organization Name}}`
-4. Use output as Task Name in ClickUp
+### For Automated/High-Volume
 
-### Automated Task Assignment by Industry
+1. Run API search with `SearchProfiles` or custom filters
+2. Results are already filtered (verified email, correct seniority, etc.)
+3. Add to Apollo list programmatically
+4. Zapier triggers → Creates ClickUp task
+5. Work leads in ClickUp
 
-Use Zapier Paths to route leads:
+### Full Pipeline (End-to-End Automation)
 
+```bash
+# Run full pipeline with API filtering
+python -m src.apollo_pipeline run \
+    --search "gyms in Naples FL, 1-50 employees" \
+    --campaign "Naples Gyms Q1" \
+    --dry-run
 ```
-Path A: If Organization Name contains "HVAC" → Assign to Sarah
-Path B: If Organization Name contains "Restaurant" → Assign to Mike
-Path C: If Organization Name contains "Fitness" → Assign to Alex
-Default: Assign to William
-```
 
-### Available Apollo Triggers
-
-| Trigger | When it Fires | Use Case |
-|---------|---------------|----------|
-| **New Contact** (Instant) | Contact added to Apollo | Main trigger for lead pipeline |
-| **New Account** (Instant) | Company account created | Track new companies |
-| **Contact Updated** | Existing contact modified | Sync updates to ClickUp |
-| **Account Updated** | Company info changed | Keep company data current |
+This uses `src/apollo.py` filters internally.
 
 ---
 
@@ -227,150 +327,57 @@ Default: Assign to William
 | Professional | 2,000 tasks | $49 | For scaling operations |
 | Team | 50,000 tasks | $299 | Enterprise scale |
 
-### Our Usage Estimate
+### Why Apollo Filtering Saves Money
 
-- **Campaigns per month**: 10
-- **Leads per campaign**: 20 enriched (top 20% of 100)
-- **Total tasks created**: 200/month
-- **Recommended plan**: Starter ($19.99/month)
+| Approach | Contacts Found | Zapier Tasks | Cost |
+|----------|----------------|--------------|------|
+| No filtering | 1,000 | 1,000 | $49+/month |
+| Apollo filtered (top 20%) | 200 | 200 | Free tier |
+| API filtered + verified email | 50-100 | 50-100 | Free tier |
 
----
-
-## Alternative: Direct API Integration
-
-Instead of Zapier, we could build a direct Apollo → ClickUp integration:
-
-### Pros:
-- No Zapier subscription cost
-- More control over logic
-- Faster execution
-- Custom enrichment logic
-
-### Cons:
-- Requires development time
-- Need to maintain code
-- More complex error handling
-
-### Implementation Estimate:
-- **Time**: 4-6 hours
-- **Cost**: Free (no Zapier fees)
-- **Maintenance**: 1 hour/month
-
-**Recommendation**: Start with Zapier for speed, consider direct integration if Zapier costs become significant.
+**Pre-filter in Apollo = Stay on free Zapier tier**
 
 ---
 
-## Webhook Alternative (Advanced)
+## Alternative: Direct API Integration (No Zapier)
 
-For real-time integration without Zapier:
+For zero Zapier cost, use our direct integration:
 
-1. **Apollo Webhook**: Configure Apollo to send webhook when contact enriched
-2. **Our Server**: Receive webhook, validate data
-3. **ClickUp API**: Create task directly via ClickUp API
-
-**Setup**:
 ```python
-# webhook_receiver.py
-from flask import Flask, request
-import requests
+from src.apollo import ApolloClient, SearchProfiles
+from execution.clickup_api import create_task
 
-app = Flask(__name__)
+client = ApolloClient()
 
-@app.route('/apollo-webhook', methods=['POST'])
-def apollo_webhook():
-    data = request.json
+# Search with filters
+filters = SearchProfiles.naples_gyms()
+filters.contact_email_status = [EmailStatus.VERIFIED]
+results = client.search_all_pages(filters, max_results=100)
 
-    # Validate lead score
-    if data.get('lead_score', 0) < 8:
-        return 'Lead score too low', 200
-
-    # Create ClickUp task
-    clickup_api_key = os.getenv('CLICKUP_API_TOKEN')
-    headers = {'Authorization': clickup_api_key}
-
-    task_data = {
-        'name': f"{data['name']} - {data['company']}",
-        'description': f"Email: {data['email']}\nPhone: {data['phone']}",
-        'status': 'New Lead',
-        'tags': [data['campaign'], 'apollo-enriched']
-    }
-
-    response = requests.post(
-        'https://api.clickup.com/api/v2/list/{LIST_ID}/task',
-        headers=headers,
-        json=task_data
+# Create ClickUp tasks directly
+for person in results:
+    create_task(
+        name=f"{person['first_name']} {person['last_name']} - {person.get('organization', {}).get('name', '')}",
+        description=f"Email: {person.get('email')}\nPhone: {person.get('phone_numbers', [{}])[0].get('raw_number', '')}",
+        list_id=os.getenv("CLICKUP_LIST_ID"),
+        status="New Lead",
+        tags=["apollo", "api-import"]
     )
-
-    return 'Task created', 200
 ```
 
----
-
-## Monitoring & Troubleshooting
-
-### Zapier Task History
-
-Check: https://zapier.com/app/history
-
-**What to Monitor**:
-- Success rate (should be >95%)
-- Failed tasks (check error messages)
-- Task volume trends
-
-### Common Issues
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Tasks not creating | Zap turned off | Turn on Zap in Zapier dashboard |
-| Duplicate tasks | Multiple Zaps running | Disable duplicate Zaps |
-| Missing fields | Field mapping error | Review and update field mappings |
-| Slow creation | Zapier tier limits | Upgrade to Professional plan |
-
-### ClickUp Verification
-
-After Zap runs:
-1. Go to ClickUp "Leads Pipeline" list
-2. Check for new task
-3. Verify all fields populated correctly
-4. Test email/phone links work
+**Pros**: No Zapier cost, full control, faster
+**Cons**: Need to run script (cron or manual)
 
 ---
 
-## Success Metrics
+## Available Apollo Triggers in Zapier
 
-Track these to measure integration effectiveness:
-
-- **Task creation rate**: 100% of enriched leads → ClickUp tasks
-- **Data accuracy**: 95%+ of fields populated correctly
-- **Time savings**: Manual task creation eliminated (~5 min/lead)
-- **Lead response time**: Faster follow-up (task created immediately)
-
----
-
-## Next Steps
-
-1. ⬜ Create Zapier account (https://zapier.com)
-2. ⬜ Get Apollo API key (Settings → Integrations → API → Create master key)
-3. ⬜ Connect Apollo.io to Zapier
-4. ⬜ Connect ClickUp to Zapier
-5. ⬜ Select "New Contact" trigger
-6. ⬜ Add filter (Email exists + Phone exists)
-7. ⬜ Configure ClickUp "Create Task" action
-8. ⬜ Map fields (see Field Mapping Reference above)
-9. ⬜ Test with sample lead
-10. ⬜ Activate Zap
-11. ⬜ Monitor for 7 days
-12. ⬜ Optimize based on results
-
----
-
-## Resources
-
-- **Zapier Apollo Integration**: https://zapier.com/apps/apollo/integrations
-- **Apollo Zapier Docs**: https://knowledge.apollo.io/hc/en-us/articles/4415362778509-Zapier-Integration-Overview
-- **ClickUp API Docs**: https://clickup.com/api
-- **Apollo API Docs**: https://apolloio.github.io/apollo-api-docs/
-- **Our ClickUp Setup**: `execution/clickup_api.py`
+| Trigger | When it Fires | Use Case |
+|---------|---------------|----------|
+| **New Contact** (Instant) | Contact added to Apollo | Main trigger for lead pipeline |
+| **New Account** (Instant) | Company account created | Track new companies |
+| **Contact Updated** | Existing contact modified | Sync updates to ClickUp |
+| **Account Updated** | Company info changed | Keep company data current |
 
 ---
 
@@ -380,12 +387,42 @@ Track these to measure integration effectiveness:
 |-------|-------|----------|
 | No contacts triggering | No new contacts in Apollo | Add a contact manually to test |
 | 30+ min delay | Apollo verifies contact info first | Normal behavior - wait for verification |
-| Missing phone/email | Contact not enriched | Only enriched contacts have full data |
+| Missing phone/email | Contact not enriched | Use `contact_email_status=[EmailStatus.VERIFIED]` filter |
 | API key invalid | Wrong key type | Use "master key" not limited key |
 | Duplicate tasks | Multiple Zaps or re-triggers | Check for duplicate Zaps |
+| Low quality leads | Not filtering in Apollo | Use SearchProfiles or UI filters FIRST |
+
+---
+
+## Next Steps
+
+1. ⬜ Decide: Manual (Apollo UI) or Automated (Apollo API)
+2. ⬜ If API: Test search profiles in `src/apollo.py`
+3. ⬜ Create Apollo API key (Settings → Integrations → API → Create master key)
+4. ⬜ Create Zapier account (https://zapier.com)
+5. ⬜ Connect Apollo.io to Zapier
+6. ⬜ Connect ClickUp to Zapier
+7. ⬜ Select "New Contact" trigger
+8. ⬜ Configure ClickUp "Create Task" action
+9. ⬜ Map fields (see Field Mapping Reference above)
+10. ⬜ Test with sample lead
+11. ⬜ Activate Zap
+12. ⬜ Monitor for 7 days
+
+---
+
+## Resources
+
+- **Apollo Search Filters (API)**: `APOLLO_SEARCH_FILTERS.md`
+- **Apollo Client Code**: `src/apollo.py`
+- **Apollo Pipeline**: `src/apollo_pipeline.py`
+- **Zapier Apollo Integration**: https://zapier.com/apps/apollo/integrations
+- **Apollo API Docs**: https://docs.apollo.io/
+- **ClickUp API Docs**: https://clickup.com/api
+- **Our ClickUp Setup**: `execution/clickup_api.py`
 
 ---
 
 **Status**: Ready to implement
 **Estimated Setup Time**: 15-30 minutes
-**Monthly Cost**: Free tier (100 tasks) or $19.99 (Zapier Starter for 750 tasks)
+**Monthly Cost**: Free tier (with Apollo pre-filtering) or $19.99 (Zapier Starter)
