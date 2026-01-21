@@ -101,39 +101,75 @@ class ApolloPipeline:
         self,
         search_query: str,
         campaign_name: str
-    ) -> Optional[str]:
+    ) -> Optional[List]:
         """
-        Execute Apollo search via MCP and export results.
+        Execute Apollo search via MCP and return enriched leads.
 
         Args:
             search_query: Natural language search (e.g., "gyms in Naples FL, 1-50 employees")
             campaign_name: Campaign identifier for tracking
 
         Returns:
-            Path to exported CSV file, or None on failure
+            List of Lead objects, or None on failure
         """
         logger.info(f"🔍 Searching Apollo via MCP: {search_query}")
 
-        # TODO: Implement MCP client call
-        # This would use the Apollo MCP server to execute the search
-        # For now, we'll return a placeholder for manual Apollo export
+        try:
+            from .apollo_mcp_bridge import ApolloMCPBridge
+            from .models import Lead
 
-        print("\n" + "="*80)
-        print("APOLLO MCP SEARCH")
-        print("="*80)
-        print(f"\nSearch Query: {search_query}")
-        print(f"Campaign: {campaign_name}")
-        print("\nNEXT STEPS:")
-        print("1. Go to Apollo.io and run this search:")
-        print(f"   {search_query}")
-        print("2. Export results to CSV (FREE - no credits used)")
-        print("3. Save CSV to: output/apollo_search_TIMESTAMP.csv")
-        print("4. Run: python -m src.apollo_pipeline import <csv_file> --campaign '{}'".format(campaign_name))
-        print("="*80 + "\n")
+            # Initialize MCP bridge
+            api_key = os.getenv("APOLLO_API_KEY")
+            if not api_key:
+                logger.error("APOLLO_API_KEY not found in environment")
+                return None
 
-        # Return None to indicate manual step required
-        # In future, this would call Apollo MCP and return CSV path
-        return None
+            bridge = ApolloMCPBridge(api_key=api_key)
+
+            # Parse query to extract location and business type
+            # Simple parsing: look for "in [location]" pattern
+            parts = search_query.lower().split(" in ")
+            if len(parts) >= 2:
+                query = parts[0].strip()
+                location = parts[1].strip()
+            else:
+                query = search_query
+                location = "Naples, FL"  # Default
+
+            # Detect company context from campaign name
+            company_context = "marceau-solutions"
+            if "hvac" in campaign_name.lower() or "comfort" in campaign_name.lower():
+                company_context = "swflorida-hvac"
+            elif "shipping" in campaign_name.lower() or "footer" in campaign_name.lower():
+                company_context = "square-foot-shipping"
+
+            logger.info(f"Parsed query: '{query}' in '{location}' for {company_context}")
+
+            # Execute search via MCP bridge
+            leads = bridge.search(
+                query=query,
+                location=location,
+                campaign_name=campaign_name,
+                company_context=company_context,
+                max_results=100,
+                enrich_top_n=20,  # Only enrich top 20% to save credits
+                min_score=8
+            )
+
+            if not leads:
+                logger.warning("Apollo MCP search returned no leads")
+                return None
+
+            logger.info(f"✅ Apollo MCP returned {len(leads)} enriched leads")
+            return leads
+
+        except ImportError as e:
+            logger.error(f"Failed to import Apollo MCP bridge: {e}")
+            logger.error("Install apollo-mcp with: pip install apollo-mcp")
+            return None
+        except Exception as e:
+            logger.error(f"Apollo MCP search failed: {e}")
+            return None
 
     def import_and_score(
         self,
@@ -461,25 +497,63 @@ class ApolloPipeline:
         }
 
         try:
-            # Step 1: Apollo Search (manual for now)
+            # Step 1: Apollo Search via MCP (fully automated)
             print("\n" + "="*80)
-            print("APOLLO PIPELINE - STEP 1: SEARCH")
+            print("APOLLO PIPELINE - STEP 1: SEARCH & ENRICH")
             print("="*80)
-            csv_path = self.apollo_search_via_mcp(search_query, campaign_name)
+            leads = self.apollo_search_via_mcp(search_query, campaign_name)
 
-            if csv_path is None:
-                print("\n⚠️  Manual step required: Export Apollo search to CSV")
-                print("   Then run: python -m src.apollo_pipeline import <csv_file>")
+            if leads is None or len(leads) == 0:
+                print("\n⚠️  Apollo MCP search returned no leads")
+                pipeline_stats["errors"].append("No leads found")
                 return pipeline_stats
 
             pipeline_stats["steps_completed"].append("search")
+            pipeline_stats["total_leads_found"] = len(leads)
+            pipeline_stats["enriched_leads"] = len([l for l in leads if l.phone])
 
-            # Future steps (would execute automatically with MCP):
-            # Step 2: Import and Score
-            # Step 3: Filter Top 20%
-            # Step 4: Enrich via Apollo MCP
-            # Step 5: Run SMS Campaign
-            # Step 6: Enroll in Follow-up Sequence
+            print(f"\n✅ Found {len(leads)} leads, {pipeline_stats['enriched_leads']} with contact info")
+
+            # Step 2: Run SMS Campaign (if not dry run)
+            if not dry_run:
+                print("\n" + "="*80)
+                print("APOLLO PIPELINE - STEP 2: SMS CAMPAIGN")
+                print("="*80)
+
+                # Send SMS to enriched leads
+                enriched_leads = [l for l in leads if l.phone]
+                sms_results = self.sms_manager.send_campaign(
+                    leads=enriched_leads[:limit],
+                    template_name=template_name or "no_website_intro",
+                    business_id=business_id,
+                    campaign_name=campaign_name,
+                    dry_run=False
+                )
+
+                pipeline_stats["sms_sent"] = sms_results.get("sent", 0)
+                pipeline_stats["steps_completed"].append("sms")
+
+                print(f"\n✅ Sent {pipeline_stats['sms_sent']} SMS messages")
+
+                # Step 3: Enroll in Follow-up Sequence
+                print("\n" + "="*80)
+                print("APOLLO PIPELINE - STEP 3: FOLLOW-UP SEQUENCE")
+                print("="*80)
+
+                enrolled = self.followup_manager.create_campaign(
+                    campaign_name=campaign_name,
+                    leads=enriched_leads[:limit],
+                    business_id=business_id
+                )
+
+                pipeline_stats["enrolled_in_sequence"] = len(enrolled)
+                pipeline_stats["steps_completed"].append("followup")
+
+                print(f"\n✅ Enrolled {pipeline_stats['enrolled_in_sequence']} leads in follow-up sequence")
+
+            else:
+                print("\n⚠️  DRY RUN - No SMS sent, no follow-up enrolled")
+                print(f"   Would send SMS to {min(len([l for l in leads if l.phone]), limit)} leads")
 
         except Exception as e:
             logger.error(f"Pipeline error: {e}")
