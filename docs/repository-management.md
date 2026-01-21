@@ -19,11 +19,13 @@ This document explains how to properly manage git repositories in the dev-sandbo
 │   ├── execution/                  # Shared executable scripts
 │   └── docs/                       # Documentation
 │
-├── website-repo/                   # Separate git repo (MOVED OUT)
-│   └── .git/                       # Its own git tracking
+├── production/                     # Deployed production skills (ORGANIZED CATEGORY)
+│   └── email-analyzer-prod/        # Deployed skill repo (SEPARATE)
+│       └── .git/                   # Production git tracking
 │
-└── email-analyzer-prod/            # Deployed skill repo (SEPARATE)
-    └── .git/                       # Production git tracking
+└── websites/                       # Company & client websites (ORGANIZED CATEGORY)
+    └── website-repo/               # Separate git repo
+        └── .git/                   # Its own git tracking
 ```
 
 ## The Golden Rule: No Nested Repositories
@@ -88,16 +90,16 @@ git init  # ❌ Creates nested repo!
 
 ### Phase 2: Deploy to Production (Separate Repo)
 
-**Location**: `/Users/williammarceaujr./email-analyzer-prod/` (OUTSIDE dev-sandbox)
+**Location**: `/Users/williammarceaujr./production/email-analyzer-prod/` (OUTSIDE dev-sandbox, in production/ category)
 
-**Key principle**: Production/deployed skills get their own git repos **outside** dev-sandbox.
+**Key principle**: Production/deployed skills get their own git repos in the **production/** directory (sibling to dev-sandbox).
 
 ```bash
 # ✅ CORRECT: Use deploy script to create separate repo
 cd /Users/williammarceaujr./dev-sandbox
 python deploy_to_skills.py --project email-analyzer --version 1.1.0
 
-# This creates: /Users/williammarceaujr./email-analyzer-prod/
+# This creates: /Users/williammarceaujr./production/email-analyzer-prod/
 # With its own .git (NOT nested in dev-sandbox)
 ```
 
@@ -108,7 +110,7 @@ The deployment script automatically handles repository separation:
 ### What It Does
 
 1. **Reads** from: `/Users/williammarceaujr./dev-sandbox/projects/[project]/`
-2. **Writes** to: `/Users/williammarceaujr./[project]-prod/` (SEPARATE location)
+2. **Writes** to: `/Users/williammarceaujr./production/[project]-prod/` (SEPARATE location in production/ category)
 3. **Creates** a git repo in the production folder (NOT in dev-sandbox)
 4. **Copies** only necessary files (workflows, SKILL.md, scripts, etc.)
 5. **Commits** and optionally pushes to GitHub
@@ -117,9 +119,9 @@ The deployment script automatically handles repository separation:
 
 | Development | Production | Git Status |
 |-------------|------------|------------|
-| `dev-sandbox/email-analyzer/` | `email-analyzer-prod/` | Separate repos |
-| `dev-sandbox/projects/interview-prep/` | `interview-prep-prod/` | Separate repos |
-| `dev-sandbox/projects/fitness-influencer/` | `fitness-influencer-prod/` | Separate repos |
+| `dev-sandbox/email-analyzer/` | `production/email-analyzer-prod/` | Separate repos |
+| `dev-sandbox/projects/interview-prep/` | `production/interview-prep-prod/` | Separate repos |
+| `dev-sandbox/projects/fitness-influencer/` | `production/fitness-influencer-prod/` | Separate repos |
 
 ### Example Deployment
 
@@ -140,12 +142,13 @@ The deployment script automatically handles repository separation:
 │   └── email-analyzer/
 │       └── (files unchanged)
 │
-└── email-analyzer-prod/                   # NEW: Separate production repo
-    ├── .git/                              # NEW: Its own git tracking
-    ├── workflows/                         # Copied from dev-sandbox
-    ├── SKILL.md                           # Copied from dev-sandbox
-    ├── CHANGELOG.md                       # Copied from dev-sandbox
-    └── VERSION                            # Copied from dev-sandbox
+└── production/                            # Organized production category
+    └── email-analyzer-prod/               # NEW: Separate production repo
+        ├── .git/                          # NEW: Its own git tracking
+        ├── workflows/                     # Copied from dev-sandbox
+        ├── SKILL.md                       # Copied from dev-sandbox
+        ├── CHANGELOG.md                   # Copied from dev-sandbox
+        └── VERSION                        # Copied from dev-sandbox
 ```
 
 ## Special Cases
@@ -157,8 +160,8 @@ The deployment script automatically handles repository separation:
 **Solution**: Move it outside dev-sandbox.
 
 ```bash
-# ✅ Move nested repo to parent folder
-mv /Users/williammarceaujr./dev-sandbox/website-repo /Users/williammarceaujr./website-repo
+# ✅ Move nested repo to organized category
+mv /Users/williammarceaujr./dev-sandbox/website-repo /Users/williammarceaujr./websites/website-repo
 
 # Verify no nested repos remain
 cd /Users/williammarceaujr./dev-sandbox
@@ -169,12 +172,14 @@ find . -name ".git" -type d
 **Result**:
 ```
 /Users/williammarceaujr./
-├── dev-sandbox/          # Git repo for development
+├── dev-sandbox/                # Git repo for development
 │   └── .git/
-├── website-repo/         # Separate git repo (now at same level)
-│   └── .git/
-└── email-analyzer-prod/  # Separate git repo (deployment target)
-    └── .git/
+├── production/                 # Organized production category
+│   └── email-analyzer-prod/    # Separate git repo (deployment target)
+│       └── .git/
+└── websites/                   # Organized websites category
+    └── website-repo/           # Separate git repo
+        └── .git/
 ```
 
 ### Case 2: Projects That Need Git During Development
@@ -187,15 +192,15 @@ find . -name ".git" -type d
 # ❌ WRONG
 /Users/williammarceaujr./dev-sandbox/special-project/.git
 
-# ✅ CORRECT
-/Users/williammarceaujr./special-project/.git
+# ✅ CORRECT (in appropriate category)
+/Users/williammarceaujr./active-projects/special-project/.git
 ```
 
 Then use symlinks if you need it visible in dev-sandbox:
 
 ```bash
 cd /Users/williammarceaujr./dev-sandbox/projects
-ln -s ../../special-project special-project
+ln -s ../../active-projects/special-project special-project
 # Now appears in dev-sandbox/projects/ but isn't nested
 ```
 
@@ -256,12 +261,12 @@ rm -rf /Users/williammarceaujr./dev-sandbox/projects/some-project/.git
 
 **Problem**: Deployed the project inside dev-sandbox instead of outside.
 
-**Fix**: Use the deployment script correctly - it automatically creates production repos outside dev-sandbox.
+**Fix**: Use the deployment script correctly - it automatically creates production repos in the production/ category.
 
 ```bash
 # ✅ Correct deployment
 python deploy_to_skills.py --project email-analyzer --version 1.1.0
-# Creates: /Users/williammarceaujr./email-analyzer-prod/ (OUTSIDE dev-sandbox)
+# Creates: /Users/williammarceaujr./production/email-analyzer-prod/ (in production/ category)
 ```
 
 ## Verification Checklist
@@ -278,13 +283,13 @@ find . -name ".git" -type d
 git status
 # Should show tracked files, no nested repo warnings
 
-# 3. Verify production repos are siblings, not children
-ls -la /Users/williammarceaujr./ | grep -E "prod|repo"
-# Should show directories at same level as dev-sandbox
+# 3. Verify production repos are in production/ category
+ls -la /Users/williammarceaujr./production/
+# Should show *-prod directories
 
 # 4. Check deployment targets
 python deploy_to_skills.py --list
-# Shows where each project deploys (should be outside dev-sandbox)
+# Shows where each project deploys (should be in ~/production/)
 ```
 
 ## Best Practices Summary
@@ -293,9 +298,9 @@ python deploy_to_skills.py --list
 |----------|------------------|-------------------|
 | **New project development** | Create in `dev-sandbox/projects/[name]/` without git | Initialize git inside project folder |
 | **Existing git repo to work on** | Clone outside dev-sandbox, symlink if needed | Clone inside dev-sandbox |
-| **Deploy to production** | Use `deploy_to_skills.py` (creates sibling repo) | Manually create git repo inside dev-sandbox |
+| **Deploy to production** | Use `deploy_to_skills.py` (creates repo in production/) | Manually create git repo inside dev-sandbox |
 | **Multiple related projects** | Keep all in `dev-sandbox/projects/` without git | Create separate git repos for each |
-| **Website or standalone app** | Keep as sibling to dev-sandbox | Put inside dev-sandbox with git |
+| **Website or standalone app** | Keep in websites/ or active-projects/ category | Put inside dev-sandbox with git |
 
 ## Quick Reference Commands
 
@@ -303,15 +308,17 @@ python deploy_to_skills.py --list
 # Find nested repos (should return only ./.git)
 find /Users/williammarceaujr./dev-sandbox -name ".git" -type d
 
-# Move nested repo out of dev-sandbox
-mv /Users/williammarceaujr./dev-sandbox/[nested-repo] /Users/williammarceaujr./[nested-repo]
+# Move nested repo to appropriate category
+mv /Users/williammarceaujr./dev-sandbox/[nested-repo] /Users/williammarceaujr./[category]/[nested-repo]
+# Categories: production/, websites/, active-projects/, legacy/, archived/
 
 # Remove .git from project folder (if accidentally initialized)
 rm -rf /Users/williammarceaujr./dev-sandbox/projects/[project]/.git
 
-# Deploy project to separate production repo
+# Deploy project to production/ category
 cd /Users/williammarceaujr./dev-sandbox
 python deploy_to_skills.py --project [name] --version X.Y.Z
+# Creates: ~/production/[name]-prod/
 
 # Commit dev-sandbox changes (includes all project folders)
 cd /Users/williammarceaujr./dev-sandbox
@@ -331,5 +338,5 @@ In 99% of cases, follow the structure outlined in this document.
 
 ---
 
-**Last updated**: 2026-01-12
-**Related docs**: [deployment.md](deployment.md), [versioned-deployment.md](versioned-deployment.md)
+**Last updated**: 2026-01-21
+**Related docs**: [deployment.md](deployment.md), [versioned-deployment.md](versioned-deployment.md), [HOME-DIRECTORY-REORGANIZATION-COMPLETE.md](../HOME-DIRECTORY-REORGANIZATION-COMPLETE.md)
