@@ -41,8 +41,8 @@ BUSINESS_CONFIG = {
     ],
 
     "service_areas": ["Naples", "Fort Myers", "Cape Coral", "Bonita Springs", "Estero", "Marco Island", "Lehigh Acres", "Sanibel"],
-    "hours": "Office: 8am-5pm Mon-Fri | Emergency: 24/7",
-    "website": "https://wmarceau.github.io/swflorida-comfort-hvac/",
+    "hours": "Office: Mon-Fri 4:30pm-10pm, Sat-Sun 8am-5pm | Emergency: 24/7",
+    "website": "https://marceausolutions.github.io/swflorida-comfort-hvac/",
     "email": "info@swfloridacomfort.com"
 }
 
