@@ -1,0 +1,148 @@
+{
+  "campaign_id": "marceau_solutions_ai_automation_jan2026",
+  "business_id": "marceau-solutions",
+  "business_name": "Marceau Solutions",
+  "campaign_name": "AI Automation - 10+ Hours Saved Per Week",
+  "created_at": "2026-01-21T12:00:00",
+  "status": "preview",
+  "target_audience": {
+    "geography": [
+      "Naples, FL",
+      "Fort Myers, FL",
+      "Cape Coral, FL",
+      "Bonita Springs, FL"
+    ],
+    "industries": [
+      "Gyms & Fitness",
+      "Restaurants & Hospitality",
+      "Medical Practices",
+      "Professional Services"
+    ],
+    "pain_point": "manual_repetitive_tasks",
+    "lead_criteria": {
+      "pain_points": [
+        "no_website",
+        "no_online_transactions",
+        "few_reviews",
+        "manual_processes"
+      ],
+      "has_phone": true,
+      "business_size": "small_to_medium"
+    }
+  },
+  "value_proposition": {
+    "main_hook": "AI automation saves 10+ hours/week on repetitive tasks",
+    "proof_points": [
+      "Average small business owner spends 15 hrs/week on admin tasks",
+      "AI can automate: scheduling, emails, customer follow-ups, review requests",
+      "Clients save $2,000+/month in labor costs"
+    ],
+    "offer": "Free automation audit - Show you exactly what we can automate"
+  },
+  "templates": {
+    "touch_1_intro": {
+      "template_id": "automation_intro",
+      "body": "Hi, William from Marceau Solutions. How many hours do you spend each week on scheduling, emails, and follow-ups? Our AI automates this. Want a free audit? (239) 398-5676. Reply STOP to opt out.",
+      "char_count": 197,
+      "pain_point": "manual_tasks",
+      "compliance": "TCPA compliant - B2B exemption, STOP included"
+    },
+    "touch_2_question": {
+      "template_id": "automation_followup_question",
+      "body": "Quick question: If you could save 10+ hours/week on admin work, what would you do with that time? We automate scheduling, emails & more. (239) 398-5676. Reply STOP to opt out.",
+      "char_count": 188,
+      "strategy": "Makes them visualize the benefit"
+    },
+    "touch_3_breakup": {
+      "template_id": "automation_breakup",
+      "body": "Final message - Marceau Solutions. Only taking 3 more automation clients this month. Want to save 10 hrs/week? Text YES or call (239) 398-5676. Reply STOP to opt out.",
+      "char_count": 181,
+      "strategy": "Scarcity + final chance"
+    }
+  },
+  "segment_specific_templates": {
+    "gyms_fitness": {
+      "touch_1": "Hi, William from Marceau Solutions. Gym owners waste 12 hrs/week on member check-ins & follow-ups. Our AI handles this automatically. Free demo? (239) 398-5676. Reply STOP to opt out.",
+      "pain_point": "Manual member management, class scheduling"
+    },
+    "restaurants": {
+      "touch_1": "Hi, William from Marceau Solutions. Restaurants lose $500/week from no-shows. Our AI sends automated reminders & confirmations. Want a demo? (239) 398-5676. Reply STOP to opt out.",
+      "pain_point": "Reservation no-shows, manual confirmations"
+    },
+    "medical_practices": {
+      "touch_1": "Hi, William from Marceau Solutions. Medical practices spend 20 hrs/week on appointment reminders. Our AI automates this 24/7. Free trial? (239) 398-5676. Reply STOP to opt out.",
+      "pain_point": "Manual appointment reminders, patient follow-ups"
+    }
+  },
+  "follow_up_schedule": {
+    "sequence_type": "3-touch_hormozi",
+    "schedule": [
+      {
+        "touch": 1,
+        "day": 0,
+        "template": "touch_1_intro"
+      },
+      {
+        "touch": 2,
+        "day": 3,
+        "template": "touch_2_question"
+      },
+      {
+        "touch": 3,
+        "day": 7,
+        "template": "touch_3_breakup"
+      }
+    ]
+  },
+  "lead_scoring": {
+    "high_priority": [
+      "No website (needs automation the most)",
+      "High review count (successful business, can afford services)",
+      "No online booking (prime automation candidate)",
+      "Gym/Restaurant/Medical (highest ROI segments)"
+    ],
+    "scoring_factors": {
+      "no_website": 3,
+      "no_online_booking": 3,
+      "review_count_25_plus": 2,
+      "prime_industry": 2,
+      "high_income_zip": 1
+    }
+  },
+  "tracking_metrics": {
+    "delivery_rate_target": 0.95,
+    "response_rate_target": 0.08,
+    "opt_out_rate_max": 0.02,
+    "conversion_goal": "10 booked audits in first 30 days"
+  },
+  "apollo_search_criteria": {
+    "industries": [
+      "Health, Wellness and Fitness",
+      "Restaurants",
+      "Medical Practices",
+      "Professional Services"
+    ],
+    "location": "Naples, FL 30 mile radius",
+    "company_size": "1-25 employees",
+    "technologies_used": [
+      "None",
+      "Basic Website Only"
+    ]
+  },
+  "budget": {
+    "max_leads_per_batch": 100,
+    "sms_cost_per_message": 0.0079,
+    "estimated_cost_per_batch": 7.9,
+    "monthly_budget": 100.0
+  },
+  "launched_at": "2026-01-21T11:45:32.082586",
+  "stats": {
+    "business_id": "marceau-solutions",
+    "business_name": "Marceau Solutions",
+    "total_targeted": 5,
+    "sent": 5,
+    "enrolled_in_sequence": 5,
+    "errors": [],
+    "dry_run": true
+  }
+}

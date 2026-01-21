@@ -961,3 +961,85 @@ async def list_configured_businesses():
     """List all businesses with voice AI configured."""
     from .business_voice_engine import list_configured_businesses
     return list_configured_businesses()
+
+
+@router.post("/call-status")
+async def handle_call_status_callback(request: Request):
+    """Handle Twilio call status callbacks (e.g., call completed).
+
+    Integrates with lead intake system to track voice AI calls.
+    """
+    import logging
+    from urllib.parse import parse_qs
+
+    try:
+        # Parse form data from Twilio
+        body = await request.body()
+        params = parse_qs(body.decode())
+
+        # Extract Twilio parameters
+        call_sid = params.get('CallSid', [''])[0]
+        call_status = params.get('CallStatus', [''])[0]
+        from_number = params.get('From', [''])[0]
+        to_number = params.get('To', [''])[0]
+        call_duration = params.get('CallDuration', ['0'])[0]
+        account_sid = params.get('AccountSid', [''])[0]
+
+        logging.info(f"Call status webhook: {call_sid} - {call_status}")
+
+        # Only process completed calls
+        if call_status.lower() == 'completed':
+            # Try to import voice_ai_tracker
+            try:
+                import sys
+                from pathlib import Path
+
+                # Add lead-scraper to path
+                lead_scraper_path = Path(__file__).parent.parent.parent.parent / 'lead-scraper'
+                if lead_scraper_path.exists() and str(lead_scraper_path) not in sys.path:
+                    sys.path.insert(0, str(lead_scraper_path))
+
+                from src.voice_ai_tracker import VoiceAITracker
+
+                # Get call data from active_calls if available
+                call = active_calls.get(call_sid)
+
+                # Determine business and outcome
+                business_id = 'marceau-solutions'  # Default
+                outcome = 'info_only'  # Default
+
+                if call:
+                    # Try to determine outcome from call state
+                    state = conversation_states.get(call_sid)
+                    if state and hasattr(state, 'awaiting_confirmation') and state.awaiting_confirmation:
+                        outcome = 'appointment_booked'
+                    elif state and hasattr(state, 'collected_info'):
+                        outcome = 'callback_requested'
+
+                # Track the call
+                tracker = VoiceAITracker()
+                result = tracker.handle_call_completed(
+                    call_sid=call_sid,
+                    caller_phone=from_number,
+                    business_id=business_id,
+                    outcome=outcome,
+                    call_duration=int(call_duration),
+                    account_sid=account_sid,
+                    additional_data={
+                        'to_number': to_number,
+                        'call_status': call_status
+                    }
+                )
+
+                logging.info(f"Voice AI call tracked: {result}")
+
+            except ImportError as e:
+                logging.warning(f"Could not import voice_ai_tracker: {e}")
+            except Exception as e:
+                logging.error(f"Error tracking voice AI call: {e}")
+
+        return {"status": "ok", "call_sid": call_sid}
+
+    except Exception as e:
+        logging.error(f"Call status callback error: {e}")
+        return {"status": "error", "message": str(e)}

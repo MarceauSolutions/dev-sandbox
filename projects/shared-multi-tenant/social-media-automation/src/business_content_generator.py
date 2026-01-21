@@ -52,6 +52,7 @@ class GeneratedPost:
     posted: bool = False
     media_paths: Optional[List[str]] = None
     image_prompt: Optional[str] = None  # Grok prompt for image generation
+    utm_tracked_link: Optional[str] = None  # UTM-tracked link for attribution
 
 
 class BusinessContentGenerator:
@@ -77,6 +78,40 @@ class BusinessContentGenerator:
             with open(CONTENT_PATH) as f:
                 return json.load(f)
         raise FileNotFoundError(f"Content templates not found: {CONTENT_PATH}")
+
+    def _generate_utm_link(self, business_id: str, platform: str, campaign: str, post_id: str) -> str:
+        """Generate UTM-tracked link for social media post
+
+        Args:
+            business_id: Business identifier
+            platform: Social platform (twitter, linkedin, facebook)
+            campaign: Campaign name
+            post_id: Unique post identifier
+
+        Returns:
+            UTM-tracked URL
+        """
+        from urllib.parse import urlencode
+
+        # Business domain mappings
+        domain_map = {
+            'marceau-solutions': 'marceausolutions.com',
+            'squarefoot-shipping': 'swfllogistics.com',
+            'swflorida-hvac': 'swfloridahvac.com',
+            'shipping-logistics': 'swfllogistics.com'
+        }
+
+        domain = domain_map.get(business_id, 'marceausolutions.com')
+
+        utm_params = {
+            'utm_source': platform,
+            'utm_medium': 'organic',
+            'utm_campaign': campaign,
+            'utm_content': post_id
+        }
+
+        utm_string = urlencode(utm_params)
+        return f"https://{domain}?{utm_string}"
 
     def list_businesses(self) -> List[Dict]:
         """List all configured businesses."""
@@ -175,6 +210,17 @@ class BusinessContentGenerator:
         cta_options = biz.get("cta_options", ["Contact us"])
         cta = random.choice(cta_options)
 
+        # Generate unique post ID for UTM tracking
+        post_id = f"post_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{template_name[:10]}"
+
+        # Generate UTM-tracked link (assumes posting to Twitter/X for now)
+        utm_link = self._generate_utm_link(
+            business_id=business_id,
+            platform='twitter',  # Default platform - can be overridden later
+            campaign=campaign,
+            post_id=post_id
+        )
+
         post = GeneratedPost(
             business_id=business_id,
             business_name=biz["name"],
@@ -183,7 +229,8 @@ class BusinessContentGenerator:
             campaign=campaign,
             hashtags=hashtags,
             cta=cta,
-            created_at=datetime.now().isoformat()
+            created_at=datetime.now().isoformat(),
+            utm_tracked_link=utm_link
         )
 
         # Flag post for image generation if requested

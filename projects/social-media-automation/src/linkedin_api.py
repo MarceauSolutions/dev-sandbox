@@ -250,24 +250,52 @@ def test_linkedin_api():
     try:
         api = LinkedInAPI()
 
-        # Get user ID first
-        user_id = api.get_user_id()
-        print(f"✅ Connected as LinkedIn user: {user_id}")
+        # Skip get_user_id() - requires profile read permissions we don't have
+        # Instead, use the "me" URN which works with w_member_social scope
+        print("✅ Testing LinkedIn posting (using 'me' URN)...")
 
-        # Test text post
-        result = api.create_text_post(
-            text="""🧪 Test post from automation system.
+        # Test text post using 'me' instead of getting user ID
+        url = f"{api.base_url}/ugcPosts"
+
+        payload = {
+            "author": "urn:li:person:me",  # Use 'me' instead of actual user ID
+            "lifecycleState": "PUBLISHED",
+            "specificContent": {
+                "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": {
+                        "text": """🧪 Test post from automation system.
 
 Building AI automation for local businesses - Voice AI, lead generation, and workflow automation.
 
 If you're a small business owner spending 10+ hours/week on repetitive tasks, let's talk.
 
-#AI #Automation #SmallBusiness""",
-            visibility="PUBLIC"
+#AI #Automation #SmallBusiness"""
+                    },
+                    "shareMediaCategory": "NONE"
+                }
+            },
+            "visibility": {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+            }
+        }
+
+        import json
+        import requests
+        response = requests.post(
+            url,
+            headers=api.headers,
+            data=json.dumps(payload)
         )
 
+        if response.status_code != 201:
+            raise Exception(f"LinkedIn API error: {response.text}")
+
+        result = response.json()
+        post_id = result.get('id')
+
         print(f"\n✅ Test successful!")
-        print(f"Post URN: {result.get('id')}")
+        print(f"Post URN: {post_id}")
+        print(f"\nView your post on LinkedIn!")
 
     except Exception as e:
         print(f"\n❌ Test failed: {e}")

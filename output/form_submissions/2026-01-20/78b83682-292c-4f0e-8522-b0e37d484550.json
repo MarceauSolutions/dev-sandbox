@@ -1,0 +1,23 @@
+{
+  "email": "test@example.com",
+  "name": "Test User",
+  "phone": "(555) 123-4567",
+  "message": "This is a test submission",
+  "source": "api-test",
+  "interest": "automation-starter",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "78b83682-292c-4f0e-8522-b0e37d484550",
+  "timestamp": "2026-01-20T14:39:39.006002",
+  "ip_address": "2601:6c4:201:32d0:3881:7392:fe4c:f34c",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

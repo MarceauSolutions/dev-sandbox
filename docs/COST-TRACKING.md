@@ -1,6 +1,23 @@
 # Cost Tracking - All Projects
 
-Last Updated: 2026-01-18
+Last Updated: 2026-01-21
+
+## 🚨 ALERT: $100 Google Cloud Charge Identified
+
+**Status:** Under investigation
+**Date:** January 2026
+**Likely Cause:** Google Trust & Safety verification hold (not actual usage)
+**Actual API Usage:** Only $10.90 in Google Places API calls
+
+**Full Analysis:** See [GOOGLE-CLOUD-COST-ANALYSIS.md](GOOGLE-CLOUD-COST-ANALYSIS.md)
+
+**Action Taken:**
+- ✅ Cost analysis report created
+- ✅ Billing alerts configured ($10, $25, $50 thresholds)
+- ✅ API usage tracker deployed (`check_google_api_costs.py`)
+- ⏳ Awaiting Google Cloud Console verification
+
+---
 
 ## Twilio Account
 
@@ -82,6 +99,42 @@ Last Updated: 2026-01-18
 
 ---
 
+## Google Cloud Platform (New)
+
+**Project:** `fitness-influencer-assistant`
+
+### Active APIs
+
+| API | Current Usage | Free Tier | Status |
+|-----|---------------|-----------|--------|
+| Google Places API | $10.90/month | $200/month credit | ✅ Under limit |
+| YouTube Data API | 0 units | 10,000 units/day | ✅ Free |
+| Gmail API | Free (OAuth) | Unlimited | ✅ Free |
+| Google Sheets API | Free (OAuth) | Unlimited | ✅ Free |
+| Google Calendar API | Free (OAuth) | Unlimited | ✅ Free |
+
+### API Usage Details
+
+**Google Places API (Lead Scraper):**
+- Leads scraped: 409 businesses
+- Estimated API calls: 1,022 requests
+- Breakdown:
+  - Nearby Search: 21 calls × $32/1K = $0.67
+  - Place Details: 409 calls × $25/1K = $10.22
+- **Total cost:** $10.90/month (5.4% of free tier)
+
+**Cost-Saving Measures:**
+- Implement caching (80% reduction) → Target: $2-3/month
+- Use Yelp API as primary (free, 5K calls/day)
+- Reduce search radius 25km → 10km (50% reduction)
+
+**Monitoring:**
+- Daily cost checks: `python -m src.check_google_api_costs`
+- Billing alerts: $10, $25, $50 thresholds
+- API quotas: 1,000 requests/day limit
+
+---
+
 ## Cost-Saving Notes
 
 1. **GitHub Pages**: Free hosting for static sites (unlimited)
@@ -89,3 +142,5 @@ Last Updated: 2026-01-18
 3. **Zoho Mail**: Free for up to 5 users per domain
 4. **Twilio**: Pay-as-you-go, only charged for actual usage
 5. **Voice AI**: Uses Anthropic API from existing subscription (already paid)
+6. **Google Places API**: $200/month free tier until March 1, 2025
+7. **Yelp API**: Free (5,000 calls/day) - use as primary source

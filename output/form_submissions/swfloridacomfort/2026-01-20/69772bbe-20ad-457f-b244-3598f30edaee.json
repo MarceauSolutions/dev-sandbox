@@ -1,0 +1,23 @@
+{
+  "email": "test@example.com",
+  "name": "Test Customer",
+  "phone": "(239) 555-1234",
+  "message": "Test HVAC inquiry",
+  "source": "api-test",
+  "interest": "",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "69772bbe-20ad-457f-b244-3598f30edaee",
+  "timestamp": "2026-01-20T14:39:44.203207",
+  "ip_address": "2601:6c4:201:32d0:3881:7392:fe4c:f34c",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

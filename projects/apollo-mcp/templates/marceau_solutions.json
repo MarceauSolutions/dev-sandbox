@@ -1,0 +1,40 @@
+{
+  "company_name": "Marceau Solutions",
+  "company_key": "marceau_solutions",
+  "description": "Small businesses that could benefit from AI automation",
+  "search_template": {
+    "industry": [
+      "Restaurants",
+      "Fitness",
+      "Medical",
+      "Professional Services",
+      "Retail"
+    ],
+    "location": "Southwest Florida",
+    "employee_range": "1,50",
+    "titles": [
+      "Owner",
+      "CEO",
+      "Founder",
+      "Manager"
+    ],
+    "excluded_titles": [
+      "sales",
+      "marketing coordinator",
+      "assistant",
+      "intern"
+    ],
+    "keywords": "small business, local business"
+  },
+  "sms_templates": {
+    "intro": "marceau_no_website_intro",
+    "follow_up_1": "marceau_still_looking",
+    "social_proof": "marceau_social_proof"
+  },
+  "pain_points": [
+    "no_website",
+    "manual_processes",
+    "no_automation",
+    "high_labor_costs"
+  ]
+}

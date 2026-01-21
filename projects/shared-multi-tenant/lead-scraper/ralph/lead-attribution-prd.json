@@ -59,7 +59,7 @@
     {
       "story_id": "003",
       "title": "Build form submission tracking across all 3 business websites",
-      "description": "Ensure form submissions for marceau-solutions, swflorida-hvac, shipping-logistics all flow into lead_intake.json with proper business_id tagging. Parse UTM params, deduplicate, and trigger CRM sync.",
+      "description": "Ensure form submissions for marceau-solutions, swflorida-hvac, square-foot-shipping all flow into lead_intake.json with proper business_id tagging. Parse UTM params, deduplicate, and trigger CRM sync.",
       "acceptance_criteria": [
         "Google Sheets webhooks configured for all 3 businesses (or unified form handler)",
         "Form handler extracts: name, email, phone, message, utm_source, utm_medium, utm_campaign, utm_content, business_id",
@@ -103,14 +103,14 @@
     {
       "story_id": "005",
       "title": "Track social media campaign leads (ready for HVAC + Shipping)",
-      "description": "Build social media lead tracking for all 3 businesses (marceau already posting, HVAC and shipping ready but not launched). Track: clicks from social posts -> website visits -> form submissions. Ready to activate for swflorida-hvac and shipping-logistics when campaigns launch.",
+      "description": "Build social media lead tracking for all 3 businesses (marceau already posting, HVAC and shipping ready but not launched). Track: clicks from social posts -> website visits -> form submissions. Ready to activate for swflorida-hvac and square-foot-shipping when campaigns launch.",
       "acceptance_criteria": [
         "Social post scheduler generates UTM-tracked links for ALL 3 businesses",
         "Link shortener (bit.ly or custom) tracks clicks per post",
         "python -m src.social_media_tracker clicks --business swflorida-hvac -> shows click data (ready for when campaign starts)",
         "Form submissions with utm_source=twitter/linkedin/facebook tagged as social media leads",
         "python -m src.social_media_tracker conversion-rate -> shows: clicks vs form fills per business",
-        "Report shows: 'swflorida-hvac: 0 posts (campaign not started), shipping-logistics: 0 posts (ready to launch)'"
+        "Report shows: 'swflorida-hvac: 0 posts (campaign not started), square-foot-shipping: 0 posts (ready to launch)'"
       ],
       "files_to_create": [
         "src/social_media_tracker.py"
@@ -121,7 +121,7 @@
       "businesses": {
         "marceau-solutions": "ACTIVE - currently posting 25x/day with UTM tracking",
         "swflorida-hvac": "READY - templates exist, scheduler configured, waiting to launch",
-        "shipping-logistics": "READY - templates exist, scheduler configured, waiting to launch"
+        "square-foot-shipping": "READY - templates exist, scheduler configured, waiting to launch"
       },
       "passes": true
     },
@@ -227,7 +227,7 @@
     "business_separation": {
       "marceau-solutions": "AI automation, lead gen, websites",
       "swflorida-hvac": "HVAC services (social media ready, not launched)",
-      "shipping-logistics": "Logistics services (social media ready, not launched)"
+      "square-foot-shipping": "Logistics services (social media ready, not launched)"
     }
   },
   "success_metrics": {

@@ -22,5 +22,17 @@
     "status": "pending",
     "touches": 0,
     "next_touch_at": "2026-01-18T16:25:35.985246"
+  },
+  {
+    "submission_id": "69772bbe-20ad-457f-b244-3598f30edaee",
+    "email": "test@example.com",
+    "phone": "(239) 555-1234",
+    "name": "Test Customer",
+    "business_id": "swfloridacomfort",
+    "sequence_id": "default",
+    "added_at": "2026-01-20T14:39:48.512640",
+    "status": "pending",
+    "touches": 0,
+    "next_touch_at": "2026-01-20T14:39:48.512655"
   }
 ]

@@ -1,0 +1,23 @@
+{
+  "email": "test@example.com",
+  "name": "Test User",
+  "phone": "",
+  "message": "",
+  "source": "manual-api-test",
+  "interest": "",
+  "email_opt_in": true,
+  "sms_opt_in": false,
+  "social_handle": "",
+  "followers": "",
+  "submission_id": "c27c11d4-532d-423a-8dcf-4ef45df98948",
+  "timestamp": "2026-01-20T14:34:57.753690",
+  "ip_address": "2601:6c4:201:32d0:3881:7392:fe4c:f34c",
+  "user_agent": "curl/8.12.1",
+  "utm_source": "",
+  "utm_medium": "",
+  "utm_campaign": "",
+  "processed": false,
+  "clickup_task_id": "",
+  "google_sheet_row": 0,
+  "errors": []
+}

@@ -1,0 +1,40 @@
+{
+  "company_name": "Southwest Florida Comfort",
+  "company_key": "southwest_florida_comfort",
+  "description": "HVAC service businesses in Southwest Florida",
+  "search_template": {
+    "industry": [
+      "HVAC",
+      "Heating & Air Conditioning",
+      "Air Conditioning Contractor"
+    ],
+    "location": "Naples, FL",
+    "employee_range": "1,50",
+    "titles": [
+      "Owner",
+      "CEO",
+      "President",
+      "Founder",
+      "General Manager"
+    ],
+    "excluded_titles": [
+      "sales",
+      "outside sales",
+      "representative",
+      "coordinator",
+      "assistant"
+    ],
+    "keywords": "HVAC, air conditioning, heating"
+  },
+  "sms_templates": {
+    "intro": "swfl_comfort_hvac_intro",
+    "follow_up_1": "swfl_comfort_hvac_followup_1",
+    "social_proof": "swfl_comfort_hvac_social_proof"
+  },
+  "pain_points": [
+    "no_website",
+    "old_website",
+    "no_online_booking",
+    "poor_reviews"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "company_name": "Footer Shipping",
+  "company_key": "footer_shipping",
+  "description": "E-commerce businesses that need shipping optimization",
+  "search_template": {
+    "industry": [
+      "E-commerce",
+      "Retail",
+      "Consumer Goods",
+      "Online Retail"
+    ],
+    "location": null,
+    "employee_range": "1,30",
+    "titles": [
+      "Owner",
+      "Founder",
+      "CEO",
+      "Operations Manager",
+      "E-commerce Manager"
+    ],
+    "excluded_titles": [
+      "sales",
+      "warehouse",
+      "driver",
+      "picker",
+      "packer"
+    ],
+    "keywords": "e-commerce, online store, Shopify, Amazon seller"
+  },
+  "sms_templates": {
+    "intro": "footer_shipping_intro",
+    "follow_up_1": "footer_shipping_followup_1",
+    "social_proof": "footer_shipping_case_study"
+  },
+  "pain_points": [
+    "high_shipping_costs",
+    "slow_fulfillment",
+    "multi_carrier_management",
+    "returns_processing"
+  ]
+}

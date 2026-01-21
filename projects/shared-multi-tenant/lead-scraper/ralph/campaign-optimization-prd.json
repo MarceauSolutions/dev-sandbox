@@ -21,7 +21,7 @@
         "Template leaderboard: top 3 templates by response rate",
         "Funnel visualization: Contacted \u2192 Responded \u2192 Qualified \u2192 Converted",
         "Time-series: response rates over last 7/30/90 days",
-        "Comparison view: marceau-solutions vs swflorida-hvac vs shipping-logistics",
+        "Comparison view: marceau-solutions vs swflorida-hvac vs square-foot-shipping",
         "Export to CSV/JSON for further analysis"
       ],
       "files_to_modify": [

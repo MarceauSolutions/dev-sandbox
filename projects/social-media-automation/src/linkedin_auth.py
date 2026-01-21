@@ -18,7 +18,9 @@ load_dotenv()
 CLIENT_ID = os.getenv("LINKEDIN_CLIENT_ID")
 CLIENT_SECRET = os.getenv("LINKEDIN_CLIENT_SECRET")
 REDIRECT_URI = "http://localhost:8000/callback"
-SCOPE = "r_liteprofile w_member_social"
+# Scopes for posting to personal profile (works immediately with Share on LinkedIn API)
+# Note: r_liteprofile is deprecated - use openid and profile instead
+SCOPE = "openid profile w_member_social"
 
 # Will store auth code from callback
 auth_code = None
