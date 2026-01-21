@@ -481,7 +481,7 @@ print('Created credentials.json')
 "
 
 # Then run the script once to generate token.json (browser auth flow)
-cd projects/personal-assistant
+cd projects/shared/personal-assistant
 python -m src.digest_aggregator --hours 1
 ```
 
@@ -981,8 +981,24 @@ Launch a second Claude instance to document steps as you work:
 **Purpose**: Systematically save valuable test outputs while maintaining workspace cleanliness
 
 **Directory Structure**:
+
+For **company-specific** projects:
 ```
-projects/[project-name]/
+projects/[company-name]/[project-name]/
+├── demos/
+│   ├── client-[name]/           # Client-specific demo outputs
+│   │   ├── YYYY-MM-DD/          # Date-stamped test sessions
+│   │   │   ├── output.pdf
+│   │   │   ├── screenshot.png
+│   │   │   └── notes.md         # Context about this demo
+│   │   └── latest/              # Symlink to most recent
+│   └── internal/                # Internal testing outputs
+└── samples/                     # Reference examples for documentation
+```
+
+For **shared/multi-tenant** projects:
+```
+projects/shared/[project-name]/
 ├── demos/
 │   ├── client-[name]/           # Client-specific demo outputs
 │   │   ├── YYYY-MM-DD/          # Date-stamped test sessions
@@ -2754,7 +2770,7 @@ TOTAL: 4.0/5 = GO
 
 1. **Verify prerequisites**:
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
    grep TWILIO .env  # All 3 vars set
    cat output/approved_templates.json | grep template_name
    ```
@@ -2792,7 +2808,7 @@ TOTAL: 4.0/5 = GO
 - ✅ Opt-out rate <2%
 - ✅ No carrier violations
 
-**References**: `projects/lead-scraper/workflows/sms-campaign-sop.md`, `projects/lead-scraper/workflows/cold-outreach-sop.md`
+**References**: `projects/shared/lead-scraper/workflows/sms-campaign-sop.md`, `projects/shared/lead-scraper/workflows/cold-outreach-sop.md`
 
 ---
 
@@ -2861,7 +2877,7 @@ Day 60: Follow-up #6 (re_engage)
 - ✅ Delivery rate >95%
 - ✅ >80% reach Day 60
 
-**References**: `projects/lead-scraper/workflows/multi-touch-followup-sop.md`
+**References**: `projects/shared/lead-scraper/workflows/multi-touch-followup-sop.md`
 
 ---
 
@@ -3049,7 +3065,7 @@ Is this task repeatable?
 
 **Directory Structure**:
 ```
-projects/lead-scraper/
+projects/shared/lead-scraper/
 ├── output/
 │   ├── sms_campaigns.json       # Raw campaign data
 │   ├── campaign_analytics.json  # Aggregated metrics
@@ -3111,7 +3127,7 @@ CONTACTED (100%) → RESPONDED (5-10%) → QUALIFIED (50% of responded) → CONV
 - ✅ A/B tests reach statistical significance
 - ✅ Winning templates identified
 
-**References**: `projects/lead-scraper/src/campaign_analytics.py`, SOP 18 (SMS Campaign Execution)
+**References**: `projects/shared/lead-scraper/src/campaign_analytics.py`, SOP 18 (SMS Campaign Execution)
 
 ---
 
@@ -3186,7 +3202,7 @@ Output shows:
 
 **Template Library Structure**:
 ```
-projects/lead-scraper/
+projects/shared/lead-scraper/
 ├── templates/
 │   ├── sms/
 │   │   ├── intro/           # Initial outreach templates
@@ -3217,7 +3233,7 @@ Define Segment → Create Hypotheses → A/B Test → Analyze → Scale Winner �
 - ✅ Response rate improves over baseline (target: +20% per quarter)
 - ✅ Losing templates archived with learnings
 
-**References**: `projects/lead-scraper/workflows/cold-outreach-strategy-sop.md`, SOP 18 (SMS Campaign Execution), SOP 22 (Campaign Analytics)
+**References**: `projects/shared/lead-scraper/workflows/cold-outreach-strategy-sop.md`, SOP 18 (SMS Campaign Execution), SOP 22 (Campaign Analytics)
 
 ---
 
@@ -3229,7 +3245,7 @@ Define Segment → Create Hypotheses → A/B Test → Analyze → Scale Winner �
 
 **Key Files**:
 ```
-projects/personal-assistant/
+projects/shared/personal-assistant/
 ├── src/
 │   ├── digest_aggregator.py    # Combines all data sources
 │   ├── morning_digest.py       # Generates + sends digest via SMTP
@@ -3244,7 +3260,7 @@ projects/personal-assistant/
 
 ```bash
 # Preview morning digest (no email sent)
-cd /Users/williammarceaujr./dev-sandbox/projects/personal-assistant
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/personal-assistant
 python -m src.morning_digest --preview
 
 # Send digest email
@@ -3302,7 +3318,7 @@ python -m src.routine_scheduler --create-all
 - ✅ Calendar reminders created for all routine tasks
 - ✅ Historical digests saved in `output/digests/`
 
-**References**: `projects/personal-assistant/workflows/daily-routine-sop.md`, `projects/personal-assistant/workflows/weekly-routine-sop.md`
+**References**: `projects/shared/personal-assistant/workflows/daily-routine-sop.md`, `projects/shared/personal-assistant/workflows/weekly-routine-sop.md`
 
 ---
 
