@@ -34,34 +34,62 @@ New Contact     →   Filter/Transform  →  Create Task
    - Copy and paste into Zapier
 6. Test trigger (should retrieve recent contacts)
 
-### Step 2: Add Filter (Optional but Recommended)
+### Step 2: Configure Apollo Filters (FREE - Do This First!)
 
-**Purpose**: Only create ClickUp tasks for high-quality leads
+**Important**: Apollo has powerful built-in filtering - use it BEFORE data hits Zapier to avoid unnecessary Zapier tasks.
+
+#### Apollo's Free Filtering Capabilities:
+
+| Filter | Where to Set | What it Does |
+|--------|--------------|--------------|
+| **Email Status** | Search filters → "Email Status" | Only include verified emails |
+| **Phone Available** | Search filters → "Mobile Phone" or "Direct Dial" | Only contacts with phone numbers |
+| **Location** | Search filters → Location | Geographic targeting (Naples, FL) |
+| **Industry** | Search filters → Industry | Target specific verticals |
+| **Employee Count** | Search filters → "# Employees" | Company size filtering |
+| **Job Titles** | Search filters → "Job Titles" | Decision-maker targeting |
+| **Contact Stage** | Lists/Sequences | Only contacts at specific stages |
+
+#### Recommended Apollo Setup:
+
+1. **Create a Saved Search in Apollo** with your quality filters:
+   ```
+   ✓ Email Status: Verified
+   ✓ Mobile Phone: Has mobile phone
+   ✓ Location: Naples, FL (or your target area)
+   ✓ Employee Count: 1-50 (small businesses)
+   ✓ Industry: Your target industries
+   ```
+
+2. **Use Lists for Zapier triggers**:
+   - Only contacts you ADD to a specific List will trigger Zapier
+   - This gives you manual control over what goes to ClickUp
+   - Create a list called "Send to ClickUp"
+
+3. **Zapier triggers from your filtered data** - not raw Apollo database
+
+#### Why This Matters:
+
+| Approach | Zapier Tasks Used | Quality |
+|----------|-------------------|---------|
+| No Apollo filters | 100% of contacts | Mixed |
+| Apollo filters first | Only qualified leads | High |
+
+**Result**: Fewer Zapier tasks = stay on free tier longer + higher quality leads in ClickUp
+
+### Step 2b: Add Zapier Filter (Optional - Only If Needed)
+
+If Apollo's filters don't cover a specific condition, add a Zapier filter:
 
 1. Click "+ Add Step" → Choose "Filter by Zapier"
-2. Add Filter Conditions:
-
-   **Option A - Filter by email presence (recommended for quality)**:
+2. Example conditions you CAN'T filter in Apollo:
    ```
-   Field: Email
-   Condition: Exists
-   ```
-
-   **Option B - Filter by specific saved search/list**:
-   ```
-   Field: Contact Stage
+   Field: Title
    Condition: Text Contains
-   Value: [your stage name]
+   Value: Owner, Manager, Director
    ```
 
-   **Option C - Multiple conditions**:
-   ```
-   Condition 1: Email (Exists)
-   AND
-   Condition 2: Phone (Exists)
-   ```
-
-3. Continue only if filter passes
+Most filtering should happen in Apollo (free) not Zapier (uses task quota).
 
 ### Step 3: Add ClickUp Action
 
@@ -139,19 +167,23 @@ New Contact     →   Filter/Transform  →  Create Task
 
 ## Advanced Configuration
 
-### Multi-Condition Filters
+### Apollo Free Features to Leverage (Before Zapier)
 
-Create sophisticated filtering logic:
+**Do these in Apollo FIRST** - all free:
 
-```
-Condition 1: Email (Exists)
-AND
-Condition 2: Organization Name (Text Contains) "Naples"
-AND
-Condition 3: Phone Number (Exists)
-```
+| Feature | How to Use | Benefit |
+|---------|------------|---------|
+| **Saved Searches** | Create filtered searches, save them | Reusable targeting criteria |
+| **Email Verification** | Filter by "Email Status: Verified" | Only valid emails |
+| **Phone Filters** | Filter by "Has Mobile" or "Has Direct Dial" | Only callable contacts |
+| **Lists** | Add contacts to named lists | Organize by campaign/stage |
+| **Tags** | Tag contacts in Apollo | Categorize leads |
+| **Contact Stages** | Set stages (New, Contacted, Qualified) | Track pipeline in Apollo |
+| **Sequences** | Automated email follow-ups | Built-in outreach (no Zapier needed) |
+| **Enrichment** | Auto-enriches contact data | Better data quality |
+| **Account Matching** | Links contacts to companies | Company-level insights |
 
-This ensures only contacts with valid contact info create tasks.
+**Pro tip**: Use Apollo's Sequences for email outreach instead of building it through Zapier. Only use Zapier for the Apollo → ClickUp sync.
 
 ### Using Formatter for Task Names
 
