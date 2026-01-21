@@ -1,1 +1,1 @@
-Hi {business_name}, this is William. Quick question - are you losing customers because they can't find you online? Reply YES or NO. Reply STOP to opt out.
+{business_name}: How many calls do you miss when you're with customers? Our AI answers 24/7. Free 2-week trial. Reply YES to see how it works. Reply STOP to opt out.

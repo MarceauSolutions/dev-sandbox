@@ -1,1 +1,1 @@
-Hi {business_name}, William here. Voice AI handles all your calls/bookings 24/7 for $99/mo. No missed revenue. Free trial? Reply YES. Reply STOP to opt out.
+{business_name}: 24/7 AI phone system for HVAC. Answers emergency calls, books appointments, transfers when needed. $99/mo + free setup. Reply YES. Reply STOP to opt out.
