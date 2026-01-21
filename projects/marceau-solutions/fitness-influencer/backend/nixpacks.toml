@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ["python310", "python310Packages.pip", "python310Packages.virtualenv", "ffmpeg", "imagemagick"]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  ". /opt/venv/bin/activate && pip install -r requirements.txt --no-cache-dir"
+]
+
+[phases.setup.nixPkgsArchive]
+archive = "nixpkgs-unstable"
+
+[phases.build]
+cmds = ["echo 'FFmpeg location:' && which ffmpeg || echo 'FFmpeg not in PATH'"]
+
+[start]
+cmd = ". /opt/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"

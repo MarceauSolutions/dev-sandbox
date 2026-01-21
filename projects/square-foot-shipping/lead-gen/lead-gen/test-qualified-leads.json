@@ -1,0 +1,99 @@
+{
+  "qualified_leads": [
+    {
+      "business_name": "ShipQuick E-commerce",
+      "business_type": "E-commerce",
+      "industry": "Online Retail",
+      "description": "Physical goods marketplace selling outdoor equipment",
+      "estimated_volume_monthly": 250,
+      "email": "contact@shipquick.com",
+      "phone": "+1-555-0123",
+      "contact_name": "John Smith",
+      "country": "US",
+      "state": "CA",
+      "address": "123 Main St, Los Angeles, CA",
+      "score": 10.0,
+      "category": "HOT",
+      "score_breakdown": {
+        "volume": 10.0,
+        "business_type": 10.0,
+        "contact_quality": 10.0,
+        "location": 10.0
+      }
+    },
+    {
+      "business_name": "High Volume Distributor",
+      "business_type": "Wholesale Distribution",
+      "industry": "Distribution",
+      "description": "Wholesale distributor of consumer goods",
+      "estimated_volume_monthly": 800,
+      "email": "orders@hvdist.com",
+      "phone": "+1-888-555-4444",
+      "contact_name": "Mike Chen",
+      "country": "US",
+      "state": "TX",
+      "score": 10.0,
+      "category": "HOT",
+      "score_breakdown": {
+        "volume": 10.0,
+        "business_type": 10.0,
+        "contact_quality": 10.0,
+        "location": 10.0
+      }
+    },
+    {
+      "business_name": "Canada Manufacturing Co",
+      "business_type": "Manufacturing",
+      "industry": "Industrial",
+      "description": "Custom manufacturing and distribution of metal parts",
+      "estimated_volume_monthly": 150,
+      "email": "sales@canmfg.ca",
+      "phone": "+1-416-555-9999",
+      "contact_name": "Sarah Johnson",
+      "country": "CA",
+      "address": "Toronto, ON",
+      "score": 9.4,
+      "category": "HOT",
+      "score_breakdown": {
+        "volume": 10.0,
+        "business_type": 10.0,
+        "contact_quality": 10.0,
+        "location": 7.0
+      }
+    },
+    {
+      "business_name": "Mystery Business",
+      "email": "hello@mysterybiz.com",
+      "score": 5.1,
+      "category": "WARM",
+      "score_breakdown": {
+        "volume": 5.0,
+        "business_type": 5.0,
+        "contact_quality": 5.5,
+        "location": 5.0
+      }
+    },
+    {
+      "business_name": "Digital Solutions Inc",
+      "business_type": "Software",
+      "industry": "SaaS",
+      "description": "Cloud-based software solutions",
+      "estimated_volume_monthly": 5,
+      "email": "info@digitalsolutions.com",
+      "country": "US",
+      "state": "NY",
+      "score": 4.9,
+      "category": "COLD",
+      "score_breakdown": {
+        "volume": 3.0,
+        "business_type": 3.0,
+        "contact_quality": 5.5,
+        "location": 10.0
+      }
+    }
+  ],
+  "total_count": 5,
+  "hot_count": 3,
+  "warm_count": 1,
+  "cold_count": 1
+}
