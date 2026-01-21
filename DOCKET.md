@@ -46,23 +46,32 @@ python -m src.apollo_pipeline run \
 ---
 
 ### 2. Publish Apollo MCP to Distribution Channels
-**Status**: ⏸️ 66% Complete (PyPI ✅, MCP Registry ⏸️, OpenRouter pending)
+**Status**: ✅ COMPLETE (100%)
+**Completed**: 2026-01-21
 **Trigger**: ✅ Apollo MCP server complete
 **Request**: Deploy to PyPI + MCP Registry + OpenRouter
 
 **Steps**:
 - ✅ SOP 11: Package structure verified
 - ✅ SOP 12: Published to PyPI (https://pypi.org/project/apollo-mcp/1.1.0/)
-- ⏸️ SOP 13: MCP Registry (BLOCKED - needs GitHub device code `737E-C3DE`)
-- ⏳ SOP 16: OpenRouter registration (pending MCP Registry)
+- ✅ SOP 13: Published to MCP Registry (io.github.wmarceau/apollo v1.1.0)
+- ⏳ SOP 16: OpenRouter registration (optional, can be done later)
 
 **Package Info**:
 - Name: `apollo-mcp` (vs competitor `apollo-io-mcp`)
 - MCP ID: `io.github.wmarceau/apollo`
 - Version: 1.1.0 (production)
 - Score: 92/100 vs competitor's 40/100
+- PyPI: https://pypi.org/project/apollo-mcp/1.1.0/
+- MCP Registry: https://registry.modelcontextprotocol.io (searchable as "apollo")
 
-**Blocker**: User must authorize GitHub at https://github.com/login/device with code `737E-C3DE`
+**Installation**:
+```bash
+# Via pip
+pip install apollo-mcp
+
+# Via Claude Desktop - search "apollo" in MCP Registry
+```
 
 ---
 
