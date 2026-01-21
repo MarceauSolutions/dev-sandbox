@@ -17,7 +17,7 @@
 See `projects/product-ideas/` for future revenue products.
 
 ### Shared Multi-Tenant Tools
-See `projects/shared-multi-tenant/` for tools used across all 3 companies:
+See `projects/shared/` for tools used across all companies:
 - lead-scraper (lead generation)
 - social-media-automation (social posting)
 - ai-customer-service (voice AI)
