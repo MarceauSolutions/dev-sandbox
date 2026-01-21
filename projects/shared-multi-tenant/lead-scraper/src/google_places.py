@@ -13,6 +13,7 @@ from pathlib import Path
 
 from .models import Lead
 from .config import ScraperConfig, GOOGLE_PLACES_TYPES
+from .website_validator import is_real_business_website
 
 logger = logging.getLogger(__name__)
 
@@ -315,9 +316,17 @@ class GooglePlacesScraper:
         """Identify potential pain points from place data."""
         pain_points = []
 
-        # No website
-        if not place.get("website"):
+        # Website validation using website_validator.py
+        website_url = place.get("website", "")
+        is_real, reason = is_real_business_website(website_url)
+
+        if not website_url:
+            # Truly no website at all
             pain_points.append("no_website")
+        elif not is_real:
+            # Has URL but it's just an aggregator (Yelp, Google Maps, Facebook)
+            pain_points.append("aggregator_only")
+            logger.debug(f"{place.get('name')}: {reason}")
 
         # No or few reviews
         review_count = place.get("user_ratings_total", 0)
