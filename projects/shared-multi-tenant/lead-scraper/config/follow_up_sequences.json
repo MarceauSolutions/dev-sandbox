@@ -1,0 +1,173 @@
+{
+  "sequences": {
+    "marceau_7touch": {
+      "sequence_id": "marceau_7touch",
+      "name": "MarceauSolutions 7-Touch Sequence",
+      "business": "MarceauSolutions",
+      "total_touches": 7,
+      "duration_days": 60,
+      "auto_enroll": true,
+      "auto_stop_on_response": true,
+      "touches": [
+        {
+          "touch_number": 1,
+          "day": 0,
+          "template_id": "marceau_social_proof",
+          "template_path": "templates/sms/intro/marceau_social_proof.txt",
+          "label": "Initial Outreach - Social Proof"
+        },
+        {
+          "touch_number": 2,
+          "day": 2,
+          "template_id": "marceau_question",
+          "template_path": "templates/sms/intro/marceau_question.txt",
+          "label": "Follow-Up #1 - Discovery Question"
+        },
+        {
+          "touch_number": 3,
+          "day": 5,
+          "template_id": "marceau_value_prop",
+          "template_path": "templates/sms/intro/marceau_value_prop.txt",
+          "label": "Follow-Up #2 - Value Proposition"
+        },
+        {
+          "touch_number": 4,
+          "day": 10,
+          "template_id": "marceau_social_proof",
+          "template_path": "templates/sms/intro/marceau_social_proof.txt",
+          "label": "Follow-Up #3 - Social Proof (Repeat)"
+        },
+        {
+          "touch_number": 5,
+          "day": 15,
+          "template_id": "marceau_question",
+          "template_path": "templates/sms/intro/marceau_question.txt",
+          "label": "Follow-Up #4 - Discovery Question (Repeat)"
+        },
+        {
+          "touch_number": 6,
+          "day": 30,
+          "template_id": "marceau_value_prop",
+          "template_path": "templates/sms/intro/marceau_value_prop.txt",
+          "label": "Follow-Up #5 - Value Proposition (Repeat)"
+        },
+        {
+          "touch_number": 7,
+          "day": 60,
+          "template_id": "marceau_social_proof",
+          "template_path": "templates/sms/intro/marceau_social_proof.txt",
+          "label": "Follow-Up #6 - Final Touch"
+        }
+      ],
+      "exit_conditions": [
+        "response_received",
+        "opt_out",
+        "delivery_failure_2x",
+        "callback_scheduled",
+        "day_60_completed"
+      ]
+    },
+    "hvac_7touch": {
+      "sequence_id": "hvac_7touch",
+      "name": "SW Florida Comfort 7-Touch Sequence",
+      "business": "SW Florida Comfort HVAC",
+      "total_touches": 7,
+      "duration_days": 60,
+      "auto_enroll": true,
+      "auto_stop_on_response": true,
+      "touches": [
+        {
+          "touch_number": 1,
+          "day": 0,
+          "template_id": "hvac_social_proof",
+          "template_path": "templates/sms/intro/hvac_social_proof.txt",
+          "label": "Initial Outreach - Social Proof"
+        },
+        {
+          "touch_number": 2,
+          "day": 2,
+          "template_id": "hvac_question",
+          "template_path": "templates/sms/intro/hvac_question.txt",
+          "label": "Follow-Up #1 - Pain Discovery"
+        },
+        {
+          "touch_number": 3,
+          "day": 5,
+          "template_id": "hvac_value_prop",
+          "template_path": "templates/sms/intro/hvac_value_prop.txt",
+          "label": "Follow-Up #2 - Value Proposition"
+        },
+        {
+          "touch_number": 4,
+          "day": 10,
+          "template_id": "hvac_social_proof",
+          "template_path": "templates/sms/intro/hvac_social_proof.txt",
+          "label": "Follow-Up #3 - Social Proof (Repeat)"
+        },
+        {
+          "touch_number": 5,
+          "day": 15,
+          "template_id": "hvac_question",
+          "template_path": "templates/sms/intro/hvac_question.txt",
+          "label": "Follow-Up #4 - Pain Discovery (Repeat)"
+        },
+        {
+          "touch_number": 6,
+          "day": 30,
+          "template_id": "hvac_value_prop",
+          "template_path": "templates/sms/intro/hvac_value_prop.txt",
+          "label": "Follow-Up #5 - Value Proposition (Repeat)"
+        },
+        {
+          "touch_number": 7,
+          "day": 60,
+          "template_id": "hvac_social_proof",
+          "template_path": "templates/sms/intro/hvac_social_proof.txt",
+          "label": "Follow-Up #6 - Final Touch"
+        }
+      ],
+      "exit_conditions": [
+        "response_received",
+        "opt_out",
+        "delivery_failure_2x",
+        "callback_scheduled",
+        "day_60_completed"
+      ]
+    }
+  },
+  "configuration": {
+    "default_sequence_duration_days": 60,
+    "default_total_touches": 7,
+    "auto_enroll_new_campaigns": true,
+    "auto_stop_on_any_response": true,
+    "delivery_failure_threshold": 2,
+    "time_of_day_restrictions": {
+      "earliest_hour": 9,
+      "latest_hour": 20,
+      "timezone": "America/New_York"
+    },
+    "rate_limiting": {
+      "max_messages_per_day": 100,
+      "max_messages_per_hour": 20
+    }
+  },
+  "schedule": {
+    "description": "7-Touch Follow-Up Schedule (Hormozi Framework)",
+    "touch_days": [0, 2, 5, 10, 15, 30, 60],
+    "rationale": {
+      "day_0": "Initial outreach - introduce value proposition",
+      "day_2": "Still Looking follow-up - most prospects need reminders",
+      "day_5": "Provide social proof or different angle",
+      "day_10": "Direct question or availability check",
+      "day_15": "Re-engage with different messaging",
+      "day_30": "Breakup message - create urgency",
+      "day_60": "Final re-engagement - dormant lead revival"
+    },
+    "expected_response_distribution": {
+      "touch_1_2": "20% of responses",
+      "touch_3_5": "60% of responses (Hormozi sweet spot)",
+      "touch_6_7": "20% of responses (late responders)"
+    }
+  },
+  "last_updated": "2026-01-21T12:40:00"
+}

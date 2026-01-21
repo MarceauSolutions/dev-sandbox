@@ -1,0 +1,124 @@
+{
+  "tests": [
+    {
+      "test_id": "marceau_001_social_vs_question",
+      "test_name": "MarceauSolutions: Social Proof vs Question-Based",
+      "business": "MarceauSolutions",
+      "status": "ready",
+      "created_at": "2026-01-21T12:36:00",
+      "control": {
+        "template_id": "marceau_social_proof",
+        "template_path": "templates/sms/intro/marceau_social_proof.txt",
+        "description": "Social proof - 3 Naples businesses, 40% boost"
+      },
+      "variant": {
+        "template_id": "marceau_question",
+        "template_path": "templates/sms/intro/marceau_question.txt",
+        "description": "Pain discovery question - losing customers online?"
+      },
+      "sample_size_per_variant": 100,
+      "confidence_threshold": 0.85,
+      "primary_metric": "positive_response_rate",
+      "secondary_metrics": ["opt_out_rate", "hot_lead_rate"],
+      "segment": {
+        "pain_point": "no_website",
+        "category": "fitness",
+        "location": "Naples, FL"
+      }
+    },
+    {
+      "test_id": "marceau_002_question_vs_value",
+      "test_name": "MarceauSolutions: Question vs Value Prop",
+      "business": "MarceauSolutions",
+      "status": "pending",
+      "created_at": "2026-01-21T12:36:00",
+      "control": {
+        "template_id": "marceau_question",
+        "template_path": "templates/sms/intro/marceau_question.txt",
+        "description": "Pain discovery question - losing customers online?"
+      },
+      "variant": {
+        "template_id": "marceau_value_prop",
+        "template_path": "templates/sms/intro/marceau_value_prop.txt",
+        "description": "Free value prop - custom landing page in 48hrs"
+      },
+      "sample_size_per_variant": 100,
+      "confidence_threshold": 0.85,
+      "primary_metric": "positive_response_rate",
+      "secondary_metrics": ["opt_out_rate", "hot_lead_rate"],
+      "segment": {
+        "pain_point": "no_website",
+        "category": "fitness",
+        "location": "Naples, FL"
+      }
+    },
+    {
+      "test_id": "hvac_001_social_vs_question",
+      "test_name": "SW Florida Comfort: Social Proof vs Question-Based",
+      "business": "SW Florida Comfort HVAC",
+      "status": "ready",
+      "created_at": "2026-01-21T12:36:00",
+      "control": {
+        "template_id": "hvac_social_proof",
+        "template_path": "templates/sms/intro/hvac_social_proof.txt",
+        "description": "Social proof - 24/7 AI, 35% more bookings"
+      },
+      "variant": {
+        "template_id": "hvac_question",
+        "template_path": "templates/sms/intro/hvac_question.txt",
+        "description": "Pain discovery - how many calls missed after 5pm?"
+      },
+      "sample_size_per_variant": 100,
+      "confidence_threshold": 0.85,
+      "primary_metric": "positive_response_rate",
+      "secondary_metrics": ["opt_out_rate", "hot_lead_rate"],
+      "segment": {
+        "pain_point": "missed_calls",
+        "category": "hvac",
+        "location": "SW Florida"
+      }
+    },
+    {
+      "test_id": "hvac_002_question_vs_value",
+      "test_name": "SW Florida Comfort: Question vs Value Prop",
+      "business": "SW Florida Comfort HVAC",
+      "status": "pending",
+      "created_at": "2026-01-21T12:36:00",
+      "control": {
+        "template_id": "hvac_question",
+        "template_path": "templates/sms/intro/hvac_question.txt",
+        "description": "Pain discovery - how many calls missed after 5pm?"
+      },
+      "variant": {
+        "template_id": "hvac_value_prop",
+        "template_path": "templates/sms/intro/hvac_value_prop.txt",
+        "description": "Value prop - $99/mo, free trial"
+      },
+      "sample_size_per_variant": 100,
+      "confidence_threshold": 0.85,
+      "primary_metric": "positive_response_rate",
+      "secondary_metrics": ["opt_out_rate", "hot_lead_rate"],
+      "segment": {
+        "pain_point": "missed_calls",
+        "category": "hvac",
+        "location": "SW Florida"
+      }
+    }
+  ],
+  "configuration": {
+    "min_sample_size_per_variant": 100,
+    "default_confidence_threshold": 0.85,
+    "statistical_test": "two_proportion_z_test",
+    "early_stopping": {
+      "enabled": true,
+      "check_frequency_contacts": 25,
+      "min_contacts_before_check": 50
+    },
+    "variant_assignment": {
+      "method": "random",
+      "seed": null,
+      "stratify_by": ["category", "location"]
+    }
+  },
+  "last_updated": "2026-01-21T12:36:00"
+}
