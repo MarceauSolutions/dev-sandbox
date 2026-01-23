@@ -84,7 +84,7 @@ projects/$FOLDER_NAME/[project-name]/
 
 ---
 
-**For documentation on folder structure**, see: [docs/FOLDER-STRUCTURE-GUIDE-UPDATED.md](../../docs/FOLDER-STRUCTURE-GUIDE-UPDATED.md)
+**For documentation on folder structure**, see: [docs/FOLDER-STRUCTURE-GUIDE.md](../../docs/FOLDER-STRUCTURE-GUIDE.md)
 EOF
 
 echo "✅ Created: $COMPANY_DIR/"

@@ -129,7 +129,7 @@ $PROJECT_NAME/
 
 ---
 
-**Documentation**: See [docs/FOLDER-STRUCTURE-GUIDE-UPDATED.md](../../../docs/FOLDER-STRUCTURE-GUIDE-UPDATED.md)
+**Documentation**: See [docs/FOLDER-STRUCTURE-GUIDE.md](../../../docs/FOLDER-STRUCTURE-GUIDE.md)
 EOF
 
         # Create placeholder main.py
