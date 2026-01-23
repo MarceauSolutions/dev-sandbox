@@ -257,11 +257,21 @@ Respect immediately. Note preference for session.
 
 ## Related SOPs
 
-- **SOP 2**: Multi-Agent Testing
-- **SOP 9**: Multi-Agent Architecture Exploration
-- **SOP 10**: Multi-Agent Parallel Development
-- **SOP 17**: Market Viability Analysis
+All SOPs are located in `CLAUDE.md`. Use Ctrl+F/Cmd+F to search.
+
+| SOP | Name | When to Use | Agents |
+|-----|------|-------------|--------|
+| **SOP 2** | Multi-Agent Testing | After implementation, test edge cases | 4 testing agents |
+| **SOP 9** | Architecture Exploration | Before coding, research approaches | 3-4 research agents |
+| **SOP 10** | Parallel Development | During coding, build components | 3-4 build agents |
+| **SOP 17** | Market Viability | Before committing, validate idea | 4 market research agents |
+
+**Quick Navigation**:
+- `CLAUDE.md` → Search "### SOP 2:" for Multi-Agent Testing
+- `CLAUDE.md` → Search "### SOP 9:" for Architecture Exploration
+- `CLAUDE.md` → Search "### SOP 10:" for Parallel Development
+- `CLAUDE.md` → Search "### SOP 17:" for Market Viability
 
 ---
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-01-23

@@ -563,12 +563,18 @@ python -m src.digest_aggregator --hours 1
 2. **Use automated scripts**:
    ```bash
    # For company-specific project
-   ./scripts/add-company-project.sh company-name "project-name" tool
+   ./scripts/add-company-project.sh company-name "project-name" [type]
 
    # For shared/multi-tenant project
-   mkdir -p projects/shared/[project-name]
-   # Then manually create structure below
+   ./scripts/add-company-project.sh shared "project-name" [type]
    ```
+
+   **Project types** (3rd argument):
+   - `tool` (default) - Automation tool or internal utility
+   - `product` - Customer-facing product/service
+   - `service` - Backend service or API
+   - `workflow` - Documented procedure or process
+   - `mcp` - Model Context Protocol server (for PyPI/MCP Registry publishing)
 
 3. **Create directive (if needed)**: `directives/[project-name].md`
    - Define capabilities and SOPs
