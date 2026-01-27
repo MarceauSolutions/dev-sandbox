@@ -1,6 +1,6 @@
 # Upwork MCP Server
 
-mcp-name: io.github.marceausolutions/upwork
+mcp-name: io.github.wmarceau/upwork
 
 A Model Context Protocol (MCP) server for Upwork job discovery, client analysis, and proposal assistance. Helps freelancers find relevant opportunities and craft winning proposals.
 
