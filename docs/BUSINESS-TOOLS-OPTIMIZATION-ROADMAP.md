@@ -21,7 +21,7 @@
 ```bash
 # Authorize GitHub device code (one-time)
 # Then run:
-cd /Users/williammarceaujr./dev-sandbox/projects/apollo-mcp
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/apollo-mcp
 /path/to/mcp-publisher publish --server server.json
 ```
 **Result**: Apollo discoverable in Claude marketplace

@@ -112,7 +112,7 @@ Automatic rollback:
 4. `~/websites/squarefoot-shipping-website/` → `projects/square-foot-shipping/website/`
 5. `~/active-projects/fitness-influencer-backend/` → `projects/marceau-solutions/fitness-influencer/backend/`
 6. `~/active-projects/fitness-influencer-frontend/` → `projects/marceau-solutions/fitness-influencer/frontend/`
-7. Current `fitness-influencer/` → `projects/marceau-solutions/fitness-influencer/mcp/`
+7. Current `fitness-influencer/` → `projects/marceau-solutions/fitness-influencer-mcp/`
 8. `~/active-projects/square-foot-shipping/` → `projects/square-foot-shipping/lead-gen/`
 
 ### 273+ Files Updated

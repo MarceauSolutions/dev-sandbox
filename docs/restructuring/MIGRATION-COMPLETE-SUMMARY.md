@@ -22,7 +22,7 @@
 ✅ **5-7. Fitness Influencer Consolidation**
 - `~/active-projects/fitness-influencer-backend` → `projects/marceau-solutions/fitness-influencer/backend/`
 - `~/active-projects/fitness-influencer-frontend` → `projects/marceau-solutions/fitness-influencer/frontend/`
-- `projects/marceau-solutions/fitness-influencer/` → `projects/marceau-solutions/fitness-influencer/mcp/`
+- `projects/marceau-solutions/fitness-influencer/` → `projects/marceau-solutions/fitness-influencer-mcp/`
 
 ✅ **8. SquareFoot Lead Gen**
 - `~/active-projects/square-foot-shipping` → `projects/square-foot-shipping/lead-gen/`

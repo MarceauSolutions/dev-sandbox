@@ -246,5 +246,5 @@ def generate_broll(prompt: str, duration: int = 15):
 ## Related Documents
 
 - `projects/marceau-solutions/fitness-influencer/` - Main project
-- `projects/marceau-solutions/fitness-influencer/mcp/market-analysis/` - Full research
+- `projects/marceau-solutions/fitness-influencer-mcp/market-analysis/` - Full research
 - [BUSINESS-TOOLS-OPTIMIZATION-ROADMAP.md](BUSINESS-TOOLS-OPTIMIZATION-ROADMAP.md)

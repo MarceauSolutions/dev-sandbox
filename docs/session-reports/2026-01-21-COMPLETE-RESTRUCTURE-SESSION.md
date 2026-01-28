@@ -154,7 +154,7 @@ projects/swflorida-hvac/website/
 projects/square-foot-shipping/website/
 projects/marceau-solutions/fitness-influencer/backend/
 projects/marceau-solutions/fitness-influencer/frontend/
-projects/marceau-solutions/fitness-influencer/mcp/
+projects/marceau-solutions/fitness-influencer-mcp/
 projects/square-foot-shipping/lead-gen/
 ```
 

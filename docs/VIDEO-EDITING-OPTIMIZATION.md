@@ -9,9 +9,9 @@
 
 | Tool | Location | Purpose | Status |
 |------|----------|---------|--------|
-| `video_jumpcut.py` | fitness-influencer/mcp/src | Silence removal | Production |
+| `video_jumpcut.py` | fitness-influencer-mcp/src | Silence removal | Production |
 | `moviepy_video_generator_v2.py` | execution/ | Image slideshow | Production |
-| `intelligent_video_router.py` | fitness-influencer/mcp/src | Routing | Production |
+| `intelligent_video_router.py` | fitness-influencer-mcp/src | Routing | Production |
 | `shotstack_api.py` | execution/ | Cloud video gen | Production |
 
 ### Current Jump-Cut Capabilities
@@ -312,5 +312,5 @@ vidstab>=1.0                # Video stabilization
 ## Related Documents
 
 - [FITNESS-INFLUENCER-AI-OPTIMIZATION.md](FITNESS-INFLUENCER-AI-OPTIMIZATION.md)
-- `projects/marceau-solutions/fitness-influencer/mcp/src/` - Source code
+- `projects/marceau-solutions/fitness-influencer-mcp/src/` - Source code
 - `execution/` - Shared video utilities
