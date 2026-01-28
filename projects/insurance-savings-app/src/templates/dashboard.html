@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — AutoInsure Saver{% endblock %}
+
+{% block content %}
+{% if not user %}
+<!-- No Profile Yet -->
+<div class="text-center py-20">
+    <span class="text-6xl">🚗</span>
+    <h2 class="mt-4 text-2xl font-bold text-gray-900">Welcome to AutoInsure Saver</h2>
+    <p class="mt-2 text-gray-600">Set up your profile to start finding savings on your car insurance.</p>
+    <a href="/setup" class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700">
+        Get Started →
+    </a>
+</div>
+{% else %}
+<!-- Savings Overview -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-500">Current Annual Cost</p>
+        <p class="text-3xl font-bold text-gray-900">${{ "%.2f"|format(current_annual) }}</p>
+        <p class="text-xs text-gray-400 mt-1">${{ "%.2f"|format(current_annual / 12) }}/month</p>
+    </div>
+    <div class="bg-green-50 rounded-xl shadow-sm border border-green-200 p-6 savings-glow">
+        <p class="text-sm text-green-600">Potential Savings</p>
+        <p class="text-3xl font-bold text-green-700">${{ "%.2f"|format(total_savings) }}</p>
+        <p class="text-xs text-green-500 mt-1">per year</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-500">Optimized Cost</p>
+        <p class="text-3xl font-bold text-blue-600">${{ "%.2f"|format(optimized_annual) }}</p>
+        <p class="text-xs text-gray-400 mt-1">${{ "%.2f"|format(optimized_annual / 12) }}/month</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <p class="text-sm text-gray-500">Active Deals</p>
+        <p class="text-3xl font-bold text-purple-600">{{ deals|length }}</p>
+        <p class="text-xs text-gray-400 mt-1">across all carriers</p>
+    </div>
+</div>
+
+<!-- Profile Summary -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Current Policy -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Current Policy</h3>
+        {% for policy in user.policies %}
+        <div class="space-y-2">
+            <p><span class="text-gray-500">Carrier:</span> <strong>{{ policy.carrier }}</strong></p>
+            <p><span class="text-gray-500">Premium:</span> ${{ "%.2f"|format(policy.monthly_premium) }}/mo</p>
+            <p><span class="text-gray-500">Deductible:</span> ${{ "%.2f"|format(policy.deductible) }}</p>
+            {% if policy.renewal_date %}
+            <p><span class="text-gray-500">Renewal:</span> {{ policy.renewal_date }}</p>
+            {% endif %}
+        </div>
+        {% if not loop.last %}<hr class="my-3">{% endif %}
+        {% endfor %}
+        {% if not user.policies %}
+        <p class="text-gray-400">No policies added yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Vehicles -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">🚗 Vehicles</h3>
+        {% for vehicle in user.vehicles %}
+        <div class="space-y-1">
+            <p class="font-medium">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</p>
+            {% if vehicle.annual_mileage %}
+            <p class="text-sm text-gray-500">{{ "{:,}".format(vehicle.annual_mileage) }} mi/year</p>
+            {% endif %}
+            {% if vehicle.estimated_value %}
+            <p class="text-sm text-gray-500">Value: ${{ "{:,.0f}".format(vehicle.estimated_value) }}</p>
+            {% endif %}
+        </div>
+        {% if not loop.last %}<hr class="my-3">{% endif %}
+        {% endfor %}
+        {% if not user.vehicles %}
+        <p class="text-gray-400">No vehicles added yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Driving Record -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Driving Record</h3>
+        {% if user.driving_record %}
+        <div class="space-y-2">
+            {% if user.driving_record.years_licensed %}
+            <p><span class="text-gray-500">Licensed:</span> {{ user.driving_record.years_licensed }} years</p>
+            {% endif %}
+            <p><span class="text-gray-500">Accidents (3yr):</span> {{ user.driving_record.accidents_3yr }}</p>
+            <p><span class="text-gray-500">Tickets (3yr):</span> {{ user.driving_record.tickets_3yr }}</p>
+            {% if user.driving_record.credit_score_range %}
+            <p><span class="text-gray-500">Credit:</span> {{ user.driving_record.credit_score_range }}</p>
+            {% endif %}
+            <div class="flex flex-wrap gap-2 mt-3">
+                {% if user.driving_record.homeowner %}
+                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Homeowner</span>
+                {% endif %}
+                {% if user.driving_record.married %}
+                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Married</span>
+                {% endif %}
+                {% if user.driving_record.defensive_driving_course %}
+                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Defensive Driving</span>
+                {% endif %}
+                {% if user.driving_record.military %}
+                <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">Military</span>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <p class="text-gray-400">No driving record added yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Savings Recommendations -->
+<div class="mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">💡 Savings Recommendations</h3>
+    {% if savings %}
+    <div class="space-y-4">
+        {% for rec in savings %}
+        {% if rec.status != 'dismissed' %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-start justify-between
+            {% if rec.status == 'applied' %}border-green-300 bg-green-50{% endif %}">
+            <div class="flex-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if rec.category == 'deductible' %}bg-yellow-100 text-yellow-700
+                        {% elif rec.category == 'coverage' %}bg-blue-100 text-blue-700
+                        {% elif rec.category == 'discount' %}bg-green-100 text-green-700
+                        {% elif rec.category == 'switching' %}bg-purple-100 text-purple-700
+                        {% elif rec.category == 'payment' %}bg-orange-100 text-orange-700
+                        {% else %}bg-gray-100 text-gray-700{% endif %}">
+                        {{ rec.category }}
+                    </span>
+                    {% if rec.status == 'applied' %}
+                    <span class="text-xs text-green-600">✅ Applied</span>
+                    {% endif %}
+                </div>
+                <h4 class="mt-1 font-medium text-gray-900">{{ rec.title }}</h4>
+                <p class="mt-1 text-sm text-gray-600">{{ rec.description }}</p>
+                {% if rec.action_steps %}
+                <p class="mt-2 text-xs text-gray-500">💪 {{ rec.action_steps }}</p>
+                {% endif %}
+            </div>
+            <div class="text-right ml-4 flex-shrink-0">
+                <p class="text-lg font-bold text-green-600">${{ "%.0f"|format(rec.estimated_annual_savings) }}</p>
+                <p class="text-xs text-gray-400">/year</p>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400">Run a savings analysis to see recommendations.</p>
+    {% endif %}
+</div>
+
+<!-- Recent Deals -->
+<div>
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">🏷️ Latest Deals</h3>
+        <a href="/deals" class="text-blue-600 text-sm hover:underline">View all →</a>
+    </div>
+    {% if deals %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for deal in deals[:6] %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <div class="flex items-center justify-between mb-2">
+                <span class="font-semibold text-gray-900">{{ deal.carrier }}</span>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{{ deal.deal_type }}</span>
+            </div>
+            <h4 class="text-sm font-medium text-gray-800">{{ deal.title }}</h4>
+            <p class="mt-1 text-xs text-gray-500">{{ deal.description[:120] }}{% if deal.description|length > 120 %}...{% endif %}</p>
+            {% if deal.estimated_savings_pct %}
+            <p class="mt-2 text-green-600 font-medium text-sm">~{{ deal.estimated_savings_pct }}% savings</p>
+            {% endif %}
+            {% if deal.url %}
+            <a href="{{ deal.url }}" target="_blank" class="mt-2 inline-block text-blue-500 text-xs hover:underline">Learn more →</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400">No deals found yet. Run a scan to discover promos.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
