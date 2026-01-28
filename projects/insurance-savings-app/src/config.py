@@ -1,4 +1,6 @@
 """Application configuration."""
+from __future__ import annotations
+from typing import List
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
@@ -24,7 +26,7 @@ class Settings(BaseSettings):
     savings_alert_threshold: float = 200.0  # Annual savings threshold for alerts
     
     # Renewal reminders (days before renewal)
-    renewal_reminder_days: list[int] = [60, 45, 30, 14, 7]
+    renewal_reminder_days: List[int] = [60, 45, 30, 14, 7]
     
     class Config:
         env_file = ".env"

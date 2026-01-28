@@ -1,3 +1,4 @@
+from typing import Optional, List
 """Savings recommendation and premium history models."""
 from datetime import date, datetime
 from sqlalchemy import String, Integer, Float, Date, DateTime, Boolean, Text, ForeignKey
@@ -16,7 +17,7 @@ class SavingsRecommendation(Base):
     
     title: Mapped[str] = mapped_column(String(200))
     description: Mapped[str] = mapped_column(Text)
-    action_steps: Mapped[str | None] = mapped_column(Text, nullable=True)
+    action_steps: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     
     estimated_annual_savings: Mapped[float] = mapped_column(Float, default=0.0)
     confidence: Mapped[str] = mapped_column(String(20), default="medium")  # low, medium, high
@@ -26,10 +27,10 @@ class SavingsRecommendation(Base):
     status: Mapped[str] = mapped_column(String(20), default="new")  # new, viewed, applied, dismissed
     
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    applied_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    applied_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     
     # Link to specific deal if applicable
-    deal_id: Mapped[int | None] = mapped_column(ForeignKey("insurance_deals.id"), nullable=True)
+    deal_id: Mapped[Optional[int]] = mapped_column(ForeignKey("insurance_deals.id"), nullable=True)
 
 
 class PremiumHistory(Base):
@@ -44,7 +45,7 @@ class PremiumHistory(Base):
     deductible: Mapped[float] = mapped_column(Float)
     
     recorded_date: Mapped[date] = mapped_column(Date, default=date.today)
-    policy_period_start: Mapped[date | None] = mapped_column(Date, nullable=True)
-    policy_period_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    policy_period_start: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    policy_period_end: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

@@ -1,3 +1,4 @@
+from typing import Optional
 """Insurance deals API routes."""
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, desc
@@ -17,8 +18,8 @@ CARRIERS = [
 
 @router.get("/")
 async def list_deals(
-    carrier: str | None = None,
-    deal_type: str | None = None,
+    carrier: Optional[str] = None,
+    deal_type: Optional[str] = None,
     active_only: bool = True,
     limit: int = Query(default=50, le=200),
     session: AsyncSession = Depends(get_session),

@@ -1,3 +1,4 @@
+from typing import Optional
 """Profile management API routes."""
 from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
@@ -18,41 +19,41 @@ class VehicleCreate(BaseModel):
     year: int
     make: str
     model: str
-    trim: str | None = None
-    vin: str | None = None
-    annual_mileage: int | None = None
+    trim: Optional[str] = None
+    vin: Optional[str] = None
+    annual_mileage: Optional[int] = None
     usage_type: str = "commute"
-    estimated_value: float | None = None
+    estimated_value: Optional[float] = None
 
 
 class PolicyCreate(BaseModel):
-    vehicle_id: int | None = None
+    vehicle_id: Optional[int] = None
     carrier: str
-    policy_number: str | None = None
+    policy_number: Optional[str] = None
     monthly_premium: float
     annual_premium: float
     deductible: float = 500.0
-    liability_bodily: str | None = None
-    liability_property: float | None = None
+    liability_bodily: Optional[str] = None
+    liability_property: Optional[float] = None
     collision: bool = True
     comprehensive: bool = True
     uninsured_motorist: bool = True
-    medical_payments: float | None = None
+    medical_payments: Optional[float] = None
     roadside_assistance: bool = False
     rental_reimbursement: bool = False
-    start_date: date | None = None
-    renewal_date: date | None = None
+    start_date: Optional[date] = None
+    renewal_date: Optional[date] = None
     payment_frequency: str = "monthly"
 
 
 class DrivingRecordCreate(BaseModel):
-    age: int | None = None
-    years_licensed: int | None = None
+    age: Optional[int] = None
+    years_licensed: Optional[int] = None
     accidents_3yr: int = 0
     tickets_3yr: int = 0
     dui_history: bool = False
-    credit_score_range: str | None = None
-    education_level: str | None = None
+    credit_score_range: Optional[str] = None
+    education_level: Optional[str] = None
     homeowner: bool = False
     married: bool = False
     military: bool = False
@@ -62,8 +63,8 @@ class DrivingRecordCreate(BaseModel):
 
 class ProfileCreate(BaseModel):
     name: str
-    email: str | None = None
-    telegram_chat_id: str | None = None
+    email: Optional[str] = None
+    telegram_chat_id: Optional[str] = None
 
 
 # --- Routes ---

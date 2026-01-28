@@ -1,3 +1,4 @@
+from typing import Optional
 """Savings recommendations API routes."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, desc, func
@@ -14,8 +15,8 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_savings(
     user_id: int,
-    status: str | None = None,
-    category: str | None = None,
+    status: Optional[str] = None,
+    category: Optional[str] = None,
     session: AsyncSession = Depends(get_session),
 ):
     """Get savings recommendations for a user, sorted by estimated savings."""
