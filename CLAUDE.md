@@ -73,6 +73,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Ralph usage (when/how)** | `docs/SOP-28-RALPH-USAGE.md` ⭐ |
 | **Clawdbot capabilities** | `docs/CLAWDBOT-CAPABILITIES.md` |
 | **Troubleshooting methodology** | `docs/TROUBLESHOOTING-METHODOLOGY.md` ⭐ |
+| **AI routing optimization** | `docs/AI-ROUTING-OPTIMIZATION.md` ⭐ |
 | **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
@@ -238,6 +239,13 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Continue Ralph" / "Next Ralph iteration" | Resume after checkpoint OR next story (manual mode) |
 | "Ralph status" | Show X/Y complete, next story, checkpoints ahead |
 | "Integrate Ralph correctly" | Set up Ralph structure for autonomous development loops |
+| "Quick question..." | Route to Clawdbot (if mobile) or answer directly |
+| "Build X while I sleep" | Route to Ralph via Clawdbot PRD creation |
+| "Help me debug..." | Route to Claude Code (interactive session needed) |
+| "Research X" | Route to Clawdbot (24/7 web search capability) |
+| "Tell Clawdbot to..." / "Ask Clawdbot..." | Delegate to Clawdbot via Telegram |
+| "Ralph: Build..." | Direct Ralph trigger with PRD |
+| "Route this to..." | Follow AI routing optimization doc |
 | *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
 | *(Needs user input while user may be AFK)* | Play church bell notification: `./scripts/notify-input-needed.sh "message"` |
 
