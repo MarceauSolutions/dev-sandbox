@@ -71,7 +71,11 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **User statement validation (MANDATORY)** | `docs/SOP-26-USER-STATEMENT-VALIDATION-PROTOCOL.md` ⭐ |
 | **Clawdbot usage (when/how)** | `docs/SOP-27-CLAWDBOT-USAGE.md` ⭐ |
 | **Ralph usage (when/how)** | `docs/SOP-28-RALPH-USAGE.md` ⭐ |
+| **Three-agent collaboration (NEW)** | `docs/SOP-29-THREE-AGENT-COLLABORATION.md` ⭐ |
 | **Clawdbot capabilities** | `docs/CLAWDBOT-CAPABILITIES.md` |
+| **Clawdbot ops manual** | `docs/CLAWDBOT-OPS-MANUAL.md` |
+| **Clawdbot test plan** | `docs/CLAWDBOT-TEST-PLAN.md` |
+| **Clawdbot implementation** | `docs/CLAWDBOT-IMPLEMENTATION-SUMMARY.md` |
 | **Troubleshooting methodology** | `docs/TROUBLESHOOTING-METHODOLOGY.md` ⭐ |
 | **AI routing optimization** | `docs/AI-ROUTING-OPTIMIZATION.md` ⭐ |
 | **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
