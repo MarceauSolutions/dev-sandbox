@@ -47,7 +47,7 @@ from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
 # Load environment variables
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 # Configure logging
@@ -153,20 +153,30 @@ NURTURE_SEQUENCES = {
 }
 
 # =============================================================================
-# Email Templates
+# Email Templates - DISCOVERY FOCUSED
+#
+# Our niche: We specialize in two things:
+# 1. Finding problems clients don't know they have
+# 2. Building better solutions than what clients originally asked for
+#
+# These templates lead with DISCOVERY, not product pitches.
 # =============================================================================
 
 EMAIL_TEMPLATES = {
+    # ==========================================================================
+    # DISCOVERY-FOCUSED FOLLOW-UP TEMPLATES
+    # ==========================================================================
+
     "day1_checkin": {
         "plain": """Hi {first_name},
 
-Just wanted to follow up on your website inquiry from yesterday.
+Just following up on your inquiry from yesterday.
 
-I know you're busy running {company}, so I'll keep this short - is there a specific challenge you're facing with getting more customers online?
+I know you're busy running {company} - quick question: What's taking up the most time right now that you wish would just handle itself?
 
-I'd love to help, even if it's just pointing you in the right direction.
+I help businesses automate the repetitive stuff, but I always start by understanding what's actually a pain point for you (vs. what I assume is a pain point).
 
-Book a quick 15-min call if it's easier to chat: {calendly_link}
+Happy to chat if you want: {calendly_link}
 
 Best,
 {owner_name}
@@ -176,11 +186,11 @@ Best,
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>Just wanted to follow up on your website inquiry from yesterday.</p>
+    <p>Just following up on your inquiry from yesterday.</p>
 
-    <p>I know you're busy running <strong>{company}</strong>, so I'll keep this short - is there a specific challenge you're facing with getting more customers online?</p>
+    <p>I know you're busy running <strong>{company}</strong> - quick question: What's taking up the most time right now that you wish would just handle itself?</p>
 
-    <p>I'd love to help, even if it's just pointing you in the right direction.</p>
+    <p>I help businesses automate the repetitive stuff, but I always start by understanding what's actually a pain point for you (vs. what I assume is a pain point).</p>
 
     <div style="text-align: center; margin: 25px 0;">
         <a href="{calendly_link}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Book a Quick Call</a>
@@ -196,18 +206,18 @@ Best,
     "day3_social_proof": {
         "plain": """Hi {first_name},
 
-Quick story I thought you'd find interesting...
+Most {industry} owners I talk to have at least 2-3 things that are eating up their time that they've just gotten used to dealing with.
 
-Last month I helped a {industry} business similar to {company} get their first website up. Within 30 days, they saw:
-- 40% increase in customer inquiries
-- 3x more phone calls
-- First page Google ranking for "{industry} near me"
+Things like:
+- Following up with leads manually
+- Answering the same questions over and over
+- Scheduling back-and-forth
 
-The owner told me "I wish I had done this years ago."
+When I dig in with a client, we usually find gaps they didn't even know existed - and fix them in ways they hadn't considered.
 
-Would you like to see what I could create for {company}? I can put together a free mockup - no strings attached.
+Would you be open to a quick 15-minute call? I'll ask a few questions, and if I don't find anything worth fixing, I'll tell you straight up.
 
-Just reply "yes" or book a call: {calendly_link}
+{calendly_link}
 
 {owner_name}""",
         "html": """
@@ -215,21 +225,20 @@ Just reply "yes" or book a call: {calendly_link}
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>Quick story I thought you'd find interesting...</p>
+    <p>Most <strong>{industry}</strong> owners I talk to have at least 2-3 things that are eating up their time that they've just gotten used to dealing with.</p>
 
-    <p>Last month I helped a <strong>{industry}</strong> business similar to {company} get their first website up. Within 30 days, they saw:</p>
-
+    <p>Things like:</p>
     <ul style="background: #f5f5f5; padding: 20px 20px 20px 40px; border-radius: 5px;">
-        <li>40% increase in customer inquiries</li>
-        <li>3x more phone calls</li>
-        <li>First page Google ranking for "{industry} near me"</li>
+        <li>Following up with leads manually</li>
+        <li>Answering the same questions over and over</li>
+        <li>Scheduling back-and-forth</li>
     </ul>
 
-    <p>The owner told me <em>"I wish I had done this years ago."</em></p>
+    <p>When I dig in with a client, we usually find gaps they didn't even know existed - and fix them in ways they hadn't considered.</p>
 
-    <p>Would you like to see what I could create for <strong>{company}</strong>? I can put together a free mockup - no strings attached.</p>
+    <p>Would you be open to a quick 15-minute call? I'll ask a few questions, and if I don't find anything worth fixing, I'll tell you straight up.</p>
 
-    <p>Just reply "yes" or <a href="{calendly_link}" style="color: #667eea;">book a call here</a>.</p>
+    <p><a href="{calendly_link}" style="color: #667eea;">Book a call here</a></p>
 
     <p>{owner_name}</p>
 </body>
@@ -239,15 +248,18 @@ Just reply "yes" or book a call: {calendly_link}
     "day7_value": {
         "plain": """Hi {first_name},
 
-Been thinking about {company} and wanted to share 3 things I've noticed your competitors are doing online:
+I've been thinking about {company} and wanted to share something.
 
-1. They show up when people search "{industry} near me"
-2. They have customer reviews visible on their website
-3. They make it easy to contact them or book online
+Most of my clients came to me with one problem in mind, but we ended up solving 2-3 more they didn't even realize they had.
 
-The good news? These are all fixable, and faster than you might think.
+For example, one {industry} owner came to me thinking they needed help with lead follow-up. After we talked, we also automated:
+- Their appointment reminders (reduced no-shows by 40%)
+- Their review request system (doubled their reviews in 60 days)
+- Their rebooking sequences (increased repeat business by 25%)
 
-I have a few slots open this week if you'd like to chat about getting {company} online. No pressure, just a friendly conversation about your options.
+All from one conversation where I asked the right questions.
+
+If you're curious what gaps might exist at {company}, I'm happy to take a look. No pitch - just perspective.
 
 {calendly_link}
 
@@ -258,17 +270,21 @@ I have a few slots open this week if you'd like to chat about getting {company} 
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>Been thinking about <strong>{company}</strong> and wanted to share 3 things I've noticed your competitors are doing online:</p>
+    <p>I've been thinking about <strong>{company}</strong> and wanted to share something.</p>
 
-    <ol style="background: #fff3cd; padding: 20px 20px 20px 40px; border-radius: 5px; border-left: 4px solid #ffc107;">
-        <li>They show up when people search "{industry} near me"</li>
-        <li>They have customer reviews visible on their website</li>
-        <li>They make it easy to contact them or book online</li>
-    </ol>
+    <p>Most of my clients came to me with one problem in mind, but we ended up solving 2-3 more they didn't even realize they had.</p>
 
-    <p>The good news? These are all fixable, and faster than you might think.</p>
+    <p>For example, one {industry} owner came to me thinking they needed help with lead follow-up. After we talked, we also automated:</p>
 
-    <p>I have a few slots open this week if you'd like to chat about getting {company} online. No pressure, just a friendly conversation about your options.</p>
+    <ul style="background: #d4edda; padding: 20px 20px 20px 40px; border-radius: 5px;">
+        <li>Their appointment reminders (reduced no-shows by 40%)</li>
+        <li>Their review request system (doubled their reviews in 60 days)</li>
+        <li>Their rebooking sequences (increased repeat business by 25%)</li>
+    </ul>
+
+    <p>All from one conversation where I asked the right questions.</p>
+
+    <p>If you're curious what gaps might exist at {company}, I'm happy to take a look. No pitch - just perspective.</p>
 
     <div style="text-align: center; margin: 25px 0;">
         <a href="{calendly_link}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Schedule a Chat</a>
@@ -282,56 +298,56 @@ I have a few slots open this week if you'd like to chat about getting {company} 
     "day14_breakup": {
         "plain": """Hi {first_name},
 
-I've reached out a few times about helping {company} with a website, but haven't heard back.
+I've reached out a few times about helping {company}, but haven't heard back.
 
-No worries at all - I know timing isn't always right.
+No worries at all - I know timing isn't always right, and honestly, if nothing's broken, there's no need to fix it.
 
-I'm going to close your file for now, but if you ever want to revisit this in the future, just reply to this email and I'll be happy to help.
+I'm going to stop reaching out, but if you ever have something eating up your time that you think automation could help with, just reply to this email.
 
 Wishing you and {company} all the best!
 
 {owner_name}
 {business_name}
 
-P.S. If I completely missed the mark on what you were looking for, I'd genuinely appreciate knowing so I can do better. Just hit reply.""",
+P.S. If my messages weren't relevant to what you actually need, I'd genuinely appreciate knowing - always trying to do better. Just hit reply.""",
         "html": """
 <html>
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>I've reached out a few times about helping <strong>{company}</strong> with a website, but haven't heard back.</p>
+    <p>I've reached out a few times about helping <strong>{company}</strong>, but haven't heard back.</p>
 
-    <p>No worries at all - I know timing isn't always right.</p>
+    <p>No worries at all - I know timing isn't always right, and honestly, if nothing's broken, there's no need to fix it.</p>
 
-    <p>I'm going to close your file for now, but if you ever want to revisit this in the future, just reply to this email and I'll be happy to help.</p>
+    <p>I'm going to stop reaching out, but if you ever have something eating up your time that you think automation could help with, just reply to this email.</p>
 
     <p>Wishing you and {company} all the best!</p>
 
     <p>{owner_name}<br>{business_name}</p>
 
     <p style="color: #666; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
-        <strong>P.S.</strong> If I completely missed the mark on what you were looking for, I'd genuinely appreciate knowing so I can do better. Just hit reply.
+        <strong>P.S.</strong> If my messages weren't relevant to what you actually need, I'd genuinely appreciate knowing - always trying to do better. Just hit reply.
     </p>
 </body>
 </html>"""
     },
 
-    # Gym-specific templates
+    # ==========================================================================
+    # INDUSTRY-SPECIFIC TEMPLATES (Fitness/Gym)
+    # ==========================================================================
+
     "day2_gym_case_study": {
         "plain": """Hi {first_name},
 
-I wanted to share something that might help {company}...
+Most gym owners I talk to are dealing with at least one of these:
 
-A gym owner I worked with was struggling to get new members. They relied on word-of-mouth and a Facebook page, but leads were slow.
+1. Leads coming in but not following up fast enough
+2. Members who disappear after month 2-3
+3. Staff spending too much time on admin instead of training
 
-After launching their website:
-- 67 new member inquiries in the first month
-- Class bookings went up 45%
-- They finally showed up when people searched "gym near me"
+When I work with a gym owner, I start by asking questions to figure out which of these (or something else entirely) is actually costing them time/money.
 
-The best part? Members could sign up for classes online 24/7, which meant the front desk wasn't constantly answering phones.
-
-Want to see what this could look like for {company}? I'd love to show you.
+Want me to do that for {company}? 15 minutes - I'll ask a few questions and share what I find. If there's nothing worth fixing, I'll tell you straight up.
 
 {calendly_link}
 
@@ -341,23 +357,20 @@ Want to see what this could look like for {company}? I'd love to show you.
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>I wanted to share something that might help <strong>{company}</strong>...</p>
+    <p>Most gym owners I talk to are dealing with at least one of these:</p>
 
-    <p>A gym owner I worked with was struggling to get new members. They relied on word-of-mouth and a Facebook page, but leads were slow.</p>
+    <ol style="background: #f5f5f5; padding: 20px 20px 20px 40px; border-radius: 5px;">
+        <li>Leads coming in but not following up fast enough</li>
+        <li>Members who disappear after month 2-3</li>
+        <li>Staff spending too much time on admin instead of training</li>
+    </ol>
 
-    <p><strong>After launching their website:</strong></p>
-    <ul style="background: #d4edda; padding: 20px 20px 20px 40px; border-radius: 5px;">
-        <li>67 new member inquiries in the first month</li>
-        <li>Class bookings went up 45%</li>
-        <li>They finally showed up when people searched "gym near me"</li>
-    </ul>
+    <p>When I work with a gym owner, I start by asking questions to figure out which of these (or something else entirely) is actually costing them time/money.</p>
 
-    <p>The best part? Members could sign up for classes online 24/7, which meant the front desk wasn't constantly answering phones.</p>
-
-    <p>Want to see what this could look like for {company}? I'd love to show you.</p>
+    <p>Want me to do that for {company}? 15 minutes - I'll ask a few questions and share what I find. If there's nothing worth fixing, I'll tell you straight up.</p>
 
     <div style="text-align: center; margin: 25px 0;">
-        <a href="{calendly_link}" style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">See What's Possible</a>
+        <a href="{calendly_link}" style="background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Let's Find the Gaps</a>
     </div>
 
     <p>{owner_name}</p>
@@ -368,15 +381,15 @@ Want to see what this could look like for {company}? I'd love to show you.
     "day5_member_acquisition": {
         "plain": """Hi {first_name},
 
-Quick question for you...
+Quick question: If you could wave a magic wand and fix ONE thing about how {company} operates, what would it be?
 
-When someone in your area searches "gym near me" or "{industry} in [your city]", does {company} show up?
+I ask because most gym owners think they know what's broken, but when we dig in together, we often discover the REAL issue is something else entirely.
 
-If not, you're invisible to the 80% of people who search online before choosing a gym.
+One owner came to me thinking they needed help with marketing. Turns out their real problem was lead follow-up - they were losing 60% of inquiries because no one responded fast enough.
 
-Here's the thing - your competitors ARE showing up. And every day without a website is potential members walking into their doors instead of yours.
+We fixed that, and they added 23 members in the first month without spending more on ads.
 
-I can help fix that. Let's chat for 15 minutes about getting {company} visible online.
+Curious what the real opportunity might be at {company}?
 
 {calendly_link}
 
@@ -386,20 +399,20 @@ I can help fix that. Let's chat for 15 minutes about getting {company} visible o
 <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
     <p>Hi {first_name},</p>
 
-    <p>Quick question for you...</p>
-
     <p style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 18px;">
-        When someone in your area searches <strong>"gym near me"</strong> or <strong>"{industry} in [your city]"</strong>, does {company} show up?
+        Quick question: If you could wave a magic wand and fix ONE thing about how <strong>{company}</strong> operates, what would it be?
     </p>
 
-    <p>If not, you're invisible to the <strong>80% of people</strong> who search online before choosing a gym.</p>
+    <p>I ask because most gym owners think they know what's broken, but when we dig in together, we often discover the REAL issue is something else entirely.</p>
 
-    <p>Here's the thing - your competitors ARE showing up. And every day without a website is potential members walking into their doors instead of yours.</p>
+    <p>One owner came to me thinking they needed help with marketing. Turns out their real problem was lead follow-up - they were losing 60% of inquiries because no one responded fast enough.</p>
 
-    <p>I can help fix that. Let's chat for 15 minutes about getting {company} visible online.</p>
+    <p>We fixed that, and they added 23 members in the first month without spending more on ads.</p>
+
+    <p>Curious what the real opportunity might be at {company}?</p>
 
     <div style="text-align: center; margin: 25px 0;">
-        <a href="{calendly_link}" style="background: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Let's Fix This</a>
+        <a href="{calendly_link}" style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Let's Find Out</a>
     </div>
 
     <p>{owner_name}</p>

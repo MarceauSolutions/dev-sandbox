@@ -34,7 +34,7 @@ from enum import Enum
 import random
 
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 from .sms_outreach import SMSOutreachManager, SMS_TEMPLATES

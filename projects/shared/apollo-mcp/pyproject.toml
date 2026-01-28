@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "apollo-mcp"
-version = "1.1.0"
+version = "1.1.1"
 description = "Apollo.io lead enrichment and prospecting via MCP"
 readme = "README.md"
 license = "MIT"

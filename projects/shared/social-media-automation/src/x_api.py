@@ -2,12 +2,12 @@
 """
 x_api.py - X/Twitter API Wrapper with Rate Limiting
 
-Handles authentication, posting, and rate limit management for X Free tier.
+Handles authentication, posting, and rate limit management for X Premium tier.
 
-Free Tier Limits:
-- 1,500 posts/month (50/day average)
-- 10,000 read requests/month
-- Media uploads limited
+Premium Tier ($8/month) Limits:
+- 25,000 posts/month (~833/day)
+- Much higher read request limits
+- Full media upload support
 
 Usage:
     from x_api import XClient
@@ -56,9 +56,11 @@ class RateLimitStatus:
     posts_today: int = 0
     posts_this_month: int = 0
     last_post_time: Optional[str] = None
-    daily_limit: int = 50  # Free tier: ~50/day to stay under 1500/month
-    monthly_limit: int = 1500
+    daily_limit: int = 100  # X Premium allows much higher - 100/day is plenty
+    monthly_limit: int = 25000  # X Premium tier limit
     reset_date: Optional[str] = None  # Monthly reset
+    consecutive_rate_limits: int = 0  # Track consecutive 429 errors for backoff
+    last_rate_limit_time: Optional[str] = None  # When we last hit a rate limit
 
 
 @dataclass
@@ -77,13 +79,14 @@ class RateLimiter:
     Rate limiter for X API Free tier.
 
     Enforces:
-    - 50 posts/day (to stay under 1500/month)
-    - Minimum 2-minute gap between posts
+    - 24 posts/day (conservative to avoid X API rate limits)
+    - Minimum 3-minute gap between posts
     - Monthly tracking with reset
     """
 
     RATE_LIMIT_FILE = Path(__file__).parent.parent / "output" / "rate_limit_status.json"
-    MIN_POST_INTERVAL_SECONDS = 120  # 2 minutes between posts
+    RATE_LIMIT_LOG_FILE = Path(__file__).parent.parent / "output" / "rate_limit_events.log"
+    MIN_POST_INTERVAL_SECONDS = 180  # 3 minutes between posts (increased from 120)
 
     def __init__(self):
         self.status = self._load_status()
@@ -132,6 +135,11 @@ class RateLimiter:
         """
         self._check_daily_reset()
 
+        # Check if we're in exponential backoff mode
+        should_backoff, backoff_remaining = self.should_backoff()
+        if should_backoff:
+            return False, f"Backing off due to rate limits. Wait {backoff_remaining} seconds ({backoff_remaining // 60} min)"
+
         # Check monthly limit
         if self.status.posts_this_month >= self.status.monthly_limit:
             return False, f"Monthly limit reached ({self.status.monthly_limit} posts)"
@@ -155,18 +163,79 @@ class RateLimiter:
         self.status.posts_today += 1
         self.status.posts_this_month += 1
         self.status.last_post_time = datetime.now().isoformat()
+        # Reset consecutive rate limits on success
+        self.status.consecutive_rate_limits = 0
         self._save_status()
+
+    def record_rate_limit(self):
+        """Record when we hit a rate limit from X API."""
+        self.status.consecutive_rate_limits += 1
+        self.status.last_rate_limit_time = datetime.now().isoformat()
+        self._save_status()
+        self._log_rate_limit_event()
+
+    def _log_rate_limit_event(self):
+        """Log rate limit events for monitoring."""
+        try:
+            self.RATE_LIMIT_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.RATE_LIMIT_LOG_FILE, 'a') as f:
+                f.write(f"{datetime.now().isoformat()} - Rate limit hit (consecutive: {self.status.consecutive_rate_limits})\n")
+        except Exception as e:
+            logger.warning(f"Could not log rate limit event: {e}")
+
+    def get_backoff_seconds(self) -> int:
+        """
+        Calculate backoff time based on consecutive rate limits.
+        Uses exponential backoff: 5min, 10min, 20min, 40min, max 60min
+        """
+        if self.status.consecutive_rate_limits == 0:
+            return 0
+
+        base_wait = 300  # 5 minutes
+        backoff = base_wait * (2 ** (self.status.consecutive_rate_limits - 1))
+        max_wait = 3600  # 60 minutes max
+        return min(backoff, max_wait)
+
+    def should_backoff(self) -> tuple[bool, int]:
+        """
+        Check if we should back off due to recent rate limits.
+
+        Returns:
+            (should_backoff, wait_seconds)
+        """
+        if self.status.consecutive_rate_limits == 0:
+            return False, 0
+
+        if not self.status.last_rate_limit_time:
+            return False, 0
+
+        last_limit = datetime.fromisoformat(self.status.last_rate_limit_time)
+        backoff_seconds = self.get_backoff_seconds()
+        elapsed = (datetime.now() - last_limit).total_seconds()
+
+        if elapsed < backoff_seconds:
+            remaining = int(backoff_seconds - elapsed)
+            return True, remaining
+
+        return False, 0
 
     def get_status(self) -> Dict[str, Any]:
         """Get current rate limit status."""
         self._check_daily_reset()
+        can_post_now, reason = self.can_post()
+        should_backoff, backoff_remaining = self.should_backoff()
+
         return {
             "posts_today": self.status.posts_today,
             "posts_remaining_today": self.status.daily_limit - self.status.posts_today,
             "posts_this_month": self.status.posts_this_month,
             "posts_remaining_month": self.status.monthly_limit - self.status.posts_this_month,
             "last_post": self.status.last_post_time,
-            "can_post": self.can_post()[0]
+            "can_post": can_post_now,
+            "reason": reason if not can_post_now else "OK",
+            "consecutive_rate_limits": self.status.consecutive_rate_limits,
+            "in_backoff": should_backoff,
+            "backoff_remaining_seconds": backoff_remaining if should_backoff else 0
         }
 
 

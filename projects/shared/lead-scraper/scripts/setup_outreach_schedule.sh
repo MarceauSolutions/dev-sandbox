@@ -3,7 +3,7 @@
 #
 # Usage: bash setup_outreach_schedule.sh
 
-PROJECT_PATH="/Users/williammarceaujr./dev-sandbox/projects/lead-scraper"
+PROJECT_PATH="/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper"
 PYTHON_PATH="/opt/anaconda3/bin/python"
 
 echo "Setting up automated outreach schedule..."

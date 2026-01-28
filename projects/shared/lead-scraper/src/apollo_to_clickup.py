@@ -28,6 +28,10 @@ import json
 import requests
 import logging
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from root .env
+load_dotenv(Path(__file__).parent.parent.parent.parent.parent / ".env")
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
 from dataclasses import dataclass, asdict
@@ -88,6 +92,7 @@ class ApolloLeadData:
             "## Contact Information",
             f"**Name:** {self.first_name} {self.last_name}",
             f"**Title:** {self.title}",
+            f"**Seniority:** {self.seniority}" if self.seniority else "",
             f"**Email:** {self.email} ({self.email_status})",
             f"**Phone:** {self.phone} ({self.phone_type})" if self.phone else "**Phone:** N/A",
             f"**LinkedIn:** {self.linkedin_url}" if self.linkedin_url else "",
@@ -103,8 +108,10 @@ class ApolloLeadData:
             f"**Apollo Score:** {self.apollo_score}/10",
             f"**Qualification:** {self.qualification.value.upper()}",
             f"**Email Verified:** {'✅ Yes' if self.email_status == 'verified' else '❌ No'}",
+            f"**Phone Available:** {'✅ Yes' if self.phone else '❌ No'}",
             "",
             "## Source",
+            f"**Data Source:** Apollo",
             f"**Campaign:** {self.campaign_name}",
             f"**Search Profile:** {self.search_profile}",
             f"**Apollo ID:** {self.apollo_id}",
@@ -385,8 +392,85 @@ class ApolloClickUpSync:
             return True
         return False
 
+    def _load_existing_tasks_cache(self) -> Dict[str, str]:
+        """
+        Fetch all existing tasks from ClickUp ONCE and build a cache.
+        Returns dict mapping email/phone -> task_id for quick lookup.
+
+        This is called once at the start of sync, not per-lead.
+        """
+        cache = {"emails": {}, "phones": {}}
+
+        try:
+            url = f"{self.base_url}/list/{self.list_id}/task"
+            params = {"archived": "false", "page": 0}
+
+            all_tasks = []
+            while True:
+                response = requests.get(url, headers=self.headers, params=params)
+                response.raise_for_status()
+                tasks = response.json().get("tasks", [])
+
+                if not tasks:
+                    break
+
+                all_tasks.extend(tasks)
+                params["page"] += 1
+
+                # Safety limit
+                if params["page"] > 50:
+                    break
+
+            print(f"  Loaded {len(all_tasks)} existing ClickUp tasks for deduplication")
+
+            for task in all_tasks:
+                description = task.get("description", "").lower()
+                task_id = task["id"]
+
+                # Extract emails from description (simple pattern)
+                import re
+                emails = re.findall(r'[\w\.-]+@[\w\.-]+\.\w+', description)
+                for email in emails:
+                    cache["emails"][email.lower()] = task_id
+
+                # Extract phone numbers (digits only for matching)
+                phones = re.findall(r'\+?[\d\s\-\(\)]{10,}', description)
+                for phone in phones:
+                    clean_phone = re.sub(r'[^\d]', '', phone)
+                    if len(clean_phone) >= 10:
+                        cache["phones"][clean_phone] = task_id
+
+            return cache
+
+        except Exception as e:
+            logger.warning(f"Failed to load ClickUp tasks cache: {e}")
+            return {"emails": {}, "phones": {}}
+
+    def _search_existing_task_cached(self, lead: ApolloLeadData, cache: Dict) -> Optional[str]:
+        """
+        Check if lead exists in ClickUp using pre-loaded cache.
+        Much faster than API call per lead.
+        """
+        # Check email
+        if lead.email:
+            email_lower = lead.email.lower()
+            if email_lower in cache.get("emails", {}):
+                return cache["emails"][email_lower]
+
+        # Check phone
+        if lead.phone:
+            import re
+            clean_phone = re.sub(r'[^\d]', '', lead.phone)
+            if clean_phone in cache.get("phones", {}):
+                return cache["phones"][clean_phone]
+
+        return None
+
     def _search_existing_task(self, lead: ApolloLeadData) -> Optional[str]:
-        """Search ClickUp for existing task with same email/phone"""
+        """
+        DEPRECATED: Search ClickUp for existing task with same email/phone.
+        Use _search_existing_task_cached() with pre-loaded cache instead.
+        """
         try:
             url = f"{self.base_url}/list/{self.list_id}/task"
             params = {"archived": "false"}
@@ -413,8 +497,13 @@ class ApolloClickUpSync:
             logger.warning(f"ClickUp search failed: {e}")
             return None
 
-    def _create_task(self, lead: ApolloLeadData) -> Dict[str, Any]:
-        """Create ClickUp task for lead"""
+    def _create_task(self, lead: ApolloLeadData, use_custom_fields: bool = True) -> Dict[str, Any]:
+        """Create ClickUp task for lead
+
+        Args:
+            lead: ApolloLeadData object
+            use_custom_fields: Whether to include custom fields (set False if plan limit reached)
+        """
 
         # Task name format: "First Last - Company (Qualification)"
         task_name = f"{lead.first_name} {lead.last_name} - {lead.company_name}"
@@ -442,8 +531,11 @@ class ApolloClickUpSync:
             ]
         }
 
-        # Add custom fields if IDs are available
-        if self.custom_field_ids:
+        # Add custom fields if IDs are available and enabled
+        if not use_custom_fields:
+            # Skip custom fields - ClickUp plan limit
+            pass
+        elif self.custom_field_ids:
             custom_fields = []
 
             # Basic contact fields
@@ -584,7 +676,11 @@ class ApolloClickUpSync:
         # Create task
         url = f"{self.base_url}/list/{self.list_id}/task"
         response = requests.post(url, headers=self.headers, json=payload)
-        response.raise_for_status()
+
+        if response.status_code >= 400:
+            error_detail = response.text
+            logger.error(f"ClickUp API error: {error_detail}")
+            raise Exception(f"ClickUp error: {error_detail}")
 
         return response.json()
 
@@ -597,7 +693,12 @@ class ApolloClickUpSync:
         response.raise_for_status()
 
     def _record_sync(self, lead: ApolloLeadData, task_id: str, action: str):
-        """Record sync in log for deduplication"""
+        """Record sync in log for deduplication AND save to disk immediately"""
+        self._record_sync_memory(lead, task_id, action)
+        self._save_sync_log()
+
+    def _record_sync_memory(self, lead: ApolloLeadData, task_id: str, action: str):
+        """Record sync in memory only (for batched saves)"""
         if lead.apollo_id and lead.apollo_id not in self.sync_log["synced_apollo_ids"]:
             self.sync_log["synced_apollo_ids"].append(lead.apollo_id)
 
@@ -619,8 +720,6 @@ class ApolloClickUpSync:
             "campaign": lead.campaign_name
         })
 
-        self._save_sync_log()
-
     def sync_apollo_leads(
         self,
         leads: List[Dict[str, Any]],
@@ -630,7 +729,10 @@ class ApolloClickUpSync:
         min_qualification: LeadQualification = None,
         require_verified_email: bool = False,
         require_phone: bool = False,
-        dry_run: bool = True
+        dry_run: bool = True,
+        use_custom_fields: bool = False,
+        batch_size: int = None,
+        delay_seconds: float = 0.5
     ) -> Dict[str, Any]:
         """
         Sync Apollo leads to ClickUp with filtering.
@@ -644,10 +746,14 @@ class ApolloClickUpSync:
             require_verified_email: Only sync verified emails
             require_phone: Only sync leads with phone numbers
             dry_run: If True, don't actually create tasks
+            use_custom_fields: Whether to populate custom fields (False if plan limit)
+            batch_size: Max number of leads to sync (None = all qualified leads)
+            delay_seconds: Delay between API calls to avoid rate limits (default 0.5s)
 
         Returns:
             Sync results summary
         """
+        import time
         results = {
             "campaign": campaign_name,
             "search_profile": search_profile,
@@ -675,6 +781,12 @@ class ApolloClickUpSync:
             LeadQualification.HOT
         ]
         min_qual_index = qualification_order.index(min_qualification)
+
+        # Pre-load existing tasks cache ONCE (not per lead)
+        clickup_task_cache = {}
+        if not dry_run:
+            print("  Loading existing ClickUp tasks for deduplication...")
+            clickup_task_cache = self._load_existing_tasks_cache()
 
         for apollo_person in leads:
             try:
@@ -726,8 +838,14 @@ class ApolloClickUpSync:
                 })
 
                 if not dry_run:
-                    # Check for existing task in ClickUp
-                    existing_task_id = self._search_existing_task(lead)
+                    # Check batch limit
+                    if batch_size and len(results["synced"]) >= batch_size:
+                        results["batch_limit_reached"] = True
+                        results["remaining_qualified"] = len(results["qualified"]) - len(results["synced"])
+                        break
+
+                    # Check for existing task in ClickUp using CACHED lookup (no API call)
+                    existing_task_id = self._search_existing_task_cached(lead, clickup_task_cache)
 
                     if existing_task_id:
                         # Add comment to existing task
@@ -737,11 +855,20 @@ class ApolloClickUpSync:
                         task_id = existing_task_id
                     else:
                         # Create new task
-                        task = self._create_task(lead)
+                        task = self._create_task(lead, use_custom_fields=use_custom_fields)
                         task_id = task["id"]
                         action = "created_task"
 
-                    self._record_sync(lead, task_id, action)
+                        # Add to cache so subsequent leads can find it
+                        if lead.email:
+                            clickup_task_cache.setdefault("emails", {})[lead.email.lower()] = task_id
+                        if lead.phone:
+                            import re
+                            clean_phone = re.sub(r'[^\d]', '', lead.phone)
+                            clickup_task_cache.setdefault("phones", {})[clean_phone] = task_id
+
+                    # Record sync (but don't save to disk yet - batch at end)
+                    self._record_sync_memory(lead, task_id, action)
 
                     results["synced"].append({
                         "name": f"{lead.first_name} {lead.last_name}",
@@ -750,12 +877,25 @@ class ApolloClickUpSync:
                         "action": action
                     })
 
+                    # Progress update every 10 synced
+                    if len(results["synced"]) % 10 == 0:
+                        print(f"  Progress: {len(results['synced'])} synced...")
+
+                    # Rate limiting delay
+                    if delay_seconds > 0:
+                        time.sleep(delay_seconds)
+
             except Exception as e:
                 logger.error(f"Error processing lead: {e}")
                 results["errors"].append({
                     "apollo_id": apollo_person.get("id", "unknown"),
                     "error": str(e)
                 })
+
+        # Save sync log once at the end (batched, not per-lead)
+        if not dry_run and results["synced"]:
+            self._save_sync_log()
+            print(f"  Sync log saved ({len(results['synced'])} entries)")
 
         # Summary
         results["summary"] = {
@@ -776,17 +916,33 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Sync Apollo leads to ClickUp")
-    parser.add_argument("command", choices=["sync", "status", "clear-log"])
-    parser.add_argument("--campaign", help="Campaign name", default="Apollo Import")
-    parser.add_argument("--profile", help="Search profile used", default="custom")
-    parser.add_argument("--min-score", type=float, default=6.0, help="Minimum score (0-10)")
-    parser.add_argument("--dry-run", action="store_true", help="Don't actually sync")
-    parser.add_argument("--for-real", action="store_true", help="Actually sync to ClickUp")
-    parser.add_argument("--hot-only", action="store_true", help="Only sync HOT leads")
-    parser.add_argument("--verified-only", action="store_true", help="Only verified emails")
-    parser.add_argument("--input", help="JSON file with Apollo leads")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # Sync command
+    sync_parser = subparsers.add_parser("sync", help="Sync Apollo leads to ClickUp")
+    sync_parser.add_argument("--campaign", help="Campaign name", default="Apollo Import")
+    sync_parser.add_argument("--profile", help="Search profile used", default="custom")
+    sync_parser.add_argument("--min-score", type=float, default=6.0, help="Minimum score (0-10)")
+    sync_parser.add_argument("--dry-run", action="store_true", help="Don't actually sync")
+    sync_parser.add_argument("--for-real", action="store_true", help="Actually sync to ClickUp")
+    sync_parser.add_argument("--hot-only", action="store_true", help="Only sync HOT leads")
+    sync_parser.add_argument("--verified-only", action="store_true", help="Only verified emails")
+    sync_parser.add_argument("--no-custom-fields", action="store_true", help="Skip custom fields (use if ClickUp plan limit reached)")
+    sync_parser.add_argument("--batch-size", type=int, help="Max leads to sync in this run (for large imports)")
+    sync_parser.add_argument("--delay", type=float, default=0.5, help="Delay between API calls in seconds (default 0.5)")
+    sync_parser.add_argument("--input", help="JSON file with Apollo leads")
+
+    # Status command
+    status_parser = subparsers.add_parser("status", help="Show sync status and history")
+
+    # Clear-log command
+    clear_parser = subparsers.add_parser("clear-log", help="Clear sync log (reset deduplication)")
 
     args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        sys.exit(1)
 
     if args.command == "sync":
         # Verify mode
@@ -822,6 +978,15 @@ def main():
         min_qual = LeadQualification.HOT if args.hot_only else LeadQualification.WARM
 
         # Run sync
+        use_custom_fields = not getattr(args, 'no_custom_fields', False)
+        batch_size = getattr(args, 'batch_size', None)
+        delay = getattr(args, 'delay', 0.5)
+
+        if batch_size:
+            print(f"\n⚙️  Batch mode: syncing up to {batch_size} leads")
+        if delay > 0:
+            print(f"⚙️  Rate limiting: {delay}s delay between API calls")
+
         results = sync.sync_apollo_leads(
             leads=leads,
             campaign_name=args.campaign,
@@ -829,7 +994,10 @@ def main():
             min_score=args.min_score,
             min_qualification=min_qual,
             require_verified_email=args.verified_only,
-            dry_run=dry_run
+            dry_run=dry_run,
+            use_custom_fields=use_custom_fields,
+            batch_size=batch_size,
+            delay_seconds=delay
         )
 
         # Print results
@@ -874,6 +1042,13 @@ def main():
             for lead in results["synced"]:
                 print(f"  • {lead['name']} @ {lead['company']}")
                 print(f"    Task: {lead['task_id']} ({lead['action']})")
+
+        # Batch limit info
+        if results.get("batch_limit_reached"):
+            remaining = results.get("remaining_qualified", 0)
+            print(f"\n⚠️  Batch limit reached ({batch_size} leads synced)")
+            print(f"   Remaining qualified leads: {remaining}")
+            print(f"   Run again to continue syncing the next batch")
 
         # Save results to file
         output_file = Path(__file__).parent.parent / "output" / "last_sync_results.json"

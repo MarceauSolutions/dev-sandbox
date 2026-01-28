@@ -14,8 +14,12 @@ from pathlib import Path
 from .models import Lead
 from .config import ScraperConfig, GOOGLE_PLACES_TYPES
 from .website_validator import is_real_business_website
+from .chain_detector import ChainDetector
 
 logger = logging.getLogger(__name__)
+
+# Initialize chain detector for filtering national franchises
+_chain_detector = ChainDetector()
 
 
 class GooglePlacesScraper:
@@ -315,6 +319,16 @@ class GooglePlacesScraper:
     def _identify_pain_points(self, place: Dict[str, Any]) -> List[str]:
         """Identify potential pain points from place data."""
         pain_points = []
+
+        # Chain detection - flag franchises (they're often locally owned, just need different messaging)
+        business_name = place.get("name", "")
+        chain_result = _chain_detector.is_chain(business_name)
+        if chain_result.is_chain and chain_result.confidence >= 0.7:
+            # Flag as franchise - they need different templates (no "you don't have a website" messaging)
+            # Many franchises are locally owned and good outreach targets
+            pain_points.append("franchise")
+            if chain_result.chain_name:
+                logger.debug(f"Franchise detected: {business_name} -> {chain_result.chain_name}")
 
         # Website validation using website_validator.py
         website_url = place.get("website", "")

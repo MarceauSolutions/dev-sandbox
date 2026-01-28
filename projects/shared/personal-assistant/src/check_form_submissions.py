@@ -86,23 +86,36 @@ def get_form_submissions(since_date=None, website_filter=None):
     submissions = []
 
     for row in values:
-        # Parse row (adjust indices based on your sheet structure)
+        # Parse row based on actual sheet structure:
+        # Timestamp, First Name, Last Name, Business Name, Email, Phone,
+        # Project Description, SMS Opt-in, Email Opt-in, Source, Status
         timestamp_str = row[0] if len(row) > 0 else ''
-        name = row[1] if len(row) > 1 else ''
-        email = row[2] if len(row) > 2 else ''
-        phone = row[3] if len(row) > 3 else ''
-        company = row[4] if len(row) > 4 else ''
-        message = row[5] if len(row) > 5 else ''
-        source = row[6] if len(row) > 6 else ''  # Which website form came from
+        first_name = row[1] if len(row) > 1 else ''
+        last_name = row[2] if len(row) > 2 else ''
+        name = f"{first_name} {last_name}".strip()
+        company = row[3] if len(row) > 3 else ''
+        email = row[4] if len(row) > 4 else ''
+        phone = row[5] if len(row) > 5 else ''
+        message = row[6] if len(row) > 6 else ''
+        source = row[9] if len(row) > 9 else ''  # Column 10 (0-indexed = 9)
 
-        # Parse timestamp
-        try:
-            timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
-        except:
+        # Parse timestamp - try multiple formats
+        timestamp = None
+        timestamp_formats = [
+            '%Y-%m-%dT%H:%M:%S',      # ISO format: 2026-01-15T12:07:00
+            '%Y-%m-%d %H:%M:%S',      # Standard: 2026-01-15 12:07:00
+            '%m/%d/%Y %H:%M:%S',      # US format: 01/15/2026 12:07:00
+            '%Y-%m-%dT%H:%M:%S.%f',   # ISO with microseconds
+        ]
+        for fmt in timestamp_formats:
             try:
-                timestamp = datetime.strptime(timestamp_str, '%m/%d/%Y %H:%M:%S')
-            except:
-                continue  # Skip rows with invalid timestamps
+                timestamp = datetime.strptime(timestamp_str, fmt)
+                break
+            except ValueError:
+                continue
+
+        if not timestamp:
+            continue  # Skip rows with invalid timestamps
 
         # Filter by date
         if timestamp < since_date:

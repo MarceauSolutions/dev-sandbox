@@ -17,7 +17,7 @@ Environment Variables:
 # Load .env file from dev-sandbox root
 from pathlib import Path
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 import argparse

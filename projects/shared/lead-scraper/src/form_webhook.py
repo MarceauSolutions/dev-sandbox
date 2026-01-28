@@ -48,7 +48,7 @@ import requests
 
 # Load environment variables
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 # Configure logging

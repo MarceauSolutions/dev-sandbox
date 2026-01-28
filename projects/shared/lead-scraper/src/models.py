@@ -17,11 +17,17 @@ class Lead:
     """Represents a business lead."""
     # Core identification
     id: str = ""  # Generated hash for deduplication
-    source: str = ""  # google_places, yelp, etc.
+    source: str = ""  # google_places, yelp, apollo, etc.
 
     # Business info
     business_name: str = ""
     owner_name: str = ""
+
+    # Apollo B2B fields (decision maker info)
+    first_name: str = ""  # Contact first name (Apollo)
+    last_name: str = ""   # Contact last name (Apollo)
+    title: str = ""       # Job title (Apollo)
+    industry: str = ""    # Industry category (Apollo)
 
     # Contact info
     email: str = ""

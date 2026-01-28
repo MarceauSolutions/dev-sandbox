@@ -25,9 +25,10 @@ Usage:
 import os
 import json
 import argparse
+import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Set
 from dataclasses import dataclass, asdict, field
 from enum import Enum
 import logging
@@ -59,6 +60,14 @@ class PostStatus(Enum):
     POSTED = "posted"
     FAILED = "failed"
     CANCELLED = "cancelled"
+    ARCHIVED = "archived"  # For permanently failed posts (duplicate content, etc.)
+
+
+class ErrorType(Enum):
+    """Classification of error types for retry logic."""
+    RETRYABLE = "retryable"  # Rate limits, network errors - worth retrying
+    PERMANENT = "permanent"  # Duplicate content, validation errors - don't retry
+    UNKNOWN = "unknown"  # Unclassified errors - retry cautiously
 
 
 @dataclass
@@ -73,11 +82,13 @@ class ScheduledPost:
     posted_at: Optional[str] = None
     tweet_id: Optional[str] = None
     error: Optional[str] = None
+    error_type: Optional[str] = None  # retryable, permanent, unknown
     campaign: Optional[str] = None
     utm_params: Optional[Dict[str, str]] = None
     media_paths: List[str] = field(default_factory=list)
     retry_count: int = 0
     max_retries: int = 3
+    last_retry_at: Optional[str] = None  # When last retry was attempted
     business_id: Optional[str] = None
     template_type: Optional[str] = None
     generate_image: bool = False
@@ -100,6 +111,7 @@ class PostScheduler:
         self.time_context = TimeContext()
         self.queue = self._load_queue()
         self.history = self._load_history()
+        self._posted_content_hashes = self._build_posted_content_cache()
 
     def _load_queue(self) -> List[ScheduledPost]:
         """Load queue from file."""
@@ -146,6 +158,10 @@ class PostScheduler:
                         post['retry_count'] = 0
                     if 'max_retries' not in post:
                         post['max_retries'] = 3
+                    if 'error_type' not in post:
+                        post['error_type'] = None
+                    if 'last_retry_at' not in post:
+                        post['last_retry_at'] = None
 
                     migrated_posts.append(ScheduledPost(**post))
                 return migrated_posts
@@ -176,6 +192,118 @@ class PostScheduler:
         self.HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(self.HISTORY_FILE, 'w') as f:
             json.dump(self.history[-1000:], f, indent=2)  # Keep last 1000
+
+    def _content_hash(self, text: str) -> str:
+        """Generate a hash of post content for duplicate detection."""
+        # Normalize text: lowercase, strip whitespace, remove URLs
+        import re
+        normalized = text.lower().strip()
+        # Remove URLs (they often have timestamps/tracking params)
+        normalized = re.sub(r'https?://\S+', '', normalized)
+        # Remove extra whitespace
+        normalized = ' '.join(normalized.split())
+        return hashlib.md5(normalized.encode()).hexdigest()
+
+    def _build_posted_content_cache(self) -> Set[str]:
+        """Build a cache of content hashes from recently posted tweets."""
+        hashes = set()
+        cutoff = datetime.now() - timedelta(days=30)  # Check last 30 days
+
+        for post in self.history:
+            posted_at = post.get('posted_at')
+            text = post.get('text')
+            if posted_at and text:
+                try:
+                    post_time = datetime.fromisoformat(posted_at)
+                    if post_time > cutoff:
+                        hashes.add(self._content_hash(text))
+                except (ValueError, TypeError):
+                    pass
+
+        logger.info(f"Built content cache with {len(hashes)} unique posted texts")
+        return hashes
+
+    def is_duplicate_content(self, text: str) -> bool:
+        """Check if this content was recently posted."""
+        content_hash = self._content_hash(text)
+        return content_hash in self._posted_content_hashes
+
+    def add_content_variation(self, text: str) -> str:
+        """Add variation to make content unique (timestamp or emoji variation)."""
+        import random
+
+        # Option 1: Add invisible variation with timestamp
+        timestamp = datetime.now().strftime("%H%M")
+
+        # Option 2: Add subtle variation phrases
+        variations = [
+            "",  # No change
+            "\n\n[{timestamp}]",  # Timestamp
+        ]
+
+        # For now, just add a timestamp marker if needed
+        if len(text) <= 270:  # Leave room for variation
+            return f"{text}\n\n#{timestamp}"
+
+        # If text is too long, we can't add variation
+        return text
+
+    def _record_posted_content(self, text: str):
+        """Record that content was posted to prevent duplicates."""
+        self._posted_content_hashes.add(self._content_hash(text))
+
+    def _classify_error(self, error_message: str) -> str:
+        """
+        Classify an error as retryable or permanent.
+
+        Returns:
+            ErrorType value: 'retryable', 'permanent', or 'unknown'
+        """
+        if not error_message:
+            return ErrorType.UNKNOWN.value
+
+        error_lower = error_message.lower()
+
+        # Permanent errors - don't retry these
+        permanent_patterns = [
+            "duplicate content",
+            "already posted",
+            "not allowed to create",
+            "tweet too long",
+            "invalid",
+            "forbidden",
+            "403",
+            "401 unauthorized",
+            "authentication",
+            "suspended",
+            "blocked",
+        ]
+
+        for pattern in permanent_patterns:
+            if pattern in error_lower:
+                return ErrorType.PERMANENT.value
+
+        # Retryable errors - worth trying again
+        retryable_patterns = [
+            "429",
+            "too many requests",
+            "rate limit",
+            "timeout",
+            "connection",
+            "network",
+            "temporary",
+            "service unavailable",
+            "503",
+            "502",
+            "500",
+        ]
+
+        for pattern in retryable_patterns:
+            if pattern in error_lower:
+                return ErrorType.RETRYABLE.value
+
+        # Unknown errors - retry cautiously (count towards max)
+        return ErrorType.UNKNOWN.value
 
     def _generate_id(self) -> str:
         """Generate unique post ID."""
@@ -302,7 +430,7 @@ class PostScheduler:
 
         return ready
 
-    def process_queue(self, max_posts: int = 5, dry_run: bool = False) -> List[PostResult]:
+    def process_queue(self, max_posts: int = 1, dry_run: bool = False) -> List[PostResult]:
         """
         Process the queue and post ready items.
 
@@ -329,6 +457,18 @@ class PostScheduler:
                 logger.warning(f"Rate limited: {reason}")
                 break
 
+            # Check for duplicate content BEFORE posting
+            if self.is_duplicate_content(post.text):
+                logger.warning(f"Duplicate content detected for post {post.id}, archiving")
+                post.status = PostStatus.ARCHIVED.value
+                post.error = "Duplicate content - already posted within last 30 days"
+                post.error_type = ErrorType.PERMANENT.value
+                results.append(PostResult(
+                    success=False,
+                    error="Duplicate content - skipped to avoid X API rejection"
+                ))
+                continue
+
             if dry_run:
                 logger.info(f"[DRY RUN] Would post: {post.text[:50]}...")
                 results.append(PostResult(success=True, text=post.text))
@@ -354,6 +494,9 @@ class PostScheduler:
                 post.posted_at = datetime.now().isoformat()
                 post.tweet_id = result.tweet_id
 
+                # Record content as posted for duplicate detection
+                self._record_posted_content(post.text)
+
                 # Add to history
                 self.history.append({
                     "post_id": post.id,
@@ -364,10 +507,45 @@ class PostScheduler:
                     "posted_at": post.posted_at
                 })
             else:
-                post.retry_count += 1
-                if post.retry_count >= post.max_retries:
-                    post.status = PostStatus.FAILED.value
+                # Classify the error to determine retry behavior
+                error_type = self._classify_error(result.error)
                 post.error = result.error
+                post.error_type = error_type
+                post.last_retry_at = datetime.now().isoformat()
+
+                if error_type == ErrorType.PERMANENT.value:
+                    # Permanent errors - archive immediately, don't retry
+                    post.status = PostStatus.ARCHIVED.value
+                    logger.warning(f"Permanent error for post {post.id}: {result.error} - archived")
+
+                    # If it's duplicate content, add to cache to prevent future attempts
+                    if "duplicate" in result.error.lower():
+                        self._record_posted_content(post.text)
+
+                elif error_type == ErrorType.RETRYABLE.value:
+                    # Retryable errors - increment count and maybe retry
+                    post.retry_count += 1
+                    logger.warning(f"Retryable error for post {post.id} (attempt {post.retry_count}/{post.max_retries}): {result.error}")
+
+                    # Trigger rate limiter backoff if it's a rate limit error
+                    if "429" in result.error or "rate limit" in result.error.lower():
+                        self.client.rate_limiter.record_rate_limit()
+                        # Stop processing more posts - we're rate limited
+                        results.append(result)
+                        break
+
+                    if post.retry_count >= post.max_retries:
+                        post.status = PostStatus.FAILED.value
+                        logger.error(f"Post {post.id} failed after {post.max_retries} retries")
+
+                else:
+                    # Unknown errors - retry cautiously
+                    post.retry_count += 1
+                    logger.warning(f"Unknown error for post {post.id} (attempt {post.retry_count}/{post.max_retries}): {result.error}")
+
+                    if post.retry_count >= post.max_retries:
+                        post.status = PostStatus.FAILED.value
+                        logger.error(f"Post {post.id} failed after {post.max_retries} retries (unknown error)")
 
             results.append(result)
 
@@ -463,12 +641,172 @@ class PostScheduler:
         """Get current time context for scheduling decisions."""
         return self.time_context.get_context_summary()
 
+    def deduplicate_queue(self) -> Dict[str, int]:
+        """
+        Remove duplicate pending/scheduled posts from queue.
+        Keeps the first occurrence (earliest scheduled time) of each unique content.
+
+        Returns:
+            Dict with counts: removed, kept, already_posted
+        """
+        seen_hashes = set()
+        kept = []
+        removed = 0
+        already_posted = 0
+
+        # First, add all posted content hashes to seen set
+        for hash_val in self._posted_content_hashes:
+            seen_hashes.add(hash_val)
+
+        # Sort by scheduled_time to keep earliest occurrence
+        pending_posts = [p for p in self.queue if p.status in [PostStatus.PENDING.value, PostStatus.SCHEDULED.value]]
+        pending_posts.sort(key=lambda p: p.scheduled_time or "9999")
+
+        # Also keep all non-pending posts
+        non_pending = [p for p in self.queue if p.status not in [PostStatus.PENDING.value, PostStatus.SCHEDULED.value]]
+
+        for post in pending_posts:
+            content_hash = self._content_hash(post.text)
+
+            if content_hash in self._posted_content_hashes:
+                # This content was already posted
+                post.status = PostStatus.FAILED.value
+                post.error = "Duplicate content - already posted"
+                non_pending.append(post)  # Move to non-pending (failed)
+                already_posted += 1
+                logger.info(f"Post {post.id} marked failed - duplicate of already posted content")
+            elif content_hash in seen_hashes:
+                # This is a duplicate of another pending post
+                removed += 1
+                logger.info(f"Post {post.id} removed - duplicate of another pending post")
+                # Don't add to kept list
+            else:
+                seen_hashes.add(content_hash)
+                kept.append(post)
+
+        self.queue = non_pending + kept
+        self._save_queue()
+
+        result = {
+            "removed": removed,
+            "kept": len(kept),
+            "already_posted": already_posted
+        }
+        logger.info(f"Deduplication complete: {result}")
+        return result
+
+    def get_retryable_failed_posts(self) -> List[ScheduledPost]:
+        """Get failed posts that can be retried (error_type is retryable or unknown)."""
+        return [
+            p for p in self.queue
+            if p.status == PostStatus.FAILED.value
+            and p.error_type in [ErrorType.RETRYABLE.value, ErrorType.UNKNOWN.value, None]
+            and p.retry_count < p.max_retries
+        ]
+
+    def reset_failed_for_retry(self, post_ids: Optional[List[str]] = None) -> Dict[str, int]:
+        """
+        Reset failed posts to pending status for retry.
+
+        Args:
+            post_ids: Specific post IDs to reset, or None for all retryable failed posts
+
+        Returns:
+            Dict with counts: reset, skipped_permanent, skipped_max_retries
+        """
+        reset = 0
+        skipped_permanent = 0
+        skipped_max_retries = 0
+
+        for post in self.queue:
+            if post.status != PostStatus.FAILED.value:
+                continue
+
+            if post_ids and post.id not in post_ids:
+                continue
+
+            # Skip permanent errors
+            if post.error_type == ErrorType.PERMANENT.value:
+                skipped_permanent += 1
+                continue
+
+            # Skip posts that hit max retries
+            if post.retry_count >= post.max_retries:
+                skipped_max_retries += 1
+                continue
+
+            # Reset to pending
+            post.status = PostStatus.PENDING.value
+            reset += 1
+            logger.info(f"Post {post.id} reset to pending (retry {post.retry_count + 1})")
+
+        self._save_queue()
+
+        return {
+            "reset": reset,
+            "skipped_permanent": skipped_permanent,
+            "skipped_max_retries": skipped_max_retries
+        }
+
+    def archive_old_overdue(self, hours_threshold: int = 48) -> Dict[str, int]:
+        """
+        Archive posts that are overdue by more than the threshold.
+
+        Args:
+            hours_threshold: Hours after scheduled time to consider too old (default 48)
+
+        Returns:
+            Dict with counts: archived, kept
+        """
+        now = datetime.now()
+        cutoff = now - timedelta(hours=hours_threshold)
+        archived = 0
+        kept = 0
+
+        for post in self.queue:
+            if post.status not in [PostStatus.PENDING.value, PostStatus.SCHEDULED.value]:
+                continue
+
+            if not post.scheduled_time:
+                continue
+
+            try:
+                scheduled = datetime.fromisoformat(post.scheduled_time)
+                if scheduled < cutoff:
+                    post.status = PostStatus.ARCHIVED.value
+                    post.error = f"Archived - overdue by more than {hours_threshold} hours"
+                    post.error_type = ErrorType.PERMANENT.value
+                    archived += 1
+                    logger.info(f"Post {post.id} archived - scheduled for {post.scheduled_time}")
+                else:
+                    kept += 1
+            except (ValueError, TypeError):
+                kept += 1
+
+        self._save_queue()
+
+        return {
+            "archived": archived,
+            "kept": kept
+        }
+
     def clear_completed(self) -> int:
         """Remove completed/cancelled posts from queue."""
         original_count = len(self.queue)
         self.queue = [
             p for p in self.queue
             if p.status not in [PostStatus.POSTED.value, PostStatus.CANCELLED.value]
+        ]
+        removed = original_count - len(self.queue)
+        self._save_queue()
+        return removed
+
+    def clear_archived(self) -> int:
+        """Remove archived posts from queue."""
+        original_count = len(self.queue)
+        self.queue = [
+            p for p in self.queue
+            if p.status != PostStatus.ARCHIVED.value
         ]
         removed = original_count - len(self.queue)
         self._save_queue()
@@ -490,12 +828,12 @@ def main():
 
     # Process command
     process_parser = subparsers.add_parser('process', help='Process queue')
-    process_parser.add_argument('--max', type=int, default=5, help='Max posts to process')
+    process_parser.add_argument('--max', type=int, default=1, help='Max posts to process (default: 1 to avoid rate limits)')
     process_parser.add_argument('--dry-run', action='store_true', help='Preview without posting')
 
     # List command
     list_parser = subparsers.add_parser('list', help='List queue')
-    list_parser.add_argument('--status', choices=['pending', 'scheduled', 'posted', 'failed', 'cancelled'])
+    list_parser.add_argument('--status', choices=['pending', 'scheduled', 'posted', 'failed', 'cancelled', 'archived'])
 
     # Stats command
     subparsers.add_parser('stats', help='Show queue statistics')
@@ -509,6 +847,20 @@ def main():
 
     # Clear command
     subparsers.add_parser('clear', help='Clear completed/cancelled posts')
+
+    # Deduplicate command
+    subparsers.add_parser('dedupe', help='Remove duplicate posts from queue')
+
+    # Retry command
+    retry_parser = subparsers.add_parser('retry', help='Reset failed posts for retry')
+    retry_parser.add_argument('--post-id', help='Specific post ID to retry')
+
+    # Archive old command
+    archive_parser = subparsers.add_parser('archive-old', help='Archive posts overdue by more than threshold')
+    archive_parser.add_argument('--hours', type=int, default=48, help='Hours threshold (default: 48)')
+
+    # Clear archived command
+    subparsers.add_parser('clear-archived', help='Remove archived posts from queue')
 
     args = parser.parse_args()
 
@@ -597,6 +949,31 @@ def main():
     elif args.command == 'clear':
         removed = scheduler.clear_completed()
         print(f"Cleared {removed} completed/cancelled posts")
+
+    elif args.command == 'dedupe':
+        result = scheduler.deduplicate_queue()
+        print("\nDeduplication Results:")
+        print(f"  Duplicates removed: {result['removed']}")
+        print(f"  Posts kept: {result['kept']}")
+        print(f"  Already posted (marked failed): {result['already_posted']}")
+
+    elif args.command == 'retry':
+        post_ids = [args.post_id] if args.post_id else None
+        result = scheduler.reset_failed_for_retry(post_ids)
+        print("\nRetry Reset Results:")
+        print(f"  Posts reset to pending: {result['reset']}")
+        print(f"  Skipped (permanent error): {result['skipped_permanent']}")
+        print(f"  Skipped (max retries reached): {result['skipped_max_retries']}")
+
+    elif args.command == 'archive-old':
+        result = scheduler.archive_old_overdue(hours_threshold=args.hours)
+        print(f"\nArchive Results (threshold: {args.hours} hours):")
+        print(f"  Posts archived: {result['archived']}")
+        print(f"  Posts kept: {result['kept']}")
+
+    elif args.command == 'clear-archived':
+        removed = scheduler.clear_archived()
+        print(f"Cleared {removed} archived posts")
 
     else:
         parser.print_help()

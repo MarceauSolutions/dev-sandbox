@@ -37,7 +37,7 @@ from typing import Optional, List, Dict, Any, Tuple
 from enum import Enum
 
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 from .models import Lead, LeadCollection
@@ -189,6 +189,19 @@ FOLLOW_UP_TEMPLATES = {
         "body": "Final message - William from Marceau Solutions. Only helping 2 more businesses boost reviews this month. Want details? Text YES or call (239) 398-5676. Reply STOP to opt out.",
         "char_count": 185,
         "notes": "Scarcity for review help"
+    },
+
+    # APOLLO B2B follow-ups (uses $first_name instead of $business_name)
+    "apollo_b2b_followup_question": {
+        "body": "$first_name - William again. Quick question: what % of your no-shows and cancellations get a follow-up text? (239) 398-5676. Reply STOP to opt out.",
+        "char_count": 153,
+        "notes": "Apollo B2B follow-up - pain point question"
+    },
+
+    "apollo_b2b_followup_breakup": {
+        "body": "Last text $first_name - only taking 3 more automation clients this month. If interested in saving 10+ hrs/week on member outreach, text YES. Reply STOP to opt out.",
+        "char_count": 172,
+        "notes": "Apollo B2B breakup - scarcity + exit"
     },
 }
 
@@ -438,11 +451,17 @@ class FollowUpSequenceManager:
             touch_num = touchpoint["touch_number"]
             logger.info(f"Processing Touch #{touch_num} for {sequence.business_name}")
 
-            # Get lead data
+            # Get lead data - try collection first, then create from sequence
             lead = leads_collection.leads.get(sequence.lead_id)
             if not lead:
-                stats["errors"].append(f"Lead not found: {sequence.lead_id}")
-                continue
+                # Create a minimal Lead from sequence data for template generation
+                lead = Lead(
+                    id=sequence.lead_id,
+                    business_name=sequence.business_name,
+                    phone=sequence.phone,
+                    source="follow_up_sequence"
+                )
+                logger.debug(f"Created lead from sequence data: {sequence.business_name}")
 
             # Send touchpoint
             result = self.send_touchpoint(

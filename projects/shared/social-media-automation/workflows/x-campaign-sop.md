@@ -1,16 +1,49 @@
 # SOP: X Platform Campaign Execution
 
-*Last Updated: 2026-01-15*
-*Version: 1.0.0*
+*Last Updated: 2026-01-21*
+*Version: 2.0.0*
 
 ## Overview
 
 Execute automated social media campaigns on X (Twitter) with rate limiting, UTM tracking, and engagement analytics.
 
-**Free Tier Limits:**
+## X Premium Subscription ($8/month) - ACTIVE
+
+We now have X Premium, which provides significant advantages:
+
+### Content Capabilities
+| Feature | Free | Premium ($8/mo) |
+|---------|------|-----------------|
+| Post length | 280 chars | **25,000 chars** |
+| Video upload | 2 min | **3 hours (8GB)** |
+| Edit posts | ❌ | ✅ (limited) |
+| Bookmark folders | ❌ | ✅ |
+
+### Visibility & Reach
+- **Blue Checkmark**: Verified account (after approval)
+- **Reply Prioritization**: Our replies appear higher in threads
+- **Algorithmic Boost**: Posts get preference in For You feed
+- **50% fewer ads**: Better user experience when browsing
+
+### Monetization (Future)
+- **Creator Revenue Sharing**: Eligible to apply (requires 500+ followers, 5M impressions in 3 months)
+- **Creator Subscriptions**: Can offer paid subscriptions to followers
+
+### AI & Tools
+- **Grok Access**: X's AI assistant for research and content ideas
+- **Media Studio**: Advanced media management
+- **Enhanced Analytics**: Detailed audience insights
+
+---
+
+## API Tier (Separate from Premium)
+
+**Current: Free API Tier Limits:**
 - 1,500 posts/month (~50/day)
 - 10,000 read requests/month
 - 2-minute minimum gap between posts
+
+**Note**: X Premium subscription does NOT upgrade API access. API upgrades require separate Basic ($100/mo) or Pro ($5,000/mo) plans.
 
 ## Prerequisites
 
@@ -292,7 +325,7 @@ Tracked: `https://marceausolutions.com/fitness?utm_source=x&utm_medium=social&ut
 
 ## Campaign Templates
 
-### Product Launch
+### Product Launch (280 chars - API posts)
 
 ```
 [PAIN POINT] keeping you up at night?
@@ -304,7 +337,7 @@ Check it out: [LINK]
 #[Niche] #[Industry]
 ```
 
-### Social Proof
+### Social Proof (280 chars - API posts)
 
 ```
 "[TESTIMONIAL QUOTE]" - [NAME], [TITLE]
@@ -314,7 +347,7 @@ See how [PRODUCT] helped [CUSTOMER] achieve [RESULT].
 [LINK]
 ```
 
-### Value-First
+### Value-First (280 chars - API posts)
 
 ```
 [NUMBER] [THING] that [OUTCOME]:
@@ -325,6 +358,101 @@ See how [PRODUCT] helped [CUSTOMER] achieve [RESULT].
 
 Want more? [LINK]
 ```
+
+---
+
+## Premium Long-Form Templates (25,000 chars - Manual posts via web/app)
+
+### Educational Thread Starter
+
+```
+🧵 [NUMBER] things I learned about [TOPIC] that changed everything:
+
+[INTRODUCTION - 2-3 sentences explaining why this matters]
+
+Let me break it down...
+
+1/ [POINT ONE]
+[Detailed explanation with specific examples, data, or case studies.
+Premium allows you to include the full context without thread fragmentation.]
+
+2/ [POINT TWO]
+[Continue with rich detail...]
+
+[... continue for all points ...]
+
+Key takeaway: [SUMMARY]
+
+If this was helpful, follow for more [TOPIC] insights.
+
+Want the full breakdown? [LINK]
+```
+
+### Case Study Post
+
+```
+How [CLIENT/EXAMPLE] went from [BEFORE STATE] to [AFTER STATE] in [TIMEFRAME]:
+
+📊 The Situation:
+[Detailed description of the problem - be specific with numbers]
+
+🔧 What We Did:
+[Step-by-step breakdown of the solution]
+
+📈 The Results:
+• [Metric 1]: [Before] → [After]
+• [Metric 2]: [Before] → [After]
+• [Metric 3]: [Before] → [After]
+
+💡 Key Lessons:
+1. [Lesson]
+2. [Lesson]
+3. [Lesson]
+
+Want similar results? Let's talk: [LINK]
+```
+
+### Authority Building Post
+
+```
+I've spent [TIME] working on [EXPERTISE AREA]. Here's what most people get wrong:
+
+❌ Common Mistake #1: [MISTAKE]
+Why it fails: [EXPLANATION]
+What works instead: [SOLUTION]
+
+❌ Common Mistake #2: [MISTAKE]
+Why it fails: [EXPLANATION]
+What works instead: [SOLUTION]
+
+❌ Common Mistake #3: [MISTAKE]
+Why it fails: [EXPLANATION]
+What works instead: [SOLUTION]
+
+The pattern? [INSIGHT]
+
+I help [TARGET AUDIENCE] avoid these mistakes and [OUTCOME].
+
+DM "HELP" or visit [LINK] to learn more.
+```
+
+---
+
+## Premium Video Strategy (Up to 3 hours)
+
+With Premium, you can upload videos up to 3 hours and 8GB. Use this for:
+
+1. **Full Tutorials**: Complete walkthroughs instead of clips
+2. **Webinar Replays**: Post entire recordings
+3. **Client Testimonials**: Unedited, authentic social proof
+4. **Behind-the-Scenes**: Extended day-in-the-life content
+5. **Screen Recordings**: Full software demos
+
+**Best Practices:**
+- Add captions (80% watch without sound)
+- Hook in first 3 seconds
+- Include CTA in video and caption
+- Post native (not YouTube links) for better reach
 
 ---
 
@@ -365,11 +493,38 @@ Form Submission (Conversion)
 
 ## Success Criteria
 
+- [x] X Premium subscription active ($8/mo)
 - [ ] X API credentials configured and verified
 - [ ] First test post successfully published
 - [ ] UTM tracking working on links
 - [ ] Engagement metrics updating
 - [ ] Campaign achieving target engagement rate (>2%)
+- [ ] Blue checkmark verified
+- [ ] First long-form post (>280 chars) published manually
+
+---
+
+## Premium Strategy Recommendations
+
+### Daily Workflow
+1. **API Posts (automated)**: Short announcements, links, quick tips
+2. **Manual Premium Posts (1-2/day)**: Long-form value content, threads, case studies
+3. **Video Content (1-2/week)**: Tutorials, demos, testimonials
+
+### Content Mix
+| Type | Frequency | Channel |
+|------|-----------|---------|
+| Quick tips/links | 3-5/day | API (automated) |
+| Long-form educational | 1/day | Manual (Premium) |
+| Video content | 2/week | Manual (Premium) |
+| Engagement replies | Ongoing | Manual (Premium boost) |
+
+### Monetization Path
+1. ✅ Get Premium ($8/mo) - DONE
+2. Build to 500+ followers
+3. Generate 5M impressions over 3 months
+4. Apply for Creator Revenue Sharing
+5. Consider Premium+ ($40/mo) when monetized
 
 ---
 
@@ -379,3 +534,5 @@ Form Submission (Conversion)
 - [Tweepy Documentation](https://docs.tweepy.org/)
 - [UTM Best Practices](https://support.google.com/analytics/answer/1033867)
 - [SOP 24: Daily/Weekly Digest](../../personal-assistant/workflows/daily-routine-sop.md)
+- [X Premium Features](https://socialrails.com/social-media-terms/x-premium-features)
+- [Is X Premium Worth It?](https://www.tryordinal.com/blog/is-x-premium-worth-it-a-complete-guide-for-creators-and-brands)

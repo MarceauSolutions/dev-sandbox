@@ -26,7 +26,7 @@ from string import Template
 
 # Load environment variables
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 from .models import Lead, LeadCollection
@@ -90,18 +90,42 @@ class SMSRecord:
 BUSINESS_TEMPLATE_MAP = {
     "marceau-solutions": {
         "allowed_templates": [
+            # No website templates (ONLY for verified no-website leads)
             "no_website_intro",
             "no_website_v2_compliant",
             "no_website_followup_question",
             "no_website_followup_breakup",
+            # Aggregator only (has Yelp/Facebook but no real site)
+            "aggregator_only_intro",
+            "aggregator_google_ranking",
+            # Few reviews templates
             "few_reviews",
+            "few_reviews_v2",
+            "few_reviews_system",
             "few_reviews_v2_compliant",
             "few_reviews_followup_question",
             "few_reviews_followup_breakup",
+            # Low rating templates
+            "low_rating_recovery",
+            "low_rating_reputation",
+            # Franchise templates (for locally-owned chain locations)
+            "franchise_intro",
+            "franchise_member_retention",
+            "franchise_operations",
+            # Apollo B2B templates (fitness industry owners)
+            "apollo_b2b_intro",
+            "apollo_b2b_followup_question",
+            "apollo_b2b_followup_breakup",
+            "apollo_decision_maker",
+            "apollo_automation_offer",
+            # Online transactions templates
             "no_online_transactions",
+            "no_online_transactions_v2",
+            "online_booking_offer",
             "no_online_transactions_v2_compliant",
             "no_online_transactions_followup_question",
             "no_online_transactions_followup_breakup",
+            # General templates
             "competitor_hook",
             "social_proof",
             "still_looking"
@@ -136,27 +160,159 @@ BUSINESS_TEMPLATE_MAP = {
 
 
 # =============================================================================
-# HORMOZI-STYLE SMS TEMPLATES
+# SMS TEMPLATES - Updated 2026-01-22
 # =============================================================================
 # Keep messages under 160 chars when possible (single SMS segment)
 # Always include opt-out language for compliance
+#
+# LESSONS LEARNED:
+# - Lead with discovery questions, not product pitches
+# - "Automation" umbrella > specific products (voice AI, websites)
+# - Avoid confusing messaging (competitor_hook was terrible)
+# - Be clear about what we're offering
 
 SMS_TEMPLATES = {
+    # =============================================================================
+    # PRIMARY TEMPLATES - DISCOVERY FOCUSED (Use these first)
+    # =============================================================================
+    # Our niche: Finding problems clients don't know they have, and building
+    # better solutions than what they originally asked for.
+
+    # Discovery question - works for any business (RECOMMENDED)
+    "discovery_question": {
+        "body": "Hi, this is William. Quick Q for $business_name - what's taking up most of your time that you wish you could hand off? Curious if I can help. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 172,
+        "notes": "PRIMARY - Pure discovery, no pitch. Opens conversation."
+    },
+
+    # Consultant positioning - emphasizes we diagnose first
+    "consultant_intro": {
+        "body": "Hi, William here. I help local businesses find where they're leaking time and money - then fix it with automation. Worth a quick chat? Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 163,
+        "notes": "Positions us as consultants, not vendors. Discovery-first."
+    },
+
+    # Gap finder - our specialty
+    "gap_finder": {
+        "body": "Hi, this is William. I specialize in finding gaps in business operations that owners don't know exist. Quick call to see if I can spot anything for $business_name? Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 189,
+        "notes": "Emphasizes our specialty - finding hidden problems"
+    },
+
+    # Better solution angle - for clients who think they know what they need
+    "better_solution": {
+        "body": "Hi, William here. I work with businesses who have a problem in mind - then build something better than what they originally asked for. Open to a quick chat? Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 183,
+        "notes": "For clients who already have an idea - we make it better"
+    },
+
+    # =============================================================================
+    # SECONDARY TEMPLATES - AUTOMATION FOCUSED
+    # =============================================================================
+
+    # Time-saving angle - universal pain point
+    "automation_time_saver": {
+        "body": "Hi, William here. I help local businesses automate the repetitive stuff - follow-ups, scheduling, inquiries. Worth a quick chat? -William. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 168,
+        "notes": "General automation pitch - clear value prop"
+    },
+
+    # Direct automation offer
+    "automation_direct": {
+        "body": "Hi, this is William. I build AI systems that handle customer follow-ups, booking, and inquiries 24/7. Interested in seeing how it works? Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 167,
+        "notes": "Direct automation offer - specific capabilities"
+    },
+
+    # Legacy alias (keep for backwards compatibility)
+    "automation_discovery": {
+        "body": "Hi, this is William. Quick Q for $business_name - what's taking up most of your time that you wish you could hand off? Curious if I can help. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 172,
+        "notes": "ALIAS for discovery_question - use discovery_question instead"
+    },
+
+    # =============================================================================
+    # LEGACY TEMPLATES - WEBSITE/REVIEW FOCUSED (Still valid for specific pain points)
+    # =============================================================================
+
     # Template 1: No Website - Direct Value Offer
     "no_website_intro": {
         "body": "Hi, this is William. I noticed $business_name doesn't have a website. 80% of customers search online first. Want a free mockup? Reply STOP to opt out.",
         "pain_points": ["no_website"],
         "char_count": 158,
-        "notes": "Primary template for leads without websites"
+        "notes": "For leads without websites - specific pain point"
     },
 
-    # Template 2: Competitor Hook (Hormozi favorite)
-    "competitor_hook": {
-        "body": "Hi, calling about a gym near $business_name that just got 23 new members from their website. Call back if interested. -William. Reply STOP to opt out.",
-        "pain_points": [],
-        "char_count": 156,
-        "notes": "Creates curiosity and FOMO"
+    # DEPRECATED - competitor_hook caused confusion (Inhale Exhale 2026-01-22)
+    # "competitor_hook" - REMOVED: Message was confusing ("gym near your spa got members")
+    # Lesson: Don't use competitor references that don't make sense for the business type
+
+    # =============================================================================
+    # INDUSTRY-SPECIFIC AUTOMATION TEMPLATES
+    # =============================================================================
+
+    # Wellness/Spa specific
+    "wellness_automation": {
+        "body": "Hi, this is William. For wellness businesses like $business_name - do you have automated rebooking reminders for past clients? Can help with that. Reply STOP to opt out.",
+        "pain_points": ["wellness", "spa"],
+        "char_count": 174,
+        "notes": "Wellness/spa specific - rebooking angle"
     },
+
+    # Fitness/Gym specific
+    "fitness_automation": {
+        "body": "Hi, William here. Quick Q for $business_name - what happens when someone misses a class or their membership lapses? I automate that follow-up. Reply STOP to opt out.",
+        "pain_points": ["fitness", "gym"],
+        "char_count": 174,
+        "notes": "Fitness specific - retention angle"
+    },
+
+    # Service business (HVAC, plumbing, etc)
+    "service_business_automation": {
+        "body": "Hi, this is William. For service businesses like $business_name - do you have automated follow-ups after jobs? Helps get reviews + repeat business. Reply STOP to opt out.",
+        "pain_points": ["service_business"],
+        "char_count": 178,
+        "notes": "Service business - post-job automation"
+    },
+
+    # =============================================================================
+    # FOLLOW-UP SEQUENCE (Automation focused)
+    # =============================================================================
+
+    # Follow-up 1: Still interested
+    "automation_followup_1": {
+        "body": "Hey, William again. Still curious if automation could help $business_name? No pressure - just thought I'd check. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 139,
+        "notes": "Follow-up 1 - soft check-in"
+    },
+
+    # Follow-up 2: Specific value
+    "automation_followup_2": {
+        "body": "Hi $business_name - most businesses I work with save 5-10 hrs/week once we automate their follow-ups. Worth a quick call? Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 151,
+        "notes": "Follow-up 2 - time savings angle"
+    },
+
+    # Follow-up 3: Breakup
+    "automation_breakup": {
+        "body": "Should I stop texting about automation for $business_name? If so, no worries - just ignore this. If not, text back. -William. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 155,
+        "notes": "Follow-up 3 - permission to stop (gets highest responses)"
+    },
+
+    # =============================================================================
+    # LEGACY TEMPLATES - REVIEW/WEBSITE FOCUSED
+    # =============================================================================
 
     # Template 3: Few Reviews - Quick Win
     "few_reviews": {
@@ -166,28 +322,28 @@ SMS_TEMPLATES = {
         "notes": "Targets review pain point"
     },
 
-    # Template 4: Still Looking (9-word reactivation)
+    # Template 4: Still Looking (9-word reactivation) - UPDATED to be more general
     "still_looking": {
-        "body": "Still looking to get more members at $business_name? -William. Reply STOP to opt out.",
+        "body": "Still interested in automating some of the busywork at $business_name? -William. Reply STOP to opt out.",
         "pain_points": [],
-        "char_count": 89,
-        "notes": "Follow-up for non-responders"
+        "char_count": 102,
+        "notes": "Follow-up for non-responders - now automation focused"
     },
 
-    # Template 5: Social Proof
+    # Template 5: Social Proof - UPDATED to automation focus
     "social_proof": {
-        "body": "Just helped a Naples gym add 40 members last month. Want to know how? Call me at this number. -William. Reply STOP to opt out.",
+        "body": "Just helped a Naples business automate their customer follow-ups - saved them 8 hrs/week. Want to know how? -William. Reply STOP to opt out.",
         "pain_points": [],
-        "char_count": 131,
-        "notes": "Leads with social proof"
+        "char_count": 147,
+        "notes": "Leads with social proof - automation angle"
     },
 
-    # Template 6: Direct Question
+    # Template 6: Direct Question - UPDATED to automation
     "direct_question": {
-        "body": "Quick question for $business_name - do you have someone handling your online presence? If not, I'd love to help. -William. Reply STOP to opt out.",
-        "pain_points": ["no_website"],
-        "char_count": 152,
-        "notes": "Opens conversation"
+        "body": "Quick Q for $business_name - do you have automated follow-ups for leads and customers? If not, I can set that up. -William. Reply STOP to opt out.",
+        "pain_points": [],
+        "char_count": 154,
+        "notes": "Opens conversation - automation focus"
     },
 
     # 7-TOUCH SEQUENCE TEMPLATES (for follow_up_sequence.py)
@@ -230,6 +386,152 @@ SMS_TEMPLATES = {
         "pain_points": ["no_website"],
         "char_count": 158,
         "notes": "Touch 7 - Final scarcity"
+    },
+
+    # =============================================================================
+    # APOLLO B2B TEMPLATES (Decision-Maker Outreach - Fitness Industry)
+    # =============================================================================
+    # These templates use first_name personalization for B2B decision makers
+    # Source: Apollo.io leads with verified contact info
+    # Variables: $first_name, $business_name, $title
+
+    # Initial B2B outreach - personal and direct
+    "apollo_b2b_intro": {
+        "body": "Hi $first_name, this is William. I help fitness business owners automate member follow-ups and booking. Curious if that's on your radar? Reply STOP to opt out.",
+        "pain_points": ["apollo_b2b"],
+        "char_count": 167,
+        "notes": "Apollo leads - personal B2B intro, no claims"
+    },
+
+    # Decision maker angle - respects their role
+    "apollo_decision_maker": {
+        "body": "Hi $first_name, saw you run $business_name. Quick question - how do you currently handle member retention follow-ups? -William. Reply STOP to opt out.",
+        "pain_points": ["apollo_b2b"],
+        "char_count": 159,
+        "notes": "Apollo leads - question hook for decision makers"
+    },
+
+    # Automation value proposition
+    "apollo_automation_offer": {
+        "body": "Hi $first_name, I build AI systems that handle member outreach for gyms (texts, emails, reminders). Saves 10+ hrs/week. Worth a quick call? Reply STOP to opt out.",
+        "pain_points": ["apollo_b2b"],
+        "char_count": 172,
+        "notes": "Apollo leads - concrete value proposition"
+    },
+
+    # Apollo follow-up question (Touch 2)
+    "apollo_b2b_followup_question": {
+        "body": "$first_name - William again. Quick question: what % of your no-shows and cancellations get a follow-up text? (239) 398-5676. Reply STOP to opt out.",
+        "pain_points": ["apollo_b2b"],
+        "char_count": 153,
+        "notes": "Apollo B2B follow-up - pain point question"
+    },
+
+    # Apollo breakup (Touch 3)
+    "apollo_b2b_followup_breakup": {
+        "body": "Last text $first_name - only taking 3 more automation clients this month. If interested in saving 10+ hrs/week on member outreach, text YES. Reply STOP to opt out.",
+        "pain_points": ["apollo_b2b"],
+        "char_count": 172,
+        "notes": "Apollo B2B breakup - scarcity + exit"
+    },
+
+    # =============================================================================
+    # FRANCHISE TEMPLATES (For locally-owned chain locations)
+    # =============================================================================
+    # These DO NOT make false claims about missing websites
+    # Focus on automation, member retention, and operational efficiency
+
+    "franchise_intro": {
+        "body": "Hi, this is William. I help local fitness owners like $business_name automate no-show follow-ups and boost member retention. Worth a quick chat? Reply STOP to opt out.",
+        "pain_points": ["franchise"],
+        "char_count": 172,
+        "notes": "For franchises - no website claims, focus on automation"
+    },
+
+    "franchise_member_retention": {
+        "body": "Hi, $business_name owner? I've helped 5 Naples gyms boost retention 20% with automated member follow-ups. Interested? -William. Reply STOP to opt out.",
+        "pain_points": ["franchise"],
+        "char_count": 159,
+        "notes": "For franchises - social proof + retention focus"
+    },
+
+    "franchise_operations": {
+        "body": "Hi, quick Q for $business_name: Do you have automated texts for missed appointments and membership renewals? Can set that up. -William. Reply STOP to opt out.",
+        "pain_points": ["franchise"],
+        "char_count": 168,
+        "notes": "For franchises - operational pain point"
+    },
+
+    # =============================================================================
+    # FEW REVIEWS TEMPLATES (5-10 reviews)
+    # =============================================================================
+
+    "few_reviews_v2": {
+        "body": "Hi, this is William. Noticed $business_name has solid ratings but could use more reviews. I helped a local gym 5x their Google reviews in 60 days. Interested? Reply STOP to opt out.",
+        "pain_points": ["few_reviews"],
+        "char_count": 189,
+        "notes": "Few reviews - social proof angle"
+    },
+
+    "few_reviews_system": {
+        "body": "Hi $business_name - most gyms leave reviews to chance. I build automated systems that ask happy members at the right time. Want details? -William. Reply STOP to opt out.",
+        "pain_points": ["few_reviews"],
+        "char_count": 173,
+        "notes": "Few reviews - system offer"
+    },
+
+    # =============================================================================
+    # LOW RATING TEMPLATES (Under 3.5 stars)
+    # =============================================================================
+
+    "low_rating_recovery": {
+        "body": "Hi, this is William. Saw $business_name has room to improve ratings. I help businesses recover by getting more 5-star reviews to balance things out. Chat? Reply STOP to opt out.",
+        "pain_points": ["low_rating"],
+        "char_count": 183,
+        "notes": "Low rating - recovery focus, not critical"
+    },
+
+    "low_rating_reputation": {
+        "body": "Hi, $business_name - 70% of customers won't visit if ratings are under 4 stars. I help local gyms fix that fast. Want to know how? -William. Reply STOP to opt out.",
+        "pain_points": ["low_rating"],
+        "char_count": 168,
+        "notes": "Low rating - urgency with stat"
+    },
+
+    # =============================================================================
+    # NO/FEW ONLINE TRANSACTIONS TEMPLATES
+    # =============================================================================
+
+    "no_online_transactions_v2": {
+        "body": "Hi, this is William. Quick Q: Can members at $business_name book classes or buy packages online? If not, I can help set that up. Reply STOP to opt out.",
+        "pain_points": ["no_online_transactions"],
+        "char_count": 160,
+        "notes": "Online transactions - question hook"
+    },
+
+    "online_booking_offer": {
+        "body": "Hi, $business_name - I help gyms add online booking that works with their schedule. Members love it, owners save time. Interested? -William. Reply STOP to opt out.",
+        "pain_points": ["no_online_transactions"],
+        "char_count": 172,
+        "notes": "Online transactions - value focus"
+    },
+
+    # =============================================================================
+    # AGGREGATOR ONLY TEMPLATES (Has Yelp/Facebook but no real website)
+    # =============================================================================
+
+    "aggregator_only_intro": {
+        "body": "Hi, saw $business_name on Yelp but couldn't find your own website. Having one helps you control your brand. Want a free mockup? -William. Reply STOP to opt out.",
+        "pain_points": ["aggregator_only"],
+        "char_count": 166,
+        "notes": "Aggregator - validates they have online presence, offers upgrade"
+    },
+
+    "aggregator_google_ranking": {
+        "body": "Hi, $business_name shows on Google Maps but competitors with websites rank higher. Want to level the playing field? -William. Reply STOP to opt out.",
+        "pain_points": ["aggregator_only"],
+        "char_count": 157,
+        "notes": "Aggregator - SEO angle"
     }
 }
 
@@ -367,11 +669,22 @@ class SMSOutreachManager:
             raise ValueError(f"Unknown template: {template_name}")
 
         # Build substitution variables
+        # Handle first_name with fallback
+        first_name = getattr(lead, 'first_name', '') or ''
+        if not first_name and lead.owner_name:
+            first_name = lead.owner_name.split()[0]
+        if not first_name:
+            first_name = "there"
+
         vars = {
             "business_name": lead.business_name[:30],  # Truncate for SMS length
             "city": lead.city or "Naples",
             "review_count": str(lead.review_count),
             "rating": str(lead.rating),
+            # Apollo B2B fields
+            "first_name": first_name,
+            "last_name": getattr(lead, 'last_name', '') or '',
+            "title": getattr(lead, 'title', '') or '',
         }
 
         if custom_vars:
@@ -382,18 +695,66 @@ class SMSOutreachManager:
 
         return body
 
-    def select_template_for_lead(self, lead: Lead) -> str:
-        """Select best SMS template based on lead's pain points."""
+    def select_template_for_lead(self, lead: Lead, use_optimizer: bool = True) -> str:
+        """
+        Select best SMS template based on lead's pain points.
+
+        Uses outreach optimizer for A/B testing when available.
+
+        CRITICAL: Match templates to VERIFIED pain points only.
+        - franchise → franchise templates (no website claims)
+        - no_website → no_website templates (verified no site)
+        - aggregator_only → aggregator templates (has Yelp but no site)
+        - low_rating → rating recovery templates
+        - few_reviews → review templates
+        """
         pain_points = set(lead.pain_points)
 
+        # Try to use optimizer for A/B testing
+        if use_optimizer:
+            try:
+                from .outreach_optimizer import OutreachOptimizer
+                optimizer = OutreachOptimizer(output_dir=str(self.output_dir))
+
+                if "apollo_b2b" in pain_points or getattr(lead, 'source', '') == 'apollo':
+                    return optimizer.select_template_for_lead("apollo")
+                else:
+                    return optimizer.select_template_for_lead("google_places")
+            except Exception as e:
+                logger.debug(f"Optimizer not available, using default: {e}")
+
+        # Priority-based template selection (most specific first)
+
+        # 1. Apollo B2B leads (decision-maker outreach)
+        if "apollo_b2b" in pain_points or getattr(lead, 'source', '') == 'apollo':
+            return "apollo_b2b_intro"
+
+        # 2. Franchises - NEVER claim they don't have a website
+        if "franchise" in pain_points:
+            return "franchise_intro"
+
+        # 3. Aggregator only (has Yelp/Facebook but no real website)
+        if "aggregator_only" in pain_points:
+            return "aggregator_only_intro"
+
+        # 4. Truly no website (verified by website_validator)
         if "no_website" in pain_points:
             return "no_website_intro"
-        elif "no_reviews" in pain_points or lead.review_count == 0:
+
+        # 5. Low rating (under 3.5 stars)
+        if "low_rating" in pain_points:
+            return "low_rating_recovery"
+
+        # 6. No online transactions
+        if "no_online_transactions" in pain_points:
+            return "no_online_transactions_v2"
+
+        # 7. Few or no reviews
+        if "no_reviews" in pain_points or "few_reviews" in pain_points or lead.review_count < 10:
             return "few_reviews"
-        elif "few_reviews" in pain_points or lead.review_count < 10:
-            return "few_reviews"
-        else:
-            return "competitor_hook"
+
+        # 8. Default - generic value hook
+        return "competitor_hook"
 
     def send_sms(
         self,

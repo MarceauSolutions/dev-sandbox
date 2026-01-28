@@ -119,7 +119,7 @@ class TwilioInboxMonitor:
 
         # Data directories
         self.project_root = Path(__file__).parent.parent
-        self.lead_scraper_output = self.project_root / "projects" / "lead-scraper" / "output"
+        self.lead_scraper_output = self.project_root / "projects" / "shared" / "lead-scraper" / "output"
         self.replies_file = self.lead_scraper_output / "sms_replies.json"
         self.campaigns_file = self.lead_scraper_output / "sms_campaigns.json"
 

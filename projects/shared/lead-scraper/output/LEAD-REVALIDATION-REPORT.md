@@ -1,14 +1,14 @@
 # Lead Re-Validation Report
-Generated: 2026-01-21 12:26:28
+Generated: 2026-01-21 19:02:16
 
 ## Summary
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| **Total Leads** | 117 | 100% |
+| **Total Leads** | 120 | 100% |
 | ✅ Correctly Targeted | 0 | 0.0% |
 | ❌ Incorrectly Targeted | 0 | 0.0% |
-| ⚠️ Missing Website Info | 117 | 100.0% |
+| ⚠️ Missing Website Info | 120 | 100.0% |
 
 ## Critical Finding
 
@@ -39,7 +39,7 @@ These businesses were sent "no website" messages but actually HAVE websites:
 
 ## Missing Website Info
 
-117 leads are missing website data and need to be re-scraped:
+120 leads are missing website data and need to be re-scraped:
 
 - Smash Fitness (+1 239-331-3581): No website field in data
 - Smash Fitness (+1 239-241-2324): No website field in data
@@ -158,6 +158,9 @@ These businesses were sent "no website" messages but actually HAVE websites:
 - LA Fitness ((239) 344-9600): No website field in data
 - PGA TOUR Superstore Naples ((239) 384-6380): No website field in data
 - Planet Fitness ((239) 417-1010): No website field in data
+- Club Pilates (+19497917184): No website field in data
+- Anytime Fitness (+18007045004): No website field in data
+- The Bar Method (+14156243631): No website field in data
 
 
 ---

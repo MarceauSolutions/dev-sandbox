@@ -251,7 +251,6 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Ralph: Build..." | Direct Ralph trigger with PRD |
 | "Route this to..." | Follow AI routing optimization doc |
 | *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
-| *(Needs user input while user may be AFK)* | Play church bell notification: `./scripts/notify-input-needed.sh "message"` |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 

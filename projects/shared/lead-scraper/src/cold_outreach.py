@@ -33,7 +33,7 @@ from string import Template
 
 # Load environment variables
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent.parent.parent / ".env"
+env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
 load_dotenv(env_path)
 
 from .models import Lead, LeadCollection
@@ -90,145 +90,344 @@ class OutreachRecord:
 
 
 # =============================================================================
-# HORMOZI-STYLE EMAIL TEMPLATES
+# DISCOVERY-FOCUSED EMAIL TEMPLATES
+#
+# Our niche: We specialize in two things:
+# 1. Finding problems clients don't know they have
+# 2. Building better solutions than what clients originally asked for
+#
+# These templates lead with DISCOVERY, not product pitches.
 # =============================================================================
 
 TEMPLATES = {
-    # Template 1: No Website Pain Point
+    # ==========================================================================
+    # PRIMARY TEMPLATES - DISCOVERY FOCUSED (Use these first)
+    # ==========================================================================
+
+    # Template 1: Pure Discovery Question (PRIMARY - recommended)
+    "discovery_question": {
+        "subject": "Quick question for $business_name",
+        "body": """Hi $first_name,
+
+I work with local businesses in Naples to find where they're leaking time or money - then fix it with automation.
+
+Quick question: What's taking up most of your time that you wish you could hand off to someone else?
+
+Not trying to pitch you anything - genuinely curious if there's something I could help with.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "PRIMARY - Pure discovery, no pitch. Opens conversation."
+    },
+
+    # Template 2: Consultant Intro
+    "consultant_intro": {
+        "subject": "Automation question for $business_name",
+        "body": """Hi $first_name,
+
+I'm William - I work with local businesses to find gaps in their operations that they don't even know exist.
+
+Most of my clients didn't know what they needed until we talked. I just ask questions and see if there's a fit.
+
+Would a quick 10-minute chat be worth it to see if there's something I could help with at $business_name?
+
+No pitch, no pressure. If there's no fit, I'll tell you honestly.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "Positions us as consultants who discover problems, not vendors pushing products."
+    },
+
+    # Template 3: Gap Finder
+    "gap_finder": {
+        "subject": "Noticed something about $business_name",
+        "body": """Hi $first_name,
+
+I specialize in finding operational gaps that business owners don't know they have.
+
+Running a $category like $business_name, there are usually 2-3 things leaking time or money that you've just gotten used to dealing with.
+
+Would you be open to a quick call where I ask a few questions? If I don't find anything worth fixing, I'll tell you straight up.
+
+No sales pitch - I only work with businesses where I can actually help.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "Emphasizes our specialty - finding hidden problems."
+    },
+
+    # Template 4: Better Solution (for leads who mentioned a specific need)
+    "better_solution": {
+        "subject": "Re: Your $category operations",
+        "body": """Hi $first_name,
+
+I work with businesses who have a problem in mind - then build something more comprehensive than what they originally asked for.
+
+Most of my clients come to me thinking they need X, and we discover that the real solution is Y (which solves 3 more problems they didn't even realize they had).
+
+If you've got something you're trying to fix at $business_name, I'd be happy to take a look and see if there's a bigger picture solution.
+
+Worth a quick chat?
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "For clients who already have an idea - we make it better."
+    },
+
+    # ==========================================================================
+    # INDUSTRY-SPECIFIC TEMPLATES (Use after discovery fails)
+    # ==========================================================================
+
+    # Template 5: Wellness/Spa Automation
+    "wellness_automation": {
+        "subject": "Automation question for $business_name",
+        "body": """Hi $first_name,
+
+I help wellness businesses automate the stuff that eats up their day - client follow-ups, appointment reminders, rebooking sequences.
+
+Quick question: What's the most repetitive task at $business_name that you wish would just handle itself?
+
+Not pitching anything specific - I'm curious what's actually a pain point for you.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": ["wellness", "spa"],
+        "category": "wellness",
+        "notes": "Discovery-focused for wellness/spa businesses."
+    },
+
+    # Template 6: Fitness Automation
+    "fitness_automation": {
+        "subject": "Quick question for $business_name",
+        "body": """Hi $first_name,
+
+I work with gyms and fitness studios to automate the time-consuming stuff - lead follow-up, member check-ins, reactivation sequences.
+
+Curious: If you could wave a magic wand and automate ONE thing at $business_name, what would it be?
+
+Not trying to sell you anything - just seeing if there's a fit.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": ["gym", "fitness"],
+        "category": "gym",
+        "notes": "Discovery-focused for fitness businesses."
+    },
+
+    # Template 7: Service Business Automation
+    "service_automation": {
+        "subject": "Automation question for $business_name",
+        "body": """Hi $first_name,
+
+I work with service businesses to automate customer follow-ups, scheduling, and lead response.
+
+Quick question: What's eating up the most time at $business_name right now?
+
+Most business owners I talk to have at least one thing they'd love to hand off. Curious what yours is.
+
+William
+Marceau Solutions
+(239) 398-5676
+""",
+        "pain_points": ["service", "hvac", "plumbing", "contractor"],
+        "category": "service",
+        "notes": "Discovery-focused for service businesses."
+    },
+
+    # ==========================================================================
+    # FOLLOW-UP TEMPLATES
+    # ==========================================================================
+
+    # Template 8: Still Looking (9-word reactivation)
+    "still_looking": {
+        "subject": "Still looking to streamline things at $business_name?",
+        "body": """Are you still looking to free up time at $business_name?
+
+William
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "Use for dormant leads who didn't respond to initial outreach."
+    },
+
+    # Template 9: Check-in Follow-up
+    "followup_checkin": {
+        "subject": "Following up - $business_name",
+        "body": """Hi $first_name,
+
+Just following up on my last message. Totally understand if you're busy running $business_name.
+
+If there's ever something eating up your time that you think automation could help with, I'm around.
+
+No pressure either way.
+
+William
+Marceau Solutions
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "Soft follow-up for non-responders."
+    },
+
+    # Template 10: Breakup Email
+    "breakup": {
+        "subject": "Closing the loop - $business_name",
+        "body": """Hi $first_name,
+
+I've reached out a few times about automation for $business_name, but haven't heard back.
+
+No worries at all - I know timing isn't always right.
+
+I'm going to stop reaching out, but if you ever want to chat about freeing up time at $business_name, just reply to this email.
+
+Wishing you the best!
+
+William
+Marceau Solutions
+""",
+        "pain_points": [],
+        "category": "general",
+        "notes": "Final touch - respectful close."
+    },
+
+    # ==========================================================================
+    # DEPRECATED TEMPLATES (Kept for backwards compatibility)
+    # ==========================================================================
+
+    # DEPRECATED - Too product-focused, caused confusion
     "no_website": {
         "subject": "$business_name - Quick question about your online presence",
         "body": """Hi $first_name,
 
-I noticed $business_name doesn't have a website yet. In Naples, over 80% of customers search online before visiting a gym.
+I noticed $business_name doesn't have a website yet. In Naples, over 80% of customers search online before visiting.
 
-I built a simple site for another local gym last month - they got 23 new members in the first 30 days.
+Quick question: Is that something you've been meaning to tackle, or is it just not a priority right now?
 
-Would you be open to a free mockup of what your site could look like? No strings attached - you can use it as a reference even if we never work together.
+Either way is fine - I'm curious what's working for you.
 
-Takes me about 20 minutes to put together.
-
-Best,
 William
 Marceau Solutions
-
-P.S. - Here's what I did for Hardcore Gym: [link]
+(239) 398-5676
 """,
         "pain_points": ["no_website", "outdated_website"],
-        "category": "gym"
+        "category": "general",
+        "notes": "DEPRECATED - Still starts with discovery question but more specific."
     },
 
-    # Template 2: Few Reviews Pain Point
+    # DEPRECATED - Too specific about reviews
     "few_reviews": {
-        "subject": "Getting more 5-star reviews for $business_name",
+        "subject": "Quick question about $business_name",
         "body": """Hi $first_name,
 
-Saw $business_name on Yelp - looks like a great spot.
+I help local businesses with the operational stuff - automating follow-ups, getting more reviews, that kind of thing.
 
-Quick thought: I noticed you have $review_count reviews. Most of your competitors have 50+.
+Curious: What's taking up the most time at $business_name right now?
 
-I have a simple 3-step system that helped another Naples gym go from 12 reviews to 67 in 60 days. No fake reviews, no gimmicks - just making it stupid easy for happy members to leave one.
+Not pitching anything - just seeing if there's something I could help with.
 
-Want me to send you the exact steps? Takes 5 minutes to read.
-
-Best,
 William
-
-P.S. - This works especially well for gyms because members are already on their phones between sets.
+Marceau Solutions
+(239) 398-5676
 """,
         "pain_points": ["few_reviews", "no_reviews", "low_rating"],
-        "category": "gym"
+        "category": "general",
+        "notes": "DEPRECATED - Leads with discovery, not review pitch."
     },
 
-    # Template 3: No Online Booking
+    # DEPRECATED - Original booking template
     "no_booking": {
-        "subject": "Let members book classes at $business_name online?",
+        "subject": "Let members book at $business_name online?",
         "body": """$first_name,
 
-Quick question - do members currently have to call or walk in to book classes at $business_name?
+Quick question - what's the most time-consuming part of handling bookings at $business_name?
 
-If so, you're probably losing people who want to sign up at 11pm when they're motivated.
+I work with businesses to automate the repetitive stuff - scheduling, follow-ups, reminders.
 
-I set up online booking for a gym in Fort Myers - they saw a 34% increase in class attendance in the first month because members could book from their couch.
-
-Would a 15-minute call be worth it to see if this could work for you?
+If that's not a pain point for you, no worries. But if it is, worth a quick chat.
 
 William
+Marceau Solutions
 """,
         "pain_points": ["no_online_booking", "no_online_transactions"],
-        "category": "gym"
+        "category": "general",
+        "notes": "DEPRECATED - Discovery-focused booking template."
     },
 
-    # Template 4: Competitor Callback (Hormozi favorite)
+    # DEPRECATED - Competitor callback (confusing, caused issues)
     "competitor_callback": {
-        "subject": "Regarding $competitor_name",
+        "subject": "Quick call - $business_name",
         "body": """$first_name,
 
-Calling about $competitor_name.
+I had a quick question about $business_name - worth a 5-minute call?
 
-Give me a call back at your convenience: (555) 123-4567
-
-William
-""",
-        "pain_points": [],  # Works for any lead
-        "category": "gym",
-        "notes": "Ultra short. Creates open loop. Best for voicemail/SMS follow-up."
-    },
-
-    # Template 5: Still Looking (9-word reactivation)
-    "still_looking": {
-        "subject": "Still looking to get more gym members?",
-        "body": """Are you still looking to get more members at $business_name?
+(239) 398-5676
 
 William
 """,
         "pain_points": [],
-        "category": "gym",
-        "notes": "Use for dormant leads who didn't respond to initial outreach."
+        "category": "general",
+        "notes": "DEPRECATED - Ultra short. Creates open loop."
     },
 
-    # Template 6: Big Fast Value - Free Audit
-    "free_audit": {
-        "subject": "Free marketing audit for $business_name (no pitch)",
-        "body": """$first_name,
+    # DEPRECATED - Too product-focused
+    "apollo_voice_ai": {
+        "subject": "Quick question for $business_name",
+        "body": """Hi $first_name,
 
-I put together a quick marketing audit for $business_name. Took me about 15 minutes.
+I work with businesses to automate the repetitive stuff - customer follow-ups, appointment handling, lead response.
 
-Found 3 things you could fix today that would probably bring in more members:
+Curious: What's eating up the most time at $business_name that you wish would just handle itself?
 
-1. [Specific observation about their online presence]
-2. [Specific observation about reviews/ratings]
-3. [Specific observation about social/booking]
-
-Full audit is attached. Use it however you want - I'm not going to follow up with a sales pitch.
-
-If you want to chat about implementing any of it, I'm around. If not, no worries.
+If there's a fit, I'll share some ideas. If not, no pitch.
 
 William
+Marceau Solutions
+(239) 398-5676
 """,
-        "pain_points": [],
-        "category": "gym",
-        "notes": "Highest conversion but requires manual personalization."
+        "pain_points": ["apollo_b2b"],
+        "category": "general",
+        "source": "apollo",
+        "notes": "DEPRECATED - Replaced with discovery-focused approach."
     },
 
-    # Template 7: Social Proof
-    "social_proof": {
-        "subject": "How [Other Naples Gym] got 40 new members last month",
+    # DEPRECATED - Too specific about retention
+    "apollo_retention": {
+        "subject": "Quick question about $business_name",
         "body": """$first_name,
 
-Not sure if you know [Other Gym Owner] over at [Other Naples Gym], but we helped them add 40 new members last month using a simple online system.
+I help businesses automate their customer follow-up and retention systems.
 
-They were skeptical at first too - their words: "We've always done word of mouth."
+What's the biggest operational challenge at $business_name right now?
 
-But they gave it a shot, and now they're asking us to help with their second location.
-
-Would you be open to a quick call to see if something similar could work for $business_name?
-
-Either way, happy to share exactly what we did if you want to try it yourself.
+Always curious what's actually a pain point vs. what I assume is a pain point.
 
 William
+Marceau Solutions
 """,
-        "pain_points": [],
-        "category": "gym"
+        "pain_points": ["apollo_b2b"],
+        "category": "general",
+        "source": "apollo",
+        "notes": "DEPRECATED - Discovery-focused retention template."
     }
 }
 
@@ -345,8 +544,13 @@ class ColdOutreachManager:
         if owner_info:
             vars["first_name"] = owner_info.get("first_name", "there")
             vars["owner_title"] = owner_info.get("title", "")
+            vars["title"] = owner_info.get("title", "run")
         elif lead.owner_name:
             vars["first_name"] = lead.owner_name.split()[0]  # First name only
+
+        # Add title if available on lead (for Apollo leads)
+        if hasattr(lead, 'title') and lead.title:
+            vars["title"] = lead.title
 
         # Add custom overrides
         if custom_vars:
@@ -364,26 +568,33 @@ class ColdOutreachManager:
 
     def select_template_for_lead(self, lead: Lead) -> str:
         """
-        Select best template based on lead's pain points.
+        Select best template based on lead's category and pain points.
+
+        Our niche: Discovery-focused consulting.
+        Lead with discovery questions, not product pitches.
 
         Priority:
-        1. No website = highest opportunity
-        2. Few reviews = easy quick win
-        3. No online booking = clear pain point
-        4. Default to social proof
+        1. Industry-specific discovery template (if available)
+        2. General discovery template
+        3. Fallback to generic consultant intro
         """
+        category = (lead.category or "").lower()
         pain_points = set(lead.pain_points)
 
-        if "no_website" in pain_points or not lead.website:
-            return "no_website"
-        elif "no_reviews" in pain_points or lead.review_count == 0:
-            return "few_reviews"
-        elif "few_reviews" in pain_points or lead.review_count < 10:
-            return "few_reviews"
-        elif "no_online_booking" in pain_points or "no_online_transactions" in pain_points:
-            return "no_booking"
-        else:
-            return "social_proof"
+        # Industry-specific discovery templates
+        if any(term in category for term in ["wellness", "spa", "massage", "salon"]):
+            return "wellness_automation"
+        elif any(term in category for term in ["gym", "fitness", "yoga", "pilates", "crossfit"]):
+            return "fitness_automation"
+        elif any(term in category for term in ["hvac", "plumbing", "contractor", "service", "repair"]):
+            return "service_automation"
+
+        # Apollo-sourced leads with verified contact info
+        if "apollo_b2b" in pain_points:
+            return "consultant_intro"
+
+        # Default: Pure discovery question (our primary template)
+        return "discovery_question"
 
     def generate_image_for_lead(
         self,
@@ -615,7 +826,9 @@ class ColdOutreachManager:
         """Register outreach for unified response monitoring across all projects."""
         try:
             import sys
-            sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / 'execution'))
+            # Path: projects/shared/lead-scraper/src/ -> projects/shared/lead-scraper/ -> projects/shared/ -> projects/ -> dev-sandbox/
+            execution_path = Path(__file__).parent.parent.parent.parent.parent / 'execution'
+            sys.path.insert(0, str(execution_path))
             from email_response_monitor import EmailResponseMonitor
 
             # Determine project based on template/category
@@ -707,6 +920,7 @@ def main():
     gen_parser.add_argument("--pain-point", "-p", help="Filter by pain point")
     gen_parser.add_argument("--limit", "-l", type=int, default=10, help="Number of leads to process")
     gen_parser.add_argument("--enrich", action="store_true", help="Enrich with Apollo")
+    gen_parser.add_argument("--leads-file", help="Custom leads JSON file (default: leads.json)")
     gen_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
 
     # Send command
@@ -714,6 +928,8 @@ def main():
     send_parser.add_argument("--dry-run", action="store_true", default=True, help="Preview without sending")
     send_parser.add_argument("--for-real", action="store_true", help="Actually send emails")
     send_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit (Rule of 100)")
+    send_parser.add_argument("--leads-file", help="Custom leads JSON file (default: leads.json)")
+    send_parser.add_argument("--template", "-t", choices=list(TEMPLATES.keys()), help="Force specific template")
     send_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
 
     # Stats command
@@ -749,17 +965,50 @@ def main():
         return
 
     if args.command in ["generate", "send"]:
-        # Load leads
-        collection = LeadCollection(output_dir=args.output_dir)
-        collection.load_json()
-
-        leads = list(collection.leads.values())
+        # Load leads - either from custom file or default leads.json
+        leads_file = getattr(args, 'leads_file', None)
+        if leads_file:
+            # Load from custom file (e.g., Apollo leads)
+            import json
+            leads_path = Path(args.output_dir) / leads_file if not Path(leads_file).is_absolute() else Path(leads_file)
+            with open(leads_path, 'r') as f:
+                data = json.load(f)
+            leads_data = data.get('leads', data) if isinstance(data, dict) else data
+            leads = []
+            for ld in leads_data:
+                lead = Lead(
+                    id=ld.get('id', ''),
+                    source=ld.get('source', 'custom'),
+                    business_name=ld.get('business_name', ''),
+                    owner_name=ld.get('owner_name', ''),
+                    email=ld.get('email', ''),
+                    phone=ld.get('phone', ''),
+                    website=ld.get('website', ''),
+                    address=ld.get('address', ''),
+                    city=ld.get('city', ''),
+                    state=ld.get('state', ''),
+                    category=ld.get('category', ''),
+                    rating=ld.get('rating', 0),
+                    review_count=ld.get('review_count', 0),
+                    pain_points=ld.get('pain_points', []),
+                    notes=ld.get('notes', ''),
+                    scraped_at=ld.get('scraped_at', '')
+                )
+                # Add extra fields for templates
+                lead.first_name = ld.get('first_name', lead.owner_name.split()[0] if lead.owner_name else '')
+                lead.title = ld.get('title', '')
+                leads.append(lead)
+            print(f"\nLoaded {len(leads)} leads from {leads_file}")
+        else:
+            # Default: load from leads.json
+            collection = LeadCollection(output_dir=args.output_dir)
+            collection.load_json()
+            leads = list(collection.leads.values())
+            print(f"\nLoaded {len(leads)} leads")
 
         # Filter by pain point if specified
         if hasattr(args, 'pain_point') and args.pain_point:
             leads = [l for l in leads if args.pain_point in l.pain_points]
-
-        print(f"\nLoaded {len(leads)} leads")
 
         manager = ColdOutreachManager(output_dir=args.output_dir)
 
