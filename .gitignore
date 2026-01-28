@@ -54,3 +54,17 @@ Thumbs.db
 # MCP Registry tokens
 .mcpregistry_*_token
 .archive/
+
+# Generated outputs (resumes, cover letters, PDFs)
+projects/global-utility/resume/output/
+ralph/output/
+
+# Generated social media content
+projects/*/output/generated_posts_*.json
+projects/*/output/*.pdf
+
+# Infographics and generated images
+projects/*/output/infographics/
+
+# Duplicate/legacy project directories
+projects/lead-scraper/
