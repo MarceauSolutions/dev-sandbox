@@ -1,7 +1,7 @@
 # MCP Collection — Master Index
 
 **Last Updated:** 2026-01-28
-**Total MCPs:** 11
+**Total MCPs:** 12
 
 ---
 
@@ -16,6 +16,7 @@
 | **Instagram Creator** | `projects/marceau-solutions/instagram-creator/` | 1.0.0 | Post images, Reels, carousels, Stories, analytics |
 | **TikTok Creator** | `projects/marceau-solutions/tiktok-creator/` | 1.0.0 | Post videos, analytics, comment management |
 | **YouTube Creator** | `projects/marceau-solutions/youtube-creator/` | 1.0.0 | Upload videos, Shorts, playlists, analytics |
+| **Trainerize** | `projects/marceau-solutions/trainerize-mcp/` | 1.0.0 | Client management, workout programs, nutrition coaching, messaging, scheduling, analytics |
 
 ### 🏠 SW Florida HVAC (Company-Specific)
 
@@ -62,6 +63,7 @@ projects/
 │   ├── fitness-influencer-mcp/
 │   ├── instagram-creator/
 │   ├── tiktok-creator/
+│   ├── trainerize-mcp/
 │   └── youtube-creator/
 ├── swflorida-hvac/          # Company 2 MCPs
 │   └── hvac-mcp/
