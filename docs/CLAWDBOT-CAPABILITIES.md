@@ -1,32 +1,43 @@
 # Clawdbot AI Assistant - Capabilities & Integration Guide
 
-*Last Updated: 2026-01-27*
+*Last Updated: 2026-01-28*
 
 ## Overview
 
 Clawdbot is William's personal AI assistant running on a dedicated EC2 instance, accessible via multiple messaging channels (Telegram, WhatsApp, iMessage). It uses Claude Max subscription (OAuth) for unlimited conversations without API credit costs.
 
+## Official Documentation
+
+**Always consult documentation before troubleshooting:**
+
+| Resource | URL | Purpose |
+|----------|-----|---------|
+| **Clawdbot CLI Docs** | https://docs.molt.bot/cli | CLI commands and usage |
+| **OAuth Concepts** | https://docs.molt.bot/concepts/oauth | Token setup and refresh |
+| **Plugins Guide** | https://docs.molt.bot/cli/plugins | Plugin management |
+
 ## Infrastructure
 
-Clawdbot runs on a **dedicated VPS** separate from the web services EC2. This provides:
-- Isolation from production web traffic
-- Dedicated resources for AI processing
-- Independent scaling and maintenance
+Clawdbot runs on the **same EC2 instance** as web services, as a systemd service.
 
 | Property | Value |
 |----------|-------|
-| **EC2 Instance** | Dedicated VPS (separate from web services at 34.193.98.97) |
-| **SSH Host** | `clawdbot@44.193.244.59` |
+| **EC2 Instance** | `i-01752306f94897d7d` (marceau-production) |
+| **SSH Host** | `ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97` |
+| **Clawdbot User** | `clawdbot` (switch with `sudo -u clawdbot bash`) |
+| **App Directory** | `/home/clawdbot/app/` |
+| **Config Directory** | `/home/clawdbot/.clawdbot/` |
 | **Auth Method** | Claude Max OAuth (`sk-ant-oat01-...` access token) |
 | **Token Refresh** | Automatic via refresh token (`sk-ant-ort01-...`) |
-| **Service** | systemd (auto-starts on reboot) |
+| **Service** | systemd `clawdbot.service` (auto-starts on reboot) |
 
-### Two EC2 Architecture
+### EC2 Services
 
-| Server | IP | Purpose |
-|--------|-------|---------|
-| **Web Services EC2** | 34.193.98.97 | SW Florida Comfort website, Voice AI API |
-| **Clawdbot VPS** | 44.193.244.59 | AI assistant (Telegram, WhatsApp, iMessage) |
+| Service | IP | Port | Purpose |
+|---------|-------|------|---------|
+| **Web Services** | 34.193.98.97 | 80/443 | SW Florida Comfort website |
+| **Voice AI API** | 34.193.98.97 | 8000 | Twilio webhooks |
+| **Clawdbot Gateway** | 34.193.98.97 | internal | AI assistant (Telegram, WhatsApp) |
 
 ## Channels
 
@@ -105,6 +116,10 @@ Based on the Clawdbot framework, expected skill categories include:
 
 ## OAuth Configuration (Working)
 
+**Two auth profiles are configured:**
+- `anthropic:manual` - Static token (primary, for headless server)
+- `anthropic:claude-cli` - OAuth with refresh (backup, expires)
+
 ```json
 // auth-profiles.json
 {
@@ -116,6 +131,11 @@ Based on the Clawdbot framework, expected skill categories include:
       "access": "sk-ant-oat01-...",
       "refresh": "sk-ant-ort01-...",
       "expires": 1769552372818
+    },
+    "anthropic:manual": {
+      "type": "token",
+      "provider": "anthropic",
+      "token": "sk-ant-oat01-..."
     }
   },
   "lastGood": {
@@ -127,17 +147,23 @@ Based on the Clawdbot framework, expected skill categories include:
 {
   "auth": {
     "profiles": {
+      "anthropic:manual": {
+        "provider": "anthropic",
+        "mode": "token"
+      },
       "anthropic:claude-cli": {
         "provider": "anthropic",
         "mode": "oauth"
       }
     },
     "order": {
-      "anthropic": ["anthropic:claude-cli"]
+      "anthropic": ["anthropic:manual", "anthropic:claude-cli"]
     }
   }
 }
 ```
+
+**Note:** The `order` array determines which profile is tried first. `anthropic:manual` should be first for headless servers.
 
 ## How to Use Clawdbot
 
@@ -192,24 +218,24 @@ Based on the Clawdbot framework, expected skill categories include:
 
 ### Check Clawdbot Status
 ```bash
-ssh clawdbot@44.193.244.59 "systemctl status clawdbot"
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 "sudo systemctl status clawdbot"
 ```
 
 ### View Logs
 ```bash
-ssh clawdbot@44.193.244.59 "journalctl -u clawdbot -f"
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 "sudo journalctl -u clawdbot -f"
 ```
 
 ### Check OAuth Status
 ```bash
-ssh clawdbot@44.193.244.59 "clawdbot models status"
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 "sudo -u clawdbot bash -c 'cd /home/clawdbot/app && HOME=/home/clawdbot ./node_modules/.bin/clawdbot models status'"
 ```
 
 Expected output: `anthropic:claude-cli=OAuth` with expiry time
 
 ### Restart Clawdbot
 ```bash
-ssh clawdbot@44.193.244.59 "sudo systemctl restart clawdbot"
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 "sudo systemctl restart clawdbot"
 ```
 
 ## Troubleshooting
@@ -217,9 +243,57 @@ ssh clawdbot@44.193.244.59 "sudo systemctl restart clawdbot"
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | "No API key found for provider anthropic" | Auth profile mismatch | Ensure clawdbot.json references the profile in auth-profiles.json |
-| OAuth token expired | Normal expiration | Should auto-refresh; if not, re-run OAuth flow |
+| OAuth token expired | Normal expiration | See "Re-authenticating OAuth" below |
+| "No provider plugins found" | Anthropic plugin not installed | Run `./node_modules/.bin/clawdbot plugins install @clawdbot/anthropic` |
 | Memory not working | OpenAI quota exceeded | Pending: Integrate Ollama embeddings |
 | Channel not responding | Service down | Check systemd status, restart if needed |
+
+### Re-authenticating OAuth (When Token Expires)
+
+**Reference**: https://docs.molt.bot/concepts/oauth
+
+**Why standard OAuth fails on EC2:** Headless servers can't complete browser-based OAuth redirects. The solution is to generate a token on your Mac and paste it on EC2.
+
+#### Step 1: Generate Token on Mac
+
+On your local Mac (with browser access):
+```bash
+claude setup-token
+```
+This opens a browser, you authenticate with Claude Max, and it gives you a token starting with `sk-ant-oat01-...`. Copy this token.
+
+#### Step 2: Paste Token on EC2
+
+```bash
+# SSH into EC2
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97
+
+# Switch to clawdbot user
+sudo -u clawdbot bash
+cd /home/clawdbot/app
+export HOME=/home/clawdbot
+
+# Paste the token
+./node_modules/.bin/clawdbot models auth paste-token --provider anthropic
+# When prompted, paste your sk-ant-oat01-... token
+```
+
+#### Step 3: Verify and Restart
+
+```bash
+# Check status (should show anthropic:manual as static)
+./node_modules/.bin/clawdbot models status
+
+# Exit to ec2-user and restart
+exit
+sudo systemctl restart clawdbot
+```
+
+#### Step 4: Test
+
+Send a message to @W_marceaubot on Telegram to verify it's working.
+
+**Important:** The pasted token is static (doesn't auto-refresh). When it expires, repeat this process.
 
 ## Related Documents
 

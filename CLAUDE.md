@@ -72,6 +72,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Clawdbot usage (when/how)** | `docs/SOP-27-CLAWDBOT-USAGE.md` ⭐ |
 | **Ralph usage (when/how)** | `docs/SOP-28-RALPH-USAGE.md` ⭐ |
 | **Clawdbot capabilities** | `docs/CLAWDBOT-CAPABILITIES.md` |
+| **Troubleshooting methodology** | `docs/TROUBLESHOOTING-METHODOLOGY.md` ⭐ |
 | **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
@@ -353,6 +354,13 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - **Rule: If it took >30 minutes, document it BEFORE moving on**
    - **Document DURING work, not AFTER** - you'll forget critical details
    - See: `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` for decision tree
+
+13. **Research before retrying (Rule of Three)** - If same approach fails 3 times, STOP and research
+   - Get exact error message and understand what it means
+   - Check official docs → GitHub issues → web search (in that order)
+   - Understand root cause before designing solution
+   - Know environment constraints (headless server, permissions, etc.)
+   - See: `docs/TROUBLESHOOTING-METHODOLOGY.md` for full methodology
 
 ## Inference Quick Reference
 

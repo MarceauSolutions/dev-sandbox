@@ -4,6 +4,41 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-28: Clawdbot OAuth Fix + Troubleshooting Methodology
+
+**Context:** Clawdbot OAuth token expired, needed to fix authentication on headless EC2 server.
+
+**Problem:** Standard OAuth flow (`auth login`) requires browser redirect - impossible on headless servers. Error: "Invalid OAuth Request - Missing redirect_uri parameter"
+
+**What Didn't Work (45 min wasted):**
+- `npx @anthropic-ai/claude-code auth login` - redirect error
+- Various flags and variations - same error
+- Repeated attempts - same result
+
+**What Fixed It (15 min after researching):**
+1. **Research:** Searched "anthropic oauth headless", found GitHub issue #7100
+2. **Solution:** `setup-token` flow designed for headless servers
+   - Mac: `claude setup-token` (generates transferable token)
+   - EC2: `clawdbot models auth paste-token --provider anthropic` (accepts pasted token)
+3. **Config:** New `anthropic:manual` profile with static token, ordered first
+
+**Key Learnings:**
+
+1. **Rule of Three:** If same approach fails 3 times, STOP and research
+2. **Research order:** Official docs → GitHub issues → web search
+3. **Understand constraints:** "Headless server" = no browser = OAuth redirect impossible
+4. **Error messages tell you something:** "Missing redirect_uri" = OAuth flow can't complete
+
+**Documentation Created:**
+- `docs/TROUBLESHOOTING-METHODOLOGY.md` - Research-first approach
+- Updated `docs/CLAWDBOT-CAPABILITIES.md` - Correct token flow for headless
+- Added Operating Principle #13 to CLAUDE.md
+
+**New Communication Pattern:**
+- "Rule of three" / "Stop and research" → Apply troubleshooting methodology
+
+---
+
 ## 2026-01-17: Pricing Optimization + Branding Strategy + Development Pipeline Update
 
 **Context:** Optimizing business pricing and branding using multi-agent exploration (SOP 9), formalizing research phase in development pipeline.
