@@ -68,9 +68,15 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Autonomous agent triggers** | `docs/autonomous-agent-decision-tree.md` ⭐ |
 | **Deferred features/reminders** | `projects/social-media-automation/DOCKET.md` ⭐ |
 | **Documentation decision framework** | `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` ⭐ |
+| **User statement validation (MANDATORY)** | `docs/SOP-26-USER-STATEMENT-VALIDATION-PROTOCOL.md` ⭐ |
+| **Clawdbot usage (when/how)** | `docs/SOP-27-CLAWDBOT-USAGE.md` ⭐ |
+| **Ralph usage (when/how)** | `docs/SOP-28-RALPH-USAGE.md` ⭐ |
+| **Clawdbot capabilities** | `docs/CLAWDBOT-CAPABILITIES.md` |
+| **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
+| **Incident reports** | `docs/incidents/` |
 
 ## Development Pipeline (DOE → Skills)
 
@@ -231,6 +237,8 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Continue Ralph" / "Next Ralph iteration" | Resume after checkpoint OR next story (manual mode) |
 | "Ralph status" | Show X/Y complete, next story, checkpoints ahead |
 | "Integrate Ralph correctly" | Set up Ralph structure for autonomous development loops |
+| *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
+| *(Needs user input while user may be AFK)* | Play church bell notification: `./scripts/notify-input-needed.sh "message"` |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 
@@ -3328,6 +3336,16 @@ python -m src.routine_scheduler --create-all
 
 ---
 
+### SOP 26: User Statement Validation Protocol
+
+**MANDATORY** - See: `docs/SOP-26-USER-STATEMENT-VALIDATION-PROTOCOL.md`
+
+**Core Rule**: NEVER contradict user statements about prior work. Trust and proceed.
+
+**Incident Report**: `docs/incidents/2026-01-27-user-statement-contradiction.md`
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
@@ -3359,6 +3377,9 @@ python -m src.routine_scheduler --create-all
 | Tracking campaign performance | [SOP 22: Campaign Analytics & Tracking](#sop-22-campaign-analytics--tracking) | **⚠️ Campaign data exists in sms_campaigns.json** |
 | Developing new outreach strategies | [SOP 23: Cold Outreach Strategy Development](#sop-23-cold-outreach-strategy-development) | Target segment defined |
 | Daily/weekly routine check | [SOP 24: Daily/Weekly Digest System](#sop-24-dailyweekly-digest-system) | **⚠️ SMTP configured, Google OAuth optional** |
+| User states something was previously done | [SOP 26: User Statement Validation Protocol](#sop-26-user-statement-validation-protocol) | **⚠️ MANDATORY - Never contradict user** |
+| Quick task while mobile / away from computer | [SOP 27: Clawdbot Usage](docs/SOP-27-CLAWDBOT-USAGE.md) | Clawdbot VPS running |
+| Complex multi-story development task | [SOP 28: Ralph Usage](docs/SOP-28-RALPH-USAGE.md) | PRD structure, clear requirements |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
@@ -3370,6 +3391,7 @@ python -m src.routine_scheduler --create-all
 - **Deployment**: Can ONLY happen after all testing scenarios complete
 - **MCP Publishing (SOPs 11-14)**: Publishes to Claude's marketplace
 - **Multi-Channel (SOPs 15-16)**: Expands reach beyond Claude to OpenRouter + directories
+- **Tool Selection (SOPs 27-28)**: Use Clawdbot for mobile/quick tasks, Ralph for complex multi-story development
 
 ---
 
