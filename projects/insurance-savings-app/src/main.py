@@ -12,6 +12,7 @@ from src.api.profile import router as profile_router
 from src.api.deals import router as deals_router
 from src.api.savings import router as savings_router
 from src.api.dashboard import router as dashboard_router
+from src.api.quotes import router as quotes_router
 from src.scrapers.promo_scanner import run_all_scrapers
 from src.calculators.savings_engine import run_savings_analysis
 from src.notifications.notifier import check_and_notify
@@ -77,6 +78,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 app.include_router(profile_router, prefix="/api/profile", tags=["Profile"])
 app.include_router(deals_router, prefix="/api/deals", tags=["Deals"])
 app.include_router(savings_router, prefix="/api/savings", tags=["Savings"])
+app.include_router(quotes_router, prefix="/api/quotes", tags=["Quotes"])
 app.include_router(dashboard_router, tags=["Dashboard"])
 
 
