@@ -1,0 +1,39 @@
+{
+  "patterns": [
+    "EC2 runs Python 3.9 \u2014 use Optional[X] and List[X] from typing, not X | None or list[X]",
+    "from __future__ import annotations breaks SQLAlchemy model evaluation on Python 3.9",
+    "Use async/await patterns with FastAPI and SQLAlchemy async sessions",
+    "Content-hash deduplication (SHA-256 of key fields) prevents duplicate database entries",
+    "APScheduler AsyncIOScheduler integrates cleanly with FastAPI lifespan events",
+    "Pydantic v2 BaseSettings handles .env loading with env_prefix for namespacing",
+    "Sub-agents work well for parallelizing independent component development"
+  ],
+  "gotchas": [
+    "pkill -f can kill parent shell \u2014 use kill $(pgrep ...) instead",
+    "nohup may not create log files if working directory changes \u2014 use absolute paths",
+    "Insurance quote APIs all require partner agreements \u2014 no free public APIs exist",
+    "SQLAlchemy 2.0 Mapped[] annotations require proper typing imports on Python 3.9"
+  ],
+  "conventions": [
+    "Commit format: 'clawdbot: Description' for Clawdbot changes, 'feat: [Story ID] - Title' for Ralph",
+    "Project structure: projects/<name>/src/ with subdirectories for api, models, scrapers, etc.",
+    "FastAPI routes: separate router files per domain, mounted with prefix in main.py",
+    "Always run syntax check (ast.parse) on all Python files before committing"
+  ],
+  "run_history": [
+    {
+      "timestamp": "2026-01-28T20:06:48.106468",
+      "efficiency": {
+        "estimated_iterations": 0,
+        "estimated_completions": 0,
+        "estimated_retries": 0,
+        "efficiency": "N/A"
+      },
+      "new_patterns": 0,
+      "new_gotchas": 0,
+      "hot_files": []
+    }
+  ],
+  "optimization_notes": [],
+  "last_updated": "2026-01-28T20:06:48.106490"
+}

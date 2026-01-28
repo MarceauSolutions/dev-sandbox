@@ -1,0 +1,50 @@
+{
+  "projectName": "PROJECT_NAME",
+  "branchName": "ralph/FEATURE_NAME",
+  "description": "DETAILED_DESCRIPTION — what problem this solves and high-level approach",
+  
+  "techStack": {
+    "language": "python|javascript|typescript",
+    "framework": "fastapi|flask|react|nextjs",
+    "database": "sqlite|postgres|none",
+    "testing": "pytest|jest|none"
+  },
+  
+  "codingStandards": {
+    "style": "Follow existing codebase conventions",
+    "documentation": "Docstrings on all public functions and classes",
+    "errorHandling": "Graceful error handling with logging — no bare except",
+    "naming": "snake_case for Python, camelCase for JS/TS",
+    "testing": "Unit tests for all business logic"
+  },
+  
+  "qualityChecks": [
+    "syntax_check",
+    "lint",
+    "type_check",
+    "unit_tests"
+  ],
+  
+  "stories": [
+    {
+      "id": "story-001",
+      "title": "CLEAR_TITLE",
+      "description": "DETAILED_DESCRIPTION — what this story accomplishes, context Ralph needs",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "SPECIFIC — File X exists with function Y",
+        "TESTABLE — Endpoint /api/Z returns 200 with valid data",
+        "MEASURABLE — Response time < 500ms for query"
+      ],
+      "status": "pending",
+      "passes": false
+    }
+  ],
+  
+  "_template_notes": {
+    "quality_gate": "PRD must score >= 70/100 on pre-flight check to trigger Ralph",
+    "story_guidelines": "Each story should be completable in one iteration. If a story is too large, split it.",
+    "acceptance_criteria": "Every criterion must be objectively verifiable — no vague words like 'properly' or 'correctly'",
+    "dependencies": "List story IDs this depends on. Ralph processes highest priority incomplete story first."
+  }
+}
