@@ -90,7 +90,8 @@ Based on the Clawdbot framework, expected skill categories include:
 
 | Plugin | Status | Notes |
 |--------|--------|-------|
-| **memory-lancedb** | ⚠️ Limited | Hardcoded for OpenAI embeddings (quota exceeded) |
+| **memory-core** | ✅ Active | Built-in memory, uses Ollama embeddings |
+| **memory-lancedb** | Disabled | Not needed - memory-core handles this |
 | **telegram** | ✅ Active | Primary channel |
 | **whatsapp** | ✅ Active | Personal number |
 | **imessage** | ⚠️ Unknown | May need verification |
@@ -100,9 +101,48 @@ Based on the Clawdbot framework, expected skill categories include:
 
 | Issue | Priority | Status |
 |-------|----------|--------|
-| OpenAI embedding quota exceeded | High | memory-lancedb plugin needs Ollama integration |
-| Ollama is installed but not connected | High | Plugin code change needed |
+| ~~OpenAI embedding quota exceeded~~ | ~~High~~ | ✅ RESOLVED - Using Ollama |
+| ~~Ollama is installed but not connected~~ | ~~High~~ | ✅ RESOLVED - Connected via memorySearch config |
 | Twilio integration not set up | Medium | Would enable SMS/call auto-response |
+
+## Memory Configuration (Ollama)
+
+Memory is now powered by **Ollama** running locally on EC2 with the `nomic-embed-text` embedding model.
+
+**Configuration in `clawdbot.json`:**
+```json
+{
+  "agents": {
+    "defaults": {
+      "memorySearch": {
+        "provider": "openai",
+        "model": "nomic-embed-text",
+        "remote": {
+          "baseUrl": "http://localhost:11434/v1/"
+        }
+      }
+    }
+  }
+}
+```
+
+**Memory Status:**
+- Provider: `openai` (pointing to Ollama's OpenAI-compatible endpoint)
+- Model: `nomic-embed-text` (768-dimensional embeddings)
+- Storage: `~/.clawdbot/memory/main.sqlite`
+- Embeddings: Local (no API costs)
+
+**Troubleshooting Memory:**
+```bash
+# Check memory status
+sudo -u clawdbot bash -c 'cd /home/clawdbot/app && export HOME=/home/clawdbot && ./node_modules/.bin/clawdbot memory status --deep'
+
+# If Ollama reports insufficient memory, restart it
+sudo systemctl restart ollama
+
+# Verify Ollama is running
+curl -s http://localhost:11434/api/tags
+```
 
 ## Configuration Files
 
@@ -188,7 +228,7 @@ Based on the Clawdbot framework, expected skill categories include:
 - Telegram Bot API
 - WhatsApp (personal link)
 - Claude Max (OAuth)
-- LanceDB (vector memory, limited by OpenAI quota)
+- **Ollama Embeddings** (local vector memory via nomic-embed-text)
 
 ### Planned Integrations
 | Integration | Purpose | Status |
@@ -196,7 +236,7 @@ Based on the Clawdbot framework, expected skill categories include:
 | Twilio SMS | Auto-respond to business SMS | Pending |
 | Twilio Voice | Auto-respond to calls | Pending |
 | WhatsApp Business | Scale messaging | Pending |
-| Ollama Embeddings | Replace OpenAI for memory | Blocked (code change needed) |
+| ~~Ollama Embeddings~~ | ~~Replace OpenAI for memory~~ | ✅ COMPLETED (2026-01-28) |
 
 ## Clawdbot vs Claude Code vs Ralph
 
