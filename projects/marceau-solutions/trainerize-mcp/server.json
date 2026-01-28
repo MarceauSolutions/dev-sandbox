@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wmarceau/trainerize",
+  "description": "ABC Trainerize personal training tools: client management, workout programs, nutrition coaching, messaging, scheduling, and analytics.",
+  "repository": {
+    "url": "https://github.com/MarceauSolutions/dev-sandbox",
+    "source": "github",
+    "subfolder": "projects/trainerize-mcp"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "trainerize-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtime": "python",
+      "environmentVariables": [
+        {
+          "name": "TRAINERIZE_API_URL",
+          "description": "ABC Trainerize API base URL (default: https://api.trainerize.com)"
+        },
+        {
+          "name": "TRAINERIZE_CLIENT_ID",
+          "description": "OAuth 2.0 Client ID for Trainerize API"
+        },
+        {
+          "name": "TRAINERIZE_CLIENT_SECRET",
+          "description": "OAuth 2.0 Client Secret for Trainerize API"
+        }
+      ]
+    }
+  ]
+}
