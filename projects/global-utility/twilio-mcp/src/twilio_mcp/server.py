@@ -27,11 +27,15 @@ USAGE with Claude Desktop:
 
 import os
 import json
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from pathlib import Path
 
 from dotenv import load_dotenv
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Load environment
 env_path = Path(__file__).parent.parent.parent.parent.parent / ".env"
@@ -91,8 +95,8 @@ def load_phone_to_business() -> dict:
                     business = record.get("business_name", "")
                     if phone and business:
                         mapping[phone] = business
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to load phone-to-business mapping: %s", e)
     return mapping
 
 
@@ -536,8 +540,8 @@ async def forward_message_to_phone(message_sid: str, forward_to: str):
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
-async def main():
-    """Run the MCP server."""
+async def run_server():
+    """Async server runner."""
     async with stdio_server() as (read_stream, write_stream):
         await mcp.run(
             read_stream,
@@ -546,6 +550,11 @@ async def main():
         )
 
 
-if __name__ == "__main__":
+def main():
+    """Run the MCP server."""
     import asyncio
-    asyncio.run(main())
+    asyncio.run(run_server())
+
+
+if __name__ == "__main__":
+    main()

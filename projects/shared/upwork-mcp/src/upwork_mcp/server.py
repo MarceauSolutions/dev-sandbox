@@ -3,12 +3,11 @@
 import os
 import json
 import logging
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 from datetime import datetime
 
 from mcp.server import Server
 from mcp.types import Tool, TextContent
-from pydantic import AnyUrl
 
 from .client import (
     UpworkClient,
@@ -40,7 +39,7 @@ def get_client() -> UpworkClient:
 
 
 @mcp.list_tools()
-async def list_tools() -> list[Tool]:
+async def list_tools() -> List[Tool]:
     """List available Upwork tools."""
     return [
         Tool(
@@ -239,7 +238,7 @@ provide the callback URL to complete authentication.""",
 
 
 @mcp.call_tool()
-async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
+async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
     """Handle tool calls."""
     try:
         if name == "upwork_search_jobs":
@@ -267,7 +266,7 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[TextContent]:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 
-async def search_jobs(args: dict) -> list[TextContent]:
+async def search_jobs(args: dict) -> List[TextContent]:
     """Search for jobs on Upwork."""
     client = get_client()
 
@@ -358,7 +357,7 @@ async def search_jobs(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Search failed: {str(e)}")]
 
 
-async def get_job_details(args: dict) -> list[TextContent]:
+async def get_job_details(args: dict) -> List[TextContent]:
     """Get detailed job information."""
     client = get_client()
     job_id = args["job_id"]
@@ -423,7 +422,7 @@ async def get_job_details(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Failed to get job details: {str(e)}")]
 
 
-async def analyze_client(args: dict) -> list[TextContent]:
+async def analyze_client(args: dict) -> List[TextContent]:
     """Analyze client reliability and hiring patterns."""
     client = get_client()
     job_id = args["job_id"]
@@ -521,7 +520,7 @@ async def analyze_client(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Analysis failed: {str(e)}")]
 
 
-async def draft_proposal(args: dict) -> list[TextContent]:
+async def draft_proposal(args: dict) -> List[TextContent]:
     """Generate a proposal draft for a job."""
     client = get_client()
     job_id = args["job_id"]
@@ -617,7 +616,7 @@ async def draft_proposal(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Failed to draft proposal: {str(e)}")]
 
 
-async def get_my_profile(args: dict) -> list[TextContent]:
+async def get_my_profile(args: dict) -> List[TextContent]:
     """Get user's freelancer profile."""
     client = get_client()
 
@@ -662,7 +661,7 @@ async def get_my_profile(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Failed to get profile: {str(e)}")]
 
 
-async def get_my_proposals(args: dict) -> list[TextContent]:
+async def get_my_proposals(args: dict) -> List[TextContent]:
     """Get user's proposals."""
     client = get_client()
     status = args.get("status", "ALL")
@@ -703,7 +702,7 @@ async def get_my_proposals(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Failed to get proposals: {str(e)}")]
 
 
-async def get_my_contracts(args: dict) -> list[TextContent]:
+async def get_my_contracts(args: dict) -> List[TextContent]:
     """Get user's contracts."""
     client = get_client()
     status = args.get("status", "ACTIVE")
@@ -759,7 +758,7 @@ async def get_my_contracts(args: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Failed to get contracts: {str(e)}")]
 
 
-async def auth_status(args: dict) -> list[TextContent]:
+async def auth_status(args: dict) -> List[TextContent]:
     """Check authentication status."""
     client = get_client()
 
@@ -780,7 +779,7 @@ async def auth_status(args: dict) -> list[TextContent]:
     return [TextContent(type="text", text=output)]
 
 
-async def complete_auth(args: dict) -> list[TextContent]:
+async def complete_auth(args: dict) -> List[TextContent]:
     """Complete OAuth authorization."""
     client = get_client()
     callback_url = args["callback_url"]

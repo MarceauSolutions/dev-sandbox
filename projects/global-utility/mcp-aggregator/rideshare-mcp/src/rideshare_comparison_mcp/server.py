@@ -27,8 +27,12 @@ import os
 import sys
 import json
 import asyncio
+import logging
 import httpx
 from typing import Any
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # MCP Protocol constants
 JSONRPC_VERSION = "2.0"
@@ -283,6 +287,7 @@ async def handle_message(server: RideshareMCPServer, message: dict) -> dict:
         }
 
     except Exception as e:
+        logger.error("Error handling method %s: %s", method, e, exc_info=True)
         return {
             "jsonrpc": JSONRPC_VERSION,
             "id": msg_id,

@@ -15,7 +15,7 @@ Features:
 
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List, Dict
 import calendar
 import random
 
@@ -40,9 +40,9 @@ class ContentTheme:
     name: str
     category: str  # workout, nutrition, motivation, lifestyle, education
     effort_level: str
-    suggested_platforms: list[str]
+    suggested_platforms: List[str]
     description: str
-    hashtag_suggestions: list[str] = field(default_factory=list)
+    hashtag_suggestions: List[str] = field(default_factory=list)
 
 
 class ContentCalendarGenerator:
@@ -238,10 +238,10 @@ class ContentCalendarGenerator:
         start_date: Optional[str] = None,
         days: int = 30,
         posts_per_day: int = 2,
-        platforms: Optional[list[str]] = None,
-        content_focus: Optional[list[str]] = None,
+        platforms: Optional[List[str]] = None,
+        content_focus: Optional[List[str]] = None,
         max_high_effort_per_week: int = 2,
-        rest_days: Optional[list[str]] = None
+        rest_days: Optional[List[str]] = None
     ) -> dict:
         """
         Generate a balanced content calendar.
@@ -350,13 +350,13 @@ class ContentCalendarGenerator:
         date_str: str,
         day_name: str,
         posts_count: int,
-        platforms: list[str],
-        categories: list[str],
+        platforms: List[str],
+        categories: List[str],
         weekly_high_effort: int,
         max_high_effort_per_week: int,
         is_holiday: bool,
         holiday_name: Optional[str]
-    ) -> list[ContentSlot]:
+    ) -> List[ContentSlot]:
         """Generate content slots for a single day."""
         slots = []
         used_categories = []
@@ -484,7 +484,7 @@ class ContentCalendarGenerator:
 
         return title
 
-    def _calculate_stats(self, slots: list[ContentSlot]) -> dict:
+    def _calculate_stats(self, slots: List[ContentSlot]) -> dict:
         """Calculate calendar statistics."""
         content_slots = [s for s in slots if s.content_type != "REST DAY"]
 
@@ -526,7 +526,7 @@ class ContentCalendarGenerator:
         else:
             return "Unsustainable - High risk of burnout, reduce immediately"
 
-    def _generate_recommendations(self, slots: list[ContentSlot], stats: dict) -> list[str]:
+    def _generate_recommendations(self, slots: List[ContentSlot], stats: dict) -> List[str]:
         """Generate recommendations based on the calendar."""
         recommendations = []
 
@@ -635,9 +635,9 @@ class ContentCalendarGenerator:
 def generate_content_calendar(
     days: int = 30,
     posts_per_day: int = 2,
-    platforms: Optional[list[str]] = None,
-    content_focus: Optional[list[str]] = None,
-    rest_days: Optional[list[str]] = None
+    platforms: Optional[List[str]] = None,
+    content_focus: Optional[List[str]] = None,
+    rest_days: Optional[List[str]] = None
 ) -> dict:
     """
     Convenience function to generate a content calendar.

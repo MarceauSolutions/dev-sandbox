@@ -11,10 +11,13 @@ Registry: io.github.williammarceaujr/md-to-pdf
 import asyncio
 import base64
 import json
+import logging
 import os
 import sys
 import tempfile
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Add parent src directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -201,6 +204,7 @@ async def handle_convert(arguments: dict):
         )]
 
     except Exception as e:
+        logger.error("Error generating PDF: %s", e, exc_info=True)
         return [TextContent(
             type="text",
             text=f"Error generating PDF: {str(e)}"
@@ -210,8 +214,8 @@ async def handle_convert(arguments: dict):
         # Cleanup temp file
         try:
             os.unlink(tmp_path)
-        except:
-            pass
+        except OSError as e:
+            logger.debug("Failed to clean up temp file %s: %s", tmp_path, e)
 
 
 async def handle_extract_toc(arguments: dict):

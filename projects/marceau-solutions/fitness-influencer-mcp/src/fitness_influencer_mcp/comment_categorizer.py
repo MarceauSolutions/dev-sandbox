@@ -16,7 +16,7 @@ Categories:
 """
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List, Dict
 import re
 
 
@@ -191,7 +191,7 @@ class CommentCategorizer:
             auto_reply_template=auto_reply
         )
 
-    def categorize_batch(self, comments: list[str]) -> dict:
+    def categorize_batch(self, comments: List[str], include_auto_replies: bool = True) -> dict:
         """
         Categorize multiple comments and return organized results.
 
@@ -248,7 +248,7 @@ class CommentCategorizer:
 
         return results
 
-    def _generate_recommendations(self, results: dict) -> list[str]:
+    def _generate_recommendations(self, results: dict) -> List[str]:
         """Generate action recommendations based on categorization results."""
         recommendations = []
         counts = results["statistics"]["category_counts"]
@@ -301,7 +301,7 @@ class CommentCategorizer:
 
 
 # Convenience function for direct use
-def categorize_comments(comments: list[str]) -> dict:
+def categorize_comments(comments: List[str]) -> dict:
     """
     Convenience function to categorize a list of comments.
 

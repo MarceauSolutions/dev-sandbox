@@ -8,7 +8,7 @@ version = "1.0.1"
 description = "MCP server for Upwork job discovery, client analysis, and proposal assistance"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 authors = [
     {name = "William Marceau", email = "wmarceau@marceausolutions.com"}
 ]
@@ -18,6 +18,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

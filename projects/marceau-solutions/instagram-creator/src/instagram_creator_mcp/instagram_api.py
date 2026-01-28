@@ -13,12 +13,15 @@ This module handles local file uploads via a temporary hosting solution.
 
 import os
 import json
+import logging
 import requests
 import time
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

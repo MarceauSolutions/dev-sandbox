@@ -18,10 +18,13 @@ Requirements:
 import os
 import sys
 import json
+import logging
 import requests
 from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()

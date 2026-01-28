@@ -4,7 +4,10 @@ Markdown to PDF Converter
 Converts markdown files to professional PDFs with interactive table of contents.
 """
 
+import logging
 import re
+
+logger = logging.getLogger(__name__)
 
 try:
     import markdown2

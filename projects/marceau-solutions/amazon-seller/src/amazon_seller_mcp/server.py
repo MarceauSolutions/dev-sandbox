@@ -10,7 +10,10 @@ Registry: io.github.williammarceaujr/amazon-seller
 
 import asyncio
 import json
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 
 try:
     from mcp.server import Server

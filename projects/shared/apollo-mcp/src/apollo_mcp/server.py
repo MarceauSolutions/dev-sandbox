@@ -10,7 +10,10 @@ Registry: io.github.wmarceau/apollo
 
 import asyncio
 import json
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 
 try:
     from mcp.server import Server
@@ -671,9 +674,6 @@ async def handle_get_credit_balance(arguments: dict):
 
 async def handle_run_full_outreach_pipeline(arguments: dict):
     """Execute full end-to-end outreach pipeline."""
-    import logging
-    logger = logging.getLogger(__name__)
-
     prompt = arguments.get("prompt", "")
     max_results = arguments.get("max_results", 100)
     enrich_top_n = arguments.get("enrich_top_n", 20)

@@ -16,8 +16,12 @@ Usage:
 """
 
 import argparse
+import logging
 import sys
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
+
 try:
     from .amazon_sp_api import AmazonSPAPI
 except ImportError:

@@ -17,7 +17,7 @@ Supported Platforms:
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, List, Dict, Tuple
 import json
 
 
@@ -27,15 +27,15 @@ class PlatformSpecs:
     name: str
     video_aspect_ratio: str
     max_video_length: int  # seconds
-    ideal_video_length: tuple[int, int]  # min, max in seconds
+    ideal_video_length: Tuple[int, int]  # min, max in seconds
     max_caption_length: int
-    ideal_caption_length: tuple[int, int]
+    ideal_caption_length: Tuple[int, int]
     hashtag_limit: int
-    ideal_hashtag_count: tuple[int, int]
-    best_posting_times: list[str]  # HH:MM format
-    best_days: list[str]
-    features: list[str]
-    tips: list[str]
+    ideal_hashtag_count: Tuple[int, int]
+    best_posting_times: List[str]  # HH:MM format
+    best_days: List[str]
+    features: List[str]
+    tips: List[str]
 
 
 class CrossPlatformOptimizer:
@@ -238,7 +238,7 @@ class CrossPlatformOptimizer:
         original_caption: str,
         target_platform: str,
         video_duration: Optional[int] = None,
-        hashtags: Optional[list[str]] = None
+        hashtags: Optional[List[str]] = None
     ) -> dict:
         """
         Generate optimization recommendations for a specific platform.
@@ -337,8 +337,8 @@ class CrossPlatformOptimizer:
         content_type: str,
         original_caption: str,
         video_duration: Optional[int] = None,
-        hashtags: Optional[list[str]] = None,
-        platforms: Optional[list[str]] = None
+        hashtags: Optional[List[str]] = None,
+        platforms: Optional[List[str]] = None
     ) -> dict:
         """
         Generate optimization recommendations for multiple platforms.
@@ -430,7 +430,7 @@ class CrossPlatformOptimizer:
 
         return f"Tomorrow ({tomorrow_day}) at {best_time}"
 
-    def _suggest_features(self, content_type: str, specs: PlatformSpecs) -> list[str]:
+    def _suggest_features(self, content_type: str, specs: PlatformSpecs) -> List[str]:
         """Suggest platform features to use."""
         suggestions = []
 
@@ -454,9 +454,9 @@ class CrossPlatformOptimizer:
 def optimize_content(
     content_type: str,
     caption: str,
-    platforms: list[str],
+    platforms: List[str],
     video_duration: Optional[int] = None,
-    hashtags: Optional[list[str]] = None
+    hashtags: Optional[List[str]] = None
 ) -> dict:
     """
     Convenience function to optimize content for multiple platforms.

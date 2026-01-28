@@ -7,7 +7,8 @@ Provides tools for Instagram content publishing via MCP protocol.
 import os
 import json
 import asyncio
-from typing import Optional, Any
+import logging
+from typing import Any, List, Optional
 from dataclasses import asdict
 
 from mcp.server import Server
@@ -16,6 +17,8 @@ from mcp.server.stdio import stdio_server
 
 from .instagram_api import InstagramAPI, MediaMetadata
 
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Initialize server
 server = Server("instagram-creator-mcp")
@@ -33,7 +36,7 @@ def get_instagram_api() -> InstagramAPI:
 
 
 @server.list_tools()
-async def list_tools() -> list[Tool]:
+async def list_tools() -> List[Tool]:
     """List available Instagram tools."""
     return [
         Tool(
@@ -218,7 +221,7 @@ async def list_tools() -> list[Tool]:
 
 
 @server.call_tool()
-async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+async def call_tool(name: str, arguments: dict) -> List[TextContent]:
     """Handle tool calls."""
     try:
         api = get_instagram_api()
@@ -289,6 +292,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
     except Exception as e:
+        logger.error("Error in tool %s: %s", name, e, exc_info=True)
         return [TextContent(
             type="text",
             text=json.dumps({"error": str(e), "tool": name})

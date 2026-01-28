@@ -10,9 +10,12 @@ Registry: io.github.williammarceaujr/fitness-influencer
 
 import asyncio
 import json
+import logging
 import os
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 try:
     from mcp.server import Server

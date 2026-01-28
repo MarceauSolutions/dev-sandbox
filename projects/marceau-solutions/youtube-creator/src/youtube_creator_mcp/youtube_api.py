@@ -10,11 +10,14 @@ Requires:
 
 import os
 import json
+import logging
 import pickle
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass, asdict
+
+logger = logging.getLogger(__name__)
 
 # Google API imports
 try:

@@ -10,10 +10,12 @@ from .converter import (
     generate_toc,
     generate_pdf,
 )
+from .server import main
 
 __all__ = [
     "DEFAULT_CSS",
     "extract_headers",
     "generate_toc",
     "generate_pdf",
+    "main",
 ]
