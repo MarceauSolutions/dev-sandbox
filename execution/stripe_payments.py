@@ -465,16 +465,12 @@ class StripePayments:
         amount = session.get("amount_total", 0)
         metadata = session.get("metadata", {})
 
-        # TODO: Update ClickUp task status
-        # clickup_task_id = metadata.get("clickup_task_id")
-        # if clickup_task_id:
-        #     update_clickup_status(clickup_task_id, "Payment Received")
-
         return {
             "event_type": "checkout.session.completed",
             "processed": True,
             "customer_id": customer_id,
             "amount": amount,
+            "metadata": metadata,
             "action": "payment_received"
         }
 
@@ -482,6 +478,7 @@ class StripePayments:
         """Handle paid invoice."""
         customer_id = invoice.get("customer")
         amount = invoice.get("amount_paid", 0)
+        metadata = invoice.get("metadata", {})
 
         return {
             "event_type": "invoice.paid",
@@ -489,16 +486,20 @@ class StripePayments:
             "customer_id": customer_id,
             "amount": amount,
             "invoice_id": invoice.get("id"),
+            "metadata": metadata,
             "action": "invoice_paid"
         }
 
     def _handle_payment_succeeded(self, payment_intent: Dict) -> Dict[str, Any]:
         """Handle successful payment intent."""
+        metadata = payment_intent.get("metadata", {})
+
         return {
             "event_type": "payment_intent.succeeded",
             "processed": True,
             "payment_intent_id": payment_intent.get("id"),
             "amount": payment_intent.get("amount", 0),
+            "metadata": metadata,
             "action": "payment_succeeded"
         }
 
@@ -655,10 +656,11 @@ def main():
 
     # Create payment link
     link_parser = subparsers.add_parser("create-link", help="Create payment link")
-    link_parser.add_argument("--amount", type=int, required=True, help="Amount in dollars")
-    link_parser.add_argument("--description", required=True)
+    link_parser.add_argument("--amount", type=int, help="Amount in dollars")
+    link_parser.add_argument("--description", help="Payment description")
     link_parser.add_argument("--customer-id")
     link_parser.add_argument("--service", help="Service catalog key")
+    link_parser.add_argument("--clickup-task", help="ClickUp task ID to auto-update on payment")
 
     # Create invoice
     invoice_parser = subparsers.add_parser("create-invoice", help="Create invoice")
@@ -691,11 +693,20 @@ def main():
             print(f"Created customer: {customer_id}")
 
         elif args.command == "create-link":
+            metadata = {}
+            if args.clickup_task:
+                metadata["clickup_task_id"] = args.clickup_task
+
             if args.service:
-                url = sp.create_payment_link(0, "", service_key=args.service)
+                url = sp.create_payment_link(0, "", service_key=args.service, metadata=metadata if metadata else None)
             else:
-                url = sp.create_payment_link(args.amount, args.description, args.customer_id)
+                if not args.amount or not args.description:
+                    print("Error: --amount and --description are required (or use --service)")
+                    return 1
+                url = sp.create_payment_link(args.amount, args.description, args.customer_id, metadata=metadata if metadata else None)
             print(f"Payment link: {url}")
+            if args.clickup_task:
+                print(f"ClickUp task {args.clickup_task} will auto-update on payment")
 
         elif args.command == "create-invoice":
             result = sp.create_invoice_from_service(args.customer_id, args.service, args.quantity)

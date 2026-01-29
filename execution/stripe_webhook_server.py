@@ -46,6 +46,12 @@ try:
 except ImportError:
     HAS_SMS = False
 
+try:
+    from execution.clickup_api import update_task, add_comment, get_task
+    HAS_CLICKUP = True
+except ImportError:
+    HAS_CLICKUP = False
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -121,9 +127,9 @@ def handle_payment_event(event: dict):
         notify_payment_received(amount_dollars, event_type, customer_id)
 
     # Update ClickUp if task ID in metadata
-    # task_id = event.get("metadata", {}).get("clickup_task_id")
-    # if task_id:
-    #     update_clickup_status(task_id, "Payment Received")
+    task_id = event.get("metadata", {}).get("clickup_task_id")
+    if task_id:
+        update_clickup_status(task_id, amount_dollars, event_type)
 
 
 def notify_payment_received(amount: float, event_type: str, customer_id: Optional[str] = None):
@@ -143,6 +149,33 @@ def notify_payment_received(amount: float, event_type: str, customer_id: Optiona
             logger.info(f"SMS sent to {admin_phone}")
         except Exception as e:
             logger.error(f"Failed to send SMS: {e}")
+
+
+def update_clickup_status(task_id: str, amount: float, event_type: str):
+    """
+    Update ClickUp task when payment is received.
+
+    Args:
+        task_id: ClickUp task ID from Stripe metadata
+        amount: Payment amount in dollars
+        event_type: Type of Stripe event
+    """
+    if not HAS_CLICKUP:
+        logger.warning("ClickUp integration not available - skipping task update")
+        return
+
+    try:
+        # Update task status to "paid" or "complete"
+        update_task(task_id, status="paid")
+        logger.info(f"Updated ClickUp task {task_id} status to 'paid'")
+
+        # Add a comment with payment details
+        comment = f"💰 Payment received: ${amount:.2f}\nEvent: {event_type}\nTimestamp: {datetime.now().isoformat()}"
+        add_comment(task_id, comment)
+        logger.info(f"Added payment comment to ClickUp task {task_id}")
+
+    except Exception as e:
+        logger.error(f"Failed to update ClickUp task {task_id}: {e}")
 
 
 # =============================================================================
