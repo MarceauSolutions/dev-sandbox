@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Influencer Tracking - Q1 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .toolbar {
+            background: #188038;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .toolbar-title {
+            color: white;
+            font-size: 18px;
+        }
+
+        .menu-bar {
+            background: white;
+            padding: 4px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .menu-bar span {
+            margin-right: 16px;
+            cursor: pointer;
+        }
+
+        .formula-bar {
+            background: white;
+            padding: 6px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cell-ref {
+            background: #f1f3f4;
+            padding: 4px 8px;
+            border: 1px solid #dadce0;
+            font-size: 12px;
+            width: 60px;
+        }
+
+        .formula-input {
+            flex: 1;
+            border: 1px solid #dadce0;
+            padding: 4px 8px;
+            font-size: 13px;
+        }
+
+        .spreadsheet {
+            overflow: auto;
+            height: calc(100vh - 120px);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 4px 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .row-header {
+            background: #f8f9fa;
+            text-align: center;
+            width: 40px;
+            color: #666;
+        }
+
+        .highlight-yellow {
+            background: #fff2cc !important;
+        }
+
+        .highlight-red {
+            background: #f4cccc !important;
+        }
+
+        .highlight-green {
+            background: #d9ead3 !important;
+        }
+
+        .empty-cell {
+            color: #999;
+        }
+
+        .notes-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .strikethrough {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .urgent {
+            color: #cc0000;
+            font-weight: bold;
+        }
+
+        tr:nth-child(odd) {
+            background: white;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        /* Some rows look messy/inconsistent */
+        .messy-row td {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <span class="toolbar-title">📊 Influencer Tracking - Q1 2026 - MASTER LIST</span>
+    </div>
+    <div class="menu-bar">
+        <span>File</span>
+        <span>Edit</span>
+        <span>View</span>
+        <span>Insert</span>
+        <span>Format</span>
+        <span>Data</span>
+        <span>Tools</span>
+        <span>Extensions</span>
+        <span>Help</span>
+    </div>
+    <div class="formula-bar">
+        <input type="text" class="cell-ref" value="A1" readonly>
+        <input type="text" class="formula-input" value="" readonly>
+    </div>
+    <div class="spreadsheet">
+        <table>
+            <thead>
+                <tr>
+                    <th class="row-header"></th>
+                    <th>A - Name</th>
+                    <th>B - Instagram</th>
+                    <th>C - TikTok</th>
+                    <th>D - Email</th>
+                    <th>E - Followers</th>
+                    <th>F - Contacted?</th>
+                    <th>G - Response?</th>
+                    <th>H - Follow Up?</th>
+                    <th>I - Status</th>
+                    <th>J - Notes</th>
+                    <th>K - Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="row-header">1</td>
+                    <td>Sarah Mitchell</td>
+                    <td>@sarahmfitness</td>
+                    <td class="empty-cell">???</td>
+                    <td>sarah.m@gmail.com</td>
+                    <td>45.2K</td>
+                    <td class="highlight-yellow">Yes - 1/15</td>
+                    <td class="empty-cell"></td>
+                    <td class="urgent">NEED TO FOLLOW UP!!!</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Yoga content, seems like good fit, loves outdoor stuff</td>
+                    <td>1/15</td>
+                </tr>
+                <tr>
+                    <td class="row-header">2</td>
+                    <td>Mike R.</td>
+                    <td>@mike_trains</td>
+                    <td>@miketrains</td>
+                    <td class="highlight-red">NEED EMAIL</td>
+                    <td>128K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>Not started</td>
+                    <td class="notes-cell">Strength training, Austin TX</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">3</td>
+                    <td class="strikethrough">Emma Chen - DUPLICATE</td>
+                    <td class="strikethrough">@emmawellness</td>
+                    <td class="strikethrough">@emmafit</td>
+                    <td class="strikethrough">emma@example.com</td>
+                    <td class="strikethrough">67.8K</td>
+                    <td class="strikethrough">Yes</td>
+                    <td class="strikethrough">No</td>
+                    <td class="empty-cell"></td>
+                    <td class="strikethrough">See row 47</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">4</td>
+                    <td>jordan williams</td>
+                    <td>jordanruns</td>
+                    <td>jrunswild</td>
+                    <td>jordan@email.com</td>
+                    <td>89500</td>
+                    <td>y</td>
+                    <td class="highlight-green">YES!! interested</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-green">HOT LEAD</td>
+                    <td class="notes-cell">Running content, Denver. RESPONDED 1/18 - "Sounds great!"</td>
+                    <td>1/18</td>
+                </tr>
+                <tr>
+                    <td class="row-header">5</td>
+                    <td>Ashley Thompson</td>
+                    <td>@ashleymoves</td>
+                    <td>@ashleymoves_</td>
+                    <td class="empty-cell"></td>
+                    <td>156K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">HIIT, Miami - check if she's already working with Lululemon?</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">6</td>
+                    <td>Tyler Park</td>
+                    <td>@tylerparkyoga</td>
+                    <td class="empty-cell">doesn't have</td>
+                    <td>tyler.park@yahoo.com</td>
+                    <td>34.6K</td>
+                    <td class="highlight-yellow">Yes 1/19</td>
+                    <td class="empty-cell">no response yet</td>
+                    <td class="highlight-yellow">Send follow up 1/22</td>
+                    <td>Waiting</td>
+                    <td class="notes-cell">Men's yoga, Portland</td>
+                    <td>1/19</td>
+                </tr>
+                <tr>
+                    <td class="row-header">7</td>
+                    <td class="highlight-red">??? can't remember name</td>
+                    <td>@fitnessgirl_ca</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>~50K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Found on explore page, looked good</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">8</td>
+                    <td>Jessica Brown</td>
+                    <td>@jessbrownfit</td>
+                    <td>@jessbrown_fit</td>
+                    <td>jess.brown.fitness@gmail.com</td>
+                    <td>78K</td>
+                    <td>Yes - 1/10</td>
+                    <td class="highlight-red">Said no :(</td>
+                    <td class="strikethrough">n/a</td>
+                    <td class="highlight-red">Declined</td>
+                    <td class="notes-cell">Already has exclusive with Alo Yoga</td>
+                    <td>1/12</td>
+                </tr>
+                <tr>
+                    <td class="row-header">9</td>
+                    <td>Chris Martinez</td>
+                    <td>@chrismartinez_fit</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell">DM'd on IG</td>
+                    <td>92K</td>
+                    <td>DM only</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Waiting for DM reply</td>
+                    <td class="notes-cell">CrossFit content</td>
+                    <td>1/16</td>
+                </tr>
+                <tr>
+                    <td class="row-header">10</td>
+                    <td>Amanda Lee</td>
+                    <td>@amandalee_wellness</td>
+                    <td>@amandalee</td>
+                    <td>amanda@wellness.co</td>
+                    <td>112K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Wellness/meditation focus - is this on brand?</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">11</td>
+                    <td>David Kim</td>
+                    <td>@davidkimfitness</td>
+                    <td>@dkim_fit</td>
+                    <td class="highlight-red">EMAIL BOUNCED</td>
+                    <td>65K</td>
+                    <td class="highlight-red">Email failed</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">Find new email!!!</td>
+                    <td class="highlight-red">Blocked</td>
+                    <td class="notes-cell">Strength/mobility content</td>
+                    <td>1/14</td>
+                </tr>
+                <tr>
+                    <td class="row-header">12</td>
+                    <td>Rachel Green</td>
+                    <td>@rachelgreenyoga</td>
+                    <td class="empty-cell"></td>
+                    <td>rachel.green.yoga@gmail.com</td>
+                    <td>41K</td>
+                    <td>Yes - 1/13</td>
+                    <td class="empty-cell"></td>
+                    <td class="urgent">OVERDUE - was supposed to follow up 1/16</td>
+                    <td class="highlight-red">OVERDUE</td>
+                    <td class="notes-cell">Vinyasa yoga, NYC based</td>
+                    <td>1/13</td>
+                </tr>
+                <tr>
+                    <td class="row-header">13</td>
+                    <td>Marcus Johnson</td>
+                    <td>@marcusjfit</td>
+                    <td>@marcusj_fitness</td>
+                    <td>marcus.johnson@hotmail.com</td>
+                    <td>88K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">14</td>
+                    <td>Sophia Rodriguez</td>
+                    <td>@sophiafitlife</td>
+                    <td>@sophia_fitlife</td>
+                    <td class="empty-cell"></td>
+                    <td>134K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Pilates content, LA</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">15</td>
+                    <td>Jake Wilson (from TikTok)</td>
+                    <td class="highlight-red">NEED TO FIND</td>
+                    <td>@jakewilson_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>245K on TT</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Viral workout videos, young audience</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">16</td>
+                    <td>lisa chen</td>
+                    <td>lisachen_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>lisa@lisachenfitness.com</td>
+                    <td>57k</td>
+                    <td>yes</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">barre + pilates</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">17</td>
+                    <td>Ryan Peters</td>
+                    <td>@ryanpeters_training</td>
+                    <td class="empty-cell"></td>
+                    <td>ryan@peterstraining.com</td>
+                    <td>76K</td>
+                    <td>Yes - 1/17</td>
+                    <td class="highlight-yellow">Asked for more info</td>
+                    <td class="highlight-green">SEND MEDIA KIT</td>
+                    <td class="highlight-yellow">Warm Lead</td>
+                    <td class="notes-cell">Personal trainer, asked about rates</td>
+                    <td>1/19</td>
+                </tr>
+                <tr>
+                    <td class="row-header">18</td>
+                    <td>Natalie Adams</td>
+                    <td>@natalieadamsfitness</td>
+                    <td>@natalie_adams</td>
+                    <td class="empty-cell"></td>
+                    <td>63K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">19</td>
+                    <td class="highlight-yellow">MAYBE - Fitness_Queen_2024</td>
+                    <td>@fitness_queen_2024</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>89K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Not sure if on brand - check content first</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">20</td>
+                    <td>Kevin Brooks</td>
+                    <td>@kevinbrooks_fitness</td>
+                    <td>@kbrooks</td>
+                    <td>kevin.brooks@gmail.com</td>
+                    <td>44K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Calisthenics content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">21</td>
+                    <td>Mia Thompson</td>
+                    <td>@miathompson_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>mia@miayoga.com</td>
+                    <td>52K</td>
+                    <td>Yes - 1/8</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">Forgot to follow up - 2 weeks ago!!!</td>
+                    <td class="highlight-red">LOST?</td>
+                    <td class="notes-cell">Probably too late now :(</td>
+                    <td>1/8</td>
+                </tr>
+                <tr>
+                    <td class="row-header">22</td>
+                    <td>Daniel Clark</td>
+                    <td>@danielclark_fit</td>
+                    <td>@dclark_fitness</td>
+                    <td class="empty-cell"></td>
+                    <td>98K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">HIIT + functional fitness</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">23</td>
+                    <td>Olivia White</td>
+                    <td>@oliviawhite_wellness</td>
+                    <td class="empty-cell"></td>
+                    <td>olivia.white@wellness.co</td>
+                    <td>71K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">24</td>
+                    <td>Andrew Taylor</td>
+                    <td>@andrewtaylor_gym</td>
+                    <td>@ataylor_fit</td>
+                    <td class="highlight-red">andrew@??? - incomplete</td>
+                    <td>83K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Bodybuilding content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">25</td>
+                    <td>Grace Liu</td>
+                    <td>@graceliu_pilates</td>
+                    <td>@graceliu</td>
+                    <td>grace@gracepilates.com</td>
+                    <td>47K</td>
+                    <td>Yes - 1/20</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Follow up 1/23</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Pilates studio owner, San Diego</td>
+                    <td>1/20</td>
+                </tr>
+                <tr>
+                    <td class="row-header">26</td>
+                    <td>Ben Harris</td>
+                    <td>@benharris_running</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>55K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Marathon runner</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">27</td>
+                    <td>Samantha King</td>
+                    <td>@samanthaking_fit</td>
+                    <td>@samking</td>
+                    <td class="empty-cell"></td>
+                    <td>102K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">28</td>
+                    <td>Jason Lee</td>
+                    <td>@jasonlee_fitness</td>
+                    <td class="empty-cell"></td>
+                    <td>jason.lee@gmail.com</td>
+                    <td>67K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">29</td>
+                    <td>Emily Davis</td>
+                    <td>@emilydavis_yoga</td>
+                    <td>@emily_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>39K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Hot yoga focus</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">30</td>
+                    <td>Alex Morgan</td>
+                    <td>@alexmorgan_train</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>81K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">31</td>
+                    <td>Nicole Brown</td>
+                    <td>@nicolebrown_fit</td>
+                    <td>@nbrown_fitness</td>
+                    <td>nicole.brown@email.com</td>
+                    <td>94K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">32</td>
+                    <td>Tom Wilson</td>
+                    <td>@tomwilson_gym</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>48K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">33</td>
+                    <td class="highlight-yellow">CHECK THIS ONE</td>
+                    <td>@mystery_fitness_acct</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>???</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Someone recommended, need to look up</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">34</td>
+                    <td>Hannah Scott</td>
+                    <td>@hannahscott_fit</td>
+                    <td>@hannah_fits</td>
+                    <td>hannah.scott@outlook.com</td>
+                    <td>73K</td>
+                    <td class="highlight-yellow">Yes - 1/11</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">OVERDUE 1/14</td>
+                    <td class="highlight-red">Overdue</td>
+                    <td class="notes-cell">CrossFit athlete, Chicago</td>
+                    <td>1/11</td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">35</td>
+                    <td>brandon T</td>
+                    <td>brandon_lifts</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell">n/a</td>
+                    <td>61k</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">powerlifting</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">36</td>
+                    <td>Victoria Evans</td>
+                    <td>@victoriaevans_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>victoria@evansyoga.com</td>
+                    <td>58K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Yin yoga specialist</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">37</td>
+                    <td class="highlight-red">REMOVED - fake account</td>
+                    <td class="strikethrough">@fitness_guru_2024</td>
+                    <td class="strikethrough">@fitguru</td>
+                    <td class="strikethrough">fake@fake.com</td>
+                    <td class="strikethrough">500K</td>
+                    <td class="strikethrough">No</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="highlight-red">FAKE</td>
+                    <td class="notes-cell">Bot followers, engagement is fake</td>
+                    <td>1/12</td>
+                </tr>
+                <tr>
+                    <td class="row-header">38</td>
+                    <td>Ethan Moore</td>
+                    <td>@ethanmoore_athlete</td>
+                    <td>@ethan_athlete</td>
+                    <td class="empty-cell"></td>
+                    <td>87K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Track & field, sponsored by Nike already?</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">39</td>
+                    <td>Lily Anderson</td>
+                    <td>@lilyanderson_pilates</td>
+                    <td class="empty-cell"></td>
+                    <td>lily@pilateslife.co</td>
+                    <td>42K</td>
+                    <td>Yes - 1/16</td>
+                    <td class="highlight-green">Very interested!</td>
+                    <td class="highlight-green">Schedule call</td>
+                    <td class="highlight-green">HOT</td>
+                    <td class="notes-cell">Wants to schedule call next week - PRIORITY</td>
+                    <td>1/18</td>
+                </tr>
+                <tr>
+                    <td class="row-header">40</td>
+                    <td>Nathan Wright</td>
+                    <td>@nathanwright_gym</td>
+                    <td>@nwright_fit</td>
+                    <td class="highlight-red">NEED EMAIL</td>
+                    <td>95K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>Not started</td>
+                    <td class="notes-cell">Bodybuilding content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">41</td>
+                    <td>Chloe Miller</td>
+                    <td>@chloemiller_wellness</td>
+                    <td class="empty-cell"></td>
+                    <td>chloe.miller@gmail.com</td>
+                    <td>66K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Mental health + fitness combo</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">42</td>
+                    <td>Lucas Garcia</td>
+                    <td>@lucasgarcia_fit</td>
+                    <td>@lucas_fitness</td>
+                    <td class="empty-cell"></td>
+                    <td>108K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Spanish content too - bilingual</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">43</td>
+                    <td>Zoe Taylor</td>
+                    <td>@zoetaylor_runs</td>
+                    <td>@zoe_runs</td>
+                    <td>zoe.taylor.runs@gmail.com</td>
+                    <td>51K</td>
+                    <td>Yes - 1/19</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Follow up 1/22</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Ultra marathon runner, good storytelling</td>
+                    <td>1/19</td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">44</td>
+                    <td>JAMES ??? last name?</td>
+                    <td>@jamesfitness</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>about 70K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">from referral - need to find full name</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">45</td>
+                    <td>Isabella Martinez</td>
+                    <td>@isabellamartinez_fit</td>
+                    <td>@isa_fitness</td>
+                    <td>isabella@martinez.fit</td>
+                    <td>79K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Dance fitness content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">46</td>
+                    <td>Owen Davis</td>
+                    <td>@owendavis_strength</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">owen@??? incomplete</td>
+                    <td>62K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Strength training, coaches online</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">47</td>
+                    <td>Emma Chen (REAL)</td>
+                    <td>@emmachen_wellness</td>
+                    <td>@emmachenfit</td>
+                    <td>emma.chen@wellness.io</td>
+                    <td>67.8K</td>
+                    <td>Yes - 1/12</td>
+                    <td class="highlight-red">No response</td>
+                    <td class="highlight-red">Try again?</td>
+                    <td class="highlight-yellow">Stalled</td>
+                    <td class="notes-cell">This is the real account - see duplicate row 3</td>
+                    <td>1/15</td>
+                </tr>
+                <tr>
+                    <td class="row-header">48</td>
+                    <td>Ava Robinson</td>
+                    <td>@avarobinson_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>ava@yogawithava.com</td>
+                    <td>84K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Aerial yoga - unique content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">49</td>
+                    <td>William Thompson</td>
+                    <td>@williamthompson_fit</td>
+                    <td>@wthompson</td>
+                    <td class="empty-cell"></td>
+                    <td>91K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">50</td>
+                    <td>Sophia Brown</td>
+                    <td>@sophiabrown_moves</td>
+                    <td>@sophia_moves</td>
+                    <td>sophia.brown.fitness@gmail.com</td>
+                    <td>56K</td>
+                    <td class="highlight-yellow">Yes - 1/20</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Today!</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">HIIT workouts, great engagement</td>
+                    <td>1/20</td>
+                </tr>
+                <tr>
+                    <td class="row-header">51</td>
+                    <td>Mason Clark</td>
+                    <td>@masonclark_athlete</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>74K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Football training content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">52</td>
+                    <td class="strikethrough">DUPLICATE - see row 14</td>
+                    <td class="strikethrough">@sophiafit</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">134K</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">DUPE</td>
+                    <td class="notes-cell">Same as Sophia Rodriguez row 14</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">53</td>
+                    <td>Harper Lewis</td>
+                    <td>@harperlewis_fit</td>
+                    <td>@harper_fitness</td>
+                    <td>harper.lewis@email.com</td>
+                    <td>69K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Outdoor fitness content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">54</td>
+                    <td>Elijah Walker</td>
+                    <td>@elijahwalker_gym</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">BOUNCED - find new email</td>
+                    <td>82K</td>
+                    <td class="highlight-red">Failed</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">Need contact info</td>
+                    <td class="highlight-red">Blocked</td>
+                    <td class="notes-cell">Gym owner, LA area</td>
+                    <td>1/10</td>
+                </tr>
+                <tr>
+                    <td class="row-header">55</td>
+                    <td>Amelia Hall</td>
+                    <td>@ameliahall_wellness</td>
+                    <td>@amelia_well</td>
+                    <td>amelia@hallwellness.com</td>
+                    <td>47K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Holistic wellness approach</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">56</td>
+                    <td>jack nelson</td>
+                    <td>jacknelsonfit</td>
+                    <td>jack_n_fit</td>
+                    <td>jack@nelson.com</td>
+                    <td>58000</td>
+                    <td>y</td>
+                    <td>n</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">sent 1/14</td>
+                    <td>1/14</td>
+                </tr>
+                <tr>
+                    <td class="row-header">57</td>
+                    <td>Charlotte Young</td>
+                    <td>@charlotteyoung_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>charlotte@youngyoga.co</td>
+                    <td>93K</td>
+                    <td>Yes - 1/13</td>
+                    <td class="highlight-green">YES - wants to collab</td>
+                    <td class="highlight-green">Send contract</td>
+                    <td class="highlight-green">HOT LEAD</td>
+                    <td class="notes-cell">Ready to sign! Sent contract 1/16</td>
+                    <td>1/18</td>
+                </tr>
+                <tr>
+                    <td class="row-header">58</td>
+                    <td>Henry King</td>
+                    <td>@henryking_strength</td>
+                    <td>@hking_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>77K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Powerlifting content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">59</td>
+                    <td>Evelyn Scott</td>
+                    <td>@evelynscott_pilates</td>
+                    <td class="empty-cell"></td>
+                    <td>evelyn.scott@gmail.com</td>
+                    <td>64K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Classical pilates instructor</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">60</td>
+                    <td class="highlight-yellow">Maybe??? - @fitlifedaily</td>
+                    <td>@fitlifedaily</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>120K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Generic name - check if real person or brand</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">61</td>
+                    <td>Sebastian Hill</td>
+                    <td>@sebastianhill_fit</td>
+                    <td>@shill_fitness</td>
+                    <td>sebastian@hillfit.com</td>
+                    <td>86K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">MMA + fitness combo</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">62</td>
+                    <td>Scarlett Adams</td>
+                    <td>@scarlettadams_run</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>49K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Trail running content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">63</td>
+                    <td>Aiden Baker</td>
+                    <td>@aidenbaker_gym</td>
+                    <td>@aiden_lifts</td>
+                    <td class="highlight-red">aiden@ - REST OF EMAIL???</td>
+                    <td>71K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Gym transformation content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">64</td>
+                    <td>Aria Carter</td>
+                    <td>@ariacarter_wellness</td>
+                    <td>@aria_wellness</td>
+                    <td>aria@carterwellness.com</td>
+                    <td>53K</td>
+                    <td>Yes - 1/17</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Follow up 1/20</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Mindfulness + movement</td>
+                    <td>1/17</td>
+                </tr>
+                <tr>
+                    <td class="row-header">65</td>
+                    <td>Grayson Nelson</td>
+                    <td>@graysonnelson_fit</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>99K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">66</td>
+                    <td>Layla Mitchell</td>
+                    <td>@laylamitchell_yoga</td>
+                    <td>@layla_yogalife</td>
+                    <td>layla.mitchell@yoga.co</td>
+                    <td>88K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Yoga retreats focus</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">67</td>
+                    <td class="strikethrough">OLD CONTACT - moved</td>
+                    <td class="strikethrough">@fitjenny_2023</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">old@email.com</td>
+                    <td class="strikethrough">45K</td>
+                    <td class="strikethrough">Yes</td>
+                    <td class="strikethrough">No</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">Archived</td>
+                    <td class="notes-cell">Account deactivated</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">68</td>
+                    <td>Jackson Perez</td>
+                    <td>@jacksonperez_athlete</td>
+                    <td>@jperez_fit</td>
+                    <td>jackson.perez@gmail.com</td>
+                    <td>76K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">CrossFit Games competitor</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">69</td>
+                    <td>Penelope Roberts</td>
+                    <td>@peneloperoberts_fit</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>61K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Postpartum fitness specialist</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">70</td>
+                    <td>Leo Turner</td>
+                    <td>@leoturner_training</td>
+                    <td>@leo_trains</td>
+                    <td>leo@turnertraining.com</td>
+                    <td>83K</td>
+                    <td>Yes - 1/15</td>
+                    <td class="highlight-red">Not interested</td>
+                    <td class="strikethrough">n/a</td>
+                    <td class="highlight-red">Declined</td>
+                    <td class="notes-cell">"Already have too many partnerships"</td>
+                    <td>1/17</td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">71</td>
+                    <td>riley ???</td>
+                    <td>@rileyfitness_</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>~55K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">found on explore</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">72</td>
+                    <td>Nova Phillips</td>
+                    <td>@novaphillips_wellness</td>
+                    <td>@nova_well</td>
+                    <td>nova@phillipswellness.co</td>
+                    <td>68K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Wellness coaching</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">73</td>
+                    <td>Carter Collins</td>
+                    <td>@cartercollins_gym</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>92K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Natural bodybuilding</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">74</td>
+                    <td>Aurora Edwards</td>
+                    <td>@auroraedwards_yoga</td>
+                    <td>@aurora_yogalife</td>
+                    <td>aurora.edwards@email.com</td>
+                    <td>57K</td>
+                    <td class="highlight-yellow">Yes - 1/18</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Follow up 1/21</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Sunrise yoga content</td>
+                    <td>1/18</td>
+                </tr>
+                <tr>
+                    <td class="row-header">75</td>
+                    <td>Hudson Stewart</td>
+                    <td>@hudsonstewart_fit</td>
+                    <td>@hudson_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>79K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell"></td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">76</td>
+                    <td>Savannah Sanchez</td>
+                    <td>@savannahsanchez_moves</td>
+                    <td class="empty-cell"></td>
+                    <td>savannah@dancefitness.co</td>
+                    <td>104K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Zumba instructor, huge engagement</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">77</td>
+                    <td class="highlight-red">??? - can't read notes</td>
+                    <td>@something_fitness</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>???</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">???? wrote this down somewhere</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">78</td>
+                    <td>Asher Morris</td>
+                    <td>@ashermorris_athlete</td>
+                    <td>@asher_trains</td>
+                    <td>asher.morris@email.com</td>
+                    <td>66K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Triathlon content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">79</td>
+                    <td>Brooklyn Murphy</td>
+                    <td>@brooklynmurphy_fit</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>73K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Brooklyn, NY based</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">80</td>
+                    <td>Eli Rivera</td>
+                    <td>@elirivera_gym</td>
+                    <td>@eli_lifts</td>
+                    <td>eli.rivera@gmail.com</td>
+                    <td>85K</td>
+                    <td>Yes - 1/14</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-red">OVERDUE - was 1/17!!!</td>
+                    <td class="highlight-red">LOST</td>
+                    <td class="notes-cell">Probably lost this one :(</td>
+                    <td>1/14</td>
+                </tr>
+                <tr>
+                    <td class="row-header">81</td>
+                    <td>Bella Cook</td>
+                    <td>@bellacook_wellness</td>
+                    <td>@bella_well</td>
+                    <td>bella@cookwellness.com</td>
+                    <td>59K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Nutrition + fitness</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">82</td>
+                    <td>Levi Rogers</td>
+                    <td>@levirogers_strength</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>91K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Strongman content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">83</td>
+                    <td>claire b</td>
+                    <td>claire_bfit</td>
+                    <td class="empty-cell"></td>
+                    <td>claireb@gmail.com</td>
+                    <td>44k</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">barre workouts</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">84</td>
+                    <td>Mateo Reed</td>
+                    <td>@mateoreed_athlete</td>
+                    <td>@mateo_athlete</td>
+                    <td>mateo.reed@email.com</td>
+                    <td>78K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Soccer training content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">85</td>
+                    <td>Luna Morgan</td>
+                    <td>@lunamorgan_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>luna@morganyoga.co</td>
+                    <td>62K</td>
+                    <td class="highlight-yellow">Yes - 1/19</td>
+                    <td class="highlight-yellow">Maybe interested</td>
+                    <td class="highlight-yellow">Send more info</td>
+                    <td class="highlight-yellow">Warm</td>
+                    <td class="notes-cell">"Send me more details about the partnership"</td>
+                    <td>1/20</td>
+                </tr>
+                <tr>
+                    <td class="row-header">86</td>
+                    <td>Dylan Cooper</td>
+                    <td>@dylancooper_training</td>
+                    <td>@dcooper_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>97K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Athletic training</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">87</td>
+                    <td>Hazel Bailey</td>
+                    <td>@hazelbailey_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>hazel.bailey@outlook.com</td>
+                    <td>54K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Outdoor workouts</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">88</td>
+                    <td class="strikethrough">DUPLICATE - row 42</td>
+                    <td class="strikethrough">@lucas_garcia_fit</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">108K</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">DUPE</td>
+                    <td class="notes-cell">Same person different handle</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">89</td>
+                    <td>Wyatt Richardson</td>
+                    <td>@wyattrichardson_gym</td>
+                    <td>@wyatt_lifts</td>
+                    <td>wyatt@richardson.fit</td>
+                    <td>81K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Gym owner, Texas</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">90</td>
+                    <td>Violet Gray</td>
+                    <td>@violetgray_wellness</td>
+                    <td>@violet_well</td>
+                    <td class="empty-cell"></td>
+                    <td>67K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Sound healing + yoga fusion</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">91</td>
+                    <td>Owen James</td>
+                    <td>@owenjames_athlete</td>
+                    <td class="empty-cell"></td>
+                    <td>owen.james@gmail.com</td>
+                    <td>89K</td>
+                    <td>Yes - 1/16</td>
+                    <td class="highlight-green">YES!!!</td>
+                    <td class="highlight-green">Contract sent</td>
+                    <td class="highlight-green">CLOSING</td>
+                    <td class="notes-cell">Contract out, waiting for signature</td>
+                    <td>1/19</td>
+                </tr>
+                <tr>
+                    <td class="row-header">92</td>
+                    <td>Stella Watson</td>
+                    <td>@stellawatson_yoga</td>
+                    <td>@stella_yoga</td>
+                    <td>stella@watsonyoga.com</td>
+                    <td>75K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Power yoga focus</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">93</td>
+                    <td>someone from crossfit games???</td>
+                    <td class="highlight-red">???</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>big following</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">need to research crossfit athletes</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">94</td>
+                    <td>Landon Brooks</td>
+                    <td>@landonbrooks_training</td>
+                    <td>@landon_trains</td>
+                    <td class="empty-cell"></td>
+                    <td>83K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Online coaching</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">95</td>
+                    <td>Ivy Bennett</td>
+                    <td>@ivybennett_fit</td>
+                    <td class="empty-cell"></td>
+                    <td>ivy.bennett@email.com</td>
+                    <td>58K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Senior fitness content - unique niche</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">96</td>
+                    <td>Josiah Powell</td>
+                    <td>@josiahpowell_gym</td>
+                    <td>@josiah_lifts</td>
+                    <td class="highlight-red">NEED TO FIND</td>
+                    <td>94K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>Not started</td>
+                    <td class="notes-cell">Hybrid athlete content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">97</td>
+                    <td>Ruby Foster</td>
+                    <td>@rubyfoster_pilates</td>
+                    <td>@ruby_pilates</td>
+                    <td>ruby@fostermovement.co</td>
+                    <td>71K</td>
+                    <td>Yes - 1/18</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Follow up 1/21</td>
+                    <td class="highlight-yellow">Waiting</td>
+                    <td class="notes-cell">Reformer pilates specialist</td>
+                    <td>1/18</td>
+                </tr>
+                <tr>
+                    <td class="row-header">98</td>
+                    <td>Nathan Simmons</td>
+                    <td>@nathansimmons_athlete</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>86K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Basketball training</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">99</td>
+                    <td>Willow Price</td>
+                    <td>@willowprice_wellness</td>
+                    <td>@willow_well</td>
+                    <td>willow@pricewellness.com</td>
+                    <td>63K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Plant-based fitness</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">100</td>
+                    <td class="highlight-yellow">REVIEW NEEDED</td>
+                    <td>@fitfam_collective</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>200K+</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Is this an individual or brand account?</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">101</td>
+                    <td>Caleb Henderson</td>
+                    <td>@calebhenderson_fit</td>
+                    <td>@caleb_fitness</td>
+                    <td>caleb.henderson@gmail.com</td>
+                    <td>77K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Mobility specialist</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">102</td>
+                    <td>Ellie Barnes</td>
+                    <td>@elliebarnes_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>ellie@barnesyoga.co</td>
+                    <td>69K</td>
+                    <td>Yes - 1/20</td>
+                    <td class="highlight-yellow">Asked questions</td>
+                    <td class="highlight-yellow">Answer questions</td>
+                    <td class="highlight-yellow">Warm</td>
+                    <td class="notes-cell">Wants to know about payment terms</td>
+                    <td>1/21</td>
+                </tr>
+                <tr>
+                    <td class="row-header">103</td>
+                    <td>Isaiah Coleman</td>
+                    <td>@isaiahcoleman_strength</td>
+                    <td>@isaiah_lifts</td>
+                    <td class="empty-cell"></td>
+                    <td>92K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Olympic lifting</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">104</td>
+                    <td>Naomi Hughes</td>
+                    <td>@naomihughes_fit</td>
+                    <td>@naomi_fitness</td>
+                    <td>naomi.hughes@email.com</td>
+                    <td>84K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Bodyweight training</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">105</td>
+                    <td>Ezra Washington</td>
+                    <td>@ezrawashington_gym</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>56K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Gym motivation content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr class="messy-row">
+                    <td class="row-header">106</td>
+                    <td>MAYA - from conference</td>
+                    <td>@maya_something???</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell">business card somewhere</td>
+                    <td>???</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Met at fitness expo, need to find card</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">107</td>
+                    <td>Everett Long</td>
+                    <td>@everettlong_athlete</td>
+                    <td>@everett_trains</td>
+                    <td>everett.long@gmail.com</td>
+                    <td>73K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Swimming + fitness</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">108</td>
+                    <td>Addison Butler</td>
+                    <td>@addisonbutler_wellness</td>
+                    <td class="empty-cell"></td>
+                    <td>addison@butlerwellness.com</td>
+                    <td>65K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Corporate wellness focus</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">109</td>
+                    <td>Miles Ross</td>
+                    <td>@milesross_training</td>
+                    <td>@miles_fit</td>
+                    <td class="highlight-red">miles@??? need domain</td>
+                    <td>88K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Speed training</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">110</td>
+                    <td>Paisley Sanders</td>
+                    <td>@paisleysanders_yoga</td>
+                    <td>@paisley_yoga</td>
+                    <td>paisley@sandersyoga.co</td>
+                    <td>79K</td>
+                    <td class="highlight-yellow">Yes - 1/21</td>
+                    <td class="empty-cell"></td>
+                    <td class="highlight-yellow">Just sent today</td>
+                    <td class="highlight-yellow">New</td>
+                    <td class="notes-cell">Yoga teacher training content</td>
+                    <td>1/21</td>
+                </tr>
+                <tr>
+                    <td class="row-header">111</td>
+                    <td>Micah Perry</td>
+                    <td>@micahperry_gym</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td>96K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Transformation specialist</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">112</td>
+                    <td>Emery Powell</td>
+                    <td>@emerypowell_fit</td>
+                    <td>@emery_fitness</td>
+                    <td>emery.powell@email.com</td>
+                    <td>61K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Couples fitness content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">113</td>
+                    <td>Jaxon Kelly</td>
+                    <td>@jaxonkelly_athlete</td>
+                    <td>@jaxon_trains</td>
+                    <td>jaxon.kelly@gmail.com</td>
+                    <td>85K</td>
+                    <td>Yes - 1/19</td>
+                    <td class="highlight-red">No response</td>
+                    <td class="highlight-yellow">Try again?</td>
+                    <td class="highlight-yellow">Stalled</td>
+                    <td class="notes-cell">Might be traveling - check stories</td>
+                    <td>1/22</td>
+                </tr>
+                <tr>
+                    <td class="row-header">114</td>
+                    <td>Quinn Russell</td>
+                    <td>@quinnrussell_wellness</td>
+                    <td class="empty-cell"></td>
+                    <td>quinn@russellwellness.com</td>
+                    <td>72K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Breathwork + movement</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">115</td>
+                    <td class="highlight-red">WRONG PERSON</td>
+                    <td class="strikethrough">@fitness_sarah_2024</td>
+                    <td class="strikethrough"></td>
+                    <td class="strikethrough">wrong@email.com</td>
+                    <td class="strikethrough">23K</td>
+                    <td class="strikethrough">Yes</td>
+                    <td class="strikethrough">"Who is this?"</td>
+                    <td class="strikethrough"></td>
+                    <td class="highlight-red">Wrong person</td>
+                    <td class="notes-cell">Confused with Sarah Mitchell row 1</td>
+                    <td>1/15</td>
+                </tr>
+                <tr>
+                    <td class="row-header">116</td>
+                    <td>Rowan Griffin</td>
+                    <td>@rowangriffin_gym</td>
+                    <td>@rowan_lifts</td>
+                    <td class="empty-cell"></td>
+                    <td>91K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Calisthenics athlete</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">117</td>
+                    <td>Piper Diaz</td>
+                    <td>@piperdiaz_yoga</td>
+                    <td class="empty-cell"></td>
+                    <td>piper@diazyoga.co</td>
+                    <td>68K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Beach yoga content</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">118</td>
+                    <td>Sawyer Hayes</td>
+                    <td>@sawyerhayes_training</td>
+                    <td>@sawyer_trains</td>
+                    <td>sawyer.hayes@email.com</td>
+                    <td>82K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">Boxing + fitness</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">119</td>
+                    <td>Kinsley Ward</td>
+                    <td>@kinsleyward_fit</td>
+                    <td>@kinsley_fitness</td>
+                    <td class="empty-cell"></td>
+                    <td>57K</td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="empty-cell"></td>
+                    <td class="notes-cell">At-home workouts specialist</td>
+                    <td class="empty-cell"></td>
+                </tr>
+                <tr>
+                    <td class="row-header">120</td>
+                    <td>Declan Torres</td>
+                    <td>@declantorres_athlete</td>
+                    <td class="empty-cell"></td>
+                    <td>declan@torresathletics.com</td>
+                    <td>104K</td>
+                    <td class="highlight-green">Yes - 1/16</td>
+                    <td class="highlight-green">VERY interested</td>
+                    <td class="highlight-green">Negotiating terms</td>
+                    <td class="highlight-green">CLOSING</td>
+                    <td class="notes-cell">High priority - discussing 6 month deal</td>
+                    <td>1/21</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+{
+  "branchName": "ralph/go-tracker-euc-branding",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Update app.json for EUC extreme sports branding",
+      "description": "Rebrand the app to target extreme InMotion electric unicycle riders who enjoy off-road trails and adrenaline sports.",
+      "acceptanceCriteria": [
+        "Update app name to reflect EUC/extreme sports identity",
+        "Update iOS location permission descriptions to mention EUC riding",
+        "Update Android permissions description",
+        "Update expo-location plugin permission text",
+        "Keep bundle identifier as com.marceausolutions.gotracker"
+      ],
+      "priority": 1,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Target audience: InMotion V13, V12, S22 riders who do trail riding, off-road, and extreme sports"
+    },
+    {
+      "id": "002",
+      "title": "Update App.js UI text for EUC riders",
+      "description": "Update all user-facing text in the app to use EUC/extreme sports terminology.",
+      "acceptanceCriteria": [
+        "Update 'Activity Complete' to use EUC terminology like 'Ride Complete'",
+        "Update tracking label from 'tracking...' to EUC-specific text",
+        "Update export button labels if needed",
+        "Update stop confirmation dialog text for riders",
+        "Keep technical stats labels (mph, pace, elevation) as they are useful for EUC"
+      ],
+      "priority": 2,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "EUC riders care about: top speed, distance, elevation gain for hill climbing"
+    },
+    {
+      "id": "003",
+      "title": "Update GPX and JSON export branding",
+      "description": "Update the GPX creator attribute and JSON app field to reflect EUC branding.",
+      "acceptanceCriteria": [
+        "Update GPX creator attribute to new app name",
+        "Update JSON export 'app' field to new app name",
+        "Update activity names in exports to use 'Ride' instead of 'Activity'"
+      ],
+      "priority": 3,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "GPX files are often imported into Strava, Relive, etc."
+    },
+    {
+      "id": "004",
+      "title": "Update color scheme for extreme sports aesthetic",
+      "description": "Adjust the color palette to feel more aggressive/extreme while maintaining readability.",
+      "acceptanceCriteria": [
+        "Consider updating primary accent color from #10b981 (green) to something more extreme",
+        "Options: electric blue (#00d4ff), neon orange (#ff6b00), or keep green if it works",
+        "Ensure high contrast for outdoor visibility",
+        "Update elevation gain/loss colors if needed"
+      ],
+      "priority": 4,
+      "passes": true,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT COMPLETE: User approved Electric Blue (#00d4ff) color scheme"
+    },
+    {
+      "id": "005",
+      "title": "Update README and APP-STORE-SUBMISSION docs",
+      "description": "Update documentation to reflect EUC branding for App Store submission.",
+      "acceptanceCriteria": [
+        "Update README.md with EUC-focused description",
+        "Update APP-STORE-SUBMISSION.md with EUC keywords and description",
+        "Add relevant keywords: EUC, electric unicycle, InMotion, trail riding, off-road"
+      ],
+      "priority": 5,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Updated README.md and APP-STORE-SUBMISSION.md with EUC branding, keywords, and App Store description"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-25",
+    "last_updated": "2026-01-25",
+    "total_stories": 5,
+    "completed_stories": 5,
+    "objective": "Rebrand GO Tracker to target extreme InMotion electric unicycle (EUC) riders who enjoy off-road trails, hill climbing, and adrenaline sports"
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "branchName": "ralph/mcp-publishing-all",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Fix fitness-influencer README mcp-name claim",
+      "description": "Add missing mcp-name ownership claim to fitness-influencer README",
+      "acceptanceCriteria": [
+        "Add 'mcp-name: io.github.wmarceau/fitness-influencer' near top of README.md",
+        "Verify the line is properly formatted"
+      ],
+      "priority": 1,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Required for MCP Registry ownership verification"
+    },
+    {
+      "id": "002",
+      "title": "Build and publish instagram-creator-mcp to PyPI",
+      "description": "Build the instagram-creator package and upload to PyPI",
+      "acceptanceCriteria": [
+        "Clean previous builds (rm -rf dist/ build/ *.egg-info)",
+        "Build package with python -m build",
+        "Upload to PyPI with twine",
+        "Verify package is available: pip index versions instagram-creator-mcp"
+      ],
+      "priority": 2,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/instagram-creator"
+    },
+    {
+      "id": "003",
+      "title": "Build and publish tiktok-creator-mcp to PyPI",
+      "description": "Build the tiktok-creator package and upload to PyPI",
+      "acceptanceCriteria": [
+        "Clean previous builds (rm -rf dist/ build/ *.egg-info)",
+        "Build package with python -m build",
+        "Upload to PyPI with twine",
+        "Verify package is available: pip index versions tiktok-creator-mcp"
+      ],
+      "priority": 3,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/tiktok-creator"
+    },
+    {
+      "id": "004",
+      "title": "Verify all 9 MCPs have correct package structure",
+      "description": "Run SOP 11 verification on all MCPs to ensure proper structure",
+      "acceptanceCriteria": [
+        "Each MCP has pyproject.toml with correct package name",
+        "Each MCP has server.json with valid schema",
+        "Each MCP has README.md with mcp-name claim",
+        "Each MCP package directory has __init__.py with __version__",
+        "All imports use relative syntax"
+      ],
+      "priority": 4,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "low",
+      "notes": "MCPs: md-to-pdf, amazon-seller, apollo, rideshare-comparison, hvac-quotes, fitness-influencer, youtube-creator, instagram-creator, tiktok-creator"
+    },
+    {
+      "id": "005",
+      "title": "Authenticate with MCP Registry",
+      "description": "Login to MCP Registry via GitHub authentication",
+      "acceptanceCriteria": [
+        "Run mcp-publisher login github",
+        "Complete GitHub device flow authentication",
+        "Verify authentication successful"
+      ],
+      "priority": 5,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "low",
+      "notes": "Token expires after ~1 hour, may need re-auth"
+    },
+    {
+      "id": "006",
+      "title": "Publish md-to-pdf-mcp to MCP Registry",
+      "description": "Publish md-to-pdf to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 6,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/global-utility/md-to-pdf"
+    },
+    {
+      "id": "007",
+      "title": "Publish amazon-seller-mcp to MCP Registry",
+      "description": "Publish amazon-seller to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 7,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/amazon-seller"
+    },
+    {
+      "id": "008",
+      "title": "Publish apollo-mcp to MCP Registry",
+      "description": "Publish apollo to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 8,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/apollo-mcp"
+    },
+    {
+      "id": "009",
+      "title": "Publish rideshare-comparison-mcp to MCP Registry",
+      "description": "Publish rideshare-comparison to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 9,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/global-utility/mcp-aggregator/rideshare-mcp"
+    },
+    {
+      "id": "010",
+      "title": "Publish hvac-quotes-mcp to MCP Registry",
+      "description": "Publish hvac-quotes to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 10,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/global-utility/mcp-aggregator/hvac-mcp"
+    },
+    {
+      "id": "011",
+      "title": "Publish fitness-influencer-mcp to MCP Registry",
+      "description": "Publish fitness-influencer to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 11,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/fitness-influencer/mcp"
+    },
+    {
+      "id": "012",
+      "title": "Publish youtube-creator-mcp to MCP Registry",
+      "description": "Publish youtube-creator to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 12,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/youtube-creator"
+    },
+    {
+      "id": "013",
+      "title": "Publish instagram-creator-mcp to MCP Registry",
+      "description": "Publish instagram-creator to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 13,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/instagram-creator"
+    },
+    {
+      "id": "014",
+      "title": "Publish tiktok-creator-mcp to MCP Registry",
+      "description": "Publish tiktok-creator to Claude MCP Registry",
+      "acceptanceCriteria": [
+        "Run mcp-publisher publish --server server.json",
+        "Verify success message",
+        "Record version published"
+      ],
+      "priority": 14,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Path: /Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/tiktok-creator"
+    },
+    {
+      "id": "015",
+      "title": "Generate final publishing report",
+      "description": "Create summary report of all MCP publishing status",
+      "acceptanceCriteria": [
+        "List all 9 MCPs with PyPI version",
+        "List all 9 MCPs with MCP Registry status",
+        "Note any failures or issues",
+        "Save report to output file"
+      ],
+      "priority": 15,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Final summary for user review"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-26",
+    "last_updated": "2026-01-26",
+    "total_stories": 15,
+    "completed_stories": 0,
+    "objective": "Optimize, test, and publish all 9 MCPs to PyPI and Claude MCP Registry"
+  }
+}

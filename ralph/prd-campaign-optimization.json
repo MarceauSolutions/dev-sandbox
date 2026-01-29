@@ -1,0 +1,172 @@
+{
+  "branchName": "ralph/campaign-optimization",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Audit all active cold outreach campaigns",
+      "description": "Create comprehensive audit of all SMS, email, and social media campaigns across Marceau Solutions and Southwest Florida Comfort.",
+      "acceptanceCriteria": [
+        "Read all campaign files in lead-scraper/output/campaigns/",
+        "Read all SMS sequences in follow_up_sequences.json",
+        "Read all email sequences in scheduled_emails.json",
+        "Read all social media posts in social-media-automation/output/scheduled_posts.json",
+        "Create CAMPAIGN-AUDIT.md with full inventory"
+      ],
+      "priority": 1,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Discovery phase - understand current state"
+    },
+    {
+      "id": "002",
+      "title": "Analyze campaign performance metrics",
+      "description": "Deep dive into campaign_analytics.json and outreach_history.json to understand what's working and what's not.",
+      "acceptanceCriteria": [
+        "Calculate response rate by template",
+        "Calculate response rate by pain point",
+        "Calculate response rate by business (Marceau vs SWFL)",
+        "Calculate response rate by channel (SMS vs email)",
+        "Calculate optimal send time (day/hour analysis)",
+        "Create PERFORMANCE-ANALYSIS.md with findings"
+      ],
+      "priority": 2,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Data-driven optimization"
+    },
+    {
+      "id": "003",
+      "title": "Optimize SMS message templates",
+      "description": "Based on performance data, rewrite underperforming SMS templates using Hormozi principles.",
+      "acceptanceCriteria": [
+        "Identify bottom 3 performing templates",
+        "Rewrite each with stronger hook, clearer value prop",
+        "Keep under 160 characters",
+        "Include personalization ({business_name})",
+        "Include clear CTA",
+        "Save optimized templates to templates/sms/optimized/"
+      ],
+      "priority": 3,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Improve messaging quality"
+    },
+    {
+      "id": "004",
+      "title": "Optimize email follow-up sequences",
+      "description": "Review and optimize email templates for Hormozi's 7-touch framework.",
+      "acceptanceCriteria": [
+        "Review existing email templates",
+        "Ensure 5-7 touch sequence exists for each campaign",
+        "Optimize subject lines for open rates",
+        "Ensure each email has different angle (still_looking, direct_question, soft_ask, breakup)",
+        "Save optimized templates to templates/email/optimized/"
+      ],
+      "priority": 4,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Review before implementing"
+    },
+    {
+      "id": "005",
+      "title": "Optimize social media content calendar",
+      "description": "Analyze social media posts and create optimized content calendar for organic engagement.",
+      "acceptanceCriteria": [
+        "Analyze past post performance (likes, retweets, engagement)",
+        "Identify best performing content types",
+        "Create 2-week content calendar for each business",
+        "Balance promotional (20%) vs value (80%) content",
+        "Schedule optimal times (analyze historical engagement)",
+        "Save to SOCIAL-CONTENT-CALENDAR.md"
+      ],
+      "priority": 5,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Social media optimization"
+    },
+    {
+      "id": "006",
+      "title": "Implement A/B test framework for all channels",
+      "description": "Set up proper A/B testing for SMS, email, and social media to continuously improve.",
+      "acceptanceCriteria": [
+        "Create ab_tests.json structure for tracking tests",
+        "Define test hypotheses for top 3 underperforming areas",
+        "Set up 50/50 split for each test",
+        "Define success metrics and statistical significance threshold (85%)",
+        "Document testing SOP in workflows/ab-testing-sop.md"
+      ],
+      "priority": 6,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Continuous improvement framework"
+    },
+    {
+      "id": "007",
+      "title": "Create unified campaign dashboard",
+      "description": "Build a single dashboard showing all campaign metrics across channels.",
+      "acceptanceCriteria": [
+        "Create src/unified_dashboard.py",
+        "Aggregate SMS, email, and social media metrics",
+        "Show conversion funnel (contacted -> responded -> qualified -> meeting -> closed)",
+        "Show weekly trends",
+        "Output to HTML report in output/dashboard.html",
+        "Add CLI command: python -m src.unified_dashboard generate"
+      ],
+      "priority": 7,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Visibility and tracking"
+    },
+    {
+      "id": "008",
+      "title": "Implement send time optimization",
+      "description": "Analyze optimal send times and update scheduler to use them.",
+      "acceptanceCriteria": [
+        "Analyze response rates by hour and day of week",
+        "Identify top 3 optimal send windows",
+        "Update automation_daemon.py to respect optimal windows",
+        "Default: Tue-Thu, 10 AM - 2 PM local time",
+        "Skip Mon morning, Fri afternoon, weekends",
+        "Document in SEND-TIME-OPTIMIZATION.md"
+      ],
+      "priority": 8,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Timing optimization"
+    },
+    {
+      "id": "009",
+      "title": "Create optimization recommendations report",
+      "description": "Synthesize all findings into actionable recommendations.",
+      "acceptanceCriteria": [
+        "Create OPTIMIZATION-RECOMMENDATIONS.md",
+        "List top 10 quick wins (can implement immediately)",
+        "List top 5 medium-term improvements (1-2 weeks)",
+        "List top 3 strategic changes (requires planning)",
+        "Include expected impact for each recommendation",
+        "Prioritize by effort vs impact"
+      ],
+      "priority": 9,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "low",
+      "notes": "CHECKPOINT: Final review of all recommendations"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-23",
+    "last_updated": "2026-01-23",
+    "total_stories": 9,
+    "completed_stories": 0,
+    "objective": "Comprehensive optimization of all cold outreach campaigns (SMS, email, social media) across Marceau Solutions and Southwest Florida Comfort to improve response rates and ROI"
+  }
+}

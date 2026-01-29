@@ -1,0 +1,125 @@
+{
+  "branchName": "ralph/mcp-publishing-completion",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Respond to punkpeye on GitHub PR #1676",
+      "description": "The PR was merged and punkpeye asked for Discord username and server claiming. Post a thank you response with username and next steps.",
+      "acceptanceCriteria": [
+        "Post comment on https://github.com/punkpeye/awesome-mcp-servers/pull/1676 thanking punkpeye",
+        "Mention that we will join Discord and share username",
+        "Mention we will claim servers on Glama.ai",
+        "Use 'gh pr comment' to post"
+      ],
+      "priority": 1,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Simple GitHub comment - PR already merged"
+    },
+    {
+      "id": "002",
+      "title": "Document Discord joining process for William",
+      "description": "Create a quick action item for William to join MCP Discord and get flair. Ralph can't join Discord, but can prepare the steps.",
+      "acceptanceCriteria": [
+        "Create ACTION-ITEMS.md in ralph/output/",
+        "Include Discord invite link: https://glama.ai/mcp/discord",
+        "Include steps to share username with punkpeye",
+        "Include steps to claim servers on Glama.ai"
+      ],
+      "priority": 2,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Requires human action - Claude can't join Discord"
+    },
+    {
+      "id": "003",
+      "title": "Verify Apollo MCP is published to PyPI",
+      "description": "Check if apollo-mcp is published to PyPI. If not, prepare it for publishing using SOPs 11-12.",
+      "acceptanceCriteria": [
+        "Check pip index versions apollo-mcp",
+        "If not published, verify package structure (pyproject.toml, src/apollo_mcp/)",
+        "If published, document current version",
+        "Create APOLLO-PUBLISHING-STATUS.md report"
+      ],
+      "priority": 3,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Verification task"
+    },
+    {
+      "id": "004",
+      "title": "Publish Apollo MCP to PyPI if needed",
+      "description": "If Apollo MCP is not on PyPI, build and publish it following SOP 12.",
+      "acceptanceCriteria": [
+        "Clean previous builds (rm -rf dist/ build/ *.egg-info)",
+        "Build package (python -m build)",
+        "Upload to PyPI (twine upload dist/*)",
+        "Verify on PyPI website"
+      ],
+      "priority": 4,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Requires PYPI_TOKEN environment variable"
+    },
+    {
+      "id": "005",
+      "title": "Publish Apollo MCP to Claude MCP Registry",
+      "description": "After PyPI publish, submit to Claude MCP Registry using mcp-publisher.",
+      "acceptanceCriteria": [
+        "Verify server.json exists and is valid",
+        "Run mcp-publisher login github",
+        "Run mcp-publisher publish --server server.json",
+        "Verify publication succeeded"
+      ],
+      "priority": 5,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Requires GitHub auth for mcp-publisher"
+    },
+    {
+      "id": "006",
+      "title": "Create comprehensive MCP status report",
+      "description": "Audit all MCPs and create status report showing what's published where.",
+      "acceptanceCriteria": [
+        "List all MCPs (md-to-pdf, amazon-seller, fitness-influencer, rideshare, hvac, apollo)",
+        "Check PyPI status for each",
+        "Check MCP Registry status for each",
+        "Check GitHub repos exist for each",
+        "Create MCP-STATUS-REPORT.md with table"
+      ],
+      "priority": 6,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Comprehensive audit"
+    },
+    {
+      "id": "007",
+      "title": "Submit remaining MCPs to MCP.so and MCP Market",
+      "description": "Complete directory submissions per SUBMISSION-CHECKLIST.md",
+      "acceptanceCriteria": [
+        "Create GitHub issue at https://github.com/chatmcp/mcpso/issues for MCP.so submission",
+        "Document MCP Market submission process",
+        "Update SUBMISSION-CHECKLIST.md with completed items"
+      ],
+      "priority": 7,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Directory submissions"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-23",
+    "last_updated": "2026-01-23",
+    "total_stories": 7,
+    "completed_stories": 0,
+    "objective": "Complete all MCP publishing tasks: respond to punkpeye, publish Apollo MCP, audit all MCPs, submit to remaining directories"
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "metadata": {
+    "prd_name": "Overnight Systems Optimization",
+    "objective": "Comprehensive optimization of all projects, channels, and workflows",
+    "total_stories": 12,
+    "completed_stories": 0,
+    "autonomous_mode": true,
+    "checkpoint_stories": [4, 8],
+    "branchName": "feature/overnight-optimization-jan27",
+    "created": "2026-01-27",
+    "estimated_duration": "4-6 hours"
+  },
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Audit and Document All MCP Servers",
+      "description": "Create a comprehensive inventory of all MCP servers (Apollo, Upwork, Canva, etc.) with their publish status, version, and health check results",
+      "acceptance_criteria": [
+        "MCP inventory document created at docs/MCP-INVENTORY.md",
+        "Each MCP has: name, version, PyPI status, Registry status, health check",
+        "Any unpublished MCPs identified for future work"
+      ],
+      "files_to_create": ["docs/MCP-INVENTORY.md"],
+      "files_to_modify": [],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "002",
+      "title": "Lead Scraper Code Optimization",
+      "description": "Review and optimize lead-scraper project: remove dead code, consolidate duplicate functions, improve error handling",
+      "acceptance_criteria": [
+        "Dead code removed or documented",
+        "Duplicate functions consolidated",
+        "All imports optimized",
+        "Code passes linting"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["projects/shared/lead-scraper/src/*.py"],
+      "passes": false,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "003",
+      "title": "Social Media Automation Health Check",
+      "description": "Verify social media posting channels (X/Twitter, LinkedIn, Instagram) are working and document any issues",
+      "acceptance_criteria": [
+        "X API connection tested",
+        "LinkedIn OAuth verified",
+        "Instagram posting status documented",
+        "Health report created"
+      ],
+      "files_to_create": ["projects/shared/social-media-automation/HEALTH-REPORT.md"],
+      "files_to_modify": [],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "004",
+      "title": "Clawdbot Memory Integration Fix",
+      "description": "Investigate and document the Ollama integration needed for Clawdbot memory (currently blocked by OpenAI embedding quota)",
+      "acceptance_criteria": [
+        "Investigation complete for memory-lancedb plugin",
+        "Ollama integration steps documented",
+        "Solution or workaround proposed",
+        "Doc created: docs/CLAWDBOT-MEMORY-FIX.md"
+      ],
+      "files_to_create": ["docs/CLAWDBOT-MEMORY-FIX.md"],
+      "files_to_modify": [],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": true
+    },
+    {
+      "story_id": "005",
+      "title": "Personal Assistant Digest Enhancement",
+      "description": "Enhance the morning digest system to include Upwork job alerts and campaign analytics summary",
+      "acceptance_criteria": [
+        "Upwork job alerts integrated into digest",
+        "Campaign analytics summary added",
+        "Digest template updated",
+        "Manual test successful"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["projects/shared/personal-assistant/src/digest_aggregator.py", "projects/shared/personal-assistant/src/morning_digest.py"],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "006",
+      "title": "Apollo Pipeline Metrics Dashboard",
+      "description": "Create a simple metrics dashboard for Apollo pipeline showing credit usage, conversion rates, and ROI",
+      "acceptance_criteria": [
+        "Metrics collection implemented",
+        "CLI command to show dashboard",
+        "Historical data stored",
+        "Documentation updated"
+      ],
+      "files_to_create": ["projects/shared/lead-scraper/src/apollo_dashboard.py"],
+      "files_to_modify": ["projects/shared/lead-scraper/src/apollo_metrics.py"],
+      "passes": false,
+      "dependencies": ["002"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "007",
+      "title": "Upwork Job Monitoring Automation",
+      "description": "Create automated job monitoring that searches Upwork for relevant Amazon FBA jobs and notifies via digest",
+      "acceptance_criteria": [
+        "Job search function created using Upwork MCP",
+        "Scoring/ranking based on UPWORK-SUCCESS-GUIDE.md criteria",
+        "Integration with notification system",
+        "CLI for manual trigger"
+      ],
+      "files_to_create": ["projects/shared/upwork-mcp/src/job_monitor.py"],
+      "files_to_modify": [],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "008",
+      "title": "Documentation Consolidation",
+      "description": "Consolidate scattered documentation, update outdated docs, and create cross-reference index",
+      "acceptance_criteria": [
+        "All DOCKET.md files synchronized",
+        "Outdated docs identified and updated",
+        "Cross-reference index created: docs/INDEX.md",
+        "Session history updated"
+      ],
+      "files_to_create": ["docs/INDEX.md"],
+      "files_to_modify": ["DOCKET.md", "docs/session-history.md"],
+      "passes": false,
+      "dependencies": ["001", "003", "004"],
+      "checkpoint": true
+    },
+    {
+      "story_id": "009",
+      "title": "Execution Folder Quick Cleanup",
+      "description": "Quick cleanup of execution/ folder: remove obvious dead code, add missing docstrings to key files",
+      "acceptance_criteria": [
+        "Dead/unused files identified",
+        "Key files have docstrings",
+        "Import cleanup done",
+        "No breaking changes"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["execution/*.py"],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "010",
+      "title": "Go-Tracker Status Check",
+      "description": "Review Go-Tracker project status, document current state, and identify next steps",
+      "acceptance_criteria": [
+        "Current state documented",
+        "Dependencies listed",
+        "Next steps identified",
+        "README updated if needed"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["projects/Go-Tracker/README.md"],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "011",
+      "title": "AI Customer Service Voice API Review",
+      "description": "Review ai-customer-service project, verify Twilio webhook configuration, document current capabilities",
+      "acceptance_criteria": [
+        "Twilio webhook config verified",
+        "API endpoints documented",
+        "Current capabilities listed",
+        "Any issues documented in DOCKET.md"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["projects/shared/ai-customer-service/DOCKET.md"],
+      "passes": false,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "012",
+      "title": "Generate Comprehensive Optimization Report",
+      "description": "Generate final report summarizing all optimizations, issues found, and recommendations",
+      "acceptance_criteria": [
+        "Summary of all stories completed",
+        "Issues found and resolved listed",
+        "Remaining issues documented",
+        "Recommendations for future work",
+        "Report saved to docs/OVERNIGHT-OPTIMIZATION-REPORT-2026-01-27.md"
+      ],
+      "files_to_create": ["docs/OVERNIGHT-OPTIMIZATION-REPORT-2026-01-27.md"],
+      "files_to_modify": [],
+      "passes": false,
+      "dependencies": ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011"],
+      "checkpoint": false
+    }
+  ]
+}

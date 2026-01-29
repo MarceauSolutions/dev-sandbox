@@ -1,0 +1,125 @@
+{
+  "branchName": "ralph/social-media-debugging",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Diagnose social media posting failures",
+      "description": "Investigate why 10 social media posts failed to post on schedule and why the system keeps showing posts as 'overdue'.",
+      "acceptanceCriteria": [
+        "Read social-media-automation/output/scheduled_posts.json",
+        "Read social-media-automation/output/posting_log.json",
+        "Identify the root cause of failed posts",
+        "Document error patterns in SOCIAL-MEDIA-DIAGNOSIS.md"
+      ],
+      "priority": 1,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Discovery phase - understand failure modes"
+    },
+    {
+      "id": "002",
+      "title": "Analyze X/Twitter rate limiting",
+      "description": "The system hit rate limits when posting to X. Understand the rate limits and how to handle them.",
+      "acceptanceCriteria": [
+        "Research X API v2 rate limits for posting",
+        "Document current posting frequency vs limits",
+        "Calculate safe posting intervals",
+        "Create RATE-LIMIT-ANALYSIS.md"
+      ],
+      "priority": 2,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Rate limit: 120 second wait observed"
+    },
+    {
+      "id": "003",
+      "title": "Fix duplicate content detection",
+      "description": "Posts are failing with 'duplicate content' errors. Need to implement content variation or deduplication.",
+      "acceptanceCriteria": [
+        "Identify which posts failed due to duplicate content",
+        "Review social_media_poster.py for content handling",
+        "Implement content uniqueness check before posting",
+        "Add timestamp or variation to prevent duplicates"
+      ],
+      "priority": 3,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "X doesn't allow duplicate tweets"
+    },
+    {
+      "id": "004",
+      "title": "Implement rate-limit-aware posting",
+      "description": "Update the posting system to respect rate limits and queue posts appropriately.",
+      "acceptanceCriteria": [
+        "Update social_media_poster.py with rate limit handling",
+        "Add exponential backoff on rate limit errors",
+        "Implement post queue with 120+ second spacing",
+        "Log rate limit encounters for monitoring"
+      ],
+      "priority": 4,
+      "passes": true,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Review changes before deploying"
+    },
+    {
+      "id": "005",
+      "title": "Add retry mechanism for failed posts",
+      "description": "Create a system to automatically retry failed posts with proper error handling.",
+      "acceptanceCriteria": [
+        "Add 'retry_count' field to scheduled_posts.json",
+        "Implement retry logic (max 3 attempts)",
+        "Add different handling for different error types",
+        "Mark permanently failed posts after max retries"
+      ],
+      "priority": 5,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Added ErrorType enum (retryable/permanent/unknown), _classify_error() method, error_type and last_retry_at fields, archive-old and retry CLI commands"
+    },
+    {
+      "id": "006",
+      "title": "Create social media status dashboard",
+      "description": "Build a status report showing pending, posted, failed, and retrying posts.",
+      "acceptanceCriteria": [
+        "Create src/social_media_status.py",
+        "Show summary: total, pending, posted, failed, overdue",
+        "Show recent errors with timestamps",
+        "Add CLI command: python -m src.social_media_status"
+      ],
+      "priority": 6,
+      "passes": true,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Created social_media_status.py with health score, error list, overdue list, posting stats. CLI supports --format json, --errors, --overdue, --stats"
+    },
+    {
+      "id": "007",
+      "title": "Clear overdue posts backlog",
+      "description": "Process or archive the current overdue posts to reset the system to a healthy state.",
+      "acceptanceCriteria": [
+        "Identify all currently overdue posts",
+        "Attempt to post any that are still relevant",
+        "Archive posts that are too old to post",
+        "Update scheduled_posts.json to clean state"
+      ],
+      "priority": 7,
+      "passes": true,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT COMPLETED 2026-01-24: Archived 4 duplicate content posts. Reset 6 rate-limited posts for retry. System health 80->88."
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-24",
+    "last_updated": "2026-01-24",
+    "total_stories": 7,
+    "completed_stories": 7,
+    "objective": "Debug and fix social media automation issues: rate limiting, duplicate content errors, and overdue post handling"
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "creators": [
+    {
+      "id": "cr_001",
+      "name": "Sarah Mitchell",
+      "instagram": "@sarahmfitness",
+      "tiktok": "@sarahmfit",
+      "followers": 45200,
+      "engagement_rate": 4.2,
+      "location": "San Diego, CA",
+      "niche": "Yoga & Wellness",
+      "content_style": "Lifestyle, Studio",
+      "brand_fit_score": 92,
+      "email": "sarah@example.com",
+      "recent_posts": ["Morning yoga flow", "New activewear haul", "Beach meditation"],
+      "status": "new",
+      "outreach_status": "not_contacted"
+    },
+    {
+      "id": "cr_002",
+      "name": "Mike Rodriguez",
+      "instagram": "@mike_trains",
+      "tiktok": "@miketrains",
+      "followers": 128000,
+      "engagement_rate": 3.8,
+      "location": "Austin, TX",
+      "niche": "Strength Training",
+      "content_style": "Gym, Tutorials",
+      "brand_fit_score": 87,
+      "email": "mike@example.com",
+      "recent_posts": ["Deadlift PR", "Leg day routine", "Recovery tips"],
+      "status": "new",
+      "outreach_status": "not_contacted"
+    },
+    {
+      "id": "cr_003",
+      "name": "Emma Chen",
+      "instagram": "@emmawellness",
+      "tiktok": "@emmafit",
+      "followers": 67800,
+      "engagement_rate": 5.1,
+      "location": "Los Angeles, CA",
+      "niche": "Pilates & Barre",
+      "content_style": "Studio, Athleisure",
+      "brand_fit_score": 95,
+      "email": "emma@example.com",
+      "recent_posts": ["Pilates reformer class", "Activewear styling", "Morning routine"],
+      "status": "contacted",
+      "outreach_status": "email_sent",
+      "last_contact": "2026-01-20",
+      "follow_up_due": "2026-01-23"
+    },
+    {
+      "id": "cr_004",
+      "name": "Jordan Williams",
+      "instagram": "@jordanruns",
+      "tiktok": "@jrunswild",
+      "followers": 89500,
+      "engagement_rate": 4.5,
+      "location": "Denver, CO",
+      "niche": "Running & Outdoor",
+      "content_style": "Outdoor, Adventure",
+      "brand_fit_score": 88,
+      "email": "jordan@example.com",
+      "recent_posts": ["Trail run recap", "Running gear review", "Half marathon prep"],
+      "status": "responded",
+      "outreach_status": "interested",
+      "last_contact": "2026-01-18",
+      "response": "Sounds great! What are the details?"
+    },
+    {
+      "id": "cr_005",
+      "name": "Ashley Thompson",
+      "instagram": "@ashleymoves",
+      "tiktok": "@ashleymoves_",
+      "followers": 156000,
+      "engagement_rate": 3.2,
+      "location": "Miami, FL",
+      "niche": "HIIT & Cardio",
+      "content_style": "High Energy, Group Fitness",
+      "brand_fit_score": 82,
+      "email": "ashley@example.com",
+      "recent_posts": ["HIIT workout", "Summer fitness challenge", "Partner workout"],
+      "status": "new",
+      "outreach_status": "not_contacted"
+    },
+    {
+      "id": "cr_006",
+      "name": "Tyler Park",
+      "instagram": "@tylerparkyoga",
+      "tiktok": "@tyoga",
+      "followers": 34600,
+      "engagement_rate": 6.2,
+      "location": "Portland, OR",
+      "niche": "Men's Yoga",
+      "content_style": "Mindfulness, Movement",
+      "brand_fit_score": 91,
+      "email": "tyler@example.com",
+      "recent_posts": ["Morning flow sequence", "Breathwork practice", "Flexibility goals"],
+      "status": "contacted",
+      "outreach_status": "follow_up_1",
+      "last_contact": "2026-01-19",
+      "follow_up_due": "2026-01-22"
+    }
+  ],
+  "outreach_templates": {
+    "initial_outreach": {
+      "subject": "Love your {recent_post} content, {first_name}!",
+      "body": "Hey {first_name},\n\nI came across your {recent_post} post and loved the {specific_element}. Your approach to {niche} really aligns with what we look for in V1 Community members.\n\nWe're reaching out to a select group of creators about our ambassador program - 40% off, exclusive event access, and early product drops.\n\nWould you be interested in learning more?\n\n- [Brand Rep Name]"
+    },
+    "follow_up_1": {
+      "subject": "Quick follow up, {first_name}",
+      "body": "Hey {first_name},\n\nJust floating this back up - wanted to make sure my last message didn't get buried.\n\nStill interested in chatting about the ambassador program?\n\n- [Brand Rep Name]"
+    },
+    "follow_up_2": {
+      "subject": "Last one from me, {first_name}",
+      "body": "Hey {first_name},\n\nI'll keep this short - if the timing isn't right, no worries at all.\n\nBut if you're open to exploring a partnership, I'd love to send over some info.\n\nJust reply 'interested' and I'll follow up with details.\n\n- [Brand Rep Name]"
+    }
+  },
+  "campaign_metrics": {
+    "total_creators_identified": 847,
+    "outreach_sent": 312,
+    "responses_received": 89,
+    "response_rate": 28.5,
+    "interested": 52,
+    "applications_submitted": 41,
+    "conversion_rate": 13.1,
+    "avg_time_to_response": 2.3
+  },
+  "filters_applied": {
+    "min_followers": 10000,
+    "max_followers": 200000,
+    "min_engagement": 3.0,
+    "niches": ["Yoga", "Pilates", "Running", "Strength Training", "HIIT"],
+    "locations": ["United States", "Canada", "UK", "Australia"],
+    "content_styles": ["Lifestyle", "Studio", "Outdoor", "Athleisure"]
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "branchName": "ralph/jan21-optimization",
+  "mode": "autonomous",
+  "objective": "Optimize and validate all systems worked on 2026-01-21: chain detection, pain-point templates, X Premium campaign, and outreach automation",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Validate chain detection across all existing leads",
+      "description": "Run chain detector on all leads in output/ and ensure franchises are properly flagged. Generate comprehensive report.",
+      "acceptanceCriteria": [
+        "Run chain_detector.py on leads.json (569 leads)",
+        "Run chain_detector.py on follow_up_sequences.json (120 leads)",
+        "Generate report showing: total leads, independents, franchises",
+        "Verify no leads with 'national_chain' pain point have incorrect templates assigned",
+        "Save report to output/chain-detection-audit-20260121.md"
+      ],
+      "priority": 1,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Validation of new chain detection system"
+    },
+    {
+      "id": "002",
+      "title": "Test all new SMS templates for character limits and variables",
+      "description": "Verify all 8 new templates (franchise_*, few_reviews_*, low_rating_*, aggregator_*) are under 160 chars when variables are substituted with realistic values",
+      "acceptanceCriteria": [
+        "Test each new template with sample data (business_name='Naples Family Fitness')",
+        "Verify all are under 160 chars after substitution (or document if intentionally over)",
+        "Verify all contain 'Reply STOP to opt out' for compliance",
+        "Verify personalization variables ($business_name, $first_name) work correctly",
+        "Create template-validation-report.md in output/"
+      ],
+      "priority": 2,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Template compliance check"
+    },
+    {
+      "id": "003",
+      "title": "Optimize template selection logic flow",
+      "description": "Review select_template_for_lead() in sms_outreach.py and ensure the priority order is optimal for avoiding false claims",
+      "acceptanceCriteria": [
+        "Review template selection priority order",
+        "Verify franchises are ALWAYS caught before no_website check",
+        "Add unit tests for edge cases (e.g., 'Planet Fitness' should never get no_website template)",
+        "Test with sample leads from each pain point category",
+        "Document the selection flow in workflows/template-selection-logic.md"
+      ],
+      "priority": 3,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Critical to prevent Jan 2026 disaster repeat"
+    },
+    {
+      "id": "004",
+      "title": "Update outreach optimizer for new template categories",
+      "description": "Ensure outreach_optimizer.py properly rotates templates within each pain point category for A/B testing",
+      "acceptanceCriteria": [
+        "Update calculate_allocation() to handle new template categories",
+        "Add FRANCHISE_TEMPLATES, LOW_RATING_TEMPLATES, etc. to allocation logic",
+        "Verify exploration/exploitation phases work for each category",
+        "Test with dry-run to ensure correct template distribution",
+        "Update status report to show performance by category"
+      ],
+      "priority": 4,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Enable A/B testing for new template types"
+    },
+    {
+      "id": "005",
+      "title": "Create X Premium content calendar",
+      "description": "Based on updated x-campaign-sop.md, create a 7-day content calendar with API posts (280 char) and Premium posts (long-form)",
+      "acceptanceCriteria": [
+        "Create content-calendar-template.json in social-media-automation/",
+        "Include 3-5 API posts per day (automated)",
+        "Include 1 Premium long-form post per day (manual)",
+        "Include 2 video content slots per week",
+        "Follow optimal posting times from SOP",
+        "Use templates from x-campaign-sop.md"
+      ],
+      "priority": 5,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Leverage new X Premium features"
+    },
+    {
+      "id": "006",
+      "title": "Audit and optimize daily_followup_cron.sh",
+      "description": "Review cron script for efficiency, error handling, and logging. Ensure all steps run correctly.",
+      "acceptanceCriteria": [
+        "Test each step of the cron script independently",
+        "Verify Apollo lead enrollment works with new templates",
+        "Verify follow-up processing respects template selection logic",
+        "Verify response tracking syncs correctly",
+        "Add better error logging and notifications",
+        "Create cron-optimization-report.md"
+      ],
+      "priority": 6,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Daily automation reliability"
+    },
+    {
+      "id": "007",
+      "title": "Create automated lead quality scoring",
+      "description": "Implement a scoring system that prioritizes leads based on: pain points, business type (franchise vs independent), rating, review count",
+      "acceptanceCriteria": [
+        "Create lead_scorer.py in src/",
+        "Score factors: is_franchise (-5 if false claims possible), low_rating (+3), few_reviews (+2), no_website (+3 if verified)",
+        "Higher score = higher priority for outreach",
+        "Integrate with outreach queue sorting",
+        "Generate scored lead list for next batch"
+      ],
+      "priority": 7,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: Lead prioritization to maximize response rates"
+    },
+    {
+      "id": "008",
+      "title": "Generate comprehensive system documentation",
+      "description": "Create a single-page reference guide covering all outreach components worked on today",
+      "acceptanceCriteria": [
+        "Create OUTREACH-SYSTEM-GUIDE.md in lead-scraper/",
+        "Document: chain detection, website validation, template selection, pain points",
+        "Include command reference for all tools",
+        "Include troubleshooting section",
+        "Include monitoring/metrics section",
+        "Cross-reference all related SOPs and workflows"
+      ],
+      "priority": 8,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "System documentation for future reference"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-21",
+    "context": "Optimization session following major fixes to chain detection and template system",
+    "total_stories": 8,
+    "checkpoints": ["003", "007"],
+    "estimated_duration": "2-3 hours autonomous",
+    "files_to_review": [
+      "src/chain_detector.py",
+      "src/sms_outreach.py",
+      "src/outreach_optimizer.py",
+      "src/google_places.py",
+      "workflows/corrected-lead-scraping-sop.md",
+      "social-media-automation/workflows/x-campaign-sop.md"
+    ]
+  }
+}

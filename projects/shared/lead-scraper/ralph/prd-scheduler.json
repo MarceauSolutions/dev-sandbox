@@ -1,0 +1,145 @@
+{
+  "branchName": "ralph/automated-scheduler",
+  "mode": "autonomous",
+  "userStories": [
+    {
+      "id": "001",
+      "title": "Create unified automation daemon that runs continuously",
+      "description": "Build a central scheduler daemon that checks system time and triggers SMS outreach, email follow-ups, and social media posts at the correct times. Should run every 15-30 minutes.",
+      "acceptanceCriteria": [
+        "Create src/automation_daemon.py with main scheduler loop",
+        "Check system date/time on each iteration",
+        "Support multiple trigger types: SMS, Email, Social Media",
+        "Log all actions to output/logs/automation.log",
+        "Graceful error handling - one failure shouldn't stop other tasks",
+        "Can run as: python -m src.automation_daemon start",
+        "Supports --dry-run flag to preview without sending"
+      ],
+      "priority": 1,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Core scheduler that orchestrates all automated outreach"
+    },
+    {
+      "id": "002",
+      "title": "Integrate SMS follow-up sequence processing",
+      "description": "Connect automation daemon to existing follow_up_sequence.py to process due SMS touches at correct times",
+      "acceptanceCriteria": [
+        "Read follow_up_sequences.json for pending touches",
+        "Check scheduled_at against current time",
+        "Process touches that are due (scheduled_at <= now)",
+        "Use existing follow_up_sequence.py send logic",
+        "Only send during business hours (8 AM - 8 PM local)",
+        "Skip weekends unless configured otherwise",
+        "Update touch status after sending"
+      ],
+      "priority": 2,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Uses existing SMS infrastructure"
+    },
+    {
+      "id": "003",
+      "title": "Integrate email scheduler processing",
+      "description": "Connect automation daemon to email_scheduler.py to send due emails",
+      "acceptanceCriteria": [
+        "Read scheduled_emails.json for due emails",
+        "Process emails where scheduled_date <= today",
+        "Use existing email_scheduler.py send logic via SMTP",
+        "Send at scheduled_time (default 8:30 AM recipient timezone)",
+        "Handle timezone conversion properly",
+        "Update email status to 'sent' after success"
+      ],
+      "priority": 3,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "medium",
+      "notes": "Uses existing email_scheduler.py"
+    },
+    {
+      "id": "004",
+      "title": "Integrate social media post scheduler",
+      "description": "Connect automation daemon to social media automation to post scheduled content",
+      "acceptanceCriteria": [
+        "Read scheduled_posts.json from social-media-automation/output/",
+        "Check scheduled_time against current time",
+        "Post content that is due and status='scheduled'",
+        "Use existing X/Twitter posting logic",
+        "Update post status to 'posted' after success",
+        "Support multiple platforms if configured"
+      ],
+      "priority": 4,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "medium",
+      "notes": "CHECKPOINT: All three automation types integrated"
+    },
+    {
+      "id": "005",
+      "title": "Create launchd/cron setup for persistent running",
+      "description": "Create proper macOS launchd plist or cron job to ensure scheduler runs automatically on system boot and stays running",
+      "acceptanceCriteria": [
+        "Create com.marceausolutions.automation.plist for launchd",
+        "Configure to run every 15 minutes",
+        "Start automatically on login",
+        "Restart if crashes",
+        "Log stdout/stderr to output/logs/",
+        "Create install script: scripts/install-scheduler.sh",
+        "Create uninstall script: scripts/uninstall-scheduler.sh"
+      ],
+      "priority": 5,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Ensures automation runs even after system restart"
+    },
+    {
+      "id": "006",
+      "title": "Add status dashboard and health checks",
+      "description": "Create status command to show what's pending, what was sent, and overall health of automation system",
+      "acceptanceCriteria": [
+        "Add 'status' subcommand: python -m src.automation_daemon status",
+        "Show: Next scheduled SMS (count, soonest date)",
+        "Show: Next scheduled emails (count, soonest date)",
+        "Show: Next scheduled social posts (count, soonest date)",
+        "Show: Last run timestamp",
+        "Show: Any errors in last 24 hours",
+        "Show: Total sent today (SMS, email, posts)"
+      ],
+      "priority": 6,
+      "passes": false,
+      "checkpoint": false,
+      "risk_level": "low",
+      "notes": "Visibility into automation health"
+    },
+    {
+      "id": "007",
+      "title": "Activate all campaigns and verify lead data quality",
+      "description": "Change campaign status from 'preview' to 'active' for all campaigns, but first verify lead data has been corrected",
+      "acceptanceCriteria": [
+        "Check leads.json for data quality (phone format, no duplicates)",
+        "Verify Apollo leads have valid phone numbers",
+        "Verify Yelp/Google Places leads have been corrected",
+        "Update marceau_solutions_automation_campaign.json status to 'active'",
+        "Update swfl_comfort_hvac_campaign.json status to 'active'",
+        "Set dry_run: false for all campaigns",
+        "Assign business_id to all sequences missing it",
+        "Create activation report in output/CAMPAIGN-ACTIVATION-REPORT.md"
+      ],
+      "priority": 7,
+      "passes": false,
+      "checkpoint": true,
+      "risk_level": "high",
+      "notes": "CHECKPOINT: Campaigns activated - this will start real outreach!"
+    }
+  ],
+  "metadata": {
+    "created": "2026-01-23",
+    "last_updated": "2026-01-23",
+    "total_stories": 7,
+    "completed_stories": 0,
+    "objective": "Create automated scheduler that runs continuously to process SMS, email, and social media at correct times, then activate all campaigns"
+  }
+}
