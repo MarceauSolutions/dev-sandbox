@@ -1,9 +1,9 @@
 # Company I Control From My Computer
 
 **Created**: 2026-01-29
-**Updated**: 2026-01-29 (Revised assessment)
+**Updated**: 2026-01-29 (Stripe COMPLETE + ClickUp auto-update + S3 backups + Revenue dashboard)
 **Goal**: Fully automated business operations from lead → revenue → delivery
-**Current Score**: 7.5/10 operational readiness (revised up from 4.8)
+**Current Score**: 9/10 operational readiness (up from 8.5 - automation complete!)
 **Target Score**: 9.5/10
 
 ---
@@ -90,21 +90,23 @@
 
 ## Actual Gaps (Narrowed From Initial Assessment)
 
-### Critical Gap: Revenue Collection
+### ~~Critical Gap: Revenue Collection~~ — ✅ CLOSED (2026-01-29)
 
 ```
-CURRENT FLOW:
+BEFORE:
 Lead Found → Contacted → Engaged → ??? → [NO PAYMENT MECHANISM]
 
-NEEDED FLOW:
+AFTER (TODAY):
 Lead Found → Contacted → Engaged → Proposal → Payment → Delivery → Repeat
-                                    ↓           ↓
-                                 [EXISTS:    [MISSING:
-                                  ClickUp     Stripe]
-                                  tracking]
+                                    ↓           ↓           ↓
+                                 [ClickUp]   [STRIPE ✅]  [Webhook → SMS]
+
+Payment URL: https://webhooks.marceausolutions.com/webhooks/stripe
+Services: config/service_catalog.json
+CLI: python -m execution.stripe_payments create-link --service website_setup
 ```
 
-**The ONE critical missing piece**: Cannot collect payment automatically.
+**The critical gap is CLOSED**: You can now collect payment automatically.
 
 ### Secondary Gaps (Nice to Have)
 
@@ -206,16 +208,25 @@ aws s3 cp ~/.env s3://marceau-backups/secrets/ --sse
 
 ## Scorecard: Before vs After
 
-| Category | Initial Score | Corrected Score | After Roadmap |
-|----------|---------------|-----------------|---------------|
-| Lead Generation | 9/10 | 9/10 | 9/10 |
-| Communication | 8/10 | 9/10 | 9/10 |
-| CRM/Sales | 6/10 | 7/10 | 9/10 |
-| Revenue Ops | 1/10 | 1/10 | 9/10 ← Main improvement |
-| AI Agents | 9/10 | 9/10 | 9/10 |
-| Security | 3/10 | 7/10 ✅ | 8/10 |
-| Infrastructure | 5/10 | 7/10 | 8/10 |
-| **OVERALL** | **4.8/10** | **7.5/10** | **9/10** |
+| Category | Initial Score | After Security | After Stripe | After Automation | Target |
+|----------|---------------|----------------|--------------|------------------|--------|
+| Lead Generation | 9/10 | 9/10 | 9/10 | 9/10 | 9/10 |
+| Communication | 8/10 | 9/10 | 9/10 | 9/10 | 9/10 |
+| CRM/Sales | 6/10 | 7/10 | 8/10 | **9/10 ✅** | 9/10 |
+| Revenue Ops | 1/10 | 1/10 | 8/10 | **9/10 ✅** | 9/10 |
+| AI Agents | 9/10 | 9/10 | 9/10 | 9/10 | 9/10 |
+| Security | 3/10 | 7/10 | 7/10 | 8/10 | 8/10 |
+| Infrastructure | 5/10 | 7/10 | 8/10 | **9/10 ✅** | 9/10 |
+| **OVERALL** | **4.8/10** | **7.5/10** | **8.5/10** | **9/10 ✅** | **9.5/10** |
+
+**Completed Today (2026-01-29 PM):**
+- ✅ Payment → ClickUp auto-update (CRM/Sales 8→9)
+- ✅ S3 backup system with daily cron (Infrastructure 8→9)
+- ✅ Revenue dashboard with weekly email (Revenue Ops 8→9)
+
+**Remaining to reach 9.5/10:**
+- Per-session sandboxing for client tools (Security 8→8.5)
+- Database migration from JSON files (Infrastructure 9→9.5)
 
 ---
 
@@ -293,8 +304,9 @@ After Day 3: You can send a payment link and get paid automatically.
 
 ---
 
-## Today's Accomplishments (Security Sprint)
+## Today's Accomplishments (Security + Revenue Sprint)
 
+### Security (Morning)
 1. ✅ IAM Role for EC2 (no static keys on server)
 2. ✅ IAM Identity Center (SSO for local development)
 3. ✅ $50/month AWS budget alert
@@ -302,6 +314,20 @@ After Day 3: You can send a payment link and get paid automatically.
 5. ✅ EC2 hardening (fail2ban, auto-updates, SSH hardening)
 6. ✅ Old access keys deleted
 7. ✅ Git conflict prevention on EC2
+8. ✅ Bidirectional repo sync system (`scripts/repo-sync/`)
+
+### Revenue Pipeline (Afternoon) — THE CRITICAL GAP: CLOSED
+9. ✅ Stripe API integration (`execution/stripe_payments.py`)
+10. ✅ Service catalog (`config/service_catalog.json`)
+11. ✅ Webhook server with HTTPS (`https://webhooks.marceausolutions.com/webhooks/stripe`)
+12. ✅ SSL certificate (Let's Encrypt, auto-renews)
+13. ✅ Systemd service (auto-restarts on reboot)
+14. ✅ Payment → SMS notification pipeline
+
+### Payment Flow Now Operational
+```
+Customer pays → Stripe webhook → EC2 server → SMS to William → ClickUp update (TODO)
+```
 
 ---
 
@@ -322,4 +348,167 @@ Once Stripe is integrated, you have a **complete revenue-generating company** ru
 
 ---
 
-**Document Status**: Living document - reflects corrected assessment as of 2026-01-29
+---
+
+## Ideas From Moltbot (Steinberger) To Steal
+
+**Research Date**: 2026-01-29
+**Source**: [github.com/moltbot/moltbot](https://github.com/moltbot/moltbot), [awesome-moltbot-skills](https://github.com/VoltAgent/awesome-moltbot-skills)
+
+### High-Value Ideas To Implement
+
+| Idea | What It Does | Our Priority |
+|------|--------------|--------------|
+| **Multi-Channel Unified Inbox** | Route WhatsApp, Telegram, iMessage, Slack through ONE gateway | P1 - Already have Telegram via Moltbot |
+| **Per-Session Sandboxing** | Main sessions unrestricted, group/shared sessions run in Docker sandbox | P2 - Good for client-facing tools |
+| **Device Nodes** | iOS/Android/macOS expose device capabilities via RPC, agent calls remotely | P3 - Cool but not critical |
+| **Skills Registry Auto-Discovery** | Agent auto-discovers and pulls new skills from `~/clawd/skills/` | P2 - We have MCPs, similar concept |
+| **Session-to-Session Coordination** | Agents communicate across isolated sessions | P1 - Relates to SOP-29 three-agent collaboration |
+| **DM Pairing for Unknown Senders** | Unknown messages get pairing code, approval required | P2 - Security for public-facing channels |
+
+### Moltbot Skills Worth Porting
+
+From 565+ community skills, these are most useful for our business:
+
+| Skill | What It Does | Our Need |
+|-------|--------------|----------|
+| **tavily** | AI-optimized web search | Already have web search |
+| **github-pr** | Fetch, preview, merge PRs locally | Would help Ralph |
+| **remotion-server** | Headless video rendering | P2 - For fitness influencer content |
+| **gamma** | AI-generated presentations | P3 - Already have interview-prep |
+| **cloudflare** | Workers, KV, D1 management | P3 - Future infrastructure |
+| **coding-agent** | Run Claude Code remotely | P1 - Useful for Moltbot to invoke Claude Code |
+
+### Architecture Comparison
+
+| Aspect | Moltbot | Our Setup |
+|--------|---------|-----------|
+| **Control Plane** | Local Gateway (WebSocket) | Local (Claude Code) + EC2 (Moltbot) |
+| **Channels** | 15+ messaging platforms | Telegram, SMS, Email, Voice |
+| **Sandbox** | Docker per-session | None (TODO?) |
+| **Skills** | npm-based auto-discovery | MCP servers + Python scripts |
+| **Voice** | ElevenLabs always-on | Vocode Voice AI (3 lines) |
+
+### Next Ideas To Implement
+
+1. **Payment → ClickUp Automation** (P0) — When payment received, auto-update ClickUp deal status
+2. **Unified Channel Routing** (P1) — All inbound (Telegram, SMS, Email, Voice) → Single processing queue
+3. **Session Sandboxing** (P2) — For client-facing automation, run in isolated environment
+4. **Skills Registry** (P2) — Auto-discovery of new MCP servers
+
+---
+
+---
+
+## Ideas From Steinberger's GitHub (steipete) - 2026-01-29
+
+### High-Impact Tools to Adopt
+
+| Tool | Stars | What It Does | Our Use Case |
+|------|-------|--------------|--------------|
+| **agent-scripts** | 1,503 | Shared AGENTS.MD rules, committer helper, docs-list | Standardize our agent workflows |
+| **claude-code-mcp** | 1,044 | Claude Code as MCP server ("agent in agent") | Let Clawdbot invoke Claude Code |
+| **bird** | 743 | X/Twitter CLI for agents | Social media automation |
+| **AXorcist** | 153 | macOS Accessibility automation | Desktop automation |
+| **CodexBar** | 3,380 | API usage stats without login | Track API costs |
+| **brabble** | 69 | Voice-activated agent triggers | "Hey Computer" for agents |
+
+### Key Patterns to Steal
+
+1. **AGENTS.MD Pointer Pattern**
+   - One canonical rules file referenced by all repos
+   - Repos contain pointer: `READ ~/Projects/agent-scripts/AGENTS.MD BEFORE ANYTHING`
+   - Keeps agent instructions synchronized
+   - **Our equivalent**: CLAUDE.md (already doing this!)
+
+2. **Committer Helper**
+   - Bash script that stages only listed files
+   - Enforces non-empty commit messages
+   - Conventional Commits format
+   - **Action**: Consider adding to scripts/
+
+3. **docs-list Tool**
+   - Walks `docs/` directory
+   - Enforces front-matter (`summary`, `read_when`)
+   - Helps agents know when to read which docs
+   - **Action**: Add `read_when` to our SOPs
+
+4. **Browser Tools Pattern**
+   - Chrome DevTools automation without full MCP
+   - Commands: start, nav, eval, screenshot, inspect, kill
+   - **Action**: Useful for web scraping automation
+
+5. **Telegraph Style**
+   - "noun-phrases ok; drop grammar; min tokens"
+   - Reduces context usage, faster agent responses
+   - **Action**: Already doing this in CLAUDE.md
+
+### Skills to Port
+
+From `steipete/agent-scripts/skills/`:
+
+| Skill | Purpose | Priority |
+|-------|---------|----------|
+| `domain-dns-ops` | DNS management commands | P2 - Have Cloudflare already |
+| `markdown-converter` | MD → various formats | P3 - Have md-to-pdf |
+| `video-transcript-downloader` | YouTube transcripts | P2 - For content research |
+| `create-cli` | CLI app scaffolding | P3 - Template creation |
+
+### claude-code-mcp Integration
+
+The most interesting pattern is using Claude Code as an MCP server:
+
+```json
+// Claude Desktop config
+"claude-code-mcp": {
+  "command": "npx",
+  "args": ["-y", "@steipete/claude-code-mcp@latest"]
+}
+```
+
+This allows:
+- Clawdbot to invoke Claude Code for complex edits
+- "Agent in agent" architecture
+- Bypass permission prompts via `--dangerously-skip-permissions`
+- Use cheaper models (Gemini/Grok) for orchestration, Claude for execution
+
+**Action**: Configure this on EC2 for Clawdbot
+
+---
+
+## Accomplishments - 2026-01-29 Afternoon Session
+
+### Automation Sprint (3 items completed)
+
+15. ✅ **Payment → ClickUp Integration** (`execution/stripe_webhook_server.py`)
+    - Imports clickup_api functions
+    - Auto-updates task status to "paid" when payment received
+    - Adds payment comment to ClickUp task
+    - CLI supports `--clickup-task` when creating payment links
+
+16. ✅ **S3 Backup System** (`scripts/daily-backup.sh`)
+    - Backs up: .env, data/, output/, config/
+    - Uploads to `s3://marceau-company-backups/daily/`
+    - 30-day retention policy
+    - Cron job: 2 AM UTC daily
+    - Commands: `--list`, `--restore DATE`
+
+17. ✅ **Revenue Dashboard** (`scripts/revenue-report.py`)
+    - Aggregates Stripe revenue, form submissions, campaign metrics
+    - Supports `--period N` for custom time ranges
+    - Supports `--email` to send via SMTP
+    - Supports `--json` for programmatic access
+    - Cron job: Monday 9 AM UTC weekly
+
+### Final Score: 9/10 Operational Readiness
+
+The "company on computer" vision is now operational with:
+- Automated lead generation → nurturing → payment → delivery
+- 24/7 agent availability (Clawdbot + Ralph)
+- Daily backups to S3
+- Weekly revenue reports
+- Payment → CRM auto-sync
+
+---
+
+**Document Status**: Living document - reflects 9/10 completion as of 2026-01-29
