@@ -174,5 +174,21 @@ git log origin/main..HEAD --oneline
 git log --oneline --left-right HEAD...origin/main
 ```
 
+## EC2 Conflict Prevention Script
+
+The `/home/clawdbot/scripts/commit-and-push.sh` script implements these safeguards:
+
+```bash
+# Key features:
+# 1. Fetches before any changes
+# 2. Creates backup branch
+# 3. Pulls with rebase
+# 4. Dry-run push before actual push
+# 5. Logs all operations
+
+# Usage on EC2:
+/home/clawdbot/scripts/commit-and-push.sh "clawdbot-outputs/" "Auto: description"
+```
+
 ## Last Updated
-2026-01-28
+2026-01-29
