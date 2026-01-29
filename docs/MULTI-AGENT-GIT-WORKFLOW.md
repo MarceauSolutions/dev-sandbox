@@ -174,9 +174,85 @@ git log origin/main..HEAD --oneline
 git log --oneline --left-right HEAD...origin/main
 ```
 
-## EC2 Conflict Prevention Script
+## Bidirectional Sync System
 
-The `/home/clawdbot/scripts/commit-and-push.sh` script implements these safeguards:
+**Location**: `scripts/repo-sync/`
+
+Keeps Local, EC2, and GitHub in sync with conflict prevention.
+
+### Quick Commands (from local)
+
+```bash
+cd /Users/williammarceaujr./dev-sandbox/scripts/repo-sync
+
+# Check sync status across all locations
+./sync-status.sh
+
+# Push local changes to GitHub and EC2
+./sync-repos.sh --push
+
+# Pull from GitHub to local and EC2
+./sync-repos.sh --pull
+
+# Force EC2 to match local (creates backup)
+./sync-repos.sh --force-local
+```
+
+### Architecture
+
+```
+┌─────────────┐         ┌─────────────┐         ┌─────────────┐
+│   LOCAL     │ ──────► │   GITHUB    │ ◄────── │    EC2      │
+│ dev-sandbox │ ◄────── │   (origin)  │ ──────► │ dev-sandbox │
+└─────────────┘         └─────────────┘         └─────────────┘
+     │                                                │
+     │  ./sync-repos.sh --push                        │
+     │  ./sync-repos.sh --pull                        │
+     └────────────────────────────────────────────────┘
+```
+
+### EC2 Sync Agent
+
+Deploy `/home/clawdbot/scripts/sync-agent.sh` on EC2:
+
+```bash
+# On EC2: Pull latest before starting work
+./sync-agent.sh --pull
+
+# On EC2: Commit and push changes
+./sync-agent.sh --push "description of changes"
+
+# On EC2: Check sync status
+./sync-agent.sh --status
+
+# Cron job (auto-pull every 30 min)
+*/30 * * * * /home/clawdbot/scripts/sync-agent.sh --auto-sync
+```
+
+### When to Use Which Command
+
+| Scenario | Command |
+|----------|---------|
+| Starting local work | `./sync-repos.sh --pull` |
+| Finished local work | `./sync-repos.sh --push` |
+| EC2 changed, need locally | `./sync-repos.sh --pull` |
+| Local changed, need on EC2 | `./sync-repos.sh --push` |
+| EC2 out of sync, trust local | `./sync-repos.sh --force-local` |
+| Check what's out of sync | `./sync-status.sh` |
+
+### Safety Features
+
+- **Automatic backups**: Creates backup branches before any sync
+- **Stash uncommitted**: Auto-stashes uncommitted changes
+- **Dry-run pushes**: Verifies push will succeed before executing
+- **Lock file**: Prevents concurrent sync operations on EC2
+- **Full logging**: All operations logged to `.sync-logs/`
+
+## EC2 Conflict Prevention Scripts
+
+### commit-and-push.sh (Legacy)
+
+The `/home/clawdbot/scripts/commit-and-push.sh` script:
 
 ```bash
 # Key features:
@@ -189,6 +265,14 @@ The `/home/clawdbot/scripts/commit-and-push.sh` script implements these safeguar
 # Usage on EC2:
 /home/clawdbot/scripts/commit-and-push.sh "clawdbot-outputs/" "Auto: description"
 ```
+
+### sync-agent.sh (Recommended)
+
+The newer `/home/clawdbot/scripts/sync-agent.sh` provides:
+- Bidirectional sync (pull and push)
+- Auto-sync via cron
+- Status reporting
+- Lock file for concurrent prevention
 
 ## Last Updated
 2026-01-29
