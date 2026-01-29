@@ -25,6 +25,14 @@
 
 set -e
 
+# Source environment (for API keys)
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc 2>/dev/null || true
+fi
+if [ -f "$HOME/dev-sandbox/.env" ]; then
+    export $(grep -v '^#' "$HOME/dev-sandbox/.env" | xargs) 2>/dev/null || true
+fi
+
 # Configuration
 CLAUDE_CMD="${CLAUDE_CLI_NAME:-claude}"
 WORKING_DIR="${WORKING_DIR:-/home/clawdbot/dev-sandbox}"
