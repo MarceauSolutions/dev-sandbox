@@ -472,7 +472,14 @@ This allows:
 - Bypass permission prompts via `--dangerously-skip-permissions`
 - Use cheaper models (Gemini/Grok) for orchestration, Claude for execution
 
-**Action**: Configure this on EC2 for Clawdbot
+**Status**: ✅ IMPLEMENTED (2026-01-29)
+
+```bash
+# Clawdbot can now invoke Claude Code:
+./scripts/invoke-claude-code.sh "Fix the bug in server.py"
+./scripts/invoke-claude-code.sh --file path/to/file.py "Add tests"
+./scripts/invoke-claude-code.sh --max-turns 5 "Refactor this module"
+```
 
 ---
 
