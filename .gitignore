@@ -68,3 +68,9 @@ projects/*/output/infographics/
 
 # Duplicate/legacy project directories
 projects/lead-scraper/
+
+# Large video files (recordings, outputs)
+*.mov
+*.mp4
+*.avi
+*.mkv
