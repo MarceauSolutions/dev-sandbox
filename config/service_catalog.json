@@ -1,0 +1,117 @@
+{
+  "website_setup": {
+    "name": "Business Website Setup",
+    "price": 1500,
+    "currency": "usd",
+    "description": "5-page professional website with form integration",
+    "deliverables": [
+      "Domain setup & DNS configuration",
+      "5-page responsive website",
+      "Contact form with email notifications",
+      "Basic SEO optimization",
+      "Mobile-friendly design",
+      "GitHub Pages hosting"
+    ],
+    "sla_days": 7
+  },
+  "lead_gen_setup": {
+    "name": "Lead Generation System",
+    "price": 2500,
+    "currency": "usd",
+    "description": "Complete lead generation and nurturing system",
+    "deliverables": [
+      "Apollo.io integration",
+      "SMS campaign setup (Twilio)",
+      "ClickUp CRM configuration",
+      "7-touch follow-up sequences",
+      "Lead scoring automation",
+      "Campaign analytics dashboard"
+    ],
+    "sla_days": 14
+  },
+  "automation_consulting": {
+    "name": "Automation Consulting (Hourly)",
+    "price": 150,
+    "currency": "usd",
+    "description": "Expert automation consulting and implementation",
+    "deliverables": [
+      "1 hour of expert consulting",
+      "Implementation guidance",
+      "Technical documentation",
+      "Follow-up summary email"
+    ],
+    "sla_days": 1
+  },
+  "custom_mcp": {
+    "name": "Custom MCP Development",
+    "price": 3000,
+    "currency": "usd",
+    "description": "Custom Model Context Protocol server for Claude integration",
+    "deliverables": [
+      "Requirements analysis",
+      "MCP server development",
+      "Testing & quality assurance",
+      "Technical documentation",
+      "PyPI package publishing",
+      "Claude Desktop integration guide"
+    ],
+    "sla_days": 21
+  },
+  "sms_campaign_setup": {
+    "name": "SMS Campaign Setup",
+    "price": 800,
+    "currency": "usd",
+    "description": "SMS marketing campaign configuration",
+    "deliverables": [
+      "Twilio account setup",
+      "Template creation & approval",
+      "TCPA compliance review",
+      "Campaign scheduling",
+      "Response tracking setup"
+    ],
+    "sla_days": 5
+  },
+  "voice_ai_setup": {
+    "name": "Voice AI System Setup",
+    "price": 2000,
+    "currency": "usd",
+    "description": "AI-powered voice assistant for inbound calls",
+    "deliverables": [
+      "Phone number provisioning",
+      "AI voice agent configuration",
+      "Call routing setup",
+      "Transcription integration",
+      "CRM webhook integration",
+      "Training & documentation"
+    ],
+    "sla_days": 10
+  },
+  "amazon_seller_setup": {
+    "name": "Amazon Seller Operations Setup",
+    "price": 1200,
+    "currency": "usd",
+    "description": "Amazon SP-API integration and automation",
+    "deliverables": [
+      "SP-API credentials setup",
+      "Inventory monitoring automation",
+      "Fee calculator integration",
+      "Restock alerts configuration",
+      "Reporting dashboard"
+    ],
+    "sla_days": 7
+  },
+  "monthly_retainer": {
+    "name": "Monthly Automation Retainer",
+    "price": 500,
+    "currency": "usd",
+    "description": "Ongoing automation support and maintenance",
+    "deliverables": [
+      "Up to 5 hours support",
+      "System monitoring",
+      "Minor updates & fixes",
+      "Priority response time",
+      "Monthly review call"
+    ],
+    "sla_days": 30
+  }
+}
