@@ -4,19 +4,24 @@
 
   "posting_schedule": {
     "weekday": {
+      "posts_per_day": 4,
+      "times": ["09:00", "12:00", "15:00", "18:00"],
       "primary": "09:00",
       "secondary": "12:00",
       "tertiary": "15:00",
       "evening": "18:00"
     },
     "weekend": {
-      "primary": "09:00"
+      "posts_per_day": 2,
+      "times": ["10:00", "16:00"],
+      "primary": "10:00"
     },
     "timezone": "America/New_York",
     "notes": {
       "peak_day": "Wednesday",
       "peak_time": "09:00",
-      "rationale": "Research shows highest global engagement Wed 9AM EST"
+      "rationale": "Research shows highest global engagement Wed 9AM EST",
+      "strategy_update": "2026-01-30: Shifted to AI Builder in Public strategy"
     }
   },
 
