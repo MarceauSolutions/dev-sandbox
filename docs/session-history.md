@@ -4,6 +4,102 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-01-30: n8n Integration + X Social Strategy Pivot + Clawdbot Research
+
+**Context:** Major infrastructure day - integrated n8n workflow automation, Clawdbot delivered extensive research on fitness coaching strategy, Mac Mini vs EC2 analysis, and X social media pivot to "AI Builder in Public".
+
+### n8n Workflow Integration
+
+**Accomplished:**
+- Connected n8n MCP to Claude Code (localhost:5678)
+- Created 5 new n8n workflows to replace/enhance Python scripts:
+  - **SMS-Response-Handler-v2** (G14Mb6lpeFZVYGwa) - Categorizes SMS, logs to Sheets, alerts on hot leads
+  - **Form-Submission-Pipeline** (MmXDtZMsY9nR5Wrx) - Scores leads, routes by quality
+  - **Daily-Operations-Digest** (Hz05R5SeJGb4VNCl) - 8 AM digest of emails, forms, SMS
+  - **Follow-Up-Sequence-Engine** (w8PYKJyeozM3qJQW) - Multi-day follow-up with Wait nodes
+  - **Hot-Lead-to-ClickUp** (SzVXrbi1y433799Y) - Creates ClickUp tasks for hot leads
+- Added ClickUp credentials to n8n
+- Created SOP 30: n8n Workflow Management
+- Created `docs/N8N-TRANSITION-PLAN.md` with full migration strategy
+
+**Python Scripts Replaced:**
+- `twilio_webhook.py` → SMS-Response-Handler-v2
+- `form_webhook.py` → Form-Submission-Pipeline
+- `morning_digest.py` → Daily-Operations-Digest
+- `follow_up_sequence.py` → Follow-Up-Sequence-Engine
+
+**Key Decision - When to Use n8n vs Python:**
+| Use n8n | Use Python |
+|---------|------------|
+| Webhook handlers | Complex ML/AI logic |
+| Scheduled tasks with visual debugging | Statistical analysis |
+| Multi-service integrations | Lead scoring algorithms |
+| Follow-up sequences (Wait nodes) | Video/image generation |
+
+### Clawdbot Research Deliverables (8 commits today)
+
+**Strategic Analysis:**
+1. **Mac Mini vs EC2 Analysis** - Mac Mini wins for personal AI assistant use case
+   - Security: Mac Mini (not internet-exposed)
+   - Cost: Break-even at ~32 months
+   - Recommendation: Mac Mini for Clawdbot, EC2 for production APIs
+
+2. **Amazon FBA vs Current Path** - Strategic decision analysis
+   - Continue AI automation focus over FBA pivot
+
+3. **Fitness Coaching Client Acquisition** - New strategy documented
+   - Complete handoff for Cline agent
+   - Asset audit completed
+
+**X Social Media Pivot:**
+- Created `CLAUDE-CODE-HANDOFF.md` (582 lines) - Complete strategy document
+- Created `ai-builder-content.json` - New content templates
+- Strategy: "AI Builder in Public" vs generic fitness tips
+- Frequency: 4 posts/day weekdays, 2 posts/day weekends
+- 50% posts with Grok-generated images ($0.07/image)
+- Sample posts ready to queue
+
+**Time-Blocked Calendar:**
+- Created Jan 30 - Feb 8 calendar with time blocks
+- Job prep handoff for Claude Code
+
+### New Communication Patterns
+
+- "Check n8n status" → Verify n8n running, list workflows
+- "Create n8n workflow for X" → Use n8n MCP tools
+- "Migrate X to n8n" → Follow `docs/N8N-TRANSITION-PLAN.md`
+
+### Files Created/Updated
+
+**n8n:**
+- `docs/N8N-TRANSITION-PLAN.md` - Full migration strategy
+- `CLAUDE.md` - Added SOP 30, updated documentation map
+- n8n workflows (5 created via MCP)
+
+**Clawdbot Commits:**
+- `MAC-MINI-VS-EC2-ANALYSIS.md`
+- `projects/shared/social-media-automation/CLAUDE-CODE-HANDOFF.md`
+- `projects/shared/social-media-automation/templates/ai-builder-content.json`
+- Multiple strategy and handoff documents
+
+**Webhook Endpoints** (once n8n workflows activated):
+| Endpoint | URL |
+|----------|-----|
+| SMS Responses | `http://localhost:5678/webhook/sms-response` |
+| Form Submissions | `http://localhost:5678/webhook/form-submit` |
+| Enroll Follow-up | `http://localhost:5678/webhook/enroll-followup` |
+| Hot Lead → ClickUp | `http://localhost:5678/webhook/hot-lead-clickup` |
+
+### Next Steps
+
+1. Activate n8n workflows
+2. Update Twilio webhook URL to point to n8n
+3. Execute X social media strategy (queue posts)
+4. Create n8n workflow for X social posting
+5. Sync EC2 server with latest changes
+
+---
+
 ## 2026-01-28: Clawdbot OAuth Fix + Troubleshooting Methodology
 
 **Context:** Clawdbot OAuth token expired, needed to fix authentication on headless EC2 server.

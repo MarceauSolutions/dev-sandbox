@@ -79,6 +79,8 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Troubleshooting methodology** | `docs/TROUBLESHOOTING-METHODOLOGY.md` ⭐ |
 | **AI routing optimization** | `docs/AI-ROUTING-OPTIMIZATION.md` ⭐ |
 | **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
+| **n8n transition plan** | `docs/N8N-TRANSITION-PLAN.md` ⭐ |
+| **n8n workflow management (SOP 30)** | See SOP 30 below ⭐ |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
@@ -3365,6 +3367,61 @@ python -m src.routine_scheduler --create-all
 
 ---
 
+### SOP 30: n8n Workflow Management
+
+**When**: Creating, managing, or transitioning automations to n8n
+
+**Purpose**: Use n8n for visual workflow automation, webhooks, and scheduled tasks instead of Python scripts where appropriate.
+
+**n8n URL**: http://localhost:5678
+
+**When to Use n8n vs Python**:
+
+| Use n8n | Use Python |
+|---------|------------|
+| Webhook handlers | Complex ML/AI logic |
+| Scheduled tasks with visual debugging | Statistical analysis |
+| Multi-service integrations | Lead scoring algorithms |
+| Follow-up sequences (Wait nodes) | Video/image generation |
+| Form → CRM → Email pipelines | Custom API clients |
+
+**Active n8n Workflows** (created 2026-01-30):
+
+| Workflow | ID | Webhook Path |
+|----------|-----|--------------|
+| SMS-Response-Handler-v2 | G14Mb6lpeFZVYGwa | `/sms-response` |
+| Form-Submission-Pipeline | MmXDtZMsY9nR5Wrx | `/form-submit` |
+| Daily-Operations-Digest | Hz05R5SeJGb4VNCl | *Scheduled 8 AM* |
+| Follow-Up-Sequence-Engine | w8PYKJyeozM3qJQW | `/enroll-followup` |
+| Hot-Lead-to-ClickUp | SzVXrbi1y433799Y | `/hot-lead-clickup` |
+
+**Commands**:
+```bash
+# Start n8n (if not running)
+n8n start &
+
+# Check n8n status
+curl http://localhost:5678/healthz
+
+# List workflows via MCP
+# Use mcp__n8n__list_workflows_minimal tool
+```
+
+**Python Scripts Replaced by n8n**:
+- `twilio_webhook.py` → SMS-Response-Handler-v2
+- `form_webhook.py` → Form-Submission-Pipeline
+- `morning_digest.py` → Daily-Operations-Digest
+- `follow_up_sequence.py` → Follow-Up-Sequence-Engine
+
+**Communication Patterns**:
+- "Check n8n status" → Verify n8n running, list workflows
+- "Create n8n workflow for X" → Use n8n MCP tools
+- "Migrate X to n8n" → Follow transition plan in `docs/N8N-TRANSITION-PLAN.md`
+
+**References**: `docs/N8N-TRANSITION-PLAN.md`
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
@@ -3399,6 +3456,7 @@ python -m src.routine_scheduler --create-all
 | User states something was previously done | [SOP 26: User Statement Validation Protocol](#sop-26-user-statement-validation-protocol) | **⚠️ MANDATORY - Never contradict user** |
 | Quick task while mobile / away from computer | [SOP 27: Clawdbot Usage](docs/SOP-27-CLAWDBOT-USAGE.md) | Clawdbot VPS running |
 | Complex multi-story development task | [SOP 28: Ralph Usage](docs/SOP-28-RALPH-USAGE.md) | PRD structure, clear requirements |
+| Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | n8n running at localhost:5678 |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
