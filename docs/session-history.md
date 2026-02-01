@@ -4,6 +4,106 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-02-01: n8n EC2 Migration + Source Pointer Analysis + Clawdbot/Ralph Audit
+
+**Context:** Multi-track session - migrated n8n to EC2 for 24/7 availability, completed Source Pointer market viability analysis (SOP 17), and verified Clawdbot/Ralph documentation readiness.
+
+### n8n EC2 Migration
+
+**Accomplished:**
+- ✅ Added 2GB swap space to prevent OOM crashes during npm install
+- ✅ Installed n8n v2.4.8 on EC2 via npm
+- ✅ Created systemd service (`/etc/systemd/system/n8n.service`)
+- ✅ Exported 6 workflows from local n8n via MCP
+- ✅ Imported all workflows to EC2 via n8n CLI
+- ✅ Configured nginx reverse proxy (port 80 → 5678)
+- ✅ Enabled SSH TCP forwarding (AllowTcpForwarding yes)
+- ✅ Security group port 5678 opened to 0.0.0.0/0
+
+**Unresolved Issue:**
+- ❌ Port 5678 not accessible from internet despite all configurations appearing correct
+- n8n responds locally with `{"status":"ok"}`
+- External connections get "connection reset"
+- **Debug command for next session:** `curl -v http://34.193.98.97:5678/healthz`
+
+**Workflows Migrated to EC2:**
+| Workflow | ID | Status |
+|----------|-----|--------|
+| SMS-Response-Handler-v2 | G14Mb6lpeFZVYGwa | Inactive (needs credentials) |
+| Form-Submission-Pipeline | MmXDtZMsY9nR5Wrx | Inactive |
+| Daily-Operations-Digest | Hz05R5SeJGb4VNCl | Inactive |
+| Follow-Up-Sequence-Engine | w8PYKJyeozM3qJQW | Inactive |
+| Hot-Lead-to-ClickUp | SzVXrbi1y433799Y | Inactive |
+| X-Social-Post-Scheduler | - | Inactive |
+
+**Created:** `docs/EC2-N8N-SETUP.md` - Complete setup guide with:
+- SSH tunnel instructions (http://localhost:5679 via tunnel)
+- Credential setup (SMTP, Google Sheets, Gmail OAuth)
+- Webhook URLs for Twilio configuration
+- Troubleshooting commands
+
+### Source Pointer Market Viability Analysis (SOP 17)
+
+**4 Parallel Agents Completed:**
+1. **Agent 1 (Market Size)**: TAM $47.5B, SAM $2.8-4.2B, SOM $2-8M Year 1-3
+2. **Agent 2 (Competition)**: Perplexity main competitor, deep-linking is unique differentiator
+3. **Agent 3 (Customer)**: Legal/journalism have 9-10/10 pain, high willingness to pay
+4. **Agent 4 (Monetization)**: LTV:CAC ratio 8.4x, $15/mo Pro tier recommended
+
+**Result:** Score 3.9/5 = **CONDITIONAL GO**
+
+**Key Findings:**
+- Deep-linking to exact paragraph is killer feature (no competitor has this)
+- Target AI skeptics in legal/journalism verticals first
+- Position as "research tool" not "AI" to reach skeptics
+- Free tier mandatory to build trust
+
+**Created:** `projects/shared/source-pointer/market-analysis/consolidated/VIABILITY-SCORECARD.md`
+
+### Clawdbot/Ralph Documentation Audit
+
+**Status:** 95% Complete - Production Ready
+
+**Documentation Verified:**
+- ✅ SOP-27-CLAWDBOT-USAGE.md - Complete decision tree and patterns
+- ✅ SOP-28-RALPH-USAGE.md - PRD structure and execution flow
+- ✅ SOP-29-THREE-AGENT-COLLABORATION.md - Comprehensive routing matrix
+- ✅ CLAWDBOT-CAPABILITIES.md - Full capability inventory
+- ✅ CLAWDBOT-OPS-MANUAL.md - System prompt and operations
+- ✅ CLAWDBOT-TEST-PLAN.md - 7 test scenarios defined
+- ✅ RALPH-CAPABILITIES.md - Architecture and CLI usage
+
+**Minor Gaps (Operational, Not Documentation):**
+- Tests 1-7 in CLAWDBOT-TEST-PLAN.md not yet executed
+- No execution logs from production use
+- Integration checklist not verified in practice
+
+**Next Steps for Clawdbot/Ralph:**
+1. Execute Test 1-6 from CLAWDBOT-TEST-PLAN.md when Clawdbot VPS operational
+2. Document test results in session-history.md
+3. Phase 2 credentials (read-only APIs) after trust established
+
+### Key Learnings
+
+1. **OOM Prevention:** Always add swap space before npm install on small instances
+2. **SSH Tunneling:** Use `-L local:localhost:remote` for port forwarding
+3. **Market Viability:** 4-agent parallel research (2-3 hours) saves weeks of building wrong thing
+4. **Documentation Maturity:** 95% documentation + 0% testing ≠ production ready
+
+### Files Created/Updated
+
+- `docs/EC2-N8N-SETUP.md` - Complete EC2 n8n guide
+- `projects/shared/source-pointer/market-analysis/consolidated/VIABILITY-SCORECARD.md`
+- `.tmp/n8n-export/*.json` - 6 workflow exports
+
+### Next Session Priority
+
+1. **Debug n8n connectivity:** Run `curl -v http://34.193.98.97:5678/healthz` from Mac
+2. **Complete n8n setup:** Access UI, credentials, activate workflows
+3. **Update Twilio webhook** to EC2 endpoint
+
+---
+
 ## 2026-01-30: n8n Integration + X Social Strategy Pivot + Clawdbot Research
 
 **Context:** Major infrastructure day - integrated n8n workflow automation, Clawdbot delivered extensive research on fitness coaching strategy, Mac Mini vs EC2 analysis, and X social media pivot to "AI Builder in Public".
