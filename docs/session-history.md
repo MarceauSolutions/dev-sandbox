@@ -4,6 +4,155 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-02-02: Upwork Workspace Setup + Proposal System
+
+**Context:** Created separate Upwork workspace for freelance client work, built proposal generation system, applied to first jobs.
+
+### Upwork Workspace Created
+
+**Location:** `~/upwork-projects/` (separate from dev-sandbox)
+
+**Why separate:**
+- Client code isolation (NDAs, ownership)
+- Parallel Claude instances without conflict
+- Clean handoffs to clients
+- Different CLAUDE.md (minimal, client-focused)
+
+**Structure:**
+```
+~/upwork-projects/
+├── CLAUDE.md              # Lightweight Upwork-specific instructions
+├── SESSION-STATUS.md      # Pipeline tracking
+├── clients/               # One folder per client
+└── templates/             # Reusable proposal tools
+```
+
+### Proposal Generation System
+
+**Created `generate_proposal.py`** - Generates PDF proposals matching dark minimalist Canva template style with:
+- Cover page (title, subtitle, prepared for)
+- Content page (description, timeline, cost, mockup preview)
+- Embedded spreadsheet/dashboard mockup image
+
+**Workflow:** Job posting → Cover letter (md + pdf) → Visual proposal (pdf) → Submit
+
+### Jobs Applied
+
+| Job | Rate | Status |
+|-----|------|--------|
+| K-12 Facilities Database | $112.50/hr | Submitted (boosted, $12-16k potential) |
+| Marketing ROI Tracker | $53.50/hr | Proposal ready, waiting for connects |
+
+### Rate Calculation Strategy
+
+- Don't use round numbers (looks calculated)
+- Position 40-60% into client's budget range
+- $53.50/hr for $45-75 range (28% in)
+- $112.50/hr for $95-135 range (44% in)
+
+### Key Learnings
+
+1. **Hourly vs Fixed:** Client chooses when posting. Can propose milestone structure in cover letter even for hourly jobs.
+2. **Boost ROI:** For high-value jobs ($10k+), spending 43 connects (~$6) is worth it.
+3. **Connects:** 10 free/month, replies are free after initial proposal.
+4. **Skip signals:** Low budget + big scope, "partner" language with employee pay, impossible tech requirements.
+
+### Files Updated
+
+- `~/dev-sandbox/CLAUDE.md` - Added upwork-projects to Home Directory Organization
+- `~/upwork-projects/` - New workspace with templates and client folders
+
+---
+
+## 2026-02-02: n8n Completion + Clawdbot Telegram Reconnection + Credential Consolidation
+
+**Context:** Completed n8n setup on EC2, reconnected Clawdbot to Telegram, consolidated Google Cloud credentials, and documented the three-agent architecture.
+
+### n8n Setup Completed
+
+**Accomplished:**
+- ✅ Fixed n8n port 5678 access (firewalld was blocking, not just security group)
+- ✅ Set `N8N_SECURE_COOKIE=false` for HTTP access
+- ✅ Created DNS record: `n8n.marceausolutions.com` → `34.193.98.97`
+- ✅ All 7 workflows imported and ready for activation
+
+**Fix for port 5678:**
+```bash
+# AWS Security Group was open, but EC2 firewalld was blocking
+ssh ec2 "sudo firewall-cmd --permanent --add-port=5678/tcp && sudo firewall-cmd --reload"
+```
+
+**n8n UI now accessible at:** http://n8n.marceausolutions.com:5678
+
+### Clawdbot Telegram Reconnection
+
+**Problem:** Clawdbot was running but Telegram showed `401 Unauthorized` errors.
+
+**Root Cause:** Old/invalid Telegram bot token in `/home/clawdbot/.clawdbot/clawdbot.json`
+
+**Solution:**
+1. Created new Telegram bot via @BotFather
+2. Updated token in clawdbot.json:
+   ```bash
+   ssh ec2 "sudo sed -i 's|OLD_TOKEN|NEW_TOKEN|g' /home/clawdbot/.clawdbot/clawdbot.json"
+   ssh ec2 "sudo systemctl restart clawdbot"
+   ```
+3. Clawdbot now connected to `@W_marceaubot`
+
+**Key Learning:** Clawdbot config is in JSON (`clawdbot.json`), not the `.env` file. The .env only has API keys (Twilio, OpenAI, Google), not channel configs.
+
+### Google Cloud Credential Consolidation
+
+**Problem:** Multiple OAuth clients across multiple projects causing credential sprawl.
+
+**Projects Found:**
+- fitness-influencer-assistant (KEEP - unified project)
+- n8nAIAgent (deactivated)
+- N8nContactForm (deactivated)
+- YouTubecreator MCP (deactivated)
+- CalendarLink (deactivated)
+- My First Project (deactivated)
+
+**Solution:**
+- Deactivated API keys in all unused projects
+- Use "Fitness AI Assistant Web" (Web application type) for n8n OAuth
+- Desktop OAuth clients don't support redirect URIs
+
+**Key Learning:** Google OAuth Web Application type is required for services like n8n that need redirect URIs. Desktop type only works for local apps without callbacks.
+
+### Three-Agent Architecture Clarified
+
+**Architecture:**
+```
+EC2 Instance ($7/month)
+├── Clawdbot (port 3100) - 24/7 Telegram access
+└── n8n (port 5678) - Workflow automation
+
+Local Mac (dev-sandbox)
+├── Claude Code - Interactive development
+└── Ralph - Autonomous multi-story development
+```
+
+**Routing:**
+| Complexity | Handler |
+|------------|---------|
+| 0-3 (trivial) | Clawdbot handles directly |
+| 4-6 (simple) | Clawdbot builds, commits, pushes |
+| 7-10 (complex) | Ralph via PRD |
+| Mac-specific | Claude Code (PyPI, MCP Registry) |
+
+### Files Updated
+- `.claude/KNOWLEDGE_BASE.md` - Added EC2/Clawdbot/n8n operations section
+- `.tmp/n8n-setup-progress.md` - Updated with completion status and lessons learned
+
+### Remaining Tasks
+- [ ] Add Google OAuth redirect URI for n8n
+- [ ] Configure Telegram credential in n8n
+- [ ] Activate 7 n8n workflows
+- [ ] Update SOPs 27, 28, 29 for three-agent collaboration
+
+---
+
 ## 2026-02-01: n8n EC2 Migration + Source Pointer Analysis + Clawdbot/Ralph Audit
 
 **Context:** Multi-track session - migrated n8n to EC2 for 24/7 availability, completed Source Pointer market viability analysis (SOP 17), and verified Clawdbot/Ralph documentation readiness.
