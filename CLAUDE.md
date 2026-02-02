@@ -252,6 +252,12 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Tell Clawdbot to..." / "Ask Clawdbot..." | Delegate to Clawdbot via Telegram |
 | "Ralph: Build..." | Direct Ralph trigger with PRD |
 | "Route this to..." | Follow AI routing optimization doc |
+| "Check my ideas" / "What's in my idea queue?" | Run `python -m src.ideas_queue list` → Show pending ideas from Telegram |
+| "Mark idea X done" / "Complete idea X" | Run `python -m src.ideas_queue complete X` |
+| "New Upwork client: [name]" | Create `~/upwork-projects/clients/[name]/` with README + TIMESHEET |
+| "Log [X] hours on [client]" | Update `~/upwork-projects/clients/[client]/TIMESHEET.md` |
+| "Package [client] for delivery" | Prepare clean handoff in client folder |
+| "Switch to Upwork workspace" | Work in `~/upwork-projects/` (separate from dev-sandbox) |
 | *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
@@ -438,13 +444,17 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **dev-sandbox/** | Active development workspace | `projects/marceau-solutions/`, `projects/shared/` | ✅ ONE repo (parent tracks all except websites) |
 | **dev-sandbox/projects/[company]/website/** | Website submodules (WITHIN dev-sandbox) | marceausolutions.com, swflorida-comfort-hvac | ✅ Git submodules → separate production repos |
 | **[project]-prod/** | Deployed production skills | `lead-scraper-prod/`, `interview-prep-prod/` | ✅ Separate repos (siblings to dev-sandbox) |
+| **~/upwork-projects/** | Client freelance work (SEPARATE workspace) | `clients/client-a/`, `clients/client-b/` | ✅ Per-client repos (isolated from personal work) |
 | **~/marceausolutions.com/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
 | **~/swflorida-comfort-hvac/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
 
 **Navigation Tips**:
 ```bash
-# Jump to active development
+# Jump to active development (personal projects)
 cd ~/dev-sandbox
+
+# Jump to Upwork client work (separate workspace)
+cd ~/upwork-projects
 
 # Check deployed production versions
 ls ~/production
@@ -461,7 +471,7 @@ cd ~/legacy/notebooks
 - **Monthly**: Review `archived/` for items that can be deleted
 - **As needed**: Move new `-prod/` deployments to `production/`
 
-**Reorganization**: Last updated 2026-01-21 (removed duplicates, categorized all folders)
+**Reorganization**: Last updated 2026-02-02 (added ~/upwork-projects/ for client freelance work)
 
 ## Credentials & API Keys
 
