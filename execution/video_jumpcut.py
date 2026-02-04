@@ -43,15 +43,22 @@ import json
 from pathlib import Path
 
 try:
-    from moviepy.editor import (
-        VideoFileClip, concatenate_videoclips, TextClip,
-        CompositeVideoClip, ImageClip
-    )
-    from moviepy.video.fx import resize
+    # MoviePy 2.x import syntax
+    from moviepy import VideoFileClip, concatenate_videoclips
+    MOVIEPY_V2 = True
 except ImportError:
-    print("ERROR: moviepy not installed")
-    print("Install with: pip install moviepy")
-    sys.exit(1)
+    try:
+        # MoviePy 1.x fallback
+        from moviepy.editor import (
+            VideoFileClip, concatenate_videoclips, TextClip,
+            CompositeVideoClip, ImageClip
+        )
+        from moviepy.video.fx import resize
+        MOVIEPY_V2 = False
+    except ImportError:
+        print("ERROR: moviepy not installed")
+        print("Install with: pip install moviepy")
+        sys.exit(1)
 
 
 class VideoJumpCutter:
@@ -198,7 +205,11 @@ class VideoJumpCutter:
 
         for i, (start, end) in enumerate(keep_segments):
             try:
-                clip = video.subclip(start, end)
+                # MoviePy 2.x uses subclipped(), 1.x uses subclip()
+                if hasattr(video, 'subclipped'):
+                    clip = video.subclipped(start, end)
+                else:
+                    clip = video.subclip(start, end)
                 clips.append(clip)
                 print(f"  Clip {i+1}/{len(keep_segments)}: {start:.2f}s - {end:.2f}s ({end-start:.2f}s)")
             except Exception as e:
