@@ -1,0 +1,234 @@
+{
+  "name": "SMS-Response-Handler-v2",
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Twilio Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sms-response",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "set-data",
+      "name": "Extract SMS Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 300],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {"id": "lead_id", "name": "lead_id", "value": "={{ 'sms_' + $now.toMillis() }}", "type": "string"},
+            {"id": "phone", "name": "phone", "value": "={{ $json.From }}", "type": "string"},
+            {"id": "message", "name": "message", "value": "={{ $json.Body }}", "type": "string"},
+            {"id": "timestamp", "name": "timestamp", "value": "={{ $now.toISO() }}", "type": "string"},
+            {"id": "message_sid", "name": "message_sid", "value": "={{ $json.MessageSid }}", "type": "string"}
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "categorize",
+      "name": "Categorize Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Categorize SMS responses based on content\nconst items = $input.all();\n\nfor (const item of items) {\n  const message = (item.json.message || '').toLowerCase().trim();\n  \n  // Opt-out keywords\n  const optOutKeywords = ['stop', 'unsubscribe', 'cancel', 'remove', 'quit', 'end'];\n  if (optOutKeywords.some(kw => message.includes(kw))) {\n    item.json.category = 'OPT_OUT';\n    item.json.priority = 'HIGH';\n    item.json.emoji = '🚫';\n    item.json.suggested_action = 'Remove from all lists immediately';\n    continue;\n  }\n  \n  // Hot lead indicators\n  const hotKeywords = ['interested', 'yes', 'call me', 'schedule', 'available', \"let's talk\", 'when can', 'how much', 'pricing', 'cost', 'sign me up', 'ready'];\n  if (hotKeywords.some(kw => message.includes(kw))) {\n    item.json.category = 'HOT_LEAD';\n    item.json.priority = 'URGENT';\n    item.json.emoji = '🔥';\n    item.json.suggested_action = 'Respond within 5 minutes!';\n    continue;\n  }\n  \n  // Warm lead indicators  \n  const warmKeywords = ['maybe', 'tell me more', 'what do you', 'how does', 'more info', 'details', 'website', 'email', 'send me'];\n  if (warmKeywords.some(kw => message.includes(kw))) {\n    item.json.category = 'WARM_LEAD';\n    item.json.priority = 'MEDIUM';\n    item.json.emoji = '🌡️';\n    item.json.suggested_action = 'Follow up with more information';\n    continue;\n  }\n  \n  // Cold/Not interested\n  const coldKeywords = ['no', 'not interested', 'no thanks', 'busy', 'later', 'not now', 'wrong number'];\n  if (coldKeywords.some(kw => message.includes(kw))) {\n    item.json.category = 'COLD_LEAD';\n    item.json.priority = 'LOW';\n    item.json.emoji = '❄️';\n    item.json.suggested_action = 'Schedule follow-up in 2 weeks';\n    continue;\n  }\n  \n  // Questions need response\n  if (message.includes('?')) {\n    item.json.category = 'QUESTION';\n    item.json.priority = 'MEDIUM';\n    item.json.emoji = '❓';\n    item.json.suggested_action = 'Answer their question';\n    continue;\n  }\n  \n  // Default to unknown\n  item.json.category = 'UNKNOWN';\n  item.json.priority = 'MEDIUM';\n  item.json.emoji = '📨';\n  item.json.suggested_action = 'Review and categorize manually';\n}\n\nreturn items;"
+      }
+    },
+    {
+      "id": "sheets-log",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [660, 300],
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "1egMBLln5cIGgwn1zeG9begxpv5VxvyY1IoIIiI1ix64"},
+        "sheetName": {"__rl": true, "mode": "name", "value": "SMS_Responses"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead_ID": "={{ $json.lead_id }}",
+            "Timestamp": "={{ $json.timestamp }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $json.message }}",
+            "Category": "={{ $json.category }}",
+            "Priority": "={{ $json.priority }}",
+            "MessageSid": "={{ $json.message_sid }}"
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "switch-category",
+      "name": "Route by Category",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [880, 300],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "rules": [
+            {"value": "HOT_LEAD", "operation": "equals", "outputKey": "hot_lead"},
+            {"value": "WARM_LEAD", "operation": "equals", "outputKey": "warm_lead"},
+            {"value": "OPT_OUT", "operation": "equals", "outputKey": "opt_out"},
+            {"value": "QUESTION", "operation": "equals", "outputKey": "question"}
+          ],
+          "fallbackOutput": "other"
+        },
+        "dataPropertyName": "category",
+        "options": {}
+      }
+    },
+    {
+      "id": "telegram-hot-lead",
+      "name": "Telegram Hot Lead Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1100, 100],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "🔥 URGENT: HOT LEAD SMS RESPONSE!\n\n📱 From: {{ $json.phone }}\n⏰ Time: {{ $json.timestamp }}\n\n💬 Message:\n\"{{ $json.message }}\"\n\n🎯 Action: {{ $json.suggested_action }}\n\n⚡ Quick Actions:\n• \"draft sms reply\" - I'll write a response\n• \"call back\" - I'll schedule a reminder\n• \"research\" - I'll look up this number\n• \"done\" - Mark as handled\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "telegram-warm-lead",
+      "name": "Telegram Warm Lead Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1100, 240],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "🌡️ WARM LEAD SMS Response\n\n📱 From: {{ $json.phone }}\n⏰ Time: {{ $json.timestamp }}\n\n💬 Message:\n\"{{ $json.message }}\"\n\n🎯 Suggestion: {{ $json.suggested_action }}\n\n⚡ Quick Actions:\n• \"draft sms\" - Draft a reply\n• \"send info\" - Send info pack\n• \"skip\" - Log only\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "telegram-question",
+      "name": "Telegram Question Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1100, 380],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "❓ SMS QUESTION Received\n\n📱 From: {{ $json.phone }}\n⏰ Time: {{ $json.timestamp }}\n\n💬 Question:\n\"{{ $json.message }}\"\n\n🎯 Action: {{ $json.suggested_action }}\n\n⚡ Quick Actions:\n• \"draft answer\" - I'll write a response\n• \"skip\" - Log only\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "opt-out-sheets",
+      "name": "Add to Opt-Out List",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1100, 520],
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "1j2or4TWWAYh_KUX3fXDbrSby16cs9j3h2P3xU-f93Z0"},
+        "sheetName": {"__rl": true, "mode": "name", "value": "Opt_Outs"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Phone": "={{ $json.phone }}",
+            "Message": "={{ $json.message }}",
+            "Lead_ID": "={{ $json.lead_id }}"
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "telegram-opt-out",
+      "name": "Telegram Opt-Out Notice",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1320, 520],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "🚫 OPT-OUT Received\n\n📱 Phone: {{ $json.phone }}\n💬 Message: \"{{ $json.message }}\"\n\n✅ Added to opt-out list automatically.\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1540, 300],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [{"name": "Content-Type", "value": "application/xml"}]
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Twilio Webhook": {"main": [[{"node": "Extract SMS Data", "type": "main", "index": 0}]]},
+    "Extract SMS Data": {"main": [[{"node": "Categorize Response", "type": "main", "index": 0}]]},
+    "Categorize Response": {"main": [[{"node": "Log to Google Sheets", "type": "main", "index": 0}]]},
+    "Log to Google Sheets": {"main": [[{"node": "Route by Category", "type": "main", "index": 0}]]},
+    "Route by Category": {
+      "main": [
+        [{"node": "Telegram Hot Lead Alert", "type": "main", "index": 0}],
+        [{"node": "Telegram Warm Lead Alert", "type": "main", "index": 0}],
+        [{"node": "Add to Opt-Out List", "type": "main", "index": 0}],
+        [{"node": "Telegram Question Alert", "type": "main", "index": 0}],
+        [{"node": "Respond to Webhook", "type": "main", "index": 0}]
+      ]
+    },
+    "Telegram Hot Lead Alert": {"main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]},
+    "Telegram Warm Lead Alert": {"main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]},
+    "Telegram Question Alert": {"main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]},
+    "Add to Opt-Out List": {"main": [[{"node": "Telegram Opt-Out Notice", "type": "main", "index": 0}]]},
+    "Telegram Opt-Out Notice": {"main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]}
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

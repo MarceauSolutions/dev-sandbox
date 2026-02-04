@@ -1,18 +1,29 @@
 # n8n on EC2 Setup Guide
 
 *Created: 2026-02-01*
-*Last Updated: 2026-02-01*
+*Last Updated: 2026-02-02*
 
-## Current Status: TROUBLESHOOTING
+## ⚠️ IMPORTANT: EC2 is the ONLY n8n Instance
 
-**Issue:** Port 5678 not accessible from internet despite:
-- n8n running and listening on `*:5678`
-- Security group open to `0.0.0.0/0`
-- No iptables firewall blocking
+**All n8n work must be done on the EC2 instance.** Do not use the local n8n instance.
 
-**Next step to debug:** Run from Mac:
+- **Development & Testing:** EC2 only (http://34.193.98.97:5678)
+- **Production:** EC2 only
+- **Local instance:** Deprecated - do not start or use
+- **Weekly sync (optional):** Pull workflows from EC2 to local for backup
+
+The Claude Code MCP is configured to connect to EC2 (`~/.claude.json` → `N8N_HOST: http://34.193.98.97:5678`).
+
+---
+
+## Current Status: ✅ OPERATIONAL
+
+**External access working!** Fixed on 2026-02-02 by adding `N8N_HOST=0.0.0.0` to `/etc/n8n.env`.
+
+**Test external access:**
 ```bash
-curl -v http://34.193.98.97:5678/healthz
+curl -s http://34.193.98.97:5678/healthz
+# Should return: {"status":"ok"}
 ```
 
 ---
@@ -21,31 +32,30 @@ curl -v http://34.193.98.97:5678/healthz
 
 | Component | Status |
 |-----------|--------|
-| n8n Service | Running (v2.4.8) |
-| Systemd | Enabled (auto-restart) |
+| n8n Service | ✅ Running (v2.4.8) |
+| Systemd | ✅ Enabled (auto-restart) |
 | Workflows | 6 imported (inactive) |
 | Credentials | **NEEDS SETUP** |
-| External Access | **NOT WORKING - debugging** |
+| External Access | ✅ WORKING |
 
 ## Access n8n UI
 
-### Step 1: Open SSH Tunnel
+**Direct access (external access enabled):**
 
-Run this on your Mac:
-```bash
-ssh -i ~/.ssh/marceau-ec2-key.pem -L 5679:localhost:5678 ec2-user@34.193.98.97
-```
+Go to: **http://34.193.98.97:5678**
 
-Keep this terminal open.
-
-### Step 2: Open n8n in Browser
-
-Go to: **http://localhost:5679**
-
-### Step 3: First-Time Setup
+### First-Time Setup
 
 1. Create your admin account (use wmarceau@marceausolutions.com)
 2. Skip the onboarding prompts
+
+### Alternative: SSH Tunnel (if external access blocked)
+
+If you need to access through SSH tunnel:
+```bash
+ssh -i ~/.ssh/marceau-ec2-key.pem -L 5679:localhost:5678 ec2-user@34.193.98.97
+```
+Then access: **http://localhost:5679**
 
 ## Credential Setup
 
@@ -78,7 +88,7 @@ Go to: **Settings → Credentials → Add Credential**
 
 **OAuth Redirect URI** (add to Google Cloud Console):
 ```
-http://localhost:5679/rest/oauth2-credential/callback
+http://34.193.98.97:5678/rest/oauth2-credential/callback
 ```
 
 Click "Connect" and authorize with your Google account.
@@ -125,7 +135,7 @@ After activating SMS-Response-Handler-v2, update Twilio:
 3. Click on: +1 855 239 9364
 4. Under "Messaging", set webhook to:
    ```
-   http://34.193.98.97/n8n-webhook/sms-response
+   http://34.193.98.97:5678/webhook/sms-response
    ```
 5. Set method to: POST
 
@@ -133,13 +143,13 @@ After activating SMS-Response-Handler-v2, update Twilio:
 
 ### SMS Webhook Test
 ```bash
-curl -X POST http://34.193.98.97/n8n-webhook/sms-response \
+curl -X POST http://34.193.98.97:5678/webhook/sms-response \
   -d "From=+1234567890&Body=Test message"
 ```
 
 ### Form Webhook Test
 ```bash
-curl -X POST http://34.193.98.97/n8n-webhook/form-submit \
+curl -X POST http://34.193.98.97:5678/webhook/form-submit \
   -H "Content-Type: application/json" \
   -d '{"name":"Test User","email":"test@example.com","message":"Test submission"}'
 ```
@@ -168,8 +178,9 @@ sudo journalctl -u n8n -f
 | Property | Value |
 |----------|-------|
 | EC2 IP | 34.193.98.97 |
-| n8n Port | 5678 (internal) |
-| Webhook URL | http://34.193.98.97/n8n-webhook/{path} |
+| n8n Port | 5678 |
+| n8n UI | http://34.193.98.97:5678 |
+| Webhook URL | http://34.193.98.97:5678/webhook/{path} |
 | Data Directory | /var/lib/n8n |
 | Service | systemd (n8n.service) |
 | Timezone | America/New_York |
