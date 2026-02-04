@@ -1,6 +1,7 @@
 {
-  "version": "1.1.0",
-  "last_updated": "2026-01-20",
+  "version": "1.2.0",
+  "last_updated": "2026-02-03",
+  "primary_focus": "fitness-influencer",
   "businesses": {
     "squarefoot-shipping": {
       "name": "Square Foot Shipping & Storage",
@@ -275,7 +276,93 @@
         "Same-day service available",
         "No overtime charges, ever"
       ],
-      "status": "active"
+      "status": "paused",
+      "paused_reason": "Focusing on fitness influencer brand"
+    },
+    "fitness-influencer": {
+      "name": "Peptide Authority / Fitness",
+      "short_name": "Peptide Authority",
+      "owner": "William Marceau Jr.",
+      "type": "fitness-influencer",
+      "website": "https://marceausolutions.com",
+      "service_area": "Global (content creator)",
+      "brand": {
+        "tone": "informed skeptic, evidence-based, no-BS fitness, science-first",
+        "colors": [
+          "#22c55e",
+          "#3b82f6",
+          "#f59e0b"
+        ],
+        "tagline": "Cutting through the peptide noise with science"
+      },
+      "content_template": "fitness-peptide-content.json",
+      "content_pillars": {
+        "education": 40,
+        "experience": 25,
+        "framework": 20,
+        "engagement": 15
+      },
+      "target_audience": {
+        "primary": "Fitness enthusiasts 25-45 interested in optimization",
+        "secondary": "Biohackers, bodybuilders, recovery-focused athletes",
+        "pain_points": [
+          "Confused by conflicting peptide information",
+          "Don't know what's hype vs real",
+          "Worried about quality/sourcing",
+          "Want evidence-based guidance",
+          "Looking for framework to decide if peptides are right for them"
+        ]
+      },
+      "social_accounts": {
+        "x_handle": "@wmarceau",
+        "use_main_account": true,
+        "strategy": "Authority building via education and personal experience"
+      },
+      "hashtags": {
+        "primary": [
+          "peptides",
+          "biohacking",
+          "fitness"
+        ],
+        "secondary": [
+          "bodybuilding",
+          "recovery",
+          "health",
+          "optimization"
+        ],
+        "avoid": [
+          "steroids",
+          "PEDs",
+          "forsale"
+        ]
+      },
+      "content_themes": {
+        "monday": "myth_buster",
+        "tuesday": "tutorial",
+        "wednesday": "wisdom",
+        "thursday": "deep_dive",
+        "friday": "qa_engagement",
+        "saturday": "personal_story",
+        "sunday": "framework"
+      },
+      "x_engagement_focus": {
+        "priority": ["replies", "quote_tweets", "retweets", "bookmarks", "likes"],
+        "always_end_with": "engagement_cta",
+        "thread_length": "5-8 tweets for educational content",
+        "hooks": "pattern_interrupt_plus_promise"
+      },
+      "posting_schedule": {
+        "posts_per_day": 3,
+        "optimal_times_est": ["06:00", "08:30", "12:00", "17:30", "20:00"],
+        "best_days": ["tuesday", "wednesday", "thursday"],
+        "thread_days": ["tuesday", "thursday"]
+      },
+      "compliance": {
+        "include_periodically": ["Not medical advice", "Consult healthcare provider", "Do your own research"],
+        "never_include": ["Specific dosing", "Vendor links", "Medical claims", "Before/after health claims"]
+      },
+      "status": "active",
+      "priority": 1
     },
     "marceau-solutions": {
       "name": "Marceau Solutions",
@@ -454,20 +541,33 @@
         ],
         "update_frequency": "Weekly POC progress posts"
       },
-      "status": "active"
+      "status": "paused",
+      "paused_reason": "Backend infrastructure - fitness influencer is public brand"
     }
   },
   "posting_config": {
-    "posts_per_business_per_day": 2,
-    "rotation_strategy": "alternate",
-    "optimal_times_est": [
-      "09:00",
-      "12:00",
-      "15:00",
-      "18:00"
-    ],
+    "primary_business": "fitness-influencer",
+    "mode": "single_focus",
+    "posts_per_business_per_day": {
+      "fitness-influencer": 3,
+      "marceau-solutions": 0,
+      "swflorida-hvac": 0,
+      "squarefoot-shipping": 0
+    },
+    "rotation_strategy": "single_focus",
+    "optimal_times_est": {
+      "fitness-influencer": ["06:00", "08:30", "12:00", "17:30", "20:00"]
+    },
     "weekend_posts": true,
-    "weekend_posts_per_day": 1
+    "weekend_posts_per_day": {
+      "fitness-influencer": 2
+    },
+    "x_engagement_optimization": {
+      "algorithm_priority": ["replies", "quote_tweets", "retweets", "bookmarks", "likes"],
+      "always_include_cta": true,
+      "thread_support": true
+    },
+    "note": "Marceau Solutions is the backend - fitness influencer is the public brand"
   },
   "shared_resources": {
     "utm_source": "twitter",
