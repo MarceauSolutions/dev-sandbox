@@ -81,16 +81,17 @@
 ## Delivery
 
 ### Email Setup
-- [ ] Write email per VIDEO-OUTLINE.md template
-- [ ] Add video thumbnail with play button (Loom generates this)
-- [ ] Find Catherine Johnston's email (likely catherine.johnston@vuori.com or similar pattern)
-- [ ] Send from professional email (william@marceausolutions.com)
-- [ ] Send Tuesday-Thursday, 9-11 AM their timezone
+- [x] Write email per VIDEO-OUTLINE.md template
+- [x] Add video thumbnail with play button (Loom generates this)
+- [x] Find Catherine Johnston's email (likely catherine.johnston@vuori.com or similar pattern)
+- [x] Send from professional email (william@marceausolutions.com)
+- [x] Send Tuesday-Thursday, 9-11 AM their timezone
+- **SENT: 2026-01-28** - Initial video email sent
 
 ### Follow-Up Plan
-- [ ] Day 3: "Did the video play okay?" (if no open/view)
-- [ ] Day 7: "Checking if this is relevant" (if viewed but no reply)
-- [ ] Day 14: Final touch (value-add, not pushy)
+- [ ] Day 3: "Did the video play okay?" (if no open/view) - Due Jan 31 ⚠️ MISSED
+- [ ] Day 7: "Checking if this is relevant" (if viewed but no reply) - Due Feb 4
+- [ ] Day 14: Final touch (value-add, not pushy) - Due Feb 11
 
 ---
 

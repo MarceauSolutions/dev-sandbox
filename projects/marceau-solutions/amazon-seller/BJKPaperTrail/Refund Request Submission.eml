@@ -1,0 +1,202 @@
+Delivered-To: wmarceau26@gmail.com
+Received: by 2002:a05:7000:d30d:b0:824:20c3:bc56 with SMTP id ll13csp554802mab;
+        Sat, 31 Jan 2026 09:51:10 -0800 (PST)
+X-Received: by 2002:a17:90b:50c3:b0:33e:2d0f:4793 with SMTP id 98e67ed59e1d1-3543b2ff249mr6708408a91.11.1769881870676;
+        Sat, 31 Jan 2026 09:51:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769881870; cv=none;
+        d=google.com; s=arc-20240605;
+        b=HoLmckpmgy2mMIyankprVmj+BYqxTqGDbk/4kmb3SYO5AvPzPghoQaK/gTFkDNEPNx
+         83gw+tJ/82q+/9Qq2C95VNUQUGNaBGut4Opj+86YSIzugwz24ymtnKtLOeoFS1QnnWb6
+         6u6jWZXS1BnVnqDJvlUwoqed0tchhPjccRbXXSdOD4F2yzPfkTJrR/SZ97X0s7GDvlCF
+         8D7TiNIn1C0Oz2xPjQY9BGApX+cQ8nKtkAsjNKPZtfALrK9aiA9UOs1+d8ENTr8HyuDM
+         v6zQTyqFs07qSfoqk27nGIp5UPMxyNNB5Wa70EVUgsJx6GEd3ztbfFhimM5sda+UgZMu
+         vWCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=references:list-unsubscribe-post:list-unsubscribe:message-id:date
+         :to:from:subject:mime-version:dkim-signature;
+        bh=6FoD5TYoDut+DKac8FBs1BZ3QXpzUbsFSLFYBVHo1y0=;
+        fh=G/xQ6AmKpaflnGqLZpT+ed4vYPro+QPNArZJabOjEAA=;
+        b=YfixfpihtzjXsg29rtUuFKC7WUYp9BrQ/vaCqi5mV9aWhMTjySuznzP8Y1Ojg2vOg4
+         yHPsHuKDZAFt3RxdGO4cfT92H6KHyPd5hlKOv/mzMzxmafLvUOKAuI29Aq2cOmaMlhCs
+         k9icns0caJ+hy43NvHJCOS/mhS4YhhhjOrXFLSLF8zSwjCAOWqZgowZ6syHCc2aRmLrX
+         pg0yOIjU82yrIOzBp90njNqJVVssTbFWoX0UTfemOcCkeXFnWic0+IrFMPSyXozwJC3u
+         0b9DsqjkVIzpwbv8eFEu+ZxV5lOf0CZHYn0Gj/TAdtbwUj/81ZLO+dwEYRDqtad+dtyM
+         mAWg==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@bjkuniversity.com header.s=google header.b=bcyGvaiW;
+       spf=pass (google.com: domain of aaron@bjkuniversity.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=aaron@bjkuniversity.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=bjkuniversity.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <aaron@bjkuniversity.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id 98e67ed59e1d1-3540f3788c3sor4984452a91.5.2026.01.31.09.51.10
+        for <wmarceau26@gmail.com>
+        (Google Transport Security);
+        Sat, 31 Jan 2026 09:51:10 -0800 (PST)
+Received-SPF: pass (google.com: domain of aaron@bjkuniversity.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@bjkuniversity.com header.s=google header.b=bcyGvaiW;
+       spf=pass (google.com: domain of aaron@bjkuniversity.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=aaron@bjkuniversity.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=bjkuniversity.com;
+       dara=pass header.i=@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bjkuniversity.com; s=google; t=1769881870; x=1770486670; dara=google.com;
+        h=references:list-unsubscribe-post:list-unsubscribe:message-id:date
+         :to:from:subject:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6FoD5TYoDut+DKac8FBs1BZ3QXpzUbsFSLFYBVHo1y0=;
+        b=bcyGvaiWUASP7yA9V1MDoDP/w+Tobwq46Eq3v2m8xaNDeJLQPgVev5+L74lxFYdU3b
+         IEAIZzDdjGC7P8cThdAU0nVu619mVMy3El9ieeo5x72E16l+vgNzcpLHlLJd5eDvA2Js
+         +dLWkwEo98E+MIhrBm1NjzQxcp3xBz2PTnTvXY+zAC5FAKhe//0c1ClxRm2TUEpmFNYw
+         R1d9AdwCwuCSBqjROduusNx81wwp4Af02xJGqq9DqxX2py5w6GpYWQW3BtR+7LTSbblM
+         lHc8XQgMbzxr+Dy5BFZbIbBL3tbhECqXoRaicvKTJRO5v0+0wgunSTXLZqkD40eoFItX
+         9+LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769881870; x=1770486670;
+        h=references:list-unsubscribe-post:list-unsubscribe:message-id:date
+         :to:from:subject:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6FoD5TYoDut+DKac8FBs1BZ3QXpzUbsFSLFYBVHo1y0=;
+        b=Wc4DTb3ppLEV7llw9ZIKWn+IcnLO75/d82xdNG6lK4tF4es2dFrDyVCrUEItNs62/i
+         SCQoOfqTgJwIx0LIVFlD1MieFbFbV0KlyAc4U7A/b82u/YzkxI3s7satDVtkX87c3KhP
+         U/Nf6/pKdE8ckGiU/CkNsviJX4fGPZ8BprVEffeCrhXrRH/mrfliIOMeJj/UdVJU1qKH
+         1hA+J2CPFukSyvNgabcscr+3JGIquL41JnKyWn4o2VdE6Z3zGQsLyGcTJcHn3OUUnL/l
+         4k4hsu+RMicdN/koptbG95UpYa43Sbih97dVZSHM7pS3M/Wunp1psy482o8y/JSHQFAW
+         aBQQ==
+X-Gm-Message-State: AOJu0YxPaLQfJgS5pv5zMDpUKUidLcsxX1er49ZZ1bYJ4c9MIh4t4vJN
+	lKSCf0vfMuZDkoTGD3PGzajigkPwJqGwK/aR72my/T8jBkg3sn6IH7if7q9YkkIdTybc/rO95YZ
+	eJy+AF/c=
+X-Gm-Gg: AZuq6aKRjAYlIwG7OkYxP3nRg4TP9FAMU4cxWf9w1rW7wgRQ/1m6x+/ovC4clLwhKO9
+	6U543P2bZafIoNnrWdNpq575Mfi/UELNT/wn23Y5EvrNDVsGIqxcIIPISKuGDrU1QR02lPwTQUK
+	0oGkA2SAxxNv/spACekHNaN6wfrs+/8JXKoo/1khmWXmRMkv3cTtCDI25B6dCRvzTUHtTBfpgGc
+	K6YGQNhIEh+sfTaD1Ea06+iAB63uHY+vmGeindnA31YbbeVqiGdAKQ5pwFzVLdgW3aQwW0SDZBI
+	0dHO4f29QDp/8AK0h7Rmzc1ZzbnjbWn4Z9y4fDQWqaFIjUFCcl4IU/ENd7FdCVTMB17/VlgPTlX
+	14bTb8DSxW04Izd1mnkP7cQu5AndfaXzJ9rAbLOqS24VDautr2WV2IXV80eu/EZWcFHYrjQoSeb
+	FJVZRRfCUOgGcrCikBFmpULiBQFTte+Rx1qJWzq5ABEBYd3Z6e0xYSIYhriCDnYOELaNlaUyIBx
+	4KjhyDtwWA=
+X-Received: by 2002:a05:6a21:a42:b0:364:13ab:d4c5 with SMTP id adf61e73a8af0-392e0053620mr6035906637.26.1769881869650;
+        Sat, 31 Jan 2026 09:51:09 -0800 (PST)
+Return-Path: <aaron@bjkuniversity.com>
+Received: from smtpgw.close.com (am11-natgw-a0.close.com. [52.11.177.187])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c642b0b4c07sm10335523a12.36.2026.01.31.09.51.08
+        for <wmarceau26@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Jan 2026 09:51:08 -0800 (PST)
+Content-Type: multipart/mixed; boundary="===============5140023854967710152=="
+MIME-Version: 1.0
+Subject: Refund Request Submission 
+From: =?utf-8?q?Aaron_Civitarese?= <aaron@bjkuniversity.com>
+To: wmarceau26@gmail.com
+Date: Sat, 31 Jan 2026 17:51:08 +0000
+Message-ID: <176988186807.7.12829439553347184624@smtpgw.close.com>
+X-CLOSEIO-EMAIL-ID: acti_DTj6n4sukNKuXqgoox42eXvczhqHm00xKHf6vDpAWne
+List-Unsubscribe: <https://app.close.com/go/unsubscribe/orga_pxxd1sHwTNY3nO01jCtf3Pox1xpbpotZNuUMBiqvjrW/wmarceau26%40gmail.com/xSgqOt1OvefSRcBVHXdlvVt2OpWz5nSOZgwV_Z7OWis=/>
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+References: <176988186807.7.1672904781816739274@smtpgw.close.com>
+
+--===============5140023854967710152==
+Content-Type: multipart/alternative; boundary="===============8550834023871591103=="
+MIME-Version: 1.0
+
+--===============8550834023871591103==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+Hey William,
+
+ =20
+
+To ensure we can assist you as efficiently as possible, we've streamlined o=
+ur
+process.
+
+ =20
+
+**The key first step is completing this form:**[**Start Your Process
+Here.**](https://go.bjkuniversity.com/start-your-process-here)
+
+ =20
+
+Please note, the date you submit the form will be considered the official d=
+ate
+of your refund request. This helps our Client Experience team to track and
+manage your request promptly.
+
+ =20
+
+Best of luck!
+
+Aaron
+
+ =20
+
+Co=E2=80=91Founder, BJK University
+
+WhatsApp +41 (79) 968 8981
+
+Student results =E2=86=92 [bjku/results](https://go.bjkuniversity.com/resul=
+ts)
+
+Book a 15=E2=80=91min call with Aaron =E2=86=92 [bjku/15](https://calendly.=
+com/aaroncivi/new-
+meeting)
+
+ =20
+
+![Screenshot 2025-10-26 at 21.19.31.png](https://closeio-
+filepicker.s3.amazonaws.com/2025-10-26%2F4aucZNr4yzosSxoiCbKrDr%2F176150998=
+2516-Screenshot+2025-10-26+at+21.19.31.png)![BJKU
+Logo.png](https://closeio-
+filepicker.s3.amazonaws.com/2025-08-22%2F3OaeDGamb4CfdQAMqGnAmS%2F175587173=
+6891-BJKU+Logo.png)
+
+ =20
+
+[Unsubscribe.](https://app.close.com/go/unsubscribe/orga_pxxd1sHwTNY3nO01jC=
+tf3Pox1xpbpotZNuUMBiqvjrW/wmarceau26%40gmail.com/xSgqOt1OvefSRcBVHXdlvVt2Op=
+Wz5nSOZgwV_Z7OWis=3D/)
+--===============8550834023871591103==
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+
+<div>Hey William,</div><div><br></div><div>To ensure we can assist you as e=
+fficiently as possible, we've streamlined our process.</div><div><br></div>=
+<div><strong>The key first step is completing this form: </strong><a rel=3D=
+"noopener noreferrer nofollow" target=3D"_blank" href=3D"https://go.bjkuniv=
+ersity.com/start-your-process-here"><strong><span style=3D"color: rgb(13, 1=
+15, 13);">Start Your Process Here.</span></strong></a></div><div><br></div>=
+<div>Please note, the date you submit the form will be considered the offic=
+ial date of your refund request. This helps our Client Experience team to t=
+rack and manage your request promptly.</div><div><br></div><div><span data-=
+system-generated=3D"signature">Best of luck!</span></div><div><span data-sy=
+stem-generated=3D"signature">Aaron</span></div><div data-system-generated=
+=3D"signature"><br></div><div><span data-system-generated=3D"signature">Co=
+=E2=80=91Founder, BJK University</span></div><div><span data-system-generat=
+ed=3D"signature">WhatsApp +41 (79) 968 8981</span></div><div><span data-sys=
+tem-generated=3D"signature">Student results =E2=86=92 </span><a rel=3D"noop=
+ener noreferrer nofollow" target=3D"_blank" href=3D"https://go.bjkuniversit=
+y.com/results"><span data-system-generated=3D"signature">bjku/results</span=
+></a></div><div><span data-system-generated=3D"signature">Book a 15=E2=80=
+=91min call with Aaron =E2=86=92 </span><a rel=3D"noopener noreferrer nofol=
+low" target=3D"_blank" href=3D"https://calendly.com/aaroncivi/new-meeting">=
+<span data-system-generated=3D"signature">bjku/15</span></a></div><div data=
+-system-generated=3D"signature"><br></div><div><span data-system-generated=
+=3D"signature"><img style=3D"width: 96px; height: 92.0207px;" alt=3D"Screen=
+shot 2025-10-26 at 21.19.31.png" src=3D"https://closeio-filepicker.s3.amazo=
+naws.com/2025-10-26%2F4aucZNr4yzosSxoiCbKrDr%2F1761509982516-Screenshot+202=
+5-10-26+at+21.19.31.png"><img style=3D"width: 84px; height: 84px;" alt=3D"B=
+JKU Logo.png" src=3D"https://closeio-filepicker.s3.amazonaws.com/2025-08-22=
+%2F3OaeDGamb4CfdQAMqGnAmS%2F1755871736891-BJKU+Logo.png"></span></div><p><b=
+r></p><div><a rel=3D"noopener noreferrer nofollow" target=3D"_blank" href=
+=3D"https://app.close.com/go/unsubscribe/orga_pxxd1sHwTNY3nO01jCtf3Pox1xpbp=
+otZNuUMBiqvjrW/wmarceau26%40gmail.com/xSgqOt1OvefSRcBVHXdlvVt2OpWz5nSOZgwV_=
+Z7OWis=3D/"><span data-system-generated=3D"unsubscribe-footer">Unsubscribe.=
+</span></a></div><p><br></p><img src=3D"https://ml.closeml.com/t/DTj6n4sukN=
+KuXqgoox42eXvczhqHm00xKHf6vDpAWne/VWJmdTxsCJ.png" alt=3D"" width=3D"1" heig=
+ht=3D"1" />
+--===============8550834023871591103==--
+
+--===============5140023854967710152==--
