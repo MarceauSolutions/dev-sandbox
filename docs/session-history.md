@@ -4,6 +4,81 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-02-04: Fitness Influencer Content Pipeline + Social Media Automation + EC2 Sync
+
+**Context:** Extended fitness influencer project with peptide video production workflow, enhanced social media automation with peptide content generator, updated n8n EC2 documentation, and synced all progress to GitHub.
+
+### Fitness Influencer Content Pipeline
+
+**Created `projects/marceau-solutions/fitness-influencer/content/Peptide-Video/`**:
+- Full post-production checklist for peptide education videos
+- B-roll asset organization (Shorts-footage, B-roll folders)
+- Production workflow documentation
+
+**Video Editing Enhancements:**
+- Updated `execution/video_jumpcut.py` with improved silence detection
+- Better handling of audio threshold calibration
+
+### Peptide Content Generator
+
+**Created `projects/shared/social-media-automation/src/peptide_content_generator.py`**:
+- Specialized content generator for fitness/peptide education
+- Integrates with existing social media automation infrastructure
+- Template-driven approach via `templates/fitness-peptide-content.json`
+
+**Updated `config/businesses.json`:**
+- Extended configuration for peptide-focused content campaigns
+- Added scheduling and targeting parameters
+
+### n8n EC2 Documentation Updates
+
+**Updated `docs/EC2-N8N-SETUP.md`**:
+- Clarified that EC2 instance is the ONLY n8n environment
+- Added Grok Imagine B-Roll Generator workflow (ID: sYvUyTooDcHQQuKN)
+- Updated workflow table with complete list
+
+**n8n Workflow Backup:**
+- Created `projects/shared/n8n-workflows/` for local backup of EC2 workflows
+- Enables version control and disaster recovery
+
+### New Utilities
+
+**Created `execution/grok_video_gen.py`**:
+- Video generation utility using Grok/XAI API
+- Supports b-roll and promotional video generation
+
+**Created `projects/shared/personal-assistant/src/ideas_queue.py`**:
+- Idea queue management from Telegram/Clawdbot
+- Integration with personal assistant digest system
+
+### Amazon Seller Updates
+
+**New folders added:**
+- `projects/marceau-solutions/amazon-seller/BJKPaperTrail/` - Business documentation
+- `projects/marceau-solutions/amazon-seller/LegalAgreement/` - Contract templates
+- `projects/marceau-solutions/amazon-seller/scripts/` - Automation scripts
+
+### Files Updated/Created
+
+- `CLAUDE.md` - Documentation consistency updates
+- `.claude/KNOWLEDGE_BASE.md` - Added peptide content and video production knowledge
+- `KANBAN.md` - Updated task tracking
+- `docs/EC2-N8N-SETUP.md` - EC2-only clarification + new workflow
+- `execution/video_jumpcut.py` - Improved silence detection
+- `execution/grok_video_gen.py` - NEW: Video generation utility
+- `projects/marceau-solutions/fitness-influencer/content/` - NEW: Production assets
+- `projects/marceau-solutions/fitness-influencer/src/` - NEW: Project source
+- `projects/shared/social-media-automation/src/peptide_content_generator.py` - NEW
+- `projects/shared/n8n-workflows/` - NEW: EC2 workflow backups
+
+### EC2 Integration Notes
+
+- All n8n workflows run on EC2 at http://34.193.98.97:5678
+- Claude Code MCP configured to connect to EC2 (not local)
+- Workflow backups stored locally for version control
+
+---
+
 ## 2026-02-02: Upwork Workspace Setup + Proposal System
 
 **Context:** Created separate Upwork workspace for freelance client work, built proposal generation system, applied to first jobs.

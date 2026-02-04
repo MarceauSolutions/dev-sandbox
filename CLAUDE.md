@@ -258,6 +258,9 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | "Log [X] hours on [client]" | Update `~/upwork-projects/clients/[client]/TIMESHEET.md` |
 | "Package [client] for delivery" | Prepare clean handoff in client folder |
 | "Switch to Upwork workspace" | Work in `~/upwork-projects/` (separate from dev-sandbox) |
+| "New website client: [name]" | Run `~/website-projects/scripts/new-client.sh "[name]"` |
+| "Use [template] for [client]" | Copy template to `~/website-projects/clients/[client]/site/` |
+| "Switch to website workspace" | Work in `~/website-projects/` (separate from dev-sandbox) |
 | *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
@@ -445,6 +448,7 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 | **dev-sandbox/projects/[company]/website/** | Website submodules (WITHIN dev-sandbox) | marceausolutions.com, swflorida-comfort-hvac | ✅ Git submodules → separate production repos |
 | **[project]-prod/** | Deployed production skills | `lead-scraper-prod/`, `interview-prep-prod/` | ✅ Separate repos (siblings to dev-sandbox) |
 | **~/upwork-projects/** | Client freelance work (SEPARATE workspace) | `clients/client-a/`, `clients/client-b/` | ✅ Per-client repos (isolated from personal work) |
+| **~/website-projects/** | Client website builds (SEPARATE workspace) | `clients/acme-corp/`, `clients/local-gym/` | ✅ Per-client repos (clean handoffs) |
 | **~/marceausolutions.com/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
 | **~/swflorida-comfort-hvac/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
 
@@ -455,6 +459,9 @@ cd ~/dev-sandbox
 
 # Jump to Upwork client work (separate workspace)
 cd ~/upwork-projects
+
+# Jump to website client builds (separate workspace)
+cd ~/website-projects
 
 # Check deployed production versions
 ls ~/production
@@ -471,7 +478,7 @@ cd ~/legacy/notebooks
 - **Monthly**: Review `archived/` for items that can be deleted
 - **As needed**: Move new `-prod/` deployments to `production/`
 
-**Reorganization**: Last updated 2026-02-02 (added ~/upwork-projects/ for client freelance work)
+**Reorganization**: Last updated 2026-02-02 (added ~/upwork-projects/ for freelance, ~/website-projects/ for client websites)
 
 ## Credentials & API Keys
 
@@ -3383,7 +3390,17 @@ python -m src.routine_scheduler --create-all
 
 **Purpose**: Use n8n for visual workflow automation, webhooks, and scheduled tasks instead of Python scripts where appropriate.
 
-**n8n URL**: http://localhost:5678
+**⚠️ CRITICAL: EC2 INSTANCE ONLY**
+
+| Instance | URL | Usage |
+|----------|-----|-------|
+| **EC2 (PRODUCTION)** | http://34.193.98.97:5678 | ✅ ALL development, testing, production |
+| Local | http://localhost:5678 | ❌ DEPRECATED - do not use |
+
+- **Never start or use the local n8n instance**
+- **All workflow creation/editing happens on EC2**
+- **Claude Code MCP is configured to connect to EC2** (`~/.claude.json`)
+- **Weekly backup (optional)**: Export workflows from EC2 to `projects/shared/n8n-workflows/`
 
 **When to Use n8n vs Python**:
 
@@ -3395,26 +3412,27 @@ python -m src.routine_scheduler --create-all
 | Follow-up sequences (Wait nodes) | Video/image generation |
 | Form → CRM → Email pipelines | Custom API clients |
 
-**Active n8n Workflows** (created 2026-01-30):
+**Active n8n Workflows** (on EC2):
 
 | Workflow | ID | Webhook Path |
 |----------|-----|--------------|
-| SMS-Response-Handler-v2 | G14Mb6lpeFZVYGwa | `/sms-response` |
-| Form-Submission-Pipeline | MmXDtZMsY9nR5Wrx | `/form-submit` |
+| SMS-Response-Handler-v2 | G14Mb6lpeFZVYGwa | `/webhook/sms-response` |
+| Form-Submission-Pipeline | MmXDtZMsY9nR5Wrx | `/webhook/form-submit` |
 | Daily-Operations-Digest | Hz05R5SeJGb4VNCl | *Scheduled 8 AM* |
-| Follow-Up-Sequence-Engine | w8PYKJyeozM3qJQW | `/enroll-followup` |
-| Hot-Lead-to-ClickUp | SzVXrbi1y433799Y | `/hot-lead-clickup` |
+| Follow-Up-Sequence-Engine | w8PYKJyeozM3qJQW | `/webhook/enroll-followup` |
+| Hot-Lead-to-ClickUp | SzVXrbi1y433799Y | `/webhook/hot-lead-clickup` |
+| Grok-Imagine-B-Roll-Generator | sYvUyTooDcHQQuKN | *Manual trigger* |
 
 **Commands**:
 ```bash
-# Start n8n (if not running)
-n8n start &
-
-# Check n8n status
-curl http://localhost:5678/healthz
+# Check EC2 n8n status
+curl http://34.193.98.97:5678/healthz
 
 # List workflows via MCP
 # Use mcp__n8n__list_workflows_minimal tool
+
+# Export workflow to local backup
+# Use mcp__n8n__export_workflow_to_file tool
 ```
 
 **Python Scripts Replaced by n8n**:
@@ -3424,11 +3442,12 @@ curl http://localhost:5678/healthz
 - `follow_up_sequence.py` → Follow-Up-Sequence-Engine
 
 **Communication Patterns**:
-- "Check n8n status" → Verify n8n running, list workflows
-- "Create n8n workflow for X" → Use n8n MCP tools
+- "Check n8n status" → `curl http://34.193.98.97:5678/healthz`
+- "Create n8n workflow for X" → Use n8n MCP tools (connects to EC2)
 - "Migrate X to n8n" → Follow transition plan in `docs/N8N-TRANSITION-PLAN.md`
+- "Backup n8n workflows" → Export to `projects/shared/n8n-workflows/`
 
-**References**: `docs/N8N-TRANSITION-PLAN.md`
+**References**: `docs/N8N-TRANSITION-PLAN.md`, `docs/EC2-N8N-SETUP.md`
 
 ---
 
@@ -3466,7 +3485,7 @@ curl http://localhost:5678/healthz
 | User states something was previously done | [SOP 26: User Statement Validation Protocol](#sop-26-user-statement-validation-protocol) | **⚠️ MANDATORY - Never contradict user** |
 | Quick task while mobile / away from computer | [SOP 27: Clawdbot Usage](docs/SOP-27-CLAWDBOT-USAGE.md) | Clawdbot VPS running |
 | Complex multi-story development task | [SOP 28: Ralph Usage](docs/SOP-28-RALPH-USAGE.md) | PRD structure, clear requirements |
-| Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | n8n running at localhost:5678 |
+| Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | EC2 n8n at http://34.193.98.97:5678 ⚠️ **EC2 ONLY** |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing

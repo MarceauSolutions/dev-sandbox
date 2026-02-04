@@ -48,6 +48,13 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Sensitive data
+data/stripe/*.json
+data/stripe/*.jsonl
+
+# Session archives (can be regenerated)
+.claude/SESSION_LOG.md.ARCHIVED
+
 # Logs
 *.log
 

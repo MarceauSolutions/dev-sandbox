@@ -678,6 +678,193 @@ Use GitHub Pages + ngrok to marceausolutions.com (NOT Netlify):
 
 ---
 
+## EC2 Infrastructure & Agent Architecture
+
+*Added: 2026-02-02*
+
+### EC2 Instance Overview
+
+**Instance:** `i-01752306f94897d7d`
+**IP:** `34.193.98.97`
+**Elastic IP:** Assigned (persistent)
+**Cost:** ~$7/month (t3.micro or similar)
+
+**Services Running:**
+| Service | Port | Purpose |
+|---------|------|---------|
+| Clawdbot | 3100 | 24/7 Telegram AI assistant |
+| n8n | 5678 | Workflow automation |
+
+**DNS Records:**
+| Subdomain | IP | Purpose |
+|-----------|-----|---------|
+| n8n.marceausolutions.com | 34.193.98.97 | n8n web UI |
+
+### SSH Access
+
+**Config Location:** `~/.ssh/config`
+```
+Host ec2
+    HostName 34.193.98.97
+    User ec2-user
+    IdentityFile ~/.ssh/marceau-ec2-key.pem
+    StrictHostKeyChecking no
+```
+
+**Quick Commands:**
+```bash
+# SSH into EC2
+ssh ec2
+
+# Check services
+ssh ec2 "sudo systemctl status clawdbot"
+ssh ec2 "sudo systemctl status n8n"
+
+# View Clawdbot logs
+ssh ec2 "sudo tail -50 /tmp/clawdbot/clawdbot-$(date +%Y-%m-%d).log"
+
+# Restart services
+ssh ec2 "sudo systemctl restart clawdbot"
+ssh ec2 "sudo systemctl restart n8n"
+```
+
+### Clawdbot Configuration
+
+**Config File:** `/home/clawdbot/.clawdbot/clawdbot.json`
+**Env File:** `/home/clawdbot/.clawdbot/.env`
+
+**Telegram Bot Setup:**
+1. Create bot via @BotFather on Telegram
+2. Get bot token (format: `123456789:ABCDEF...`)
+3. Update config:
+   ```bash
+   ssh ec2 "sudo sed -i 's|OLD_TOKEN|NEW_TOKEN|g' /home/clawdbot/.clawdbot/clawdbot.json"
+   ssh ec2 "sudo systemctl restart clawdbot"
+   ```
+4. Message the bot to activate: `/start`
+
+**Checking Telegram Connection:**
+```bash
+# Look for 401 errors (bad token) or successful starts
+ssh ec2 "sudo tail -30 /tmp/clawdbot/clawdbot-$(date +%Y-%m-%d).log | grep -i telegram"
+```
+
+**Common Issues:**
+| Issue | Symptom | Fix |
+|-------|---------|-----|
+| Bad token | `401 Unauthorized` in logs | Update botToken in clawdbot.json |
+| Bot not responding | No logs for telegram | Check bot is enabled in config |
+| Service crashed | systemctl shows failed | Check logs, restart service |
+
+### n8n Configuration
+
+**Web UI:** http://n8n.marceausolutions.com:5678
+**Config:** `/etc/n8n.env`
+
+**Key Settings:**
+```bash
+N8N_SECURE_COOKIE=false  # Required for HTTP (non-HTTPS) access
+```
+
+**Firewall Setup:**
+```bash
+# Open port 5678
+ssh ec2 "sudo firewall-cmd --permanent --add-port=5678/tcp && sudo firewall-cmd --reload"
+```
+
+**Importing Workflows:**
+```bash
+# SCP workflow files to EC2
+scp workflow.json ec2:/tmp/
+
+# Import via n8n CLI
+ssh ec2 "n8n import:workflow --input=/tmp/workflow.json"
+```
+
+**Google OAuth for n8n:**
+1. Add redirect URI in Google Cloud Console:
+   `http://n8n.marceausolutions.com:5678/rest/oauth2-credential/callback`
+2. Use "Web application" OAuth client (not Desktop)
+3. In n8n: Credentials → Add → Google Sheets OAuth2 API
+
+### Three-Agent Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         USER REQUESTS                           │
+└─────────────────────┬───────────────────┬───────────────────────┘
+                      │                   │
+              ┌───────▼───────┐   ┌───────▼───────┐
+              │   TELEGRAM    │   │   VS CODE     │
+              │   (Mobile)    │   │   (Desktop)   │
+              └───────┬───────┘   └───────┬───────┘
+                      │                   │
+                      ▼                   ▼
+              ┌───────────────┐   ┌───────────────┐
+              │  CLAWDBOT     │   │  CLAUDE CODE  │
+              │  (EC2 24/7)   │   │  (Local Mac)  │
+              │  Score 0-6    │   │  Interactive  │
+              └───────┬───────┘   └───────┬───────┘
+                      │                   │
+                      └─────────┬─────────┘
+                                │
+                        ┌───────▼───────┐
+                        │    RALPH      │
+                        │  (Complex)    │
+                        │  Score 7-10   │
+                        └───────────────┘
+```
+
+**Routing Rules:**
+| Complexity | Score | Handler | Examples |
+|------------|-------|---------|----------|
+| Trivial | 0-3 | Clawdbot | Quick questions, status checks |
+| Simple | 4-6 | Clawdbot | Single file edits, simple scripts |
+| Complex | 7-10 | Ralph | Multi-file features, refactoring |
+| Mac-specific | Any | Claude Code | PyPI, MCP Registry, Xcode |
+
+**Communication Between Agents:**
+| From | To | Method |
+|------|-----|--------|
+| Clawdbot → Local | Git push + Telegram notification |
+| Local → Clawdbot | Git (Clawdbot pulls) |
+| Clawdbot → Ralph | Creates PRD in repo, notifies user |
+| Ralph → Clawdbot | Webhook notification when done |
+
+### Google Sheets IDs (n8n Workflows)
+
+| Purpose | Spreadsheet ID |
+|---------|---------------|
+| Ideas_Queue | `1KfTupeA0VQASuYHccG4SmC9vFtJMtY0prJXe5xt36rE` |
+| SMS_Responses | `1egMBLln5cIGgwn1zeG9begxpv5VxvyY1IoIIiI1ix64` |
+| Form_Submissions | `1iXAvYMJBqAH-VBWBiy4mXpGXP6wxLWy23U2HaHUtmk4` |
+| Opt_Outs | `1j2or4TWWAYh_KUX3fXDbrSby16cs9j3h2P3xU-f93Z0` |
+
+### Credential Consolidation (Google Cloud)
+
+**Unified Project:** `fitness-influencer-assistant`
+
+**OAuth Client to Use:** "Fitness AI Assistant Web" (Web application type)
+- Supports redirect URIs (required for n8n)
+- Client ID: `915754256960-608f...`
+
+**Deactivated Projects** (security cleanup 2026-02-02):
+- n8nAIAgent
+- N8nContactForm
+- YouTubecreator MCP
+- CalendarLink
+- My First Project
+
+**Best Practice:** Use ONE Google Cloud project with all APIs enabled:
+- Google Sheets API
+- Google Calendar API
+- Gmail API
+- Google Drive API
+- YouTube Data API v3
+- Google Places API
+
+---
+
 ## Troubleshooting
 
 ### Skill Not Triggering

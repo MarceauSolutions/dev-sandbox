@@ -3,6 +3,9 @@
 ## Backlog
 | Task | Added | Notes |
 |------|-------|-------|
+| **SECURITY: Enable HTTPS for n8n** | 2026-02-02 | Credentials sent unencrypted over HTTP; use Let's Encrypt |
+| **SECURITY: Add IP restriction for n8n admin** | 2026-02-02 | Currently anyone worldwide can attempt login |
+| **SECURITY: Enable rate limiting for n8n** | 2026-02-02 | Prevent brute force attacks on login |
 | Integrate Clawdbot AI assistant with Voice AI (Twilio) | 2026-01-27 | Could auto-respond to calls/SMS |
 | Integrate Clawdbot with existing Twilio phone numbers | 2026-01-27 | WhatsApp Business API or SMS integration |
 | Fix DOCKET.md system | 2026-01-27 | Current docket system not working properly |
