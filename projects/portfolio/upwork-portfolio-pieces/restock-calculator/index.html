@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBA Restock Decision Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="ambient-bg"></div>
+
+    <div class="calculator">
+        <header class="calc-header">
+            <h1>FBA <span>Restock</span> Decision Tool</h1>
+            <p>Optimize inventory: balance storage fees vs stockout risk</p>
+        </header>
+
+        <div class="calc-grid">
+            <!-- Input Section -->
+            <div class="input-section">
+                <h2>Product Data</h2>
+
+                <div class="input-group">
+                    <label>Product Name / SKU</label>
+                    <input type="text" id="product-name" value="Premium Widget Set" placeholder="Enter product name">
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Current Inventory</label>
+                        <input type="number" id="current-inventory" value="45" min="0">
+                        <span class="unit">units</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Daily Sales Velocity</label>
+                        <input type="number" id="daily-velocity" value="8.5" min="0" step="0.1">
+                        <span class="unit">units/day</span>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Unit Cost (COGS)</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="unit-cost" value="8.00" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Sale Price</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="sale-price" value="19.99" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Cost Factors</h2>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Monthly Storage Fee</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="storage-fee" value="0.87" min="0" step="0.01">
+                        </div>
+                        <span class="unit">per cubic ft</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Unit Size</label>
+                        <input type="number" id="unit-size" value="0.15" min="0" step="0.01">
+                        <span class="unit">cubic ft</span>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Shipping Cost to FBA</label>
+                        <div class="input-with-prefix">
+                            <span class="prefix">$</span>
+                            <input type="number" id="shipping-cost" value="1.50" min="0" step="0.01">
+                        </div>
+                        <span class="unit">per unit</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Lead Time</label>
+                        <input type="number" id="lead-time" value="14" min="1">
+                        <span class="unit">days</span>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculate()">
+                    Calculate Optimal Order
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>Analysis Results</h2>
+
+                <!-- Current Status -->
+                <div class="result-card status">
+                    <div class="card-header">
+                        <h3>Current Status</h3>
+                        <span class="status-badge" id="status-badge">WARNING</span>
+                    </div>
+                    <div class="status-metrics">
+                        <div class="metric">
+                            <span class="metric-value" id="days-of-stock">5</span>
+                            <span class="metric-label">Days of Stock</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="stockout-date">Feb 3</span>
+                            <span class="metric-label">Stockout Date</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value" id="stockout-risk">HIGH</span>
+                            <span class="metric-label">Stockout Risk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation -->
+                <div class="result-card recommendation">
+                    <div class="card-header">
+                        <h3>Recommendation</h3>
+                    </div>
+                    <div class="recommendation-content">
+                        <div class="order-qty">
+                            <span class="qty-label">Order Quantity</span>
+                            <span class="qty-value" id="order-qty">150</span>
+                            <span class="qty-unit">units</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-row">
+                                <span>Target Stock Coverage</span>
+                                <span id="target-days">60 days</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Order Cost</span>
+                                <span id="order-cost">$1,425.00</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Expected Revenue</span>
+                                <span id="expected-revenue">$2,998.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost Analysis -->
+                <div class="result-card costs">
+                    <div class="card-header">
+                        <h3>Cost-Benefit Analysis</h3>
+                    </div>
+                    <div class="cost-comparison">
+                        <div class="cost-scenario">
+                            <h4>If You Order Now</h4>
+                            <div class="cost-items">
+                                <div class="cost-item">
+                                    <span>Product Cost</span>
+                                    <span id="product-cost-order">$1,200.00</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Shipping to FBA</span>
+                                    <span id="shipping-cost-order">$225.00</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Storage Fees (60 days)</span>
+                                    <span id="storage-cost-order">$11.75</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span>Total Cost</span>
+                                    <span id="total-cost-order">$1,436.75</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cost-scenario danger">
+                            <h4>If You Stockout</h4>
+                            <div class="cost-items">
+                                <div class="cost-item">
+                                    <span>Lost Sales (14 days)</span>
+                                    <span id="lost-sales">$2,379.81</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Lost Profit</span>
+                                    <span id="lost-profit">$951.93</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Ranking Loss (est.)</span>
+                                    <span id="ranking-loss">$500.00</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span>Total Loss</span>
+                                    <span id="total-loss">$1,451.93</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profit Projection -->
+                <div class="result-card profit">
+                    <div class="card-header">
+                        <h3>Profit Projection (60 days)</h3>
+                    </div>
+                    <div class="profit-breakdown">
+                        <div class="profit-row">
+                            <span>Projected Revenue</span>
+                            <span class="positive" id="proj-revenue">$10,194.90</span>
+                        </div>
+                        <div class="profit-row">
+                            <span>Product Cost (COGS)</span>
+                            <span class="negative" id="proj-cogs">-$4,080.00</span>
+                        </div>
+                        <div class="profit-row">
+                            <span>Amazon Fees (~22%)</span>
+                            <span class="negative" id="proj-fees">-$2,242.88</span>
+                        </div>
+                        <div class="profit-row">
+                            <span>Storage Fees</span>
+                            <span class="negative" id="proj-storage">-$11.75</span>
+                        </div>
+                        <div class="profit-row total">
+                            <span>Net Profit</span>
+                            <span class="positive" id="proj-profit">$3,860.27</span>
+                        </div>
+                        <div class="profit-row margin">
+                            <span>Profit Margin</span>
+                            <span id="proj-margin">37.9%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="calc-footer">
+            <span>Data-driven restock decisions</span>
+            <span>Built with Python + SP-API</span>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

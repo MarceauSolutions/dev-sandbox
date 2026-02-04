@@ -1,0 +1,59 @@
+{
+  "project": "FBA Portfolio Styling",
+  "objective": "Fix CSS loading issues and ensure all portfolio pages have consistent dark theme styling matching the landing page",
+  "stories": [
+    {
+      "id": 1,
+      "title": "Debug CSS Loading Issues",
+      "description": "Investigate and fix why CSS styles are not loading properly on the FBA Dashboard page. The page shows unstyled content instead of the dark theme.",
+      "acceptance_criteria": [
+        "FBA Dashboard page loads with dark background (#131921)",
+        "All KPI cards display with proper styling",
+        "Tables and charts have dark theme applied",
+        "Console shows no CSS errors"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "title": "Verify All Portfolio Pages",
+      "description": "Ensure all 4 portfolio pages (landing, sp-api-automation, restock-calculator, fba-dashboard) load correctly with consistent styling",
+      "acceptance_criteria": [
+        "Landing page: Dark theme with animated cards",
+        "SP-API Automation: Centered layout with feature orbit",
+        "Restock Calculator: Two-column layout with cards",
+        "FBA Dashboard: KPI grid with charts and tables"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": 3,
+      "title": "Match Landing Page Design",
+      "description": "Ensure all sub-pages match the landing page color scheme and have consistent visual elements",
+      "acceptance_criteria": [
+        "Same color variables across all pages (#131921, #00a8e8)",
+        "Ambient blue gradient background on all pages",
+        "fadeInUp animations on page load",
+        "Card hover effects with lift and glow"
+      ],
+      "status": "pending"
+    }
+  ],
+  "tech_stack": ["HTML", "CSS", "JavaScript"],
+  "files": {
+    "landing": "projects/portfolio/upwork-portfolio-pieces/index.html",
+    "sp_api": "projects/portfolio/upwork-portfolio-pieces/sp-api-automation/",
+    "restock": "projects/portfolio/upwork-portfolio-pieces/restock-calculator/",
+    "dashboard": "projects/portfolio/upwork-portfolio-pieces/fba-dashboard/"
+  },
+  "design_reference": {
+    "colors": {
+      "bg_primary": "#131921",
+      "bg_secondary": "#1a2332",
+      "bg_card": "#232f3e",
+      "accent": "#00a8e8",
+      "text_primary": "#ffffff",
+      "text_secondary": "#b8c5d4"
+    }
+  }
+}

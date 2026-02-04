@@ -1,0 +1,27 @@
+[Unit]
+Description=Stripe API Server
+After=network.target
+
+[Service]
+Type=simple
+User=clawdbot
+Group=clawdbot
+WorkingDirectory=/home/clawdbot/dev-sandbox
+Environment="PATH=/home/clawdbot/.local/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/home/clawdbot/dev-sandbox/.env
+ExecStart=/usr/bin/python3 -m execution.stripe_webhook_server --port 5002
+Restart=always
+RestartSec=5
+
+# Logging
+StandardOutput=append:/var/log/stripe-server/server.log
+StandardError=append:/var/log/stripe-server/error.log
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/clawdbot/dev-sandbox/data /home/clawdbot/dev-sandbox/output /var/log/stripe-server
+
+[Install]
+WantedBy=multi-user.target
