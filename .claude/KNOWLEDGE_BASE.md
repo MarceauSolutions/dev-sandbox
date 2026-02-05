@@ -867,6 +867,35 @@ ssh ec2 "n8n import:workflow --input=/tmp/workflow.json"
 
 ## Troubleshooting
 
+### macOS Command Alternatives
+
+**Always try alternatives before giving up:**
+
+| Task | Primary Command | Alternatives |
+|------|-----------------|--------------|
+| Open file in VS Code | `code file.md` | `open file.md`, `/usr/local/bin/code file.md` |
+| Open file in default app | `open file.md` | `xdg-open file.md` (Linux) |
+| Open folder in Finder | `open .` | `open /path/to/folder` |
+| Open URL in browser | `open https://...` | Direct WebFetch |
+
+**Rule:** If first command fails with "command not found" or similar, immediately try alternatives. Never tell user "I can't do it" after one failure.
+
+### Anti-Pattern: Giving Up Too Early
+
+**DON'T:**
+```
+Command failed → Tell user "I can't do it"
+```
+
+**DO:**
+```
+Command failed → Try alternative approach → Try another → Then ask user
+```
+
+**Learning (2026-02-04):** When `code` command failed, should have immediately tried `open` instead of telling user it wasn't available. The `open` command works for most file types on macOS and opens in the default application.
+
+---
+
 ### Skill Not Triggering
 **Check:**
 1. Is skill deployed? `manage_agent_skills.py list-skills`
