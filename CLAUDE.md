@@ -440,22 +440,32 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
 
 ## Home Directory Organization (Hybrid Architecture)
 
-**Hybrid approach**: Company-centric folders in dev-sandbox + website git submodules for production hosting
+**Hybrid approach**: Company-centric folders in dev-sandbox + separate repos for deployed assets
 
 | Directory | Purpose | Examples | Git Repos? |
 |-----------|---------|----------|------------|
 | **dev-sandbox/** | Active development workspace | `projects/marceau-solutions/`, `projects/shared/` | ✅ ONE repo (parent tracks all except websites) |
 | **dev-sandbox/projects/[company]/website/** | Website submodules (WITHIN dev-sandbox) | marceausolutions.com, swflorida-comfort-hvac | ✅ Git submodules → separate production repos |
-| **[project]-prod/** | Deployed production skills | `lead-scraper-prod/`, `interview-prep-prod/` | ✅ Separate repos (siblings to dev-sandbox) |
+| **~/production/[name]-prod/** | Deployed Skills (for dev-sandbox Claude) | `lead-scraper-prod/`, `interview-prep-prod/` | ✅ Separate repos (SOP 3) |
+| **~/ai-assistants/[name]/** | Deployed AI Assistants (standalone/sellable) | `upwork-proposal-generator/`, `website-builder/` | ✅ Separate repos each (SOP 31) |
 | **~/upwork-projects/** | Client freelance work (SEPARATE workspace) | `clients/client-a/`, `clients/client-b/` | ✅ Per-client repos (isolated from personal work) |
 | **~/website-projects/** | Client website builds (SEPARATE workspace) | `clients/acme-corp/`, `clients/local-gym/` | ✅ Per-client repos (clean handoffs) |
 | **~/marceausolutions.com/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
-| **~/swflorida-comfort-hvac/** | Website production repos (OUTSIDE dev-sandbox) | Cloned for direct editing | ✅ Same repos as submodules |
+
+**Deployment Targets**:
+| What | Deploy To | SOP | Fresh Claude? |
+|------|-----------|-----|---------------|
+| Skills (used by dev-sandbox Claude) | `~/production/[name]-prod/` | SOP 3 | ❌ No |
+| AI Assistants (standalone/sellable) | `~/ai-assistants/[name]/` | SOP 31 | ✅ Yes |
+| MCP Packages | PyPI + MCP Registry | SOPs 11-14 | ✅ Yes |
 
 **Navigation Tips**:
 ```bash
 # Jump to active development (personal projects)
 cd ~/dev-sandbox
+
+# Jump to AI assistants (standalone tools)
+cd ~/ai-assistants
 
 # Jump to Upwork client work (separate workspace)
 cd ~/upwork-projects
@@ -463,22 +473,19 @@ cd ~/upwork-projects
 # Jump to website client builds (separate workspace)
 cd ~/website-projects
 
-# Check deployed production versions
+# Check deployed skills (for dev-sandbox Claude)
 ls ~/production
 
 # Work on company website
 cd ~/websites/marceausolutions.com
-
-# Review legacy data science work
-cd ~/legacy/notebooks
 ```
 
 **Maintenance**:
 - **Weekly**: Verify `dev-sandbox/` has no nested repos (SOP 4)
 - **Monthly**: Review `archived/` for items that can be deleted
-- **As needed**: Move new `-prod/` deployments to `production/`
+- **As needed**: Deploy AI assistants with SOP 31, Skills with SOP 3
 
-**Reorganization**: Last updated 2026-02-02 (added ~/upwork-projects/ for freelance, ~/website-projects/ for client websites)
+**Reorganization**: Last updated 2026-02-08 (added ~/ai-assistants/ for standalone AI tools per SOP 31)
 
 ## Credentials & API Keys
 
@@ -761,9 +768,17 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 
 ---
 
-### SOP 3: Version Control & Deployment
+### SOP 3: Version Control & Deployment (Skills)
 
-**When**: Deploying a new version to production (AFTER testing complete)
+**When**: Deploying a Skill to production for dev-sandbox Claude usage (AFTER testing complete)
+
+**This SOP is for Skills** (used by dev-sandbox Claude). For standalone AI Assistants (fresh Claude or sellable), see **SOP 31**.
+
+| Deployment Type | Target | SOP | Used By |
+|-----------------|--------|-----|---------|
+| **Skills** | `~/production/[name]-prod/` | SOP 3 (this) | Dev-sandbox Claude |
+| **AI Assistants** | `~/ai-assistants/[name]/` | SOP 31 | Fresh Claude / Buyers |
+| **Both** | Both locations | SOP 3 + SOP 31 | Both |
 
 **CRITICAL PREREQUISITES** (verify BEFORE deploying):
 1. ✅ **Manual testing complete** - Scenario 1 from testing-strategy.md
@@ -3451,6 +3466,160 @@ curl http://34.193.98.97:5678/healthz
 
 ---
 
+### SOP 31: AI Assistant Deployment
+
+**When**: Deploying a standalone AI assistant that fresh Claude instances (or buyers) can use without dev-sandbox context
+
+**Purpose**: Deploy AI assistants as self-contained products with Python scripts that can be:
+1. Used by fresh Claude Code instances in isolation
+2. Packaged and sold to customers
+3. Optionally registered as Skills for dev-sandbox Claude
+
+**Key Distinction from SOP 3:**
+- **SOP 3 (Skills)**: Deploys to `~/production/[name]-prod/` for dev-sandbox Claude use
+- **SOP 31 (AI Assistants)**: Deploys to `~/ai-assistants/[name]/` for standalone/sellable use
+- **Both**: A project can be deployed BOTH as a Skill AND an AI Assistant
+
+**Deployment Location:**
+```
+~/ai-assistants/                         # Container folder (NOT a git repo)
+├── upwork-proposal-generator/           # ✅ Separate git repo
+├── website-builder/                     # ✅ Separate git repo
+├── md-to-pdf/                           # ✅ Separate git repo
+└── [future-assistants]/                 # Each is its own repo
+```
+
+**Standard AI Assistant Structure:**
+```
+~/ai-assistants/[name]/
+├── CLAUDE.md           # Instructions for LLM usage (self-contained)
+├── README.md           # Human documentation, GitHub readme
+├── requirements.txt    # Python dependencies
+├── VERSION             # Version tracking
+├── CHANGELOG.md        # Version history
+│
+├── src/                # THE PRODUCT (Python scripts - what you sell)
+│   ├── __init__.py
+│   ├── main.py         # Primary entry point
+│   └── utils.py        # Supporting utilities
+│
+├── templates/          # Data templates and user configuration
+│   └── profile.json    # User-specific data (name, skills, etc.)
+│
+├── output/             # Generated outputs (gitignored)
+│
+└── workflows/          # Step-by-step procedures (optional)
+```
+
+**What Gets Sold (if selling):**
+- `src/` - Python scripts (the product)
+- `templates/` - Configuration templates
+- `README.md` - Usage documentation
+- `requirements.txt` - Dependencies
+
+**What's For LLM Usage (not sold):**
+- `CLAUDE.md` - Instructions for Claude to orchestrate the .py files
+
+**CLAUDE.md Template for AI Assistants:**
+```markdown
+# [Assistant Name]
+
+## What This Does
+[One paragraph - problem it solves]
+
+## Quick Start
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+## Commands
+- `python src/main.py --option "value"` - [Description]
+- `python src/main.py --help` - Show all options
+
+## User Configuration
+Edit `templates/profile.json` to customize:
+- [Config option 1]
+- [Config option 2]
+
+## Examples
+[2-3 concrete usage examples with expected output]
+```
+
+**Steps:**
+
+1. **Develop in dev-sandbox** (as normal):
+   ```bash
+   dev-sandbox/projects/[company]/[project]/
+   ```
+
+2. **Test thoroughly** (SOP 2/testing-strategy.md)
+
+3. **Create assistant structure**:
+   ```bash
+   mkdir -p ~/ai-assistants/[name]/{src,templates,output,workflows}
+   cd ~/ai-assistants/[name]
+   git init
+   ```
+
+4. **Copy product files**:
+   ```bash
+   cp -r dev-sandbox/projects/[company]/[name]/src/* ~/ai-assistants/[name]/src/
+   cp dev-sandbox/projects/[company]/[name]/requirements.txt ~/ai-assistants/[name]/
+   ```
+
+5. **Create self-contained CLAUDE.md** (fresh Claude needs ONLY this file)
+
+6. **Create profile template**:
+   ```bash
+   # templates/profile.json - user-editable configuration
+   ```
+
+7. **Add .gitignore**:
+   ```
+   output/
+   __pycache__/
+   *.pyc
+   .env
+   ```
+
+8. **Commit and push**:
+   ```bash
+   git add .
+   git commit -m "Initial AI assistant deployment"
+   git remote add origin git@github.com:[user]/[name].git
+   git push -u origin main
+   ```
+
+9. **(Optional) Also deploy as Skill** for dev-sandbox usage:
+   ```bash
+   python deploy_to_skills.py --project [name] --version X.Y.Z
+   ```
+
+**Distribution Options:**
+
+| Target Buyer | Distribution Method | Complexity |
+|--------------|---------------------|------------|
+| Developers | GitHub repo + `pip install -r requirements.txt` | Low |
+| Claude users | MCP package (SOPs 11-14) | Medium |
+| Non-technical | Streamlit/Gradio web app | Medium |
+| General public | Desktop app (Electron/PyInstaller) | High |
+
+**Verification** (fresh Claude test):
+1. Open new Claude Code instance
+2. Open ONLY `~/ai-assistants/[name]/`
+3. Claude should be able to use the assistant with ONLY the CLAUDE.md
+4. No reference to dev-sandbox should be needed
+
+**Communication Patterns**:
+- "Deploy as AI assistant" → SOP 31 to `~/ai-assistants/[name]/`
+- "Deploy as skill" → SOP 3 to `~/production/[name]-prod/`
+- "Deploy as both" → Run SOP 31 then SOP 3
+- "Package for sale" → Zip `src/`, `templates/`, `README.md`, `requirements.txt`
+
+**References**: SOP 3 (Skills), SOPs 11-14 (MCP packaging)
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
@@ -3486,6 +3655,8 @@ curl http://34.193.98.97:5678/healthz
 | Quick task while mobile / away from computer | [SOP 27: Clawdbot Usage](docs/SOP-27-CLAWDBOT-USAGE.md) | Clawdbot VPS running |
 | Complex multi-story development task | [SOP 28: Ralph Usage](docs/SOP-28-RALPH-USAGE.md) | PRD structure, clear requirements |
 | Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | EC2 n8n at http://34.193.98.97:5678 ⚠️ **EC2 ONLY** |
+| Deploying standalone AI assistant | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Tested, self-contained CLAUDE.md written** |
+| Selling/packaging an AI tool | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Product files ready (src/, templates/)** |
 
 **Critical Notes**:
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
@@ -3494,7 +3665,8 @@ curl http://34.193.98.97:5678/healthz
 - **Parallel Development (SOP 10)**: Use DURING coding to build components simultaneously
 - **Testing**: ALWAYS see `docs/testing-strategy.md` for complete pipeline (Manual → Multi-Agent → Pre-Deployment)
 - **Multi-Agent Testing**: ALWAYS check `email-analyzer/testing/` first as reference template
-- **Deployment**: Can ONLY happen after all testing scenarios complete
+- **Deployment Types**: Skills (SOP 3) → `~/production/`, AI Assistants (SOP 31) → `~/ai-assistants/`
+- **AI Assistants (SOP 31)**: Self-contained tools for fresh Claude or sale - CLAUDE.md must work in isolation
 - **MCP Publishing (SOPs 11-14)**: Publishes to Claude's marketplace
 - **Multi-Channel (SOPs 15-16)**: Expands reach beyond Claude to OpenRouter + directories
 - **Tool Selection (SOPs 27-28)**: Use Clawdbot for mobile/quick tasks, Ralph for complex multi-story development
