@@ -1,0 +1,145 @@
+{
+  "project_name": "Project Deployment Sweep",
+  "version": "1.0.0",
+  "created": "2026-02-08",
+  "description": "Systematically evaluate and deploy all dev-sandbox projects to appropriate locations per SOP 3 (Skills) and SOP 31 (AI Assistants)",
+
+  "context": {
+    "background": "The dev-sandbox contains 20+ projects at various stages of completion. Need to evaluate each and deploy to the correct location based on the new architecture.",
+    "goals": [
+      "Evaluate each project's completion status",
+      "Deploy ready projects to ~/ai-assistants/ or ~/production/",
+      "Create development tasks for incomplete projects",
+      "Clean up duplicates and archives"
+    ],
+    "constraints": [
+      "Follow SOP 31 for AI Assistants (standalone tools)",
+      "Follow SOP 3 for Skills (dev-sandbox Claude tools)",
+      "Follow SOPs 11-14 for MCP packages",
+      "Do not deploy incomplete projects"
+    ]
+  },
+
+  "stories": [
+    {
+      "id": 1,
+      "title": "Deploy website-builder as AI Assistant",
+      "description": "Migrate website-builder to ~/ai-assistants/ structure",
+      "acceptance_criteria": [
+        "Create ~/ai-assistants/website-builder/ with standard structure",
+        "Copy src/ and templates to new location",
+        "Create self-contained CLAUDE.md",
+        "Create profile template for customization",
+        "Initialize git repo",
+        "Test with fresh Claude prompt"
+      ],
+      "priority": "high",
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 2,
+      "title": "Evaluate and deploy personal-assistant",
+      "description": "Check if personal-assistant is ready for AI Assistant deployment",
+      "acceptance_criteria": [
+        "Run tests on current src/",
+        "Fix any issues found",
+        "Update VERSION from 1.0.0-dev to 1.0.0",
+        "Deploy as AI Assistant if ready",
+        "Or document what's needed"
+      ],
+      "priority": "high",
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 3,
+      "title": "Add VERSION to social-media-automation",
+      "description": "The social-media-automation project is missing a VERSION file",
+      "acceptance_criteria": [
+        "Evaluate current completion status",
+        "Add VERSION file with appropriate version",
+        "Add CHANGELOG.md if missing",
+        "Determine if ready for deployment"
+      ],
+      "priority": "medium",
+      "estimated_effort": "low"
+    },
+    {
+      "id": 4,
+      "title": "Evaluate MCP projects for publishing",
+      "description": "Check apollo-mcp, canva-mcp, upwork-mcp, ticket-aggregator-mcp status",
+      "acceptance_criteria": [
+        "Check each for pyproject.toml and server.json",
+        "Test each MCP server runs",
+        "Identify which are ready for PyPI",
+        "Create publishing queue"
+      ],
+      "priority": "medium",
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 5,
+      "title": "Clean up project duplicates",
+      "description": "Identify and remove duplicate projects",
+      "acceptance_criteria": [
+        "Compare projects/apollo-mcp vs projects/shared/apollo-mcp",
+        "Compare projects/lead-scraper vs projects/shared/lead-scraper",
+        "Remove duplicates, keep most complete version",
+        "Update any references"
+      ],
+      "priority": "low",
+      "estimated_effort": "low"
+    },
+    {
+      "id": 6,
+      "title": "Evaluate creator tools bundle",
+      "description": "Assess instagram-creator, tiktok-creator, youtube-creator",
+      "acceptance_criteria": [
+        "Check completion status of each",
+        "Determine if they should be separate or bundled",
+        "Create development plan if incomplete",
+        "Deploy if ready"
+      ],
+      "priority": "low",
+      "estimated_effort": "medium"
+    },
+    {
+      "id": 7,
+      "title": "Archive deprecated projects",
+      "description": "Move old/replaced projects to ~/archived/",
+      "acceptance_criteria": [
+        "Identify projects that have been replaced",
+        "Move to ~/archived/ with date stamp",
+        "Update PROJECT-INVENTORY document",
+        "Clean up ~/archived/ of very old items"
+      ],
+      "priority": "low",
+      "estimated_effort": "low"
+    }
+  ],
+
+  "checkpoints": [
+    {
+      "after_story": 2,
+      "description": "Verify high-priority deployments before continuing",
+      "verification": [
+        "website-builder is functional in ~/ai-assistants/",
+        "personal-assistant status is determined"
+      ]
+    },
+    {
+      "after_story": 4,
+      "description": "MCP evaluation complete",
+      "verification": [
+        "MCP publishing queue created",
+        "Blockers documented"
+      ]
+    }
+  ],
+
+  "success_metrics": [
+    "All ready projects deployed to correct locations",
+    "No projects left in ambiguous state",
+    "Incomplete projects have clear development tasks",
+    "Duplicates removed"
+  ]
+}
