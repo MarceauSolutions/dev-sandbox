@@ -1,0 +1,814 @@
+{
+  "updatedAt": "2026-02-07T00:29:17.000Z",
+  "createdAt": "2026-02-07T00:22:42.152Z",
+  "id": "1s52PkA1lY1lHfGP",
+  "name": "Universal-Agent-Orchestrator",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent/execute",
+        "responseMode": "responseNode",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "agent-execute"
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Parse and validate agent request\nconst input = $input.first().json;\n\n// Handle both webhook and manual trigger\nlet request = input.body || input;\n\n// For testing, provide defaults\nif (!request.agent) {\n  request = {\n    agent: {\n      id: 'claude-code-v1',\n      provider: 'anthropic',\n      model: 'claude-3-5-sonnet-20241022',\n      system_prompt: 'You are a helpful AI assistant that can read files, execute commands, and help with development tasks. When you need to use a tool, respond with a JSON object containing \"action\" and \"input\" fields. When the task is complete, include \"TASK_COMPLETE\" in your response.',\n      tools_available: ['file_read', 'file_write', 'command', 'web_fetch', 'git_status']\n    },\n    task: {\n      objective: 'Read the CLAUDE.md file and summarize it',\n      context: '/Users/williammarceaujr./dev-sandbox'\n    },\n    config: {\n      max_iterations: 20,\n      require_approval_for: ['file_delete', 'git_push --force'],\n      notification_channel: 'telegram'\n    }\n  };\n}\n\n// Validate required fields\nif (!request.agent) {\n  throw new Error('Missing required field: agent');\n}\nif (!request.task) {\n  throw new Error('Missing required field: task');\n}\n\n// Generate session ID if not provided\nif (!request.session_id) {\n  request.session_id = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);\n}\n\n// Set default provider\nif (!request.agent.provider) {\n  request.agent.provider = 'anthropic';\n}\n\n// Set default model based on provider\nif (!request.agent.model) {\n  request.agent.model = request.agent.provider === 'xai' \n    ? 'grok-2-latest' \n    : 'claude-3-5-sonnet-20241022';\n}\n\n// Set default config\nconst defaultConfig = {\n  max_iterations: 20,\n  iteration_timeout_seconds: 60,\n  require_approval_for: ['file_delete', 'git_push --force', 'rm -rf'],\n  notify_on: ['completion', 'error'],\n  notification_channel: 'telegram'\n};\nrequest.config = { ...defaultConfig, ...request.config };\n\n// Initialize state\nrequest.state = {\n  iteration: 0,\n  status: 'initializing',\n  history: [],\n  messages: [\n    {\n      role: 'user',\n      content: `Task: ${request.task.objective}\\n\\nContext: ${request.task.context || 'No specific context'}\\n\\nConstraints: ${(request.task.constraints || []).join(', ') || 'None'}\\n\\nAvailable tools: ${request.agent.tools_available.join(', ')}\\n\\nWhen you need to use a tool, respond with a JSON object like:\\n{\"action\": \"file_read\", \"input\": {\"path\": \"/path/to/file\"}}\\n\\nWhen the task is complete, include TASK_COMPLETE in your response.`\n    }\n  ]\n};\n\nreturn { json: request };"
+      },
+      "id": "parse-request",
+      "name": "Parse Agent Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AGENT_SESSIONS_SHEET_ID || '1egMBLln5cIGgwn1zeG9begxpv5VxvyY1IoIIiI1ix64' }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Agent_Sessions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $json.session_id }}",
+            "agent_id": "={{ $json.agent.id }}",
+            "provider": "={{ $json.agent.provider }}",
+            "task_objective": "={{ $json.task.objective }}",
+            "status": "initializing",
+            "iteration": "0",
+            "max_iterations": "={{ $json.config.max_iterations }}",
+            "created_at": "={{ $now.toISO() }}",
+            "updated_at": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "init-state",
+      "name": "Initialize State",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        440,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RIFdaHtNYdTpFnlu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Prepare API request based on provider\nconst data = $input.first().json;\nconst provider = data.agent.provider || 'anthropic';\nconst model = data.agent.model;\nconst systemPrompt = data.agent.system_prompt || 'You are a helpful AI assistant.';\nconst messages = data.state.messages;\n\nlet apiConfig = {};\n\nif (provider === 'anthropic') {\n  // Anthropic Claude API format\n  apiConfig = {\n    url: 'https://api.anthropic.com/v1/messages',\n    body: {\n      model: model,\n      max_tokens: 4096,\n      system: systemPrompt,\n      messages: messages\n    },\n    headers: {\n      'Content-Type': 'application/json',\n      'anthropic-version': '2023-06-01'\n    }\n  };\n} else if (provider === 'xai') {\n  // xAI Grok API format (OpenAI compatible)\n  const xaiMessages = [\n    { role: 'system', content: systemPrompt },\n    ...messages\n  ];\n  apiConfig = {\n    url: 'https://api.x.ai/v1/chat/completions',\n    body: {\n      model: model,\n      messages: xaiMessages,\n      max_tokens: 4096\n    },\n    headers: {\n      'Content-Type': 'application/json'\n    }\n  };\n}\n\nreturn {\n  json: {\n    ...data,\n    apiConfig: apiConfig\n  }\n};"
+      },
+      "id": "prepare-api-request",
+      "name": "Prepare API Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.apiConfig.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.apiConfig.body) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "agent-reasoning",
+      "name": "Agent Reasoning (Claude/Grok)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        400
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "VU2Z5R0qKUOUFky5",
+          "name": "Anthropic API Key"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Parse AI response and extract tool call or completion\nconst input = $input.first().json;\nconst prevData = $('Prepare API Request').first().json;\nconst provider = prevData.agent.provider || 'anthropic';\n\nlet responseText = '';\nlet toolCall = null;\n\n// Handle errors\nif (input.error) {\n  return {\n    json: {\n      ...prevData,\n      action_type: 'error',\n      error: input.error.message || 'API call failed',\n      continue_loop: false\n    }\n  };\n}\n\n// Parse response based on provider\nif (provider === 'anthropic') {\n  // Anthropic format: { content: [{ type: 'text', text: '...' }] }\n  const content = input.content || [];\n  for (const block of content) {\n    if (block.type === 'text') {\n      responseText = block.text;\n    }\n  }\n} else if (provider === 'xai') {\n  // OpenAI format: { choices: [{ message: { content: '...' }}] }\n  responseText = input.choices?.[0]?.message?.content || '';\n}\n\n// Check for task completion\nif (responseText.includes('TASK_COMPLETE')) {\n  return {\n    json: {\n      ...prevData,\n      action_type: 'complete',\n      result: responseText,\n      continue_loop: false\n    }\n  };\n}\n\n// Try to parse tool call from response\ntry {\n  // Look for JSON in the response\n  const jsonMatch = responseText.match(/\\{[\\s\\S]*?\"action\"[\\s\\S]*?\\}/g);\n  if (jsonMatch) {\n    for (const match of jsonMatch) {\n      try {\n        const parsed = JSON.parse(match);\n        if (parsed.action) {\n          toolCall = parsed;\n          break;\n        }\n      } catch (e) {\n        continue;\n      }\n    }\n  }\n} catch (e) {\n  // No valid JSON found\n}\n\nif (toolCall) {\n  // Add assistant message to history\n  prevData.state.messages.push({\n    role: 'assistant',\n    content: responseText\n  });\n  \n  return {\n    json: {\n      ...prevData,\n      action_type: toolCall.action,\n      action_input: toolCall.input || {},\n      raw_response: responseText,\n      continue_loop: true\n    }\n  };\n}\n\n// No tool call - might be thinking/clarifying\n// Add to messages and continue\nprevData.state.messages.push({\n  role: 'assistant',\n  content: responseText\n});\n\n// If no tool call and max iterations, complete\nif (prevData.state.iteration >= prevData.config.max_iterations - 1) {\n  return {\n    json: {\n      ...prevData,\n      action_type: 'complete',\n      result: responseText,\n      continue_loop: false\n    }\n  };\n}\n\nreturn {\n  json: {\n    ...prevData,\n    action_type: 'think',\n    thought: responseText,\n    continue_loop: true\n  }\n};"
+      },
+      "id": "parse-tool-request",
+      "name": "Parse Tool Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "outputKey": "python_bridge",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "file_read",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "python_bridge",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "file_write",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "python_bridge",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "command",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "python_bridge",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "git_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "web_fetch",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "web_fetch",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "complete",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "complete",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            },
+            {
+              "outputKey": "continue_thinking",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "think",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              }
+            }
+          ],
+          "fallbackOutput": "unknown"
+        },
+        "options": {}
+      },
+      "id": "tool-router",
+      "name": "Tool Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1320,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Map action type to Python Bridge endpoint\nconst data = $input.first().json;\nconst action = data.action_type;\nconst input = data.action_input || {};\n\nconst endpoints = {\n  'file_read': '/files/read',\n  'file_write': '/files/write',\n  'file_edit': '/files/edit',\n  'file_list': '/files/list',\n  'file_delete': '/files/delete',\n  'command': '/command/execute',\n  'git_status': '/git/status',\n  'git_commit': '/git/commit',\n  'git_push': '/git/push',\n  'git_diff': '/git/diff'\n};\n\nconst endpoint = endpoints[action] || '/health';\n\nreturn {\n  json: {\n    ...data,\n    bridge_endpoint: `http://localhost:5010${endpoint}`,\n    bridge_body: input\n  }\n};"
+      },
+      "id": "prepare-bridge-call",
+      "name": "Prepare Bridge Call",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.bridge_endpoint }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.bridge_body) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "python-bridge",
+      "name": "Python Bridge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        200
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $json.action_input.url }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "web-fetch",
+      "name": "Web Fetch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        400
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Format tool result as observation for the agent\nconst toolResult = $input.first().json;\nconst prevData = $('Parse Tool Request').first().json;\n\n// Format the observation\nlet observation = '';\nif (toolResult.success !== undefined) {\n  if (toolResult.success) {\n    if (toolResult.content) {\n      // File read result\n      observation = `File contents:\\n${toolResult.content}`;\n    } else if (toolResult.stdout !== undefined) {\n      // Command result\n      observation = `Command executed. Exit code: ${toolResult.exit_code}\\nOutput:\\n${toolResult.stdout}`;\n      if (toolResult.stderr) {\n        observation += `\\nStderr:\\n${toolResult.stderr}`;\n      }\n    } else if (toolResult.branch !== undefined) {\n      // Git status\n      observation = `Git status:\\nBranch: ${toolResult.branch}\\nClean: ${toolResult.clean}\\nStaged: ${JSON.stringify(toolResult.staged)}\\nUnstaged: ${JSON.stringify(toolResult.unstaged)}`;\n    } else {\n      observation = `Operation succeeded: ${JSON.stringify(toolResult)}`;\n    }\n  } else {\n    observation = `Error: ${toolResult.error || 'Unknown error'}`;\n  }\n} else {\n  // Web fetch or other response\n  observation = `Result: ${JSON.stringify(toolResult).substring(0, 5000)}`;\n}\n\n// Add tool result to messages\nprevData.state.messages.push({\n  role: 'user',\n  content: `Tool result for ${prevData.action_type}:\\n${observation}`\n});\n\n// Increment iteration\nprevData.state.iteration += 1;\n\n// Add to history\nprevData.state.history.push({\n  iteration: prevData.state.iteration,\n  action: prevData.action_type,\n  input: prevData.action_input,\n  result: toolResult.success !== undefined ? toolResult.success : true,\n  timestamp: new Date().toISOString()\n});\n\n// Check if should continue\nconst shouldContinue = prevData.state.iteration < prevData.config.max_iterations;\n\nreturn {\n  json: {\n    ...prevData,\n    last_observation: observation,\n    continue_loop: shouldContinue\n  }\n};"
+      },
+      "id": "response-handler",
+      "name": "Response Handler",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "continue-check",
+              "leftValue": "={{ $json.continue_loop }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "continue-decision",
+      "name": "Continue Loop?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Prepare final response\nconst data = $input.first().json;\n\nconst response = {\n  session_id: data.session_id,\n  agent_id: data.agent.id,\n  provider: data.agent.provider,\n  status: data.action_type === 'error' ? 'failed' : 'completed',\n  iterations: data.state.iteration,\n  result: data.result || data.error || 'Task completed',\n  history: data.state.history\n};\n\nreturn { json: response };"
+      },
+      "id": "prepare-final",
+      "name": "Prepare Final Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "final-response",
+      "name": "Final Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1760,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $env.AGENT_SESSIONS_SHEET_ID || '1egMBLln5cIGgwn1zeG9begxpv5VxvyY1IoIIiI1ix64' }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Agent_Sessions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "session_id": "={{ $('Parse Agent Request').first().json.session_id }}",
+            "status": "={{ $json.status }}",
+            "iteration": "={{ $json.iterations }}",
+            "final_result": "={{ $json.result.substring(0, 1000) }}",
+            "updated_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "session_id"
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-final-state",
+      "name": "Update Final State",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        600
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RIFdaHtNYdTpFnlu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Increment iteration for think action (no tool call)\nconst data = $input.first().json;\ndata.state.iteration += 1;\n\n// Check if should continue\nconst shouldContinue = data.state.iteration < data.config.max_iterations;\n\nreturn {\n  json: {\n    ...data,\n    continue_loop: shouldContinue\n  }\n};"
+      },
+      "id": "increment-think",
+      "name": "Increment Think",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        800
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Agent Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Agent Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Agent Request": {
+      "main": [
+        [
+          {
+            "node": "Initialize State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize State": {
+      "main": [
+        [
+          {
+            "node": "Prepare API Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare API Request": {
+      "main": [
+        [
+          {
+            "node": "Agent Reasoning (Claude/Grok)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Reasoning (Claude/Grok)": {
+      "main": [
+        [
+          {
+            "node": "Parse Tool Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Tool Request": {
+      "main": [
+        [
+          {
+            "node": "Tool Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Router": {
+      "main": [
+        [
+          {
+            "node": "Prepare Bridge Call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Web Fetch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Think",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Bridge Call": {
+      "main": [
+        [
+          {
+            "node": "Python Bridge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Python Bridge": {
+      "main": [
+        [
+          {
+            "node": "Response Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Fetch": {
+      "main": [
+        [
+          {
+            "node": "Response Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Handler": {
+      "main": [
+        [
+          {
+            "node": "Continue Loop?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue Loop?": {
+      "main": [
+        [
+          {
+            "node": "Prepare API Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Final Response": {
+      "main": [
+        [
+          {
+            "node": "Update Final State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Final State": {
+      "main": [
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Think": {
+      "main": [
+        [
+          {
+            "node": "Continue Loop?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {},
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T00:22:42.165Z",
+      "createdAt": "2026-02-07T00:22:42.165Z",
+      "role": "workflow:owner",
+      "workflowId": "1s52PkA1lY1lHfGP",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-07T00:14:10.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": false,
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-06",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

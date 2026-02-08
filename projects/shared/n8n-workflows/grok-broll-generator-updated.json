@@ -1,0 +1,600 @@
+{
+  "updatedAt": "2026-02-03T15:08:55.695Z",
+  "createdAt": "2026-02-03T00:21:18.531Z",
+  "id": "sYvUyTooDcHQQuKN",
+  "name": "Grok Imagine B-Roll Generator",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "B_Roll_Prompts",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "get-prompts",
+      "name": "Get Prompts from Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        208,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mywn8S0xjRx9YM9K",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "filter-pending",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-pending",
+      "name": "Filter Pending Only",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.x.ai/v1/videos/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"grok-imagine-video\",\n  \"prompt\": \"{{ $json.prompt }}\",\n  \"duration\": {{ $json.duration || 12 }},\n  \"aspect_ratio\": \"{{ $json.aspect_ratio || '16:9' }}\",\n  \"resolution\": \"720p\"\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "generate-video",
+      "name": "Call Grok Imagine API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1088,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "P1H6Vz9nbdj2q1KU",
+          "name": "XAi_API_key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 45
+      },
+      "id": "wait-generation",
+      "name": "Wait 45s for Generation",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1296,
+        0
+      ],
+      "webhookId": "e64dd4b5-fc34-4ccf-b309-23d2f2d4497f"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.x.ai/v1/videos/{{ $('Call Grok Imagine API').item.json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "poll-result",
+      "name": "Poll for Video Result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "P1H6Vz9nbdj2q1KU",
+          "name": "XAi_API_key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check-completed",
+              "leftValue": "={{ $json.video.url }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "check-status",
+      "name": "Is Completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "B_Roll_Prompts"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": 0,
+            "output_url": "={{ $json.video.url }}",
+            "status": "Completed",
+            "clip_name": "=",
+            "prompt": "=",
+            "duration": "="
+          },
+          "matchingColumns": [
+            "clip_name"
+          ],
+          "schema": [
+            {
+              "id": "clip_id",
+              "displayName": "clip_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "clip_name",
+              "displayName": "clip_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "duration",
+              "displayName": "duration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "aspect_ratio",
+              "displayName": "aspect_ratio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output_url",
+              "displayName": "output_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "generated_at",
+              "displayName": "generated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "update-success",
+      "name": "Update Sheet - Success",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1968,
+        -96
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mywn8S0xjRx9YM9K",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "wait-retry",
+      "name": "Wait & Retry",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1968,
+        112
+      ],
+      "webhookId": "60196789-c21c-4510-978f-5fe12a5b4a7f"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        656,
+        0
+      ],
+      "id": "b5801d94-ebbe-49ab-98b5-2c7d53c415c2",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        864,
+        208
+      ],
+      "id": "16af08c4-1fcb-42d2-8265-429ad2ed42f3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65fb65e5-f574-4ef9-8aa4-d3fc1b8b4e89",
+              "name": "prompt",
+              "value": "={{ $json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "2dbd0b3b-70e9-4fa2-85f9-c2d504a1a822",
+              "name": "clip_name",
+              "value": "={{ $json.clip_name }}",
+              "type": "string"
+            },
+            {
+              "id": "bf1ed528-c10b-46df-aba8-939624313f97",
+              "name": "duration",
+              "value": "={{ $json.duration }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        -80
+      ],
+      "id": "fbd2e1f9-6a34-47cd-8b98-bfef75142421",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Prompts from Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Prompts from Sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter Pending Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Pending Only": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Grok Imagine API": {
+      "main": [
+        [
+          {
+            "node": "Wait 45s for Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 45s for Generation": {
+      "main": [
+        [
+          {
+            "node": "Poll for Video Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll for Video Result": {
+      "main": [
+        [
+          {
+            "node": "Is Completed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Completed?": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet - Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait & Retry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait & Retry": {
+      "main": [
+        [
+          {
+            "node": "Poll for Video Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Call Grok Imagine API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "pinData": {},
+  "versionCounter": 68,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T00:21:18.634Z",
+      "createdAt": "2026-02-03T00:21:18.634Z",
+      "role": "workflow:owner",
+      "workflowId": "sYvUyTooDcHQQuKN",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-07T05:06:14.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-07",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

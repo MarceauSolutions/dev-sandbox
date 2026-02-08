@@ -84,7 +84,7 @@
 | Category | Monthly | Annual | Notes |
 |----------|---------|--------|-------|
 | **Insurance (GL + PL)** | $17 | $200 | NEXT Insurance combined policy |
-| **Website Hosting** | $5 | $60 | Hostinger or similar |
+| **Website Hosting** | $0 | $0 | GitHub Pages (free) |
 | **Payment Processing** | ~$30 | ~$360 | Stripe fees on $1K revenue (2.9%) |
 | **Google Workspace** | $6 | $72 | Professional email |
 | **Twilio SMS** | $10 | $120 | Client reminders, already configured |

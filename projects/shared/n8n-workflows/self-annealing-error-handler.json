@@ -1,0 +1,628 @@
+{
+  "updatedAt": "2026-02-07T05:51:50.385Z",
+  "createdAt": "2026-02-07T05:33:23.633Z",
+  "id": "Ob7kiVvCnmDHAfNW",
+  "name": "Self-Annealing-Error-Handler",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "webhook-error",
+      "name": "Error Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "error/handle",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "webhookId": "error-handler"
+    },
+    {
+      "id": "parse-error",
+      "name": "Parse Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst error = input.body || input;\n\n// Extract error details\nconst errorData = {\n  workflow_id: error.workflow?.id || error.workflowId || 'unknown',\n  workflow_name: error.workflow?.name || error.workflowName || 'Unknown Workflow',\n  execution_id: error.execution?.id || error.executionId || 'unknown',\n  node_name: error.node?.name || error.nodeName || 'unknown',\n  error_message: error.error?.message || error.message || JSON.stringify(error).substring(0, 500),\n  error_type: error.error?.name || error.errorType || 'UnknownError',\n  stack_trace: error.error?.stack || error.stack || null,\n  timestamp: new Date().toISOString(),\n  context: {\n    input_data: error.inputData || null,\n    node_type: error.node?.type || error.nodeType || null,\n    retry_count: error.retryCount || 0\n  }\n};\n\n// Generate error pattern for matching\nconst errorPattern = `${errorData.error_type}: ${errorData.error_message.substring(0, 100)}`;\n\nreturn {\n  json: {\n    ...errorData,\n    error_pattern: errorPattern,\n    severity: determineSeverity(errorData),\n    recoverable: isRecoverable(errorData)\n  }\n};\n\nfunction determineSeverity(err) {\n  const critical = ['ECONNREFUSED', 'ETIMEDOUT', 'Authentication', 'Permission', 'OutOfMemory', 'FATAL', 'CRASH'];\n  const high = ['TypeError', 'ReferenceError', 'SyntaxError', 'ValidationError'];\n  const medium = ['NetworkError', 'TimeoutError', 'RateLimitError'];\n  \n  for (const c of critical) {\n    if (err.error_message.includes(c) || err.error_type.includes(c)) return 'critical';\n  }\n  for (const h of high) {\n    if (err.error_message.includes(h) || err.error_type.includes(h)) return 'high';\n  }\n  for (const m of medium) {\n    if (err.error_message.includes(m) || err.error_type.includes(m)) return 'medium';\n  }\n  return 'low';\n}\n\nfunction isRecoverable(err) {\n  const recoverable = ['timeout', 'rate limit', 'temporary', 'retry', 'network', 'connection', 'ECONNRESET', 'ETIMEDOUT'];\n  const msg = err.error_message.toLowerCase();\n  return recoverable.some(r => msg.includes(r));\n}"
+      }
+    },
+    {
+      "id": "find-solution",
+      "name": "Find Known Solution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/meta/find-solution",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"error_message\": \"{{ $json.error_pattern }}\"}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "check-solution",
+      "name": "Solution Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        660,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "apply-solution",
+      "name": "Apply Solution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const solution = $input.first().json;\nconst errorData = $('Parse Error').first().json;\n\n// Attempt auto-recovery if solution suggests it\nconst response = {\n  status: 'solution_applied',\n  error_pattern: errorData.error_pattern,\n  solution: solution.solution,\n  workflow_id: errorData.workflow_id,\n  workflow_name: errorData.workflow_name,\n  timestamp: new Date().toISOString(),\n  message: `Found solution for error: ${solution.solution.substring(0, 200)}`,\n  auto_recovery: solution.auto_recovery || false,\n  recovery_action: solution.recovery_action || null,\n  should_retry: solution.should_retry || false\n};\n\nreturn { json: response };"
+      }
+    },
+    {
+      "id": "auto-retry-check",
+      "name": "Auto Retry Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/error/auto-fix",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"error_message\": \"{{ $('Parse Error').first().json.error_message }}\",\n  \"error_type\": \"{{ $('Parse Error').first().json.error_type }}\",\n  \"workflow_id\": \"{{ $('Parse Error').first().json.workflow_id }}\",\n  \"node_name\": \"{{ $('Parse Error').first().json.node_name }}\",\n  \"retry_count\": {{ $('Parse Error').first().json.context.retry_count || 0 }},\n  \"recoverable\": {{ $('Parse Error').first().json.recoverable }}\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "log-new-error",
+      "name": "Log New Error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        500
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/meta/learn-error",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"error_pattern\": \"{{ $('Parse Error').first().json.error_pattern }}\",\n  \"solution\": \"PENDING - Error logged for analysis\",\n  \"workflow_id\": \"{{ $('Parse Error').first().json.workflow_id }}\",\n  \"workflow_name\": \"{{ $('Parse Error').first().json.workflow_name }}\",\n  \"node_name\": \"{{ $('Parse Error').first().json.node_name }}\",\n  \"severity\": \"{{ $('Parse Error').first().json.severity }}\",\n  \"recoverable\": {{ $('Parse Error').first().json.recoverable }},\n  \"occurrence_count\": 1\n}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "check-severity",
+      "name": "Check Severity",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        500
+      ],
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "critical",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Error').first().json.severity }}",
+                    "rightValue": "critical",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "high",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Error').first().json.severity }}",
+                    "rightValue": "high",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "medium_low",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Error').first().json.severity }}",
+                    "rightValue": "medium",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "fallbackOutput": "extra"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "critical-alert",
+      "name": "Critical Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const errorData = $('Parse Error').first().json;\n\n// Format critical alert with recovery info\nconst alert = {\n  status: 'critical_error',\n  priority: 'URGENT',\n  error: errorData,\n  message: `CRITICAL ERROR in ${errorData.workflow_name}\\n\\nNode: ${errorData.node_name}\\nError: ${errorData.error_message}\\nTime: ${errorData.timestamp}`,\n  requires_immediate_attention: true,\n  notification_channels: ['sms', 'email', 'slack'],\n  timestamp: new Date().toISOString(),\n  recoverable: errorData.recoverable,\n  auto_retry_suggested: errorData.recoverable && errorData.context.retry_count < 3\n};\n\nreturn { json: alert };"
+      }
+    },
+    {
+      "id": "sms-critical-alert",
+      "name": "SMS Critical Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        250
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/notify/critical",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": \"{{ $json.message }}\",\n  \"error_type\": \"{{ $('Parse Error').first().json.error_type }}\",\n  \"workflow_name\": \"{{ $('Parse Error').first().json.workflow_name }}\",\n  \"node_name\": \"{{ $('Parse Error').first().json.node_name }}\",\n  \"timestamp\": \"{{ $json.timestamp }}\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "high-alert",
+      "name": "High Priority Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        450
+      ],
+      "parameters": {
+        "jsCode": "const errorData = $('Parse Error').first().json;\n\nconst alert = {\n  status: 'high_priority_error',\n  priority: 'HIGH',\n  error: errorData,\n  message: `HIGH PRIORITY ERROR in ${errorData.workflow_name}\\n\\nNode: ${errorData.node_name}\\nError: ${errorData.error_message}`,\n  notification_channels: ['email', 'slack'],\n  timestamp: new Date().toISOString()\n};\n\nreturn { json: alert };"
+      }
+    },
+    {
+      "id": "log-only",
+      "name": "Log Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        600
+      ],
+      "parameters": {
+        "jsCode": "const errorData = $('Parse Error').first().json;\n\nconst logEntry = {\n  status: 'error_logged',\n  priority: errorData.severity,\n  error: errorData,\n  message: `Error logged for ${errorData.workflow_name}: ${errorData.error_message.substring(0, 100)}`,\n  notification_channels: [],\n  timestamp: new Date().toISOString()\n};\n\nreturn { json: logEntry };"
+      }
+    },
+    {
+      "id": "introspect",
+      "name": "Trigger Introspection",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/meta/introspect",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "generate-suggestions",
+      "name": "Get Suggestions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1980,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/meta/suggest",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "final-response",
+      "name": "Final Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const errorData = $('Parse Error').first().json;\nlet solutionFound = false;\nlet alertData = { status: 'processed' };\nlet autoFixResult = null;\nlet smsResult = null;\n\ntry {\n  const solutionCheck = $('Solution Found?').first().json;\n  solutionFound = solutionCheck?.found || false;\n} catch(e) {}\n\ntry {\n  if ($('Critical Alert').first()) alertData = $('Critical Alert').first().json;\n  else if ($('High Priority Alert').first()) alertData = $('High Priority Alert').first().json;\n  else if ($('Log Only').first()) alertData = $('Log Only').first().json;\n  else if ($('Apply Solution').first()) alertData = $('Apply Solution').first().json;\n} catch(e) {}\n\ntry {\n  autoFixResult = $('Auto Retry Check').first().json;\n} catch(e) {}\n\ntry {\n  smsResult = $('SMS Critical Alert').first().json;\n} catch(e) {}\n\nconst suggestions = $input.first().json;\n\nreturn {\n  json: {\n    success: true,\n    error_handled: true,\n    original_error: {\n      workflow: errorData.workflow_name,\n      node: errorData.node_name,\n      message: errorData.error_message,\n      severity: errorData.severity,\n      recoverable: errorData.recoverable\n    },\n    solution_found: solutionFound,\n    action_taken: alertData?.status || 'logged',\n    auto_fix: autoFixResult?.auto_fix_attempted || false,\n    sms_sent: smsResult?.success || false,\n    suggestions: suggestions?.suggestions || [],\n    self_annealing: {\n      error_logged: true,\n      pattern_recorded: errorData.error_pattern,\n      introspection_triggered: true\n    },\n    timestamp: new Date().toISOString()\n  }\n};"
+      }
+    },
+    {
+      "id": "error-pattern-matcher",
+      "name": "Pattern Matcher",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// Advanced error pattern matching with solutions\nconst errorData = $input.first().json;\nconst errorMsg = errorData.error_message.toLowerCase();\nconst errorType = errorData.error_type;\n\n// Known error patterns with solutions and auto-fix actions\nconst patterns = [\n  {\n    pattern: /econnrefused/i,\n    category: 'connection',\n    solution: 'Service is not running. Restart the service.',\n    auto_fix: 'restart_service',\n    priority: 'critical'\n  },\n  {\n    pattern: /etimedout|timeout/i,\n    category: 'timeout',\n    solution: 'Request timed out. Retry with longer timeout or check network.',\n    auto_fix: 'retry_with_backoff',\n    priority: 'high'\n  },\n  {\n    pattern: /rate.?limit|too.?many.?requests|429/i,\n    category: 'rate_limit',\n    solution: 'Rate limited. Wait and retry with exponential backoff.',\n    auto_fix: 'exponential_backoff',\n    priority: 'medium'\n  },\n  {\n    pattern: /auth|unauthorized|401|403|forbidden/i,\n    category: 'auth',\n    solution: 'Authentication failed. Check credentials and tokens.',\n    auto_fix: 'refresh_credentials',\n    priority: 'high'\n  },\n  {\n    pattern: /not.?found|404/i,\n    category: 'not_found',\n    solution: 'Resource not found. Verify the path or ID.',\n    auto_fix: null,\n    priority: 'medium'\n  },\n  {\n    pattern: /permission|access.?denied/i,\n    category: 'permission',\n    solution: 'Permission denied. Check file/resource permissions.',\n    auto_fix: null,\n    priority: 'high'\n  },\n  {\n    pattern: /memory|heap|oom/i,\n    category: 'memory',\n    solution: 'Out of memory. Reduce data size or increase memory allocation.',\n    auto_fix: 'restart_service',\n    priority: 'critical'\n  },\n  {\n    pattern: /syntax|parse|json/i,\n    category: 'syntax',\n    solution: 'Syntax error. Check input format and data structure.',\n    auto_fix: null,\n    priority: 'medium'\n  }\n];\n\n// Find matching pattern\nlet matchedPattern = null;\nfor (const p of patterns) {\n  if (p.pattern.test(errorMsg) || p.pattern.test(errorType)) {\n    matchedPattern = p;\n    break;\n  }\n}\n\nreturn {\n  json: {\n    ...errorData,\n    pattern_match: matchedPattern ? {\n      category: matchedPattern.category,\n      solution: matchedPattern.solution,\n      auto_fix: matchedPattern.auto_fix,\n      priority: matchedPattern.priority,\n      matched: true\n    } : {\n      category: 'unknown',\n      solution: 'Unknown error. Manual investigation required.',\n      auto_fix: null,\n      priority: 'medium',\n      matched: false\n    }\n  }\n};"
+      }
+    },
+    {
+      "id": "slack-alert",
+      "name": "Slack Alert (Stub)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        350
+      ],
+      "parameters": {
+        "jsCode": "// Slack notification stub\n// TODO: Replace with actual Slack node when credentials are configured\nconst alert = $input.first().json;\n\nconst slackMessage = {\n  channel: '#alerts',\n  username: 'n8n Error Bot',\n  icon_emoji: ':warning:',\n  attachments: [{\n    color: alert.priority === 'URGENT' ? 'danger' : 'warning',\n    title: `${alert.priority} Alert: ${alert.error?.workflow_name || 'Unknown Workflow'}`,\n    text: alert.message,\n    fields: [\n      { title: 'Node', value: alert.error?.node_name || 'Unknown', short: true },\n      { title: 'Severity', value: alert.error?.severity || 'Unknown', short: true }\n    ],\n    ts: Date.now() / 1000\n  }]\n};\n\n// Log what would be sent to Slack\nconsole.log('SLACK_ALERT:', JSON.stringify(slackMessage));\n\nreturn {\n  json: {\n    ...alert,\n    slack_notification: {\n      would_send: slackMessage,\n      status: 'stub_logged'\n    }\n  }\n};"
+      }
+    },
+    {
+      "id": "email-alert",
+      "name": "Email Alert (Stub)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        450
+      ],
+      "parameters": {
+        "jsCode": "// Email notification stub\n// TODO: Replace with actual Email node when SMTP is configured\nconst alert = $input.first().json;\n\nconst emailContent = {\n  to: 'wmarceau@marceausolutions.com',\n  subject: `[${alert.priority}] n8n Error: ${alert.error?.workflow_name || 'Unknown Workflow'}`,\n  body: `\n    <h2>${alert.priority} Error Alert</h2>\n    <p><strong>Workflow:</strong> ${alert.error?.workflow_name || 'Unknown'}</p>\n    <p><strong>Node:</strong> ${alert.error?.node_name || 'Unknown'}</p>\n    <p><strong>Error:</strong> ${alert.error?.error_message || 'No message'}</p>\n    <p><strong>Severity:</strong> ${alert.error?.severity || 'Unknown'}</p>\n    <p><strong>Time:</strong> ${alert.timestamp}</p>\n    <hr>\n    <p><em>Sent by n8n Self-Annealing Error Handler</em></p>\n  `\n};\n\nconsole.log('EMAIL_ALERT:', JSON.stringify(emailContent));\n\nreturn {\n  json: {\n    ...alert,\n    email_notification: {\n      would_send: emailContent,\n      status: 'stub_logged'\n    }\n  }\n};"
+      }
+    },
+    {
+      "id": "error-stats",
+      "name": "Update Error Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        250
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/error/stats",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"action\": \"record\",\n  \"error_type\": \"{{ $('Parse Error').first().json.error_type }}\",\n  \"workflow_id\": \"{{ $('Parse Error').first().json.workflow_id }}\",\n  \"severity\": \"{{ $('Parse Error').first().json.severity }}\",\n  \"pattern_matched\": {{ $('Pattern Matcher').first().json.pattern_match?.matched || false }},\n  \"category\": \"{{ $('Pattern Matcher').first().json.pattern_match?.category || 'unknown' }}\"\n}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Error Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Error": {
+      "main": [
+        [
+          {
+            "node": "Find Known Solution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Known Solution": {
+      "main": [
+        [
+          {
+            "node": "Solution Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solution Found?": {
+      "main": [
+        [
+          {
+            "node": "Apply Solution",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log New Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Solution": {
+      "main": [
+        [
+          {
+            "node": "Auto Retry Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto Retry Check": {
+      "main": [
+        [
+          {
+            "node": "Trigger Introspection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log New Error": {
+      "main": [
+        [
+          {
+            "node": "Check Severity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Severity": {
+      "main": [
+        [
+          {
+            "node": "Critical Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "High Priority Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Only",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical Alert": {
+      "main": [
+        [
+          {
+            "node": "SMS Critical Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMS Critical Alert": {
+      "main": [
+        [
+          {
+            "node": "Trigger Introspection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Priority Alert": {
+      "main": [
+        [
+          {
+            "node": "Trigger Introspection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Only": {
+      "main": [
+        [
+          {
+            "node": "Trigger Introspection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Introspection": {
+      "main": [
+        [
+          {
+            "node": "Get Suggestions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Suggestions": {
+      "main": [
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {},
+  "versionCounter": 9,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T05:33:23.641Z",
+      "createdAt": "2026-02-07T05:33:23.641Z",
+      "role": "workflow:owner",
+      "workflowId": "Ob7kiVvCnmDHAfNW",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-07T05:06:14.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-07",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

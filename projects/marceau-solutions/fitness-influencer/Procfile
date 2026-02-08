@@ -1,0 +1,5 @@
+# Fitness Influencer AI v2.0 Procfile
+# Web server and background worker for Railway deployment
+
+web: uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
+worker: python backend/worker.py

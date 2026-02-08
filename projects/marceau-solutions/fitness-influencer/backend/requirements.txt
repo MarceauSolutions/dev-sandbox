@@ -14,3 +14,17 @@ moviepy==1.0.3
 twilio==9.0.4
 # Anthropic Claude API
 anthropic==0.40.0
+# Background task queue (v2.0)
+redis>=5.0.0
+rq>=1.15.0
+# Database (v2.0)
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+# Rate limiting (v2.0)
+slowapi>=0.1.9
+# Async HTTP client (v2.0)
+httpx>=0.25.0
+# Subject tracking (v2.0 - Story 012)
+opencv-python>=4.8.0
+mediapipe>=0.10.0
+numpy>=1.24.0

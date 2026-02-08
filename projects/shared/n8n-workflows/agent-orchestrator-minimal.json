@@ -1,0 +1,46 @@
+{
+  "name": "Agent-Orchestrator-Minimal",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent/test",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-test",
+      "name": "Webhook Test",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "agent-test"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.first().json;\nconst request = input.body || input;\n\nreturn {\n  json: {\n    status: 'success',\n    message: 'Webhook received and processed',\n    received: request,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "process-and-respond",
+      "name": "Process and Respond",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Test": {
+      "main": [
+        [
+          {
+            "node": "Process and Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

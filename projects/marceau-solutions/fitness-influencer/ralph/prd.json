@@ -1,0 +1,470 @@
+{
+  "metadata": {
+    "prd_name": "Fitness Influencer AI v2.0 Overhaul",
+    "objective": "Transform MVP (6/10 production readiness) to battle-tested enterprise platform (9/10) with auto-captions, filler removal, auto-reframe, multi-platform export, long-to-shorts extraction, and fitness-specific intelligence",
+    "total_stories": 24,
+    "autonomous_mode": false,
+    "checkpoint_stories": [4, 8, 12, 16, 20, 24],
+    "branchName": "feature/v2-overhaul",
+    "created": "2026-02-07",
+    "estimated_duration": "4-6 weeks",
+    "project_path": "/Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/fitness-influencer"
+  },
+  "stories": [
+    {
+      "story_id": "001",
+      "title": "Set up background task queue with Redis and RQ",
+      "description": "Replace synchronous video processing with async background jobs. Install Redis + RQ, create job submission endpoint, status polling, and webhook notifications on completion.",
+      "acceptance_criteria": [
+        "requirements.txt includes rq>=1.15.0 and redis>=5.0.0",
+        "backend/task_queue.py exists with submit_job(), get_status(), cancel_job() functions",
+        "POST /api/jobs/submit returns {job_id, status, estimated_time}",
+        "GET /api/jobs/{job_id}/status returns {status, progress, estimated_remaining}",
+        "Jobs persist across server restarts (Redis persistence)",
+        "Worker process starts via 'rq worker' command"
+      ],
+      "files_to_create": ["backend/task_queue.py", "backend/worker.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt", "Procfile"],
+      "passes": true,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "002",
+      "title": "Add SQLite database with migrations",
+      "description": "Create persistent storage for jobs, content, users, and analytics. Use SQLAlchemy with Alembic migrations for schema management.",
+      "acceptance_criteria": [
+        "requirements.txt includes sqlalchemy>=2.0.0 and alembic>=1.13.0",
+        "backend/database.py exists with engine, session, Base class",
+        "backend/models.py defines Job, Content, User, Analytics models",
+        "alembic/ directory with initial migration",
+        "Database file created at data/fitness.db on first run",
+        "All existing endpoints use database instead of in-memory storage"
+      ],
+      "files_to_create": ["backend/database.py", "backend/models.py", "alembic.ini", "alembic/env.py", "alembic/versions/001_initial.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt"],
+      "passes": true,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "003",
+      "title": "Implement structured JSON logging",
+      "description": "Replace print statements with structured logging. Include request_id, user_id, endpoint, duration, status in every log. Add log rotation and Railway-compatible output.",
+      "acceptance_criteria": [
+        "backend/logging_config.py exists with JSON formatter",
+        "Every request has unique request_id in logs",
+        "Log format: {timestamp, level, request_id, endpoint, user_id, duration_ms, status, metadata}",
+        "Error logs include stack traces and context",
+        "Logs rotate at 10MB with 5 file retention",
+        "All print() statements replaced with logger calls"
+      ],
+      "files_to_create": ["backend/logging_config.py", "backend/middleware.py"],
+      "files_to_modify": ["backend/main.py", "backend/video_jumpcut.py", "backend/grok_image_gen.py", "backend/revenue_analytics.py"],
+      "passes": true,
+      "dependencies": [],
+      "checkpoint": false
+    },
+    {
+      "story_id": "004",
+      "title": "Add rate limiting and user quotas",
+      "description": "Implement per-user rate limits using slowapi. Define tier-based quotas (free: 5 videos/day, pro: 50/day). Return 429 with retry-after header when limits exceeded.",
+      "acceptance_criteria": [
+        "requirements.txt includes slowapi>=0.1.9",
+        "backend/rate_limiter.py exists with tier definitions",
+        "Free tier: 5 video jobs/day, 10 captions/day, 20 exports/day",
+        "Pro tier: 50 video jobs/day, unlimited captions, unlimited exports",
+        "429 response includes X-RateLimit-Remaining and Retry-After headers",
+        "Rate limit state persists in Redis",
+        "Quota reset at midnight UTC"
+      ],
+      "files_to_create": ["backend/rate_limiter.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt"],
+      "passes": true,
+      "dependencies": ["001", "002"],
+      "checkpoint": true,
+      "checkpoint_reason": "Infrastructure complete - validate queue, database, logging, rate limiting before building features"
+    },
+    {
+      "story_id": "005",
+      "title": "Integrate OpenAI Whisper for transcription",
+      "description": "Add speech-to-text capability using OpenAI Whisper API. Support word-level timestamps for caption sync. Handle multiple languages (en, es, pt).",
+      "acceptance_criteria": [
+        "backend/transcription.py exists with transcribe_audio() function",
+        "Returns word-level timestamps: [{word, start, end}, ...]",
+        "Supports language detection and forced language",
+        "Handles audio extraction from video (FFmpeg)",
+        "Maximum 25MB audio file limit with chunking for longer",
+        "Cost tracking: logs tokens used per transcription",
+        "Fallback to local Whisper if API fails"
+      ],
+      "files_to_create": ["backend/transcription.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt", ".env.example"],
+      "passes": true,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "006",
+      "title": "Build word-level caption generator",
+      "description": "Create captions that highlight words as they're spoken (karaoke-style). Use transcription timestamps to sync text with audio.",
+      "acceptance_criteria": [
+        "backend/caption_generator.py exists with generate_captions() function",
+        "Word highlighting syncs within 50ms of speech",
+        "Maximum 7 words per line (configurable)",
+        "Auto line-break at punctuation and pauses",
+        "Outputs: embedded video, SRT file, VTT file",
+        "Handles punctuation and capitalization correctly"
+      ],
+      "files_to_create": ["backend/caption_generator.py"],
+      "files_to_modify": ["backend/main.py"],
+      "passes": true,
+      "dependencies": ["005"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "007",
+      "title": "Create 10 caption style templates",
+      "description": "Build preset caption styles matching competitor quality. Include trending TikTok styles, professional styles, and fitness-specific styles.",
+      "acceptance_criteria": [
+        "backend/caption_styles.py exists with 10 style definitions",
+        "Styles: trending, glow, minimal, bold, clean, neon, subtitle, fitness, professional, dramatic",
+        "Each style defines: font, size, color, outline, shadow, animation, position",
+        "Style previews available via GET /api/captions/styles",
+        "Custom style creation via POST /api/captions/styles/custom",
+        "Styles render correctly on all platforms (tested visually)"
+      ],
+      "files_to_create": ["backend/caption_styles.py", "static/fonts/README.md"],
+      "files_to_modify": ["backend/caption_generator.py", "backend/main.py"],
+      "passes": true,
+      "dependencies": ["006"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "008",
+      "title": "Add caption position and font customization API",
+      "description": "Allow users to customize caption position (top/center/bottom), font family, size, colors. Create POST /api/video/caption endpoint.",
+      "acceptance_criteria": [
+        "POST /api/video/caption endpoint accepts: video_url, style, position, language, word_highlight, max_words_per_line, custom_font, custom_colors",
+        "Position options: top, center, bottom with pixel offset support",
+        "Font size range: 24-72pt",
+        "Color supports hex codes and named colors",
+        "Outline and shadow independently configurable",
+        "Returns job_id for async processing",
+        "Completed job returns video_url with embedded captions + SRT file"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["backend/main.py", "backend/caption_generator.py"],
+      "passes": true,
+      "dependencies": ["006", "007"],
+      "checkpoint": true,
+      "checkpoint_reason": "Caption system complete - validate transcription accuracy, style rendering, and API before video enhancement"
+    },
+    {
+      "story_id": "009",
+      "title": "Build filler word detection engine",
+      "description": "Detect verbal fillers (um, uh, like, you know, so, basically, actually) using transcription with context awareness. Distinguish intentional vs filler usage.",
+      "acceptance_criteria": [
+        "backend/filler_detector.py exists with detect_fillers() function",
+        "Detects: um, uh, like, you know, so, basically, actually, right, I mean",
+        "Context-aware: 'So, here's the plan' keeps 'so', 'So, um, yeah' removes 'so'",
+        "Returns: [{word, start, end, confidence, is_filler}, ...]",
+        "Confidence threshold configurable (default 0.8)",
+        "Handles word clusters (multiple fillers in sequence)"
+      ],
+      "files_to_create": ["backend/filler_detector.py"],
+      "files_to_modify": ["backend/transcription.py"],
+      "passes": true,
+      "dependencies": ["005"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "010",
+      "title": "Implement smooth audio and video removal for fillers",
+      "description": "Remove detected fillers with smooth audio crossfade and visual jump cut. Preserve natural speech rhythm.",
+      "acceptance_criteria": [
+        "backend/filler_remover.py exists with remove_fillers() function",
+        "Audio crossfade: 50ms fade in/out at cut points",
+        "Video jump cut synced with audio removal",
+        "No audio pops or clicks at edit points",
+        "Sensitivity modes: aggressive (remove all), moderate (high confidence), conservative (very high confidence)",
+        "Preview mode: returns before/after comparison",
+        "POST /api/video/remove-fillers endpoint functional"
+      ],
+      "files_to_create": ["backend/filler_remover.py"],
+      "files_to_modify": ["backend/main.py", "backend/video_jumpcut.py"],
+      "passes": true,
+      "dependencies": ["009"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "011",
+      "title": "Create auto-reframe engine with aspect ratio conversion",
+      "description": "Convert videos between aspect ratios (16:9 to 9:16, etc.) using intelligent cropping. Keep subjects centered in frame.",
+      "acceptance_criteria": [
+        "backend/auto_reframe.py exists with reframe_video() function",
+        "Supports aspect ratios: 9:16, 1:1, 4:5, 16:9",
+        "Center-crop fallback when no subjects detected",
+        "Motion smoothing to prevent jerky camera movement",
+        "Safe zone margin configurable (default 10%)",
+        "Batch processing for multiple clips"
+      ],
+      "files_to_create": ["backend/auto_reframe.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt"],
+      "passes": true,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "012",
+      "title": "Add face and body tracking for reframe",
+      "description": "Use MediaPipe or OpenCV for face/body detection. Track subjects across frames for smooth reframing. Handle multiple subjects with priority.",
+      "acceptance_criteria": [
+        "backend/subject_tracker.py exists with track_subjects() function",
+        "Face detection using MediaPipe Face Detection",
+        "Body detection using MediaPipe Pose",
+        "Tracking maintains subject identity across frames",
+        "Multiple subject handling with user-configurable priority",
+        "Smoothing algorithm prevents jitter (configurable factor 0.1-1.0)",
+        "POST /api/video/reframe endpoint functional"
+      ],
+      "files_to_create": ["backend/subject_tracker.py"],
+      "files_to_modify": ["backend/auto_reframe.py", "backend/main.py", "requirements.txt"],
+      "passes": true,
+      "dependencies": ["011"],
+      "checkpoint": true,
+      "checkpoint_reason": "Video enhancement complete - validate filler removal quality, reframe accuracy before platform export"
+    },
+    {
+      "story_id": "013",
+      "title": "Build multi-platform export presets",
+      "description": "Create optimized export settings for TikTok, Instagram Reels, YouTube Shorts, LinkedIn, Twitter. Handle resolution, bitrate, codec, container.",
+      "acceptance_criteria": [
+        "backend/platform_exporter.py exists with export_for_platform() function",
+        "TikTok: 1080x1920, H.264, 2-4Mbps, 30fps, AAC 128kbps",
+        "Instagram: 1080x1920, H.264, 3.5-4.5Mbps, 30fps, AAC 128kbps",
+        "YouTube Shorts: 1080x1920, H.264, 8-15Mbps, 30/60fps, AAC 192kbps",
+        "LinkedIn: 1080x1920, H.264, 5Mbps, 30fps, AAC 128kbps",
+        "Twitter: 1280x720, H.264, 5Mbps, 30fps, AAC 128kbps",
+        "Duration limits enforced per platform with warning"
+      ],
+      "files_to_create": ["backend/platform_exporter.py"],
+      "files_to_modify": ["backend/main.py"],
+      "passes": true,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "014",
+      "title": "Add platform-specific caption styling",
+      "description": "Adapt caption styles per platform. TikTok gets casual/trending, LinkedIn gets professional, YouTube gets SEO-optimized text.",
+      "acceptance_criteria": [
+        "backend/platform_captions.py exists with adapt_captions() function",
+        "TikTok: trending style, emoji-friendly, casual language",
+        "Instagram: clean style, hashtag-ready",
+        "YouTube: subtitle style, keyword-rich",
+        "LinkedIn: professional style, formal language",
+        "Auto-converts caption style based on target platform",
+        "Platform-specific character limits respected"
+      ],
+      "files_to_create": ["backend/platform_captions.py"],
+      "files_to_modify": ["backend/caption_generator.py", "backend/platform_exporter.py"],
+      "passes": true,
+      "dependencies": ["007", "013"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "015",
+      "title": "Implement hashtag and description generator",
+      "description": "Generate platform-optimized hashtags and descriptions using AI. Include trending hashtags, niche-specific tags, and SEO keywords.",
+      "acceptance_criteria": [
+        "backend/content_metadata.py exists with generate_metadata() function",
+        "Hashtag generation: 5-30 tags based on platform limits",
+        "Description generation: platform-appropriate length and tone",
+        "Trending hashtag integration (cached, updated daily)",
+        "Fitness-specific hashtag library (100+ tags)",
+        "SEO keyword extraction from transcription",
+        "Returns: {hashtags: [], description: string, keywords: []}"
+      ],
+      "files_to_create": ["backend/content_metadata.py", "data/fitness_hashtags.json"],
+      "files_to_modify": ["backend/main.py"],
+      "passes": true,
+      "dependencies": ["005"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "016",
+      "title": "Create batch export workflow",
+      "description": "Export single video to all platforms at once. Queue parallel jobs, return all URLs when complete. POST /api/video/export endpoint.",
+      "acceptance_criteria": [
+        "POST /api/video/export accepts: video_url, platforms[], include_captions, generate_descriptions, hashtag_count",
+        "Parallel processing for each platform",
+        "Returns batch job_id with progress for each platform",
+        "Completed response includes: {platform: {video_url, description, hashtags}}",
+        "Failed platform exports don't block others",
+        "Webhook notification when all exports complete"
+      ],
+      "files_to_create": [],
+      "files_to_modify": ["backend/main.py", "backend/platform_exporter.py", "backend/task_queue.py"],
+      "passes": true,
+      "dependencies": ["013", "014", "015"],
+      "checkpoint": true,
+      "checkpoint_reason": "Platform export complete - validate exports work on actual platforms before content repurposing"
+    },
+    {
+      "story_id": "017",
+      "title": "Build long-form video analyzer",
+      "description": "Analyze 10-60 minute videos to identify structure, key moments, and potential clips. Extract audio energy, keyword density, visual action.",
+      "acceptance_criteria": [
+        "backend/video_analyzer.py exists with analyze_video() function",
+        "Audio energy analysis: identifies peaks and valleys",
+        "Keyword density: extracts key terms from transcription",
+        "Visual action: detects high-motion segments",
+        "Scene detection: identifies shot changes",
+        "Returns timeline with scored segments",
+        "Processing time < 2 minutes for 30-minute video"
+      ],
+      "files_to_create": ["backend/video_analyzer.py"],
+      "files_to_modify": ["backend/main.py", "requirements.txt"],
+      "passes": true,
+      "dependencies": ["005"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "018",
+      "title": "Implement viral moment detection",
+      "description": "Score video segments for viral potential. Identify 5-10 best clips from long-form content using engagement prediction algorithm.",
+      "acceptance_criteria": [
+        "backend/viral_detector.py exists with detect_viral_moments() function",
+        "Viral score (0-100) based on: hook_strength, audio_energy, visual_variety, keyword_density, emotional_markers",
+        "Returns top 10 segments with scores and timestamps",
+        "Minimum clip duration: 15 seconds",
+        "Maximum clip duration: 60 seconds",
+        "Context preservation: doesn't cut mid-sentence",
+        "Fitness-specific boosters: transformation moments, form demonstrations"
+      ],
+      "files_to_create": ["backend/viral_detector.py"],
+      "files_to_modify": ["backend/video_analyzer.py", "backend/main.py"],
+      "passes": true,
+      "dependencies": ["017"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "019",
+      "title": "Create hook analyzer and optimizer",
+      "description": "Analyze first 3 seconds of video for hook effectiveness. Score and suggest improvements. Generate alternative hook variants.",
+      "acceptance_criteria": [
+        "backend/hook_analyzer.py exists with analyze_hook() function",
+        "Hook score (0-100) based on: action, curiosity, emotion, audio_impact",
+        "Suggests improvements: reorder shots, add text overlay, change music",
+        "Generates 3 alternative hook variants",
+        "A/B test tracking for hook performance",
+        "POST /api/video/analyze-hook endpoint functional"
+      ],
+      "files_to_create": ["backend/hook_analyzer.py"],
+      "files_to_modify": ["backend/main.py", "backend/models.py"],
+      "passes": true,
+      "dependencies": ["017"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "020",
+      "title": "Add retention curve predictor",
+      "description": "Predict audience retention before publishing. Identify drop-off points and suggest edits. Compare against platform benchmarks.",
+      "acceptance_criteria": [
+        "backend/retention_predictor.py exists with predict_retention() function",
+        "Returns predicted retention curve: [{timestamp, retention_percent}, ...]",
+        "Identifies 'cliff' moments (>10% sudden drop)",
+        "Platform benchmarks: TikTok (50% good), YouTube (45% good), IG (40% good)",
+        "Improvement suggestions for each cliff moment",
+        "POST /api/video/predict-retention endpoint functional",
+        "Accuracy validation against actual retention (future enhancement)"
+      ],
+      "files_to_create": ["backend/retention_predictor.py"],
+      "files_to_modify": ["backend/main.py", "backend/hook_analyzer.py"],
+      "passes": true,
+      "dependencies": ["017", "019"],
+      "checkpoint": true,
+      "checkpoint_reason": "Content repurposing complete - validate long-to-shorts pipeline before fitness intelligence"
+    },
+    {
+      "story_id": "021",
+      "title": "Build workout timer overlay system",
+      "description": "Add HIIT timers, rep counters, and interval indicators as video overlays. Support multiple timer presets and customization.",
+      "acceptance_criteria": [
+        "backend/workout_overlays.py exists with add_timer_overlay() function",
+        "Timer types: countdown, countup, interval (work/rest), rep_counter",
+        "Presets: HIIT (45/15), Tabata (20/10), Strength (reps), Yoga (hold)",
+        "Position options: top_left, top_right, bottom_left, bottom_right, center",
+        "Style options: minimal, bold, neon, digital",
+        "Timer sync with audio cues (optional beeps)",
+        "POST /api/video/add-workout-overlay endpoint functional"
+      ],
+      "files_to_create": ["backend/workout_overlays.py", "static/overlay_assets/README.md"],
+      "files_to_modify": ["backend/main.py"],
+      "passes": true,
+      "dependencies": ["001"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "022",
+      "title": "Create form annotation tools",
+      "description": "Allow adding arrows, circles, and text labels to highlight exercise form. Support slow-motion segments with annotations.",
+      "acceptance_criteria": [
+        "backend/form_annotations.py exists with add_annotations() function",
+        "Annotation types: arrow, circle, line, text, highlight_box",
+        "Arrow: animated, points from start to end coordinates",
+        "Circle: pulsing, highlights area of focus",
+        "Text: floating label with optional background",
+        "Slow-motion segments: configurable speed (0.25x-0.75x)",
+        "Annotations persist across frames (motion tracking optional)",
+        "POST /api/video/add-form-annotations endpoint functional"
+      ],
+      "files_to_create": ["backend/form_annotations.py"],
+      "files_to_modify": ["backend/main.py"],
+      "passes": true,
+      "dependencies": ["012"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "023",
+      "title": "Implement exercise recognition",
+      "description": "Detect exercise type from video using pose estimation. Support 20+ common exercises. Auto-generate video descriptions.",
+      "acceptance_criteria": [
+        "backend/exercise_recognition.py exists with detect_exercise() function",
+        "Supports 20 exercises: squat, deadlift, bench, row, pullup, lunge, plank, pushup, curl, press, etc.",
+        "Accuracy > 80% on clear demonstrations",
+        "Returns: {exercise, confidence, rep_count_estimate, recommendations}",
+        "Auto-generates exercise description for captions",
+        "Suggests complementary exercises",
+        "POST /api/video/detect-exercise endpoint functional"
+      ],
+      "files_to_create": ["backend/exercise_recognition.py", "data/exercise_library.json"],
+      "files_to_modify": ["backend/main.py", "backend/subject_tracker.py"],
+      "passes": true,
+      "dependencies": ["012"],
+      "checkpoint": false
+    },
+    {
+      "story_id": "024",
+      "title": "Final integration, battle testing, and documentation",
+      "description": "Integrate all features, run comprehensive battle tests, fix edge cases, update API documentation and MCP package.",
+      "acceptance_criteria": [
+        "All 23 previous stories passing",
+        "Battle test suite: 50+ test cases covering input variety, audio quality, content types, durations, stress tests",
+        "Edge case handling documented and tested",
+        "OpenAPI documentation updated with all endpoints",
+        "MCP package updated to v2.0.0",
+        "README updated with new features",
+        "CHANGELOG updated with v2.0.0 release notes",
+        "Performance benchmarks documented"
+      ],
+      "files_to_create": ["tests/battle_tests.py", "docs/API.md", "CHANGELOG.md"],
+      "files_to_modify": ["backend/main.py", "mcp/src/fitness_influencer_mcp/__init__.py", "README.md"],
+      "passes": true,
+      "dependencies": ["001", "002", "003", "004", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023"],
+      "checkpoint": true,
+      "checkpoint_reason": "Full v2.0 complete - final validation before release"
+    }
+  ]
+}

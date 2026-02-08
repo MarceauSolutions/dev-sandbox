@@ -1,0 +1,2514 @@
+{
+  "updatedAt": "2026-02-07T02:34:51.652Z",
+  "createdAt": "2026-02-07T00:22:42.152Z",
+  "id": "1s52PkA1lY1lHfGP",
+  "name": "Universal-Agent-Orchestrator",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent/execute",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "agent-execute"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.first().json;\nconst req = input.body || input;\n\nif (req.debug === true) {\n  return {\n    json: {\n      is_debug: true,\n      status: 'debug',\n      message: 'Agent orchestrator v3 is working!',\n      features: ['multi-provider', 'hitl-approval', 'plan-mode', 'todo-tracking', 'session-checkpoint', 'grep', 'glob', 'web_search', 'git_status', 'web_fetch', 'file_write', 'file_edit'],\n      timestamp: new Date().toISOString()\n    }\n  };\n}\n\n// Check for session continuation\nif (req.continue_session === true && req.session_state) {\n  const state = req.session_state;\n  state.messages.push({ role: 'user', content: req.message || 'Continue' });\n  return {\n    json: {\n      is_debug: false,\n      session_id: req.session_id || state.session_id,\n      agent: state.agent,\n      task: state.task,\n      config: state.config,\n      state: state,\n      is_continuation: true\n    }\n  };\n}\n\n// Check for session resume from checkpoint\nif (req.resume_session === true && req.session_id) {\n  return {\n    json: {\n      is_debug: false,\n      session_id: req.session_id,\n      checkpoint_name: req.checkpoint_name || 'default',\n      is_resume: true,\n      resume_message: req.message || 'Resume from checkpoint'\n    }\n  };\n}\n\nconst allTools = ['file_read', 'file_write', 'file_edit', 'command', 'git_status', 'web_fetch', 'grep', 'glob', 'web_search', 'todo', 'checkpoint'];\nconst approvalTools = ['command', 'file_write', 'file_edit'];\nconst dangerousPatterns = ['rm -rf', 'rm -r', 'rmdir', 'git push', 'git push --force', 'kill', 'pkill', 'killall', 'reboot', 'shutdown', 'chmod 777', 'chown', 'dd if=', 'mkfs', ':(){', '> /dev/'];\n\nconst agent = req.agent || { id: 'claude-code-v1', provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', tools_available: allTools };\nif (!agent.provider) agent.provider = 'anthropic';\nif (!agent.model) agent.model = agent.provider === 'xai' ? 'grok-2-latest' : 'claude-sonnet-4-5-20250929';\nif (!agent.tools_available) agent.tools_available = allTools;\n\nconst toolDocs = {\n  file_read: '- file_read: Read a file. Input: {\"path\": \"/absolute/path\"}',\n  file_write: '- file_write: Write/create a file. Input: {\"path\": \"/path\", \"content\": \"text\"}',\n  file_edit: '- file_edit: Edit lines in a file. Input: {\"path\": \"/path\", \"edits\": [{\"line_start\": 1, \"line_end\": 2, \"new_content\": \"new text\"}]}',\n  command: '- command: Execute a shell command. Input: {\"command\": \"the command\"}',\n  git_status: '- git_status: Get git repository status. Input: {\"repo_path\": \"/path/to/repo\"}',\n  web_fetch: '- web_fetch: Fetch content from a URL. Input: {\"url\": \"https://...\"}',\n  grep: '- grep: Search file contents with regex. Input: {\"pattern\": \"regex\", \"path\": \"/dir\", \"type\": \"py\", \"context\": 2}',\n  glob: '- glob: Find files by pattern. Input: {\"pattern\": \"**/*.py\", \"path\": \"/dir\"}',\n  web_search: '- web_search: Search the web. Input: {\"query\": \"search terms\", \"max_results\": 10}',\n  todo: '- todo: Manage task list. Input: {\"operation\": \"add|update|list|delete\", \"content\": \"task\", \"id\": \"id\", \"status\": \"pending|in_progress|completed\"}',\n  checkpoint: '- checkpoint: Save session state for later resume. Input: {\"name\": \"optional_checkpoint_name\"}'\n};\n\nconst availableToolDocs = agent.tools_available.map(t => toolDocs[t] || `- ${t}`).join('\\n');\n\nconst planMode = req.config?.plan_mode === true;\nlet systemPrompt;\n\nif (planMode) {\n  systemPrompt = agent.system_prompt || `You are a helpful AI assistant that can perform actions using tools.\n\nIMPORTANT: PLAN MODE is enabled. You MUST first create a plan before executing any actions.\n\nTo create a plan, respond with:\n{\"action\": \"plan\", \"input\": {\"title\": \"Plan Title\", \"steps\": [\"Step 1 description\", \"Step 2 description\", ...]}}\n\nAfter your plan is approved, you will execute each step using the available tools.\n\nAvailable tools:\n${availableToolDocs}\n\nWhen you need to use a tool, respond with:\n{\"action\": \"tool_name\", \"input\": {\"key\": \"value\"}}\n\nDo NOT use XML tags. ONLY use JSON format.\nAfter using a tool, wait for the result before continuing.\nWhen the task is fully complete, include TASK_COMPLETE in your response.`;\n} else {\n  systemPrompt = agent.system_prompt || `You are a helpful AI assistant that can perform actions using tools.\n\nIMPORTANT: When you need to use a tool, you MUST respond with ONLY a JSON object in this exact format:\n{\"action\": \"tool_name\", \"input\": {\"key\": \"value\"}}\n\nAvailable tools:\n${availableToolDocs}\n\nDo NOT use XML tags or any other format. ONLY use the JSON format above.\nAfter using a tool, wait for the result before continuing.\nWhen the task is fully complete, include TASK_COMPLETE in your response.`;\n}\n\nconst task = req.task || { objective: 'Read /home/ec2-user/.bashrc and summarize what aliases are defined', context: '/home/ec2-user' };\nconst config = { max_iterations: 10, require_approval_for: req.config?.require_approval_for || approvalTools, dangerous_patterns: dangerousPatterns, approval_timeout_seconds: 300, plan_mode: planMode, ...req.config };\n\nlet initialMessage = `Task: ${task.objective}\\nContext: ${task.context || 'none'}\\n\\n`;\nif (planMode) {\n  initialMessage += 'PLAN MODE: First, create a plan for how you will accomplish this task. The plan will be reviewed before execution.';\n} else {\n  initialMessage += 'Remember: Use ONLY JSON format for tool calls: {\"action\": \"tool_name\", \"input\": {...}}';\n}\n\nconst sessionId = req.session_id || 'session_' + Date.now();\n\nreturn {\n  json: {\n    is_debug: false,\n    session_id: sessionId,\n    agent: { ...agent, system_prompt: systemPrompt },\n    task: task,\n    config: config,\n    state: { iteration: 0, history: [], approvals: [], plan: null, plan_approved: false, current_step: 0, todos: [], messages: [{ role: 'user', content: initialMessage }] }\n  }\n};"
+      },
+      "id": "parse-request",
+      "name": "Parse Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.is_debug }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-debug",
+      "name": "Debug?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        440,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return { json: $input.first().json };"
+      },
+      "id": "debug-response",
+      "name": "Debug Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const d = $input.first().json;\nconst msgs = d.state.messages;\nconst sys = d.agent.system_prompt;\nconst model = d.agent.model;\nconst provider = d.agent.provider || 'anthropic';\n\nlet api_body, api_url, extra_headers;\n\nif (provider === 'xai' || provider === 'grok') {\n  api_url = 'https://api.x.ai/v1/chat/completions';\n  api_body = {\n    model: model || 'grok-2-latest',\n    messages: [{ role: 'system', content: sys }, ...msgs],\n    max_tokens: 4096,\n    temperature: 0.7\n  };\n  extra_headers = {};\n} else {\n  api_url = 'https://api.anthropic.com/v1/messages';\n  api_body = {\n    model: model || 'claude-sonnet-4-5-20250929',\n    max_tokens: 4096,\n    system: sys,\n    messages: msgs\n  };\n  extra_headers = { 'anthropic-version': '2023-06-01' };\n}\n\nreturn { json: { ...d, provider, api_url, api_body, extra_headers } };"
+      },
+      "id": "prepare-api",
+      "name": "Prepare API",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.api_url }}",
+        "authentication": "genericCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "={{ $json.provider === 'anthropic' ? 'anthropic-version' : 'X-Custom-Header' }}",
+              "value": "={{ $json.provider === 'anthropic' ? '2023-06-01' : 'none' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.api_body) }}",
+        "options": {
+          "timeout": 120000
+        },
+        "genericAuthType": "httpHeaderAuth"
+      },
+      "id": "call-api",
+      "name": "Call API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        500
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YcmiPKM8dtApO3q3",
+          "name": "Anthropic API Key"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const resp = $input.first().json;\nconst prev = $('Prepare API').first().json;\nconst provider = prev.provider || 'anthropic';\n\nif (resp.error || resp.type === 'error') {\n  return { json: { ...prev, action_type: 'error', error: resp.error?.message || resp.message || JSON.stringify(resp).substring(0, 300), continue_loop: false } };\n}\n\nlet text = '';\nif (provider === 'xai' || provider === 'grok') {\n  if (resp.choices?.[0]?.message) text = resp.choices[0].message.content || '';\n} else {\n  for (const c of (resp.content || [])) {\n    if (c.type === 'text') text = c.text;\n  }\n}\n\nif (text.includes('TASK_COMPLETE')) {\n  return { json: { ...prev, action_type: 'complete', result: text, continue_loop: false } };\n}\n\nlet tool = null;\ntry {\n  const actionMatch = text.match(/\\{\\s*\"action\"\\s*:\\s*\"[^\"]+\"[^}]*\"input\"\\s*:\\s*\\{[^}]*\\}\\s*\\}/g);\n  if (actionMatch) {\n    for (const m of actionMatch) {\n      try {\n        const parsed = JSON.parse(m);\n        if (parsed.action) { tool = parsed; break; }\n      } catch(e) {}\n    }\n  }\n  // Also try to match plan action with array in input\n  if (!tool) {\n    const planMatch = text.match(/\\{\\s*\"action\"\\s*:\\s*\"plan\"[\\s\\S]*?\"steps\"\\s*:\\s*\\[[^\\]]*\\][^}]*\\}/g);\n    if (planMatch) {\n      for (const m of planMatch) {\n        try {\n          const parsed = JSON.parse(m);\n          if (parsed.action === 'plan') { tool = parsed; break; }\n        } catch(e) {}\n      }\n    }\n  }\n} catch(e) {}\n\nif (tool) {\n  prev.state.messages.push({ role: 'assistant', content: text });\n  \n  // Check if this action requires approval\n  const requiresApproval = prev.config.require_approval_for?.includes(tool.action);\n  let isDangerous = false;\n  \n  // Check for dangerous patterns in commands\n  if (tool.action === 'command' && tool.input?.command) {\n    const cmd = tool.input.command.toLowerCase();\n    isDangerous = prev.config.dangerous_patterns?.some(p => cmd.includes(p.toLowerCase()));\n  }\n  \n  // Plan actions always require approval\n  const isPlan = tool.action === 'plan';\n  if (isPlan) {\n    prev.state.plan = tool.input;\n  }\n  \n  return { json: { ...prev, action_type: tool.action, action_input: tool.input || {}, raw_response: text, continue_loop: true, requires_approval: requiresApproval || isDangerous || isPlan, is_dangerous: isDangerous, is_plan: isPlan } };\n}\n\nreturn { json: { ...prev, action_type: 'complete', result: text, continue_loop: false } };"
+      },
+      "id": "parse-response",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.requires_approval }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "check-approval",
+      "name": "Needs Approval?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Format approval request for logging/notification\nconst d = $input.first().json;\nconst approvalId = 'approval_' + Date.now();\n\nlet message;\nif (d.is_plan) {\n  // Format plan approval message\n  const plan = d.action_input;\n  const stepsFormatted = plan.steps.map((s, i) => `  ${i+1}. ${s}`).join('\\n');\n  message = `📋 PLAN APPROVAL REQUIRED\\n\\n**${plan.title || 'Execution Plan'}**\\n\\nSteps:\\n${stepsFormatted}\\n\\nApprove this plan to begin execution?`;\n} else if (d.is_dangerous) {\n  message = `⚠️ DANGEROUS ACTION REQUESTED\\n\\nAction: ${d.action_type}\\nInput: ${JSON.stringify(d.action_input, null, 2)}\\n\\nThis action matches dangerous patterns. Approve?`;\n} else {\n  message = `🔔 Approval Required\\n\\nAction: ${d.action_type}\\nInput: ${JSON.stringify(d.action_input, null, 2)}\\n\\nApprove this action?`;\n}\n\nconst approvalRequest = {\n  approval_id: approvalId,\n  session_id: d.session_id,\n  action_type: d.action_type,\n  action_input: d.action_input,\n  is_dangerous: d.is_dangerous,\n  is_plan: d.is_plan,\n  message: message,\n  created_at: new Date().toISOString(),\n  timeout_seconds: d.config.approval_timeout_seconds || 300\n};\n\n// Store in state for tracking\nd.state.pending_approval = approvalRequest;\n\nreturn { json: { ...d, approval_request: approvalRequest } };"
+      },
+      "id": "format-approval",
+      "name": "Format Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {
+          "webhookSuffix": "={{ $json.approval_request.approval_id }}"
+        }
+      },
+      "id": "wait-approval",
+      "name": "Wait for Approval",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1760,
+        400
+      ],
+      "webhookId": "agent-approval"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Process approval response from webhook\nconst webhookData = $input.first().json;\nconst prevData = $('Format Approval').first().json;\n\n// Check if approved (webhook body should contain { approved: true/false })\nconst approved = webhookData.body?.approved === true || webhookData.approved === true;\nconst reason = webhookData.body?.reason || webhookData.reason || '';\nconst isPlan = prevData.is_plan;\n\nprevData.state.approvals.push({\n  approval_id: prevData.approval_request?.approval_id,\n  action_type: prevData.action_type,\n  is_plan: isPlan,\n  approved: approved,\n  reason: reason,\n  responded_at: new Date().toISOString()\n});\n\nif (approved) {\n  if (isPlan) {\n    // Plan approved - add plan to context and instruct agent to execute\n    // Set approval_granted FALSE so it routes to Prepare API (loop back)\n    prevData.state.plan_approved = true;\n    const plan = prevData.action_input;\n    const stepsFormatted = plan.steps.map((s, i) => `Step ${i+1}: ${s}`).join('\\n');\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `✅ Plan approved! Now execute the following plan step by step:\\n\\n${stepsFormatted}\\n\\nStart with Step 1. After completing each step, proceed to the next. When all steps are complete, include TASK_COMPLETE.`\n    });\n    // Route to Prepare API to continue execution\n    return { json: { ...prevData, approval_granted: false, action_type: 'plan_approved', continue_loop: true } };\n  } else {\n    // Regular action approved - continue to tool execution\n    return { json: { ...prevData, approval_granted: true, continue_loop: true } };\n  }\n} else {\n  // Denied - add message to conversation and continue\n  if (isPlan) {\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `❌ Plan rejected.${reason ? ' Reason: ' + reason : ''} Please revise your plan based on the feedback and create a new plan.`\n    });\n  } else {\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `Tool call denied by human operator.${reason ? ' Reason: ' + reason : ''} Please try a different approach.`\n    });\n  }\n  return { json: { ...prevData, approval_granted: false, action_type: 'approval_denied', continue_loop: true } };\n}"
+      },
+      "id": "process-approval",
+      "name": "Process Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.approval_granted }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "approval-granted",
+      "name": "Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "outputKey": "file_read",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "file_read",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "file_write",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "file_write",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "file_edit",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "file_edit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "command",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "command",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "git_status",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "git_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "web_fetch",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "web_fetch",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "grep",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "grep",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "glob",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "glob",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "web_search",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "web_search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "todo",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "todo",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "done",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "complete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "outputKey": "done",
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action_type }}",
+                    "rightValue": "error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "tool-router",
+      "name": "Tool Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1540,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/files/read",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "file-read",
+      "name": "File Read",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        100
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/files/write",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "file-write",
+      "name": "File Write",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        220
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/files/edit",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "file-edit",
+      "name": "File Edit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        340
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/command/execute",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "command-exec",
+      "name": "Command",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        460
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/git/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "git-status",
+      "name": "Git Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        580
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/web/fetch",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "web-fetch",
+      "name": "Web Fetch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        700
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/search/grep",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "grep-search",
+      "name": "Grep Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        820
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/files/glob",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "glob-find",
+      "name": "Glob Find",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        940
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const r = $input.first().json;\n\nlet prev;\ntry {\n  prev = $('Parse Response').first().json;\n} catch(e) {\n  try {\n    prev = $('Process Approval').first().json;\n  } catch(e2) {\n    prev = $('Approved?').first().json;\n  }\n}\n\nlet obs = '';\nif (r.success) {\n  if (r.content !== undefined) {\n    obs = `File content:\\n${r.content}`;\n  } else if (r.stdout !== undefined) {\n    obs = `Command output:\\n${r.stdout}${r.stderr ? '\\nStderr: ' + r.stderr : ''}`;\n  } else if (r.branch !== undefined) {\n    obs = `Git status:\\nBranch: ${r.branch}\\nClean: ${r.clean}\\nStaged: ${JSON.stringify(r.staged)}\\nUnstaged: ${JSON.stringify(r.unstaged)}\\nUntracked: ${JSON.stringify(r.untracked)}`;\n  } else if (r.text !== undefined) {\n    obs = `Web content (${r.status_code}):\\n${r.text.substring(0, 5000)}`;\n  } else if (r.bytes_written !== undefined) {\n    obs = `File written: ${r.path} (${r.bytes_written} bytes)`;\n  } else if (r.lines_modified !== undefined) {\n    obs = `File edited: ${r.path} (${r.lines_modified} edits applied)`;\n  } else if (r.matches !== undefined) {\n    obs = `Search results (${r.match_count} matches):\\n${r.matches.slice(0, 20).map(m => `${m.file}:${m.line_number}: ${m.text}`).join('\\n')}`;\n  } else if (r.files !== undefined) {\n    obs = `Found ${r.count} files:\\n${r.files.slice(0, 30).map(f => f.relative_path || f.path).join('\\n')}`;\n  } else if (r.results !== undefined) {\n    // Web search results\n    obs = `Web search results (${r.count} found):\\n${r.results.slice(0, 10).map((s, i) => `${i+1}. ${s.title}\\n   ${s.url}\\n   ${s.snippet}`).join('\\n\\n')}`;\n  } else {\n    obs = `Result: ${JSON.stringify(r).substring(0, 2000)}`;\n  }\n} else {\n  obs = `Error: ${r.error || 'Unknown error'}`;\n}\n\nprev.state.messages.push({ role: 'user', content: `Tool result:\\n${obs}` });\nprev.state.iteration++;\nprev.state.history.push({ action: prev.action_type, success: r.success, iteration: prev.state.iteration });\n\nconst cont = prev.state.iteration < prev.config.max_iterations;\n\nreturn { json: { ...prev, last_observation: obs, continue_loop: cont } };"
+      },
+      "id": "handle-tool-result",
+      "name": "Handle Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.continue_loop }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "continue-check",
+      "name": "Continue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const d = $input.first().json;\nreturn {\n  json: {\n    session_id: d.session_id,\n    agent_id: d.agent.id,\n    provider: d.agent.provider,\n    status: d.action_type === 'error' ? 'failed' : 'completed',\n    iterations: d.state?.iteration || 0,\n    result: d.result || d.error || 'Done',\n    history: d.state?.history || [],\n    approvals: d.state?.approvals || []\n  }\n};"
+      },
+      "id": "final-response",
+      "name": "Final Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        1100
+      ]
+    },
+    {
+      "id": "web-search",
+      "name": "Web Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        1060
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5010/search/web",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "todo-ops",
+      "name": "Todo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        1180
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://localhost:5010/todo/' + ($json.action_input?.operation || 'list') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({...($json.action_input || {}), session_id: $json.session_id}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Request": {
+      "main": [
+        [
+          {
+            "node": "Debug?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Debug?": {
+      "main": [
+        [
+          {
+            "node": "Debug Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare API": {
+      "main": [
+        [
+          {
+            "node": "Call API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call API": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          {
+            "node": "Needs Approval?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs Approval?": {
+      "main": [
+        [
+          {
+            "node": "Format Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tool Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Approval": {
+      "main": [
+        [
+          {
+            "node": "Wait for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Approval": {
+      "main": [
+        [
+          {
+            "node": "Process Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Approval": {
+      "main": [
+        [
+          {
+            "node": "Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved?": {
+      "main": [
+        [
+          {
+            "node": "Tool Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tool Router": {
+      "main": [
+        [
+          {
+            "node": "File Read",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "File Write",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "File Edit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Git Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Web Fetch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Grep Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Glob Find",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Web Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Todo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Todo": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Read": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Write": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Edit": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Command": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git Status": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Fetch": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grep Search": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Glob Find": {
+      "main": [
+        [
+          {
+            "node": "Handle Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Result": {
+      "main": [
+        [
+          {
+            "node": "Continue?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue?": {
+      "main": [
+        [
+          {
+            "node": "Prepare API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Final Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {},
+  "activeVersionId": "b8d28fc2-2d3e-4d71-b948-aef097e786f2",
+  "versionCounter": 208,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T00:22:42.165Z",
+      "createdAt": "2026-02-07T00:22:42.165Z",
+      "role": "workflow:owner",
+      "workflowId": "1s52PkA1lY1lHfGP",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-07T02:24:02.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-06",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-07T02:34:51.655Z",
+    "createdAt": "2026-02-07T02:34:51.655Z",
+    "versionId": "b8d28fc2-2d3e-4d71-b948-aef097e786f2",
+    "workflowId": "1s52PkA1lY1lHfGP",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agent/execute",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "webhook",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          400
+        ],
+        "webhookId": "agent-execute"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const input = $input.first().json;\nconst req = input.body || input;\n\nif (req.debug === true) {\n  return {\n    json: {\n      is_debug: true,\n      status: 'debug',\n      message: 'Agent orchestrator v3 is working!',\n      features: ['multi-provider', 'hitl-approval', 'plan-mode', 'todo-tracking', 'session-checkpoint', 'grep', 'glob', 'web_search', 'git_status', 'web_fetch', 'file_write', 'file_edit'],\n      timestamp: new Date().toISOString()\n    }\n  };\n}\n\n// Check for session continuation\nif (req.continue_session === true && req.session_state) {\n  const state = req.session_state;\n  state.messages.push({ role: 'user', content: req.message || 'Continue' });\n  return {\n    json: {\n      is_debug: false,\n      session_id: req.session_id || state.session_id,\n      agent: state.agent,\n      task: state.task,\n      config: state.config,\n      state: state,\n      is_continuation: true\n    }\n  };\n}\n\n// Check for session resume from checkpoint\nif (req.resume_session === true && req.session_id) {\n  return {\n    json: {\n      is_debug: false,\n      session_id: req.session_id,\n      checkpoint_name: req.checkpoint_name || 'default',\n      is_resume: true,\n      resume_message: req.message || 'Resume from checkpoint'\n    }\n  };\n}\n\nconst allTools = ['file_read', 'file_write', 'file_edit', 'command', 'git_status', 'web_fetch', 'grep', 'glob', 'web_search', 'todo', 'checkpoint'];\nconst approvalTools = ['command', 'file_write', 'file_edit'];\nconst dangerousPatterns = ['rm -rf', 'rm -r', 'rmdir', 'git push', 'git push --force', 'kill', 'pkill', 'killall', 'reboot', 'shutdown', 'chmod 777', 'chown', 'dd if=', 'mkfs', ':(){', '> /dev/'];\n\nconst agent = req.agent || { id: 'claude-code-v1', provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', tools_available: allTools };\nif (!agent.provider) agent.provider = 'anthropic';\nif (!agent.model) agent.model = agent.provider === 'xai' ? 'grok-2-latest' : 'claude-sonnet-4-5-20250929';\nif (!agent.tools_available) agent.tools_available = allTools;\n\nconst toolDocs = {\n  file_read: '- file_read: Read a file. Input: {\"path\": \"/absolute/path\"}',\n  file_write: '- file_write: Write/create a file. Input: {\"path\": \"/path\", \"content\": \"text\"}',\n  file_edit: '- file_edit: Edit lines in a file. Input: {\"path\": \"/path\", \"edits\": [{\"line_start\": 1, \"line_end\": 2, \"new_content\": \"new text\"}]}',\n  command: '- command: Execute a shell command. Input: {\"command\": \"the command\"}',\n  git_status: '- git_status: Get git repository status. Input: {\"repo_path\": \"/path/to/repo\"}',\n  web_fetch: '- web_fetch: Fetch content from a URL. Input: {\"url\": \"https://...\"}',\n  grep: '- grep: Search file contents with regex. Input: {\"pattern\": \"regex\", \"path\": \"/dir\", \"type\": \"py\", \"context\": 2}',\n  glob: '- glob: Find files by pattern. Input: {\"pattern\": \"**/*.py\", \"path\": \"/dir\"}',\n  web_search: '- web_search: Search the web. Input: {\"query\": \"search terms\", \"max_results\": 10}',\n  todo: '- todo: Manage task list. Input: {\"operation\": \"add|update|list|delete\", \"content\": \"task\", \"id\": \"id\", \"status\": \"pending|in_progress|completed\"}',\n  checkpoint: '- checkpoint: Save session state for later resume. Input: {\"name\": \"optional_checkpoint_name\"}'\n};\n\nconst availableToolDocs = agent.tools_available.map(t => toolDocs[t] || `- ${t}`).join('\\n');\n\nconst planMode = req.config?.plan_mode === true;\nlet systemPrompt;\n\nif (planMode) {\n  systemPrompt = agent.system_prompt || `You are a helpful AI assistant that can perform actions using tools.\n\nIMPORTANT: PLAN MODE is enabled. You MUST first create a plan before executing any actions.\n\nTo create a plan, respond with:\n{\"action\": \"plan\", \"input\": {\"title\": \"Plan Title\", \"steps\": [\"Step 1 description\", \"Step 2 description\", ...]}}\n\nAfter your plan is approved, you will execute each step using the available tools.\n\nAvailable tools:\n${availableToolDocs}\n\nWhen you need to use a tool, respond with:\n{\"action\": \"tool_name\", \"input\": {\"key\": \"value\"}}\n\nDo NOT use XML tags. ONLY use JSON format.\nAfter using a tool, wait for the result before continuing.\nWhen the task is fully complete, include TASK_COMPLETE in your response.`;\n} else {\n  systemPrompt = agent.system_prompt || `You are a helpful AI assistant that can perform actions using tools.\n\nIMPORTANT: When you need to use a tool, you MUST respond with ONLY a JSON object in this exact format:\n{\"action\": \"tool_name\", \"input\": {\"key\": \"value\"}}\n\nAvailable tools:\n${availableToolDocs}\n\nDo NOT use XML tags or any other format. ONLY use the JSON format above.\nAfter using a tool, wait for the result before continuing.\nWhen the task is fully complete, include TASK_COMPLETE in your response.`;\n}\n\nconst task = req.task || { objective: 'Read /home/ec2-user/.bashrc and summarize what aliases are defined', context: '/home/ec2-user' };\nconst config = { max_iterations: 10, require_approval_for: req.config?.require_approval_for || approvalTools, dangerous_patterns: dangerousPatterns, approval_timeout_seconds: 300, plan_mode: planMode, ...req.config };\n\nlet initialMessage = `Task: ${task.objective}\\nContext: ${task.context || 'none'}\\n\\n`;\nif (planMode) {\n  initialMessage += 'PLAN MODE: First, create a plan for how you will accomplish this task. The plan will be reviewed before execution.';\n} else {\n  initialMessage += 'Remember: Use ONLY JSON format for tool calls: {\"action\": \"tool_name\", \"input\": {...}}';\n}\n\nconst sessionId = req.session_id || 'session_' + Date.now();\n\nreturn {\n  json: {\n    is_debug: false,\n    session_id: sessionId,\n    agent: { ...agent, system_prompt: systemPrompt },\n    task: task,\n    config: config,\n    state: { iteration: 0, history: [], approvals: [], plan: null, plan_approved: false, current_step: 0, todos: [], messages: [{ role: 'user', content: initialMessage }] }\n  }\n};"
+        },
+        "id": "parse-request",
+        "name": "Parse Request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          220,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.is_debug }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "check-debug",
+        "name": "Debug?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          440,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "return { json: $input.first().json };"
+        },
+        "id": "debug-response",
+        "name": "Debug Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          660,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const d = $input.first().json;\nconst msgs = d.state.messages;\nconst sys = d.agent.system_prompt;\nconst model = d.agent.model;\nconst provider = d.agent.provider || 'anthropic';\n\nlet api_body, api_url, extra_headers;\n\nif (provider === 'xai' || provider === 'grok') {\n  api_url = 'https://api.x.ai/v1/chat/completions';\n  api_body = {\n    model: model || 'grok-2-latest',\n    messages: [{ role: 'system', content: sys }, ...msgs],\n    max_tokens: 4096,\n    temperature: 0.7\n  };\n  extra_headers = {};\n} else {\n  api_url = 'https://api.anthropic.com/v1/messages';\n  api_body = {\n    model: model || 'claude-sonnet-4-5-20250929',\n    max_tokens: 4096,\n    system: sys,\n    messages: msgs\n  };\n  extra_headers = { 'anthropic-version': '2023-06-01' };\n}\n\nreturn { json: { ...d, provider, api_url, api_body, extra_headers } };"
+        },
+        "id": "prepare-api",
+        "name": "Prepare API",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          660,
+          500
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $json.api_url }}",
+          "authentication": "genericCredentialType",
+          "nodeCredentialType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "={{ $json.provider === 'anthropic' ? 'anthropic-version' : 'X-Custom-Header' }}",
+                "value": "={{ $json.provider === 'anthropic' ? '2023-06-01' : 'none' }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.api_body) }}",
+          "options": {
+            "timeout": 120000
+          },
+          "genericAuthType": "httpHeaderAuth"
+        },
+        "id": "call-api",
+        "name": "Call API",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          880,
+          500
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "YcmiPKM8dtApO3q3",
+            "name": "Anthropic API Key"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const resp = $input.first().json;\nconst prev = $('Prepare API').first().json;\nconst provider = prev.provider || 'anthropic';\n\nif (resp.error || resp.type === 'error') {\n  return { json: { ...prev, action_type: 'error', error: resp.error?.message || resp.message || JSON.stringify(resp).substring(0, 300), continue_loop: false } };\n}\n\nlet text = '';\nif (provider === 'xai' || provider === 'grok') {\n  if (resp.choices?.[0]?.message) text = resp.choices[0].message.content || '';\n} else {\n  for (const c of (resp.content || [])) {\n    if (c.type === 'text') text = c.text;\n  }\n}\n\nif (text.includes('TASK_COMPLETE')) {\n  return { json: { ...prev, action_type: 'complete', result: text, continue_loop: false } };\n}\n\nlet tool = null;\ntry {\n  const actionMatch = text.match(/\\{\\s*\"action\"\\s*:\\s*\"[^\"]+\"[^}]*\"input\"\\s*:\\s*\\{[^}]*\\}\\s*\\}/g);\n  if (actionMatch) {\n    for (const m of actionMatch) {\n      try {\n        const parsed = JSON.parse(m);\n        if (parsed.action) { tool = parsed; break; }\n      } catch(e) {}\n    }\n  }\n  // Also try to match plan action with array in input\n  if (!tool) {\n    const planMatch = text.match(/\\{\\s*\"action\"\\s*:\\s*\"plan\"[\\s\\S]*?\"steps\"\\s*:\\s*\\[[^\\]]*\\][^}]*\\}/g);\n    if (planMatch) {\n      for (const m of planMatch) {\n        try {\n          const parsed = JSON.parse(m);\n          if (parsed.action === 'plan') { tool = parsed; break; }\n        } catch(e) {}\n      }\n    }\n  }\n} catch(e) {}\n\nif (tool) {\n  prev.state.messages.push({ role: 'assistant', content: text });\n  \n  // Check if this action requires approval\n  const requiresApproval = prev.config.require_approval_for?.includes(tool.action);\n  let isDangerous = false;\n  \n  // Check for dangerous patterns in commands\n  if (tool.action === 'command' && tool.input?.command) {\n    const cmd = tool.input.command.toLowerCase();\n    isDangerous = prev.config.dangerous_patterns?.some(p => cmd.includes(p.toLowerCase()));\n  }\n  \n  // Plan actions always require approval\n  const isPlan = tool.action === 'plan';\n  if (isPlan) {\n    prev.state.plan = tool.input;\n  }\n  \n  return { json: { ...prev, action_type: tool.action, action_input: tool.input || {}, raw_response: text, continue_loop: true, requires_approval: requiresApproval || isDangerous || isPlan, is_dangerous: isDangerous, is_plan: isPlan } };\n}\n\nreturn { json: { ...prev, action_type: 'complete', result: text, continue_loop: false } };"
+        },
+        "id": "parse-response",
+        "name": "Parse Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1100,
+          500
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.requires_approval }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "check-approval",
+        "name": "Needs Approval?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1320,
+          500
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// Format approval request for logging/notification\nconst d = $input.first().json;\nconst approvalId = 'approval_' + Date.now();\n\nlet message;\nif (d.is_plan) {\n  // Format plan approval message\n  const plan = d.action_input;\n  const stepsFormatted = plan.steps.map((s, i) => `  ${i+1}. ${s}`).join('\\n');\n  message = `📋 PLAN APPROVAL REQUIRED\\n\\n**${plan.title || 'Execution Plan'}**\\n\\nSteps:\\n${stepsFormatted}\\n\\nApprove this plan to begin execution?`;\n} else if (d.is_dangerous) {\n  message = `⚠️ DANGEROUS ACTION REQUESTED\\n\\nAction: ${d.action_type}\\nInput: ${JSON.stringify(d.action_input, null, 2)}\\n\\nThis action matches dangerous patterns. Approve?`;\n} else {\n  message = `🔔 Approval Required\\n\\nAction: ${d.action_type}\\nInput: ${JSON.stringify(d.action_input, null, 2)}\\n\\nApprove this action?`;\n}\n\nconst approvalRequest = {\n  approval_id: approvalId,\n  session_id: d.session_id,\n  action_type: d.action_type,\n  action_input: d.action_input,\n  is_dangerous: d.is_dangerous,\n  is_plan: d.is_plan,\n  message: message,\n  created_at: new Date().toISOString(),\n  timeout_seconds: d.config.approval_timeout_seconds || 300\n};\n\n// Store in state for tracking\nd.state.pending_approval = approvalRequest;\n\nreturn { json: { ...d, approval_request: approvalRequest } };"
+        },
+        "id": "format-approval",
+        "name": "Format Approval",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1540,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "resume": "webhook",
+          "options": {
+            "webhookSuffix": "={{ $json.approval_request.approval_id }}"
+          }
+        },
+        "id": "wait-approval",
+        "name": "Wait for Approval",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1760,
+          400
+        ],
+        "webhookId": "agent-approval"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// Process approval response from webhook\nconst webhookData = $input.first().json;\nconst prevData = $('Format Approval').first().json;\n\n// Check if approved (webhook body should contain { approved: true/false })\nconst approved = webhookData.body?.approved === true || webhookData.approved === true;\nconst reason = webhookData.body?.reason || webhookData.reason || '';\nconst isPlan = prevData.is_plan;\n\nprevData.state.approvals.push({\n  approval_id: prevData.approval_request?.approval_id,\n  action_type: prevData.action_type,\n  is_plan: isPlan,\n  approved: approved,\n  reason: reason,\n  responded_at: new Date().toISOString()\n});\n\nif (approved) {\n  if (isPlan) {\n    // Plan approved - add plan to context and instruct agent to execute\n    // Set approval_granted FALSE so it routes to Prepare API (loop back)\n    prevData.state.plan_approved = true;\n    const plan = prevData.action_input;\n    const stepsFormatted = plan.steps.map((s, i) => `Step ${i+1}: ${s}`).join('\\n');\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `✅ Plan approved! Now execute the following plan step by step:\\n\\n${stepsFormatted}\\n\\nStart with Step 1. After completing each step, proceed to the next. When all steps are complete, include TASK_COMPLETE.`\n    });\n    // Route to Prepare API to continue execution\n    return { json: { ...prevData, approval_granted: false, action_type: 'plan_approved', continue_loop: true } };\n  } else {\n    // Regular action approved - continue to tool execution\n    return { json: { ...prevData, approval_granted: true, continue_loop: true } };\n  }\n} else {\n  // Denied - add message to conversation and continue\n  if (isPlan) {\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `❌ Plan rejected.${reason ? ' Reason: ' + reason : ''} Please revise your plan based on the feedback and create a new plan.`\n    });\n  } else {\n    prevData.state.messages.push({ \n      role: 'user', \n      content: `Tool call denied by human operator.${reason ? ' Reason: ' + reason : ''} Please try a different approach.`\n    });\n  }\n  return { json: { ...prevData, approval_granted: false, action_type: 'approval_denied', continue_loop: true } };\n}"
+        },
+        "id": "process-approval",
+        "name": "Process Approval",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1980,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.approval_granted }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "approval-granted",
+        "name": "Approved?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2200,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "rules",
+          "rules": {
+            "values": [
+              {
+                "outputKey": "file_read",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "file_read",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "file_write",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "file_write",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "file_edit",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "file_edit",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "command",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "command",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "git_status",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "git_status",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "web_fetch",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "web_fetch",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "grep",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "grep",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "glob",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "glob",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "web_search",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "web_search",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "todo",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "todo",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "done",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "complete",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "outputKey": "done",
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action_type }}",
+                      "rightValue": "error",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "tool-router",
+        "name": "Tool Router",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1540,
+          600
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/files/read",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "file-read",
+        "name": "File Read",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          100
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/files/write",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "file-write",
+        "name": "File Write",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          220
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/files/edit",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "file-edit",
+        "name": "File Edit",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          340
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/command/execute",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "command-exec",
+        "name": "Command",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          460
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/git/status",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "git-status",
+        "name": "Git Status",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          580
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/web/fetch",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "web-fetch",
+        "name": "Web Fetch",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          700
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/search/grep",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "id": "grep-search",
+        "name": "Grep Search",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          820
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/files/glob",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "glob-find",
+        "name": "Glob Find",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          940
+        ],
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const r = $input.first().json;\n\nlet prev;\ntry {\n  prev = $('Parse Response').first().json;\n} catch(e) {\n  try {\n    prev = $('Process Approval').first().json;\n  } catch(e2) {\n    prev = $('Approved?').first().json;\n  }\n}\n\nlet obs = '';\nif (r.success) {\n  if (r.content !== undefined) {\n    obs = `File content:\\n${r.content}`;\n  } else if (r.stdout !== undefined) {\n    obs = `Command output:\\n${r.stdout}${r.stderr ? '\\nStderr: ' + r.stderr : ''}`;\n  } else if (r.branch !== undefined) {\n    obs = `Git status:\\nBranch: ${r.branch}\\nClean: ${r.clean}\\nStaged: ${JSON.stringify(r.staged)}\\nUnstaged: ${JSON.stringify(r.unstaged)}\\nUntracked: ${JSON.stringify(r.untracked)}`;\n  } else if (r.text !== undefined) {\n    obs = `Web content (${r.status_code}):\\n${r.text.substring(0, 5000)}`;\n  } else if (r.bytes_written !== undefined) {\n    obs = `File written: ${r.path} (${r.bytes_written} bytes)`;\n  } else if (r.lines_modified !== undefined) {\n    obs = `File edited: ${r.path} (${r.lines_modified} edits applied)`;\n  } else if (r.matches !== undefined) {\n    obs = `Search results (${r.match_count} matches):\\n${r.matches.slice(0, 20).map(m => `${m.file}:${m.line_number}: ${m.text}`).join('\\n')}`;\n  } else if (r.files !== undefined) {\n    obs = `Found ${r.count} files:\\n${r.files.slice(0, 30).map(f => f.relative_path || f.path).join('\\n')}`;\n  } else if (r.results !== undefined) {\n    // Web search results\n    obs = `Web search results (${r.count} found):\\n${r.results.slice(0, 10).map((s, i) => `${i+1}. ${s.title}\\n   ${s.url}\\n   ${s.snippet}`).join('\\n\\n')}`;\n  } else {\n    obs = `Result: ${JSON.stringify(r).substring(0, 2000)}`;\n  }\n} else {\n  obs = `Error: ${r.error || 'Unknown error'}`;\n}\n\nprev.state.messages.push({ role: 'user', content: `Tool result:\\n${obs}` });\nprev.state.iteration++;\nprev.state.history.push({ action: prev.action_type, success: r.success, iteration: prev.state.iteration });\n\nconst cont = prev.state.iteration < prev.config.max_iterations;\n\nreturn { json: { ...prev, last_observation: obs, continue_loop: cont } };"
+        },
+        "id": "handle-tool-result",
+        "name": "Handle Result",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1980,
+          600
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "leftValue": "={{ $json.continue_loop }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "continue-check",
+        "name": "Continue?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2200,
+          600
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const d = $input.first().json;\nreturn {\n  json: {\n    session_id: d.session_id,\n    agent_id: d.agent.id,\n    provider: d.agent.provider,\n    status: d.action_type === 'error' ? 'failed' : 'completed',\n    iterations: d.state?.iteration || 0,\n    result: d.result || d.error || 'Done',\n    history: d.state?.history || [],\n    approvals: d.state?.approvals || []\n  }\n};"
+        },
+        "id": "final-response",
+        "name": "Final Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          1100
+        ]
+      },
+      {
+        "id": "web-search",
+        "name": "Web Search",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          1060
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://localhost:5010/search/web",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify($json.action_input) }}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "id": "todo-ops",
+        "name": "Todo",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1760,
+          1180
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "={{ 'http://localhost:5010/todo/' + ($json.action_input?.operation || 'list') }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({...($json.action_input || {}), session_id: $json.session_id}) }}",
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Parse Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Request": {
+        "main": [
+          [
+            {
+              "node": "Debug?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Debug?": {
+        "main": [
+          [
+            {
+              "node": "Debug Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Prepare API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare API": {
+        "main": [
+          [
+            {
+              "node": "Call API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call API": {
+        "main": [
+          [
+            {
+              "node": "Parse Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Response": {
+        "main": [
+          [
+            {
+              "node": "Needs Approval?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Needs Approval?": {
+        "main": [
+          [
+            {
+              "node": "Format Approval",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Tool Router",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Approval": {
+        "main": [
+          [
+            {
+              "node": "Wait for Approval",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait for Approval": {
+        "main": [
+          [
+            {
+              "node": "Process Approval",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Approval": {
+        "main": [
+          [
+            {
+              "node": "Approved?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Approved?": {
+        "main": [
+          [
+            {
+              "node": "Tool Router",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Prepare API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tool Router": {
+        "main": [
+          [
+            {
+              "node": "File Read",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "File Write",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "File Edit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Command",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Git Status",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Web Fetch",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Grep Search",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Glob Find",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Web Search",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Todo",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Final Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Todo": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Web Search": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Read": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Write": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Edit": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Command": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Git Status": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Web Fetch": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Grep Search": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Glob Find": {
+        "main": [
+          [
+            {
+              "node": "Handle Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Handle Result": {
+        "main": [
+          [
+            {
+              "node": "Continue?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Continue?": {
+        "main": [
+          [
+            {
+              "node": "Prepare API",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Final Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "William Marceau",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-07T02:34:51.762Z",
+        "id": 77,
+        "workflowId": "1s52PkA1lY1lHfGP",
+        "versionId": "b8d28fc2-2d3e-4d71-b948-aef097e786f2",
+        "event": "activated",
+        "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec"
+      }
+    ]
+  }
+}

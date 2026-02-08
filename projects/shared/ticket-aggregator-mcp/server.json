@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wmarceau/ticket-discovery",
+  "description": "Search and compare concert ticket prices across platforms",
+  "repository": {
+    "url": "https://github.com/wmarceau/ticket-discovery-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "ticket-discovery-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtime": "python",
+      "environmentVariables": [
+        {
+          "name": "TICKETMASTER_API_KEY",
+          "description": "Ticketmaster Discovery API key (free at developer.ticketmaster.com)"
+        },
+        {
+          "name": "SEATGEEK_CLIENT_ID",
+          "description": "SeatGeek API client ID (free at seatgeek.com/account/develop)"
+        },
+        {
+          "name": "SEATGEEK_CLIENT_SECRET",
+          "description": "SeatGeek API client secret (optional)"
+        },
+        {
+          "name": "SEATGEEK_AFFILIATE_ID",
+          "description": "SeatGeek affiliate ID for commission tracking (optional)"
+        }
+      ]
+    }
+  ]
+}

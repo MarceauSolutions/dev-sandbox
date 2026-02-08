@@ -13,12 +13,12 @@ Usage:
     uvicorn execution.fitness_assistant_api:app --reload --host 0.0.0.0 --port 8000
 """
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 import subprocess
 import os
 from pathlib import Path
@@ -27,11 +27,35 @@ import shutil
 import uuid
 import time
 
+# Structured logging (v2.0)
+from backend.logging_config import setup_logging, get_logger
+from backend.middleware import setup_middleware
+
+# Rate limiting (v2.0)
+from backend.rate_limiter import (
+    limiter,
+    rate_limit_exceeded_handler,
+    check_quota,
+    get_quota_status,
+    require_quota,
+    get_rate_limit_headers,
+    Tier
+)
+from slowapi.errors import RateLimitExceeded
+
+# Initialize structured JSON logging
+setup_logging()
+logger = get_logger(__name__)
+
 app = FastAPI(
     title="Fitness Influencer Assistant API",
     description="AI-powered fitness content creation and automation",
-    version="1.0.0"
+    version="2.0.0"
 )
+
+# Add rate limiter to app state and register error handler
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 # Enable CORS for Replit app
 app.add_middleware(
@@ -41,6 +65,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add structured logging and performance monitoring middleware (v2.0)
+setup_middleware(app)
 
 # Base path for execution scripts
 SCRIPTS_PATH = Path(__file__).parent
@@ -134,6 +161,292 @@ class BrandProfileRequest(BaseModel):
 
 
 # ============================================================================
+# Job Queue Models (v2.0)
+# ============================================================================
+
+class JobSubmitRequest(BaseModel):
+    """Request model for submitting a background job."""
+    job_type: str  # video_caption, video_filler_removal, video_reframe, video_export, etc.
+    params: Dict[str, Any]
+    user_id: Optional[str] = None
+    priority: Optional[int] = 5  # 1=highest, 10=lowest
+
+class JobStatusResponse(BaseModel):
+    """Response model for job status."""
+    job_id: str
+    status: str  # queued, processing, complete, failed, cancelled
+    progress: int  # 0-100
+    estimated_remaining: int  # seconds
+    result: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+class JobSubmitResponse(BaseModel):
+    """Response model for job submission."""
+    job_id: str
+    status: str
+    job_type: str
+    created_at: str
+    estimated_time: int  # seconds
+    poll_url: str
+
+class VideoCaptionRequest(BaseModel):
+    """
+    Request model for video captioning job with full customization.
+
+    Supports:
+    - Style presets: trending, glow, minimal, bold, clean, neon, subtitle, fitness, professional, dramatic
+    - Position with offset: 'bottom', 'center', 'top', or 'bottom+20' for pixel offset
+    - Custom fonts and colors (hex or named colors like 'white', 'neon_green')
+    - Word highlighting styles: color, underline, bold, scale, none
+    """
+    video_url: str
+    style: Optional[str] = "trending"  # trending, glow, minimal, bold, clean, neon, etc.
+    position: Optional[str] = "bottom"  # top, center, bottom (with optional offset like 'bottom+20')
+    language: Optional[str] = "en"  # en, es, pt, auto
+    word_highlight: Optional[bool] = True
+    max_words_per_line: Optional[int] = 7
+
+    # Custom font settings
+    custom_font: Optional[str] = None  # e.g., "Arial", "Impact", "Roboto"
+    font_size: Optional[int] = None  # 24-72pt range
+
+    # Custom color settings (hex or named colors)
+    font_color: Optional[str] = None  # e.g., "#FFFFFF" or "white"
+    outline_color: Optional[str] = None  # e.g., "#000000" or "black"
+    outline_width: Optional[int] = None  # 0-5 pixels
+    shadow_color: Optional[str] = None  # e.g., "#000000" or None
+    shadow_offset: Optional[int] = None  # 0-10 pixels
+    highlight_color: Optional[str] = None  # Color for active word highlighting
+
+    # Background settings
+    background_color: Optional[str] = None  # e.g., "#000000" for subtitle-style
+    background_opacity: Optional[float] = None  # 0.0-1.0
+
+class VideoReframeRequest(BaseModel):
+    """Request model for video reframe job."""
+    video_url: str
+    target_aspect: Optional[str] = "9:16"  # 9:16, 1:1, 4:5, 16:9
+    tracking_mode: Optional[str] = "auto"  # face, body, auto
+    smoothing: Optional[float] = 0.8  # 0.1-1.0
+    safe_zone_margin: Optional[float] = 0.1
+
+class VideoExportRequest(BaseModel):
+    """
+    Request model for multi-platform export with metadata generation.
+
+    Features:
+    - Export to multiple platforms in parallel (TikTok, Instagram, YouTube, etc.)
+    - Platform-optimized encoding (resolution, bitrate, codec)
+    - Auto-generate hashtags and descriptions from transcription
+    - Webhook notification on completion
+    """
+    video_url: str
+    platforms: List[str] = ["tiktok", "instagram_reels", "youtube_shorts"]
+    include_captions: Optional[bool] = False
+    generate_descriptions: Optional[bool] = True
+    hashtag_count: Optional[int] = None  # Uses platform-optimal count if not specified
+    transcription_text: Optional[str] = None  # For metadata generation
+    category: Optional[str] = None  # workout, nutrition, motivation, transformation, tutorial, tips, challenge
+    webhook_url: Optional[str] = None  # URL to POST completion notification
+
+
+class BatchExportRequest(BaseModel):
+    """
+    Request model for exporting multiple videos to multiple platforms.
+
+    Useful for batch processing content across all platforms at once.
+    """
+    videos: List[Dict[str, Any]]  # List of {video_url, transcription_text, category}
+    platforms: List[str] = ["tiktok", "instagram_reels", "youtube_shorts"]
+    generate_descriptions: Optional[bool] = True
+    webhook_url: Optional[str] = None
+
+class FillerRemovalRequest(BaseModel):
+    """Request model for filler word removal."""
+    video_url: str
+    sensitivity: Optional[str] = "moderate"  # aggressive, moderate, conservative
+
+
+class FillerDetectionRequest(BaseModel):
+    """Request model for filler word detection (analysis only, no removal)."""
+    video_url: Optional[str] = None
+    audio_url: Optional[str] = None
+    sensitivity: Optional[str] = "moderate"  # aggressive, moderate, conservative
+    confidence_threshold: Optional[float] = None  # Override default (0.5-0.95)
+    include_clusters: Optional[bool] = True  # Include filler clusters in response
+    language: Optional[str] = "en"  # Transcription language
+    fillers_to_remove: Optional[List[str]] = ["um", "uh", "like", "you know"]
+    preserve_rhythm: Optional[bool] = True
+
+
+class VideoAnalyzeRequest(BaseModel):
+    """
+    Request model for long-form video analysis.
+
+    Analyzes videos to identify structure, key moments, and potential clips.
+    Optimized for 10-60 minute videos with < 2 minute processing.
+    """
+    video_url: str
+    analyze_audio: Optional[bool] = True  # Analyze audio energy peaks/valleys
+    analyze_motion: Optional[bool] = True  # Detect high-motion segments
+    detect_scenes: Optional[bool] = True  # Identify scene/shot changes
+    extract_keywords: Optional[bool] = True  # Extract keywords from transcription
+    min_segment_duration: Optional[float] = 5.0  # Min clip duration (seconds)
+    max_segment_duration: Optional[float] = 60.0  # Max clip duration (seconds)
+    transcription_text: Optional[str] = None  # Pre-transcribed text (speeds up analysis)
+    word_timestamps: Optional[List[Dict[str, Any]]] = None  # Word-level timestamps
+    top_segments_count: Optional[int] = 20  # Number of top segments to return
+
+
+class ViralDetectionRequest(BaseModel):
+    """
+    Request model for viral moment detection.
+
+    Identifies the best clips from long-form content with viral scoring.
+    """
+    video_url: str
+    top_count: Optional[int] = 10  # Number of viral moments to return
+    min_score: Optional[float] = 40.0  # Minimum viral score (0-100)
+    min_duration: Optional[float] = 15.0  # Minimum clip duration (seconds)
+    max_duration: Optional[float] = 60.0  # Maximum clip duration (seconds)
+    preserve_sentences: Optional[bool] = True  # Don't cut mid-sentence
+    transcription_text: Optional[str] = None  # Pre-transcribed text
+    word_timestamps: Optional[List[Dict[str, Any]]] = None  # Word-level timestamps
+    # Scoring weights (must sum to ~1.0)
+    weight_hook: Optional[float] = 0.25
+    weight_audio: Optional[float] = 0.15
+    weight_visual: Optional[float] = 0.15
+    weight_keywords: Optional[float] = 0.15
+    weight_emotion: Optional[float] = 0.15
+    weight_fitness: Optional[float] = 0.15
+
+
+class HookAnalysisRequest(BaseModel):
+    """
+    Request model for hook analysis and optimization.
+
+    Analyzes the first 3 seconds of a video for hook effectiveness,
+    provides improvement suggestions, and generates alternative variants.
+    """
+    video_url: str
+    platform: Optional[str] = "tiktok"  # tiktok, instagram_reels, youtube_shorts
+    hook_duration: Optional[float] = 3.0  # Duration to analyze (seconds)
+    generate_variants: Optional[bool] = True  # Generate alternative hook variants
+    variant_count: Optional[int] = 3  # Number of variants to generate
+    include_ab_test_setup: Optional[bool] = False  # Include A/B test framework
+    transcription_text: Optional[str] = None  # Pre-transcribed text
+    word_timestamps: Optional[List[Dict[str, Any]]] = None  # Word-level timestamps
+
+
+class RetentionPredictionRequest(BaseModel):
+    """
+    Request model for retention curve prediction.
+
+    Predicts audience retention before publishing, identifies drop-off points,
+    and provides improvement suggestions.
+    """
+    video_url: str
+    platform: Optional[str] = "tiktok"  # tiktok, instagram_reels, youtube_shorts, youtube
+    sample_interval: Optional[float] = 1.0  # Sample every N seconds
+    include_hook_analysis: Optional[bool] = True  # Include hook scoring
+    cliff_threshold: Optional[float] = 10.0  # Drop % to flag as cliff
+    generate_suggestions: Optional[bool] = True  # Generate improvement tips
+    transcription_text: Optional[str] = None  # Pre-transcribed text
+    word_timestamps: Optional[List[Dict[str, Any]]] = None  # Word-level timestamps
+
+
+class WorkoutOverlayRequest(BaseModel):
+    """
+    Request model for workout timer overlay.
+
+    Adds HIIT timers, rep counters, and interval indicators to videos.
+    """
+    video_url: str
+    timer_type: Optional[str] = "interval"  # countdown, countup, interval, rep_counter
+    preset: Optional[str] = None  # hiit, tabata, emom, amrap, strength, yoga, cardio, plank
+
+    # Custom timer settings (used if no preset)
+    duration: Optional[float] = 60.0  # Total duration in seconds
+    work_duration: Optional[float] = 45.0  # Work interval (for interval type)
+    rest_duration: Optional[float] = 15.0  # Rest interval (for interval type)
+    rounds: Optional[int] = 1  # Number of rounds
+
+    # Rep counter settings
+    total_reps: Optional[int] = 10
+    auto_increment: Optional[bool] = False
+
+    # Visual settings
+    position: Optional[str] = "top_right"  # top_left, top_right, bottom_left, bottom_right, center
+    style: Optional[str] = "bold"  # minimal, bold, neon, digital
+
+    # Display settings
+    show_round_number: Optional[bool] = True
+    show_work_rest_label: Optional[bool] = True
+
+    # Audio settings
+    enable_audio_cues: Optional[bool] = False
+
+
+class AnnotationItem(BaseModel):
+    """Single annotation item."""
+    type: str  # arrow, circle, line, text, highlight_box
+    start_time: Optional[float] = 0.0
+    end_time: Optional[float] = None
+
+    # Arrow/Line coordinates
+    start: Optional[List[int]] = None  # [x, y]
+    end: Optional[List[int]] = None  # [x, y]
+
+    # Circle coordinates
+    center: Optional[List[int]] = None  # [x, y]
+    radius: Optional[int] = 50
+
+    # Text/Label
+    position: Optional[List[int]] = None  # [x, y]
+    text: Optional[str] = None
+    font_size: Optional[int] = 32
+
+    # Highlight box
+    top_left: Optional[List[int]] = None  # [x, y]
+    bottom_right: Optional[List[int]] = None  # [x, y]
+
+    # Common styling
+    color: Optional[str] = "#FF0000"
+    thickness: Optional[int] = 3
+    pulsing: Optional[bool] = False
+    animated: Optional[bool] = False
+    label: Optional[str] = None
+    background: Optional[str] = None
+    background_opacity: Optional[float] = 0.7
+
+
+class FormAnnotationsRequest(BaseModel):
+    """
+    Request model for form annotations.
+
+    Adds arrows, circles, text labels, and highlight boxes to videos
+    for exercise form instruction.
+    """
+    video_url: str
+    annotations: List[AnnotationItem]
+    slow_motion_segments: Optional[List[Dict[str, Any]]] = None
+    preserve_audio: Optional[bool] = True
+
+
+class ExerciseRecognitionRequest(BaseModel):
+    """
+    Request model for exercise recognition.
+
+    Detects exercise type from video using pose estimation.
+    """
+    video_url: str
+    min_confidence: Optional[float] = 0.7
+    enable_rep_counting: Optional[bool] = True
+    enable_form_analysis: Optional[bool] = True
+    sample_interval: Optional[int] = 5  # Process every Nth frame
+
+
+# ============================================================================
 # API Endpoints
 # ============================================================================
 
@@ -143,7 +456,7 @@ async def root():
     return {
         "name": "Fitness Influencer Assistant API",
         "status": "active",
-        "version": "2.1.0",
+        "version": "2.0.0",
         "ai_providers": {
             "anthropic": bool(os.getenv('ANTHROPIC_API_KEY')),
             "xai": bool(os.getenv('XAI_API_KEY')),
@@ -157,9 +470,2137 @@ async def root():
             "email_digest": "/api/email/digest",
             "revenue_report": "/api/analytics/revenue",
             "generate_image": "/api/images/generate"
+        },
+        "v2_endpoints": {
+            "job_submit": "/api/jobs/submit",
+            "job_status": "/api/jobs/{job_id}/status",
+            "job_cancel": "/api/jobs/{job_id}/cancel",
+            "job_list": "/api/jobs",
+            "video_caption": "/api/video/caption",
+            "video_reframe": "/api/video/reframe",
+            "video_export": "/api/video/export",
+            "video_export_batch": "/api/video/export/batch",
+            "video_export_platforms": "/api/video/export/platforms",
+            "video_remove_fillers": "/api/video/remove-fillers",
+            "video_detect_fillers": "/api/video/detect-fillers",
+            "video_analyze": "/api/video/analyze",
+            "video_viral_moments": "/api/video/viral-moments",
+            "video_analyze_hook": "/api/video/analyze-hook",
+            "video_predict_retention": "/api/video/predict-retention",
+            "video_workout_overlay": "/api/video/add-workout-overlay",
+            "video_form_annotations": "/api/video/add-form-annotations",
+            "video_detect_exercise": "/api/video/detect-exercise",
+            "content_metadata": "/api/content/metadata",
+            "quota_status": "/api/quota/status",
+            "quota_tiers": "/api/quota/tiers",
+            "transcription": "/api/transcription"
         }
     }
 
+
+# ============================================================================
+# Background Job Endpoints (v2.0)
+# ============================================================================
+
+@app.post("/api/jobs/submit", response_model=JobSubmitResponse)
+async def submit_job(request: JobSubmitRequest):
+    """
+    Submit a background job for async processing.
+
+    Supported job types:
+    - video_caption: Add captions to video
+    - video_filler_removal: Remove filler words
+    - video_reframe: Auto-reframe for different aspect ratios
+    - video_export: Multi-platform export
+    - video_jumpcut: Remove silence (jump cuts)
+    - long_to_shorts: Extract clips from long-form
+    - image_generation: Generate AI images
+    - transcription: Transcribe video/audio
+
+    Returns job_id for polling status.
+    """
+    from task_queue import get_queue, JobType
+
+    queue = get_queue()
+
+    # Validate job type
+    valid_types = [t.value for t in JobType]
+    if request.job_type not in valid_types:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid job_type. Must be one of: {valid_types}"
+        )
+
+    result = queue.submit_job(
+        job_type=request.job_type,
+        params=request.params,
+        user_id=request.user_id,
+        priority=request.priority or 5
+    )
+
+    return JobSubmitResponse(
+        job_id=result.job_id,
+        status=result.status,
+        job_type=result.job_type,
+        created_at=result.created_at,
+        estimated_time=result.estimated_time,
+        poll_url=f"/api/jobs/{result.job_id}/status"
+    )
+
+
+@app.get("/api/jobs/{job_id}/status", response_model=JobStatusResponse)
+async def get_job_status(job_id: str):
+    """
+    Get the status of a background job.
+
+    Poll this endpoint until status is 'complete' or 'failed'.
+    """
+    from task_queue import get_queue
+
+    queue = get_queue()
+    status = queue.get_status(job_id)
+
+    if not status:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    return JobStatusResponse(
+        job_id=status.job_id,
+        status=status.status,
+        progress=status.progress,
+        estimated_remaining=status.estimated_remaining,
+        result=status.result,
+        error=status.error
+    )
+
+
+@app.post("/api/jobs/{job_id}/cancel")
+async def cancel_job(job_id: str):
+    """
+    Cancel a queued job.
+
+    Only queued jobs can be cancelled. Processing jobs cannot be cancelled.
+    """
+    from task_queue import get_queue
+
+    queue = get_queue()
+    success = queue.cancel_job(job_id)
+
+    if not success:
+        raise HTTPException(
+            status_code=400,
+            detail="Job not found or cannot be cancelled (may be processing)"
+        )
+
+    return {"status": "cancelled", "job_id": job_id}
+
+
+@app.get("/api/jobs")
+async def list_jobs(
+    user_id: Optional[str] = None,
+    status: Optional[str] = None,
+    limit: int = 50
+):
+    """
+    List background jobs with optional filtering.
+
+    Query params:
+    - user_id: Filter by user
+    - status: Filter by status (queued, processing, complete, failed, cancelled)
+    - limit: Max jobs to return (default 50)
+    """
+    from task_queue import get_queue
+
+    queue = get_queue()
+    jobs = queue.list_jobs(user_id=user_id, status=status, limit=limit)
+
+    return {"jobs": jobs, "count": len(jobs)}
+
+
+@app.post("/api/video/caption")
+async def caption_video(request: Request, body: VideoCaptionRequest):
+    """
+    Add captions to a video (async).
+
+    Submits job to background queue and returns job_id for polling.
+
+    Supports full customization:
+    - Position: 'top', 'center', 'bottom' with optional pixel offset (e.g., 'bottom+20')
+    - Font: custom_font (24-72pt), font_size
+    - Colors: font_color, outline_color, shadow_color, highlight_color (hex or named)
+    - Outline: outline_width (0-5px)
+    - Shadow: shadow_offset (0-10px)
+    - Background: background_color, background_opacity (0-1)
+
+    Returns job_id for async processing. Completed job returns:
+    - video_url: URL of captioned video
+    - srt_url: URL of SRT subtitle file
+    """
+    from backend.caption_styles import validate_custom_style, normalize_style_params
+    from backend.task_queue import get_queue, JobType
+
+    # Check quota
+    await check_quota(request, "caption_jobs")
+
+    # Build params dict for validation
+    params = body.model_dump()
+
+    # Validate custom style parameters if any custom settings provided
+    has_custom = any([
+        body.custom_font, body.font_size, body.font_color, body.outline_color,
+        body.outline_width is not None, body.shadow_color, body.shadow_offset is not None,
+        body.highlight_color, body.background_color, body.background_opacity is not None
+    ])
+
+    if has_custom:
+        # Build style dict for validation
+        style_dict = {
+            "font_size": body.font_size or 48,
+            "font_color": body.font_color,
+            "outline_color": body.outline_color,
+            "outline_width": body.outline_width or 2,
+            "shadow_color": body.shadow_color,
+            "shadow_offset": body.shadow_offset or 0,
+            "highlight_color": body.highlight_color,
+            "background_color": body.background_color,
+            "background_opacity": body.background_opacity or 0.0,
+            "position": body.position
+        }
+
+        # Validate
+        errors = validate_custom_style(style_dict, min_font_size=24, max_font_size=72)
+        if errors:
+            raise HTTPException(
+                status_code=400,
+                detail={"errors": errors, "message": "Invalid caption style parameters"}
+            )
+
+        # Normalize colors (convert named colors to hex)
+        normalized = normalize_style_params(style_dict)
+        params.update(normalized)
+
+    queue = get_queue()
+    result = queue.submit_job(
+        job_type=JobType.VIDEO_CAPTION.value,
+        params=params
+    )
+
+    return {
+        "job_id": result.job_id,
+        "status": result.status,
+        "estimated_time": result.estimated_time,
+        "style": body.style,
+        "position": body.position,
+        "word_highlight": body.word_highlight,
+        "has_custom_style": has_custom,
+        "poll_url": f"/api/jobs/{result.job_id}/status",
+        "message": "Caption job submitted. Poll the status URL for progress."
+    }
+
+
+@app.post("/api/video/reframe")
+async def reframe_video(request: VideoReframeRequest):
+    """
+    Auto-reframe video for different aspect ratios (async).
+
+    Uses face/body tracking to keep subjects centered.
+    """
+    from task_queue import get_queue, JobType
+
+    queue = get_queue()
+    result = queue.submit_job(
+        job_type=JobType.VIDEO_REFRAME.value,
+        params=request.model_dump()
+    )
+
+    return {
+        "job_id": result.job_id,
+        "status": result.status,
+        "estimated_time": result.estimated_time,
+        "poll_url": f"/api/jobs/{result.job_id}/status"
+    }
+
+
+@app.post("/api/video/export")
+async def export_video(request: VideoExportRequest):
+    """
+    Export video to multiple platforms (async).
+
+    Creates optimized versions for TikTok, Instagram, YouTube Shorts, etc.
+    Includes platform-specific encoding and optional metadata generation.
+
+    Platforms supported:
+    - tiktok, tt: TikTok (9:16, 30fps, 3Mbps)
+    - instagram_reels, ig, reels: Instagram Reels (9:16, 30fps, 4Mbps)
+    - instagram_feed, ig_feed: Instagram Feed (4:5, 30fps, 3.5Mbps)
+    - instagram_story, ig_story: Instagram Story (9:16, 30fps, 3Mbps)
+    - youtube_shorts, yt, shorts: YouTube Shorts (9:16, 60fps, 10Mbps)
+    - youtube_long, yt_long: YouTube Long-form (16:9, 60fps, 12Mbps)
+    - linkedin, li: LinkedIn (9:16, 30fps, 5Mbps)
+    - twitter, x: Twitter/X (16:9, 30fps, 5Mbps)
+    - facebook_reels, fb: Facebook Reels (9:16, 30fps, 4Mbps)
+    """
+    from backend.task_queue import get_queue, JobType
+
+    queue = get_queue()
+    result = queue.submit_job(
+        job_type=JobType.VIDEO_EXPORT.value,
+        params=request.model_dump()
+    )
+
+    return {
+        "job_id": result.job_id,
+        "status": result.status,
+        "estimated_time": result.estimated_time,
+        "platforms": request.platforms,
+        "poll_url": f"/api/jobs/{result.job_id}/status"
+    }
+
+
+@app.get("/api/video/export/platforms")
+async def list_export_platforms():
+    """
+    List all supported export platforms with their specifications.
+
+    Returns resolution, aspect ratio, duration limits, codec settings, etc.
+    """
+    from backend.platform_exporter import list_platforms
+
+    return {
+        "platforms": list_platforms()
+    }
+
+
+@app.get("/api/video/export/platforms/{platform}")
+async def get_platform_spec(platform: str):
+    """
+    Get detailed specification for a specific platform.
+    """
+    from backend.platform_exporter import parse_platform, get_platform_spec
+
+    try:
+        platform_enum = parse_platform(platform)
+        spec = get_platform_spec(platform_enum)
+        return {"platform": platform, "spec": spec}
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown platform: {platform}. Use /api/video/export/platforms to list valid platforms."
+        )
+
+
+@app.post("/api/video/export/batch")
+async def batch_export_videos(request: BatchExportRequest):
+    """
+    Batch export multiple videos to multiple platforms.
+
+    Submits separate jobs for each video and returns all job IDs.
+    Use /api/jobs/{job_id}/status to poll individual job status.
+    """
+    from backend.task_queue import get_queue, JobType
+
+    queue = get_queue()
+    jobs = []
+
+    for video in request.videos:
+        params = {
+            "video_url": video.get("video_url"),
+            "platforms": request.platforms,
+            "generate_descriptions": request.generate_descriptions,
+            "transcription_text": video.get("transcription_text", ""),
+            "category": video.get("category"),
+            "webhook_url": request.webhook_url
+        }
+
+        result = queue.submit_job(
+            job_type=JobType.VIDEO_EXPORT.value,
+            params=params
+        )
+
+        jobs.append({
+            "job_id": result.job_id,
+            "video_url": video.get("video_url"),
+            "status": result.status,
+            "estimated_time": result.estimated_time,
+            "poll_url": f"/api/jobs/{result.job_id}/status"
+        })
+
+    return {
+        "total_jobs": len(jobs),
+        "platforms": request.platforms,
+        "jobs": jobs
+    }
+
+
+@app.post("/api/content/metadata")
+@limiter.limit("60/minute")
+async def generate_content_metadata(
+    request: Request,
+    transcription_text: str = Form(...),
+    platform: str = Form("tiktok"),
+    category: Optional[str] = Form(None),
+    hashtag_count: Optional[int] = Form(None)
+):
+    """
+    Generate platform-optimized metadata (hashtags, descriptions) from transcription.
+
+    Uses AI to extract keywords and generate engaging descriptions.
+    """
+    from backend.content_metadata import generate_metadata
+    from backend.platform_exporter import parse_platform
+
+    try:
+        platform_enum = parse_platform(platform)
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown platform: {platform}"
+        )
+
+    metadata = await generate_metadata(
+        transcription_text=transcription_text,
+        platform=platform_enum,
+        category=category,
+        hashtag_count=hashtag_count
+    )
+
+    return metadata.to_dict()
+
+
+@app.post("/api/video/remove-fillers")
+async def remove_fillers(request: FillerRemovalRequest):
+    """
+    Remove filler words from video (async).
+
+    Detects and removes um, uh, like, you know, etc. with smooth transitions.
+    """
+    from task_queue import get_queue, JobType
+
+    queue = get_queue()
+    result = queue.submit_job(
+        job_type=JobType.VIDEO_FILLER_REMOVAL.value,
+        params=request.model_dump()
+    )
+
+    return {
+        "job_id": result.job_id,
+        "status": result.status,
+        "estimated_time": result.estimated_time,
+        "sensitivity": request.sensitivity,
+        "poll_url": f"/api/jobs/{result.job_id}/status"
+    }
+
+
+@app.post("/api/video/detect-fillers")
+@limiter.limit("30/minute")
+async def detect_fillers_endpoint(request: Request, body: FillerDetectionRequest):
+    """
+    Detect filler words in video or audio (analysis only).
+
+    Returns detailed analysis of filler words including:
+    - Each filler word with timestamp and confidence
+    - Filler clusters (consecutive fillers)
+    - Summary statistics (filler %, count by category)
+    - Removal segments for preview
+
+    Sensitivity modes:
+    - aggressive: Remove most potential fillers (confidence >= 0.5)
+    - moderate: Balanced approach (confidence >= 0.7)
+    - conservative: Only high-confidence fillers (confidence >= 0.85)
+    """
+    from backend.transcription import transcribe_video, transcribe_audio, WordTimestamp as TranscriptionWord
+    from backend.filler_detector import (
+        detect_fillers,
+        detect_fillers_with_sensitivity,
+        get_removal_segments,
+        WordTimestamp,
+        SENSITIVITY_PRESETS
+    )
+
+    # Validate input
+    if not body.video_url and not body.audio_url:
+        raise HTTPException(
+            status_code=400,
+            detail="Either video_url or audio_url is required"
+        )
+
+    # Check quota
+    if not await check_quota(request, "caption"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for caption/transcription operations"
+        )
+
+    try:
+        # Step 1: Transcribe to get word-level timestamps
+        if body.video_url:
+            transcription = await transcribe_video(
+                video_url=body.video_url,
+                language=body.language or "en"
+            )
+        else:
+            transcription = await transcribe_audio(
+                audio_url=body.audio_url,
+                language=body.language or "en"
+            )
+
+        if not transcription.words:
+            return {
+                "success": True,
+                "message": "No words detected in audio",
+                "fillers": [],
+                "clusters": [],
+                "statistics": {
+                    "total_filler_count": 0,
+                    "filler_percentage": 0,
+                    "words_analyzed": 0
+                }
+            }
+
+        # Convert transcription words to filler detector format
+        words = [
+            WordTimestamp(
+                word=w.word,
+                start=w.start,
+                end=w.end,
+                confidence=w.confidence
+            )
+            for w in transcription.words
+        ]
+
+        # Step 2: Detect fillers
+        if body.confidence_threshold is not None:
+            # Use custom threshold
+            result = detect_fillers(
+                words=words,
+                confidence_threshold=max(0.5, min(0.95, body.confidence_threshold))
+            )
+        else:
+            # Use sensitivity preset
+            result = detect_fillers_with_sensitivity(
+                words=words,
+                sensitivity=body.sensitivity or "moderate"
+            )
+
+        # Step 3: Get removal segments for preview
+        removal_segments = get_removal_segments(
+            result,
+            include_clusters=body.include_clusters
+        )
+
+        return {
+            "success": True,
+            "sensitivity": body.sensitivity,
+            "confidence_threshold": body.confidence_threshold or SENSITIVITY_PRESETS.get(
+                body.sensitivity, SENSITIVITY_PRESETS["moderate"]
+            )["confidence_threshold"],
+            "fillers": [f.to_dict() for f in result.fillers if f.is_filler],
+            "all_detected": [f.to_dict() for f in result.fillers],  # Includes below-threshold
+            "clusters": [c.to_dict() for c in result.clusters],
+            "removal_segments": [
+                {"start": s, "end": e, "duration": round(e - s, 2)}
+                for s, e in removal_segments
+            ],
+            "statistics": {
+                "total_filler_count": result.total_filler_count,
+                "filler_duration": round(result.filler_duration, 2),
+                "total_duration": round(result.total_duration, 2),
+                "filler_percentage": round(result.filler_percentage, 2),
+                "words_analyzed": result.words_analyzed,
+                "removal_time_saved": round(sum(e - s for s, e in removal_segments), 2)
+            },
+            "summary": result.to_dict()["summary"],
+            "transcription": {
+                "text": transcription.text,
+                "language": transcription.language,
+                "duration": transcription.duration
+            }
+        }
+
+    except Exception as e:
+        logger.error(f"Filler detection failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Filler detection failed: {str(e)}"
+        )
+
+
+# ============================================================================
+# Video Analysis Endpoints (v2.0 - Phase 5)
+# ============================================================================
+
+@app.post("/api/video/analyze")
+@limiter.limit("10/minute")
+async def analyze_video_endpoint(request: Request, body: VideoAnalyzeRequest):
+    """
+    Analyze a long-form video for key moments and potential clips.
+
+    Features:
+    - Audio energy analysis (peaks and valleys)
+    - Motion/action intensity detection
+    - Scene change detection
+    - Keyword extraction from transcription
+    - Scored segments ranked by viral potential
+
+    Optimized for 10-60 minute videos with < 2 minute processing.
+
+    Returns:
+    - top_segments: Best clips ranked by score (0-100)
+    - timeline: Audio peaks, scene changes, keyword clusters
+    - summary: Overall statistics
+
+    Use cases:
+    - Long-to-shorts extraction
+    - Viral moment detection
+    - Content repurposing
+    """
+    from backend.video_analyzer import (
+        analyze_video,
+        AnalysisConfig,
+        get_video_duration
+    )
+    import tempfile
+    import urllib.request
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            # Download video to temp file
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for analysis: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+
+        else:
+            video_path = body.video_url
+
+        # Check video exists
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Get duration first
+        duration = await get_video_duration(video_path)
+        if duration <= 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Could not determine video duration"
+            )
+
+        # Build analysis config
+        config = AnalysisConfig(
+            analyze_audio=body.analyze_audio,
+            analyze_motion=body.analyze_motion,
+            detect_scenes=body.detect_scenes,
+            extract_keywords=body.extract_keywords,
+            min_segment_duration=body.min_segment_duration,
+            max_segment_duration=body.max_segment_duration
+        )
+
+        # Prepare transcription data if provided
+        transcription_result = None
+        if body.transcription_text or body.word_timestamps:
+            transcription_result = {
+                "text": body.transcription_text or "",
+                "words": body.word_timestamps or []
+            }
+
+        # Run analysis
+        result = await analyze_video(
+            video_path=video_path,
+            transcription_result=transcription_result,
+            config=config
+        )
+
+        # Cleanup temp video
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+                Path(video_path).parent.rmdir()
+            except Exception:
+                pass
+
+        # Build response with limited top segments
+        response_data = result.to_dict()
+
+        # Limit top_segments to requested count
+        if len(response_data.get("top_segments", [])) > body.top_segments_count:
+            response_data["top_segments"] = response_data["top_segments"][:body.top_segments_count]
+
+        return {
+            "success": True,
+            **response_data
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Video analysis failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Video analysis failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/analyze/segment-types")
+async def get_segment_types():
+    """
+    Get available segment types for video analysis.
+
+    Segment types help categorize moments in videos.
+    """
+    from backend.video_analyzer import SegmentType
+
+    return {
+        "segment_types": [
+            {"value": st.value, "description": get_segment_type_description(st)}
+            for st in SegmentType
+        ]
+    }
+
+
+def get_segment_type_description(segment_type) -> str:
+    """Get human-readable description for segment type."""
+    from backend.video_analyzer import SegmentType
+
+    descriptions = {
+        SegmentType.INTRO: "Opening segment, typically lower energy",
+        SegmentType.MAIN_CONTENT: "Primary content delivery",
+        SegmentType.DEMONSTRATION: "Exercise or technique demonstration",
+        SegmentType.TRANSITION: "Transition between topics",
+        SegmentType.CLIMAX: "High energy moment, potential viral clip",
+        SegmentType.CONCLUSION: "Closing segment",
+        SegmentType.UNKNOWN: "Unclassified segment"
+    }
+    return descriptions.get(segment_type, "Unknown segment type")
+
+
+@app.post("/api/video/viral-moments")
+@limiter.limit("10/minute")
+async def detect_viral_moments_endpoint(request: Request, body: ViralDetectionRequest):
+    """
+    Detect viral moments in a video for content repurposing.
+
+    Identifies the best clips from long-form content using:
+    - Hook strength analysis (first 3 seconds impact)
+    - Audio energy levels
+    - Visual variety (scene changes, motion)
+    - Keyword density
+    - Emotional marker detection
+    - Fitness-specific content boosters
+
+    Returns scored moments (0-100) with categories:
+    - hook: Strong opening hook
+    - transformation: Before/after, progress content
+    - demonstration: Exercise/technique demos
+    - climax: High energy moments
+    - educational: Teaching content
+
+    Use cases:
+    - Long-to-shorts extraction
+    - Highlight reel creation
+    - Content repurposing
+    """
+    from backend.viral_detector import (
+        detect_viral_moments,
+        ViralConfig
+    )
+    import tempfile
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            # Download video to temp file
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for viral detection: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+
+        else:
+            video_path = body.video_url
+
+        # Check video exists
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Build config
+        config = ViralConfig(
+            min_duration=body.min_duration,
+            max_duration=body.max_duration,
+            top_count=body.top_count,
+            min_score=body.min_score,
+            preserve_sentences=body.preserve_sentences,
+            weights={
+                "hook_strength": body.weight_hook,
+                "audio_energy": body.weight_audio,
+                "visual_variety": body.weight_visual,
+                "keyword_density": body.weight_keywords,
+                "emotional_markers": body.weight_emotion,
+                "fitness_relevance": body.weight_fitness
+            }
+        )
+
+        # Prepare transcription data if provided
+        transcription_result = None
+        if body.transcription_text or body.word_timestamps:
+            transcription_result = {
+                "text": body.transcription_text or "",
+                "words": body.word_timestamps or []
+            }
+
+        # Run viral detection
+        result = await detect_viral_moments(
+            video_path=video_path,
+            transcription_result=transcription_result,
+            config=config
+        )
+
+        # Cleanup temp video
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+                Path(video_path).parent.rmdir()
+            except Exception:
+                pass
+
+        return {
+            "success": True,
+            **result.to_dict()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Viral detection failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Viral detection failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/viral-moments/categories")
+async def get_viral_categories():
+    """
+    Get available viral moment categories.
+
+    Categories help identify the type of viral content.
+    """
+    from backend.viral_detector import ViralCategory
+
+    category_descriptions = {
+        ViralCategory.HOOK: "Strong opening hook that grabs attention",
+        ViralCategory.TRANSFORMATION: "Before/after or progress content",
+        ViralCategory.DEMONSTRATION: "Exercise or technique demonstration",
+        ViralCategory.REACTION: "Emotional reaction shot",
+        ViralCategory.CLIMAX: "Peak energy moment",
+        ViralCategory.CONTROVERSY: "Contrarian or debate-worthy content",
+        ViralCategory.EDUCATIONAL: "Teaching or informational moment",
+        ViralCategory.INSPIRATIONAL: "Motivational content"
+    }
+
+    return {
+        "categories": [
+            {"value": cat.value, "description": desc}
+            for cat, desc in category_descriptions.items()
+        ]
+    }
+
+
+# ============================================================================
+# Hook Analysis Endpoints (v2.0 - Phase 5)
+# ============================================================================
+
+@app.post("/api/video/analyze-hook")
+@limiter.limit("20/minute")
+async def analyze_hook_endpoint(request: Request, body: HookAnalysisRequest):
+    """
+    Analyze and optimize video hook (first 3 seconds).
+
+    Returns:
+    - Hook score (0-100) with component breakdown
+    - Grade (A-F) based on hook effectiveness
+    - Improvement suggestions prioritized by impact
+    - Alternative hook variants with text overlays
+    - Platform-specific optimization tips
+
+    Scoring components:
+    - action: Movement and activity in first frame
+    - curiosity: Curiosity gap, question, mystery
+    - emotion: Emotional impact and connection
+    - audio_impact: Sound, music, voice effectiveness
+    - visual_variety: Scene interest and contrast
+    - text_hook: Text overlay effectiveness
+
+    Use cases:
+    - Pre-publish hook validation
+    - A/B test variant generation
+    - Hook improvement recommendations
+    """
+    from backend.hook_analyzer import (
+        analyze_hook,
+        HookConfig,
+        PLATFORM_HOOK_TIPS
+    )
+    import tempfile
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            # Download video to temp file
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for hook analysis: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+
+        else:
+            video_path = body.video_url
+
+        # Check video exists
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Build config
+        config = HookConfig(
+            hook_duration=body.hook_duration,
+            platform=body.platform,
+            generate_variants=body.generate_variants,
+            variant_count=body.variant_count,
+            include_ab_test_setup=body.include_ab_test_setup
+        )
+
+        # Prepare transcription data if provided
+        transcription_result = None
+        if body.transcription_text or body.word_timestamps:
+            transcription_result = {
+                "text": body.transcription_text or "",
+                "words": body.word_timestamps or []
+            }
+
+        # Run hook analysis
+        result = await analyze_hook(
+            video_path=video_path,
+            transcription_result=transcription_result,
+            config=config
+        )
+
+        # Cleanup temp video
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+                Path(video_path).parent.rmdir()
+            except Exception:
+                pass
+
+        # Add platform tips to response
+        platform_tips = PLATFORM_HOOK_TIPS.get(body.platform, PLATFORM_HOOK_TIPS["tiktok"])
+
+        return {
+            "success": True,
+            "platform": body.platform,
+            "platform_tips": platform_tips,
+            **result.to_dict()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Hook analysis failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Hook analysis failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/analyze-hook/platforms")
+async def get_hook_platforms():
+    """
+    Get available platforms for hook optimization.
+
+    Each platform has different hook best practices.
+    """
+    from backend.hook_analyzer import PLATFORM_HOOK_TIPS
+
+    return {
+        "platforms": [
+            {
+                "value": platform,
+                "ideal_duration": tips["ideal_duration"],
+                "text_overlay_recommended": tips["text_overlay"],
+                "music_important": tips["music_important"],
+                "face_visible_recommended": tips["face_visible"],
+                "tips": tips["tips"]
+            }
+            for platform, tips in PLATFORM_HOOK_TIPS.items()
+        ]
+    }
+
+
+@app.get("/api/video/analyze-hook/improvement-types")
+async def get_hook_improvement_types():
+    """
+    Get available hook improvement types.
+
+    Improvement types categorize the suggested changes.
+    """
+    from backend.hook_analyzer import HookImprovementType
+
+    improvement_descriptions = {
+        HookImprovementType.REORDER_SHOTS: "Rearrange shots for better pacing",
+        HookImprovementType.ADD_TEXT_OVERLAY: "Add text hook overlay in first 0.5 seconds",
+        HookImprovementType.CHANGE_MUSIC: "Use trending or more impactful music",
+        HookImprovementType.ADD_VISUAL_EFFECT: "Add zoom, flash, or motion effect",
+        HookImprovementType.CHANGE_OPENING_SHOT: "Replace opening shot with more action",
+        HookImprovementType.ADD_PATTERN_INTERRUPT: "Start with unexpected element",
+        HookImprovementType.INCREASE_ENERGY: "Boost energy in voice or visuals",
+        HookImprovementType.ADD_CURIOSITY_GAP: "Create mystery or question"
+    }
+
+    return {
+        "improvement_types": [
+            {"value": imp_type.value, "description": desc}
+            for imp_type, desc in improvement_descriptions.items()
+        ]
+    }
+
+
+# ============================================================================
+# Retention Prediction Endpoints (v2.0 - Phase 5)
+# ============================================================================
+
+@app.post("/api/video/predict-retention")
+@limiter.limit("10/minute")
+async def predict_retention_endpoint(request: Request, body: RetentionPredictionRequest):
+    """
+    Predict audience retention curve before publishing.
+
+    Returns:
+    - Retention curve (% at each timestamp)
+    - Cliff moments (>10% sudden drops)
+    - Platform benchmark comparison
+    - Improvement suggestions for each cliff
+    - Overall grade (A-F)
+
+    Platform benchmarks:
+    - TikTok: 50% = good, 60% = excellent
+    - Instagram Reels: 40% = good, 55% = excellent
+    - YouTube Shorts: 45% = good, 55% = excellent
+    - YouTube: 40% = good, 50% = excellent
+
+    Use cases:
+    - Pre-publish quality check
+    - Identify weak points for editing
+    - Compare against platform standards
+    - A/B test validation
+    """
+    from backend.retention_predictor import (
+        predict_retention,
+        RetentionConfig
+    )
+    import tempfile
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            # Download video to temp file
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for retention prediction: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+
+        else:
+            video_path = body.video_url
+
+        # Check video exists
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Build config
+        config = RetentionConfig(
+            platform=body.platform,
+            sample_interval=body.sample_interval,
+            include_hook_analysis=body.include_hook_analysis,
+            cliff_threshold=body.cliff_threshold,
+            generate_suggestions=body.generate_suggestions
+        )
+
+        # Prepare transcription data if provided
+        transcription_result = None
+        if body.transcription_text or body.word_timestamps:
+            transcription_result = {
+                "text": body.transcription_text or "",
+                "words": body.word_timestamps or []
+            }
+
+        # Run retention prediction
+        result = await predict_retention(
+            video_path=video_path,
+            transcription_result=transcription_result,
+            config=config
+        )
+
+        # Cleanup temp video
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+                Path(video_path).parent.rmdir()
+            except Exception:
+                pass
+
+        return {
+            "success": True,
+            **result.to_dict()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Retention prediction failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Retention prediction failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/predict-retention/benchmarks")
+async def get_retention_benchmarks():
+    """
+    Get platform retention benchmarks.
+
+    Shows what retention percentages are considered good/excellent for each platform.
+    """
+    from backend.retention_predictor import get_platform_benchmarks
+
+    return {
+        "benchmarks": get_platform_benchmarks()
+    }
+
+
+@app.get("/api/video/predict-retention/improvement-types")
+async def get_retention_improvement_types():
+    """
+    Get available retention improvement suggestion types.
+
+    Each type includes description and specific suggestions.
+    """
+    from backend.retention_predictor import get_improvement_types
+
+    return {
+        "improvement_types": get_improvement_types()
+    }
+
+
+# ============================================================================
+# Workout Overlay Endpoints (v2.0 - Phase 6)
+# ============================================================================
+
+@app.post("/api/video/add-workout-overlay")
+@limiter.limit("10/minute")
+async def add_workout_overlay_endpoint(request: Request, body: WorkoutOverlayRequest):
+    """
+    Add workout timer overlay to video.
+
+    Timer types:
+    - countdown: Count down from duration to zero
+    - countup: Count up from zero
+    - interval: Alternating work/rest intervals (HIIT style)
+    - rep_counter: Display rep count
+
+    Presets:
+    - hiit: 45s work / 15s rest
+    - tabata: 20s work / 10s rest x 8 rounds
+    - emom: 50s work / 10s rest (Every Minute On the Minute)
+    - strength: 45s work / 90s rest (longer rest for heavy lifts)
+    - yoga: 30s hold / 5s transition
+    - cardio: 30s on / 30s off
+    - plank: 60s hold / 30s rest
+
+    Styles: minimal, bold, neon, digital
+    Positions: top_left, top_right, bottom_left, bottom_right, center
+    """
+    from backend.workout_overlays import (
+        add_timer_overlay,
+        TimerConfig,
+        TimerType,
+        OverlayPosition,
+        OverlayStyle
+    )
+    import tempfile
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            # Download video to temp file
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for workout overlay: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+
+        else:
+            video_path = body.video_url
+
+        # Check video exists
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Parse enums
+        try:
+            timer_type = TimerType(body.timer_type)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid timer_type: {body.timer_type}. Valid options: {[t.value for t in TimerType]}"
+            )
+
+        try:
+            position = OverlayPosition(body.position)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid position: {body.position}. Valid options: {[p.value for p in OverlayPosition]}"
+            )
+
+        try:
+            style = OverlayStyle(body.style)
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid style: {body.style}. Valid options: {[s.value for s in OverlayStyle]}"
+            )
+
+        # Build config
+        config = TimerConfig(
+            timer_type=timer_type,
+            preset=body.preset,
+            duration=body.duration,
+            work_duration=body.work_duration,
+            rest_duration=body.rest_duration,
+            rounds=body.rounds,
+            total_reps=body.total_reps,
+            auto_increment=body.auto_increment,
+            position=position,
+            style=style,
+            show_round_number=body.show_round_number,
+            show_work_rest_label=body.show_work_rest_label,
+            enable_audio_cues=body.enable_audio_cues
+        )
+
+        # Add overlay
+        result = await add_timer_overlay(
+            video_path=video_path,
+            config=config
+        )
+
+        # Cleanup temp video (keep output)
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+        return {
+            "success": result.success,
+            **result.to_dict()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Workout overlay failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Workout overlay failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/add-workout-overlay/presets")
+async def get_workout_presets():
+    """
+    Get available workout timer presets.
+
+    Each preset includes work/rest durations and total rounds.
+    """
+    from backend.workout_overlays import get_presets
+
+    return {
+        "presets": get_presets()
+    }
+
+
+@app.get("/api/video/add-workout-overlay/styles")
+async def get_workout_overlay_styles():
+    """
+    Get available overlay styles.
+
+    Each style includes font, colors, and visual settings.
+    """
+    from backend.workout_overlays import get_styles
+
+    return {
+        "styles": get_styles()
+    }
+
+
+@app.get("/api/video/add-workout-overlay/timer-types")
+async def get_workout_timer_types():
+    """
+    Get available timer types.
+
+    Timer types: countdown, countup, interval, rep_counter
+    """
+    from backend.workout_overlays import get_timer_types
+
+    return {
+        "timer_types": get_timer_types()
+    }
+
+
+# ============================================================================
+# Form Annotation Endpoints (v2.0 - Phase 6)
+# ============================================================================
+
+@app.post("/api/video/add-form-annotations")
+@limiter.limit("10/minute")
+async def add_form_annotations_endpoint(request: Request, body: FormAnnotationsRequest):
+    """
+    Add form annotations to video for exercise instruction.
+
+    Annotation types:
+    - arrow: Points from start to end coordinates, with optional label
+    - circle: Highlights an area (can be pulsing)
+    - line: Straight line between two points
+    - text: Floating text label with optional background
+    - highlight_box: Rectangular highlight region
+
+    Each annotation can have:
+    - start_time/end_time: When to show the annotation
+    - color: Hex color code
+    - pulsing/animated: Animation effects
+    - label: Associated text label
+    """
+    from backend.form_annotations import (
+        add_annotations,
+        AnnotationConfig,
+        Arrow,
+        Circle,
+        Line,
+        TextLabel,
+        HighlightBox
+    )
+    import tempfile
+    import httpx
+
+    # Check quota
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL provided
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            logger.info(f"Downloading video for form annotations: {body.video_url[:50]}...")
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+        else:
+            video_path = body.video_url
+
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Convert annotation items to annotation objects
+        annotations = []
+        for item in body.annotations:
+            if item.type == "arrow":
+                if not item.start or not item.end:
+                    continue
+                annotations.append(Arrow(
+                    start=tuple(item.start),
+                    end=tuple(item.end),
+                    color=item.color or "#FF0000",
+                    thickness=item.thickness or 4,
+                    animated=item.animated or False,
+                    label=item.label,
+                    start_time=item.start_time or 0,
+                    end_time=item.end_time
+                ))
+            elif item.type == "circle":
+                if not item.center:
+                    continue
+                annotations.append(Circle(
+                    center=tuple(item.center),
+                    radius=item.radius or 50,
+                    color=item.color or "#00FF00",
+                    thickness=item.thickness or 3,
+                    pulsing=item.pulsing or False,
+                    start_time=item.start_time or 0,
+                    end_time=item.end_time
+                ))
+            elif item.type == "line":
+                if not item.start or not item.end:
+                    continue
+                annotations.append(Line(
+                    start=tuple(item.start),
+                    end=tuple(item.end),
+                    color=item.color or "#FFFF00",
+                    thickness=item.thickness or 3,
+                    start_time=item.start_time or 0,
+                    end_time=item.end_time
+                ))
+            elif item.type == "text":
+                if not item.position or not item.text:
+                    continue
+                annotations.append(TextLabel(
+                    position=tuple(item.position),
+                    text=item.text,
+                    color=item.color or "#FFFFFF",
+                    font_size=item.font_size or 32,
+                    background=item.background,
+                    background_opacity=item.background_opacity or 0.7,
+                    start_time=item.start_time or 0,
+                    end_time=item.end_time
+                ))
+            elif item.type == "highlight_box":
+                if not item.top_left or not item.bottom_right:
+                    continue
+                annotations.append(HighlightBox(
+                    top_left=tuple(item.top_left),
+                    bottom_right=tuple(item.bottom_right),
+                    color=item.color or "#FFFF00",
+                    thickness=item.thickness or 3,
+                    pulsing=item.pulsing or False,
+                    start_time=item.start_time or 0,
+                    end_time=item.end_time
+                ))
+
+        if not annotations:
+            raise HTTPException(
+                status_code=400,
+                detail="No valid annotations provided"
+            )
+
+        # Add annotations
+        config = AnnotationConfig(preserve_audio=body.preserve_audio)
+        result = await add_annotations(
+            video_path=video_path,
+            annotations=annotations,
+            config=config
+        )
+
+        # Cleanup
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+        return {
+            "success": result.success,
+            **result.to_dict()
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Form annotations failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Form annotations failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/add-form-annotations/types")
+async def get_annotation_types():
+    """
+    Get available annotation types.
+
+    Each type includes description and required parameters.
+    """
+    from backend.form_annotations import get_annotation_types
+
+    return {
+        "annotation_types": get_annotation_types()
+    }
+
+
+@app.get("/api/video/add-form-annotations/colors")
+async def get_annotation_colors():
+    """
+    Get available preset colors for annotations.
+    """
+    from backend.form_annotations import get_colors
+
+    return {
+        "colors": get_colors()
+    }
+
+
+@app.post("/api/video/add-slow-motion")
+@limiter.limit("10/minute")
+async def add_slow_motion_endpoint(
+    request: Request,
+    video_url: str = Form(...),
+    start_time: float = Form(...),
+    end_time: float = Form(...),
+    speed: float = Form(0.5),
+    preserve_audio: bool = Form(False)
+):
+    """
+    Add slow motion effect to a video segment.
+
+    Speeds:
+    - 0.25: Quarter speed (very slow)
+    - 0.5: Half speed (standard slow-mo)
+    - 0.75: Three-quarter speed (slight slow)
+    """
+    from backend.form_annotations import add_slow_motion
+    import tempfile
+    import httpx
+
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL
+        video_path = None
+        cleanup_video = False
+
+        if video_url.startswith("http"):
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+        else:
+            video_path = video_url
+
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        result = await add_slow_motion(
+            video_path=video_path,
+            start_time=start_time,
+            end_time=end_time,
+            speed=speed,
+            preserve_audio=preserve_audio
+        )
+
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Slow motion failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Slow motion failed: {str(e)}"
+        )
+
+
+# ============================================================================
+# Exercise Recognition Endpoints (v2.0 - Phase 6)
+# ============================================================================
+
+@app.post("/api/video/detect-exercise")
+@limiter.limit("10/minute")
+async def detect_exercise_endpoint(request: Request, body: ExerciseRecognitionRequest):
+    """
+    Detect exercise type from video using pose estimation.
+
+    Supports 20+ exercises including:
+    - Squat, Deadlift, Bench Press, Overhead Press
+    - Pull-Up, Bent Over Row, Lat Pulldown
+    - Lunge, Leg Press, Hip Thrust
+    - Push-Up, Dips, Plank
+    - Bicep Curl, Tricep Extension, Lateral Raise
+    - Burpee, Mountain Climber, and more
+
+    Returns exercise identification, rep count estimate, form analysis,
+    and recommendations for complementary exercises.
+    """
+    from backend.exercise_recognition import (
+        detect_exercise,
+        ExerciseRecognitionConfig
+    )
+    import tempfile
+    import httpx
+
+    if not await check_quota(request, "video"):
+        raise HTTPException(
+            status_code=429,
+            detail="Quota exceeded for video operations"
+        )
+
+    try:
+        # Download video if URL
+        video_path = None
+        cleanup_video = False
+
+        if body.video_url.startswith("http"):
+            temp_dir = tempfile.mkdtemp()
+            video_path = f"{temp_dir}/video.mp4"
+            cleanup_video = True
+
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                response = await client.get(body.video_url, follow_redirects=True)
+                response.raise_for_status()
+
+                with open(video_path, 'wb') as f:
+                    f.write(response.content)
+        else:
+            video_path = body.video_url
+
+        from pathlib import Path
+        if not Path(video_path).exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Video file not found: {video_path}"
+            )
+
+        # Configure recognition
+        config = ExerciseRecognitionConfig(
+            min_confidence=body.min_confidence,
+            enable_rep_counting=body.enable_rep_counting,
+            enable_form_analysis=body.enable_form_analysis,
+            sample_interval=body.sample_interval
+        )
+
+        # Detect exercise
+        result = await detect_exercise(video_path, config)
+
+        # Cleanup
+        if cleanup_video and video_path:
+            try:
+                Path(video_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+        return {
+            "success": result.success,
+            "detected_exercise": result.detected_exercise,
+            "exercise_name": result.exercise_name,
+            "confidence": result.confidence,
+            "category": result.category,
+            "muscle_groups": result.muscle_groups,
+            "rep_count_estimate": result.rep_count_estimate,
+            "avg_rep_duration": result.avg_rep_duration,
+            "description": result.description,
+            "recommendations": result.recommendations,
+            "complementary_exercises": result.complementary_exercises,
+            "form_score": result.form_score,
+            "form_observations": result.form_observations,
+            "processing_time": result.processing_time,
+            "frames_analyzed": result.frames_analyzed,
+            "error": result.error
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Exercise detection failed: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Exercise detection failed: {str(e)}"
+        )
+
+
+@app.get("/api/video/detect-exercise/exercises")
+async def get_supported_exercises():
+    """
+    Get list of all supported exercises.
+
+    Returns exercise details including:
+    - name, category, muscle groups
+    - equipment options
+    - difficulty level
+    - form cues
+    - complementary exercises
+    """
+    from backend.exercise_recognition import get_supported_exercises
+
+    exercises = get_supported_exercises()
+
+    return {
+        "total": len(exercises),
+        "exercises": exercises
+    }
+
+
+@app.get("/api/video/detect-exercise/categories")
+async def get_exercise_categories():
+    """
+    Get exercise categories.
+
+    Categories: legs, back, chest, shoulders, arms, core, glutes, full_body
+    """
+    from backend.exercise_recognition import get_exercise_categories
+
+    return {
+        "categories": get_exercise_categories()
+    }
+
+
+@app.get("/api/video/detect-exercise/exercise/{exercise_id}")
+async def get_exercise_details(exercise_id: str):
+    """
+    Get detailed information about a specific exercise.
+
+    Includes form cues, target muscles, equipment options,
+    and complementary exercises.
+    """
+    from backend.exercise_recognition import get_exercise_by_id
+
+    exercise = get_exercise_by_id(exercise_id)
+
+    if not exercise:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Exercise not found: {exercise_id}"
+        )
+
+    return {
+        "exercise": exercise
+    }
+
+
+@app.get("/api/video/detect-exercise/category/{category}")
+async def get_exercises_by_category(category: str):
+    """
+    Get exercises in a specific category.
+
+    Categories: legs, back, chest, shoulders, arms, core, glutes, full_body
+    """
+    from backend.exercise_recognition import get_exercises_by_category, get_exercise_categories
+
+    valid_categories = get_exercise_categories()
+    if category not in valid_categories:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid category: {category}. Valid: {', '.join(valid_categories)}"
+        )
+
+    exercises = get_exercises_by_category(category)
+
+    return {
+        "category": category,
+        "count": len(exercises),
+        "exercises": exercises
+    }
+
+
+# ============================================================================
+# Rate Limiting and Quota Endpoints (v2.0)
+# ============================================================================
+
+@app.get("/api/quota/status")
+@limiter.limit("60/minute")
+async def get_user_quota_status(request: Request):
+    """
+    Get current quota status for the authenticated user.
+
+    Returns usage counts, limits, and reset time for all quota types.
+    Rate limit headers included in response.
+    """
+    status = await get_quota_status(request)
+
+    # Build response with headers
+    response = JSONResponse(content=status)
+
+    # Add rate limit headers
+    headers = get_rate_limit_headers(request)
+    for key, value in headers.items():
+        response.headers[key] = value
+
+    return response
+
+
+@app.get("/api/quota/tiers")
+async def get_quota_tiers():
+    """
+    Get available subscription tiers and their limits.
+
+    Returns all tiers with their quota limits and rate limits.
+    """
+    from backend.rate_limiter import TIER_QUOTAS, TIER_RATE_LIMITS
+
+    tiers = {}
+    for tier_name in [Tier.FREE, Tier.PRO, Tier.ENTERPRISE]:
+        tiers[tier_name] = {
+            "quotas": TIER_QUOTAS[tier_name],
+            "rate_limit": TIER_RATE_LIMITS[tier_name]
+        }
+
+    return {
+        "tiers": tiers,
+        "current_tier_header": "X-User-Tier",
+        "upgrade_url": "/api/upgrade"
+    }
+
+
+# ============================================================================
+# Transcription Endpoints (v2.0)
+# ============================================================================
+
+class TranscriptionRequest(BaseModel):
+    """Request model for transcription."""
+    video_url: Optional[str] = None
+    audio_url: Optional[str] = None
+    language: Optional[str] = "auto"  # en, es, pt, auto
+    output_format: Optional[str] = "json"  # json, srt, vtt
+
+@app.post("/api/transcription")
+@limiter.limit("30/minute")
+async def transcribe_media(request: Request, body: TranscriptionRequest):
+    """
+    Transcribe audio or video with word-level timestamps.
+
+    Supports:
+    - Multiple languages (en, es, pt, auto-detect)
+    - Word-level timestamps for caption sync
+    - Output formats: JSON, SRT, VTT
+
+    Returns transcription with timing for each word.
+    """
+    from backend.transcription import transcribe_video, transcribe_audio, generate_srt, generate_vtt
+
+    # Check quota
+    await check_quota(request, "transcription_jobs")
+
+    # Validate input
+    if not body.video_url and not body.audio_url:
+        raise HTTPException(
+            status_code=400,
+            detail="Either video_url or audio_url is required"
+        )
+
+    try:
+        # Download file if URL provided
+        source_url = body.video_url or body.audio_url
+        is_video = body.video_url is not None
+
+        # For now, assume local file paths
+        # TODO: Add URL download support
+        if is_video:
+            result = await transcribe_video(source_url, body.language)
+        else:
+            result = await transcribe_audio(source_url, body.language)
+
+        # Format output
+        if body.output_format == "srt":
+            return {
+                "format": "srt",
+                "content": generate_srt(result),
+                "language": result.language,
+                "duration": result.duration,
+                "word_count": len(result.words)
+            }
+        elif body.output_format == "vtt":
+            return {
+                "format": "vtt",
+                "content": generate_vtt(result),
+                "language": result.language,
+                "duration": result.duration,
+                "word_count": len(result.words)
+            }
+        else:
+            return result.to_dict()
+
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        logger.error(f"Transcription failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Transcription failed: {str(e)}")
+
+
+# ============================================================================
+# Caption Style Endpoints (v2.0)
+# ============================================================================
+
+@app.get("/api/captions/styles")
+async def get_caption_styles():
+    """
+    Get all available caption style templates.
+
+    Returns 10 pre-built styles with previews and metadata.
+    """
+    from backend.caption_styles import list_styles
+
+    return {
+        "styles": list_styles(),
+        "count": len(list_styles())
+    }
+
+
+@app.get("/api/captions/styles/{style_name}")
+async def get_caption_style_detail(style_name: str):
+    """
+    Get details for a specific caption style.
+
+    Args:
+        style_name: Style name (trending, glow, minimal, etc.)
+    """
+    from backend.caption_styles import get_style
+
+    style = get_style(style_name)
+    if not style:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Style '{style_name}' not found. Use GET /api/captions/styles for available styles."
+        )
+
+    return style.to_dict()
+
+
+@app.get("/api/captions/styles/platform/{platform}")
+async def get_styles_for_platform(platform: str):
+    """
+    Get caption styles recommended for a specific platform.
+
+    Args:
+        platform: Platform name (tiktok, instagram, youtube, linkedin)
+    """
+    from backend.caption_styles import get_styles_for_platform as get_platform_styles
+
+    styles = get_platform_styles(platform)
+    return {
+        "platform": platform,
+        "styles": styles,
+        "count": len(styles)
+    }
+
+
+class CustomStyleRequest(BaseModel):
+    """Request model for creating custom caption style."""
+    name: Optional[str] = "custom"
+    font_family: Optional[str] = "Arial"
+    font_size: Optional[int] = 48
+    font_color: Optional[str] = "#FFFFFF"
+    outline_color: Optional[str] = "#000000"
+    outline_width: Optional[int] = 2
+    shadow_color: Optional[str] = None
+    shadow_offset: Optional[int] = 0
+    background_color: Optional[str] = None
+    background_opacity: Optional[float] = 0.0
+    highlight_color: Optional[str] = "#FFFF00"
+    highlight_style: Optional[str] = "color"
+    animation: Optional[str] = "none"
+    position: Optional[str] = "bottom"
+
+
+@app.post("/api/captions/styles/custom")
+async def create_custom_caption_style(body: CustomStyleRequest):
+    """
+    Create a custom caption style.
+
+    Validates parameters and returns the custom style definition.
+    """
+    from backend.caption_styles import create_custom_style, validate_custom_style
+
+    # Validate
+    errors = validate_custom_style(body.model_dump())
+    if errors:
+        raise HTTPException(
+            status_code=400,
+            detail={"errors": errors}
+        )
+
+    # Create custom style
+    style = create_custom_style(**body.model_dump())
+    return style.to_dict()
+
+
+@app.get("/api/captions/fonts")
+async def get_available_fonts():
+    """
+    Get list of available fonts for caption styling.
+    """
+    from backend.caption_styles import list_available_fonts
+
+    fonts = list_available_fonts()
+    return {
+        "fonts": fonts,
+        "count": len(fonts)
+    }
+
+
+@app.post("/api/captions/recommend")
+async def recommend_caption_style(
+    platform: Optional[str] = None,
+    content_type: Optional[str] = None,
+    brand_color: Optional[str] = None
+):
+    """
+    Get style recommendations based on context.
+
+    Args:
+        platform: Target platform (tiktok, instagram, youtube, linkedin)
+        content_type: Content type (fitness, tutorial, vlog, professional)
+        brand_color: Brand color to match (hex)
+    """
+    from backend.caption_styles import recommend_style
+
+    recommendations = recommend_style(
+        platform=platform,
+        content_type=content_type,
+        brand_color=brand_color
+    )
+
+    return {
+        "recommendations": recommendations,
+        "count": len(recommendations)
+    }
+
+
+# ============================================================================
+# Original Endpoints
+# ============================================================================
 
 @app.post("/api/ai/chat")
 async def ai_chat(request: AIRequest):

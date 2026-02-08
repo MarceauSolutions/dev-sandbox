@@ -1,0 +1,205 @@
+{
+  "id": "n8n-agent-v3",
+  "name": "n8n Agent Orchestrator v3 - Claude Code Parity",
+  "description": "Upgrade the Universal Agent Orchestrator to match and exceed Claude Code VS Code extension capabilities, utilizing n8n's new Human-in-the-Loop features",
+  "created": "2026-02-06",
+  "status": "ready",
+  "priority": "high",
+  "stories": [
+    {
+      "id": "story-001",
+      "title": "Add Human-in-the-Loop (HITL) for Tool Approvals",
+      "description": "Implement n8n's new HITL capabilities to require human approval before executing destructive or sensitive tools. Use the Chat node's 'Send and Wait for Response' operation.",
+      "acceptance_criteria": [
+        "Add Chat Trigger node as alternative entry point",
+        "Before file_delete, git_push, rm commands - pause and wait for approval",
+        "Use buttons for structured approval (Approve/Deny/Modify)",
+        "Set timeout limits (default 5 minutes)",
+        "Route approvals to Telegram via existing notification setup",
+        "Log approval/denial in Google Sheets"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow (ID: 1s52PkA1lY1lHfGP)"
+      ],
+      "checkpoint": true,
+      "checkpoint_reason": "Core HITL functionality - verify approval flow works before proceeding"
+    },
+    {
+      "id": "story-002",
+      "title": "Add Grep/Search Tool",
+      "description": "Add ripgrep-like search capability to find content across files",
+      "acceptance_criteria": [
+        "Add /search/grep endpoint to Python Bridge API",
+        "Support regex patterns",
+        "Support file type filtering (--type js, --type py)",
+        "Support context lines (-A, -B, -C)",
+        "Limit results to prevent overwhelming responses",
+        "Route through Tool Router in n8n workflow"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "execution/agent_bridge_api.py",
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": false
+    },
+    {
+      "id": "story-003",
+      "title": "Add Glob File Pattern Tool",
+      "description": "Add glob-based file finding capability",
+      "acceptance_criteria": [
+        "Add /files/glob endpoint to Python Bridge API",
+        "Support patterns like **/*.py, src/**/*.ts",
+        "Return file paths sorted by modification time",
+        "Support path filtering",
+        "Route through Tool Router in n8n workflow"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "execution/agent_bridge_api.py",
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": false
+    },
+    {
+      "id": "story-004",
+      "title": "Add Web Search Tool",
+      "description": "Add web search capability using available APIs",
+      "acceptance_criteria": [
+        "Add web_search tool to available tools",
+        "Use available search API (Serper, Brave, or scraping)",
+        "Return structured search results",
+        "Include source URLs",
+        "Add to Tool Router"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "execution/agent_bridge_api.py",
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": true,
+      "checkpoint_reason": "Search tools complete - verify grep, glob, web_search work"
+    },
+    {
+      "id": "story-005",
+      "title": "Add Plan Mode",
+      "description": "Implement plan mode where agent creates a plan and waits for approval before executing",
+      "acceptance_criteria": [
+        "Add plan_mode flag to request config",
+        "When enabled, agent first outputs a plan",
+        "Use HITL to get plan approval",
+        "Only proceed with execution after approval",
+        "Allow plan modification via chat"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": false
+    },
+    {
+      "id": "story-006",
+      "title": "Add Todo Tracking",
+      "description": "Implement todo list tracking for complex multi-step tasks",
+      "acceptance_criteria": [
+        "Add todo_write tool for agent to track progress",
+        "Store todos in session state",
+        "Include todo status in final response",
+        "Support pending/in_progress/completed states",
+        "Log todos to Google Sheets"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": false
+    },
+    {
+      "id": "story-007",
+      "title": "Add Chat-Based Interface",
+      "description": "Add interactive chat interface using n8n Chat Trigger",
+      "acceptance_criteria": [
+        "Add Chat Trigger node as entry point",
+        "Support multi-turn conversations",
+        "Maintain session context across messages",
+        "Show agent thinking/tool usage in real-time",
+        "Support conversation history"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": true,
+      "checkpoint_reason": "Interactive features complete - verify chat interface works"
+    },
+    {
+      "id": "story-008",
+      "title": "Add Session Resume/Checkpoint",
+      "description": "Allow resuming interrupted sessions from last checkpoint",
+      "acceptance_criteria": [
+        "Store full session state in Google Sheets on each iteration",
+        "Add resume endpoint to webhook",
+        "Load previous state when session_id provided with resume=true",
+        "Support explicit checkpoints for complex tasks",
+        "Show session history on resume"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": false
+    },
+    {
+      "id": "story-009",
+      "title": "Add Background Task Support",
+      "description": "Allow long-running tasks to execute in background with status checks",
+      "acceptance_criteria": [
+        "Add background=true flag to request config",
+        "Return task_id immediately for background tasks",
+        "Add /status/{task_id} endpoint for checking progress",
+        "Send Telegram notification on completion",
+        "Support abort/cancel for background tasks"
+      ],
+      "files_to_create": [],
+      "files_to_modify": [
+        "Universal-Agent-Orchestrator workflow"
+      ],
+      "checkpoint": true,
+      "checkpoint_reason": "All core features complete - full system test"
+    },
+    {
+      "id": "story-010",
+      "title": "Documentation and Testing",
+      "description": "Update documentation and create test suite",
+      "acceptance_criteria": [
+        "Update docs/AGENT-ORCHESTRATOR-GUIDE.md with all new features",
+        "Create test workflow for each tool",
+        "Document HITL approval flow",
+        "Create quick-start examples",
+        "Update memory notes in CLAUDE.md"
+      ],
+      "files_to_create": [
+        "docs/AGENT-ORCHESTRATOR-V3-GUIDE.md"
+      ],
+      "files_to_modify": [
+        "docs/AGENT-ORCHESTRATOR-GUIDE.md",
+        ".claude/projects/-Users-williammarceaujr--dev-sandbox/memory/MEMORY.md"
+      ],
+      "checkpoint": false
+    }
+  ],
+  "technical_notes": {
+    "n8n_hitl_docs": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.wait/",
+    "chat_trigger_docs": "https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/",
+    "current_workflow_id": "1s52PkA1lY1lHfGP",
+    "ec2_url": "http://34.193.98.97:5678",
+    "python_bridge": "http://localhost:5010 on EC2"
+  },
+  "estimated_effort": {
+    "total_stories": 10,
+    "checkpoints": 4,
+    "estimated_hours": 8,
+    "complexity": "medium-high"
+  }
+}
