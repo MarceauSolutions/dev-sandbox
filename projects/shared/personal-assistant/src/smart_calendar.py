@@ -37,6 +37,9 @@ except ImportError:
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
+# Default transition time between blocks (minutes)
+DEFAULT_TRANSITION_MINUTES = 15
+
 
 class Priority(Enum):
     """Hormozi-style priority levels"""
@@ -186,6 +189,117 @@ class SmartCalendar:
                 token.write(creds.to_json())
 
         self.service = build('calendar', 'v3', credentials=creds)
+
+    def get_existing_events(self, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
+        """Fetch existing calendar events for a date range"""
+        if not self.service:
+            return []
+
+        try:
+            # Fetch events from Google Calendar
+            events_result = self.service.events().list(
+                calendarId='primary',
+                timeMin=start_date.isoformat() + 'Z' if start_date.tzinfo is None else start_date.isoformat(),
+                timeMax=end_date.isoformat() + 'Z' if end_date.tzinfo is None else end_date.isoformat(),
+                singleEvents=True,
+                orderBy='startTime'
+            ).execute()
+
+            events = events_result.get('items', [])
+
+            # Parse events into a consistent format
+            parsed_events = []
+            for event in events:
+                start = event.get('start', {})
+                end = event.get('end', {})
+
+                # Handle all-day events vs timed events
+                if 'dateTime' in start:
+                    start_dt = datetime.fromisoformat(start['dateTime'].replace('Z', '+00:00'))
+                    end_dt = datetime.fromisoformat(end['dateTime'].replace('Z', '+00:00'))
+                else:
+                    # All-day event - skip for conflict detection
+                    continue
+
+                parsed_events.append({
+                    'id': event.get('id'),
+                    'summary': event.get('summary', 'Untitled'),
+                    'start': start_dt,
+                    'end': end_dt,
+                    'description': event.get('description', '')
+                })
+
+            return parsed_events
+        except Exception as e:
+            print(f"Warning: Could not fetch existing events: {e}")
+            return []
+
+    def check_conflicts(self, new_block: TimeBlock, existing_events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Check if a new block conflicts with existing events"""
+        conflicts = []
+
+        for event in existing_events:
+            event_start = event['start']
+            event_end = event['end']
+
+            # Remove timezone info for comparison if needed
+            if new_block.start.tzinfo is None and event_start.tzinfo is not None:
+                event_start = event_start.replace(tzinfo=None)
+                event_end = event_end.replace(tzinfo=None)
+
+            # Check for overlap: A overlaps B if A.start < B.end AND A.end > B.start
+            if new_block.start < event_end and new_block.end > event_start:
+                conflicts.append(event)
+
+        return conflicts
+
+    def check_duplicate(self, new_block: TimeBlock, existing_events: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """Check if a new block is a duplicate of an existing event"""
+        for event in existing_events:
+            event_start = event['start']
+
+            # Remove timezone info for comparison if needed
+            if new_block.start.tzinfo is None and event_start.tzinfo is not None:
+                event_start = event_start.replace(tzinfo=None)
+
+            # Check for duplicate: same summary and same start time (within 5 min)
+            time_diff = abs((new_block.start - event_start).total_seconds())
+
+            # Normalize summaries for comparison (remove emojis and extra spaces)
+            new_summary = ''.join(c for c in new_block.summary if c.isalnum() or c.isspace()).lower().strip()
+            existing_summary = ''.join(c for c in event['summary'] if c.isalnum() or c.isspace()).lower().strip()
+
+            if time_diff < 300 and (new_summary in existing_summary or existing_summary in new_summary):
+                return event
+
+        return None
+
+    def add_transition_time(self, blocks: List[TimeBlock], transition_minutes: int = DEFAULT_TRANSITION_MINUTES) -> List[TimeBlock]:
+        """Add transition time between blocks by ending each block earlier"""
+        if not blocks:
+            return blocks
+
+        # Sort blocks by start time
+        sorted_blocks = sorted(blocks, key=lambda b: b.start)
+
+        # Adjust end times to leave transition buffer
+        for i, block in enumerate(sorted_blocks):
+            # Check if there's a next block on the same day
+            if i < len(sorted_blocks) - 1:
+                next_block = sorted_blocks[i + 1]
+
+                # Only adjust if blocks are on the same day and adjacent
+                if block.start.date() == next_block.start.date():
+                    gap = (next_block.start - block.end).total_seconds() / 60
+
+                    # If gap is less than transition time, shorten current block
+                    if gap < transition_minutes:
+                        new_end = block.end - timedelta(minutes=transition_minutes - int(gap))
+                        # Don't make blocks shorter than 15 minutes
+                        if (new_end - block.start).total_seconds() >= 900:
+                            block.end = new_end
+
+        return sorted_blocks
 
     def generate_daily_habits(self, date: datetime) -> List[TimeBlock]:
         """Generate daily habit blocks based on context"""
@@ -439,14 +553,80 @@ class SmartCalendar:
 
         return all_blocks
 
-    def create_blocks(self, blocks: List[TimeBlock], dry_run: bool = False) -> Dict[str, Any]:
-        """Create time blocks in Google Calendar"""
+    def create_blocks(
+        self,
+        blocks: List[TimeBlock],
+        dry_run: bool = False,
+        skip_conflict_check: bool = False,
+        add_transitions: bool = True
+    ) -> Dict[str, Any]:
+        """Create time blocks in Google Calendar with conflict/duplicate detection"""
         if not self.service:
             return {"success": False, "error": "Google Calendar not available"}
 
-        results = {"created": 0, "failed": 0, "blocks": []}
+        results = {
+            "created": 0,
+            "failed": 0,
+            "skipped_duplicates": 0,
+            "conflicts": [],
+            "blocks": []
+        }
+
+        # Add transition time between blocks
+        if add_transitions:
+            blocks = self.add_transition_time(blocks)
+
+        # Get date range for existing events
+        if blocks:
+            min_date = min(b.start for b in blocks)
+            max_date = max(b.end for b in blocks) + timedelta(days=1)
+            existing_events = self.get_existing_events(min_date, max_date)
+        else:
+            existing_events = []
 
         for block in blocks:
+            # Check for duplicates
+            duplicate = self.check_duplicate(block, existing_events)
+            if duplicate:
+                results["blocks"].append({
+                    "summary": block.summary,
+                    "start": block.start.isoformat(),
+                    "end": block.end.isoformat(),
+                    "status": "skipped_duplicate",
+                    "existing_event": duplicate['summary']
+                })
+                results["skipped_duplicates"] += 1
+                continue
+
+            # Check for conflicts
+            if not skip_conflict_check:
+                conflicts = self.check_conflicts(block, existing_events)
+                if conflicts:
+                    conflict_info = {
+                        "new_block": {
+                            "summary": block.summary,
+                            "start": block.start.isoformat(),
+                            "end": block.end.isoformat()
+                        },
+                        "conflicting_events": [
+                            {
+                                "summary": c['summary'],
+                                "start": c['start'].isoformat(),
+                                "end": c['end'].isoformat()
+                            }
+                            for c in conflicts
+                        ]
+                    }
+                    results["conflicts"].append(conflict_info)
+                    results["blocks"].append({
+                        "summary": block.summary,
+                        "start": block.start.isoformat(),
+                        "end": block.end.isoformat(),
+                        "status": "conflict",
+                        "conflicts_with": [c['summary'] for c in conflicts]
+                    })
+                    continue
+
             try:
                 if dry_run:
                     results["blocks"].append({
@@ -469,6 +649,14 @@ class SmartCalendar:
                         "id": event.get("id")
                     })
                     results["created"] += 1
+
+                    # Add to existing events for subsequent conflict checks
+                    existing_events.append({
+                        'id': event.get("id"),
+                        'summary': block.summary,
+                        'start': block.start,
+                        'end': block.end
+                    })
             except Exception as e:
                 results["blocks"].append({
                     "summary": block.summary,
@@ -477,8 +665,117 @@ class SmartCalendar:
                 })
                 results["failed"] += 1
 
+        results["success"] = results["failed"] == 0 and len(results["conflicts"]) == 0
+        return results
+
+    def delete_events(
+        self,
+        events: List[Dict[str, Any]],
+        dry_run: bool = True,
+        require_confirmation: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Delete events from Google Calendar with safety checks.
+
+        CAUTION: This is a destructive operation!
+        - Always shows preview first
+        - Requires explicit confirmation
+        - Cannot be undone
+        """
+        if not self.service:
+            return {"success": False, "error": "Google Calendar not available"}
+
+        results = {
+            "deleted": 0,
+            "failed": 0,
+            "events": []
+        }
+
+        if not events:
+            return {"success": True, "deleted": 0, "events": [], "message": "No events to delete"}
+
+        # Show what will be deleted
+        print("\n🗑️  EVENTS TO DELETE:")
+        print("=" * 60)
+        for i, event in enumerate(events, 1):
+            start_time = event['start'].strftime('%Y-%m-%d %H:%M') if hasattr(event['start'], 'strftime') else str(event['start'])
+            end_time = event['end'].strftime('%H:%M') if hasattr(event['end'], 'strftime') else str(event['end'])
+            print(f"  {i}. {event['summary']}")
+            print(f"     Time: {start_time} - {end_time}")
+            print(f"     ID: {event.get('id', 'N/A')}")
+        print("=" * 60)
+
+        if dry_run:
+            print("\n📋 Dry run - no events deleted. Use --delete --confirm to actually delete.")
+            for event in events:
+                results["events"].append({
+                    "summary": event['summary'],
+                    "status": "dry_run",
+                    "id": event.get('id')
+                })
+            results["success"] = True
+            return results
+
+        # Double confirmation for safety
+        if require_confirmation:
+            print("\n⚠️  WARNING: This action CANNOT be undone!")
+            confirm1 = input(f"Are you sure you want to delete {len(events)} event(s)? (yes/no): ")
+            if confirm1.lower() != 'yes':
+                print("Cancelled.")
+                return {"success": False, "deleted": 0, "events": [], "message": "Cancelled by user"}
+
+            confirm2 = input("Type 'DELETE' to confirm: ")
+            if confirm2 != 'DELETE':
+                print("Cancelled - confirmation not matched.")
+                return {"success": False, "deleted": 0, "events": [], "message": "Confirmation not matched"}
+
+        # Actually delete
+        for event in events:
+            event_id = event.get('id')
+            if not event_id:
+                results["events"].append({
+                    "summary": event['summary'],
+                    "status": "failed",
+                    "error": "No event ID"
+                })
+                results["failed"] += 1
+                continue
+
+            try:
+                self.service.events().delete(
+                    calendarId='primary',
+                    eventId=event_id
+                ).execute()
+                results["events"].append({
+                    "summary": event['summary'],
+                    "status": "deleted",
+                    "id": event_id
+                })
+                results["deleted"] += 1
+                print(f"   🗑️  Deleted: {event['summary']}")
+            except Exception as e:
+                results["events"].append({
+                    "summary": event['summary'],
+                    "status": "failed",
+                    "error": str(e)
+                })
+                results["failed"] += 1
+                print(f"   ❌ Failed to delete {event['summary']}: {e}")
+
         results["success"] = results["failed"] == 0
         return results
+
+    def find_events_by_summary(self, search_term: str, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
+        """Find events matching a search term"""
+        existing = self.get_existing_events(start_date, end_date)
+        search_lower = search_term.lower()
+
+        matches = [
+            e for e in existing
+            if search_lower in e['summary'].lower()
+        ]
+
+        return matches
 
     def schedule_from_natural_language(self, request: str, start_date: Optional[datetime] = None) -> List[TimeBlock]:
         """
@@ -550,6 +847,11 @@ def main():
     parser.add_argument("--date", type=str, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--dry-run", action="store_true", help="Preview without creating events")
     parser.add_argument("--context", type=str, help="Path to context JSON file")
+    parser.add_argument("--force", action="store_true", help="Skip conflict confirmation (create anyway)")
+    parser.add_argument("--no-transitions", action="store_true", help="Don't add transition time between blocks")
+    parser.add_argument("--show-existing", action="store_true", help="Show existing events for the date range")
+    parser.add_argument("--delete", type=str, metavar="SEARCH", help="Delete events matching search term (DANGEROUS)")
+    parser.add_argument("--confirm", action="store_true", help="Confirm deletion (required with --delete)")
 
     args = parser.parse_args()
 
@@ -582,6 +884,50 @@ def main():
     else:
         start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
+    # Determine end date for existing events check
+    if args.week:
+        end_date = start_date + timedelta(days=7)
+    else:
+        end_date = start_date + timedelta(days=1)
+
+    # Show existing events if requested or always show for awareness
+    existing_events = calendar.get_existing_events(start_date, end_date)
+    if existing_events:
+        print(f"\n📅 Existing events ({start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}):")
+        print("-" * 60)
+        for event in existing_events:
+            start_time = event['start'].strftime('%H:%M') if hasattr(event['start'], 'strftime') else str(event['start'])
+            end_time = event['end'].strftime('%H:%M') if hasattr(event['end'], 'strftime') else str(event['end'])
+            date_str = event['start'].strftime('%a %m/%d') if hasattr(event['start'], 'strftime') else ''
+            print(f"  • {date_str} {start_time}-{end_time}: {event['summary']}")
+        print("-" * 60)
+        print()
+
+    if args.show_existing:
+        return  # Only show existing events, don't generate new ones
+
+    # Handle delete operation
+    if args.delete:
+        print(f"\n🔍 Searching for events matching: '{args.delete}'")
+        matches = calendar.find_events_by_summary(args.delete, start_date, end_date)
+
+        if not matches:
+            print(f"❌ No events found matching '{args.delete}'")
+            return
+
+        print(f"Found {len(matches)} matching event(s)")
+
+        # Delete with appropriate confirmation level
+        delete_results = calendar.delete_events(
+            matches,
+            dry_run=not args.confirm,
+            require_confirmation=True
+        )
+
+        if delete_results.get("deleted", 0) > 0:
+            print(f"\n✅ Deleted {delete_results['deleted']} event(s)")
+        return
+
     # Generate blocks
     if args.schedule:
         blocks = calendar.schedule_from_natural_language(args.schedule, start_date)
@@ -592,22 +938,83 @@ def main():
         blocks = calendar.generate_daily_habits(start_date)
         blocks.extend(calendar.generate_content_blocks(start_date))
 
-    # Create or preview
-    print(f"{'Preview' if args.dry_run else 'Creating'} {len(blocks)} time blocks...")
+    # First pass: check for conflicts and duplicates (always dry run first)
+    print(f"🔍 Checking {len(blocks)} proposed time blocks for conflicts...")
     print("=" * 60)
 
-    results = calendar.create_blocks(blocks, dry_run=args.dry_run)
+    check_results = calendar.create_blocks(
+        blocks,
+        dry_run=True,
+        skip_conflict_check=False,
+        add_transitions=not args.no_transitions
+    )
 
-    for block_result in results["blocks"]:
-        status = "✅" if block_result["status"] in ["created", "dry_run"] else "❌"
-        print(f"{status} {block_result['summary']}")
-        print(f"   {block_result['start']} - {block_result.get('end', 'N/A').split('T')[1] if 'T' in block_result.get('end', '') else 'N/A'}")
+    # Display results by category
+    duplicates = [b for b in check_results["blocks"] if b["status"] == "skipped_duplicate"]
+    conflicts = [b for b in check_results["blocks"] if b["status"] == "conflict"]
+    ready = [b for b in check_results["blocks"] if b["status"] == "dry_run"]
 
-    print("=" * 60)
-    print(f"Created: {results['created']} | Failed: {results['failed']}")
+    if duplicates:
+        print(f"\n⚠️  {len(duplicates)} DUPLICATES (will skip):")
+        for dup in duplicates:
+            print(f"   ⏭️  {dup['summary']}")
+            print(f"      Already exists: {dup.get('existing_event', 'similar event')}")
 
+    if conflicts:
+        print(f"\n🚨 {len(conflicts)} CONFLICTS DETECTED:")
+        for conf in conflicts:
+            print(f"   ⚠️  {conf['summary']}")
+            print(f"      Time: {conf['start'].split('T')[1][:5]} - {conf['end'].split('T')[1][:5]}")
+            print(f"      Conflicts with: {', '.join(conf.get('conflicts_with', []))}")
+
+    if ready:
+        print(f"\n✅ {len(ready)} events ready to create:")
+        for blk in ready[:10]:  # Show first 10
+            print(f"   • {blk['summary']}")
+            print(f"     {blk['start'].split('T')[1][:5]} - {blk['end'].split('T')[1][:5]}")
+        if len(ready) > 10:
+            print(f"   ... and {len(ready) - 10} more")
+
+    print("\n" + "=" * 60)
+    print(f"Summary: {len(ready)} ready | {len(duplicates)} duplicates | {len(conflicts)} conflicts")
+
+    # Handle conflicts
+    if conflicts and not args.force and not args.dry_run:
+        print("\n⚠️  There are conflicts! Options:")
+        print("   1. Add --force to create anyway (will overlap)")
+        print("   2. Resolve conflicts manually in Google Calendar first")
+        print("   3. Use --dry-run to preview without creating")
+        return
+
+    # Create events if not dry run
     if args.dry_run:
-        print("\n⚠️  Dry run - no events created. Remove --dry-run to create events.")
+        print("\n📋 Dry run - no events created. Remove --dry-run to create events.")
+    else:
+        if not ready:
+            print("\n❌ No events to create (all duplicates or conflicts)")
+            return
+
+        # Confirm before creating
+        if not args.force:
+            confirm = input(f"\nCreate {len(ready)} events? (y/N): ")
+            if confirm.lower() != 'y':
+                print("Cancelled.")
+                return
+
+        # Actually create the events (skip duplicates, handle conflicts based on --force)
+        print(f"\n🚀 Creating {len(ready)} events...")
+        final_results = calendar.create_blocks(
+            blocks,
+            dry_run=False,
+            skip_conflict_check=args.force,
+            add_transitions=not args.no_transitions
+        )
+
+        created = [b for b in final_results["blocks"] if b["status"] == "created"]
+        print(f"\n✅ Created {len(created)} events successfully!")
+
+        for event in created:
+            print(f"   ✅ {event['summary']}")
 
 
 if __name__ == "__main__":
