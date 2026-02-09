@@ -866,6 +866,150 @@ async def generate_content_metadata(
     return metadata.to_dict()
 
 
+# ============================================================================
+# Content Calendar & Strategy Endpoints
+# ============================================================================
+
+@app.get("/api/content/calendar/today")
+@limiter.limit("120/minute")
+async def get_today_content(request: Request):
+    """
+    Get content strategy for today.
+
+    Returns the recommended topic, hook, format, and filming tips for today.
+    Use this to know what content to film right now.
+    """
+    from backend.content_calendar import get_today_content, generate_caption
+
+    content = get_today_content()
+    if not content:
+        raise HTTPException(status_code=404, detail="No content strategy for today")
+
+    # Also include pre-generated captions
+    captions = generate_caption(content.day.lower())
+
+    return {
+        "day": content.day,
+        "theme": content.theme,
+        "topic": content.topic,
+        "hook": content.hook,
+        "format": content.format,
+        "viral_angle": content.viral_angle,
+        "filming_tips": content.filming_tips,
+        "hashtag_strategy": content.hashtag_strategy,
+        "captions": captions
+    }
+
+
+@app.get("/api/content/calendar/{day}")
+@limiter.limit("120/minute")
+async def get_day_content(request: Request, day: str):
+    """
+    Get content strategy for a specific day.
+
+    Args:
+        day: Day of week (monday, tuesday, etc.)
+
+    Returns the recommended topic, hook, format, and filming tips.
+    """
+    from backend.content_calendar import get_day_content, generate_caption
+
+    content = get_day_content(day)
+    if not content:
+        valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        raise HTTPException(
+            status_code=404,
+            detail=f"No content strategy for '{day}'. Valid days: {', '.join(valid_days)}"
+        )
+
+    captions = generate_caption(day.lower())
+
+    return {
+        "day": content.day,
+        "theme": content.theme,
+        "topic": content.topic,
+        "hook": content.hook,
+        "format": content.format,
+        "viral_angle": content.viral_angle,
+        "filming_tips": content.filming_tips,
+        "hashtag_strategy": content.hashtag_strategy,
+        "captions": captions
+    }
+
+
+@app.get("/api/content/calendar/week/plan")
+@limiter.limit("60/minute")
+async def get_weekly_plan(request: Request, start_date: Optional[str] = None):
+    """
+    Get full weekly content plan.
+
+    Args:
+        start_date: Start date (YYYY-MM-DD), defaults to next Monday
+
+    Returns complete weekly content plan with all days, themes, and estimated hours.
+    """
+    from backend.content_calendar import get_weekly_plan
+    from datetime import datetime
+
+    parsed_date = None
+    if start_date:
+        try:
+            parsed_date = datetime.strptime(start_date, "%Y-%m-%d")
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid date format: {start_date}. Use YYYY-MM-DD"
+            )
+
+    plan = get_weekly_plan(parsed_date)
+
+    return {
+        "week_start": plan.week_start,
+        "week_end": plan.week_end,
+        "total_content_pieces": plan.total_pieces,
+        "estimated_hours": plan.estimated_hours,
+        "days": [
+            {
+                "day": d.day,
+                "theme": d.theme,
+                "topic": d.topic,
+                "hook": d.hook,
+                "format": d.format,
+                "viral_angle": d.viral_angle,
+                "filming_tips": d.filming_tips,
+                "hashtag_strategy": d.hashtag_strategy
+            }
+            for d in plan.days
+        ]
+    }
+
+
+@app.get("/api/content/calendar/captions/{day}")
+@limiter.limit("120/minute")
+async def generate_captions(request: Request, day: str, custom_topic: Optional[str] = None):
+    """
+    Generate platform-specific captions for a day's content.
+
+    Args:
+        day: Day of week
+        custom_topic: Optional custom topic to override the default
+
+    Returns captions formatted for TikTok, Instagram Reel, YouTube Short, etc.
+    """
+    from backend.content_calendar import generate_caption
+
+    captions = generate_caption(day, custom_topic)
+
+    if "error" in captions:
+        valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        raise HTTPException(
+            status_code=404,
+            detail=f"No content strategy for '{day}'. Valid days: {', '.join(valid_days)}"
+        )
+
+    return captions
+
+
 @app.post("/api/video/remove-fillers")
 async def remove_fillers(request: FillerRemovalRequest):
     """
