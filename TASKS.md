@@ -12,9 +12,9 @@
 _Active tasks for the current session_
 
 ### Personal Training Business Setup
-- [ ] Test X image generation with new xAI credits
-- [ ] Review gamification system on EC2 (`/home/clawdbot/clawd/gamification/`)
-- [ ] Determine if gamification GUI should live in fitness-influencer or personal-training-business
+- [x] Test X image generation with new xAI credits ✅ API working
+- [x] Gamification GUI complete (fitness-influencer/frontend/gamification.html)
+- [x] Alex Hormozi content strategy created
 
 ### Infrastructure
 - [ ] Verify X scheduler posts at correct EST times (next post: 3 PM EST today)
@@ -24,9 +24,10 @@ _Active tasks for the current session_
 ## 📋 THIS WEEK — Near-Term Priorities
 
 ### Personal Training Business (P1)
-- [ ] Build Gamification App GUI (standalone HTML in fitness-influencer/frontend/)
-- [ ] Create backend API endpoints for gamification (`/api/player/*`, `/api/quests/*`)
+- [x] Build Gamification App GUI (standalone HTML in fitness-influencer/frontend/) ✅
+- [x] Create backend API endpoints for gamification (`/api/player/*`, `/api/quests/*`) ✅
 - [ ] Connect to EC2 gamification data
+- [ ] Record content videos for this week's plan
 
 ### Security Hardening (P1)
 - [ ] Enable HTTPS for n8n (Let's Encrypt) - credentials currently unencrypted
@@ -34,7 +35,7 @@ _Active tasks for the current session_
 - [ ] Enable rate limiting for n8n login
 
 ### Clawdbot Enhancements (P2)
-- [ ] Fix mac-sync.sh permissions (`chmod +x`)
+- [x] Fix mac-sync.sh permissions (`chmod +x`) ✅
 - [ ] Integrate Clawdbot with Voice AI (Twilio)
 - [ ] Add Ollama embedding support to memory-lancedb
 
@@ -83,6 +84,11 @@ git submodule update --remote --merge
 - [x] Fixed scheduler timezone (UTC → EST)
 - [x] Added xAI billing ($15/mo limit)
 - [x] Created personal-training-business folder structure
+- [x] Built Gamification App GUI + backend API
+- [x] Created Alex Hormozi style content strategy
+- [x] Created weekly content plan (Feb 10-16)
+- [x] Added task management API to fitness-influencer
+- [x] Fixed mac-sync.sh permissions
 
 ### 2026-02-08
 - [x] Clawdbot handoff system (HANDOFF.md, handoffs.json, sync scripts)
