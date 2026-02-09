@@ -1,0 +1,79 @@
+{
+  "$schema": "https://registry.modelcontextprotocol.io/schemas/manifest.json",
+  "name": "MCP Aggregator",
+  "version": "1.0.0",
+  "description": "Universal routing layer for AI services. Routes requests to the appropriate MCP server based on category, capability, and user preferences.",
+  "author": {
+    "name": "William Marceau Jr.",
+    "github": "williammarceaujr"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/williammarceaujr/mcp-aggregator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/williammarceaujr/mcp-aggregator.git"
+  },
+  "categories": [
+    "aggregator",
+    "routing",
+    "platform"
+  ],
+  "capabilities": [
+    "service_discovery",
+    "request_routing",
+    "multi_service_aggregation",
+    "caching",
+    "billing"
+  ],
+  "services": [
+    {
+      "name": "rideshare-comparison",
+      "namespace": "io.github.williammarceaujr/rideshare-comparison",
+      "category": "TRANSPORTATION",
+      "connectivity": "HTTP",
+      "latency": "<500ms",
+      "description": "Compare Uber and Lyft prices for any route"
+    },
+    {
+      "name": "hvac-quotes",
+      "namespace": "io.github.williammarceaujr/hvac-quotes",
+      "category": "HOME_SERVICES",
+      "connectivity": "EMAIL",
+      "latency": "async_24h",
+      "description": "Request quotes from HVAC distributors"
+    }
+  ],
+  "endpoints": {
+    "discover": "/discover",
+    "manifest": "/manifest",
+    "health": "/health",
+    "metrics": "/metrics"
+  },
+  "pricing": {
+    "model": "per_request",
+    "free_tier": {
+      "requests_per_month": 1000
+    },
+    "paid_tiers": [
+      {
+        "name": "basic",
+        "price_per_request": 0.01,
+        "includes": ["priority_routing"]
+      },
+      {
+        "name": "premium",
+        "price_per_request": 0.005,
+        "includes": ["priority_routing", "analytics", "dedicated_support"]
+      }
+    ]
+  },
+  "sla": {
+    "uptime_target": "99.5%",
+    "response_time_p50": "50ms",
+    "response_time_p99": "500ms"
+  },
+  "contact": {
+    "support": "support@mcp-aggregator.com",
+    "security": "security@mcp-aggregator.com"
+  }
+}

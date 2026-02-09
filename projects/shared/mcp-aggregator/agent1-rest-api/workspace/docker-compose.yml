@@ -1,0 +1,86 @@
+# MCP Aggregator API - Docker Compose for Local Development
+#
+# Usage:
+#   docker-compose up -d        # Start in background
+#   docker-compose logs -f      # View logs
+#   docker-compose down         # Stop and remove containers
+#
+# Access:
+#   API: http://localhost:8000
+#   Docs: http://localhost:8000/docs
+#   Health: http://localhost:8000/health
+
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-aggregator-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
+      - MCP_DEBUG=true
+      - MCP_WORKERS=1
+      - MCP_LOG_LEVEL=DEBUG
+      - MCP_ENABLE_RATE_LIMITING=true
+      - MCP_CORS_ORIGINS=*
+    volumes:
+      # Mount rideshare MCP source for development
+      - /Users/williammarceaujr./dev-sandbox/projects/mcp-aggregator/src/mcps/rideshare:/app/src/mcps/rideshare:ro
+      # Mount workspace for live reload during development
+      - .:/app:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - mcp-network
+
+  # Optional: Redis for production rate limiting
+  # Uncomment when ready for production
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: mcp-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   restart: unless-stopped
+  #   networks:
+  #     - mcp-network
+
+  # Optional: Prometheus for metrics
+  # Uncomment when ready for production
+  #
+  # prometheus:
+  #   image: prom/prometheus:v2.48.0
+  #   container_name: mcp-prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus-data:/prometheus
+  #   restart: unless-stopped
+  #   networks:
+  #     - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:
+#   prometheus-data:

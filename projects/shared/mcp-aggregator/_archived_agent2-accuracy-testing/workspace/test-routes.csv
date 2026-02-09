@@ -1,0 +1,31 @@
+route_id,pickup_lat,pickup_lng,dropoff_lat,dropoff_lng,pickup_address,dropoff_address,city,distance_category,time_of_day,test_time
+1,37.7879,-122.4074,37.7599,-122.4148,Union Square,Mission District,san_francisco,short,morning_rush,08:00
+2,37.6213,-122.379,37.7785,-122.395,SFO Airport,SOMA,san_francisco,medium,midday,13:00
+3,37.7879,-122.4074,37.6213,-122.379,Union Square,SFO Airport,san_francisco,long,evening_rush,17:30
+4,40.758,-73.9855,40.7061,-73.9969,Times Square,Brooklyn Bridge,new_york,short,late_night,23:00
+5,40.6413,-73.7781,40.7549,-73.984,JFK Airport,Midtown,new_york,medium,early_morning,06:00
+6,40.758,-73.9855,40.6413,-73.7781,Times Square,JFK Airport,new_york,long,morning_rush,08:00
+7,33.9425,-118.4081,34.0736,-118.4004,LAX Airport,Beverly Hills,los_angeles,short,midday,13:00
+8,34.0928,-118.3287,33.985,-118.4695,Hollywood,Venice Beach,los_angeles,medium,evening_rush,17:30
+9,33.9425,-118.4081,34.0928,-118.3287,LAX Airport,Hollywood,los_angeles,long,late_night,23:00
+10,41.9742,-87.9073,41.9214,-87.6513,ORD Airport,Lincoln Park,chicago,short,early_morning,06:00
+11,41.8827,-87.6233,41.9088,-87.6796,The Loop,Wicker Park,chicago,medium,morning_rush,08:00
+12,41.9742,-87.9073,41.8827,-87.6233,ORD Airport,The Loop,chicago,long,midday,13:00
+13,42.3656,-71.0096,42.3647,-71.0542,Logan Airport,North End,boston,short,evening_rush,17:30
+14,42.3555,-71.0604,42.3501,-71.0762,Downtown Crossing,Back Bay,boston,medium,late_night,23:00
+15,42.3656,-71.0096,42.3555,-71.0604,Logan Airport,Downtown Crossing,boston,long,early_morning,06:00
+16,47.4502,-122.3088,47.6511,-122.3502,SeaTac Airport,Fremont,seattle,short,morning_rush,08:00
+17,47.6097,-122.3422,47.6681,-122.3843,Pike Place Market,Ballard,seattle,medium,midday,13:00
+18,47.4502,-122.3088,47.6097,-122.3422,SeaTac Airport,Pike Place Market,seattle,long,evening_rush,17:30
+19,30.1975,-97.6664,30.2652,-97.7131,Austin Airport,East Austin,austin,short,late_night,23:00
+20,30.2672,-97.7431,30.2665,-97.7731,Downtown Austin,Zilker Park,austin,medium,early_morning,06:00
+21,30.1975,-97.6664,30.2672,-97.7431,Austin Airport,Downtown Austin,austin,long,morning_rush,08:00
+22,25.7959,-80.287,25.8011,-80.199,MIA Airport,Wynwood,miami,short,midday,13:00
+23,25.7826,-80.1341,25.7215,-80.2684,South Beach,Coral Gables,miami,medium,evening_rush,17:30
+24,25.7959,-80.287,25.7826,-80.1341,MIA Airport,South Beach,miami,long,late_night,23:00
+25,39.8561,-104.6737,39.7312,-104.9811,DEN Airport,Capitol Hill,denver,short,early_morning,06:00
+26,39.7392,-104.9903,39.7656,-104.9811,Downtown Denver,RiNo,denver,medium,morning_rush,08:00
+27,39.8561,-104.6737,39.7392,-104.9903,DEN Airport,Downtown Denver,denver,long,midday,13:00
+28,38.8512,-77.0402,38.8895,-77.0353,DCA Airport,National Mall,washington_dc,short,evening_rush,17:30
+29,38.8899,-77.0091,38.9215,-77.0422,Capitol Hill,Adams Morgan,washington_dc,medium,late_night,23:00
+30,38.8512,-77.0402,38.8899,-77.0091,DCA Airport,Capitol Hill,washington_dc,long,early_morning,06:00

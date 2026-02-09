@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.wmarceau/canva-mcp",
+  "description": "MCP server for Canva - create designs, manage assets, use templates, export graphics",
+  "repository": {
+    "url": "https://github.com/wmarceau/canva-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "canva-mcp",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtime": "python",
+      "environmentVariables": [
+        {
+          "name": "CANVA_CLIENT_ID",
+          "description": "Canva Connect API Client ID from developers.canva.com"
+        },
+        {
+          "name": "CANVA_CLIENT_SECRET",
+          "description": "Canva Connect API Client Secret"
+        }
+      ]
+    }
+  ]
+}
