@@ -777,6 +777,115 @@ class SmartCalendar:
 
         return matches
 
+    def find_duplicate_events(self, start_date: datetime, end_date: datetime) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Find duplicate events in the calendar.
+        Groups events by date + normalized summary, returns groups with 2+ events.
+        """
+        existing = self.get_existing_events(start_date, end_date)
+
+        # Group events by date and normalized summary
+        groups = {}
+        for event in existing:
+            # Create a key from date + normalized summary
+            event_date = event['start'].date() if hasattr(event['start'], 'date') else event['start']
+            normalized = ''.join(c for c in event['summary'] if c.isalnum() or c.isspace()).lower().strip()
+
+            # Also group similar events (e.g., "Workout" and "[FITNESS] Push")
+            # Map common patterns to canonical names
+            canonical = normalized
+            if 'workout' in normalized or 'fitness' in normalized or 'push' in normalized or 'pull' in normalized or 'legs' in normalized:
+                canonical = 'workout'
+            elif 'spanish' in normalized:
+                canonical = 'spanish'
+            elif 'reading' in normalized:
+                canonical = 'reading'
+            elif 'dog' in normalized:
+                canonical = 'dog training'
+            elif 'content' in normalized and 'post' in normalized:
+                canonical = 'daily post'
+
+            key = f"{event_date}_{canonical}"
+
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(event)
+
+        # Return only groups with duplicates (2+ events)
+        return {k: v for k, v in groups.items() if len(v) > 1}
+
+    def cleanup_duplicates(
+        self,
+        start_date: datetime,
+        end_date: datetime,
+        dry_run: bool = True,
+        require_confirmation: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Find and remove duplicate events, keeping one of each.
+        Prefers to keep events with emojis over bracketed format.
+        """
+        duplicates = self.find_duplicate_events(start_date, end_date)
+
+        if not duplicates:
+            return {"success": True, "message": "No duplicates found", "deleted": 0}
+
+        events_to_delete = []
+        events_to_keep = []
+
+        for key, events in duplicates.items():
+            # Sort events: prefer emoji format over [BRACKET] format
+            # Also prefer longer summaries (more descriptive)
+            def score_event(e):
+                summary = e['summary']
+                score = 0
+                # Prefer emoji
+                if any(c for c in summary if ord(c) > 127):
+                    score += 10
+                # Penalize [BRACKET] format
+                if summary.startswith('['):
+                    score -= 5
+                # Prefer longer descriptions
+                score += len(summary) / 100
+                return score
+
+            sorted_events = sorted(events, key=score_event, reverse=True)
+
+            # Keep the first (highest scored), delete the rest
+            events_to_keep.append(sorted_events[0])
+            events_to_delete.extend(sorted_events[1:])
+
+        print(f"\n🔍 Found {len(duplicates)} groups with duplicates ({len(events_to_delete)} events to delete)")
+        print("=" * 60)
+
+        print("\n✅ KEEPING (one per group):")
+        for event in events_to_keep[:10]:
+            start_time = event['start'].strftime('%a %m/%d %H:%M') if hasattr(event['start'], 'strftime') else str(event['start'])
+            print(f"   • {start_time}: {event['summary']}")
+        if len(events_to_keep) > 10:
+            print(f"   ... and {len(events_to_keep) - 10} more")
+
+        print(f"\n🗑️  TO DELETE ({len(events_to_delete)} duplicates):")
+        for event in events_to_delete[:15]:
+            start_time = event['start'].strftime('%a %m/%d %H:%M') if hasattr(event['start'], 'strftime') else str(event['start'])
+            print(f"   • {start_time}: {event['summary']}")
+        if len(events_to_delete) > 15:
+            print(f"   ... and {len(events_to_delete) - 15} more")
+
+        print("=" * 60)
+
+        if dry_run:
+            print("\n📋 Dry run - no events deleted. Use --cleanup --confirm to actually delete.")
+            return {
+                "success": True,
+                "dry_run": True,
+                "duplicates_found": len(events_to_delete),
+                "would_keep": len(events_to_keep)
+            }
+
+        # Delete the duplicates
+        return self.delete_events(events_to_delete, dry_run=False, require_confirmation=require_confirmation)
+
     def schedule_from_natural_language(self, request: str, start_date: Optional[datetime] = None) -> List[TimeBlock]:
         """
         Parse natural language request and generate appropriate blocks.
@@ -851,7 +960,9 @@ def main():
     parser.add_argument("--no-transitions", action="store_true", help="Don't add transition time between blocks")
     parser.add_argument("--show-existing", action="store_true", help="Show existing events for the date range")
     parser.add_argument("--delete", type=str, metavar="SEARCH", help="Delete events matching search term (DANGEROUS)")
-    parser.add_argument("--confirm", action="store_true", help="Confirm deletion (required with --delete)")
+    parser.add_argument("--confirm", action="store_true", help="Confirm deletion (required with --delete or --cleanup)")
+    parser.add_argument("--cleanup", action="store_true", help="Find and remove duplicate events (keeps one of each)")
+    parser.add_argument("--clear-all", action="store_true", help="Delete ALL events in date range (VERY DANGEROUS)")
 
     args = parser.parse_args()
 
@@ -905,6 +1016,40 @@ def main():
 
     if args.show_existing:
         return  # Only show existing events, don't generate new ones
+
+    # Handle cleanup operation (remove duplicates)
+    if args.cleanup:
+        print(f"\n🧹 Cleaning up duplicate events from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
+        cleanup_results = calendar.cleanup_duplicates(
+            start_date,
+            end_date,
+            dry_run=not args.confirm,
+            require_confirmation=True
+        )
+        if cleanup_results.get("deleted", 0) > 0:
+            print(f"\n✅ Cleaned up {cleanup_results['deleted']} duplicate event(s)")
+        return
+
+    # Handle clear-all operation (delete everything in range)
+    if args.clear_all:
+        print(f"\n⚠️  CLEAR ALL events from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
+        all_events = calendar.get_existing_events(start_date, end_date)
+
+        if not all_events:
+            print("No events found in this date range.")
+            return
+
+        print(f"Found {len(all_events)} event(s) to delete")
+
+        delete_results = calendar.delete_events(
+            all_events,
+            dry_run=not args.confirm,
+            require_confirmation=True
+        )
+
+        if delete_results.get("deleted", 0) > 0:
+            print(f"\n✅ Deleted {delete_results['deleted']} event(s)")
+        return
 
     # Handle delete operation
     if args.delete:
