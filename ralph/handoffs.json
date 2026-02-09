@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-02-09T03:20:00Z",
+  "agents": {
+    "clawdbot": {
+      "platform": "EC2",
+      "status": "online",
+      "last_seen": "2026-02-09T03:20:00Z"
+    },
+    "ralph": {
+      "platform": "EC2",
+      "status": "idle",
+      "last_seen": null
+    },
+    "claude_code": {
+      "platform": "MacBook",
+      "status": "unknown",
+      "last_seen": null
+    }
+  },
+  "active_handoffs": [],
+  "pending_for_mac": [],
+  "pending_for_ec2": [],
+  "completed": []
+}
