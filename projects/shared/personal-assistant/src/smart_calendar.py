@@ -82,6 +82,96 @@ COLORS = {
 }
 
 
+# =============================================================================
+# CONTENT STRATEGY - Specific trending topics for filming blocks
+# Based on: https://www.miracamp.com/learn/content-creation/how-to-create-viral-fitness-content-on-tiktok-instagram
+# =============================================================================
+CONTENT_CALENDAR = {
+    "monday": {
+        "theme": "Quick Workout",
+        "topic": "5-min Ab Burnout (no crunches)",
+        "hook": "Stop doing crunches. Here's what actually works.",
+        "format": "short_form",
+        "viral_angle": "Myth-busting + actionable"
+    },
+    "tuesday": {
+        "theme": "Gym Hack",
+        "topic": "3 exercises you're doing wrong",
+        "hook": "I see this mistake EVERY day at the gym",
+        "format": "short_form",
+        "viral_angle": "Educational + relatable"
+    },
+    "wednesday": {
+        "theme": "Myth-Busting",
+        "topic": "Peptide basics: What actually works",
+        "hook": "Everyone's asking about peptides. Here's the truth.",
+        "format": "medium_form",
+        "viral_angle": "Trending topic + authority"
+    },
+    "thursday": {
+        "theme": "Long-Form Educational",
+        "topic": "Full compound lift tutorial OR weekly routine",
+        "hook": "The only 4 exercises you need for [muscle group]",
+        "format": "long_form",
+        "viral_angle": "High-value deep dive"
+    },
+    "friday": {
+        "theme": "Challenge/Results",
+        "topic": "Weekly transformation or challenge results",
+        "hook": "7 days of [protocol]. Here's what happened.",
+        "format": "short_form",
+        "viral_angle": "Before/after + social proof"
+    },
+    "saturday": {
+        "theme": "Lifestyle/Behind Scenes",
+        "topic": "Day in the life or meal prep",
+        "hook": "What I actually eat in a day",
+        "format": "short_form",
+        "viral_angle": "Authenticity + relatability"
+    },
+    "sunday": {
+        "theme": "Week Prep + Batching",
+        "topic": "Plan content for the week",
+        "hook": "N/A - planning session",
+        "format": "planning",
+        "viral_angle": "N/A"
+    }
+}
+
+# =============================================================================
+# PROJECT WORK - Development blocks for active projects
+# =============================================================================
+PROJECT_WORK_CONFIG = {
+    "fitness-influencer": {
+        "name": "Fitness Influencer v2.0",
+        "emoji": "💪🔧",
+        "description": "Backend development + video pipeline\n\nFocus areas:\n- API endpoints\n- Video editing automation\n- MCP integration",
+        "hours_per_week": 4,
+        "preferred_days": ["tuesday", "thursday"],
+        "preferred_time": (9, 11),  # 9 AM - 11 AM
+        "priority": Priority.HIGH
+    },
+    "mcp-publishing": {
+        "name": "MCP Publishing Sprint",
+        "emoji": "📦",
+        "description": "Publish MCPs to PyPI + Registry\n\n9 MCPs pending:\n- apollo-mcp, canva-mcp, upwork-mcp\n- ticket-aggregator, instagram/tiktok/youtube-creator\n- trainerize-mcp, amazon-seller",
+        "hours_per_week": 2,
+        "preferred_days": ["wednesday"],
+        "preferred_time": (14, 16),  # 2 PM - 4 PM
+        "priority": Priority.MEDIUM
+    },
+    "plan-execution": {
+        "name": "Plan File Execution",
+        "emoji": "📋",
+        "description": "Work through plan file tasks\n\nCurrent plan: Project Deployment Sweep\n- Migrate projects\n- TikTok API implementation\n- Documentation updates",
+        "hours_per_week": 2,
+        "preferred_days": ["wednesday"],
+        "preferred_time": (14, 16),  # 2 PM - 4 PM
+        "priority": Priority.MEDIUM
+    }
+}
+
+
 @dataclass
 class TimeBlock:
     """A scheduled time block"""
@@ -390,17 +480,29 @@ class SmartCalendar:
 
         return blocks
 
-    def generate_content_blocks(self, date: datetime) -> List[TimeBlock]:
-        """Generate content creation/posting blocks based on strategy"""
+    def generate_content_blocks(self, date: datetime, use_content_strategy: bool = True) -> List[TimeBlock]:
+        """Generate content creation/posting blocks based on strategy
+
+        Args:
+            date: The date to generate blocks for
+            use_content_strategy: If True, use CONTENT_CALENDAR for specific topics
+        """
         blocks = []
         day_name = date.strftime("%A").lower()
         is_weekend = day_name in ["saturday", "sunday"]
 
+        # Get today's content strategy
+        content_info = CONTENT_CALENDAR.get(day_name, {})
+        topic = content_info.get("topic", "General content")
+        hook = content_info.get("hook", "")
+        theme = content_info.get("theme", "Content")
+
         # Daily content post (weekdays)
         if not is_weekend and self.context.content_frequency == "daily":
+            post_desc = f"Post today's content.\n\n📌 Today's topic: {topic}\n🎣 Hook: {hook}\n\nRaw > Perfect. Volume negates luck."
             blocks.append(TimeBlock(
                 summary="📱 Daily Content Post",
-                description="Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
+                description=post_desc,
                 start=date.replace(hour=20, minute=0),
                 end=date.replace(hour=20, minute=30),
                 priority=Priority.HIGH,
@@ -408,11 +510,11 @@ class SmartCalendar:
                 color_id=COLORS[BlockType.CONTENT]
             ))
 
-        # Day-specific content blocks
+        # Day-specific content blocks with trending topics
         if day_name == "monday" and not is_weekend:
             blocks.append(TimeBlock(
-                summary="🎬 Content Creation: Film 2-3 Short Clips",
-                description="Batch film content while energy is high.\n\nIdeas:\n- Post-workout tip\n- Form demonstration\n- Quick peptide fact\n- Motivation/mindset\n\nRaw footage is fine - edit later or post raw.",
+                summary=f"🎬 Film: {topic}",
+                description=f"CONTENT STRATEGY: {theme}\n\n📌 Topic: {topic}\n🎣 Hook: \"{hook}\"\n\nFormat: 2-3 short clips (15-60s each)\nViral angle: {content_info.get('viral_angle', 'Educational')}\n\nRaw footage is fine - edit later or post raw.",
                 start=date.replace(hour=11, minute=0),
                 end=date.replace(hour=12, minute=0),
                 priority=Priority.HIGH,
@@ -422,8 +524,8 @@ class SmartCalendar:
 
         elif day_name == "wednesday" and not is_weekend:
             blocks.append(TimeBlock(
-                summary="🎬 Content Creation: Medium-Form Content",
-                description="Create 1-2 longer pieces (3-5 min).\n\nIdeas:\n- Full workout walkthrough\n- Peptide basics explainer\n- Client transformation story\n- Q&A from DMs\n\nCan be YouTube Short or full video.",
+                summary=f"🎬 Film: {topic}",
+                description=f"CONTENT STRATEGY: {theme}\n\n📌 Topic: {topic}\n🎣 Hook: \"{hook}\"\n\nFormat: Medium-form (3-5 min)\nViral angle: {content_info.get('viral_angle', 'Educational')}\n\nThis is your authority-building content.",
                 start=date.replace(hour=14, minute=0),
                 end=date.replace(hour=15, minute=30),
                 priority=Priority.HIGH,
@@ -432,9 +534,10 @@ class SmartCalendar:
             ))
 
         elif day_name == self.context.batch_content_day and not is_weekend:
+            thu_content = CONTENT_CALENDAR.get("thursday", {})
             blocks.append(TimeBlock(
-                summary="🎬 BATCH DAY: Long-Form YouTube Production",
-                description="Dedicated content production block.\n\nCreate 1 polished YouTube video OR batch multiple shorts.\n\nStructure:\n1. Script/outline (30 min)\n2. Film (1 hr)\n3. Edit (1.5 hr)\n\nTopic ideas:\n- Peptide deep-dive\n- Weekly workout routine\n- Nutrition protocol\n- 'Day in the life' fitness",
+                summary=f"🎬 BATCH DAY: {thu_content.get('topic', 'Long-Form Production')}",
+                description=f"CONTENT STRATEGY: {thu_content.get('theme', 'Long-Form')}\n\n📌 Topic: {thu_content.get('topic', 'Full tutorial')}\n🎣 Hook: \"{thu_content.get('hook', '')}\"\n\nStructure:\n1. Script/outline (30 min)\n2. Film (1 hr)\n3. Edit (1.5 hr)\n\nViral angle: {thu_content.get('viral_angle', 'High-value deep dive')}",
                 start=date.replace(hour=9, minute=0),
                 end=date.replace(hour=12, minute=0),
                 priority=Priority.HIGH,
@@ -443,9 +546,10 @@ class SmartCalendar:
             ))
 
         elif day_name == "friday" and not is_weekend:
+            fri_content = CONTENT_CALENDAR.get("friday", {})
             blocks.append(TimeBlock(
-                summary="🎬 Content Review: Publish Best of Week",
-                description="Review week's content and publish best pieces.\n\nActions:\n1. Review all filmed content\n2. Quick edits on top 2-3 pieces\n3. Schedule for optimal posting times\n4. Cross-post to all platforms\n\nFriday afternoon = high engagement time.",
+                summary=f"🎬 Publish: {fri_content.get('topic', 'Best of Week')}",
+                description=f"CONTENT STRATEGY: {fri_content.get('theme', 'Results')}\n\n📌 Topic: {fri_content.get('topic', 'Weekly results')}\n🎣 Hook: \"{fri_content.get('hook', '')}\"\n\nActions:\n1. Review all filmed content\n2. Quick edits on top 2-3 pieces\n3. Post challenge/transformation results\n\nFriday afternoon = high engagement time.\nViral angle: {fri_content.get('viral_angle', 'Social proof')}",
                 start=date.replace(hour=10, minute=30),
                 end=date.replace(hour=12, minute=0),
                 priority=Priority.HIGH,
@@ -525,12 +629,65 @@ class SmartCalendar:
 
         return blocks
 
+    def generate_project_work_blocks(
+        self,
+        date: datetime,
+        projects: Optional[List[str]] = None
+    ) -> List[TimeBlock]:
+        """Generate development/work blocks for active projects
+
+        Args:
+            date: The date to generate blocks for
+            projects: List of project keys from PROJECT_WORK_CONFIG, or None for all active
+        """
+        blocks = []
+        day_name = date.strftime("%A").lower()
+        is_weekend = day_name in ["saturday", "sunday"]
+
+        if is_weekend:
+            return blocks  # No project work on weekends (unless forced)
+
+        # Default to all configured projects
+        if projects is None:
+            projects = list(PROJECT_WORK_CONFIG.keys())
+
+        for project_key in projects:
+            config = PROJECT_WORK_CONFIG.get(project_key)
+            if not config:
+                continue
+
+            # Check if this day is a preferred day for this project
+            if day_name not in config.get("preferred_days", []):
+                continue
+
+            start_hour, end_hour = config.get("preferred_time", (9, 11))
+            blocks.append(TimeBlock(
+                summary=f"{config['emoji']} {config['name']}",
+                description=config["description"],
+                start=date.replace(hour=start_hour, minute=0),
+                end=date.replace(hour=end_hour, minute=0),
+                priority=config.get("priority", Priority.MEDIUM),
+                block_type=BlockType.BUSINESS,
+                color_id=COLORS[config.get("priority", Priority.MEDIUM)]
+            ))
+
+        return blocks
+
     def generate_week(
         self,
         start_date: datetime,
-        priorities: Optional[List[Dict[str, Any]]] = None
+        priorities: Optional[List[Dict[str, Any]]] = None,
+        include_projects: bool = True,
+        projects: Optional[List[str]] = None
     ) -> List[TimeBlock]:
-        """Generate a full week of time blocks"""
+        """Generate a full week of time blocks
+
+        Args:
+            start_date: Start date of the week
+            priorities: Custom business priorities
+            include_projects: Whether to include project work blocks
+            projects: Specific projects to include (None = all configured)
+        """
         all_blocks = []
         priorities = priorities or []
 
@@ -541,8 +698,12 @@ class SmartCalendar:
             # Daily habits
             all_blocks.extend(self.generate_daily_habits(current_date))
 
-            # Content blocks
+            # Content blocks (with specific topics)
             all_blocks.extend(self.generate_content_blocks(current_date))
+
+            # Project work blocks (new!)
+            if include_projects:
+                all_blocks.extend(self.generate_project_work_blocks(current_date, projects))
 
             # Business blocks (distribute priorities across week)
             day_priorities = [p for p in priorities if p.get("day", "").lower() == day_name]
@@ -964,6 +1125,12 @@ def main():
     parser.add_argument("--cleanup", action="store_true", help="Find and remove duplicate events (keeps one of each)")
     parser.add_argument("--clear-all", action="store_true", help="Delete ALL events in date range (VERY DANGEROUS)")
 
+    # New: Content strategy and project work
+    parser.add_argument("--show-content-strategy", action="store_true", help="Show this week's content topics and strategy")
+    parser.add_argument("--projects", type=str, help="Comma-separated list of projects to include (e.g., fitness-influencer,mcp-publishing)")
+    parser.add_argument("--no-projects", action="store_true", help="Don't include project work blocks")
+    parser.add_argument("--add-project", type=str, metavar="PROJECT", help="Add a single project work block for today")
+
     args = parser.parse_args()
 
     # Load context if provided
@@ -1016,6 +1183,29 @@ def main():
 
     if args.show_existing:
         return  # Only show existing events, don't generate new ones
+
+    # Show content strategy
+    if args.show_content_strategy:
+        print("\n📅 CONTENT STRATEGY FOR THE WEEK")
+        print("=" * 70)
+        print("Based on: https://www.miracamp.com/learn/content-creation/viral-fitness-content\n")
+        for day, info in CONTENT_CALENDAR.items():
+            print(f"📆 {day.upper()}")
+            print(f"   Theme: {info['theme']}")
+            print(f"   Topic: {info['topic']}")
+            print(f"   Hook: \"{info['hook']}\"")
+            print(f"   Format: {info['format']} | Viral angle: {info['viral_angle']}")
+            print()
+        print("=" * 70)
+        print("\n📦 PROJECT WORK BLOCKS AVAILABLE:")
+        print("-" * 40)
+        for key, config in PROJECT_WORK_CONFIG.items():
+            print(f"  {config['emoji']} {key}")
+            print(f"     → {config['name']}")
+            print(f"     → Days: {', '.join(config['preferred_days'])}")
+            print(f"     → Time: {config['preferred_time'][0]}:00-{config['preferred_time'][1]}:00")
+        print("-" * 40)
+        return
 
     # Handle cleanup operation (remove duplicates)
     if args.cleanup:
@@ -1073,15 +1263,43 @@ def main():
             print(f"\n✅ Deleted {delete_results['deleted']} event(s)")
         return
 
+    # Parse project list
+    projects_list = None
+    if args.projects:
+        projects_list = [p.strip() for p in args.projects.split(",")]
+    include_projects = not args.no_projects
+
+    # Handle single project addition
+    if args.add_project:
+        if args.add_project not in PROJECT_WORK_CONFIG:
+            print(f"❌ Unknown project: {args.add_project}")
+            print(f"Available projects: {', '.join(PROJECT_WORK_CONFIG.keys())}")
+            return
+        blocks = calendar.generate_project_work_blocks(start_date, [args.add_project])
+        if not blocks:
+            # Force add even if not preferred day
+            config = PROJECT_WORK_CONFIG[args.add_project]
+            start_hour, end_hour = config.get("preferred_time", (9, 11))
+            blocks = [TimeBlock(
+                summary=f"{config['emoji']} {config['name']}",
+                description=config["description"],
+                start=start_date.replace(hour=start_hour, minute=0),
+                end=start_date.replace(hour=end_hour, minute=0),
+                priority=config.get("priority", Priority.MEDIUM),
+                block_type=BlockType.BUSINESS,
+                color_id=COLORS[config.get("priority", Priority.MEDIUM)]
+            )]
     # Generate blocks
-    if args.schedule:
+    elif args.schedule:
         blocks = calendar.schedule_from_natural_language(args.schedule, start_date)
     elif args.week:
-        blocks = calendar.generate_week(start_date)
+        blocks = calendar.generate_week(start_date, include_projects=include_projects, projects=projects_list)
     else:
-        # Default: tomorrow with habits + content
+        # Default: tomorrow with habits + content + projects
         blocks = calendar.generate_daily_habits(start_date)
         blocks.extend(calendar.generate_content_blocks(start_date))
+        if include_projects:
+            blocks.extend(calendar.generate_project_work_blocks(start_date, projects_list))
 
     # First pass: check for conflicts and duplicates (always dry run first)
     print(f"🔍 Checking {len(blocks)} proposed time blocks for conflicts...")
