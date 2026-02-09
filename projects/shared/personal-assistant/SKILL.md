@@ -33,7 +33,60 @@ User Request
 
 ## Integrated Capabilities
 
-### 1. Time Blocks (Calendar Management)
+### 1. Smart Calendar (AI-Powered Scheduling) ⭐ NEW
+**Script:** `projects/shared/personal-assistant/src/smart_calendar.py`
+**Credentials:** `~/dev-sandbox/credentials.json` (Google Calendar OAuth)
+
+**Philosophy:**
+- Hormozi-style prioritization: Revenue impact → Operations → Admin
+- Energy management: Hard tasks in morning, admin in afternoon
+- Habit stacking: Consistent daily routines compound
+- Content velocity: Daily posts > weekly polished content
+
+**Three-Agent Integration (SOP-29):**
+| Agent | Use Case | Example |
+|-------|----------|---------|
+| **Claude Code** | Interactive planning, complex scheduling | "Help me plan next week with these priorities..." |
+| **Clawdbot** | Quick mobile requests | "Block tomorrow for content" |
+| **Ralph** | Complex multi-week schedule generation | PRD with detailed schedule requirements |
+
+**Commands:**
+```bash
+cd projects/shared/personal-assistant
+
+# Natural language scheduling
+python -m src.smart_calendar --schedule "Block tomorrow for content and habits"
+python -m src.smart_calendar --schedule "Schedule next week with focus on business"
+
+# Generate full week
+python -m src.smart_calendar --week
+
+# Preview without creating (dry run)
+python -m src.smart_calendar --week --dry-run
+
+# Specific date
+python -m src.smart_calendar --date 2026-02-17 --schedule "Block for deep work"
+```
+
+**Default Daily Habits (Mon-Fri):**
+| Time | Activity | Purpose |
+|------|----------|---------|
+| 6:00-7:00 AM | 💪 Workout | Non-negotiable fitness credibility |
+| 7:00-7:30 AM | 🇪🇸 Spanish | 2x audience (Hispanic market) |
+| 7:30-8:00 AM | 📚 Reading | Ideas from inputs |
+| 5:00-5:30 PM | 🐕 Dog Training | Discipline + content |
+| 8:00-8:30 PM | 📱 Daily Post | Volume > perfection |
+
+**Content Schedule:**
+| Day | Block | Focus |
+|-----|-------|-------|
+| Mon | 11 AM-12 PM | 🎬 Film 2-3 short clips |
+| Wed | 2-3:30 PM | 🎬 Medium-form content |
+| Thu | 9 AM-12 PM | 🎬 BATCH DAY - Long-form YouTube |
+| Fri | 10:30 AM-12 PM | 🎬 Publish best of week |
+| Sun | 2-4 PM | 📅 Week prep + content batching |
+
+### 1b. Legacy Time Blocks (Templates)
 **Project:** `projects/time-blocks/`
 **Credentials:** `~/.time-blocks/` (Google Calendar OAuth)
 
@@ -52,12 +105,6 @@ python src/time_blocks.py view --date today
 - `outreach_day` - Sales/lead generation focus
 - `weekend` - Relaxed Saturday schedule
 - `williams_weekly_routine` - Complete weekly schedule (complex format)
-
-**Current Config:**
-- Working Hours: 6 AM - 9 PM
-- Workout: Mon/Wed/Fri/Sat 6-7 AM
-- Creative Work: Mon/Wed/Fri/Sat 7:30-9:30 AM
-- Reading: Daily 8-9 PM
 
 ### 2. Morning Digest
 **Script:** `projects/personal-assistant/src/morning_digest.py`
@@ -127,20 +174,24 @@ Personal assistant routes to:
 ## Files
 
 ```
-projects/personal-assistant/
-├── SKILL.md              # This file
-├── README.md             # Project overview
-├── VERSION               # 1.0.0
-├── CHANGELOG.md          # Version history
+projects/shared/personal-assistant/
+├── SKILL.md                  # This file
+├── README.md                 # Project overview
+├── VERSION                   # 1.0.0
+├── CHANGELOG.md              # Version history
 ├── src/
+│   ├── smart_calendar.py     # ⭐ AI-powered scheduling (NEW)
+│   ├── create_time_blocks.py # Hardcoded time block creator
 │   ├── morning_digest.py     # Daily digest generator
 │   ├── routine_scheduler.py  # Routine management
-│   └── digest_aggregator.py  # Aggregates project updates
+│   ├── digest_aggregator.py  # Aggregates project updates
+│   ├── ideas_queue.py        # Telegram ideas queue
+│   └── fitness_calendar.py   # Fitness-specific calendar
 ├── workflows/
 │   ├── daily-routine-sop.md
 │   ├── weekly-routine-sop.md
-│   ├── calendar-sync.md      # NEW
-│   └── request-routing.md    # NEW
+│   ├── calendar-sync.md
+│   └── request-routing.md
 └── output/
     └── digests/              # Generated digests
 ```
