@@ -322,6 +322,87 @@ When Operating Principle #9a (Pre-commit testing gate) triggers:
 
 **Auto-add testing phase rule**: Any PRD or plan with "implement" must include corresponding "test" phase.
 
+### Unified Agent Decision Flowchart
+
+**Three decisions to make for every task:**
+
+```
+STEP 1: SELECT PRIMARY AGENT
+─────────────────────────────
+Is task Mac-specific? (PyPI, MCP, Xcode, iOS)
+├─ YES → Claude Code (REQUIRED)
+└─ NO ↓
+
+Is user present at Mac?
+├─ YES → Prefer Claude Code (interactive)
+└─ NO ↓
+
+Score task complexity (0-10):
+├─ 0-6 → Clawdbot
+└─ 7-10 → Ralph (via PRD)
+
+
+STEP 2: SPAWN SUBAGENTS? (Task tool)
+────────────────────────────────────
+Does task involve:
+├─ Multiple valid approaches to research? → YES: Spawn 3-4 Explore agents (SOP 9)
+├─ New product/idea validation? → YES: Spawn 4 market viability agents (SOP 17)
+├─ Complex feature with 5+ edge cases? → YES: Spawn 4 testing agents (SOP 2)
+├─ 4+ independent components to build? → YES: Spawn parallel dev agents (SOP 10)
+├─ Open-ended codebase research? → YES: Spawn Explore agent(s)
+└─ None of above → NO subagents needed
+
+
+STEP 3: AGENT COMBINATIONS
+──────────────────────────
+Primary: Claude Code
+├─ Can spawn: Explore, Plan, general-purpose subagents
+├─ Can trigger: Clawdbot (via Telegram), Ralph (via PRD)
+└─ Receives from: Ralph (deployment handoff)
+
+Primary: Clawdbot
+├─ Can spawn: Limited (no Task tool currently)
+├─ Can trigger: Ralph (via PRD webhook)
+└─ Receives from: Claude Code (mobility handoff), Ralph (completion)
+
+Primary: Ralph
+├─ Can spawn: N/A (self-contained PRD execution)
+├─ Can trigger: N/A (autonomous)
+└─ Hands off to: Claude Code (for Mac-specific), Clawdbot (for notification)
+```
+
+### Subagent Types (Task Tool)
+
+| Subagent Type | When to Use | Spawned By |
+|---------------|-------------|------------|
+| **Explore** | Codebase research, file discovery | Claude Code |
+| **Plan** | Architecture planning, implementation design | Claude Code |
+| **general-purpose** | Multi-step research, keyword search | Claude Code |
+| **Bash** | Git operations, command execution | Claude Code |
+
+### Decision Matrix: Full Combinations
+
+| Scenario | Primary | Subagents? | Example |
+|----------|---------|------------|---------|
+| Quick question | Clawdbot | No | "What's the weather?" |
+| Simple build (3 files) | Clawdbot | No | "Build Flask API" |
+| Complex build (8+ stories) | Ralph | No (self-contained) | "Build analytics dashboard" |
+| Mac deployment | Claude Code | No | "Deploy to PyPI" |
+| Research + decide approach | Claude Code | Yes (3-4 Explore) | "How should we implement X?" |
+| New product validation | Claude Code | Yes (4 market agents) | "Should we build X?" |
+| Edge case testing | Claude Code + Ralph | Yes (4 test agents) | "Test thoroughly" |
+| Large parallel build | Claude Code | Yes (3-4 dev agents) | "Build these 5 components" |
+| Codebase exploration | Claude Code | Yes (Explore) | "Find all auth-related code" |
+| Mobile + overnight work | Clawdbot → Ralph | No | "Build X while I sleep" |
+
+### When NOT to Spawn Subagents
+
+- Simple single-file edits (overkill)
+- Quick lookups (faster directly)
+- User doing step-by-step (respect their pace)
+- Unclear requirements (clarify first)
+- Complexity 0-3 tasks (Clawdbot handles alone)
+
 ## Communication Patterns (William ↔ Claude)
 
 | William Says | Claude Does |
