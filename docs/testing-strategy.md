@@ -2,7 +2,16 @@
 
 **Purpose**: Define comprehensive testing strategy across the development-to-deployment pipeline
 
-**Last Updated**: 2026-01-12
+**Last Updated**: 2026-02-08
+
+**Three-Agent Integration**: Testing scenarios map to the three-agent framework (SOP-29):
+
+| Scenario | Primary Agent | Notes |
+|----------|---------------|-------|
+| Scenario 1 (Manual) | Claude Code / Clawdbot | Interactive = Claude Code; Simple scripts = Clawdbot |
+| Scenario 2 (Multi-Agent) | Ralph + Claude Code | Ralph generates tests; Claude Code orchestrates |
+| Scenario 3 (Pre-Deploy) | Claude Code | Requires interactive verification |
+| Scenario 4 (Post-Deploy) | Claude Code | Requires Mac for PyPI/MCP verification |
 
 ---
 

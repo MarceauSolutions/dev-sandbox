@@ -4,7 +4,42 @@
 
 **Purpose**: Optimize development workflow by routing tasks to the agent best suited for each type of work, enabling 24/7 development, efficient mobile access, and intelligent complexity management
 
-**Last Updated**: 2026-01-28
+**Last Updated**: 2026-02-08
+
+**Integration**: This SOP applies to ALL development work. See `CLAUDE.md` → "Three-Agent Development Integration" for the unified agent → SOP mapping.
+
+---
+
+## Development SOP Integration
+
+**Core Principle**: Every development SOP should route through the three-agent framework based on complexity, availability, and Mac-specific requirements.
+
+### Development Pipeline Mapping
+
+| Phase | SOP | Claude Code | Clawdbot | Ralph |
+|-------|-----|-------------|----------|-------|
+| Research | SOP 17 (Market Viability) | ✅ Orchestrate | ✅ Research | ✅ 4-agent |
+| Kickoff | SOP 0 | ✅ Primary | ⚠️ Simple | ❌ |
+| Design | SOP 1 | ✅ Primary | ✅ 0-6 | ✅ 7-10 |
+| Test | SOP 2 (Multi-Agent) | ✅ Orchestrate | ❌ | ✅ Generate |
+| Deploy | SOP 3 | ✅ Primary | ✅ Git only | ❌ |
+| Publish | SOP 11-14 | ✅ REQUIRED | ❌ | ❌ |
+
+### Testing Strategy Integration
+
+| Scenario | Description | Agent |
+|----------|-------------|-------|
+| Scenario 1 | Manual Testing | Claude Code (interactive) or Clawdbot (simple) |
+| Scenario 2 | Multi-Agent Edge Cases | Ralph (generation) + Claude Code (orchestration) |
+| Scenario 3 | Pre-Deployment | Claude Code (primary) |
+| Scenario 4 | Post-Deployment | Claude Code (interactive) |
+
+### Operating Principle #9a (Pre-Commit Testing Gate)
+
+When new code is about to be committed:
+- **Claude Code**: Interactive import verification, functionality testing
+- **Clawdbot**: Can run `python -c "from module import X"` for basic validation
+- **Ralph**: PRDs MUST include testing phase after every implementation phase
 
 ---
 

@@ -2,6 +2,17 @@
 
 > When Claude should launch parallel agents WITHOUT explicit user request
 
+**Last Updated**: 2026-02-08
+
+**Three-Agent Integration**: This decision tree works WITH SOP-29 (Three-Agent Collaboration). Before launching subagents, also consider which PRIMARY agent should handle the task:
+
+| Task Complexity | Primary Agent | Subagent Launch? |
+|-----------------|---------------|------------------|
+| 0-3 (trivial) | Clawdbot | No subagents |
+| 4-6 (medium) | Clawdbot | Maybe (if research needed) |
+| 7-10 (complex) | Ralph | Yes (via PRD) |
+| Mac-specific | Claude Code | Yes (if parallel exploration) |
+
 ## Core Principle
 
 Launch autonomous agents when the task would clearly benefit from parallel research/work AND the overhead of asking permission would slow down obvious value delivery.

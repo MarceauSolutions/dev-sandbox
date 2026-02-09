@@ -187,6 +187,141 @@ python deploy_to_skills.py --project [name] --version 1.1.0   # Deploy with vers
 python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHub
 ```
 
+## Three-Agent Development Integration (SOP-29)
+
+**Purpose**: All development—regardless of project type—follows the three-agent collaboration model. This section maps agents to development phases.
+
+**Reference**: `docs/SOP-29-THREE-AGENT-COLLABORATION.md` for complete routing logic.
+
+### Agent Capabilities Summary
+
+| Agent | Platform | Availability | Complexity Range | Best For |
+|-------|----------|--------------|------------------|----------|
+| **Claude Code** | Mac terminal | When user present | Any (Mac-specific) | Interactive debugging, PyPI/MCP publishing, live editing |
+| **Clawdbot** | EC2 24/7 | Always (Telegram) | 0-6 | Quick tasks, research, simple builds, mobile access |
+| **Ralph** | EC2 24/7 | Via PRD trigger | 7-10 | Complex multi-story builds, autonomous overnight work |
+
+### Development Pipeline → Agent Mapping
+
+```
+-1. RESEARCH (SOP 17/9)
+    └── Claude Code: Interactive exploration when present
+    └── Clawdbot: 24/7 research, web search, competitor analysis
+    └── Ralph: Complex 4-agent market viability (SOP 17)
+
+0. KICKOFF (SOP 0)
+    └── Claude Code: Interactive questionnaire completion
+    └── Clawdbot: Quick kickoff for simple projects (complexity 0-4)
+    └── Ralph: N/A (kickoff requires human decisions)
+
+1. DESIGN in directives/
+    └── Claude Code: Interactive directive creation
+    └── Clawdbot: Simple directive templates
+    └── Ralph: Complex system architecture docs (PRD-driven)
+
+2. DEVELOP in dev-sandbox
+    └── Claude Code: Interactive development, debugging, Mac-specific
+    └── Clawdbot: Builds complexity 0-6 autonomously
+    └── Ralph: Builds complexity 7-10 via PRD (multi-story)
+
+3. TEST in dev-sandbox
+    └── Claude Code: Interactive test runs, debugging failures
+    └── Clawdbot: Run Scenario 1 (manual testing) for simple projects
+    └── Ralph: Generate test suites, run SOP 2 (multi-agent testing)
+
+4. ORCHESTRATE
+    └── Claude Code: Primary orchestrator when present
+    └── Clawdbot: Orchestrate simple workflows, trigger Ralph
+    └── Ralph: Self-orchestrating for PRD execution
+
+5. DEPLOY
+    └── Claude Code: REQUIRED for PyPI/MCP Registry (Mac keychain)
+    └── Clawdbot: Git commits, GitHub pushes (non-PyPI)
+    └── Ralph: Prepare for deployment, hand off to Claude Code
+
+6. POST-DEPLOYMENT VERIFICATION
+    └── Claude Code: Interactive verification, debugging
+    └── Clawdbot: Automated smoke tests
+    └── Ralph: N/A (verification is interactive)
+
+7. MCP REGISTRY PUBLISHING
+    └── Claude Code: REQUIRED (mcp-publisher uses Mac auth)
+    └── Clawdbot: N/A (Mac-specific tools)
+    └── Ralph: N/A (Mac-specific tools)
+```
+
+### SOP → Agent Mapping Matrix
+
+| SOP | Name | Claude Code | Clawdbot | Ralph |
+|-----|------|-------------|----------|-------|
+| **SOP 0** | Project Kickoff | ✅ Primary | ⚠️ Simple only | ❌ |
+| **SOP 1** | New Project Init | ✅ Primary | ✅ Complexity 0-6 | ✅ Complexity 7-10 |
+| **SOP 2** | Multi-Agent Testing | ✅ Orchestrate | ❌ | ✅ Generate tests |
+| **SOP 3** | Version Control & Deploy | ✅ Primary | ✅ Git only | ❌ |
+| **SOP 9** | Architecture Exploration | ✅ Interactive | ✅ Research | ✅ Complex analysis |
+| **SOP 10** | Parallel Development | ✅ Orchestrate | ✅ Components 0-6 | ✅ Components 7-10 |
+| **SOP 11** | MCP Package Structure | ✅ REQUIRED | ❌ | ❌ |
+| **SOP 12** | PyPI Publishing | ✅ REQUIRED | ❌ | ❌ |
+| **SOP 13** | MCP Registry Publish | ✅ REQUIRED | ❌ | ❌ |
+| **SOP 14** | MCP Update/Version Bump | ✅ REQUIRED | ❌ | ❌ |
+| **SOP 17** | Market Viability | ✅ Orchestrate | ✅ Research agents | ✅ 4-agent execution |
+| **SOP 18** | SMS Campaign | ✅ Primary | ✅ Execute (Phase 4+) | ❌ |
+| **SOP 30** | n8n Workflow Mgmt | ✅ Primary | ✅ Basic workflows | ✅ Complex automation |
+
+### Complexity Scoring Quick Reference
+
+| Score | Examples | Agent |
+|-------|----------|-------|
+| **0-3** | Typo fix, research, status check, simple question | Clawdbot |
+| **4-6** | 3-4 file build, Flask API, calculator, SMS script | Clawdbot |
+| **7-8** | 8+ stories, multi-component, test suite | Ralph |
+| **9-10** | Full app with database, API, tests, docs | Ralph |
+| **Any (Mac)** | PyPI, MCP Registry, Xcode, iOS | Claude Code |
+
+### Handoff Patterns
+
+**Clawdbot → Ralph** (complexity escalation):
+```
+User: "Build analytics dashboard"
+Clawdbot: Scores as 8 → Creates PRD → Triggers Ralph → Monitors progress
+Ralph: Executes 8 stories → Notifies Clawdbot on completion
+Clawdbot: Verifies → Reports to user
+```
+
+**Ralph → Claude Code** (deployment handoff):
+```
+Ralph: Completes complex build → Commits to git → Creates "ready to deploy" note
+Clawdbot: Notifies user "Ready for PyPI publishing"
+User (on Mac): "Deploy to PyPI"
+Claude Code: SOP 12 → SOP 13 → Published
+```
+
+**Claude Code → Clawdbot** (mobility handoff):
+```
+User (Mac): "I'm heading out, continue this"
+Claude Code: Summarizes state → User tells Clawdbot to continue
+Clawdbot: Picks up work → Commits progress
+User (mobile): Monitors via Telegram
+```
+
+### Testing Strategy Integration
+
+| Testing Scenario | Primary Agent | Supporting Agent |
+|------------------|---------------|------------------|
+| **Scenario 1**: Manual Testing | Claude Code (interactive) | Clawdbot (simple scripts) |
+| **Scenario 2**: Multi-Agent Edge Cases | Ralph (test generation) | Claude Code (orchestrate) |
+| **Scenario 3**: Pre-Deployment | Claude Code (verification) | Clawdbot (smoke tests) |
+| **Scenario 4**: Post-Deployment | Claude Code (interactive) | Clawdbot (automated checks) |
+
+### Operating Principle #9a Integration
+
+When Operating Principle #9a (Pre-commit testing gate) triggers:
+- **Claude Code**: Runs imports, verifies functionality interactively
+- **Clawdbot**: Can run basic import tests: `python -c "from module import X"`
+- **Ralph**: Should auto-include testing phase in every PRD with implementation
+
+**Auto-add testing phase rule**: Any PRD or plan with "implement" must include corresponding "test" phase.
+
 ## Communication Patterns (William ↔ Claude)
 
 | William Says | Claude Does |
