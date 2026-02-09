@@ -21,6 +21,16 @@ Launch autonomous agents when the task would clearly benefit from parallel resea
 | **Large refactor touching 4+ independent files** | Parallel Development (3-4 agents) | SOP 10 |
 | **Research task spanning multiple domains** | Explore agents (2-4 parallel) | Task tool |
 
+### ALWAYS Block (Pre-Commit Gate)
+
+| Trigger | Action | SOPs |
+|---------|--------|------|
+| **New .py/.js/.ts files about to be committed** | BLOCK until Scenario 1 testing complete | testing-strategy.md |
+| **Plan includes implementation phase without testing phase** | AUTO-ADD testing phase to plan | SOP 2/testing-strategy.md |
+| **Code written but imports not verified** | RUN quick import test before commit | Operating Principle #9a |
+
+**Incident that created this rule:** `docs/incidents/2026-02-08-untested-code-committed.md`
+
 ### ASK First (Permission Required)
 
 | Situation | Why Ask |
@@ -123,6 +133,31 @@ Launch autonomous agents when the task would clearly benefit from parallel resea
 **Action:** Launch Explore agent(s) with appropriate thoroughness
 
 **Output:** Findings with file references
+
+---
+
+### 6. Pre-Commit Testing Gate (NEW - 2026-02-08)
+
+**Auto-trigger when:**
+- New code files (`.py`, `.js`, `.ts`) are about to be committed
+- A plan includes "implement X" phase without corresponding "test X" phase
+- User says "commit this" or "push to GitHub" after code implementation
+
+**Blocking Conditions:**
+- ❌ No imports tested → BLOCK until `python -c "from module import X"` passes
+- ❌ No manual run → BLOCK until basic functionality verified
+- ❌ Plan missing test phase → AUTO-INSERT testing phase before commit phase
+
+**Action:**
+1. Check if new code files were created in current session
+2. Verify at minimum imports work
+3. If basic tests not run, STOP and ask user before commit
+
+**Output:** Either "✅ Testing complete, safe to commit" or "⚠️ Testing required before commit"
+
+**Reference:** See `CLAUDE.md` Operating Principle #9a, `docs/testing-strategy.md`
+
+**Incident:** This trigger was added after TikTok modules were committed without testing (2026-02-08)
 
 ---
 
@@ -252,6 +287,8 @@ Respect immediately. Note preference for session.
 | "Research X in codebase" | Launch Explore agent |
 | "Find all X" | Launch Explore agent |
 | "In parallel" | Launch multiple agents as specified |
+| "Commit this" (after new code) | **BLOCK** until testing complete (Principle #9a) |
+| Plan has "implement" without "test" | **AUTO-ADD** testing phase to plan |
 
 ---
 
@@ -274,4 +311,4 @@ All SOPs are located in `CLAUDE.md`. Use Ctrl+F/Cmd+F to search.
 
 ---
 
-**Last Updated:** 2026-01-23
+**Last Updated:** 2026-02-08 (Added Pre-Commit Testing Gate - Principle #9a)

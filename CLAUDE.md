@@ -324,7 +324,17 @@ python deploy_to_skills.py --project [name] --repo [org/repo]  # Deploy to GitHu
    - Complex feature done + manual test passed → Auto-launch SOP 2 (multi-agent testing)
    - 4+ independent components to build → Auto-launch SOP 10 (parallel development)
    - Open-ended codebase questions → Auto-launch Explore agents
+   - **New code written → BLOCK commit until testing complete** (see #9a below)
    - See: `docs/autonomous-agent-decision-tree.md` for full decision matrix
+
+9a. **Pre-commit testing gate** - BEFORE committing new code implementations:
+   - **ALWAYS** run at minimum Scenario 1 (Manual Testing) from testing-strategy.md
+   - **NEVER** commit new `.py` files without verifying they at least run
+   - **CHECK** if plan includes implementation phases → testing phases MUST follow
+   - When creating plans with code implementation, automatically add testing phases
+   - If about to commit and new code hasn't been tested: STOP and ask user
+   - See: `docs/testing-strategy.md` for complete testing pipeline
+   - Incident that created this rule: `docs/incidents/2026-02-08-untested-code-committed.md`
 
 10. **Track deferred work** - Use DOCKET.md for items with future trigger conditions
    - Add items with clear trigger conditions (metrics, dates, dependencies)
