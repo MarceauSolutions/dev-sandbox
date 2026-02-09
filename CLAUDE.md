@@ -484,6 +484,8 @@ Primary: Ralph
 | "Use [template] for [client]" | Copy template to `~/website-projects/clients/[client]/site/` |
 | "Switch to website workspace" | Work in `~/website-projects/` (separate from dev-sandbox) |
 | *(SSH/EC2 commands)* | **Claude announces:** "I'm about to SSH into EC2—you'll see a fingerprint prompt." |
+| "Can you access Clawdbot/EC2?" | SSH into EC2: `ssh ec2` → access `/home/clawdbot/` |
+| "Check Clawdbot's files/logs" | `ssh ec2 "sudo -u clawdbot ls /home/clawdbot/clawd/"` or similar |
 
 **Prompt interpretation:** See `docs/prompting-guide.md` for complete phrase mappings.
 

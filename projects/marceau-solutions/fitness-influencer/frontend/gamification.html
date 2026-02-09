@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Coach Game | Gamification Dashboard</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+            --dark-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --card-border: #0f3460;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --xp-bar-bg: #2d2d44;
+            --gold-accent: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            background: var(--primary-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .player-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .player-details h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .player-title {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* XP Bar */
+        .xp-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .xp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .xp-bar-container {
+            background: var(--xp-bar-bg);
+            border-radius: 10px;
+            height: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .xp-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Daily Quests */
+        .quest-list {
+            list-style: none;
+        }
+
+        .quest-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quest-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .quest-item.completed {
+            opacity: 0.6;
+        }
+
+        .quest-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .quest-item.completed .quest-checkbox {
+            background: var(--success-gradient);
+            border-color: transparent;
+        }
+
+        .quest-info {
+            flex: 1;
+        }
+
+        .quest-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .quest-xp {
+            font-size: 12px;
+            color: var(--gold-accent);
+        }
+
+        /* Streak Section */
+        .streak-display {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .streak-flame {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .streak-count {
+            font-size: 36px;
+            font-weight: bold;
+            background: var(--warning-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .streak-multiplier {
+            font-size: 14px;
+            color: var(--gold-accent);
+            margin-top: 8px;
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .achievement-item {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .achievement-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .achievement-item.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .achievement-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .achievement-name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Rewards Shop */
+        .rewards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reward-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .reward-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .reward-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .reward-info {
+            flex: 1;
+        }
+
+        .reward-name {
+            font-weight: 500;
+        }
+
+        .reward-cost {
+            font-size: 14px;
+            color: var(--gold-accent);
+        }
+
+        .reward-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reward-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .reward-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Log Action Button */
+        .log-action-section {
+            margin-bottom: 24px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .action-btn-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .action-btn-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .action-btn-xp {
+            font-size: 12px;
+            color: var(--gold-accent);
+            margin-top: 4px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: var(--success-gradient);
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: var(--secondary-gradient);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--card-border);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stats-item {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .stats-item-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--gold-accent);
+        }
+
+        .stats-item-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 16px;">Loading your game stats...</p>
+        </div>
+
+        <!-- Main Content (hidden until loaded) -->
+        <div id="main-content" style="display: none;">
+            <!-- Header with Player Info -->
+            <div class="header">
+                <div class="player-info">
+                    <div class="player-avatar" id="player-avatar">🏋️</div>
+                    <div class="player-details">
+                        <h1>Level <span id="player-level">1</span>: <span id="player-title">Aspiring Coach</span></h1>
+                        <div class="player-title">Fitness Content Creator</div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value" id="coins-display">0</div>
+                        <div class="stat-label">Coins</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="streak-display">0</div>
+                        <div class="stat-label">Day Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="multiplier-display">1.0x</div>
+                        <div class="stat-label">Multiplier</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XP Progress Bar -->
+            <div class="xp-section">
+                <div class="xp-header">
+                    <span>Experience Points</span>
+                    <span id="xp-text">0 / 100 XP</span>
+                </div>
+                <div class="xp-bar-container">
+                    <div class="xp-bar-fill" id="xp-bar" style="width: 0%"></div>
+                    <div class="xp-bar-text" id="xp-percent">0%</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card log-action-section">
+                <div class="card-header">
+                    <h2 class="card-title">📝 Log Action</h2>
+                </div>
+                <div class="action-grid" id="action-grid">
+                    <button class="action-btn" data-action="post">
+                        <div class="action-btn-icon">📱</div>
+                        <div class="action-btn-label">Posted Content</div>
+                        <div class="action-btn-xp">+15 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="comment">
+                        <div class="action-btn-icon">💬</div>
+                        <div class="action-btn-label">Comments</div>
+                        <div class="action-btn-xp">+10 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="dm">
+                        <div class="action-btn-icon">✉️</div>
+                        <div class="action-btn-label">Checked DMs</div>
+                        <div class="action-btn-xp">+10 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="story">
+                        <div class="action-btn-icon">📸</div>
+                        <div class="action-btn-label">Posted Story</div>
+                        <div class="action-btn-xp">+15 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="engage">
+                        <div class="action-btn-icon">👍</div>
+                        <div class="action-btn-label">Engaged 5 Posts</div>
+                        <div class="action-btn-xp">+10 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="consultation">
+                        <div class="action-btn-icon">📞</div>
+                        <div class="action-btn-label">Consultation</div>
+                        <div class="action-btn-xp">+100 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="client_signed">
+                        <div class="action-btn-icon">🤝</div>
+                        <div class="action-btn-label">Client Signed</div>
+                        <div class="action-btn-xp">+500 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="revenue">
+                        <div class="action-btn-icon">💰</div>
+                        <div class="action-btn-label">Revenue Goal</div>
+                        <div class="action-btn-xp">+200 XP</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Daily Quests -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">📋 Daily Quests</h2>
+                        <span id="quests-progress">0/5</span>
+                    </div>
+                    <ul class="quest-list" id="quest-list">
+                        <!-- Populated by JavaScript -->
+                    </ul>
+                    <div style="text-align: center; margin-top: 16px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 8px;">
+                        <span style="color: var(--gold-accent);">🏆 Complete all for +50 XP bonus!</span>
+                    </div>
+                </div>
+
+                <!-- Streak & Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🔥 Streak</h2>
+                    </div>
+                    <div class="streak-display">
+                        <div class="streak-flame">🔥</div>
+                        <div class="streak-count" id="streak-count">0 Days</div>
+                        <div class="streak-multiplier" id="streak-bonus">Keep your streak to earn bonus XP!</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stats-item">
+                            <div class="stats-item-value" id="total-posts">0</div>
+                            <div class="stats-item-label">Total Posts</div>
+                        </div>
+                        <div class="stats-item">
+                            <div class="stats-item-value" id="total-clients">0</div>
+                            <div class="stats-item-label">Clients Signed</div>
+                        </div>
+                        <div class="stats-item">
+                            <div class="stats-item-value" id="total-revenue">$0</div>
+                            <div class="stats-item-label">Revenue</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🏅 Achievements</h2>
+                        <span id="achievements-count">0/11</span>
+                    </div>
+                    <div class="achievements-grid" id="achievements-grid">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Rewards Shop -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🛒 Rewards Shop</h2>
+                        <span id="coins-balance">💰 0 coins</span>
+                    </div>
+                    <div class="rewards-list" id="rewards-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = window.location.origin;
+        const TENANT_ID = 'wmarceau'; // Default tenant
+
+        // State
+        let playerData = null;
+        let questsData = [];
+        let achievementsData = [];
+        let rewardsData = [];
+
+        // Level titles
+        const LEVEL_TITLES = {
+            1: 'Aspiring Coach',
+            2: 'Content Rookie',
+            3: 'Rising Star',
+            4: 'Fitness Creator',
+            5: 'Content Pro',
+            6: 'Influence Builder',
+            7: 'Community Leader',
+            8: 'Fitness Authority',
+            9: 'Industry Expert',
+            10: 'Fitness Legend'
+        };
+
+        // Achievement icons
+        const ACHIEVEMENT_ICONS = {
+            'first_steps': '👣',
+            'week_warrior': '⚔️',
+            'consistency_king': '👑',
+            'month_master': '📅',
+            'quarter_champion': '🏆',
+            'yearly_legend': '⭐',
+            'first_sale': '💵',
+            '5k_goal': '💎',
+            '10k_goal': '💰',
+            '50k_goal': '🎯',
+            '100k_goal': '🚀'
+        };
+
+        // XP per level
+        function getXpForLevel(level) {
+            return level * 100;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlayerData();
+            setupActionButtons();
+        });
+
+        // Load all data
+        async function loadPlayerData() {
+            try {
+                // Load player stats
+                const statsRes = await fetch(`${API_BASE}/api/gamification/player/stats?tenant_id=${TENANT_ID}`);
+                if (!statsRes.ok) throw new Error('Failed to load player stats');
+                playerData = await statsRes.json();
+
+                // Load quests
+                const questsRes = await fetch(`${API_BASE}/api/gamification/quests/daily?tenant_id=${TENANT_ID}`);
+                if (!questsRes.ok) throw new Error('Failed to load quests');
+                questsData = await questsRes.json();
+
+                // Load achievements
+                const achievementsRes = await fetch(`${API_BASE}/api/gamification/achievements?tenant_id=${TENANT_ID}`);
+                if (!achievementsRes.ok) throw new Error('Failed to load achievements');
+                achievementsData = await achievementsRes.json();
+
+                // Load rewards
+                const rewardsRes = await fetch(`${API_BASE}/api/gamification/rewards?tenant_id=${TENANT_ID}`);
+                if (!rewardsRes.ok) throw new Error('Failed to load rewards');
+                rewardsData = await rewardsRes.json();
+
+                // Render everything
+                renderPlayerStats();
+                renderQuests();
+                renderAchievements();
+                renderRewards();
+
+                // Show main content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: #f5576c;">Failed to load data. Make sure the API is running.</p>
+                    <p style="margin-top: 8px; font-size: 14px;">Error: ${error.message}</p>
+                    <button onclick="location.reload()" style="margin-top: 16px; padding: 12px 24px; border: none; border-radius: 8px; background: var(--primary-gradient); color: white; cursor: pointer;">Retry</button>
+                `;
+            }
+        }
+
+        // Render player stats
+        function renderPlayerStats() {
+            const { level, xp, coins, title, current_streak, best_streak, streak_multiplier, stats } = playerData;
+
+            // Update header
+            document.getElementById('player-level').textContent = level;
+            document.getElementById('player-title').textContent = title || LEVEL_TITLES[level] || 'Fitness Coach';
+            document.getElementById('coins-display').textContent = coins;
+            document.getElementById('streak-display').textContent = current_streak;
+            document.getElementById('multiplier-display').textContent = `${streak_multiplier}x`;
+
+            // Update XP bar
+            const xpForCurrentLevel = getXpForLevel(level);
+            const xpProgress = (xp / xpForCurrentLevel) * 100;
+            document.getElementById('xp-bar').style.width = `${Math.min(xpProgress, 100)}%`;
+            document.getElementById('xp-text').textContent = `${xp} / ${xpForCurrentLevel} XP`;
+            document.getElementById('xp-percent').textContent = `${Math.round(xpProgress)}%`;
+
+            // Update streak section
+            document.getElementById('streak-count').textContent = `${current_streak} Days`;
+            if (current_streak >= 30) {
+                document.getElementById('streak-bonus').textContent = `🔥 3x XP Multiplier Active! Best: ${best_streak} days`;
+            } else if (current_streak >= 14) {
+                document.getElementById('streak-bonus').textContent = `🔥 2x XP Multiplier Active! Best: ${best_streak} days`;
+            } else if (current_streak >= 7) {
+                document.getElementById('streak-bonus').textContent = `🔥 1.5x XP Multiplier Active! Best: ${best_streak} days`;
+            } else if (current_streak >= 3) {
+                document.getElementById('streak-bonus').textContent = `🔥 1.25x XP Multiplier Active! Best: ${best_streak} days`;
+            } else {
+                document.getElementById('streak-bonus').textContent = `Keep a 3+ day streak for bonus XP!`;
+            }
+
+            // Update stats
+            document.getElementById('total-posts').textContent = stats?.total_posts || 0;
+            document.getElementById('total-clients').textContent = stats?.total_clients || 0;
+            document.getElementById('total-revenue').textContent = `$${(stats?.total_revenue || 0).toLocaleString()}`;
+
+            // Update coins in rewards section
+            document.getElementById('coins-balance').textContent = `💰 ${coins} coins`;
+        }
+
+        // Render quests
+        function renderQuests() {
+            const questList = document.getElementById('quest-list');
+            const completedCount = questsData.filter(q => q.completed).length;
+            document.getElementById('quests-progress').textContent = `${completedCount}/${questsData.length}`;
+
+            questList.innerHTML = questsData.map(quest => `
+                <li class="quest-item ${quest.completed ? 'completed' : ''}" onclick="completeQuest('${quest.id}')">
+                    <div class="quest-checkbox">
+                        ${quest.completed ? '✓' : ''}
+                    </div>
+                    <div class="quest-info">
+                        <div class="quest-name">${quest.name}</div>
+                        <div class="quest-xp">+${quest.xp_reward} XP</div>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        // Render achievements
+        function renderAchievements() {
+            const grid = document.getElementById('achievements-grid');
+            const unlockedCount = achievementsData.filter(a => a.unlocked).length;
+            document.getElementById('achievements-count').textContent = `${unlockedCount}/${achievementsData.length}`;
+
+            grid.innerHTML = achievementsData.map(achievement => `
+                <div class="achievement-item ${achievement.unlocked ? '' : 'locked'}" title="${achievement.description}">
+                    <div class="achievement-icon">${ACHIEVEMENT_ICONS[achievement.id] || '🏅'}</div>
+                    <div class="achievement-name">${achievement.name}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render rewards
+        function renderRewards() {
+            const list = document.getElementById('rewards-list');
+
+            list.innerHTML = rewardsData.map(reward => `
+                <div class="reward-item">
+                    <div class="reward-icon">${reward.icon || '🎁'}</div>
+                    <div class="reward-info">
+                        <div class="reward-name">${reward.name}</div>
+                        <div class="reward-cost">${reward.cost} coins</div>
+                    </div>
+                    <button class="reward-btn"
+                        onclick="purchaseReward('${reward.id}')"
+                        ${playerData.coins < reward.cost ? 'disabled' : ''}>
+                        Buy
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Setup action buttons
+        function setupActionButtons() {
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.dataset.action;
+                    logAction(action);
+                });
+            });
+        }
+
+        // Log action
+        async function logAction(actionType) {
+            try {
+                const res = await fetch(`${API_BASE}/api/gamification/player/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action_type: actionType,
+                        tenant_id: TENANT_ID
+                    })
+                });
+
+                if (!res.ok) throw new Error('Failed to log action');
+
+                const result = await res.json();
+
+                // Show toast
+                showToast(`+${result.xp_earned} XP${result.coins_earned ? ` | +${result.coins_earned} coins` : ''}${result.level_up ? ' | 🎉 LEVEL UP!' : ''}`);
+
+                // Reload data
+                await loadPlayerData();
+
+            } catch (error) {
+                showToast('Failed to log action', true);
+            }
+        }
+
+        // Complete quest
+        async function completeQuest(questId) {
+            try {
+                const res = await fetch(`${API_BASE}/api/gamification/quests/${questId}/complete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tenant_id: TENANT_ID })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Failed to complete quest');
+                }
+
+                const result = await res.json();
+                showToast(`Quest complete! +${result.xp_earned} XP`);
+
+                // Reload data
+                await loadPlayerData();
+
+            } catch (error) {
+                showToast(error.message, true);
+            }
+        }
+
+        // Purchase reward
+        async function purchaseReward(rewardId) {
+            try {
+                const res = await fetch(`${API_BASE}/api/gamification/rewards/purchase`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reward_id: rewardId,
+                        tenant_id: TENANT_ID
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Failed to purchase reward');
+                }
+
+                const result = await res.json();
+                showToast(`🎉 ${result.reward_name} purchased!`);
+
+                // Reload data
+                await loadPlayerData();
+
+            } catch (error) {
+                showToast(error.message, true);
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${isError ? 'error' : ''} show`;
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

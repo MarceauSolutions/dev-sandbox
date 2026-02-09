@@ -43,6 +43,12 @@ from backend.rate_limiter import (
 )
 from slowapi.errors import RateLimitExceeded
 
+# Gamification routes (v2.0)
+from backend.gamification_routes import router as gamification_router
+
+# Task management routes (v2.0)
+from backend.tasks_routes import router as tasks_router
+
 # Initialize structured JSON logging
 setup_logging()
 logger = get_logger(__name__)
@@ -69,16 +75,39 @@ app.add_middleware(
 # Add structured logging and performance monitoring middleware (v2.0)
 setup_middleware(app)
 
+# Include gamification routes (v2.0)
+app.include_router(gamification_router)
+
+# Include task management routes (v2.0)
+app.include_router(tasks_router)
+
 # Base path for execution scripts
 SCRIPTS_PATH = Path(__file__).parent
+PROJECT_PATH = SCRIPTS_PATH.parent  # fitness-influencer root
 
 # Create static directory for processed videos
 STATIC_PATH = SCRIPTS_PATH / "static"
 VIDEOS_PATH = STATIC_PATH / "videos"
 VIDEOS_PATH.mkdir(parents=True, exist_ok=True)
 
+# Frontend path for HTML files
+FRONTEND_PATH = PROJECT_PATH / "frontend"
+
 # Mount static files for video downloads
 app.mount("/static", StaticFiles(directory=str(STATIC_PATH)), name="static")
+
+
+# ============================================================================
+# Frontend Routes
+# ============================================================================
+
+@app.get("/gamification")
+async def gamification_page():
+    """Serve the gamification dashboard HTML page."""
+    gamification_html = FRONTEND_PATH / "gamification.html"
+    if gamification_html.exists():
+        return FileResponse(gamification_html, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Gamification page not found")
 
 
 # ============================================================================

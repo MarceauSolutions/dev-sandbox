@@ -280,70 +280,105 @@
       "paused_reason": "Focusing on fitness influencer brand"
     },
     "fitness-influencer": {
-      "name": "Peptide Authority / Fitness",
-      "short_name": "Peptide Authority",
+      "name": "Fitness Business Journey",
+      "short_name": "Fitness Journey",
       "owner": "William Marceau Jr.",
       "type": "fitness-influencer",
       "website": "https://marceausolutions.com",
       "service_area": "Global (content creator)",
       "brand": {
-        "tone": "informed skeptic, evidence-based, no-BS fitness, science-first",
+        "tone": "transparent, authentic, data-driven founder, evidence-based fitness",
         "colors": [
           "#22c55e",
           "#3b82f6",
           "#f59e0b"
         ],
-        "tagline": "Cutting through the peptide noise with science"
+        "tagline": "Building a fitness business in public"
       },
-      "content_template": "fitness-peptide-content.json",
+      "content_templates": [
+        "fitness-peptide-content.json",
+        "build-in-public-content.json"
+      ],
       "content_pillars": {
-        "education": 40,
-        "experience": 25,
-        "framework": 20,
-        "engagement": 15
+        "build_in_public": 50,
+        "peptide_education": 30,
+        "fitness_content": 20
+      },
+      "content_mix": {
+        "bip_revenue": 15,
+        "bip_milestone": 15,
+        "bip_lesson": 15,
+        "bip_tech": 10,
+        "bip_behind_scenes": 10,
+        "bip_engagement": 10,
+        "peptide_education": 15,
+        "fitness_tips": 10
       },
       "target_audience": {
-        "primary": "Fitness enthusiasts 25-45 interested in optimization",
+        "primary_x": "Aspiring creators, solopreneurs, build-in-public community",
+        "primary_youtube": "Fitness enthusiasts interested in peptide education",
         "secondary": "Biohackers, bodybuilders, recovery-focused athletes",
         "pain_points": [
+          "Want to build a fitness business but don't know how",
           "Confused by conflicting peptide information",
-          "Don't know what's hype vs real",
-          "Worried about quality/sourcing",
-          "Want evidence-based guidance",
-          "Looking for framework to decide if peptides are right for them"
+          "Looking for transparent business journey to follow",
+          "Want evidence-based guidance on optimization"
         ]
       },
       "social_accounts": {
         "x_handle": "@wmarceau",
         "use_main_account": true,
-        "strategy": "Authority building via education and personal experience"
+        "strategy": "X for build-in-public journey, YouTube for peptide education"
       },
       "hashtags": {
         "primary": [
-          "peptides",
-          "biohacking",
-          "fitness"
+          "buildinpublic",
+          "solopreneur",
+          "fitnessbusiness"
         ],
         "secondary": [
-          "bodybuilding",
-          "recovery",
-          "health",
-          "optimization"
+          "indiehacker",
+          "creatoreconomy",
+          "peptides",
+          "biohacking"
         ],
         "avoid": [
           "steroids",
           "PEDs",
-          "forsale"
+          "forsale",
+          "getrichquick"
         ]
       },
       "content_themes": {
-        "monday": "myth_buster",
-        "tuesday": "tutorial",
-        "wednesday": "wisdom",
-        "thursday": "deep_dive",
-        "friday": "qa_engagement",
-        "saturday": "personal_story",
-        "sunday": "framework"
+        "monday": "week_preview",
+        "tuesday": "behind_scenes",
+        "wednesday": "milestone_or_lesson",
+        "thursday": "tech_automation",
+        "friday": "week_recap",
+        "saturday": "engagement",
+        "sunday": "planning"
+      },
+      "platform_strategy": {
+        "x_twitter": {
+          "focus": "Build-in-public business journey",
+          "content_type": "Revenue updates, wins, failures, tech stack, behind-the-scenes",
+          "frequency": "4 posts/day weekdays"
+        },
+        "youtube": {
+          "focus": "Peptide education (TikTok bans peptide content)",
+          "content_type": "Deep-dive explainers, research breakdowns, personal protocols",
+          "frequency": "1-2 videos/week"
+        },
+        "instagram": {
+          "focus": "Fitness/workout content only",
+          "content_type": "Workout reels, exercise demos",
+          "frequency": "3-4 reels/week"
+        },
+        "tiktok": {
+          "focus": "Fitness only - NO peptide content (banned)",
+          "content_type": "Workout clips, fitness tips",
+          "frequency": "Optional, cross-post from Instagram"
+        }
       },
       "x_engagement_focus": {
         "priority": ["replies", "quote_tweets", "retweets", "bookmarks", "likes"],
@@ -352,9 +387,9 @@
         "hooks": "pattern_interrupt_plus_promise"
       },
       "posting_schedule": {
-        "posts_per_day": 3,
-        "optimal_times_est": ["06:00", "08:30", "12:00", "17:30", "20:00"],
-        "best_days": ["tuesday", "wednesday", "thursday"],
+        "posts_per_day": 4,
+        "optimal_times_est": ["09:00", "12:00", "15:00", "18:00"],
+        "best_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
         "thread_days": ["tuesday", "thursday"]
       },
       "compliance": {

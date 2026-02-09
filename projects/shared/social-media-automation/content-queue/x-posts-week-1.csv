@@ -1,0 +1,110 @@
+Post_ID,Content,Status,Category,Scheduled_Day
+bip_001,"Building a fitness business in 2026.
+
+Week 1 goals:
+- Finish automating content pipeline
+- Land 1 coaching client
+- Post 3x daily
+
+Public accountability works.
+
+What are your goals this week?",PENDING,bip_engagement,monday
+bip_002,"My solo fitness business tech stack:
+
+- n8n for automation
+- Claude for content ideas
+- Google Sheets for tracking
+- Notion for client management
+- Grok for image generation
+
+Total cost: ~$50/month.
+
+What's in your stack?",PENDING,bip_tech,tuesday
+bip_003,"What my day actually looks like:
+
+5:00 AM - Wake up, gym
+7:00 AM - Content batch (1 hour)
+8:00 AM - Day job starts
+5:00 PM - Day job ends
+6:00 PM - Client calls
+8:00 PM - Family time
+10:00 PM - Planning tomorrow
+
+No magic. Just systems.
+
+What's your schedule?",PENDING,bip_behind_scenes,tuesday
+bip_004,"Just automated my X posting.
+
+n8n workflow:
+1. Reads from Google Sheets
+2. Posts at optimal times
+3. Updates status
+4. Tracks analytics
+
+Now I batch content on Sunday.
+Posts itself all week.
+
+What have you automated?",PENDING,bip_tech,wednesday
+bip_005,"Small win today:
+
+Finished building the gamification dashboard for my fitness app.
+
+- Track daily quests
+- XP and level progression
+- Streak multipliers
+- Rewards shop
+
+Makes the grind feel like a game.
+
+What keeps you motivated?",PENDING,bip_milestone,wednesday
+bip_006,"Made a mistake today.
+
+Tried to do everything at once:
+- Film content
+- Edit videos
+- Write posts
+- Build automation
+
+Result: Nothing done well.
+
+Lesson: Focus on one thing at a time.
+
+What's your ONE focus this week?",PENDING,bip_lesson,thursday
+bip_007,"Peptide education + personal training.
+
+Seems like a weird combo to some.
+
+To me, it's both about optimization.
+
+What's your niche combo?",PENDING,bip_engagement,thursday
+bip_008,"Friday recap.
+
+Wins:
+- Automation pipeline working
+- 5 pieces of content created
+- Gamification dashboard live
+
+Losses:
+- No clients signed yet
+- Spent too much time on features
+
+Next week: Focus on outreach.
+
+How was your week?",PENDING,bip_revenue,friday
+bip_009,"Recording setup for under $200:
+
+- iPhone (already had)
+- $30 tripod from Amazon
+- Ring light: $40
+- Lav mic: $25
+- Free editing software
+
+You don't need expensive gear.
+You need to start.
+
+What's holding you back?",PENDING,bip_behind_scenes,saturday
+bip_010,"If you could automate one thing in your business tomorrow, what would it be?
+
+I'll share how I'd do it.
+
+Reply below.",PENDING,bip_engagement,sunday

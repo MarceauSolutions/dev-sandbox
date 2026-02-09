@@ -99,5 +99,92 @@ Even if Claude has no memory of the prior work:
 
 ## Related Documents
 
-- `docs/incidents/2026-01-27-user-statement-contradiction.md` - Full incident report
+- `docs/incidents/2026-01-27-user-statement-contradiction.md` - Full incident report (statement contradiction)
+- `docs/incidents/2026-02-09-ssh-access-awareness.md` - Full incident report (capability awareness)
 - `CLAUDE.md` - Main agent instructions (references this SOP)
+
+---
+
+## Extension: Capability Awareness (Added 2026-02-09)
+
+### Incident That Triggered This Extension
+
+| Item | Detail |
+|------|--------|
+| **User Question** | "why can't you directly access clawdbot?" |
+| **Claude's Incorrect Response** | Explained they are "separate systems" - implying inability |
+| **Reality** | SSH access to EC2 is standard practice, documented in 10+ files, used earlier in session |
+| **Impact** | Claude claimed limitation when capability clearly exists |
+
+**Full incident report**: `docs/incidents/2026-02-09-ssh-access-awareness.md`
+
+### Key Insight
+
+The original SOP-26 covers trusting user statements about **past work**. This extension covers trusting user implications about **current capabilities**.
+
+| Original SOP-26 | Capability Extension |
+|-----------------|---------------------|
+| User says "we set up X" | User implies "you can access X" |
+| Don't say "No we didn't" | Don't say "I can't access that" |
+
+---
+
+### MANDATORY Protocol for Capability Questions
+
+When user asks about accessing systems, tools, or capabilities:
+
+### 1. Check Documentation First
+Before claiming inability, verify:
+- Does SSH access exist? (EC2, servers)
+- Are there documented access patterns?
+- Have you used this capability earlier in the session?
+
+### 2. Default to Trying, Not Declining
+If unsure, attempt the access rather than claiming limitation.
+
+### 3. Trust User's Implications
+If user asks "why can't you X", they likely know you CAN X.
+
+---
+
+### Prohibited Capability Responses
+
+| Response Type | Example |
+|--------------|---------|
+| Claiming inability | "I can't access that" |
+| System separation | "We are separate systems" |
+| Dismissing access | "That's not possible" |
+| Forgetting prior use | "I don't have access to that" (after using it earlier) |
+
+---
+
+### Required Capability Responses
+
+| Response Type | Example |
+|--------------|---------|
+| Verify access | "Let me check how we access that" |
+| Try first | "I'll attempt to connect via SSH/API" |
+| Acknowledge capability | "I can access that via [method]" |
+| Reference documentation | "According to our docs, I access that via [method]" |
+
+---
+
+### Capability Verification Checklist
+
+Before claiming you cannot access something:
+
+- [ ] Check if SSH access exists in documentation
+- [ ] Check if you've used this access earlier in session
+- [ ] Check CLAUDE.md communication patterns table
+- [ ] Check relevant SOPs (SOP-27 Clawdbot, SOP-28 Ralph, SOP-29 Three-Agent)
+- [ ] Try the access before claiming limitation
+
+---
+
+### Success Criteria (Extended)
+
+- ✅ User statements about prior work are never contradicted (original)
+- ✅ User implications about capabilities are trusted (new)
+- ✅ Capability claims are verified before being made (new)
+- ✅ Access is attempted before declaring it impossible (new)
+- ✅ Trust is maintained in the working relationship

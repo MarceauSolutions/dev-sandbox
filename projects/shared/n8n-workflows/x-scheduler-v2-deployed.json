@@ -1,0 +1,1092 @@
+{
+  "updatedAt": "2026-02-09T18:39:21.831Z",
+  "createdAt": "2026-02-09T18:39:21.831Z",
+  "id": "CT5em35LljouaCrU",
+  "name": "X-Social-Post-Scheduler-v2",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,12,15,18 * * 1-5"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "0 10,16 * * 6,0"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Weekday Post Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "X_Post_Queue"
+        },
+        "options": {}
+      },
+      "id": "get-next-post",
+      "name": "Get Next Post from Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        220,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mywn8S0xjRx9YM9K",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "status",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "PENDING",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "filter-pending",
+      "name": "Filter Pending Posts",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        },
+        "batchSize": 1
+      },
+      "id": "limit-one",
+      "name": "Process One Post",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "text",
+              "name": "text",
+              "value": "={{ $json.Content }}",
+              "type": "string"
+            },
+            {
+              "id": "post_id",
+              "name": "post_id",
+              "value": "={{ $json.Post_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "category",
+              "name": "category",
+              "value": "={{ $json.Category }}",
+              "type": "string"
+            },
+            {
+              "id": "row_number",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "media_url",
+              "name": "media_url",
+              "value": "={{ $json.Media_URL || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "prepare-post",
+      "name": "Prepare Post Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "has-media",
+              "leftValue": "={{ $json.media_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-media",
+      "name": "Has Media URL?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-image",
+      "name": "Download Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "upload",
+        "binaryPropertyName": "data"
+      },
+      "id": "upload-to-twitter",
+      "name": "Upload to Twitter",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        200
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "GE5AiSqCkxMyqg77",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Prepare Post Data').item.json.text }}",
+        "additionalFields": {
+          "mediaIds": "={{ $json.data.media_id_string }}"
+        }
+      },
+      "id": "post-with-media",
+      "name": "Post to X (with Media)",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        200
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "GE5AiSqCkxMyqg77",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "post-text-only",
+      "name": "Post to X (Text Only)",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        400
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "GE5AiSqCkxMyqg77",
+          "name": "X account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "X_Post_Queue"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Prepare Post Data').item.json.row_number }}",
+            "Status": "POSTED",
+            "Posted_At": "={{ $now.toISO() }}",
+            "Tweet_ID": "={{ $json.data.id }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "type": "string"
+            },
+            {
+              "id": "Posted_At",
+              "displayName": "Posted_At",
+              "type": "string"
+            },
+            {
+              "id": "Tweet_ID",
+              "displayName": "Tweet_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-status",
+      "name": "Mark as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mywn8S0xjRx9YM9K",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "X_Post_Analytics"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tweet_ID": "={{ $json.data.id }}",
+            "Post_ID": "={{ $('Prepare Post Data').item.json.post_id }}",
+            "Content": "={{ $('Prepare Post Data').item.json.text }}",
+            "Category": "={{ $('Prepare Post Data').item.json.category }}",
+            "Has_Image": "={{ $('Prepare Post Data').item.json.media_url ? 'YES' : 'NO' }}",
+            "Posted_At": "={{ $now.toISO() }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "log-analytics",
+      "name": "Log to Analytics",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        500
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mywn8S0xjRx9YM9K",
+          "name": "Google Sheets account 4"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Weekday Post Schedule": {
+      "main": [
+        [
+          {
+            "node": "Get Next Post from Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Next Post from Queue": {
+      "main": [
+        [
+          {
+            "node": "Filter Pending Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Pending Posts": {
+      "main": [
+        [
+          {
+            "node": "Process One Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process One Post": {
+      "main": [
+        [
+          {
+            "node": "Prepare Post Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Prepare Post Data": {
+      "main": [
+        [
+          {
+            "node": "Has Media URL?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Media URL?": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post to X (Text Only)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Twitter": {
+      "main": [
+        [
+          {
+            "node": "Post to X (with Media)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to X (with Media)": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to X (Text Only)": {
+      "main": [
+        [
+          {
+            "node": "Mark as Posted",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Weekday Post Schedule": {
+      "recurrenceRules": []
+    }
+  },
+  "activeVersionId": "ea4701f6-2b73-4419-acd5-102ba4fae0ec",
+  "versionCounter": 4,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-09T18:39:21.833Z",
+      "createdAt": "2026-02-09T18:39:21.833Z",
+      "role": "workflow:owner",
+      "workflowId": "CT5em35LljouaCrU",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-09T16:46:23.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-09",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-09T18:39:21.842Z",
+    "createdAt": "2026-02-09T18:39:21.842Z",
+    "versionId": "ea4701f6-2b73-4419-acd5-102ba4fae0ec",
+    "workflowId": "CT5em35LljouaCrU",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 9,12,15,18 * * 1-5"
+              },
+              {
+                "field": "cronExpression",
+                "expression": "0 10,16 * * 6,0"
+              }
+            ]
+          }
+        },
+        "id": "schedule-trigger",
+        "name": "Weekday Post Schedule",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "X_Post_Queue"
+          },
+          "options": {}
+        },
+        "id": "get-next-post",
+        "name": "Get Next Post from Queue",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          220,
+          300
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "mywn8S0xjRx9YM9K",
+            "name": "Google Sheets account 4"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "caseSensitive": true
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "status",
+                "leftValue": "={{ $json.Status }}",
+                "rightValue": "PENDING",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "filter-pending",
+        "name": "Filter Pending Posts",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          440,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          },
+          "batchSize": 1
+        },
+        "id": "limit-one",
+        "name": "Process One Post",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          660,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "text",
+                "name": "text",
+                "value": "={{ $json.Content }}",
+                "type": "string"
+              },
+              {
+                "id": "post_id",
+                "name": "post_id",
+                "value": "={{ $json.Post_ID }}",
+                "type": "string"
+              },
+              {
+                "id": "category",
+                "name": "category",
+                "value": "={{ $json.Category }}",
+                "type": "string"
+              },
+              {
+                "id": "row_number",
+                "name": "row_number",
+                "value": "={{ $json.row_number }}",
+                "type": "number"
+              },
+              {
+                "id": "media_url",
+                "name": "media_url",
+                "value": "={{ $json.Media_URL || '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "prepare-post",
+        "name": "Prepare Post Data",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          880,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": false,
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "has-media",
+                "leftValue": "={{ $json.media_url }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "has-media",
+        "name": "Has Media URL?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1100,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.media_url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "id": "download-image",
+        "name": "Download Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1320,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "media",
+          "operation": "upload",
+          "binaryPropertyName": "data"
+        },
+        "id": "upload-to-twitter",
+        "name": "Upload to Twitter",
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          1540,
+          200
+        ],
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "GE5AiSqCkxMyqg77",
+            "name": "X account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "text": "={{ $('Prepare Post Data').item.json.text }}",
+          "additionalFields": {
+            "mediaIds": "={{ $json.data.media_id_string }}"
+          }
+        },
+        "id": "post-with-media",
+        "name": "Post to X (with Media)",
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          200
+        ],
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "GE5AiSqCkxMyqg77",
+            "name": "X account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "text": "={{ $json.text }}",
+          "additionalFields": {}
+        },
+        "id": "post-text-only",
+        "name": "Post to X (Text Only)",
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          1320,
+          400
+        ],
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "GE5AiSqCkxMyqg77",
+            "name": "X account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "X_Post_Queue"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "row_number": "={{ $('Prepare Post Data').item.json.row_number }}",
+              "Status": "POSTED",
+              "Posted_At": "={{ $now.toISO() }}",
+              "Tweet_ID": "={{ $json.data.id }}"
+            },
+            "matchingColumns": [
+              "row_number"
+            ],
+            "schema": [
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "type": "string"
+              },
+              {
+                "id": "Posted_At",
+                "displayName": "Posted_At",
+                "type": "string"
+              },
+              {
+                "id": "Tweet_ID",
+                "displayName": "Tweet_ID",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "update-status",
+        "name": "Mark as Posted",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1980,
+          300
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "mywn8S0xjRx9YM9K",
+            "name": "Google Sheets account 4"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "X_Post_Analytics"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Tweet_ID": "={{ $json.data.id }}",
+              "Post_ID": "={{ $('Prepare Post Data').item.json.post_id }}",
+              "Content": "={{ $('Prepare Post Data').item.json.text }}",
+              "Category": "={{ $('Prepare Post Data').item.json.category }}",
+              "Has_Image": "={{ $('Prepare Post Data').item.json.media_url ? 'YES' : 'NO' }}",
+              "Posted_At": "={{ $now.toISO() }}"
+            }
+          },
+          "options": {}
+        },
+        "id": "log-analytics",
+        "name": "Log to Analytics",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1980,
+          500
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "mywn8S0xjRx9YM9K",
+            "name": "Google Sheets account 4"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Weekday Post Schedule": {
+        "main": [
+          [
+            {
+              "node": "Get Next Post from Queue",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Next Post from Queue": {
+        "main": [
+          [
+            {
+              "node": "Filter Pending Posts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter Pending Posts": {
+        "main": [
+          [
+            {
+              "node": "Process One Post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process One Post": {
+        "main": [
+          [
+            {
+              "node": "Prepare Post Data",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Prepare Post Data": {
+        "main": [
+          [
+            {
+              "node": "Has Media URL?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Media URL?": {
+        "main": [
+          [
+            {
+              "node": "Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Post to X (Text Only)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image": {
+        "main": [
+          [
+            {
+              "node": "Upload to Twitter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Twitter": {
+        "main": [
+          [
+            {
+              "node": "Post to X (with Media)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post to X (with Media)": {
+        "main": [
+          [
+            {
+              "node": "Mark as Posted",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Log to Analytics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post to X (Text Only)": {
+        "main": [
+          [
+            {
+              "node": "Mark as Posted",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Log to Analytics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "William Marceau",
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-09T18:42:02.780Z",
+        "id": 127,
+        "workflowId": "CT5em35LljouaCrU",
+        "versionId": "ea4701f6-2b73-4419-acd5-102ba4fae0ec",
+        "event": "activated",
+        "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec"
+      }
+    ]
+  }
+}
