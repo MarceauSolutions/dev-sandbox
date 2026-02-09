@@ -81,10 +81,16 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | **Ralph capabilities** | `docs/RALPH-CAPABILITIES.md` |
 | **n8n transition plan** | `docs/N8N-TRANSITION-PLAN.md` ⭐ |
 | **n8n workflow management (SOP 30)** | See SOP 30 below ⭐ |
+| **n8n Agent Orchestrator** | `docs/AGENT-ORCHESTRATOR-GUIDE.md` ⭐ |
+| **EC2 n8n setup** | `docs/EC2-N8N-SETUP.md` |
+| **Folder structure decisions** | `docs/FOLDER-STRUCTURE-GUIDE.md` ⭐ |
+| **Hybrid architecture quick ref** | `docs/HYBRID-ARCHITECTURE-QUICK-REF.md` |
+| **MCP conversion plan** | `docs/MCP-CONVERSION-PLAN.md` |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) ⭐ |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
 | **Incident reports** | `docs/incidents/` |
+| **Archived documentation** | `docs/archive/` |
 
 ## Development Pipeline (DOE → Skills)
 
@@ -786,6 +792,8 @@ python -m src.digest_aggregator --hours 1
 
 **Purpose**: Ensure proper app type selection, cost analysis, and template decisions are made upfront.
 
+**Agent**: Claude Code (primary, interactive). Clawdbot for complexity 0-4 projects only. Ralph: N/A.
+
 **Steps**:
 1. **Complete kickoff questionnaire**: Copy `templates/project-kickoff-questionnaire.md` to project folder
    - Answer all 19 questions
@@ -825,6 +833,13 @@ python -m src.digest_aggregator --hours 1
 - Go/No-Go decision
 - Next step (SOP 1 or SOP 9)
 
+**Success Criteria**:
+- [ ] Kickoff questionnaire completed (19 questions answered)
+- [ ] App type selected with rationale documented
+- [ ] Cost-benefit analysis shows positive ROI or strategic value
+- [ ] KICKOFF.md created in project folder
+- [ ] Go/No-Go decision made and documented
+
 **References**: `docs/app-type-decision-guide.md`, `docs/cost-benefit-templates.md`, `templates/project-kickoff-questionnaire.md`
 
 ---
@@ -832,6 +847,15 @@ python -m src.digest_aggregator --hours 1
 ### SOP 1: New Project Initialization
 
 **When**: Starting a new AI assistant or automation project (AFTER completing SOP 0)
+
+**Purpose**: Create standardized project structure with proper folder placement, version control, and documentation scaffolding.
+
+**Agent**: Claude Code (primary). Clawdbot for complexity 0-6. Ralph for complexity 7-10 via PRD.
+
+**Prerequisites**:
+- ✅ SOP 0 complete (KICKOFF.md exists with Go decision)
+- ✅ App type determined (MCP, CLI, Web, etc.)
+- ✅ Company/shared placement decided
 
 **Steps**:
 1. **Determine location** using folder structure decision tree:
@@ -893,6 +917,13 @@ python -m src.digest_aggregator --hours 1
    python deploy_to_skills.py --project [project-name] --version 1.0.0
    ```
 
+**Success Criteria**:
+- [ ] Project folder created in correct location (company-specific or shared)
+- [ ] Standard structure present: src/, workflows/, VERSION, CHANGELOG.md, README.md
+- [ ] No nested git repository (`find . -name ".git"` shows only parent)
+- [ ] Initial commit pushed to dev-sandbox
+- [ ] Directive created (if project has SOPs)
+
 **References**:
 - `docs/FOLDER-STRUCTURE-GUIDE.md` - Where to put new code
 - `docs/HYBRID-ARCHITECTURE-QUICK-REF.md` - Quick reference
@@ -904,6 +935,8 @@ python -m src.digest_aggregator --hours 1
 ### SOP 2: Multi-Agent Testing
 
 **When**: After manual testing complete AND implementing complex features with multiple edge cases
+
+**Agent**: Claude Code (orchestrate agents). Ralph (generate test suites). Clawdbot: N/A.
 
 **Complete Testing Guide**: See `docs/testing-strategy.md` for full pipeline
 
@@ -998,6 +1031,8 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 
 **When**: Deploying a Skill to production for dev-sandbox Claude usage (AFTER testing complete)
 
+**Agent**: Claude Code (primary, REQUIRED for PyPI/MCP). Clawdbot (git operations only). Ralph: N/A.
+
 **This SOP is for Skills** (used by dev-sandbox Claude). For standalone AI Assistants (fresh Claude or sellable), see **SOP 31**.
 
 | Deployment Type | Target | SOP | Used By |
@@ -1050,6 +1085,14 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 - **Minor (x.Y.0)**: New features, backwards compatible
 - **Patch (x.y.Z)**: Bug fixes only
 
+**Success Criteria**:
+- [ ] Production folder created at `~/production/[name]-prod/`
+- [ ] VERSION file updated (no -dev suffix)
+- [ ] CHANGELOG.md has entry for this version
+- [ ] `deploy_to_skills.py --status` shows matching versions
+- [ ] Dev-sandbox bumped to next -dev version
+- [ ] Post-deployment verification passed (Scenario 4)
+
 **References**: `docs/versioned-deployment.md`
 
 ---
@@ -1057,6 +1100,10 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 ### SOP 4: Repository Cleanup & Verification
 
 **When**: Weekly maintenance, or when adding new projects
+
+**Purpose**: Maintain clean repository structure with no nested git repos, ensuring all production code is properly organized.
+
+**Agent**: Any agent (Claude Code for complex fixes, Clawdbot for checks, Ralph: N/A).
 
 **Steps**:
 1. **Check for nested repos**:
@@ -1087,6 +1134,11 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 
 **If issues persist**: See `docs/repository-management.md` Section: "Common Mistakes and Fixes"
 
+**Success Criteria**:
+- [ ] `find . -name ".git" -type d` shows only `./.git`
+- [ ] `git status` shows no submodule warnings
+- [ ] All production repos outside dev-sandbox verified
+
 **References**: `docs/repository-management.md`, `docs/REPO-QUICK-REFERENCE.md`
 
 ---
@@ -1094,6 +1146,10 @@ Manual Testing → Multi-Agent Testing → Pre-Deployment → Deploy
 ### SOP 5: Session Documentation
 
 **When**: At end of each significant session or when major learnings occur
+
+**Purpose**: Capture session learnings, patterns, and progress to enable continuity across sessions and self-annealing system improvement.
+
+**Agent**: All agents document their own work. Claude Code updates CLAUDE.md. Clawdbot/Ralph update session-history.md.
 
 **Intermittent Save Points**:
 
@@ -1147,6 +1203,12 @@ Save progress mid-session when:
    git commit -m "docs: Session learnings from YYYY-MM-DD"
    ```
 
+**Success Criteria**:
+- [ ] session-history.md updated with accomplishments and learnings
+- [ ] New communication patterns added to CLAUDE.md (if discovered)
+- [ ] Documentation committed to git
+- [ ] Future sessions can continue without re-learning
+
 **References**: `docs/session-history.md`, `docs/prompting-guide.md`
 
 ---
@@ -1154,6 +1216,10 @@ Save progress mid-session when:
 ### SOP 6: Workflow Creation
 
 **When**: Completing a repeatable task for the first time
+
+**Purpose**: Document repeatable processes as workflows to prevent re-learning and enable consistent execution across sessions and agents.
+
+**Agent**: Any agent. Claude Code for complex workflows. Clawdbot for simple 3-5 step workflows. Ralph: N/A.
 
 **Decision Matrix** - Score each factor 0-3:
 
@@ -1223,47 +1289,127 @@ Launch a second Claude instance to document steps as you work:
 
 **Example**: `email-analyzer/workflows/analyze-email-from-html.md`
 
+**Success Criteria**:
+- [ ] Workflow file created in `[project]/workflows/`
+- [ ] Contains: Overview, Use Cases, Prerequisites, Steps, Troubleshooting, Success Criteria
+- [ ] Another agent can follow workflow without additional context
+- [ ] Referenced in project directive (if applicable)
+
 **References**: `docs/workflow-standard.md`
 
 ---
 
 ### SOP 7: DOE Architecture Rollback
 
-**When**: Premature deployment detected (deployed execution without directive)
+**When**: Premature deployment detected (deployed before all DOE layers complete)
+
+**Purpose**: Safely roll back deployments that violated DOE discipline (Directive → Orchestration → Execution order), preventing broken features from reaching users while capturing learnings.
+
+**Agent**: Claude Code (primary for code rollback and git operations). Clawdbot can identify violations. Ralph: N/A.
+
+**Prerequisites**:
+- ✅ Premature deployment identified (feature deployed without directive)
+- ✅ Git access to affected repository
+- ✅ Understanding of which DOE layer is missing
+
+**DOE Violation Patterns**:
+
+| Violation | Example | Impact |
+|-----------|---------|--------|
+| **No Directive** | Scripts deployed without SOPs | Users don't know how to use feature |
+| **No Orchestration** | Standalone scripts, no integration | Feature works in isolation only |
+| **No Execution** | Frontend with no backend | Broken UI, failed API calls |
+| **Skip Testing** | Deployed without Scenario 1-3 | Bugs reach production |
 
 **Steps**:
-1. **Identify premature deployments**:
-   - Frontend deployed without backend
-   - Execution scripts without directive
-   - Features advertised but not implemented
 
-2. **Create "Coming Soon" page**:
-   - Replace premature content with inquiry form
-   - Collect email/SMS opt-ins (pre-checked)
-   - Show project preview/description
-   - Link to contact form
-
-3. **Remove premature files**:
+1. **Identify the violation**:
    ```bash
-   git rm [premature-file.html]
-   git commit -m "rollback: Remove premature [feature] deployment"
+   # Check what's deployed
+   ls ~/production/[project]-prod/
+
+   # Check if directive exists
+   ls directives/[project].md
+
+   # Check if tested
+   grep -r "testing" projects/[project]/
    ```
 
-4. **Build directive first**:
-   - Create `directives/[project].md`
-   - Define capabilities, SOPs, edge cases
-   - Document tool usage patterns
+2. **Assess rollback scope**:
+   - **Minor**: Missing docs only → Add docs, no code rollback
+   - **Moderate**: Missing tests → Add tests, keep code
+   - **Major**: Missing execution → Roll back frontend/UI
+   - **Critical**: Broken production → Immediate rollback + incident doc
 
-5. **Then build execution**:
-   - Create scripts in `[project]/src/`
-   - Test thoroughly
-   - Update directive with learnings
+3. **Execute rollback** (for Major/Critical):
+   ```bash
+   # Option A: Remove specific files
+   cd ~/production/[project]-prod
+   git rm [premature-file]
+   git commit -m "rollback: Remove premature [feature] - missing [layer]"
+   git push
 
-6. **Finally deploy frontend** (when ready):
-   - All layers complete (Directive, Orchestration, Execution)
-   - Replace "Coming Soon" with real content
+   # Option B: Revert to last good version
+   git revert HEAD
+   git push
+   ```
 
-**References**: `docs/session-history.md` (2026-01-09 entry)
+4. **Create placeholder** (if user-facing):
+   - Replace removed feature with "Coming Soon" page
+   - Add email capture form for notifications
+   - Link to existing working features
+
+5. **Document the violation**:
+   ```bash
+   # Create incident doc
+   cat > docs/incidents/$(date +%Y-%m-%d)-[feature]-rollback.md << 'EOF'
+   # Incident: [Feature] Premature Deployment
+
+   **Date**: $(date +%Y-%m-%d)
+   **Severity**: [Minor/Moderate/Major/Critical]
+   **DOE Violation**: [Missing layer]
+
+   ## What Happened
+   [Description]
+
+   ## Impact
+   [User impact]
+
+   ## Resolution
+   [Rollback steps taken]
+
+   ## Prevention
+   [What we'll do differently]
+   EOF
+   ```
+
+6. **Complete the missing layer**:
+   - If missing Directive → Create `directives/[project].md`
+   - If missing Orchestration → Integrate with Claude/n8n
+   - If missing Execution → Build and test `src/` scripts
+   - If missing Testing → Complete Scenarios 1-3
+
+7. **Re-deploy properly** (after all layers complete):
+   ```bash
+   python deploy_to_skills.py --project [name] --version X.Y.Z
+   ```
+
+**Troubleshooting**:
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Can't identify what's premature | Unclear deployment history | Check `git log`, CHANGELOG.md |
+| Rollback breaks other features | Tight coupling | Isolate change, test dependencies |
+| Users already using feature | Deployed too long ago | Gradual deprecation instead |
+
+**Success Criteria**:
+- [ ] Premature deployment removed from production
+- [ ] Incident documented in `docs/incidents/`
+- [ ] Missing DOE layer identified and planned
+- [ ] No broken features visible to users
+- [ ] Lesson added to session-history.md
+
+**References**: `docs/architecture-guide.md`, `docs/testing-strategy.md`
 
 ---
 
@@ -1272,6 +1418,8 @@ Launch a second Claude instance to document steps as you work:
 **When**: Testing workflows for clients or need to preserve test outputs for review/demonstration
 
 **Purpose**: Systematically save valuable test outputs while maintaining workspace cleanliness
+
+**Agent**: Claude Code (primary for file management). Clawdbot can copy/move files. Ralph: N/A.
 
 **Directory Structure**:
 
@@ -1420,6 +1568,13 @@ rm .tmp/acme-demo.pptx
 open projects/interview-prep/demos/client-acme/latest/acme-demo.pptx
 ```
 
+**Success Criteria**:
+- [ ] Valuable outputs saved to `demos/` or `samples/`
+- [ ] Each demo has `notes.md` with context
+- [ ] `latest` symlink updated for easy access
+- [ ] `.tmp/` cleaned after session
+- [ ] Sensitive outputs added to `.gitignore` (if applicable)
+
 **References**: See `docs/workflow-standard.md` for documentation examples, `docs/repository-management.md` for .gitignore best practices
 
 ---
@@ -1429,6 +1584,8 @@ open projects/interview-prep/demos/client-acme/latest/acme-demo.pptx
 **When**: Before starting implementation of a new project with multiple possible approaches
 
 **Purpose**: Research and evaluate 3-4 different implementation strategies in parallel to choose the optimal approach BEFORE writing code
+
+**Agent**: Claude Code (orchestrate, interactive). Clawdbot (research agents). Ralph (complex 4-agent analysis).
 
 **Key Distinction**:
 - **SOP 9 (Exploration)**: BEFORE implementation - "Which approach should we use?"
@@ -1682,6 +1839,13 @@ Day 19-20: Deploy
 Net savings with SOP 9: 5-7 days
 ```
 
+**Success Criteria**:
+- [ ] 3-4 approaches researched by parallel agents
+- [ ] `exploration/COMPARISON-MATRIX.md` created with scores
+- [ ] `exploration/RECOMMENDATION.md` documents chosen approach with rationale
+- [ ] Chosen approach has clear implementation path
+- [ ] Alternatives documented for future reference
+
 **References**:
 - See `docs/testing-strategy.md` for distinction between exploration (SOP 9) and testing (SOP 2)
 - See `email-analyzer/testing/` as template for multi-agent setup (similar structure)
@@ -1693,6 +1857,8 @@ Net savings with SOP 9: 5-7 days
 **When**: Building a complex system with 3+ independent components that can be developed simultaneously
 
 **Purpose**: Accelerate development by having multiple agents BUILD different components in parallel, then consolidate outputs into a unified codebase
+
+**Agent**: Claude Code (orchestrate consolidation). Clawdbot (build components 0-6). Ralph (build components 7-10).
 
 **Key Distinction from Other Multi-Agent SOPs**:
 - **SOP 2 (Testing)**: Agents find bugs in EXISTING code (after implementation)
@@ -1927,6 +2093,8 @@ This is where outputs are merged into a working system:
 
 **Purpose**: Create a properly structured Python package that can be installed via `pip` and registered on Claude's MCP marketplace
 
+**Agent**: Claude Code (REQUIRED - Mac keychain for publishing). Clawdbot/Ralph: N/A.
+
 **Prerequisites**:
 - ✅ Project has working `src/` code with MCP server implementation
 - ✅ Project has been tested (SOP 2/3 complete)
@@ -2119,9 +2287,9 @@ python -c "from src.[project]_mcp import mcp"
 **Next Step**: SOP 12 (PyPI Publishing)
 
 **References**:
-- `projects/md-to-pdf/` - Working example
-- `projects/amazon-seller/` - Working example
-- `projects/fitness-influencer/` - Working example
+- `projects/shared/md-to-pdf/` - Working example
+- `projects/marceau-solutions/amazon-seller/` - Working example
+- `projects/marceau-solutions/fitness-influencer-mcp/` - Working example
 
 ---
 
@@ -2130,6 +2298,8 @@ python -c "from src.[project]_mcp import mcp"
 **When**: Publishing an MCP package to PyPI (AFTER SOP 11 complete)
 
 **Purpose**: Make your MCP installable via `pip install [project]-mcp`
+
+**Agent**: Claude Code (REQUIRED - PyPI credentials on Mac). Clawdbot/Ralph: N/A.
 
 **Prerequisites**:
 - ✅ SOP 11 complete (package structure created)
@@ -2240,6 +2410,8 @@ python -m twine upload dist/*
 **When**: Publishing to Claude's MCP Registry (AFTER SOP 12 complete - package must be on PyPI first)
 
 **Purpose**: Make your MCP discoverable in Claude's marketplace and installable via Claude Desktop
+
+**Agent**: Claude Code (REQUIRED - mcp-publisher uses Mac auth). Clawdbot/Ralph: N/A.
 
 **Prerequisites**:
 - ✅ SOP 11 complete (package structure)
@@ -2381,6 +2553,8 @@ python -m twine upload dist/* --username __token__ --password $PYPI_TOKEN
 **When**: Updating an MCP that's already published to PyPI and the Claude MCP Registry
 
 **Purpose**: Push code changes to an existing MCP while maintaining version consistency across all systems
+
+**Agent**: Claude Code (REQUIRED - publishing credentials). Clawdbot/Ralph: N/A.
 
 **Prerequisites**:
 - ✅ MCP already published (SOPs 11-13 completed previously)
@@ -2590,6 +2764,8 @@ All three should show the same version number.
 
 **Purpose**: Orchestrate deployment across all configured channels (Local, GitHub, PyPI, MCP Registry, OpenRouter) in a single workflow
 
+**Agent**: Claude Code (REQUIRED for PyPI/MCP channels). Clawdbot (GitHub only). Ralph: N/A.
+
 **Available Channels**:
 
 | Channel | Target Audience | Prerequisites |
@@ -2678,55 +2854,125 @@ python deploy_to_skills.py --project mcp-aggregator-rideshare \
 
 **References**:
 - SOP 11-14: Individual channel SOPs
-- `docs/deployment-channels-guide.md`: Full channel documentation
+- `docs/deployment.md`: Deployment pipeline documentation
 
 ---
 
 ### SOP 16: OpenRouter Registration
 
-**When**: Registering an MCP on OpenRouter and related directories (PulseMCP, Glama)
+**When**: Registering an MCP on OpenRouter and related directories (PulseMCP, Glama) to expand reach beyond Claude marketplace
 
-**Purpose**: Expand MCP reach to 200+ LLM providers via AI gateway integration
+**Purpose**: Expand MCP reach to 200+ LLM providers via AI gateway integration, making your tool discoverable to a broader audience
+
+**Agent**: Claude Code (primary, form submissions). Clawdbot (directory research). Ralph: N/A.
 
 **Prerequisites**:
 - ✅ MCP published to PyPI (SOP 12 complete)
-- ✅ MCP server uses stdio transport
-- ✅ Working documentation/README
+- ✅ MCP published to Claude MCP Registry (SOP 13 complete)
+- ✅ MCP server uses stdio transport (not HTTP)
+- ✅ Working documentation/README with clear install instructions
+- ✅ GitHub repo public (for some directories)
+
+**Directory Comparison**:
+
+| Directory | Review Time | Audience | Best For |
+|-----------|-------------|----------|----------|
+| **PulseMCP** | 1-3 days | Developers | Technical MCPs |
+| **Glama** | 2-5 days | Enterprise | Production-ready MCPs |
+| **MCP Market** | 3-7 days | General | Consumer-friendly MCPs |
 
 **Steps**:
 
-1. **Verify MCP works locally**:
+1. **Verify MCP works locally** (required before submission):
    ```bash
-   # Test MCP server runs
+   # Test server runs without errors
    python -m [package]_mcp.server
+
+   # Test with Claude Desktop (optional but recommended)
+   # Add to ~/.claude.json and verify tools appear
    ```
 
-2. **Register on PulseMCP** (https://pulsemcp.com):
-   - Submit MCP URL/package name
-   - Add description and keywords
-   - Wait for review/approval
+2. **Prepare submission materials**:
+   - **Short description** (under 100 chars): One-line summary
+   - **Full description** (300-500 chars): What it does, who it's for
+   - **Keywords** (5-10): Related terms for search
+   - **Category**: Choose from directory's categories
+   - **Installation command**: `pip install [package]-mcp`
+   - **Example usage**: 2-3 example tool calls with expected output
 
-3. **Register on Glama** (https://glama.ai/mcp/servers):
-   - Submit GitHub repo or PyPI package
-   - Add metadata and examples
+3. **Register on PulseMCP** (https://pulsemcp.com):
+   ```
+   Submit Form Fields:
+   - Package Name: [package]-mcp
+   - PyPI URL: https://pypi.org/project/[package]-mcp/
+   - GitHub URL: https://github.com/[username]/[repo]
+   - Description: [your short description]
+   - Keywords: [comma-separated keywords]
+   ```
+   **Expected timeline**: Review in 1-3 business days, email notification
 
-4. **Register on MCP Market** (https://mcpmarket.com):
-   - Create listing with documentation
-   - Add use case examples
+4. **Register on Glama** (https://glama.ai/mcp/servers):
+   ```
+   Submit Form Fields:
+   - Server Name: [Display Name]
+   - Source: PyPI or GitHub
+   - Identifier: [package]-mcp (or github.com/[username]/[repo])
+   - Category: [Select from dropdown]
+   - Description: [your full description]
+   ```
+   **Expected timeline**: Review in 2-5 business days, email notification
 
-5. **Update project documentation**:
-   - Add "Available on OpenRouter" badge to README
-   - Link to directory listings
+5. **Register on MCP Market** (https://mcpmarket.com):
+   ```
+   Submit Form Fields:
+   - Title: [Human-readable name]
+   - Package: [package]-mcp
+   - Documentation URL: [link to README or docs site]
+   - Use Cases: [2-3 example use cases]
+   - Screenshots: [optional but recommended]
+   ```
+   **Expected timeline**: Review in 3-7 business days
 
-**Verification**:
-- Search for your MCP on each directory
-- Confirm listing appears correctly
-- Test installation instructions work
+6. **Update project documentation**:
+   ```markdown
+   ## Available On
+
+   - [Claude MCP Registry](https://registry.modelcontextprotocol.io)
+   - [PulseMCP](https://pulsemcp.com/[your-listing])
+   - [Glama](https://glama.ai/mcp/servers/[your-listing])
+   - [MCP Market](https://mcpmarket.com/[your-listing])
+   ```
+
+**Maintaining Listings** (after initial registration):
+
+| Event | Action |
+|-------|--------|
+| New version released | Update version on each directory (if required) |
+| Description changed | Submit update request on each platform |
+| Deprecated | Mark as archived/deprecated on directories |
+| Major feature added | Update keywords and description |
+
+**Troubleshooting**:
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Submission rejected | Missing PyPI package | Complete SOP 12 first |
+| "Not found" error | Package name mismatch | Verify exact PyPI package name |
+| No response after 7 days | Stuck in queue | Email directory support |
+| Listing shows old version | Cache | Wait 24-48 hours or request refresh |
+
+**Success Criteria**:
+- [ ] MCP listed on at least 2 directories
+- [ ] Installation instructions verified working
+- [ ] Search for MCP name returns your listing
+- [ ] README updated with directory links
+- [ ] Confirmation emails received from directories
 
 **References**:
 - [Using MCP Servers with OpenRouter](https://openrouter.ai/docs/guides/guides/mcp-servers)
 - [PulseMCP Directory](https://pulsemcp.com)
 - [Glama MCP Servers](https://glama.ai/mcp/servers)
+- [MCP Market](https://mcpmarket.com)
 
 ---
 
@@ -2735,6 +2981,8 @@ python deploy_to_skills.py --project mcp-aggregator-rideshare \
 **When**: BEFORE investing significant development time in a new product/project idea
 
 **Purpose**: Quickly assess market viability using parallel research agents to determine if an idea is worth pursuing, saving weeks of wasted development time on unviable products.
+
+**Agent**: Claude Code (orchestrate 4 agents). Clawdbot (research agents). Ralph (4-agent execution via PRD).
 
 **Key Principle**: Fail fast, fail cheap. Better to spend 2 hours researching than 2 weeks building something nobody wants.
 
@@ -3052,6 +3300,8 @@ TOTAL: 4.0/5 = GO
 
 **Purpose**: Execute compliant SMS campaigns with proper template approval, sending, and tracking
 
+**Agent**: Claude Code (primary, template approval). Clawdbot (execute campaigns after setup). Ralph: N/A.
+
 **Prerequisites**:
 - ✅ Twilio account with balance (>$10)
 - ✅ Phone number configured (+1 855 239 9364)
@@ -3110,6 +3360,14 @@ TOTAL: 4.0/5 = GO
 **When**: Managing automated follow-up sequences for non-responding leads
 
 **Purpose**: Execute the 7-touch, 60-day follow-up sequence based on Hormozi's "Still Looking" framework
+
+**Agent**: Claude Code (setup). Clawdbot (daily processing). Ralph: N/A. Note: Consider n8n workflow replacement.
+
+**Prerequisites**:
+- ✅ SOP 18 campaign created (initial outreach complete)
+- ✅ Lead list loaded with valid phone numbers
+- ✅ Follow-up templates approved
+- ✅ Twilio balance sufficient for sequence duration
 
 **Sequence Architecture**:
 ```
@@ -3180,6 +3438,13 @@ Day 60: Follow-up #6 (re_engage)
 
 **Purpose**: Develop internal methods (estimation frameworks, qualification criteria, onboarding processes) with the same rigor as projects, but with appropriate differences
 
+**Agent**: Claude Code (primary). Clawdbot (research phases). Ralph (complex method via PRD).
+
+**Prerequisites**:
+- ✅ Problem clearly defined (not vague)
+- ✅ Used by 2+ people or applied 2+ times
+- ✅ Existing ad-hoc approach to formalize
+
 **Key Distinction from Projects**:
 - **Projects** → External products/services → Deploy to PyPI/GitHub
 - **Internal Methods** → Operational tools → Integrate into CLAUDE.md/SOPs
@@ -3241,6 +3506,13 @@ methods/[method-name]/
 - Quality assurance checklists
 - SOP creation method (meta-method)
 
+**Success Criteria**:
+- [ ] DEFINITION.md exists with problem statement and success definition
+- [ ] Method validated on 3-5 real or hypothetical cases
+- [ ] VALIDATION-LOG.md documents test results
+- [ ] Integrated into CLAUDE.md or relevant SOPs
+- [ ] Another agent can apply method without additional context
+
 **References**: SOP 9 (Multi-Agent Exploration), SOP 6 (Workflow Creation)
 
 ---
@@ -3250,6 +3522,8 @@ methods/[method-name]/
 **When**: A recurring process is identified that needs documentation
 
 **Purpose**: Systematically decide when and how to create new SOPs on-the-fly
+
+**Agent**: Any agent. Claude Code for complex SOPs. Clawdbot for simple SOPs. Ralph: N/A.
 
 **Trigger Conditions**:
 - Task repeated 2+ times
@@ -3340,6 +3614,12 @@ Is this task repeatable?
 
 **Location for meta-method documentation**: `methods/sop-creation/`
 
+**Success Criteria**:
+- [ ] Task scored using SOP 6 matrix (Recurrence, Consistency, Complexity, Onboarding)
+- [ ] Appropriate template used (Lightweight 4-6, Full 7-12)
+- [ ] SOP added to CLAUDE.md Quick Reference table
+- [ ] Communication pattern added (if applicable)
+
 **References**: SOP 6 (Workflow Creation), SOP 20 (Internal Method Development)
 
 ---
@@ -3349,6 +3629,13 @@ Is this task repeatable?
 **When**: Tracking campaign performance, response rates, and optimizing outreach strategies
 
 **Purpose**: Measure campaign effectiveness, identify winning templates, and track conversion funnels to continuously improve cold outreach ROI
+
+**Agent**: Claude Code (primary, complex analysis). Clawdbot (quick status checks). Ralph: N/A.
+
+**Prerequisites**:
+- ✅ Campaign data exists in `output/sms_campaigns.json`
+- ✅ At least one campaign completed (SOP 18)
+- ✅ Lead scraper project dependencies installed
 
 **Key Metrics Tracked**:
 - Response rates by template
@@ -3420,6 +3707,15 @@ CONTACTED (100%) → RESPONDED (5-10%) → QUALIFIED (50% of responded) → CONV
 - ✅ A/B tests reach statistical significance
 - ✅ Winning templates identified
 
+**Troubleshooting**:
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| No campaigns found | Missing sms_campaigns.json | Run SOP 18 first to create campaign |
+| Stats not updating | Cache stale | Run `campaign_analytics update` |
+| Template comparison empty | No A/B data | Ensure templates tagged in campaign creation |
+| Funnel shows 0% | No responses recorded | Check webhook receiving SMS replies |
+
 **References**: `projects/shared/lead-scraper/src/campaign_analytics.py`, SOP 18 (SMS Campaign Execution)
 
 ---
@@ -3429,6 +3725,8 @@ CONTACTED (100%) → RESPONDED (5-10%) → QUALIFIED (50% of responded) → CONV
 **When**: Developing new cold outreach strategies, testing messaging hypotheses, or optimizing campaign performance
 
 **Purpose**: Systematically create, test, and optimize cold outreach strategies using A/B testing and data-driven iteration
+
+**Agent**: Claude Code (strategy design, A/B analysis). Clawdbot (hypothesis brainstorming). Ralph (bulk template generation).
 
 **The Hormozi Framework** (foundation for all outreach):
 1. **Lead with value** - Offer something before asking
@@ -3536,6 +3834,8 @@ Define Segment → Create Hypotheses → A/B Test → Analyze → Scale Winner �
 
 **Purpose**: Aggregate data from multiple sources (Gmail, SMS, Forms, Calendar, Campaigns) into unified morning digest with prioritized action items
 
+**Agent**: Claude Code (setup, debugging). Clawdbot ("Run morning digest" command). Ralph: N/A.
+
 **Key Files**:
 ```
 projects/shared/personal-assistant/
@@ -3631,6 +3931,13 @@ python -m src.routine_scheduler --create-all
 
 **Purpose**: Use n8n for visual workflow automation, webhooks, and scheduled tasks instead of Python scripts where appropriate.
 
+**Agent**: Claude Code (all n8n MCP operations). Clawdbot (status checks only). Ralph (complex automation via PRD).
+
+**Prerequisites**:
+- ✅ EC2 n8n running at http://34.193.98.97:5678
+- ✅ n8n MCP configured in `~/.claude.json`
+- ✅ Python Bridge API running on EC2 (localhost:5010)
+
 **⚠️ CRITICAL: EC2 INSTANCE ONLY**
 
 | Instance | URL | Usage |
@@ -3687,6 +3994,22 @@ curl http://34.193.98.97:5678/healthz
 - "Create n8n workflow for X" → Use n8n MCP tools (connects to EC2)
 - "Migrate X to n8n" → Follow transition plan in `docs/N8N-TRANSITION-PLAN.md`
 - "Backup n8n workflows" → Export to `projects/shared/n8n-workflows/`
+
+**Success Criteria**:
+- [ ] Workflow created/updated on EC2 n8n
+- [ ] Workflow activated and responding to triggers
+- [ ] Webhook URL documented in table above
+- [ ] Backup exported to `projects/shared/n8n-workflows/`
+
+**Troubleshooting**:
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Can't connect to n8n | EC2 not running | SSH and check `docker ps` or PM2 status |
+| MCP tool fails | n8n credential expired | Re-authenticate in n8n MCP settings |
+| Webhook not firing | Workflow inactive | Activate workflow in n8n UI |
+| Python Bridge error | Port 5010 not listening | SSH and restart `agent_bridge_api.py` |
+| Workflow execution fails | Node error | Check n8n execution log, fix node config |
 
 **References**: `docs/N8N-TRANSITION-PLAN.md`, `docs/EC2-N8N-SETUP.md`
 
@@ -3877,9 +4200,11 @@ Edit `templates/profile.json` to customize:
 | Tracking campaign performance | [SOP 22: Campaign Analytics & Tracking](#sop-22-campaign-analytics--tracking) | **⚠️ Campaign data exists in sms_campaigns.json** |
 | Developing new outreach strategies | [SOP 23: Cold Outreach Strategy Development](#sop-23-cold-outreach-strategy-development) | Target segment defined |
 | Daily/weekly routine check | [SOP 24: Daily/Weekly Digest System](#sop-24-dailyweekly-digest-system) | **⚠️ SMTP configured, Google OAuth optional** |
+| Documenting large effort (>30 min) | [SOP 25: Documentation Decision Framework](docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md) | Task completed, >30 minutes invested |
 | User states something was previously done | [SOP 26: User Statement Validation Protocol](#sop-26-user-statement-validation-protocol) | **⚠️ MANDATORY - Never contradict user** |
 | Quick task while mobile / away from computer | [SOP 27: Clawdbot Usage](docs/SOP-27-CLAWDBOT-USAGE.md) | Clawdbot VPS running |
 | Complex multi-story development task | [SOP 28: Ralph Usage](docs/SOP-28-RALPH-USAGE.md) | PRD structure, clear requirements |
+| Deciding which agent to use | [SOP 29: Three-Agent Collaboration](docs/SOP-29-THREE-AGENT-COLLABORATION.md) | See routing decision tree |
 | Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | EC2 n8n at http://34.193.98.97:5678 ⚠️ **EC2 ONLY** |
 | Deploying standalone AI assistant | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Tested, self-contained CLAUDE.md written** |
 | Selling/packaging an AI tool | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Product files ready (src/, templates/)** |
