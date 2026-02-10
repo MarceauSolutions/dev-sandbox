@@ -51,12 +51,13 @@ class Priority(Enum):
 
 
 class EnergyLevel(Enum):
-    """Time-of-day energy optimization"""
-    PEAK = "peak"           # 6-10 AM: Deep work, decisions, creative
-    HIGH = "high"           # 10 AM-12 PM: Collaborative, meetings
-    MODERATE = "moderate"   # 1-4 PM: Operations, follow-ups
-    LOW = "low"             # 4-6 PM: Admin, routine tasks
-    EVENING = "evening"     # 6-9 PM: Light work, content, personal
+    """Hormozi-style energy optimization — high-agency first"""
+    PEAK = "peak"           # 7:30-9 AM: HIGH-AGENCY — study, reading, strategic thinking
+    HIGH = "high"           # 9-11 AM: WORKOUT (non-negotiable 2hr block)
+    CREATIVE = "creative"   # 11 AM-1 PM: Video recording (proactive/creative)
+    MODERATE = "moderate"   # 1:30-3:30 PM: Video editing (reactive/mechanical)
+    LOW = "low"             # 3:30-5 PM: Business ops, admin, email, social (reactive)
+    EVENING = "evening"     # 5-6 PM: Dog training, planning, wind down
 
 
 class BlockType(Enum):
@@ -221,13 +222,16 @@ class ScheduleContext:
     habits: List[str] = field(default_factory=lambda: ["workout", "spanish", "reading", "dog_training"])
     learning_goals: List[str] = field(default_factory=list)
 
-    # Energy preferences
-    peak_hours: tuple = (6, 10)      # 6 AM - 10 AM
-    low_energy_start: int = 16       # 4 PM
+    # Energy preferences (Hormozi: high-agency tasks in morning peak)
+    peak_hours: tuple = (7, 9)       # 7:30-9 AM: HIGH-AGENCY study block
+    workout_hours: tuple = (9, 11)   # 9-11 AM: Non-negotiable 2hr workout
+    creative_hours: tuple = (11, 13) # 11 AM-1 PM: Video recording
+    reactive_start: int = 13         # 1:30 PM: Editing, admin, social
+    low_energy_start: int = 15       # 3:30 PM: Business ops, email
 
     # Working hours
-    work_start: int = 6              # 6 AM
-    work_end: int = 21               # 9 PM
+    work_start: int = 7              # 7 AM
+    work_end: int = 19               # 7 PM
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -392,70 +396,126 @@ class SmartCalendar:
         return sorted_blocks
 
     def generate_daily_habits(self, date: datetime) -> List[TimeBlock]:
-        """Generate daily habit blocks based on context"""
+        """Generate daily blocks using Hormozi framework.
+
+        Morning = HIGH-AGENCY (study, reading, strategic thinking)
+        Then workout, then creative work (recording)
+        Afternoon = REACTIVE (editing, admin, social, email)
+        """
         blocks = []
         day_name = date.strftime("%A").lower()
         is_weekend = day_name in ["saturday", "sunday"]
 
-        # Workout - adjusted for weekends
+        # === MORNING STARTUP (7:00-7:30) ===
+        if not is_weekend:
+            blocks.append(TimeBlock(
+                summary="🌅 Morning Startup",
+                description="Wake + hydrate + dog walk.\nNo screens, no email, no social media. Protect the morning.",
+                start=date.replace(hour=7, minute=0),
+                end=date.replace(hour=7, minute=30),
+                priority=Priority.HABIT,
+                block_type=BlockType.HABIT,
+                color_id=COLORS[Priority.HABIT]
+            ))
+
+        # === HIGH-AGENCY BLOCK (7:30-9:00) — PEAK WILLPOWER ===
+        # Hormozi: Do the thing that makes everything else easier FIRST
+        if not is_weekend:
+            # Reading rotation by day
+            reading_topics = {
+                "monday": "Business/Entrepreneurship",
+                "tuesday": "Fitness/Exercise Science",
+                "wednesday": "Business/Entrepreneurship",
+                "thursday": "Fitness/Exercise Science",
+                "friday": "Psychology/Habits/Productivity",
+            }
+            reading_topic = reading_topics.get(day_name, "Business")
+
+            blocks.append(TimeBlock(
+                summary="🧠 HIGH-AGENCY: Peptide Study + Reading",
+                description=f"PEAK WILLPOWER — highest cognitive load tasks FIRST.\n\n"
+                           f"7:30-8:15: Peptide Research (protocols, mechanisms, compounds)\n"
+                           f"8:15-8:45: Business Education ({reading_topic})\n"
+                           f"8:45-9:00: Pre-workout nutrition\n\n"
+                           f"Hormozi rule: Do the thing that makes everything else easier or unnecessary FIRST.",
+                start=date.replace(hour=7, minute=30),
+                end=date.replace(hour=9, minute=0),
+                priority=Priority.CRITICAL,
+                block_type=BlockType.LEARNING,
+                color_id=COLORS[Priority.CRITICAL]
+            ))
+        elif day_name == "sunday":
+            blocks.append(TimeBlock(
+                summary="📚 Deep Reading / Learning",
+                description="Longer learning session. Peptide research, business books, biohacking.",
+                start=date.replace(hour=9, minute=0),
+                end=date.replace(hour=10, minute=30),
+                priority=Priority.HABIT,
+                block_type=BlockType.LEARNING,
+                color_id=COLORS[BlockType.LEARNING]
+            ))
+
+        # === WORKOUT (9:00-11:00) — 2 HOURS NON-NEGOTIABLE ===
         if "workout" in self.context.habits:
             if is_weekend:
                 blocks.append(TimeBlock(
                     summary="💪 Active Recovery / Light Workout",
                     description="Walk, stretch, yoga, or light activity.\nRest is part of training.",
-                    start=date.replace(hour=8, minute=0),
-                    end=date.replace(hour=9, minute=0),
+                    start=date.replace(hour=9, minute=0),
+                    end=date.replace(hour=10, minute=0),
                     priority=Priority.HABIT,
                     block_type=BlockType.HABIT,
                     color_id=COLORS[Priority.HABIT]
                 ))
             else:
                 blocks.append(TimeBlock(
-                    summary="💪 Workout",
-                    description="Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-                    start=date.replace(hour=6, minute=0),
-                    end=date.replace(hour=7, minute=0),
+                    summary="💪 WORKOUT (2hr)",
+                    description="NON-NEGOTIABLE 2-hour block.\n\n"
+                               "9:00-9:15: Warmup (dynamic stretching, mobility)\n"
+                               "9:15-10:30: Training session (push/pull/legs rotation)\n"
+                               "10:30-10:45: Cooldown + stretch\n"
+                               "10:45-11:00: Post-workout nutrition\n\n"
+                               "If filming: set up camera BEFORE warmup, film 2-3 key sets.",
+                    start=date.replace(hour=9, minute=0),
+                    end=date.replace(hour=11, minute=0),
                     priority=Priority.HABIT,
                     block_type=BlockType.HABIT,
                     color_id=COLORS[Priority.HABIT]
                 ))
 
-        # Spanish - weekdays only
-        if "spanish" in self.context.habits and not is_weekend:
+        # === VIDEO EDITING (1:30-3:30 PM) — REACTIVE/MECHANICAL ===
+        if not is_weekend:
             blocks.append(TimeBlock(
-                summary="🇪🇸 Spanish Practice",
-                description="15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-                start=date.replace(hour=7, minute=0),
-                end=date.replace(hour=7, minute=30),
-                priority=Priority.HABIT,
-                block_type=BlockType.LEARNING,
-                color_id=COLORS[BlockType.LEARNING]
+                summary="✂️ Video Editing & Post-Production",
+                description="REACTIVE — doesn't require peak willpower.\n\n"
+                           "1:30-2:00: Review pipeline output\n"
+                           "2:00-3:00: Fine-tune edits, B-roll, captions\n"
+                           "3:00-3:30: Export & package for platforms",
+                start=date.replace(hour=13, minute=30),
+                end=date.replace(hour=15, minute=30),
+                priority=Priority.MEDIUM,
+                block_type=BlockType.CONTENT,
+                color_id=COLORS[BlockType.CONTENT]
             ))
 
-        # Reading - daily but longer on weekends
-        if "reading" in self.context.habits:
-            if is_weekend and day_name == "sunday":
-                blocks.append(TimeBlock(
-                    summary="📚 Deep Reading / Learning",
-                    description="Longer learning session. Peptide research, business books, etc.",
-                    start=date.replace(hour=9, minute=0),
-                    end=date.replace(hour=10, minute=30),
-                    priority=Priority.HABIT,
-                    block_type=BlockType.LEARNING,
-                    color_id=COLORS[BlockType.LEARNING]
-                ))
-            elif not is_weekend:
-                blocks.append(TimeBlock(
-                    summary="📚 Reading",
-                    description="Business, fitness, or personal development.\nIdeas for content come from inputs.",
-                    start=date.replace(hour=7, minute=30),
-                    end=date.replace(hour=8, minute=0),
-                    priority=Priority.HABIT,
-                    block_type=BlockType.LEARNING,
-                    color_id=COLORS[BlockType.LEARNING]
-                ))
+        # === BUSINESS OPS & ADMIN (3:30-5:00 PM) — REACTIVE ===
+        if not is_weekend:
+            blocks.append(TimeBlock(
+                summary="📊 Business Ops & Admin",
+                description="REACTIVE — lowest leverage tasks go last.\n\n"
+                           "3:30-3:45: Check SMS/lead replies\n"
+                           "3:45-4:00: Review morning digest (NOT in morning!)\n"
+                           "4:00-4:30: Review analytics, campaign performance\n"
+                           "4:30-5:00: Social engagement, comments, DMs\n\n"
+                           "Rule: NO email or social media before 3:30 PM.",
+                start=date.replace(hour=15, minute=30),
+                end=date.replace(hour=17, minute=0),
+                priority=Priority.LOW,
+                block_type=BlockType.BUSINESS,
+                color_id=COLORS[Priority.LOW]
+            ))
 
-        # Dog training - daily
+        # === DOG TRAINING + PLANNING (5:00-6:00 PM) ===
         if "dog_training" in self.context.habits:
             if is_weekend:
                 blocks.append(TimeBlock(
@@ -469,10 +529,12 @@ class SmartCalendar:
                 ))
             else:
                 blocks.append(TimeBlock(
-                    summary="🐕 Dog Training",
-                    description="Evening session. Discipline transfer + potential content angle.",
+                    summary="🐕 Plan Tomorrow + Dog Training",
+                    description="5:00-5:15: Plan tomorrow (content topic, workout, calendar)\n"
+                               "5:15-6:00: Dog training + evening walk\n\n"
+                               "Obedience drills, socialization, mental stimulation on return.",
                     start=date.replace(hour=17, minute=0),
-                    end=date.replace(hour=17, minute=30),
+                    end=date.replace(hour=18, minute=0),
                     priority=Priority.HABIT,
                     block_type=BlockType.PERSONAL,
                     color_id=COLORS[BlockType.LEARNING]
@@ -497,61 +559,21 @@ class SmartCalendar:
         hook = content_info.get("hook", "")
         theme = content_info.get("theme", "Content")
 
-        # Daily content post (weekdays)
-        if not is_weekend and self.context.content_frequency == "daily":
-            post_desc = f"Post today's content.\n\n📌 Today's topic: {topic}\n🎣 Hook: {hook}\n\nRaw > Perfect. Volume negates luck."
+        # === VIDEO RECORDING (11:00 AM - 1:00 PM) — CREATIVE/PROACTIVE ===
+        # Recording is still a proactive task — it sits right after workout when energy is high
+        if not is_weekend:
             blocks.append(TimeBlock(
-                summary="📱 Daily Content Post",
-                description=post_desc,
-                start=date.replace(hour=20, minute=0),
-                end=date.replace(hour=20, minute=30),
-                priority=Priority.HIGH,
-                block_type=BlockType.CONTENT,
-                color_id=COLORS[BlockType.CONTENT]
-            ))
-
-        # Day-specific content blocks with trending topics
-        if day_name == "monday" and not is_weekend:
-            blocks.append(TimeBlock(
-                summary=f"🎬 Film: {topic}",
-                description=f"CONTENT STRATEGY: {theme}\n\n📌 Topic: {topic}\n🎣 Hook: \"{hook}\"\n\nFormat: 2-3 short clips (15-60s each)\nViral angle: {content_info.get('viral_angle', 'Educational')}\n\nRaw footage is fine - edit later or post raw.",
+                summary=f"🎬 Record: {topic}",
+                description=f"CONTENT STRATEGY: {theme}\n\n"
+                           f"📌 Topic: {topic}\n"
+                           f"🎣 Hook: \"{hook}\"\n"
+                           f"Viral angle: {content_info.get('viral_angle', 'Educational')}\n\n"
+                           f"11:00-11:15: Review content calendar\n"
+                           f"11:15-12:15: Record video content (talking-head, tutorials, B-roll)\n"
+                           f"12:15-12:45: Quick edit pass (import to pipeline)\n"
+                           f"12:45-1:00: Publish/schedule to TikTok, YouTube, IG",
                 start=date.replace(hour=11, minute=0),
-                end=date.replace(hour=12, minute=0),
-                priority=Priority.HIGH,
-                block_type=BlockType.CONTENT,
-                color_id=COLORS[BlockType.CONTENT]
-            ))
-
-        elif day_name == "wednesday" and not is_weekend:
-            blocks.append(TimeBlock(
-                summary=f"🎬 Film: {topic}",
-                description=f"CONTENT STRATEGY: {theme}\n\n📌 Topic: {topic}\n🎣 Hook: \"{hook}\"\n\nFormat: Medium-form (3-5 min)\nViral angle: {content_info.get('viral_angle', 'Educational')}\n\nThis is your authority-building content.",
-                start=date.replace(hour=14, minute=0),
-                end=date.replace(hour=15, minute=30),
-                priority=Priority.HIGH,
-                block_type=BlockType.CONTENT,
-                color_id=COLORS[BlockType.CONTENT]
-            ))
-
-        elif day_name == self.context.batch_content_day and not is_weekend:
-            thu_content = CONTENT_CALENDAR.get("thursday", {})
-            blocks.append(TimeBlock(
-                summary=f"🎬 BATCH DAY: {thu_content.get('topic', 'Long-Form Production')}",
-                description=f"CONTENT STRATEGY: {thu_content.get('theme', 'Long-Form')}\n\n📌 Topic: {thu_content.get('topic', 'Full tutorial')}\n🎣 Hook: \"{thu_content.get('hook', '')}\"\n\nStructure:\n1. Script/outline (30 min)\n2. Film (1 hr)\n3. Edit (1.5 hr)\n\nViral angle: {thu_content.get('viral_angle', 'High-value deep dive')}",
-                start=date.replace(hour=9, minute=0),
-                end=date.replace(hour=12, minute=0),
-                priority=Priority.HIGH,
-                block_type=BlockType.CONTENT,
-                color_id=COLORS[BlockType.CONTENT]
-            ))
-
-        elif day_name == "friday" and not is_weekend:
-            fri_content = CONTENT_CALENDAR.get("friday", {})
-            blocks.append(TimeBlock(
-                summary=f"🎬 Publish: {fri_content.get('topic', 'Best of Week')}",
-                description=f"CONTENT STRATEGY: {fri_content.get('theme', 'Results')}\n\n📌 Topic: {fri_content.get('topic', 'Weekly results')}\n🎣 Hook: \"{fri_content.get('hook', '')}\"\n\nActions:\n1. Review all filmed content\n2. Quick edits on top 2-3 pieces\n3. Post challenge/transformation results\n\nFriday afternoon = high engagement time.\nViral angle: {fri_content.get('viral_angle', 'Social proof')}",
-                start=date.replace(hour=10, minute=30),
-                end=date.replace(hour=12, minute=0),
+                end=date.replace(hour=13, minute=0),
                 priority=Priority.HIGH,
                 block_type=BlockType.CONTENT,
                 color_id=COLORS[BlockType.CONTENT]
@@ -1140,8 +1162,8 @@ def main():
             ctx_data = json.load(f)
             context = ScheduleContext(**ctx_data)
 
-    # Default context for William
-    context.habits = ["workout", "spanish", "reading", "dog_training"]
+    # Default context for William (Hormozi framework)
+    context.habits = ["workout", "reading", "dog_training"]
     context.content_frequency = "daily"
     context.batch_content_day = "thursday"
 

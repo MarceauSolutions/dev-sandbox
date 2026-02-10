@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Create time blocks for the week based on business priorities.
+Create time blocks for the week based on Hormozi high-agency framework.
 Uses Google Calendar API.
 
-Philosophy: Volume > Perfection for content. Daily habits compound.
+Philosophy:
+- High-agency tasks (study, reading, strategic thinking) → MORNING peak willpower
+- Workout → 9-11 AM non-negotiable 2hr block
+- Creative work (recording) → post-workout energy
+- Reactive tasks (editing, admin, email, social) → AFTERNOON
+- Never waste peak morning hours on email or social media
 """
 
 import os
-import pickle
 from datetime import datetime, timedelta
 from pathlib import Path
 from google.oauth2.credentials import Credentials
@@ -17,417 +21,220 @@ from googleapiclient.discovery import build
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-# Time blocks for week of Feb 10, 2026
-# Based on: Content velocity + Personal development + Business priorities
-TIME_BLOCKS = [
-    # ========================================
-    # DAILY HABITS (Mon-Fri) - Non-negotiable
-    # ========================================
+# =============================================================================
+# HORMOZI FRAMEWORK: Time blocks for week of Feb 10, 2026
+# Morning = HIGH-AGENCY (study, reading, strategic thinking)
+# Afternoon = REACTIVE (editing, admin, email, social)
+# =============================================================================
 
-    # MONDAY Feb 10 - Daily Habits
-    {
-        "summary": "💪 Workout",
-        "description": "Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-        "start": "2026-02-10T06:00:00",
-        "end": "2026-02-10T07:00:00",
+# Reading rotation by day
+READING_TOPICS = {
+    "Mon": "Business/Entrepreneurship + Weekly planning",
+    "Tue": "Fitness/Exercise Science + Peptide deep-dive",
+    "Wed": "Business/Entrepreneurship + Analytics review",
+    "Thu": "Fitness/Exercise Science + Lead follow-up",
+    "Fri": "Psychology/Productivity + Business review",
+}
+
+# Content themes by day
+CONTENT_THEMES = {
+    "Mon": ("Quick workout tip / gym hack", "30-60s short"),
+    "Tue": ("Full exercise tutorial", "2-3 min"),
+    "Wed": ("Peptide education / science content", "medium-form"),
+    "Thu": ("Client transformation / before-after", "short"),
+    "Fri": ("Week recap + motivation", "short"),
+    "Sat": ("Longer-form workout follow-along", "long-form"),
+    "Sun": ("Lifestyle / nutrition / dog content", "rest day"),
+}
+
+# Workout rotation by day
+WORKOUT_FOCUS = {
+    "Mon": "Push (Chest/Shoulders/Tri)",
+    "Tue": "Pull (Back/Biceps)",
+    "Wed": "Legs (Quads/Hams/Glutes)",
+    "Thu": "Push variation",
+    "Fri": "Pull variation",
+    "Sat": "Full body / Active recovery",
+    "Sun": "Rest / Light cardio",
+}
+
+
+def generate_weekday_blocks(date):
+    """Generate all blocks for a single weekday using Hormozi framework."""
+    day_abbr = date.strftime("%a")
+    day_str = date.strftime("%Y-%m-%d")
+    reading_topic = READING_TOPICS.get(day_abbr, "Business")
+    content_theme, content_format = CONTENT_THEMES.get(day_abbr, ("General content", "short"))
+    workout_focus = WORKOUT_FOCUS.get(day_abbr, "General training")
+
+    blocks = []
+
+    # === 7:00-7:30 MORNING STARTUP ===
+    blocks.append({
+        "summary": "🌅 Morning Startup",
+        "description": "Wake + hydrate (water, electrolytes, peptide protocol) + short dog walk.\n\nNo screens, no email, no social media. Protect the morning.",
+        "start": f"{day_str}T07:00:00",
+        "end": f"{day_str}T07:30:00",
         "colorId": "10"  # Green
-    },
-    {
-        "summary": "🇪🇸 Spanish Practice",
-        "description": "15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-        "start": "2026-02-10T07:00:00",
-        "end": "2026-02-10T07:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📚 Reading",
-        "description": "Business, fitness, or personal development.\nIdeas for content come from inputs.",
-        "start": "2026-02-10T07:30:00",
-        "end": "2026-02-10T08:00:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training",
-        "description": "Evening session. Discipline transfer + potential content angle.",
-        "start": "2026-02-10T17:00:00",
-        "end": "2026-02-10T17:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📱 Daily Content Post",
-        "description": "Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
-        "start": "2026-02-10T20:00:00",
-        "end": "2026-02-10T20:30:00",
-        "colorId": "9"  # Blue
-    },
+    })
 
-    # TUESDAY Feb 11 - Daily Habits
-    {
-        "summary": "💪 Workout",
-        "description": "Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-        "start": "2026-02-11T06:00:00",
-        "end": "2026-02-11T07:00:00",
+    # === 7:30-9:00 HIGH-AGENCY BLOCK (PEAK WILLPOWER) ===
+    blocks.append({
+        "summary": "🧠 HIGH-AGENCY: Study + Reading",
+        "description": f"PEAK WILLPOWER — highest cognitive load tasks FIRST.\n\n"
+                      f"7:30-8:15: Peptide Research (protocols, mechanisms, compounds)\n"
+                      f"8:15-8:45: Business Education — {reading_topic}\n"
+                      f"8:45-9:00: Pre-workout nutrition\n\n"
+                      f"Hormozi rule: Do the thing that makes everything else easier or unnecessary FIRST.",
+        "start": f"{day_str}T07:30:00",
+        "end": f"{day_str}T09:00:00",
+        "colorId": "11"  # Red (critical priority)
+    })
+
+    # === 9:00-11:00 WORKOUT (2hr NON-NEGOTIABLE) ===
+    blocks.append({
+        "summary": f"💪 WORKOUT: {workout_focus}",
+        "description": f"NON-NEGOTIABLE 2-hour block.\n\n"
+                      f"Focus: {workout_focus}\n\n"
+                      f"9:00-9:15: Warmup (dynamic stretching, mobility)\n"
+                      f"9:15-10:30: Training session\n"
+                      f"10:30-10:45: Cooldown + stretch\n"
+                      f"10:45-11:00: Post-workout nutrition\n\n"
+                      f"If filming: set up camera BEFORE warmup, film 2-3 key sets.",
+        "start": f"{day_str}T09:00:00",
+        "end": f"{day_str}T11:00:00",
         "colorId": "10"  # Green
-    },
-    {
-        "summary": "🇪🇸 Spanish Practice",
-        "description": "15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-        "start": "2026-02-11T07:00:00",
-        "end": "2026-02-11T07:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📚 Reading",
-        "description": "Business, fitness, or personal development.\nIdeas for content come from inputs.",
-        "start": "2026-02-11T07:30:00",
-        "end": "2026-02-11T08:00:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training",
-        "description": "Evening session. Discipline transfer + potential content angle.",
-        "start": "2026-02-11T17:00:00",
-        "end": "2026-02-11T17:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📱 Daily Content Post",
-        "description": "Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
-        "start": "2026-02-11T20:00:00",
-        "end": "2026-02-11T20:30:00",
+    })
+
+    # === 11:00-1:00 VIDEO RECORDING (CREATIVE/PROACTIVE) ===
+    blocks.append({
+        "summary": f"🎬 Record: {content_theme}",
+        "description": f"Creative block — still proactive, uses post-workout energy.\n\n"
+                      f"Theme: {content_theme}\n"
+                      f"Format: {content_format}\n\n"
+                      f"11:00-11:15: Review content calendar\n"
+                      f"11:15-12:15: Record video content\n"
+                      f"12:15-12:45: Quick edit pass (import to pipeline)\n"
+                      f"12:45-1:00: Publish/schedule to TikTok, YouTube, IG",
+        "start": f"{day_str}T11:00:00",
+        "end": f"{day_str}T13:00:00",
         "colorId": "9"  # Blue
-    },
+    })
 
-    # WEDNESDAY Feb 12 - Daily Habits
-    {
-        "summary": "💪 Workout",
-        "description": "Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-        "start": "2026-02-12T06:00:00",
-        "end": "2026-02-12T07:00:00",
-        "colorId": "10"  # Green
-    },
-    {
-        "summary": "🇪🇸 Spanish Practice",
-        "description": "15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-        "start": "2026-02-12T07:00:00",
-        "end": "2026-02-12T07:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📚 Reading",
-        "description": "Business, fitness, or personal development.\nIdeas for content come from inputs.",
-        "start": "2026-02-12T07:30:00",
-        "end": "2026-02-12T08:00:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training",
-        "description": "Evening session. Discipline transfer + potential content angle.",
-        "start": "2026-02-12T17:00:00",
-        "end": "2026-02-12T17:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📱 Daily Content Post",
-        "description": "Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
-        "start": "2026-02-12T20:00:00",
-        "end": "2026-02-12T20:30:00",
+    # === 1:00-1:30 LUNCH ===
+    blocks.append({
+        "summary": "🍽️ Lunch",
+        "description": "Meal prep or cook.",
+        "start": f"{day_str}T13:00:00",
+        "end": f"{day_str}T13:30:00",
+        "colorId": "2"  # Green (sage)
+    })
+
+    # === 1:30-3:30 VIDEO EDITING (REACTIVE/MECHANICAL) ===
+    blocks.append({
+        "summary": "✂️ Video Editing & Post-Production",
+        "description": "REACTIVE — doesn't require peak willpower.\n\n"
+                      "1:30-2:00: Review pipeline output\n"
+                      "2:00-3:00: Fine-tune edits, B-roll, captions\n"
+                      "3:00-3:30: Export & package for platforms",
+        "start": f"{day_str}T13:30:00",
+        "end": f"{day_str}T15:30:00",
         "colorId": "9"  # Blue
-    },
+    })
 
-    # THURSDAY Feb 13 - Daily Habits
-    {
-        "summary": "💪 Workout",
-        "description": "Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-        "start": "2026-02-13T06:00:00",
-        "end": "2026-02-13T07:00:00",
-        "colorId": "10"  # Green
-    },
-    {
-        "summary": "🇪🇸 Spanish Practice",
-        "description": "15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-        "start": "2026-02-13T07:00:00",
-        "end": "2026-02-13T07:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📚 Reading",
-        "description": "Business, fitness, or personal development.\nIdeas for content come from inputs.",
-        "start": "2026-02-13T07:30:00",
-        "end": "2026-02-13T08:00:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training",
-        "description": "Evening session. Discipline transfer + potential content angle.",
-        "start": "2026-02-13T17:00:00",
-        "end": "2026-02-13T17:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📱 Daily Content Post",
-        "description": "Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
-        "start": "2026-02-13T20:00:00",
-        "end": "2026-02-13T20:30:00",
-        "colorId": "9"  # Blue
-    },
-
-    # FRIDAY Feb 14 - Daily Habits
-    {
-        "summary": "💪 Workout",
-        "description": "Non-negotiable. Fitness influencer = practice what you preach.\nLog workout for potential content.",
-        "start": "2026-02-14T06:00:00",
-        "end": "2026-02-14T07:00:00",
-        "colorId": "10"  # Green
-    },
-    {
-        "summary": "🇪🇸 Spanish Practice",
-        "description": "15-30 min Duolingo or Pimsleur.\n60M+ Hispanic Americans = 2x audience if bilingual.",
-        "start": "2026-02-14T07:00:00",
-        "end": "2026-02-14T07:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📚 Reading",
-        "description": "Business, fitness, or personal development.\nIdeas for content come from inputs.",
-        "start": "2026-02-14T07:30:00",
-        "end": "2026-02-14T08:00:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training",
-        "description": "Evening session. Discipline transfer + potential content angle.",
-        "start": "2026-02-14T17:00:00",
-        "end": "2026-02-14T17:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📱 Daily Content Post",
-        "description": "Post 1 short-form piece (TikTok/Reels/Shorts).\nRaw > Perfect. Volume negates luck.\n\nIdeas: workout clip, tip, form check, peptide fact.",
-        "start": "2026-02-14T20:00:00",
-        "end": "2026-02-14T20:30:00",
-        "colorId": "9"  # Blue
-    },
-
-    # SATURDAY Feb 15 - Rest Day Habits (lighter)
-    {
-        "summary": "💪 Active Recovery / Light Workout",
-        "description": "Walk, stretch, yoga, or light activity.\nRest is part of training.",
-        "start": "2026-02-15T08:00:00",
-        "end": "2026-02-15T09:00:00",
-        "colorId": "10"  # Green
-    },
-    {
-        "summary": "🐕 Dog Training + Walk",
-        "description": "Longer weekend session. Good for both of you.",
-        "start": "2026-02-15T10:00:00",
-        "end": "2026-02-15T11:00:00",
-        "colorId": "2"  # Green
-    },
-
-    # SUNDAY Feb 16 - Rest + Prep
-    {
-        "summary": "📚 Deep Reading / Learning",
-        "description": "Longer learning session. Peptide research, business books, etc.",
-        "start": "2026-02-16T09:00:00",
-        "end": "2026-02-16T10:30:00",
-        "colorId": "2"  # Green
-    },
-    {
-        "summary": "📅 Week Prep: Content Batching",
-        "description": "Plan and batch content for the week.\n- Write 5-7 short-form hooks\n- Outline 1 long-form video\n- Schedule posts if possible",
-        "start": "2026-02-16T14:00:00",
-        "end": "2026-02-16T16:00:00",
-        "colorId": "9"  # Blue
-    },
-
-    # ========================================
-    # BUSINESS BLOCKS (Strategic work)
-    # ========================================
-
-    # Monday Feb 10
-    {
-        "summary": "🔴 CRITICAL: Review Fitness Influencer v2.0 OVERHAUL-PLAN",
-        "description": """Decision point: Approve for Ralph execution OR scope down.
-
-Action items:
-1. Read /projects/marceau-solutions/fitness-influencer/OVERHAUL-PLAN.md
-2. Review the 40+ story scope
-3. Decide: GO (4-6 weeks Ralph) or adjust scope
-4. If GO: Launch Ralph PRD
-
-Business Impact: $60K-120K Year 1 revenue potential""",
-        "start": "2026-02-10T09:00:00",
-        "end": "2026-02-10T10:30:00",
-        "colorId": "11"  # Red
-    },
-    {
-        "summary": "🎬 Content Creation: Film 2-3 Short Clips",
-        "description": """Batch film content while energy is high.
-
-Ideas:
-- Post-workout tip
-- Form demonstration
-- Quick peptide fact
-- Motivation/mindset
-
-Raw footage is fine - edit later or post raw.""",
-        "start": "2026-02-10T11:00:00",
-        "end": "2026-02-10T12:00:00",
-        "colorId": "9"  # Blue
-    },
-
-    # Tuesday Feb 11
-    {
-        "summary": "🟠 HIGH: Lead Scraper Campaign Analysis",
-        "description": """Optimize SMS campaign performance.
-
-Action items:
-1. Review CAMPAIGN-PERFORMANCE-BASELINE.md
-2. Analyze 9,128 enrolled leads performance
-3. Identify winning message templates
-4. Plan next segment (HVAC or fitness studios)
-
-SOP: SOP 22 (Campaign Analytics), SOP 23 (Strategy Development)
-Potential: $3-5K/month revenue""",
-        "start": "2026-02-11T09:00:00",
-        "end": "2026-02-11T11:00:00",
-        "colorId": "6"  # Orange
-    },
-    {
-        "summary": "🟠 HIGH: TikTok Integration Testing",
-        "description": """Test the new TikTok modules implemented Feb 8.
-
-Action items:
-1. Test TikTok OAuth flow with real account
-2. Upload test video via API
-3. Verify scheduling works (TikTokScheduler)
-4. Document any issues for Fitness Influencer product
-
-Files: projects/shared/social-media-automation/src/tiktok_*.py
-Impact: 10X reach if cross-posting works""",
-        "start": "2026-02-11T14:00:00",
-        "end": "2026-02-11T16:00:00",
-        "colorId": "6"  # Orange
-    },
-
-    # Wednesday Feb 12
-    {
-        "summary": "🟠 HIGH: Personal Training Business Validation",
-        "description": """Start validation for peptide-focused personal training.
-
-Action items:
-1. Create 5-7 social posts for fitness niche
-2. Set up basic website (use website-builder)
-3. Draft fitness content strategy
-4. Reach out to 3 potential clients
-
-Business model: $50-75/session + Peptide referral $500-1000/client""",
-        "start": "2026-02-12T09:00:00",
-        "end": "2026-02-12T11:30:00",
-        "colorId": "6"  # Orange
-    },
-    {
-        "summary": "🎬 Content Creation: Medium-Form Content",
-        "description": """Create 1-2 longer pieces (3-5 min).
-
-Ideas:
-- Full workout walkthrough
-- Peptide basics explainer
-- Client transformation story
-- Q&A from DMs
-
-Can be YouTube Short or full video.""",
-        "start": "2026-02-12T14:00:00",
-        "end": "2026-02-12T15:30:00",
-        "colorId": "9"  # Blue
-    },
-
-    # Thursday Feb 13 - BATCH CONTENT DAY
-    {
-        "summary": "🎬 BATCH DAY: Long-Form YouTube Production",
-        "description": """Dedicated content production block.
-
-Create 1 polished YouTube video OR batch multiple shorts.
-
-Structure:
-1. Script/outline (30 min)
-2. Film (1 hr)
-3. Edit (1.5 hr)
-
-Topic ideas:
-- Peptide deep-dive
-- Weekly workout routine
-- Nutrition protocol
-- "Day in the life" fitness""",
-        "start": "2026-02-13T09:00:00",
-        "end": "2026-02-13T12:00:00",
-        "colorId": "9"  # Blue
-    },
-    {
-        "summary": "📊 Lead Scraper: Execute Follow-up Sequence",
-        "description": """Run follow-up sequence on best performers.
-
-Action items:
-1. Identify leads that responded positively
-2. Run SOP 19 (Multi-Touch Follow-Up)
-3. Move hot leads to ClickUp CRM
-4. Schedule callbacks
-
-Tools: python -m src.follow_up_sequence process-due""",
-        "start": "2026-02-13T14:00:00",
-        "end": "2026-02-13T15:30:00",
+    # === 3:30-5:00 BUSINESS OPS & ADMIN (REACTIVE) ===
+    blocks.append({
+        "summary": "📊 Business Ops & Admin",
+        "description": "REACTIVE — lowest leverage tasks go last in the workday.\n\n"
+                      "3:30-3:45: Check SMS/lead replies\n"
+                      "3:45-4:00: Review morning digest (NOT in morning!)\n"
+                      "4:00-4:30: Review analytics, campaign performance\n"
+                      "4:30-5:00: Social engagement, comments, DMs\n\n"
+                      "Rule: NO email or social media before 3:30 PM.",
+        "start": f"{day_str}T15:30:00",
+        "end": f"{day_str}T17:00:00",
         "colorId": "7"  # Cyan
-    },
+    })
 
-    # Friday Feb 14
-    {
-        "summary": "📋 Fitness Influencer: Ralph Progress Checkpoint",
-        "description": """If Ralph running, review progress.
+    # === 5:00-6:00 PLAN TOMORROW + DOG TRAINING ===
+    blocks.append({
+        "summary": "🐕 Plan Tomorrow + Dog Training",
+        "description": "5:00-5:15: Plan tomorrow (content topic, workout, calendar)\n"
+                      "5:15-6:00: Dog training + evening walk\n\n"
+                      "Obedience drills, socialization, mental stimulation on return.",
+        "start": f"{day_str}T17:00:00",
+        "end": f"{day_str}T18:00:00",
+        "colorId": "2"  # Green (sage)
+    })
 
-Action items:
-1. Check completed stories in Ralph execution
-2. Review any checkpoint approvals needed
-3. Adjust scope if blockers found
-4. Plan next week's execution
+    # === 6:00-7:00 DINNER + WIND DOWN ===
+    blocks.append({
+        "summary": "🍽️ Dinner + Wind Down",
+        "description": "6:00-6:30: Dinner\n6:30-7:00: Light stretching, prep for next day.",
+        "start": f"{day_str}T18:00:00",
+        "end": f"{day_str}T19:00:00",
+        "colorId": "2"  # Green (sage)
+    })
 
-If not running: Launch Ralph today""",
-        "start": "2026-02-14T09:00:00",
-        "end": "2026-02-14T10:00:00",
-        "colorId": "7"  # Cyan
-    },
-    {
-        "summary": "🎬 Content Review: Publish Best of Week",
-        "description": """Review week's content and publish best pieces.
+    return blocks
 
-Actions:
-1. Review all filmed content
-2. Quick edits on top 2-3 pieces
-3. Schedule for optimal posting times
-4. Cross-post to all platforms
 
-Friday afternoon = high engagement time.""",
-        "start": "2026-02-14T10:30:00",
-        "end": "2026-02-14T12:00:00",
-        "colorId": "9"  # Blue
-    },
-    {
-        "summary": "📅 Weekly Planning: Review & Adjust",
-        "description": """End of week planning session.
+def generate_weekend_blocks(date):
+    """Generate weekend blocks (lighter schedule)."""
+    day_abbr = date.strftime("%a")
+    day_str = date.strftime("%Y-%m-%d")
+    workout_focus = WORKOUT_FOCUS.get(day_abbr, "Active recovery")
+    content_theme, content_format = CONTENT_THEMES.get(day_abbr, ("Lifestyle content", "short"))
 
-Action items:
-1. Review content performance (what got engagement?)
-2. Document wins and learnings
-3. Update docs/session-history.md
-4. Plan next week's content themes
-5. Adjust strategy based on data
+    blocks = []
 
-Prepare for: Week 2 with more data""",
-        "start": "2026-02-14T14:00:00",
-        "end": "2026-02-14T15:00:00",
-        "colorId": "3"  # Purple
-    },
-]
+    if day_abbr == "Sat":
+        blocks.append({
+            "summary": f"💪 {workout_focus}",
+            "description": "Lighter weekend session. Walk, stretch, yoga, or light activity.\nRest is part of training.",
+            "start": f"{day_str}T09:00:00",
+            "end": f"{day_str}T10:00:00",
+            "colorId": "10"
+        })
+        blocks.append({
+            "summary": "🐕 Dog Training + Walk",
+            "description": "Longer weekend session. Good for both of you.",
+            "start": f"{day_str}T10:00:00",
+            "end": f"{day_str}T11:00:00",
+            "colorId": "2"
+        })
+        blocks.append({
+            "summary": f"🎬 {content_theme}",
+            "description": f"Weekend content: {content_theme}\nFormat: {content_format}\n\nMore relaxed pace — film when inspiration strikes.",
+            "start": f"{day_str}T14:00:00",
+            "end": f"{day_str}T16:00:00",
+            "colorId": "9"
+        })
+
+    elif day_abbr == "Sun":
+        blocks.append({
+            "summary": "📚 Deep Reading / Learning",
+            "description": "Longer learning session. Peptide research, business books, biohacking.\nPersonal interest / fiction allowed on Sundays.",
+            "start": f"{day_str}T09:00:00",
+            "end": f"{day_str}T10:30:00",
+            "colorId": "2"
+        })
+        blocks.append({
+            "summary": "🐕 Dog Training + Walk",
+            "description": "Longer weekend session.",
+            "start": f"{day_str}T10:30:00",
+            "end": f"{day_str}T11:30:00",
+            "colorId": "2"
+        })
+        blocks.append({
+            "summary": "📅 Week Prep: Content Batching",
+            "description": "Plan and batch content for the week.\n- Write 5-7 short-form hooks\n- Outline 1 long-form video\n- Schedule posts if possible\n- Meal prep for the week",
+            "start": f"{day_str}T14:00:00",
+            "end": f"{day_str}T16:00:00",
+            "colorId": "3"
+        })
+
+    return blocks
 
 
 def get_calendar_service():
@@ -490,9 +297,23 @@ def create_time_block(service, block):
 
 def main():
     """Create all time blocks for the week."""
+    # Generate blocks for week of Feb 10, 2026
+    start_date = datetime(2026, 2, 10)  # Monday
+
+    all_blocks = []
+    for day_offset in range(7):
+        current_date = start_date + timedelta(days=day_offset)
+        day_name = current_date.strftime("%A")
+        day_abbr = current_date.strftime("%a")
+
+        if day_abbr in ("Sat", "Sun"):
+            all_blocks.extend(generate_weekend_blocks(current_date))
+        else:
+            all_blocks.extend(generate_weekday_blocks(current_date))
+
     print("Creating time blocks for week of Feb 10, 2026...")
-    print("Philosophy: Volume > Perfection | Daily habits compound")
-    print("=" * 60)
+    print("Framework: Alex Hormozi High-Agency (study/reading FIRST, reactive tasks LAST)")
+    print("=" * 70)
 
     service = get_calendar_service()
     if not service:
@@ -500,39 +321,31 @@ def main():
         return
 
     created_count = 0
-    for block in TIME_BLOCKS:
+    for block in all_blocks:
         try:
             event = create_time_block(service, block)
-            print(f"✅ Created: {block['summary'][:50]}...")
-            print(f"   Time: {block['start']} - {block['end'].split('T')[1]}")
+            print(f"  {block['summary'][:55]}")
+            print(f"    {block['start'].split('T')[0]} {block['start'].split('T')[1][:5]} - {block['end'].split('T')[1][:5]}")
             created_count += 1
         except Exception as e:
-            print(f"❌ Failed: {block['summary'][:50]}...")
-            print(f"   Error: {e}")
+            print(f"  FAILED: {block['summary'][:55]}")
+            print(f"    Error: {e}")
 
-    print("=" * 60)
-    print(f"Created {created_count}/{len(TIME_BLOCKS)} time blocks")
-    print("\n📊 WEEKLY SUMMARY:")
-    print("\nDAILY HABITS (Mon-Fri):")
-    print("  6:00-7:00  💪 Workout")
-    print("  7:00-7:30  🇪🇸 Spanish")
-    print("  7:30-8:00  📚 Reading")
-    print("  5:00-5:30  🐕 Dog Training")
-    print("  8:00-8:30  📱 Daily Content Post")
-    print("\nCONTENT BLOCKS:")
-    print("  Mon 11-12  🎬 Film 2-3 clips")
-    print("  Wed 2-3:30 🎬 Medium-form content")
-    print("  Thu 9-12   🎬 BATCH DAY: Long-form YouTube")
-    print("  Fri 10:30  🎬 Publish best of week")
-    print("  Sun 2-4    📅 Week prep + batch planning")
-    print("\nBUSINESS BLOCKS:")
-    print("  Mon 9-10:30  🔴 Fitness v2.0 Decision")
-    print("  Tue 9-11     🟠 Lead Scraper Analysis")
-    print("  Tue 2-4      🟠 TikTok Testing")
-    print("  Wed 9-11:30  🟠 PT Validation")
-    print("  Thu 2-3:30   📊 Follow-up Sequence")
-    print("  Fri 9-10     📋 Ralph Checkpoint")
-    print("  Fri 2-3      📅 Weekly Planning")
+    print("=" * 70)
+    print(f"Created {created_count}/{len(all_blocks)} time blocks")
+    print()
+    print("HORMOZI DAILY FRAMEWORK:")
+    print("  7:00-7:30   🌅 Morning Startup (wake, hydrate, dog walk)")
+    print("  7:30-9:00   🧠 HIGH-AGENCY: Peptide Study + Business Education + Reading")
+    print("  9:00-11:00  💪 WORKOUT (2hr non-negotiable)")
+    print("  11:00-1:00  🎬 Video Recording (creative/proactive)")
+    print("  1:00-1:30   🍽️  Lunch")
+    print("  1:30-3:30   ✂️  Video Editing (reactive/mechanical)")
+    print("  3:30-5:00   📊 Business Ops & Admin (reactive)")
+    print("  5:00-6:00   🐕 Plan Tomorrow + Dog Training")
+    print("  6:00-7:00   🍽️  Dinner + Wind Down")
+    print()
+    print("Rule: NO email or social media before 3:30 PM.")
 
 
 if __name__ == '__main__':
