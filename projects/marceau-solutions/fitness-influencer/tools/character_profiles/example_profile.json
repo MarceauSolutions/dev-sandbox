@@ -1,0 +1,23 @@
+{
+  "name": "FitnessCoach",
+  "physical": {
+    "age_range": "28-32",
+    "gender": "male",
+    "ethnicity": "caucasian",
+    "build": "athletic, muscular",
+    "hair": "short brown, styled back",
+    "facial_features": "strong jawline, light stubble, bright blue eyes",
+    "skin": "tan, healthy complexion"
+  },
+  "style": {
+    "clothing": "fitted black t-shirt, athletic wear",
+    "environment": "modern gym, natural lighting",
+    "camera": "RED Komodo, 85mm lens, shallow depth of field"
+  },
+  "voice": {
+    "provider": null,
+    "voice_id": null,
+    "settings": {}
+  },
+  "prompt_template": "A {age_range} year old {gender}, {build} build, {hair}, {facial_features}, {skin}, wearing {clothing}, in a {environment}. Shot on {camera}."
+}

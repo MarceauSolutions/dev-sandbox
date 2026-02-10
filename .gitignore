@@ -64,7 +64,11 @@ data/stripe/*.jsonl
 
 # Generated outputs (resumes, cover letters, PDFs)
 projects/global-utility/resume/output/
+projects/shared/resume/output/
 ralph/output/
+
+# AI tool testing outputs
+projects/marceau-solutions/fitness-influencer/tools/output/
 
 # Generated social media content
 projects/*/output/generated_posts_*.json
