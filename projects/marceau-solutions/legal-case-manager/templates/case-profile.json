@@ -1,0 +1,78 @@
+{
+  "case": {
+    "name": "",
+    "type": "housing_discrimination",
+    "status": "active",
+    "date_opened": "",
+    "date_of_incident": "",
+    "date_of_last_discriminatory_act": ""
+  },
+  "complainant": {
+    "name": "",
+    "address": "",
+    "phone": "",
+    "email": ""
+  },
+  "respondent": {
+    "name": "",
+    "role": "",
+    "company": "",
+    "address": "",
+    "phone": "",
+    "email": ""
+  },
+  "property": {
+    "address": "",
+    "type": "",
+    "unit": ""
+  },
+  "protected_class": {
+    "basis": [],
+    "description": ""
+  },
+  "discrimination_type": {
+    "type": [],
+    "description": ""
+  },
+  "filings": {
+    "hud_complaint": {
+      "filed": false,
+      "date_filed": null,
+      "case_number": null,
+      "status": null
+    },
+    "fchr_complaint": {
+      "filed": false,
+      "date_filed": null,
+      "case_number": null,
+      "status": null
+    },
+    "federal_lawsuit": {
+      "filed": false,
+      "date_filed": null,
+      "case_number": null,
+      "court": null,
+      "status": null
+    },
+    "state_lawsuit": {
+      "filed": false,
+      "date_filed": null,
+      "case_number": null,
+      "court": null,
+      "status": null
+    }
+  },
+  "attorney": {
+    "name": null,
+    "firm": null,
+    "phone": null,
+    "email": null,
+    "retained": false
+  },
+  "statutes_of_limitation": {
+    "hud_deadline": "",
+    "fchr_deadline": "",
+    "federal_lawsuit_deadline": "",
+    "state_lawsuit_deadline": ""
+  }
+}

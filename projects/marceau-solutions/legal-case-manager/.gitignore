@@ -1,0 +1,17 @@
+# Sensitive case data - NEVER commit
+data/
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.doc
+*.docx
+*.tiff
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment
+.env

@@ -53,5 +53,19 @@
       "Bash(done)",
       "mcp__n8n__export_workflow_to_file"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/check-existing-tools.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }
