@@ -24,9 +24,16 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
-# Import video generators
-from moviepy_video_generator import MoviePyVideoGenerator
-from creatomate_api import CreatomateAPI
+# Import video generators (support both direct and package imports)
+try:
+    from backend.moviepy_video_generator import MoviePyVideoGenerator
+    from backend.creatomate_api_enhanced import CreatomateAPIEnhanced as CreatomateAPI
+except ImportError:
+    from moviepy_video_generator import MoviePyVideoGenerator
+    try:
+        from creatomate_api_enhanced import CreatomateAPIEnhanced as CreatomateAPI
+    except ImportError:
+        from creatomate_api import CreatomateAPI
 
 load_dotenv()
 
@@ -50,17 +57,42 @@ class IntelligentVideoRouter:
     def __init__(self, log_dir: str = ".tmp/logs"):
         """
         Initialize intelligent video router.
-        
+
         Args:
             log_dir: Directory for log files
         """
-        self.moviepy = MoviePyVideoGenerator()
-        self.creatomate = CreatomateAPI()
-        
+        # Lazy-initialize generators (avoids import errors when just reading stats)
+        self._moviepy = None
+        self._creatomate = None
+        self._moviepy_available = None
+        self._creatomate_available = None
+
         # Setup logging
         self.log_dir = Path(log_dir)
         self.log_dir.mkdir(parents=True, exist_ok=True)
         self.log_file = self.log_dir / "video_generation.jsonl"
+
+    @property
+    def moviepy(self):
+        if self._moviepy is None:
+            try:
+                self._moviepy = MoviePyVideoGenerator()
+                self._moviepy_available = True
+            except (ImportError, Exception) as e:
+                self._moviepy_available = False
+                raise
+        return self._moviepy
+
+    @property
+    def creatomate(self):
+        if self._creatomate is None:
+            try:
+                self._creatomate = CreatomateAPI()
+                self._creatomate_available = True
+            except (ImportError, Exception) as e:
+                self._creatomate_available = False
+                raise
+        return self._creatomate
     
     def create_video(
         self,
@@ -154,12 +186,11 @@ class IntelligentVideoRouter:
         print(f"{'='*70}")
         
         try:
-            result = self.creatomate.create_fitness_ad(
+            result = self.creatomate.create_fitness_ad_high_quality(
                 image_urls=image_urls,
                 headline=headline,
                 cta_text=cta_text,
-                duration=duration,
-                music_style=music_style
+                duration=duration
             )
             
             if result.get('success'):

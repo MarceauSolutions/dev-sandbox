@@ -96,10 +96,22 @@ FRONTEND_PATH = PROJECT_PATH / "frontend"
 # Mount static files for video downloads
 app.mount("/static", StaticFiles(directory=str(STATIC_PATH)), name="static")
 
+# Mount frontend assets (CSS, JS) for dashboard
+app.mount("/frontend", StaticFiles(directory=str(FRONTEND_PATH)), name="frontend")
+
 
 # ============================================================================
 # Frontend Routes
 # ============================================================================
+
+@app.get("/dashboard")
+async def dashboard_page():
+    """Serve the main dashboard SPA."""
+    dashboard_html = FRONTEND_PATH / "index.html"
+    if dashboard_html.exists():
+        return FileResponse(dashboard_html, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Dashboard not found")
+
 
 @app.get("/gamification")
 async def gamification_page():
@@ -171,6 +183,8 @@ class VideoGenerateRequest(BaseModel):
     cta_text: Optional[str] = "Start Your Journey"
     duration: Optional[float] = 15.0
     music_style: Optional[str] = "energetic"  # energetic, motivational, upbeat
+    force_method: Optional[str] = None  # 'moviepy', 'creatomate', or None (auto)
+    quality_tier: Optional[str] = None  # 'free', 'budget', 'standard', 'premium', or None (auto)
 
 
 class VideoStatusRequest(BaseModel):
@@ -494,7 +508,9 @@ async def root():
         "endpoints": {
             "ai_chat": "/api/ai/chat",
             "video_edit": "/api/video/edit",
-            "video_generate": "/api/video/generate",
+            "video_generate": "/api/video/generate (hybrid: MoviePy free → Creatomate paid)",
+            "video_stats": "/api/video/stats",
+            "video_providers": "/api/video/providers",
             "create_graphic": "/api/graphics/create",
             "email_digest": "/api/email/digest",
             "revenue_report": "/api/analytics/revenue",
@@ -2921,33 +2937,32 @@ async def edit_video(
 @app.post("/api/video/generate")
 async def generate_video(request: VideoGenerateRequest):
     """
-    Generate a video ad from images using Shotstack.
+    Generate a video ad from images using the hybrid video router.
 
-    Takes AI-generated images (from Grok) and creates a professional
-    video with transitions, music, and text overlays.
+    Intelligent routing: MoviePy (free, local) → Creatomate (paid, cloud fallback).
+    Tracks costs, success rates, and provider performance automatically.
+
+    Supports force_method override and quality_tier selection.
 
     Returns:
-    - video_url: Direct download link for the generated video
-    - render_id: ID to check status if still processing
-    - cost: Approximate cost (~$0.05-0.10)
+    - video_url or video_path: The generated video
+    - method: Which provider was used
+    - cost: Actual cost for this generation
     """
-    from shotstack_video import ShotstackVideo
+    from backend.intelligent_video_router import IntelligentVideoRouter
 
     try:
-        api = ShotstackVideo()
+        router = IntelligentVideoRouter(
+            log_dir=str(Path(__file__).parent.parent / "data" / "video_logs")
+        )
 
-        if not api.api_key:
-            raise HTTPException(
-                status_code=500,
-                detail="SHOTSTACK_API_KEY not configured. Get one at https://dashboard.shotstack.io/"
-            )
-
-        result = await api.create_fitness_video(
+        result = router.create_video(
             image_urls=request.image_urls,
             headline=request.headline,
             cta_text=request.cta_text,
             duration=request.duration,
-            music_style=request.music_style
+            music_style=request.music_style,
+            force_method=request.force_method
         )
 
         if not result.get("success"):
@@ -2959,10 +2974,10 @@ async def generate_video(request: VideoGenerateRequest):
         return {
             "success": True,
             "video_url": result.get("video_url"),
-            "render_id": result.get("render_id"),
-            "status": result.get("status"),
-            "cost": result.get("cost", 0.05),
-            "message": "Video generated successfully"
+            "video_path": result.get("video_path"),
+            "method": result.get("method", "unknown"),
+            "cost": result.get("cost", 0),
+            "message": f"Video generated via {result.get('method', 'hybrid router')}"
         }
 
     except HTTPException:
@@ -3008,6 +3023,76 @@ async def check_video_status(request: VideoStatusRequest):
             status_code=500,
             detail=f"Error checking status: {str(e)}"
         )
+
+
+@app.get("/api/video/stats")
+async def get_video_stats(days: int = 30):
+    """
+    Get video generation statistics from the hybrid router.
+
+    Returns cost breakdown, success rates, and provider performance
+    over the specified time period.
+    """
+    from backend.intelligent_video_router import IntelligentVideoRouter
+
+    try:
+        router = IntelligentVideoRouter(
+            log_dir=str(Path(__file__).parent.parent / "data" / "video_logs")
+        )
+        stats = router.get_statistics(days=days)
+        return {"success": True, "stats": stats}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching stats: {str(e)}"
+        )
+
+
+@app.get("/api/video/providers")
+async def get_video_providers():
+    """
+    Get available video generation providers and their status.
+
+    Shows each provider's cost, tier, and current availability.
+    """
+    providers = [
+        {
+            "id": "moviepy",
+            "name": "MoviePy (Local)",
+            "tier": "free",
+            "cost_per_video": 0,
+            "description": "Local video generation using MoviePy. Free but 70-85% success rate.",
+            "requires_api_key": False,
+            "available": True
+        },
+        {
+            "id": "creatomate",
+            "name": "Creatomate (Cloud)",
+            "tier": "standard",
+            "cost_per_video": 0.05,
+            "description": "Cloud-based video generation. Reliable fallback at $0.05/video.",
+            "requires_api_key": True,
+            "available": bool(os.getenv("CREATOMATE_API_KEY"))
+        },
+        {
+            "id": "shotstack",
+            "name": "Shotstack (Legacy)",
+            "tier": "standard",
+            "cost_per_video": 0.05,
+            "description": "Legacy cloud video generation. Available as direct override.",
+            "requires_api_key": True,
+            "available": bool(os.getenv("SHOTSTACK_API_KEY"))
+        }
+    ]
+
+    return {
+        "success": True,
+        "providers": providers,
+        "routing": {
+            "strategy": "MoviePy first (free) → Creatomate fallback (paid)",
+            "override": "Use force_method parameter to select a specific provider"
+        }
+    }
 
 
 @app.post("/api/brand/research")
@@ -4262,6 +4347,555 @@ async def user_sheets_data(request: UserSheetsRequest):
 # ============================================================================
 # Utility Endpoints
 # ============================================================================
+
+# ============================================================================
+# Video Pipeline Endpoints (Editor)
+# ============================================================================
+
+@app.get("/api/video/pipeline/presets")
+async def get_pipeline_presets():
+    """List all available pipeline presets with descriptions."""
+    from backend.pipeline_orchestrator import list_presets
+    return {"presets": list_presets()}
+
+
+@app.post("/api/video/pipeline/run")
+async def run_pipeline(
+    video: UploadFile = File(...),
+    preset: str = Form("humiston_style"),
+    step_overrides: Optional[str] = Form(None),
+):
+    """
+    Start a video editing pipeline.
+
+    Upload a video and select a preset. Returns a job_id for polling progress.
+
+    - **video**: Raw video file (mp4, mov, avi)
+    - **preset**: Pipeline preset name (humiston_style, viral_short, etc.)
+    - **step_overrides**: Optional JSON string of step enable/disable overrides
+      e.g. '{"sfx": false, "captions": false}'
+    """
+    import asyncio
+    from backend.pipeline_orchestrator import run_pipeline as _run_pipeline, list_presets, PRESETS
+
+    # Validate preset
+    if preset not in PRESETS:
+        valid = [p["id"] for p in list_presets()]
+        raise HTTPException(400, f"Invalid preset '{preset}'. Valid: {valid}")
+
+    # Validate file type
+    allowed = {".mp4", ".mov", ".avi", ".mkv", ".webm"}
+    ext = Path(video.filename).suffix.lower() if video.filename else ".mp4"
+    if ext not in allowed:
+        raise HTTPException(400, f"Unsupported format '{ext}'. Allowed: {allowed}")
+
+    # Save uploaded video
+    job_id = str(uuid.uuid4())[:8]
+    upload_dir = VIDEOS_PATH / f"pipeline_{job_id}"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    input_path = upload_dir / f"input{ext}"
+
+    with open(input_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    # Parse step overrides
+    overrides = None
+    if step_overrides:
+        try:
+            import json as _json
+            overrides = _json.loads(step_overrides)
+        except Exception:
+            raise HTTPException(400, "step_overrides must be valid JSON")
+
+    # Run pipeline in background
+    async def _background():
+        try:
+            await _run_pipeline(
+                video_path=str(input_path),
+                preset_id=preset,
+                output_dir=str(upload_dir),
+                step_overrides=overrides,
+            )
+        except Exception as e:
+            logger.error(f"Pipeline {job_id} failed: {e}")
+
+    asyncio.create_task(_background())
+
+    return {
+        "job_id": job_id,
+        "preset": preset,
+        "status": "running",
+        "poll_url": f"/api/video/pipeline/status/{job_id}",
+        "message": "Pipeline started. Poll the status URL for progress.",
+    }
+
+
+@app.get("/api/video/pipeline/status/{job_id}")
+async def get_pipeline_status(job_id: str):
+    """
+    Poll pipeline progress.
+
+    Returns current step, overall progress, and output URLs when complete.
+    """
+    from backend.pipeline_orchestrator import get_job
+
+    ctx = get_job(job_id)
+    if not ctx:
+        raise HTTPException(404, f"Pipeline job '{job_id}' not found")
+
+    result = {
+        "job_id": ctx.job_id,
+        "status": ctx.status,
+        "current_step": ctx.current_step,
+        "total_steps": ctx.total_steps,
+        "progress": ctx.progress,
+        "steps_completed": ctx.steps_completed,
+        "steps_failed": ctx.steps_failed,
+        "error": ctx.error,
+    }
+
+    if ctx.status == "complete" and ctx.current_video:
+        # Build download URL
+        rel_path = Path(ctx.current_video).relative_to(STATIC_PATH)
+        result["output_url"] = f"/static/{rel_path}"
+        result["output_path"] = ctx.current_video
+
+    return result
+
+
+@app.post("/api/video/pipeline/custom")
+async def run_custom_pipeline(
+    video: UploadFile = File(...),
+    steps: str = Form(...),
+):
+    """
+    Run a custom pipeline with manually specified steps.
+
+    - **video**: Raw video file
+    - **steps**: JSON array of step configs, e.g.:
+      '[{"name": "jumpcut", "params": {"aggressive": true}},
+        {"name": "punch_zoom", "params": {"zoom_level": 1.4}}]'
+    """
+    import asyncio
+    from backend.pipeline_orchestrator import run_custom_pipeline as _run_custom, StepConfig
+
+    # Parse steps JSON
+    try:
+        import json as _json
+        steps_data = _json.loads(steps)
+    except Exception:
+        raise HTTPException(400, "steps must be valid JSON array")
+
+    if not isinstance(steps_data, list) or not steps_data:
+        raise HTTPException(400, "steps must be a non-empty JSON array")
+
+    # Build StepConfig list
+    step_configs = []
+    for s in steps_data:
+        if not isinstance(s, dict) or "name" not in s:
+            raise HTTPException(400, "Each step must have a 'name' field")
+        step_configs.append(StepConfig(
+            name=s["name"],
+            module=s.get("module", s["name"]),
+            enabled=s.get("enabled", True),
+            params=s.get("params", {}),
+        ))
+
+    # Save uploaded video
+    job_id = str(uuid.uuid4())[:8]
+    upload_dir = VIDEOS_PATH / f"pipeline_{job_id}"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    ext = Path(video.filename).suffix.lower() if video.filename else ".mp4"
+    input_path = upload_dir / f"input{ext}"
+
+    with open(input_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    async def _background():
+        try:
+            await _run_custom(
+                video_path=str(input_path),
+                steps=step_configs,
+                output_dir=str(upload_dir),
+            )
+        except Exception as e:
+            logger.error(f"Custom pipeline {job_id} failed: {e}")
+
+    asyncio.create_task(_background())
+
+    return {
+        "job_id": job_id,
+        "preset": "custom",
+        "steps": [s.name for s in step_configs],
+        "status": "running",
+        "poll_url": f"/api/video/pipeline/status/{job_id}",
+        "message": "Custom pipeline started. Poll the status URL for progress.",
+    }
+
+
+# ── Phase 3: Viral Intelligence + Color Grading + Transitions ────────────────
+
+@app.get("/api/video/color-presets")
+async def get_color_presets():
+    """List available color grading presets."""
+    from backend.color_grader import list_presets as _list_color_presets
+    return {"presets": _list_color_presets()}
+
+
+@app.post("/api/video/color-grade")
+async def color_grade_video(
+    video: UploadFile = File(...),
+    preset: str = Form("humiston_clean"),
+    intensity: float = Form(1.0),
+    auto_detect: bool = Form(False),
+):
+    """Apply color grading to a video."""
+    from backend.color_grader import apply_grade
+
+    job_id = str(uuid.uuid4())[:8]
+    upload_dir = VIDEOS_PATH / f"grade_{job_id}"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    input_path = upload_dir / video.filename
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(video.file, f)
+
+    output_path = upload_dir / f"graded_{video.filename}"
+
+    result = await apply_grade(
+        video_path=str(input_path),
+        preset=preset,
+        output_path=str(output_path),
+        intensity=intensity,
+        auto_detect=auto_detect,
+    )
+
+    return {
+        "job_id": job_id,
+        **result.to_dict(),
+        "download_url": f"/api/video/download/{job_id}/graded_{video.filename}",
+    }
+
+
+@app.post("/api/video/viral-analyze")
+async def viral_analyze_video(
+    video: UploadFile = File(...),
+):
+    """Run viral optimization analysis on a video, get improvement plan."""
+    from backend.viral_optimizer import ViralOptimizer
+
+    job_id = str(uuid.uuid4())[:8]
+    upload_dir = VIDEOS_PATH / f"viral_{job_id}"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    input_path = upload_dir / video.filename
+    with open(input_path, "wb") as f:
+        shutil.copyfileobj(video.file, f)
+
+    optimizer = ViralOptimizer()
+    plan = await optimizer.analyze_and_optimize(video_path=str(input_path))
+
+    if plan:
+        return {
+            "job_id": job_id,
+            "viral_score_before": plan.viral_score_before,
+            "weaknesses": [w.to_dict() for w in plan.weaknesses],
+            "fix_steps": [
+                {"step": f.fix_step, "params": f.fix_params, "impact": f.impact_estimate}
+                for f in plan.weaknesses
+            ],
+        }
+    return {"job_id": job_id, "error": "Analysis could not complete"}
+
+
+@app.get("/api/video/transition-types")
+async def get_transition_types():
+    """List available transition types and platform presets."""
+    from backend.transition_engine import TransitionType, PLATFORM_CONFIGS
+    return {
+        "types": [t.value for t in TransitionType if t != TransitionType.NONE],
+        "platforms": {
+            k: {"default_duration": v["default_duration"], "energy": v["energy"]}
+            for k, v in PLATFORM_CONFIGS.items()
+        },
+    }
+
+
+# ============================================================================
+# Phase 4: Music, B-Roll, Batch Processing, Export Packaging
+# ============================================================================
+
+@app.post("/api/video/add-music")
+@limiter.limit("10/minute")
+async def add_music_to_video(
+    request: Request,
+    video: UploadFile = File(...),
+    music: Optional[UploadFile] = File(None),
+    category: str = Form("energetic"),
+    volume: float = Form(0.15),
+    duck_mode: str = Form("sidechain"),
+    detect_bpm: bool = Form(False),
+):
+    """
+    Add background music to a video with automatic speech ducking.
+
+    Supports sidechain compression (music auto-ducks under speech),
+    envelope ducking, or constant volume mixing.
+    """
+    from backend.music_mixer import add_background_music
+
+    # Save uploaded video
+    video_dir = tempfile.mkdtemp(dir=str(VIDEOS_PATH))
+    video_path = os.path.join(video_dir, video.filename or "input.mp4")
+    with open(video_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    # Save music file if provided
+    music_path = None
+    if music:
+        music_path = os.path.join(video_dir, music.filename or "music.mp3")
+        with open(music_path, "wb") as f:
+            content = await music.read()
+            f.write(content)
+
+    output_path = os.path.join(video_dir, "output_with_music.mp4")
+    music_dir = str(PROJECT_PATH / "data" / "music")
+
+    result = await add_background_music(
+        video_path=video_path,
+        output_path=output_path,
+        music_path=music_path,
+        music_dir=music_dir if not music_path else None,
+        category=category,
+        music_volume=min(max(volume, 0.0), 1.0),
+        duck_mode=duck_mode,
+        detect_bpm=detect_bpm,
+    )
+
+    if result.success:
+        return {
+            "success": True,
+            "download_url": f"/static/videos/{Path(video_dir).name}/output_with_music.mp4",
+            "music_track": result.music_track,
+            "duck_mode": result.duck_mode,
+            "bpm": result.detected_bpm,
+            "beat_count": result.beat_count,
+        }
+    raise HTTPException(status_code=500, detail=result.error or "Music mixing failed")
+
+
+@app.get("/api/video/music-categories")
+async def get_music_categories():
+    """List available music categories and library contents."""
+    from backend.music_mixer import MusicCategory, scan_music_library
+
+    music_dir = str(PROJECT_PATH / "data" / "music")
+    tracks = scan_music_library(music_dir)
+
+    categories = {}
+    for cat in MusicCategory:
+        cat_tracks = [t for t in tracks if t.category == cat]
+        categories[cat.value] = {
+            "name": cat.value.replace("_", " ").title(),
+            "track_count": len(cat_tracks),
+            "tracks": [{"name": t.name, "duration": round(t.duration, 1)} for t in cat_tracks],
+        }
+
+    return {"categories": categories, "total_tracks": len(tracks)}
+
+
+@app.post("/api/video/detect-beats")
+@limiter.limit("10/minute")
+async def detect_video_beats(
+    request: Request,
+    video: UploadFile = File(...),
+):
+    """Detect beat timestamps and BPM in a video's audio track."""
+    from backend.music_mixer import get_beat_timestamps
+
+    video_dir = tempfile.mkdtemp(dir=str(VIDEOS_PATH))
+    video_path = os.path.join(video_dir, video.filename or "input.mp4")
+    with open(video_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    result = await get_beat_timestamps(video_path)
+    return result
+
+
+@app.post("/api/video/detect-talking-head")
+@limiter.limit("10/minute")
+async def detect_talking_head(
+    request: Request,
+    video: UploadFile = File(...),
+    min_duration: float = Form(3.0),
+):
+    """Detect talking-head segments with low visual variety."""
+    from backend.broll_inserter import detect_talking_head_segments
+
+    video_dir = tempfile.mkdtemp(dir=str(VIDEOS_PATH))
+    video_path = os.path.join(video_dir, video.filename or "input.mp4")
+    with open(video_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    segments = await detect_talking_head_segments(video_path, min_duration=min_duration)
+    return {
+        "segments": [
+            {
+                "start": s.start,
+                "end": s.end,
+                "duration": round(s.duration, 2),
+                "motion_score": round(s.motion_score, 3),
+                "is_candidate": s.is_good_candidate,
+            }
+            for s in segments
+        ],
+        "total": len(segments),
+        "candidates": sum(1 for s in segments if s.is_good_candidate),
+    }
+
+
+@app.post("/api/video/insert-broll")
+@limiter.limit("5/minute")
+async def insert_broll_endpoint(
+    request: Request,
+    video: UploadFile = File(...),
+    category: Optional[str] = Form(None),
+    max_insertions: int = Form(8),
+    min_duration: float = Form(3.0),
+):
+    """Detect talking-head segments and auto-insert B-roll clips."""
+    from backend.broll_inserter import insert_broll
+
+    video_dir = tempfile.mkdtemp(dir=str(VIDEOS_PATH))
+    video_path = os.path.join(video_dir, video.filename or "input.mp4")
+    with open(video_path, "wb") as f:
+        content = await video.read()
+        f.write(content)
+
+    output_path = os.path.join(video_dir, "output_with_broll.mp4")
+    broll_dir = str(PROJECT_PATH / "data" / "broll")
+
+    result = await insert_broll(
+        video_path=video_path,
+        output_path=output_path,
+        broll_dir=broll_dir,
+        category=category,
+        max_insertions=max_insertions,
+        min_segment_dur=min_duration,
+    )
+
+    if result.success:
+        return {
+            "success": True,
+            "download_url": f"/static/videos/{Path(video_dir).name}/output_with_broll.mp4" if result.segments_filled > 0 else None,
+            "segments_detected": result.segments_detected,
+            "segments_filled": result.segments_filled,
+            "insertions": result.insertions,
+        }
+    raise HTTPException(status_code=500, detail=result.error or "B-roll insertion failed")
+
+
+@app.get("/api/video/broll-categories")
+async def get_broll_categories():
+    """List available B-roll categories and clips."""
+    from backend.broll_inserter import BRollCategory, scan_broll_library
+
+    broll_dir = str(PROJECT_PATH / "data" / "broll")
+    clips = scan_broll_library(broll_dir)
+
+    categories = {}
+    for cat in BRollCategory:
+        cat_clips = [c for c in clips if c.category == cat]
+        categories[cat.value] = {
+            "name": cat.value.replace("_", " ").title(),
+            "clip_count": len(cat_clips),
+            "clips": [{"name": c.name, "duration": round(c.duration, 1)} for c in cat_clips],
+        }
+
+    return {"categories": categories, "total_clips": len(clips)}
+
+
+@app.post("/api/video/pipeline/batch")
+@limiter.limit("3/minute")
+async def run_batch_pipeline_endpoint(
+    request: Request,
+    videos: List[UploadFile] = File(...),
+    preset: str = Form("humiston_style"),
+):
+    """
+    Process multiple videos with the same preset.
+
+    Returns a batch_id for tracking overall progress.
+    """
+    from backend.pipeline_orchestrator import run_batch_pipeline, PRESETS
+
+    if preset not in PRESETS:
+        raise HTTPException(status_code=400, detail=f"Unknown preset: {preset}")
+
+    if len(videos) > 20:
+        raise HTTPException(status_code=400, detail="Maximum 20 videos per batch")
+
+    batch_dir = tempfile.mkdtemp(dir=str(VIDEOS_PATH))
+    video_paths = []
+
+    for i, video in enumerate(videos):
+        video_path = os.path.join(batch_dir, f"video_{i}_{video.filename or 'input.mp4'}")
+        with open(video_path, "wb") as f:
+            content = await video.read()
+            f.write(content)
+        video_paths.append(video_path)
+
+    output_dir = os.path.join(batch_dir, "output")
+
+    # Run batch in background (async)
+    batch = await run_batch_pipeline(
+        video_paths=video_paths,
+        preset_id=preset,
+        output_dir=output_dir,
+    )
+
+    return batch.to_status_dict()
+
+
+@app.get("/api/video/pipeline/batch/{batch_id}")
+async def get_batch_status(batch_id: str):
+    """Get status of a batch pipeline run."""
+    from backend.pipeline_orchestrator import get_batch
+
+    batch = get_batch(batch_id)
+    if not batch:
+        raise HTTPException(status_code=404, detail=f"Batch {batch_id} not found")
+    return batch.to_status_dict()
+
+
+@app.post("/api/video/pipeline/package/{job_id}")
+async def create_package(job_id: str, platforms: Optional[str] = Form(None)):
+    """
+    Create export package for a completed pipeline job.
+
+    Returns video + thumbnail + description + hashtags per platform.
+    """
+    from backend.pipeline_orchestrator import get_job, create_export_package
+
+    ctx = get_job(job_id)
+    if not ctx:
+        raise HTTPException(status_code=404, detail=f"Job {job_id} not found")
+    if ctx.status != "completed":
+        raise HTTPException(status_code=400, detail=f"Job {job_id} is not completed (status: {ctx.status})")
+
+    platform_list = platforms.split(",") if platforms else ["tiktok", "youtube_shorts"]
+    packages = await create_export_package(ctx, platforms=platform_list)
+
+    return {
+        "job_id": job_id,
+        "packages": [p.to_dict() for p in packages],
+    }
+
 
 @app.get("/api/status")
 async def status():
