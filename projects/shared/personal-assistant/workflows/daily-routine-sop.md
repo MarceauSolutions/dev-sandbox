@@ -1,166 +1,258 @@
-# SOP: Daily Routine Checklist
+# SOP: Daily Routine & Schedule
 
-*Last Updated: 2026-01-15*
-*Version: 1.0.0*
+*Last Updated: 2026-02-09*
+*Version: 2.0.0*
 
 ## Overview
 
-Daily tasks to ensure no leads, opportunities, or urgent items are missed. Designed to take 30-45 minutes total.
+Structured daily schedule optimized for fitness content creation, business growth, and personal development. Built around a non-negotiable 2-hour morning workout block.
 
-## Morning (8:00 AM - 10:30 AM)
+---
 
-### Step 1: Review Morning Digest (8:00 AM - 15 min)
+## Daily Schedule
 
-**Objective**: Get overview of all activity from last 24 hours
+### 7:00 AM - 8:00 AM | Morning Startup (1 hr)
 
-**Command**:
+| Time | Activity | Details |
+|------|----------|---------|
+| 7:00 - 7:15 | Wake + Hydrate | Water, electrolytes, morning peptide protocol |
+| 7:15 - 7:30 | Dog Walk | Short morning walk (15 min) |
+| 7:30 - 7:45 | Review Morning Digest | Check overnight leads, emails, urgent items |
+| 7:45 - 8:00 | Pre-Workout Nutrition | Meal prep or shake, review workout plan |
+
+**Morning Digest Command**:
 ```bash
-# If automated digest not received:
-cd /Users/williammarceaujr./dev-sandbox/projects/personal-assistant
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/personal-assistant
 python -m src.morning_digest --preview
 ```
 
-**Review**:
+**Quick Checks**:
+- [ ] Hot leads from overnight SMS replies
 - [ ] Urgent emails flagged
-- [ ] Hot leads from SMS replies
-- [ ] New form submissions
-- [ ] Today's calendar events
-- [ ] Action items list
-
-**Action**: Prioritize items for the day
+- [ ] Today's calendar/commitments
+- [ ] Content posting schedule for the day
 
 ---
 
-### Step 2: Check SMS Replies (10:00 AM - 15 min)
+### 9:00 AM - 11:00 AM | WORKOUT (2 hrs - NON-NEGOTIABLE)
 
-**Objective**: Respond to leads and maintain campaign momentum
+| Time | Activity | Details |
+|------|----------|---------|
+| 9:00 - 9:15 | Warmup | Dynamic stretching, mobility work |
+| 9:15 - 10:30 | Training Session | Primary workout (push/pull/legs rotation) |
+| 10:30 - 10:45 | Cooldown + Stretch | Static stretching, foam rolling |
+| 10:45 - 11:00 | Post-Workout | Nutrition, shower, recover |
 
-**Command**:
+**Recording Notes** (if filming during workout):
+- Set up camera/phone on tripod BEFORE warmup
+- Film key sets (2-3 exercises minimum per session)
+- Capture both angles: wide shot + close-up form
+- Raw footage goes to `data/raw_footage/` for pipeline processing
+
+---
+
+### 11:00 AM - 1:00 PM | Video Recording & Content Creation (2 hrs)
+
+| Time | Activity | Details |
+|------|----------|---------|
+| 11:00 - 11:15 | Review content calendar | Check today's planned topic from strategy |
+| 11:15 - 12:15 | Record Video Content | Film talking-head, tutorials, B-roll |
+| 12:15 - 12:45 | Quick Edit Pass | Import to pipeline, select preset, review |
+| 12:45 - 1:00 | Publish/Schedule | Post to TikTok, queue for YouTube/IG |
+
+**Content Calendar Command**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
+curl https://fitai.marceausolutions.com/api/content/calendar/week/plan
+```
+
+**Pipeline Quick Edit**:
+```bash
+# Upload raw footage and run Humiston preset
+curl -X POST https://fitai.marceausolutions.com/api/video/pipeline/run \
+  -F "video=@raw_footage.mp4" \
+  -F "preset_id=humiston_style"
+```
+
+**Recording Priorities** (rotate through the week):
+- **Mon**: Quick workout tip / gym hack (30-60s short)
+- **Tue**: Full exercise tutorial (2-3 min)
+- **Wed**: Peptide education / science content
+- **Thu**: Client transformation / before-after
+- **Fri**: Week recap + motivation
+- **Sat**: Longer-form workout follow-along
+- **Sun**: Rest day content (nutrition, lifestyle, dog content)
+
+---
+
+### 1:00 PM - 1:30 PM | Lunch Break (30 min)
+
+---
+
+### 1:30 PM - 3:30 PM | Video Editing & Post-Production (2 hrs)
+
+| Time | Activity | Details |
+|------|----------|---------|
+| 1:30 - 2:00 | Review pipeline output | Check auto-edits, adjust step params |
+| 2:00 - 3:00 | Fine-tune edits | Manual cuts, B-roll placement, captions |
+| 3:00 - 3:30 | Export & package | Run export packaging, prep thumbnails |
+
+**Editing Pipeline Commands**:
+```bash
+# Check job status
+curl https://fitai.marceausolutions.com/api/video/pipeline/status/{job_id}
+
+# Re-run with different preset
+curl -X POST https://fitai.marceausolutions.com/api/video/pipeline/run \
+  -F "video=@footage.mp4" \
+  -F "preset_id=maximum_viral"
+
+# Create export packages for all platforms
+curl -X POST https://fitai.marceausolutions.com/api/video/pipeline/package/{job_id} \
+  -F "platforms=tiktok,youtube_shorts,instagram_reels,youtube"
+```
+
+---
+
+### 3:30 PM - 5:00 PM | Peptide Research & Business Education (1.5 hrs)
+
+| Time | Activity | Details |
+|------|----------|---------|
+| 3:30 - 4:15 | Peptide Study | Research protocols, mechanisms, new compounds |
+| 4:15 - 5:00 | Business Education | Marketing, sales, content strategy, competitor analysis |
+
+**Peptide Study Focus Areas** (rotate weekly):
+- Week 1: BPC-157 / TB-500 (healing/recovery)
+- Week 2: GH secretagogues (MK-677, CJC-1295, Ipamorelin)
+- Week 3: Performance peptides (Selank, Semax, PT-141)
+- Week 4: Review, summarize, create content from learnings
+
+**Business Education Focus**:
+- Content strategy optimization (analytics review)
+- Competitor analysis (what's working in fitness niche)
+- Platform algorithm changes (TikTok, YouTube, IG updates)
+- Revenue diversification (sponsorships, affiliates, courses)
+- Lead generation and client acquisition tactics
+
+---
+
+### 5:00 PM - 6:00 PM | Business Operations & Admin (1 hr)
+
+| Time | Activity | Details |
+|------|----------|---------|
+| 5:00 - 5:15 | Check SMS/lead replies | Respond to hot leads, schedule callbacks |
+| 5:15 - 5:30 | Review analytics | Campaign performance, content metrics |
+| 5:30 - 5:45 | Social engagement | Reply to comments, DMs, community building |
+| 5:45 - 6:00 | Plan tomorrow | Set content topic, prep workout, review calendar |
+
+**Lead Check Commands**:
+```bash
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.twilio_webhook stats
-```
-
-**Review**:
-- [ ] Hot leads (call within 1 hour)
-- [ ] Callback requests (schedule call)
-- [ ] Questions (reply with answer)
-- [ ] Opt-outs (verify processed)
-
-**Priorities**:
-1. **Hot leads**: Call immediately
-2. **Callbacks**: Schedule or call within 2 hours
-3. **Questions**: Reply same day
-4. **Opt-outs**: Verify compliance (must be <1 min processing)
-
----
-
-### Step 3: Check Form Submissions (10:15 AM - 10 min)
-
-**Objective**: Ensure no inquiry goes unnoticed
-
-**Check**:
-1. Google Sheets: `Lead Submissions` (ID: `1AgdGdTLi0E8eZBUZ3yHVCCdVSlXOuxFhOZ7BSXmNbZM`)
-2. ClickUp: New tasks in Intake stage
-
-**Review**:
-- [ ] New submissions since yesterday
-- [ ] Source of submissions (which landing page)
-- [ ] Quality of leads (fit for services)
-
-**Action**: Create ClickUp task for qualified leads
-
----
-
-### Step 4: Webhook Health Check (10:25 AM - 5 min)
-
-**Objective**: Ensure all webhooks are running
-
-**Commands**:
-```bash
-# Check Twilio webhook
-curl http://localhost:5001/health
-
-# Check Form webhook
-curl http://localhost:5000/webhook/health
-```
-
-**Expected**: `{"status": "healthy", "uptime": "..."}`
-
-**If unhealthy**:
-```bash
-# Restart webhooks
-cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
-python -m src.twilio_webhook serve --port 5001 &
-python -m src.form_webhook serve --port 5000 &
+python -m src.campaign_analytics report
 ```
 
 ---
 
-## Evening (Optional - 5:00 PM)
+### 6:00 PM - 7:30 PM | Extracurriculars (1.5 hrs)
 
-### Quick Status Check
+| Time | Activity | Details |
+|------|----------|---------|
+| 6:00 - 6:45 | Dog Training + Walk | Evening walk with training exercises |
+| 6:45 - 7:30 | Reading | Books on business, fitness, psychology, biohacking |
 
-**Objective**: Ensure nothing urgent was missed
+**Reading List Rotation**:
+- Business/Entrepreneurship (Mon/Wed)
+- Fitness/Exercise Science (Tue/Thu)
+- Psychology/Habits/Productivity (Fri)
+- Personal interest / fiction (Weekends)
 
-**Review**:
-- [ ] Any new SMS replies since morning
-- [ ] Any new form submissions
-- [ ] Tomorrow's calendar preview
+**Dog Training Focus**:
+- Obedience drills during walk (heel, sit, stay, recall)
+- Socialization if possible
+- Mental stimulation (puzzle toys, scent work) on return
 
-**Command**:
-```bash
-python -m src.digest_aggregator --hours 8
-```
+---
+
+### 7:30 PM - 8:30 PM | Dinner & Wind Down (1 hr)
+
+| Time | Activity | Details |
+|------|----------|---------|
+| 7:30 - 8:00 | Dinner | Meal prep or cook |
+| 8:00 - 8:30 | Wind down | Light stretching, prep for next day |
+
+---
+
+## Weekly Variations
+
+| Day | Workout Focus | Content Theme | Extra |
+|-----|--------------|---------------|-------|
+| **Mon** | Push (Chest/Shoulders/Tri) | Gym hack / quick tip | Weekly planning |
+| **Tue** | Pull (Back/Biceps) | Exercise tutorial | Peptide deep-dive |
+| **Wed** | Legs (Quads/Hams/Glutes) | Science/peptide content | Analytics review |
+| **Thu** | Push variation | Transformation / results | Lead follow-up |
+| **Fri** | Pull variation | Week recap + motivation | Business review |
+| **Sat** | Full body / Active recovery | Long-form workout | Extended reading |
+| **Sun** | Rest / Light cardio | Lifestyle / nutrition / dog | Meal prep, relax |
+
+---
+
+## Time Allocation Summary
+
+| Category | Hours/Day | Hours/Week | % of Productive Day |
+|----------|-----------|------------|---------------------|
+| **Workout** | 2.0 | 14.0 | 18% |
+| **Recording** | 2.0 | 14.0 | 18% |
+| **Editing** | 2.0 | 14.0 | 18% |
+| **Peptide + Business Study** | 1.5 | 10.5 | 14% |
+| **Business Ops** | 1.0 | 7.0 | 9% |
+| **Extracurriculars** | 1.5 | 10.5 | 14% |
+| **Morning Startup** | 1.0 | 7.0 | 9% |
+| **Total Productive** | **11.0** | **77.0** | **100%** |
 
 ---
 
 ## Quick Reference Commands
 
 ```bash
-# Generate morning digest
-cd /Users/williammarceaujr./dev-sandbox/projects/personal-assistant
+# Morning digest
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/personal-assistant
 python -m src.morning_digest --preview
 
-# Check SMS stats
-cd /Users/williammarceaujr./dev-sandbox/projects/lead-scraper
+# Content calendar
+curl https://fitai.marceausolutions.com/api/content/calendar/week/plan
+
+# Lead stats
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper
 python -m src.twilio_webhook stats
 
-# Webhook health
-curl http://localhost:5001/health
-curl http://localhost:5000/webhook/health
+# Campaign analytics
+python -m src.campaign_analytics report
 
-# Record SMS response
-python -m src.campaign_analytics response --phone "+1XXX" --category hot_lead
+# Run video pipeline
+curl -X POST https://fitai.marceausolutions.com/api/video/pipeline/run \
+  -F "video=@raw.mp4" -F "preset_id=humiston_style"
 
-# View today's calendar
-python calendar_reminders.py list --days 1
+# Check pipeline presets
+curl https://fitai.marceausolutions.com/api/video/pipeline/presets
 ```
 
 ---
 
 ## Success Criteria
 
-- [ ] Morning digest reviewed before 9 AM
-- [ ] Hot leads contacted within 1 hour
-- [ ] All SMS questions answered same day
-- [ ] Webhooks healthy (no downtime)
-- [ ] New form inquiries processed into CRM
-
----
-
-## Automation Status
-
-| Task | Manual | Automated |
-|------|--------|-----------|
-| Morning Digest | `--preview` | Email at 8 AM |
-| SMS Check | Manual stats | Calendar reminder |
-| Form Check | Manual sheet | Auto ClickUp task |
-| Webhook Health | curl | Uptime monitoring (future) |
+- [ ] Workout completed every day by 11 AM (minimum 5 days/week)
+- [ ] At least 1 piece of content recorded daily
+- [ ] At least 1 edited video published daily (short-form)
+- [ ] 45 min+ peptide/business study daily
+- [ ] Hot leads contacted same day
+- [ ] Dog walked and trained daily
+- [ ] Reading 30+ min daily
+- [ ] Tomorrow planned before bed
 
 ---
 
 ## References
 
-- [Webhook Monitoring SOP](../../lead-scraper/workflows/webhook-monitoring-sop.md)
-- [Campaign Analytics (SOP 22)](../../../CLAUDE.md#sop-22-campaign-analytics--tracking)
+- [Weekly Routine SOP](weekly-routine-sop.md)
+- [Multi-Platform Content Strategy](../../marceau-solutions/fitness-influencer/MULTI-PLATFORM-CONTENT-STRATEGY.md)
+- [Video Pipeline Presets](../../marceau-solutions/fitness-influencer/backend/pipeline_orchestrator.py)
