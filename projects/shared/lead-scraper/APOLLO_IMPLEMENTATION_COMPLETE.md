@@ -48,7 +48,7 @@ The Apollo MCP integration is **PRODUCTION READY** with full end-to-end automati
 - **URL**: https://github.com/login/device
 - **Next Step**: User must authorize, then run:
   ```bash
-  cd /Users/williammarceaujr./dev-sandbox/projects/global-utility/registry
+  cd /Users/williammarceaujr./dev-sandbox/projects/shared/registry
   ./bin/mcp-publisher publish --server /Users/williammarceaujr./dev-sandbox/projects/apollo-mcp/server.json
   ```
 

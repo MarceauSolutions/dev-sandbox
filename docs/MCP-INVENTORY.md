@@ -19,14 +19,14 @@
 |----------|--------------|---------|----------|-------------------|
 | **Apollo MCP** | `apollo-mcp` | 1.1.1 | `projects/apollo-mcp/` | `io.github.wmarceau/apollo` |
 | **Upwork MCP** | `upwork-mcp` | 1.0.1 | `projects/shared/upwork-mcp/` | `io.github.wmarceau/upwork` |
-| **MD to PDF MCP** | `md-to-pdf-mcp` | 1.0.1 | `projects/global-utility/md-to-pdf/` | `io.github.wmarceau/md-to-pdf` |
+| **MD to PDF MCP** | `md-to-pdf-mcp` | 1.0.1 | `projects/shared/md-to-pdf/` | `io.github.wmarceau/md-to-pdf` |
 | **Amazon Seller MCP** | `amazon-seller-mcp` | 1.0.0 | `projects/marceau-solutions/amazon-seller/` | `io.github.wmarceau/amazon-seller` |
 | **Fitness Influencer MCP** | `fitness-influencer-mcp` | 1.3.0 | `projects/marceau-solutions/fitness-influencer/mcp/` | `io.github.wmarceau/fitness-influencer` |
 | **YouTube Creator MCP** | `youtube-creator-mcp` | 1.0.0 | `projects/marceau-solutions/youtube-creator/` | `io.github.wmarceau/youtube-creator` |
 | **Instagram Creator MCP** | `instagram-creator-mcp` | 1.0.0 | `projects/marceau-solutions/instagram-creator/` | `io.github.wmarceau/instagram-creator` |
 | **TikTok Creator MCP** | `tiktok-creator-mcp` | 1.0.0 | `projects/marceau-solutions/tiktok-creator/` | `io.github.wmarceau/tiktok-creator` |
-| **Rideshare Comparison MCP** | `rideshare-comparison-mcp` | 1.0.0 | `projects/global-utility/mcp-aggregator/rideshare-mcp/` | `io.github.wmarceau/rideshare-comparison` |
-| **HVAC Quotes MCP** | `hvac-quotes-mcp` | 1.0.0 | `projects/global-utility/mcp-aggregator/hvac-mcp/` | `io.github.wmarceau/hvac-quotes` |
+| **Rideshare Comparison MCP** | `rideshare-comparison-mcp` | 1.0.0 | `projects/shared/mcp-aggregator/rideshare-mcp/` | `io.github.wmarceau/rideshare-comparison` |
+| **HVAC Quotes MCP** | `hvac-quotes-mcp` | 1.0.0 | `projects/shared/mcp-aggregator/hvac-mcp/` | `io.github.wmarceau/hvac-quotes` |
 
 ---
 
@@ -35,7 +35,7 @@
 | MCP Name | PyPI Package | Location | Status |
 |----------|--------------|----------|--------|
 | **Canva MCP** | `canva-mcp` | `projects/shared/canva-mcp/` | Needs server.json |
-| **Twilio MCP** | `twilio-mcp` | `projects/global-utility/twilio-mcp/` | Needs server.json |
+| **Twilio MCP** | `twilio-mcp` | `projects/shared/twilio-mcp/` | Needs server.json |
 
 ---
 

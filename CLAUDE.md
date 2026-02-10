@@ -17,7 +17,7 @@
 3. **Test before committing** — New `.py` files must at minimum pass syntax check. Pre-commit hook enforces this.
 4. **DOE discipline** — Directive must exist before deploying. Never deploy untested code.
 5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
-6. **Document efforts >30 min** immediately using `docs/sops/sop-25-documentation.md` decision tree.
+6. **Document efforts >30 min** immediately using `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` decision tree.
 7. **Rule of Three** — If same approach fails 3 times, STOP. Research root cause before retrying.
 
 ## Commands & Shortcuts

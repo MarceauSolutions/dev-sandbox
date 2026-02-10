@@ -31,13 +31,13 @@
 | **Apollo** | `projects/shared/apollo-mcp/` | 1.1.0 | Apollo.io lead enrichment and prospecting |
 | **Upwork** | `projects/shared/upwork-mcp/` | 1.0.1 | Job discovery, client analysis, proposal assistance |
 
-### 🌐 Global Utilities (Personal Tools)
+### 🌐 Shared Utilities (Personal Tools)
 
 | MCP | Location | Version | Description |
 |-----|----------|---------|-------------|
-| **MD to PDF** | `projects/global-utility/md-to-pdf/` | 1.0.1 | Markdown → professional PDFs with TOC |
-| **Twilio** | `projects/global-utility/twilio-mcp/` | 1.0.0 | SMS inbox, sending, lead tracking |
-| **Rideshare** | `projects/global-utility/mcp-aggregator/rideshare-mcp/` | 1.0.0 | Uber vs Lyft price comparison |
+| **MD to PDF** | `projects/shared/md-to-pdf/` | 1.0.1 | Markdown → professional PDFs with TOC |
+| **Twilio** | `projects/shared/twilio-mcp/` | 1.0.0 | SMS inbox, sending, lead tracking |
+| **Rideshare** | `projects/shared/mcp-aggregator/rideshare-mcp/` | 1.0.0 | Uber vs Lyft price comparison |
 
 ---
 
@@ -70,7 +70,7 @@ projects/
 ├── shared/                  # Multi-company MCPs
 │   ├── apollo-mcp/
 │   └── upwork-mcp/
-└── global-utility/          # Personal utility MCPs
+└── shared/                  # Personal utility MCPs
     ├── md-to-pdf/
     ├── twilio-mcp/
     └── mcp-aggregator/
@@ -80,5 +80,5 @@ projects/
 **Rules:**
 - Company-specific MCPs go under their company folder
 - Tools used by 2+ companies go in `shared/`
-- Personal utilities go in `global-utility/`
+- Personal utilities go in `shared/`
 - Each MCP is a standalone directory with `pyproject.toml`, `src/`, and `server.json`

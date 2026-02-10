@@ -43,7 +43,7 @@ You can now run: **"Find Naples gyms for Marceau Solutions"** and get SMS-ready 
 3. Authorize application
 4. Then run:
    ```bash
-   cd /Users/williammarceaujr./dev-sandbox/projects/global-utility/registry
+   cd /Users/williammarceaujr./dev-sandbox/projects/shared/registry
    ./bin/mcp-publisher publish --server /Users/williammarceaujr./dev-sandbox/projects/apollo-mcp/server.json
    ```
 
@@ -375,7 +375,7 @@ pip install -e /Users/williammarceaujr./dev-sandbox/projects/apollo-mcp
 
 **Fix**:
 ```bash
-cd /Users/williammarceaujr./dev-sandbox/projects/global-utility/registry
+cd /Users/williammarceaujr./dev-sandbox/projects/shared/registry
 ./bin/mcp-publisher login github
 # Get new code, authorize again
 ```

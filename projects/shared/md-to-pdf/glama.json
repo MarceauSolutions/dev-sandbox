@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "repository": "https://github.com/MarceauSolutions/dev-sandbox",
-  "homepage": "https://github.com/MarceauSolutions/dev-sandbox/tree/main/projects/global-utility/md-to-pdf",
+  "homepage": "https://github.com/MarceauSolutions/dev-sandbox/tree/main/projects/shared/md-to-pdf",
   "categories": ["document-conversion", "pdf", "markdown", "utilities"],
   "tags": ["markdown", "pdf", "converter", "toc", "document", "export"],
   "runtime": "python",

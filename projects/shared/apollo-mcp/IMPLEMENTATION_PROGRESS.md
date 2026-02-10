@@ -54,7 +54,7 @@
 
 **Prerequisites:**
 - ✅ Package live on PyPI
-- ✅ mcp-publisher tool available (/Users/williammarceaujr./dev-sandbox/projects/global-utility/registry/bin/mcp-publisher)
+- ✅ mcp-publisher tool available (/Users/williammarceaujr./dev-sandbox/projects/shared/registry/bin/mcp-publisher)
 - ⏳ GitHub authentication IN PROGRESS
 
 **Actions:**
