@@ -78,6 +78,30 @@ def get_api_key():
     return key
 
 
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_lipsync.py")
+    print("-" * 50)
+    ok = True
+
+    key = os.environ.get("FAL_API_KEY")
+    if key:
+        print(f"  FAL_API_KEY: {'*' * 6}...{key[-4:]}  ✓")
+    else:
+        print("  FAL_API_KEY: NOT SET  ✗")
+        ok = False
+
+    try:
+        import requests  # noqa: F401
+        print("  requests: installed  ✓")
+    except ImportError:
+        print("  requests: NOT INSTALLED  ✗")
+        ok = False
+
+    print(f"\n  {'ALL GOOD — ready to lip sync!' if ok else 'Fix issues above before running.'}")
+    return ok
+
+
 def list_models():
     """List available lip sync models."""
     print("\nAvailable Lip Sync Models:")
@@ -382,6 +406,7 @@ Models:
     parser.add_argument("--compare-all", action="store_true",
                         help="Run all models for comparison")
     parser.add_argument("--list-models", action="store_true", help="List available models")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
     parser.add_argument("--cost", action="store_true", help="Estimate cost")
     parser.add_argument("--duration", type=float, default=30,
                         help="Video duration in seconds (for cost estimate)")
@@ -390,6 +415,10 @@ Models:
 
     if args.list_models:
         list_models()
+        return
+
+    if args.check:
+        check_prerequisites()
         return
 
     if args.cost:

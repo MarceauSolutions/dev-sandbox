@@ -50,6 +50,30 @@ def get_api_key():
     return key
 
 
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_voice_resemble.py")
+    print("-" * 50)
+    ok = True
+
+    key = os.environ.get("RESEMBLE_API_KEY")
+    if key:
+        print(f"  RESEMBLE_API_KEY: {'*' * 6}...{key[-4:]}  ✓")
+    else:
+        print("  RESEMBLE_API_KEY: NOT SET  ✗")
+        ok = False
+
+    try:
+        import requests  # noqa: F401
+        print("  requests: installed  ✓")
+    except ImportError:
+        print("  requests: NOT INSTALLED  ✗")
+        ok = False
+
+    print(f"\n  {'ALL GOOD — ready to generate!' if ok else 'Fix issues above before running.'}")
+    return ok
+
+
 def _headers():
     return {
         "Authorization": f"Token token={get_api_key()}",
@@ -314,6 +338,7 @@ Examples:
     parser.add_argument("--voice-uuid", type=str, help="Voice UUID to use")
     parser.add_argument("--output", "-o", type=str, help="Output file path")
     parser.add_argument("--list-voices", action="store_true", help="List available voices")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
     parser.add_argument("--cost", action="store_true", help="Estimate cost")
     parser.add_argument("--clone", action="store_true", help="Clone a voice from sample")
     parser.add_argument("--sample", type=str, help="Audio sample for cloning")
@@ -325,6 +350,10 @@ Examples:
 
     if args.list_voices:
         list_voices()
+        return
+
+    if args.check:
+        check_prerequisites()
         return
 
     if args.clone:

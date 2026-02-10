@@ -154,6 +154,26 @@ python test_face_restore.py --image face.png --compare-all
 python test_face_restore.py --batch output/consistency_20260209/
 ```
 
+## Prerequisite Check
+
+Every script has a `--check` flag that validates API keys and packages:
+
+```bash
+# Check a single script
+python test_talking_head.py --check
+
+# Check all scripts at once
+for script in test_*.py; do echo "=== $script ===" && python "$script" --check && echo; done
+```
+
+## Real-User Testing Guide
+
+See **[TESTING-GUIDE.md](TESTING-GUIDE.md)** for complete step-by-step walkthrough with 3 test pathways:
+
+- **Pathway A** (~$0.20): Quick avatar with XAI + Replicate only
+- **Pathway B** (~$1.00): Full pipeline with voice generation
+- **Pathway C**: Compare all providers/models side-by-side
+
 ## Recommended Workflow
 
 1. **Create character profile** - Edit `character_profiles/example_profile.json`

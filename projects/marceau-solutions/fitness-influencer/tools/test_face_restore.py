@@ -18,6 +18,7 @@ Requires: REPLICATE_API_TOKEN in .env
 import argparse
 import os
 import sys
+import time
 import glob as glob_module
 from pathlib import Path
 from datetime import datetime
@@ -34,14 +35,14 @@ except ImportError:
 
 MODELS = {
     "gfpgan": {
-        "id": "tencentarc/gfpgan:0fbacf7a",
+        "id": "tencentarc/gfpgan",
         "name": "GFPGAN v1.4",
         "cost_per_run": 0.005,
         "description": "Face-specific restoration — best for AI-generated faces",
         "supports_scale": False,
     },
     "realesrgan": {
-        "id": "xinntao/realesrgan:1b976a4d",
+        "id": "xinntao/realesrgan",
         "name": "Real-ESRGAN",
         "cost_per_run": 0.01,
         "description": "General image upscaling — faces + backgrounds",
@@ -60,6 +61,31 @@ def get_api_token():
         print("Get token at: https://replicate.com/account/api-tokens")
         sys.exit(1)
     return token
+
+
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_face_restore.py")
+    print("-" * 50)
+    ok = True
+
+    token = os.environ.get("REPLICATE_API_TOKEN")
+    if token:
+        print(f"  REPLICATE_API_TOKEN: {'*' * 6}...{token[-4:]}  ✓")
+    else:
+        print("  REPLICATE_API_TOKEN: NOT SET  ✗")
+        ok = False
+
+    for pkg in ("replicate", "requests"):
+        try:
+            __import__(pkg)
+            print(f"  {pkg}: installed  ✓")
+        except ImportError:
+            print(f"  {pkg}: NOT INSTALLED  ✗")
+            ok = False
+
+    print(f"\n  {'ALL GOOD — ready to restore!' if ok else 'Fix issues above before running.'}")
+    return ok
 
 
 def list_models():
@@ -115,6 +141,8 @@ def restore_face(image_path: str, model_key: str = DEFAULT_MODEL,
         print("ERROR: replicate and requests required. Run: pip install replicate requests")
         sys.exit(1)
 
+    start_time = time.time()
+
     # Build input payload
     input_payload = {"img": open(image_path, "rb")}
 
@@ -147,12 +175,14 @@ def restore_face(image_path: str, model_key: str = DEFAULT_MODEL,
         with open(output_path, "wb") as f:
             f.write(image_data)
 
+        elapsed = time.time() - start_time
         file_size = os.path.getsize(output_path)
-        print(f"{Path(output_path).name} ({file_size / 1024:.0f} KB)")
+        print(f"{Path(output_path).name} ({file_size / 1024:.0f} KB, {elapsed:.1f}s)")
         return output_path
 
     except Exception as e:
-        print(f"ERROR: {e}")
+        elapsed = time.time() - start_time
+        print(f"ERROR ({elapsed:.1f}s): {e}")
         return None
     finally:
         fh = input_payload.get("img")
@@ -288,6 +318,7 @@ Workflow:
     parser.add_argument("--batch", type=str,
                         help="Batch restore: directory path or glob pattern")
     parser.add_argument("--list-models", action="store_true", help="List available models")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
     parser.add_argument("--cost", action="store_true", help="Estimate cost")
     parser.add_argument("--count", type=int, default=10,
                         help="Number of images (for cost estimate)")
@@ -296,6 +327,10 @@ Workflow:
 
     if args.list_models:
         list_models()
+        return
+
+    if args.check:
+        check_prerequisites()
         return
 
     if args.cost:

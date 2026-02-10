@@ -18,6 +18,7 @@ Requires: REPLICATE_API_TOKEN in .env
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
 from datetime import datetime
 
@@ -33,7 +34,7 @@ except ImportError:
 
 MODELS = {
     "sadtalker": {
-        "id": "cjwbw/sadtalker:a519cc0c",
+        "id": "cjwbw/sadtalker",
         "name": "SadTalker",
         "cost_per_run": 0.05,
         "description": "Audio-driven talking head from single image (head movement + lip sync)"
@@ -51,6 +52,33 @@ def get_api_token():
         print("Get token at: https://replicate.com/account/api-tokens")
         sys.exit(1)
     return token
+
+
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_talking_head.py")
+    print("-" * 50)
+    ok = True
+
+    # Check API key
+    token = os.environ.get("REPLICATE_API_TOKEN")
+    if token:
+        print(f"  REPLICATE_API_TOKEN: {'*' * 6}...{token[-4:]}  ✓")
+    else:
+        print("  REPLICATE_API_TOKEN: NOT SET  ✗")
+        ok = False
+
+    # Check packages
+    for pkg in ("replicate", "requests"):
+        try:
+            __import__(pkg)
+            print(f"  {pkg}: installed  ✓")
+        except ImportError:
+            print(f"  {pkg}: NOT INSTALLED  ✗")
+            ok = False
+
+    print(f"\n  {'ALL GOOD — ready to generate!' if ok else 'Fix issues above before running.'}")
+    return ok
 
 
 def list_models():
@@ -106,14 +134,13 @@ def run_talking_head(image_path: str, audio_path: str,
     get_api_token()
 
     model = MODELS[model_key]
-    enhancer_name = "gfpgan" if enhance else None
 
     print(f"\nTalking Head Generation")
     print(f"{'='*60}")
     print(f"  Model: {model['name']} ({model_key})")
     print(f"  Image: {image_path}")
     print(f"  Audio: {audio_path}")
-    print(f"  Enhance: {enhancer_name or 'none'}")
+    print(f"  Enhance: {'gfpgan' if enhance else 'none'}")
     print(f"  Expression scale: {expression_scale}")
     print(f"  Still mode: {still_mode}")
     print(f"  Preprocess: {preprocess}")
@@ -133,15 +160,16 @@ def run_talking_head(image_path: str, audio_path: str,
         "driven_audio": open(audio_path, "rb"),
         "preprocess": preprocess,
         "expression_scale": expression_scale,
-        "still": still_mode,
+        "still_mode": still_mode,
     }
 
-    if enhancer_name:
-        input_payload["enhancer"] = enhancer_name
+    if enhance:
+        input_payload["use_enhancer"] = True
 
     print("  Submitting to Replicate...")
     print("  (This may take 1-5 minutes depending on audio length)")
 
+    start_time = time.time()
     try:
         output = replicate.run(
             model["id"],
@@ -171,12 +199,15 @@ def run_talking_head(image_path: str, audio_path: str,
         with open(output_path, "wb") as f:
             f.write(video_data)
 
+        elapsed = time.time() - start_time
         file_size = os.path.getsize(output_path)
         print(f"\n  Saved: {output_path} ({file_size / 1024 / 1024:.1f} MB)")
+        print(f"  Time: {elapsed:.1f}s  |  Est. cost: ~${model['cost_per_run']:.2f}")
         return output_path
 
     except Exception as e:
-        print(f"\n  ERROR: {e}")
+        elapsed = time.time() - start_time
+        print(f"\n  ERROR ({elapsed:.1f}s): {e}")
         return None
     finally:
         # Close file handles
@@ -240,6 +271,7 @@ Cost: ~$0.05/run (varies with audio length)
                         choices=["crop", "resize", "full"],
                         help="Face preprocessing mode (default: crop)")
     parser.add_argument("--list-models", action="store_true", help="List available models")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
     parser.add_argument("--cost", action="store_true", help="Estimate cost")
     parser.add_argument("--duration", type=float, default=10,
                         help="Audio duration in seconds (for cost estimate)")
@@ -248,6 +280,10 @@ Cost: ~$0.05/run (varies with audio length)
 
     if args.list_models:
         list_models()
+        return
+
+    if args.check:
+        check_prerequisites()
         return
 
     if args.cost:

@@ -37,6 +37,40 @@ except ImportError:
     pass
 
 
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_seed_bracketing.py")
+    print("-" * 50)
+    ok = True
+
+    providers = {
+        "XAI_API_KEY": "Grok Aurora (standard)",
+        "OPENAI_API_KEY": "DALL-E 3 (premium)",
+        "REPLICATE_API_TOKEN": "Stable Diffusion (budget)",
+    }
+    found_any = False
+    for key, desc in providers.items():
+        val = os.environ.get(key)
+        if val:
+            print(f"  {key}: {'*' * 6}...{val[-4:]}  ✓  ({desc})")
+            found_any = True
+        else:
+            print(f"  {key}: NOT SET  -  ({desc})")
+
+    if not found_any:
+        print("  ERROR: No image provider API keys found!")
+        ok = False
+
+    try:
+        from multi_provider_image_router import MultiProviderImageRouter  # noqa: F401
+        print("  multi_provider_image_router: found  ✓")
+    except ImportError:
+        print("  multi_provider_image_router: NOT FOUND  ⚠ (will try grok fallback)")
+
+    print(f"\n  {'ALL GOOD — ready to bracket!' if ok else 'Fix issues above before running.'}")
+    return ok
+
+
 def parse_seed_range(seed_str: str) -> list:
     """Parse seed range like '1000-1010' into list of ints."""
     if "-" in seed_str:
@@ -180,7 +214,7 @@ Cost per bracket:
   Premium (11 seeds):  ~$0.88
         """
     )
-    parser.add_argument("--prompt", "-p", type=str, required=True, help="Image generation prompt")
+    parser.add_argument("--prompt", "-p", type=str, help="Image generation prompt")
     parser.add_argument("--seeds", "-s", type=str, default="1000-1010",
                         help="Seed range (e.g., '1000-1010') or comma-separated (e.g., '1003,1007')")
     parser.add_argument("--tier", type=str, default="standard",
@@ -188,8 +222,19 @@ Cost per bracket:
                         help="Quality tier (default: standard)")
     parser.add_argument("--provider", type=str, help="Force specific provider")
     parser.add_argument("--output", "-o", type=str, help="Output directory")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
 
     args = parser.parse_args()
+
+    if args.check:
+        check_prerequisites()
+        return
+
+    if not args.prompt:
+        parser.print_help()
+        print("\nERROR: --prompt required")
+        sys.exit(1)
+
     seeds = parse_seed_range(args.seeds)
     run_seed_bracket(args.prompt, seeds, tier=args.tier,
                      provider=args.provider, output_dir=args.output)

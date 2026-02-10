@@ -33,6 +33,43 @@ except ImportError:
     pass
 
 
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_character_consistency.py")
+    print("-" * 50)
+    ok = True
+
+    # Check at least one image provider key
+    providers = {
+        "XAI_API_KEY": "Grok Aurora (standard)",
+        "OPENAI_API_KEY": "DALL-E 3 (premium)",
+        "REPLICATE_API_TOKEN": "Stable Diffusion (budget)",
+        "IDEOGRAM_API_KEY": "Ideogram (standard)",
+    }
+    found_any = False
+    for key, desc in providers.items():
+        val = os.environ.get(key)
+        if val:
+            print(f"  {key}: {'*' * 6}...{val[-4:]}  ✓  ({desc})")
+            found_any = True
+        else:
+            print(f"  {key}: NOT SET  -  ({desc})")
+
+    if not found_any:
+        print("  ERROR: No image provider API keys found!")
+        ok = False
+
+    # Check router
+    try:
+        from multi_provider_image_router import MultiProviderImageRouter  # noqa: F401
+        print("  multi_provider_image_router: found  ✓")
+    except ImportError:
+        print("  multi_provider_image_router: NOT FOUND  ⚠ (will try grok fallback)")
+
+    print(f"\n  {'ALL GOOD — ready to generate!' if ok else 'Fix issues above before running.'}")
+    return ok
+
+
 def load_profile(profile_path: str) -> dict:
     """Load a character profile and build the prompt."""
     with open(profile_path, "r") as f:
@@ -169,8 +206,13 @@ Cost Estimates:
                         help="Quality tier (default: standard)")
     parser.add_argument("--provider", type=str, help="Force specific provider")
     parser.add_argument("--output", "-o", type=str, help="Output directory")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
 
     args = parser.parse_args()
+
+    if args.check:
+        check_prerequisites()
+        return
 
     if args.profile:
         data = load_profile(args.profile)

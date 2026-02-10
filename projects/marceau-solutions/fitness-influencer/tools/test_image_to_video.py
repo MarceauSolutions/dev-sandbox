@@ -32,6 +32,36 @@ except ImportError:
     pass
 
 
+def check_prerequisites():
+    """Check all dependencies and API keys are available."""
+    print("\nPrerequisite Check: test_image_to_video.py")
+    print("-" * 50)
+    ok = True
+
+    key = os.environ.get("XAI_API_KEY")
+    if key:
+        print(f"  XAI_API_KEY: {'*' * 6}...{key[-4:]}  ✓")
+    else:
+        print("  XAI_API_KEY: NOT SET  ✗")
+        ok = False
+
+    try:
+        import requests  # noqa: F401
+        print("  requests: installed  ✓")
+    except ImportError:
+        print("  requests: NOT INSTALLED  ✗")
+        ok = False
+
+    try:
+        from grok_video_gen import GrokVideoGenerator  # noqa: F401
+        print("  grok_video_gen: found  ✓")
+    except ImportError:
+        print("  grok_video_gen: NOT FOUND  ⚠ (will use direct API)")
+
+    print(f"\n  {'ALL GOOD — ready to animate!' if ok else 'Fix issues above before running.'}")
+    return ok
+
+
 def animate_image(image_path: str, prompt: str, duration: int = 8,
                   aspect_ratio: str = "16:9", output_path: str = None):
     """Animate a still image into video using Grok Imagine."""
@@ -176,15 +206,26 @@ Workflow:
 Cost: ~$0.02/second ($0.16 for 8s, $0.24 for 12s)
         """
     )
-    parser.add_argument("--image", "-i", type=str, required=True, help="Input image path")
-    parser.add_argument("--prompt", "-p", type=str, required=True, help="Animation prompt")
+    parser.add_argument("--image", "-i", type=str, help="Input image path")
+    parser.add_argument("--prompt", "-p", type=str, help="Animation prompt")
     parser.add_argument("--duration", "-d", type=int, default=8, help="Video duration in seconds (default: 8)")
     parser.add_argument("--aspect", type=str, default="16:9",
                         choices=["16:9", "9:16", "4:3", "1:1"],
                         help="Aspect ratio (default: 16:9)")
     parser.add_argument("--output", "-o", type=str, help="Output video path")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites (API keys, packages)")
 
     args = parser.parse_args()
+
+    if args.check:
+        check_prerequisites()
+        return
+
+    if not args.image or not args.prompt:
+        parser.print_help()
+        print("\nERROR: --image and --prompt required")
+        sys.exit(1)
+
     animate_image(args.image, args.prompt, duration=args.duration,
                   aspect_ratio=args.aspect, output_path=args.output)
 
