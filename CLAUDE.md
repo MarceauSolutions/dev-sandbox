@@ -47,6 +47,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 | Need | Location |
 |------|----------|
 | **How we work** | This file (CLAUDE.md) |
+| **Build taxonomy (what we call things)** | This file → "Build Taxonomy" section ⭐ |
 | **Architecture & code organization** | `docs/architecture-guide.md` ⭐ |
 | **App type decision** | `docs/app-type-decision-guide.md` ⭐ |
 | **Mobile app development** | `docs/mobile-app-development-guide.md` ⭐ |
@@ -97,6 +98,12 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
 **Complete documentation**: See `docs/development-to-deployment.md` for full process, or `docs/deployment.md`, `docs/repository-management.md`, `docs/versioned-deployment.md` for specific topics.
 
 ```
+-2. CLASSIFY (SOP 32) - FIRST for any new idea
+   └── Run 5-question routing decision tree
+   └── Determines: Type, Location, Deployment Target, Next SOP
+   └── Output: Routing Result (type + path + deploy target)
+   └── Skip if: Continuing existing project (already classified)
+
 -1. RESEARCH (SOP 17/9) - BEFORE committing resources
    └── For NEW product ideas: SOP 17 Market Viability (4 agents)
    └── For OPTIMIZATION decisions: SOP 9 Multi-Agent Exploration (3-4 agents)
@@ -104,7 +111,7 @@ Layer 3: IMPLEMENTATION (projects/[project]/src/*.py) ← Project-specific
    └── Skip if: Internal tool, <2 days effort, or clear requirements
 
 0. KICKOFF (SOP 0) - BEFORE starting any new project
-   └── Prerequisites: ✅ SOP 17 = GO (if applicable)
+   └── Prerequisites: ✅ SOP 32 complete, ✅ SOP 17 = GO (if applicable)
    └── Complete project-kickoff-questionnaire.md (19 questions)
    └── Decide app type (MCP, CLI, Web, Desktop, Hybrid, Mobile, PWA)
    └── If Mobile considered: Run Mobile App Viability Scorecard (≥24 to proceed)
@@ -439,6 +446,8 @@ Primary: Ralph
 | "Create a method for [X]" | Run SOP 20 (Internal Method Development) |
 | "How should we classify [X]" | Run SOP 20 (Internal Method Development) |
 | "Should this be an SOP?" | Run SOP 21 (score using decision tree) |
+| "What do we call this?" / "Is this a tool or a project?" | Reference Build Taxonomy section in CLAUDE.md |
+| "What's the difference between X and Y?" (build terms) | Reference Build Taxonomy → Common Confusions table |
 | "Log this as a product opportunity" | Add entry to methods/product-opportunities/OPPORTUNITY-LOG.md |
 | "This could be a product" | Ask for details, add to OPPORTUNITY-LOG.md |
 | "Weekly product review" | Open OPPORTUNITY-LOG.md, review pending items |
@@ -476,6 +485,10 @@ Primary: Ralph
 | "Route this to..." | Follow AI routing optimization doc |
 | "Check my ideas" / "What's in my idea queue?" | Run `python -m src.ideas_queue list` → Show pending ideas from Telegram |
 | "Mark idea X done" / "Complete idea X" | Run `python -m src.ideas_queue complete X` |
+| "I want to build..." / "New project" / "Let's create..." | Run SOP 32 first (classify before building) |
+| "This is for a client" | SOP 32 → routes to ~/upwork-projects/ or ~/website-projects/ |
+| "This is personal / for me" | SOP 32 → routes to projects/marceau-solutions/ |
+| "Should this be an AI assistant or a project?" | Run SOP 32 decision tree |
 | "New Upwork client: [name]" | Create `~/upwork-projects/clients/[name]/` with README + TIMESHEET |
 | "Log [X] hours on [client]" | Update `~/upwork-projects/clients/[client]/TIMESHEET.md` |
 | "Package [client] for delivery" | Prepare clean handoff in client folder |
@@ -874,12 +887,11 @@ python -m src.digest_aggregator --hours 1
    ./scripts/add-company-project.sh shared "project-name" [type]
    ```
 
-   **Project types** (3rd argument):
-   - `tool` (default) - Automation tool or internal utility
-   - `product` - Customer-facing product/service
-   - `service` - Backend service or API
-   - `workflow` - Documented procedure or process
-   - `mcp` - Model Context Protocol server (for PyPI/MCP Registry publishing)
+   **Project subtypes** (3rd argument — see Build Taxonomy for definitions):
+   - `project` (default) - Company Project or general-purpose codebase
+   - `automation` - Scheduled/triggered process (n8n, cron, webhook handler)
+   - `ops` - Business Ops (primarily workflows/documentation, minimal code)
+   - `mcp` - MCP Server (for eventual PyPI/MCP Registry publishing via SOPs 11-14)
 
 3. **Create directive (if needed)**: `directives/[project-name].md`
    - Define capabilities and SOPs
@@ -4171,12 +4183,171 @@ Edit `templates/profile.json` to customize:
 
 ---
 
+## Build Taxonomy (Canonical Definitions)
+
+> **Why this exists**: We use many terms — project, tool, skill, assistant, workflow, utility, product, service, MCP, automation. These overlap in everyday language ("my tool is someone else's skill"). This section defines exactly what each term means **in our system** so SOP 32 routing, folder placement, and deployment decisions are consistent.
+
+### The 3 Layers
+
+Everything we build falls into one of three layers. These layers define the **vocabulary** (what we call things). SOP 32's 10 routing destinations use this vocabulary — each destination maps to one or more layers.
+
+| Layer | What It Is | Contains | Example |
+|-------|-----------|----------|---------|
+| **Documentation** | Written knowledge (no code) | Procedures, frameworks, decisions | Workflow, Method, SOP |
+| **Code** | Software that runs | Scripts, servers, APIs | Utility, Project, MCP Server |
+| **Deployment** | How code reaches users | Packaging + distribution | Skill, AI Assistant, MCP Package |
+
+**How this relates to SOP 32**: SOP 32 routes you to a *destination* (e.g., "Company Project"). This taxonomy tells you what that destination *is* (Code layer, Project type). A single destination can span layers — e.g., "Business Ops" is Documentation + Code.
+
+**Key insight**: A single codebase can have multiple deployment targets. A "Company Project" (code) can be deployed as both a "Skill" (for dev-sandbox Claude) AND an "AI Assistant" (for fresh Claude). The *code* and the *deployment* are separate concepts.
+
+### Documentation Layer (No Code)
+
+| Term | Definition | Location | Key Test |
+|------|-----------|----------|----------|
+| **Workflow** | A step-by-step procedure documented in markdown. Tells someone (human or AI) how to complete a specific task. Not code — just instructions. | `[project]/workflows/[name].md` | "Can I follow these steps manually?" → Yes = Workflow |
+| **Method** | An internal operational framework, decision matrix, or classification system. Broader than a workflow — defines *how to think about* a category of problems. | `methods/[name]/` | "Does this define a repeatable decision-making process?" → Yes = Method |
+| **SOP** | A Standard Operating Procedure. A formalized, numbered, version-controlled process in CLAUDE.md. SOPs are the most rigid documentation — they define how our *system itself* operates. | `CLAUDE.md` (inline) | "Should every session follow this the same way?" → Yes = SOP |
+| **Directive** | High-level instructions for a capability area. Defines what a project/system does and how to orchestrate it. The "what" layer of DOE. | `directives/[name].md` | "Does this tell Claude what to do, not how?" → Yes = Directive |
+
+### Code Layer (Software That Runs)
+
+| Term | Definition | Location | Key Test |
+|------|-----------|----------|---------|
+| **Utility** | A single Python file (<200 lines) used by 2+ projects. Small, focused, stable. No folder structure — just one script in the shared execution directory. | `execution/[name].py` | "Is it one file, used by multiple projects, and rarely changes?" → Yes = Utility |
+| **Project** | A multi-file codebase with its own folder structure (`src/`, `workflows/`, `VERSION`, `README.md`). The general-purpose container for any software effort that needs more than one file. Projects always live under `projects/`. | `projects/[location]/[name]/` | "Does it need its own folder with multiple files?" → Yes = Project |
+| **MCP Server** | A Model Context Protocol server — a specific technical format that exposes tools to Claude via stdio transport. An MCP Server is a *type of code*, not a deployment target. | `projects/[location]/[name]/src/[name]_mcp/` | "Does it implement the MCP protocol with tool definitions?" → Yes = MCP Server |
+| **Automation** | Code that runs on a schedule or trigger without human initiation. Usually an n8n workflow, cron job, or webhook handler. Automations *do things* on their own. | n8n (EC2) or `execution/[name].py` with cron | "Does it run by itself on a timer or trigger?" → Yes = Automation |
+| **Website** | A web presence (HTML/CSS/JS) deployed to hosting. Not a web *app* — a website is primarily content, not functionality. | `projects/[co]/website/` (submodule) | "Is the primary output a public web page?" → Yes = Website |
+
+### Deployment Layer (How Code Reaches Users)
+
+| Term | Definition | Location | Key Test |
+|------|-----------|----------|---------|
+| **Skill** | Code deployed for THIS dev-sandbox Claude to use. A Skill is a *deployment target*, not a type of code. Any Project can become a Skill by deploying via SOP 3. | `~/production/[name]-prod/` | "Will dev-sandbox Claude use this directly?" → Yes = deploy as Skill |
+| **AI Assistant** | A self-contained tool with its own CLAUDE.md, deployable to a fresh Claude instance or sellable to buyers. Must work in isolation — no reference to dev-sandbox. A deployment target (can ALSO be deployed as a Skill for dev-sandbox Claude via SOP 3). | `~/ai-assistants/[name]/` | "Can a fresh Claude use this with zero context?" → Yes = deploy as AI Assistant |
+| **MCP Package** | An MCP Server published to PyPI and the Claude MCP Registry. This is a *distribution channel*, not a type of code. Any MCP Server can become an MCP Package via SOPs 11-14. | PyPI + MCP Registry | "Is it installable via pip and discoverable in Claude?" → Yes = MCP Package |
+| **Client Deliverable** | Code or website delivered to a paying client. A *delivery mechanism*, not a type of code. | `~/upwork-projects/` or `~/website-projects/` | "Is a client paying for this?" → Yes = Client Deliverable |
+
+### Project Subtypes (When Primary Type = Project)
+
+Since "Project" is the broadest category, these subtypes distinguish *who it's for* and *how it's used*:
+
+| Subtype | Definition | Location | Key Distinguisher |
+|---------|-----------|----------|-------------------|
+| **Company Project** | A project specific to one company (usually marceau-solutions). Used internally by that company. | `projects/[company]/[name]/` | Single-company, internal use |
+| **Shared Tool** | A project used by 2+ companies. Multi-tenant by design. | `projects/shared/[name]/` | Multi-company, shared use |
+| **Product Idea** | An experimental or proof-of-concept project. Not committed to — exploring whether it's worth building. | `projects/product-ideas/[name]/` | Experimental, may be abandoned |
+| **Business Ops** | A project that's primarily workflows/documentation with minimal or no code. Operational procedures for a company. | `projects/[company]/[name]/` (workflows-only) | Mostly docs, little/no code |
+
+### Common Confusions Resolved
+
+| Confusion | Resolution |
+|-----------|-----------|
+| "Is this a Tool or a Project?" | If it's one file in `execution/` → **Utility**. If it has its own folder with multiple files → **Project**. "Tool" is informal — avoid using it; say Utility or Project instead. |
+| "Is this a Skill or an AI Assistant?" | Both are *deployment targets*, not code types. **Skill** = for dev-sandbox Claude (SOP 3). **AI Assistant** = for fresh Claude or buyers (SOP 31). Same code can be deployed as both. |
+| "Is this a Project or an MCP?" | **MCP Server** is a code format. **Project** is a folder structure. An MCP Server lives *inside* a Project. Publishing it makes it an **MCP Package**. |
+| "Is this a Workflow or an Automation?" | **Workflow** = documented steps (markdown, human follows). **Automation** = code that runs by itself (n8n, cron). A Workflow can *describe* how to use an Automation. |
+| "Is this a Product or a Project?" | **Product** is a business concept (generates revenue). **Project** is a technical container. A Project *becomes* a Product when you sell/monetize it. Use the subtype "Product Idea" for early exploration. |
+| "Is this a Service or a Project?" | **Service** is informal for "backend API that runs continuously." In our system, it's still a **Project** (or **Automation** if triggered). Avoid "service" as a formal category. |
+
+### Terminology Rules
+
+1. **Prefer specific terms** over generic ones: "Utility" not "tool", "Company Project" not "project"
+2. **Separate code from deployment**: "We built a Company Project and deployed it as a Skill and an AI Assistant"
+3. **Avoid these ambiguous terms** in formal contexts: "tool" (use Utility or Project), "service" (use Project or Automation), "script" (use Utility), "product" (use Product Idea subtype or just say "revenue-generating")
+4. **Layer your descriptions**: "[Code Type] deployed as [Deployment Type]" — e.g., "MCP Server deployed as an MCP Package" or "Company Project deployed as a Skill"
+
+---
+
+### SOP 32: Project Routing & Classification
+
+**When**: FIRST step for ANY new idea, project, tool, assistant, or skill — before SOP 0, SOP 17, or anything else
+
+**Purpose**: Classify what you're building and where it belongs using a 5-question decision tree. Prevents inconsistent placement and ensures correct deployment routing from day one.
+
+**Agent**: Any agent. Claude Code (primary). Clawdbot (can run for simple routing). Ralph: N/A.
+
+**Skip if**: Continuing work on an already-classified project.
+
+**5-Question Decision Tree**:
+
+```
+Q1: Is this SOFTWARE you will build?
+├── NO → Internal Method (methods/) | Business Ops (projects/[co]/) | Research
+│        NEXT: SOP 20 (methods) or just create folder with workflows/
+└── YES → Q2
+
+Q2: Who is this for?
+├── CLIENT (someone paying you)
+│   ├── Website build → ~/website-projects/clients/[name]/
+│   └── Custom tool   → ~/upwork-projects/clients/[name]/
+│   NEXT: Client workspace procedures
+└── OWN USE or PRODUCT → Q3
+
+Q3: Will 2+ companies/projects use this?
+├── YES + small utility (<200 lines) → execution/[name].py (just build it)
+├── YES + multi-file project → projects/shared/[name]/ → SOP 0
+└── NO or UNSURE → Q4
+
+Q4: Will this be sold, packaged, or used by a fresh Claude?
+├── YES → AI Assistant
+│   DEV: projects/[company]/[name]/
+│   DEPLOY: ~/ai-assistants/[name]/ (SOP 31)
+│   NEXT: SOP 0
+└── NO (internal/personal use only) → Q5
+
+Q5: Exploration/POC or committed real project?
+├── POC / "Let me try this" → projects/product-ideas/[name]/
+│   NEXT: SOP 17 (if commercial) or just experiment
+└── REAL PROJECT → projects/[company]/[name]/
+    NEXT: SOP 0
+```
+
+**Routing Output Template** (fill out after running the tree):
+
+```markdown
+## Project Routing Result
+| Field | Value |
+|-------|-------|
+| **Type** | [See 10 types below] |
+| **Location** | [Exact path] |
+| **Deploy To** | [Target or None] |
+| **Next SOP** | [SOP number] |
+| **Skip SOPs** | [SOPs that don't apply] |
+```
+
+**10 Routing Destinations** (see Build Taxonomy above for full definitions):
+
+| Destination | Layer | Location | Deploy To | Next SOP |
+|-------------|-------|----------|-----------|----------|
+| Method | Documentation | `methods/[name]/` | None (integrate into SOPs) | SOP 20 |
+| Business Ops | Documentation + Code | `projects/[company]/[name]/` | None | Create workflows/ |
+| Client Website | Code (Website) | `~/website-projects/clients/[name]/` | Client hosting | Client procedures |
+| Client Freelance | Code (Project) | `~/upwork-projects/clients/[name]/` | Client Deliverable | Client procedures |
+| Utility | Code | `execution/[name].py` | None (used in-place) | Just build it |
+| Shared Tool | Code (Project subtype) | `projects/shared/[name]/` | Skill (`~/production/`) | SOP 0 → SOP 1 |
+| AI Assistant | Code → Deployment | `projects/[co]/[name]/` → `~/ai-assistants/[name]/` | AI Assistant | SOP 0 → SOP 31 |
+| Product Idea | Code (Project subtype) | `projects/product-ideas/[name]/` | None (graduate if viable) | SOP 17 |
+| Company Project | Code (Project subtype) | `projects/[company]/[name]/` | Varies (SOP 0 decides) | SOP 0 → SOP 1 |
+| Website | Code (Website) | `projects/[company]/website/` | Git submodule | Website setup |
+
+**Success Criteria**:
+- [ ] Routing Result filled out with Type, Location, Deploy To, Next SOP
+- [ ] Location path is unambiguous
+- [ ] Correct next SOP identified (skip unnecessary ones)
+
+**References**: `docs/FOLDER-STRUCTURE-GUIDE.md` (detailed folder placement), `docs/app-type-decision-guide.md` (app type within software projects)
+
+---
+
 ## Quick Reference: When to Use Which SOP
 
 | Situation | Use SOP | ⚠️ Prerequisites |
 |-----------|---------|-----------------|
-| **NEW IDEA** - uncertain market viability | [SOP 17: Market Viability Analysis](#sop-17-market-viability-analysis-multi-agent) | Product hypothesis, target customer |
-| **FIRST** for any new project | [SOP 0: Project Kickoff & App Type Classification](#sop-0-project-kickoff--app-type-classification) | ⚠️ SOP 17 = GO (if applicable) |
+| **ANY new idea** (before anything else) | [SOP 32: Project Routing & Classification](#sop-32-project-routing--classification) | None — this is always first |
+| **NEW IDEA** - uncertain market viability | [SOP 17: Market Viability Analysis](#sop-17-market-viability-analysis-multi-agent) | ⚠️ SOP 32 complete, product hypothesis |
+| **FIRST** for any new software project | [SOP 0: Project Kickoff & App Type Classification](#sop-0-project-kickoff--app-type-classification) | ⚠️ SOP 32 complete, SOP 17 = GO (if applicable) |
 | Starting a new project | [SOP 1: New Project Initialization](#sop-1-new-project-initialization) | **⚠️ Complete SOP 0 first** |
 | Just wrote code / Need to test | `docs/testing-strategy.md` ⭐ | **Start with Scenario 1 (Manual Testing)** |
 | Complex feature with edge cases | [SOP 2: Multi-Agent Testing](#sop-2-multi-agent-testing) | **⚠️ Manual testing complete (Scenario 1), environment working** |
@@ -4210,10 +4381,12 @@ Edit `templates/profile.json` to customize:
 | Visual workflow automation / webhooks | [SOP 30: n8n Workflow Management](#sop-30-n8n-workflow-management) | EC2 n8n at http://34.193.98.97:5678 ⚠️ **EC2 ONLY** |
 | Deploying standalone AI assistant | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Tested, self-contained CLAUDE.md written** |
 | Selling/packaging an AI tool | [SOP 31: AI Assistant Deployment](#sop-31-ai-assistant-deployment) | **Product files ready (src/, templates/)** |
+| **Any new idea / project / tool / assistant** | [SOP 32: Project Routing & Classification](#sop-32-project-routing--classification) | None — always first |
 
 **Critical Notes**:
+- **Project Routing (SOP 32)**: ALWAYS run this FIRST for any new idea — classifies type, location, and deployment target before anything else
 - **Market Viability (SOP 17)**: For NEW product ideas - 2-hour research saves weeks of building the wrong thing
-- **Project Kickoff (SOP 0)**: ALWAYS start here for new projects - decide app type, cost-benefit, template vs clean slate
+- **Project Kickoff (SOP 0)**: For software projects after SOP 32 routing — decide app type, cost-benefit, template vs clean slate
 - **Architecture Exploration (SOP 9)**: Use BEFORE coding to research which approach is best
 - **Parallel Development (SOP 10)**: Use DURING coding to build components simultaneously
 - **Testing**: ALWAYS see `docs/testing-strategy.md` for complete pipeline (Manual → Multi-Agent → Pre-Deployment)

@@ -1,29 +1,30 @@
 #!/bin/bash
 # Add Project to Company Folder Script
-# Adds new projects, tools, or products to an existing company folder
+# Adds new projects to an existing company folder
+# See Build Taxonomy in CLAUDE.md for definitions of each subtype
 
 set -e  # Exit on error
 
 if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: ./add-company-project.sh \"company-folder-name\" \"project-name\" [type]"
+    echo "Usage: ./add-company-project.sh \"company-folder-name\" \"project-name\" [subtype]"
     echo
     echo "Examples:"
-    echo "  ./add-company-project.sh naples-dental-group \"lead-automation\" tool"
-    echo "  ./add-company-project.sh marceau-solutions \"email-analyzer\" product"
-    echo "  ./add-company-project.sh swflorida-hvac \"voice-ai-backend\" service"
+    echo "  ./add-company-project.sh marceau-solutions \"email-analyzer\" project"
+    echo "  ./add-company-project.sh marceau-solutions \"daily-digest\" automation"
+    echo "  ./add-company-project.sh marceau-solutions \"onboarding\" ops"
+    echo "  ./add-company-project.sh marceau-solutions \"price-compare\" mcp"
     echo
-    echo "Types (optional):"
-    echo "  - tool       : Automation tool or internal utility"
-    echo "  - product    : Customer-facing product/service"
-    echo "  - service    : Backend service or API"
-    echo "  - workflow   : Documented procedure or process"
-    echo "  - mcp        : MCP server integration"
+    echo "Subtypes (see Build Taxonomy in CLAUDE.md):"
+    echo "  - project    : (default) Company Project — multi-file codebase"
+    echo "  - automation : Scheduled/triggered process (n8n, cron, webhook)"
+    echo "  - ops        : Business Ops — primarily workflows/documentation"
+    echo "  - mcp        : MCP Server — Model Context Protocol server"
     exit 1
 fi
 
 COMPANY_FOLDER="$1"
 PROJECT_NAME="$2"
-PROJECT_TYPE="${3:-tool}"  # Default to "tool" if not specified
+PROJECT_TYPE="${3:-project}"  # Default to "project" if not specified
 
 COMPANY_DIR="/Users/williammarceaujr./dev-sandbox/projects/$COMPANY_FOLDER"
 PROJECT_DIR="$COMPANY_DIR/$PROJECT_NAME"
@@ -31,7 +32,7 @@ PROJECT_DIR="$COMPANY_DIR/$PROJECT_NAME"
 echo "╔════════════════════════════════════════════════════════════════╗"
 echo "║  Adding Project: $PROJECT_NAME"
 echo "║  To Company: $COMPANY_FOLDER"
-echo "║  Type: $PROJECT_TYPE"
+echo "║  Subtype: $PROJECT_TYPE"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo
 
@@ -48,17 +49,15 @@ if [ -d "$PROJECT_DIR" ]; then
     exit 1
 fi
 
-# Create project directory structure based on type
-echo "Creating project structure for type: $PROJECT_TYPE"
+# Create project directory structure based on subtype
+echo "Creating project structure for subtype: $PROJECT_TYPE"
 mkdir -p "$PROJECT_DIR"
 
 case "$PROJECT_TYPE" in
-    tool|product|service)
-        # Standard project structure
+    project|automation)
+        # Standard project structure (Company Project or Automation)
         mkdir -p "$PROJECT_DIR/src"
         mkdir -p "$PROJECT_DIR/workflows"
-        mkdir -p "$PROJECT_DIR/tests"
-        mkdir -p "$PROJECT_DIR/output"
 
         # Create VERSION file
         echo "1.0.0-dev" > "$PROJECT_DIR/VERSION"
@@ -84,24 +83,17 @@ EOF
 # $PROJECT_NAME
 
 **Company**: $COMPANY_FOLDER
-**Type**: $PROJECT_TYPE
+**Subtype**: $PROJECT_TYPE (see Build Taxonomy in CLAUDE.md)
 **Status**: Development
 **Version**: 1.0.0-dev
 
 ## Overview
 
-[Brief description of what this $PROJECT_TYPE does]
-
-## Features
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
+[Brief description of what this project does]
 
 ## Usage
 
 \`\`\`bash
-# How to use this $PROJECT_TYPE
 cd projects/$COMPANY_FOLDER/$PROJECT_NAME
 python -m src.main
 \`\`\`
@@ -112,20 +104,10 @@ python -m src.main
 $PROJECT_NAME/
 ├── src/                 # Python source code
 ├── workflows/           # Task procedures (markdown)
-├── tests/               # Unit and integration tests
-├── output/              # Generated outputs
 ├── VERSION              # Current version
 ├── CHANGELOG.md         # Version history
 └── README.md            # This file
 \`\`\`
-
-## Dependencies
-
-[List any dependencies or requirements]
-
-## Development
-
-[Development notes, how to contribute, etc.]
 
 ---
 
@@ -139,14 +121,14 @@ EOF
 $PROJECT_NAME - Main Entry Point
 
 Company: $COMPANY_FOLDER
-Type: $PROJECT_TYPE
+Subtype: $PROJECT_TYPE
 """
 
 def main():
     """Main entry point for $PROJECT_NAME"""
     print("$PROJECT_NAME is running!")
     print("Company: $COMPANY_FOLDER")
-    print("Type: $PROJECT_TYPE")
+    print("Subtype: $PROJECT_TYPE")
 
 if __name__ == "__main__":
     main()
@@ -154,18 +136,18 @@ EOF
 
         chmod +x "$PROJECT_DIR/src/main.py"
 
-        echo "✅ Created standard project structure"
+        echo "✅ Created $PROJECT_TYPE structure"
         ;;
 
-    workflow)
-        # Workflow structure (documentation-focused)
-        mkdir -p "$PROJECT_DIR"
+    ops)
+        # Business Ops structure (documentation-focused, minimal code)
+        mkdir -p "$PROJECT_DIR/workflows"
 
         cat > "$PROJECT_DIR/README.md" <<EOF
-# $PROJECT_NAME Workflows
+# $PROJECT_NAME
 
 **Company**: $COMPANY_FOLDER
-**Type**: Documented Procedures
+**Subtype**: ops (Business Ops — see Build Taxonomy in CLAUDE.md)
 
 ## Overview
 
@@ -173,15 +155,14 @@ Collection of documented procedures and workflows for $PROJECT_NAME operations.
 
 ## Workflows
 
-- [ ] [workflow-1.md](workflow-1.md) - Description
-- [ ] [workflow-2.md](workflow-2.md) - Description
+- [ ] [workflow-1.md](workflows/workflow-1.md) - Description
 
 ## Workflow Template
 
 See [docs/workflow-standard.md](../../../docs/workflow-standard.md) for standard workflow format.
 EOF
 
-        cat > "$PROJECT_DIR/example-workflow.md" <<EOF
+        cat > "$PROJECT_DIR/workflows/example-workflow.md" <<EOF
 # Workflow: [Name]
 
 **Created**: $(date +%Y-%m-%d)
@@ -193,7 +174,6 @@ EOF
 
 ## Prerequisites
 - [ ] Prerequisite 1
-- [ ] Prerequisite 2
 
 ## Steps
 
@@ -204,10 +184,7 @@ EOF
 1. Action 1
 2. Action 2
 
-**Verification**: ✅ You should see...
-
-### Step 2: [Name]
-[Repeat structure]
+**Verification**: You should see...
 
 ## Troubleshooting
 
@@ -217,14 +194,13 @@ EOF
 
 ## Success Criteria
 - [ ] Criterion 1
-- [ ] Criterion 2
 EOF
 
-        echo "✅ Created workflow structure"
+        echo "✅ Created ops (Business Ops) structure"
         ;;
 
     mcp)
-        # MCP server structure
+        # MCP Server structure
         mkdir -p "$PROJECT_DIR/src/${PROJECT_NAME//-/_}_mcp"
         mkdir -p "$PROJECT_DIR/workflows"
 
@@ -234,7 +210,7 @@ EOF
 # $PROJECT_NAME MCP Server
 
 **Company**: $COMPANY_FOLDER
-**Type**: Model Context Protocol Server
+**Subtype**: mcp (MCP Server — see Build Taxonomy in CLAUDE.md)
 
 ## Overview
 
@@ -264,15 +240,10 @@ Add to Claude Desktop config:
 ## Tools Provided
 
 - \`tool_1\`: Description
-- \`tool_2\`: Description
-
-## Resources
-
-[Any resources this MCP exposes]
 
 ---
 
-**MCP Documentation**: See SOPs 11-14 in CLAUDE.md
+**Publishing**: Follow SOPs 11-14 in CLAUDE.md to publish as MCP Package
 EOF
 
         # Create minimal MCP server
@@ -307,12 +278,13 @@ EOF
 
         chmod +x "$PROJECT_DIR/src/${PROJECT_NAME//-/_}_mcp/server.py"
 
-        echo "✅ Created MCP server structure"
+        echo "✅ Created MCP Server structure"
         ;;
 
     *)
-        echo "❌ Unknown project type: $PROJECT_TYPE"
-        echo "   Valid types: tool, product, service, workflow, mcp"
+        echo "❌ Unknown subtype: $PROJECT_TYPE"
+        echo "   Valid subtypes: project, automation, ops, mcp"
+        echo "   See Build Taxonomy in CLAUDE.md for definitions"
         exit 1
         ;;
 esac
@@ -324,25 +296,25 @@ echo
 echo "Next steps:"
 echo "───────────"
 case "$PROJECT_TYPE" in
-    tool|product|service)
+    project|automation)
         echo "1. Implement functionality in src/"
         echo "2. Add workflows in workflows/"
         echo "3. Test your implementation"
         echo "4. Update VERSION and CHANGELOG.md before deploying"
         ;;
-    workflow)
-        echo "1. Document procedures in workflow markdown files"
+    ops)
+        echo "1. Document procedures in workflows/"
         echo "2. Reference from company README or other projects"
         ;;
     mcp)
         echo "1. Implement MCP tools in src/${PROJECT_NAME//-/_}_mcp/server.py"
         echo "2. Test locally with Claude Desktop"
-        echo "3. Follow SOPs 11-14 to publish to PyPI and MCP Registry"
+        echo "3. Follow SOPs 11-14 to publish as MCP Package"
         ;;
 esac
 
 echo
-echo "5. Commit to dev-sandbox:"
+echo "Commit to dev-sandbox:"
 echo "    git add projects/$COMPANY_FOLDER/$PROJECT_NAME"
 echo "    git commit -m \"feat($COMPANY_FOLDER): Add $PROJECT_NAME ($PROJECT_TYPE)\""
 echo "    git push origin main"

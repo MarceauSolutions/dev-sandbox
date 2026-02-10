@@ -2,12 +2,23 @@
 
 Complete this questionnaire BEFORE starting any new project. This ensures proper app type selection, cost analysis, and template decisions are made upfront.
 
+> **Prerequisite**: SOP 32 (Project Routing & Classification) must be complete before starting this questionnaire. The routing result determines project type, location, and deployment target. Attach the SOP 32 Routing Output below.
+
+## SOP 32 Routing Output (Required)
+
+| Field | Value |
+|-------|-------|
+| **Type** | _[From SOP 32]_ |
+| **Location** | _[From SOP 32]_ |
+| **Deploy To** | _[From SOP 32]_ |
+
 ## Instructions
 
-1. Copy this template to your project folder as `KICKOFF.md`
-2. Answer all 19 questions
-3. Review the Decision Output section
-4. Proceed to SOP 1 (New Project Initialization) with clarity
+1. Complete SOP 32 (Project Routing) and fill in the table above
+2. Copy this template to your project folder as `KICKOFF.md`
+3. Answer all 19 questions
+4. Review the Decision Output section
+5. Proceed to SOP 1 (New Project Initialization) with clarity
 
 ---
 

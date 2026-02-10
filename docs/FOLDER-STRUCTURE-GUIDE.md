@@ -2,7 +2,9 @@
 
 **Purpose**: Maintain consistent company-centric folder organization with proper website deployment as new companies and projects are added
 
-**Last Updated**: 2026-01-21 (Updated for hybrid architecture with submodules)
+**Last Updated**: 2026-02-09 (Added SOP 32 cross-reference)
+
+> **Prerequisite**: Run **SOP 32 (Project Routing & Classification)** first to determine the project type and general location. This guide provides detailed folder placement AFTER SOP 32 has classified the project.
 
 ---
 
