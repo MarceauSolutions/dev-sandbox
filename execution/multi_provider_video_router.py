@@ -10,9 +10,12 @@ Routes video generation across multiple providers to:
 
 Providers (in priority order):
 - FREE: MoviePy (local, $0, 70-85% success)
-- BUDGET: Hailuo Fast ($0.03-0.05/video via fal.ai)
-- STANDARD: Creatomate ($0.05), Grok Imagine ($0.70/10s)
-- PREMIUM: Veo 3 ($0.40-2.00 via third-party)
+- BUDGET: Hailuo Fast ($0.10/video via Replicate)
+- STANDARD: Creatomate ($0.05), Grok Imagine ($0.07/sec)
+- PREMIUM: Veo 3 ($0.40-2.00 via Kie.ai)
+
+Retired: Hailuo via fal.ai (balance exhausted, migrated to Replicate)
+See docs/service-standards.md for full service standards.
 
 Usage:
     # Auto-select best provider
@@ -91,25 +94,25 @@ PROVIDER_CONFIGS: Dict[Provider, ProviderConfig] = {
         success_rate=0.75
     ),
     Provider.HAILUO_FAST: ProviderConfig(
-        name="Hailuo 2.3 Fast (via fal.ai)",
+        name="Hailuo 02 Fast (via Replicate)",
         tier=QualityTier.BUDGET,
         cost_per_second=0.017,  # 512P pricing
-        base_cost=0.03,
+        base_cost=0.10,
         max_duration=10.0,
         rate_limit_per_hour=60,
         rate_limit_per_day=500,
-        api_key_env="FAL_API_KEY",
+        api_key_env="REPLICATE_API_TOKEN",
         success_rate=0.92
     ),
     Provider.HAILUO: ProviderConfig(
-        name="Hailuo 2.3 (via fal.ai)",
+        name="Hailuo 02 (via Replicate)",
         tier=QualityTier.STANDARD,
         cost_per_second=0.045,  # 768P pricing
-        base_cost=0.05,
+        base_cost=0.27,
         max_duration=10.0,
         rate_limit_per_hour=40,
         rate_limit_per_day=300,
-        api_key_env="FAL_API_KEY",
+        api_key_env="REPLICATE_API_TOKEN",
         success_rate=0.94
     ),
     Provider.CREATOMATE: ProviderConfig(
@@ -416,8 +419,8 @@ class MultiProviderVideoRouter:
         if os.getenv("XAI_API_KEY"):
             self.providers[Provider.GROK_IMAGINE] = GrokImagineProvider()
 
-        # Hailuo via fal.ai
-        if os.getenv("FAL_API_KEY"):
+        # Hailuo via Replicate (migrated from fal.ai)
+        if os.getenv("REPLICATE_API_TOKEN"):
             self.providers[Provider.HAILUO_FAST] = HailuoProvider(fast=True)
             self.providers[Provider.HAILUO] = HailuoProvider(fast=False)
 
@@ -760,13 +763,11 @@ class GrokImagineProvider:
 
 
 class HailuoProvider:
-    """Hailuo/Minimax provider via fal.ai."""
+    """Hailuo/Minimax provider via Replicate (migrated from fal.ai 2026-02-11)."""
 
     def __init__(self, fast: bool = False):
         self.fast = fast
-        self.api_key = os.getenv("FAL_API_KEY")
-        # fal.ai model IDs
-        self.model_id = "fal-ai/minimax/hailuo-02/fast" if fast else "fal-ai/minimax/hailuo-02"
+        self.model_id = "minimax/hailuo-02-fast" if fast else "minimax/hailuo-02"
 
     def generate_video(
         self,
@@ -774,33 +775,23 @@ class HailuoProvider:
         image_urls: List[str] = None,
         duration: int = 6
     ) -> Dict[str, Any]:
-        """Generate video using Hailuo via fal.ai."""
-
-        if not self.api_key:
-            return {"success": False, "error": "FAL_API_KEY not set"}
-
-        headers = {
-            "Authorization": f"Key {self.api_key}",
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "prompt": prompt,
-            "duration": min(duration, 10)
-        }
-
-        if image_urls:
-            payload["image_url"] = image_urls[0]  # Use first image for image-to-video
+        """Generate video using Hailuo via Replicate."""
 
         try:
-            url = f"https://fal.run/{self.model_id}"
-            response = requests.post(url, headers=headers, json=payload, timeout=120)
+            import replicate
 
-            if response.status_code != 200:
-                return {"success": False, "error": f"API error: {response.status_code}"}
+            input_params = {
+                "prompt": prompt,
+                "duration": min(duration, 10)
+            }
 
-            data = response.json()
-            video_url = data.get("video", {}).get("url")
+            if image_urls:
+                input_params["first_frame_image"] = image_urls[0]
+
+            output = replicate.run(self.model_id, input=input_params)
+
+            # Replicate returns the video URL directly
+            video_url = str(output) if output else None
 
             if video_url:
                 return {

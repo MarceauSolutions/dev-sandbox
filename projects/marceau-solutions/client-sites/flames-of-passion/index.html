@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flames of Passion Entertainment | Luxury Fire Performance</title>
+    <meta name="description" content="Flames of Passion Entertainment — luxury fire dancing, acrobatics, and bespoke fire performances by Daisy de la Cruz, 'The Girl on Fire.' Weddings, galas, festivals, and private events.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Flames of Passion Entertainment | Luxury Fire Performance">
+    <meta property="og:description" content="Bespoke fire performances by Daisy de la Cruz. Fiery elegance and unmatched energy for your most extraordinary events.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/images/hero-fire-poi-closeup.jpg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── Reset & Variables ─────────────────────────────────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --flame-orange: #e8600a;
+            --flame-gold: #d4a24e;
+            --flame-gold-light: #e8c174;
+            --flame-red: #b91c1c;
+            --flame-deep: #7f1d1d;
+            --flame-ember: #f97316;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --surface: #0f0f0f;
+            --surface-light: #161616;
+            --border-subtle: rgba(212, 162, 78, 0.12);
+            --text: #f5f0e8;
+            --text-muted: #9a9087;
+            --font-display: 'Cinzel', serif;
+            --font-decorative: 'Cinzel Decorative', serif;
+            --font-elegant: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── Animated Fire Particles ──────────────────────────── */
+        .fire-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .fire-particle {
+            position: absolute;
+            bottom: -20px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: fireRise linear infinite;
+        }
+
+        @keyframes fireRise {
+            0% { opacity: 0; transform: translateY(0) scale(1) rotate(0deg); }
+            15% { opacity: 0.9; }
+            50% { opacity: 0.6; transform: translateY(-80px) scale(0.7) rotate(45deg); }
+            100% { opacity: 0; transform: translateY(-200px) scale(0.1) rotate(90deg); }
+        }
+
+        /* Ambient flame glow on sections */
+        .flame-glow {
+            position: relative;
+        }
+
+        .flame-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--flame-deep) 15%,
+                var(--flame-orange) 30%,
+                var(--flame-gold) 50%,
+                var(--flame-orange) 70%,
+                var(--flame-deep) 85%,
+                transparent 100%
+            );
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ── Navigation ───────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.3s;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--flame-gold);
+            letter-spacing: 0.1em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--flame-gold);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--flame-gold); }
+        .nav-links a:hover::after { transform: scaleX(1); }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 22px;
+            height: 1.5px;
+            background: var(--flame-gold);
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* ── Hero Section ─────────────────────────────────────── */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: url('assets/images/hero-fire-poi-closeup.jpg') center center / cover no-repeat;
+            filter: brightness(0.4) saturate(1.2);
+            animation: heroBreath 8s ease-in-out infinite;
+        }
+
+        @keyframes heroBreath {
+            0%, 100% { filter: brightness(0.4) saturate(1.2); }
+            50% { filter: brightness(0.5) saturate(1.3); }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(5, 5, 5, 0.5) 0%,
+                rgba(5, 5, 5, 0.15) 35%,
+                rgba(5, 5, 5, 0.3) 65%,
+                rgba(5, 5, 5, 1) 100%
+            );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            max-width: 850px;
+        }
+
+        .hero-content img.hero-logo {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 50px rgba(232, 96, 10, 0.5));
+            animation: logoPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { filter: drop-shadow(0 0 40px rgba(232, 96, 10, 0.4)); }
+            50% { filter: drop-shadow(0 0 60px rgba(232, 96, 10, 0.7)); }
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-decorative);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 40px rgba(0,0,0,0.6);
+        }
+
+        .hero-content h1 span {
+            background: linear-gradient(135deg, var(--flame-gold-light), var(--flame-orange), var(--flame-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-tagline {
+            font-family: var(--font-elegant);
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--flame-gold);
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 1.1rem 3rem;
+            background: transparent;
+            color: var(--flame-gold);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border: 1px solid var(--flame-gold);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--flame-orange), var(--flame-red));
+            transform: translateY(100%);
+            transition: transform 0.4s;
+            z-index: -1;
+        }
+
+        .hero-cta:hover {
+            color: white;
+            border-color: var(--flame-orange);
+            box-shadow: 0 8px 40px rgba(232, 96, 10, 0.4);
+        }
+
+        .hero-cta:hover::before { transform: translateY(0); }
+
+        /* ── Section Shared ───────────────────────────────────── */
+        section { padding: 7rem 2rem; }
+
+        .section-container { max-width: 1200px; margin: 0 auto; }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--flame-gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .section-divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--flame-gold), transparent);
+            margin-bottom: 2.5rem;
+        }
+
+        .section-center {
+            text-align: center;
+        }
+
+        .section-center .section-divider {
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(90deg, transparent, var(--flame-gold), transparent);
+        }
+
+        /* ── About Section ────────────────────────────────────── */
+        .about { background: var(--dark); }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 550px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .about-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--border-subtle);
+            pointer-events: none;
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, rgba(10,10,10,0.8), transparent);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .about-text p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-text .highlight {
+            font-family: var(--font-elegant);
+            font-size: 1.35rem;
+            font-style: italic;
+            color: var(--flame-gold);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .stat h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--flame-gold);
+            font-weight: 700;
+        }
+
+        .stat p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0 !important;
+        }
+
+        /* ── Video Section ────────────────────────────────────── */
+        .video-section {
+            background: var(--darker);
+            position: relative;
+        }
+
+        .video-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .video-text p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-embed {
+            display: flex;
+            justify-content: center;
+        }
+
+        .video-embed iframe {
+            border-radius: 4px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(232, 96, 10, 0.1);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* ── Gallery Section ──────────────────────────────────── */
+        .gallery { background: var(--dark); }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 300px;
+            gap: 0.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease, filter 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.06);
+            filter: brightness(1.15) saturate(1.1);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .gallery-item:hover::after { opacity: 1; }
+
+        .gallery-item.tall { grid-row: span 2; }
+        .gallery-item.wide { grid-column: span 2; }
+
+        /* ── Reviews Section ──────────────────────────────────── */
+        .reviews {
+            background: var(--darker);
+            position: relative;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .review-card {
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 3px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .review-card .review-stars {
+            color: var(--flame-gold);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 1.25rem;
+        }
+
+        .review-card blockquote {
+            font-family: var(--font-elegant);
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-card .review-author {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .review-card .review-source {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        /* Featured review — the most visible one */
+        .review-featured {
+            background: var(--surface-light);
+            border: 1px solid rgba(212, 162, 78, 0.25);
+            border-radius: 3px;
+            padding: 3rem 3.5rem;
+            position: relative;
+            box-shadow: 0 0 60px rgba(212, 162, 78, 0.06);
+        }
+
+        .review-featured::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--flame-gold), transparent);
+        }
+
+        .review-featured .review-stars {
+            color: var(--flame-gold);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 1.5rem;
+        }
+
+        .review-featured blockquote {
+            font-family: var(--font-elegant);
+            font-size: 1.35rem;
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.8;
+            margin-bottom: 1.75rem;
+        }
+
+        .review-featured .review-author {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--flame-gold);
+            letter-spacing: 0.05em;
+        }
+
+        .review-featured .review-source {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        /* ── Services Section ─────────────────────────────────── */
+        .services { background: var(--dark); }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .service-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 2px;
+            padding: 2.5rem 2rem;
+            transition: border-color 0.4s, transform 0.4s, box-shadow 0.4s;
+        }
+
+        .service-card:hover {
+            border-color: var(--border-subtle);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ── Featured Break ───────────────────────────────────── */
+        .featured {
+            position: relative;
+            height: 55vh;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .featured-bg {
+            position: absolute;
+            inset: 0;
+            background: url('assets/images/handstand-splits-fire.jpg') center center / cover no-repeat;
+            filter: brightness(0.35) saturate(1.2);
+        }
+
+        .featured-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom,
+                rgba(5,5,5,0.7) 0%,
+                rgba(5,5,5,0.2) 50%,
+                rgba(5,5,5,0.7) 100%
+            );
+        }
+
+        .featured-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 700px;
+            padding: 2rem;
+        }
+
+        .featured-content blockquote {
+            font-family: var(--font-elegant);
+            font-size: clamp(1.3rem, 3vw, 1.85rem);
+            font-weight: 400;
+            color: var(--text);
+            font-style: italic;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .featured-content cite {
+            font-family: var(--font-display);
+            color: var(--flame-gold);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            font-style: normal;
+            text-transform: uppercase;
+        }
+
+        /* ── Contact / Booking Section ────────────────────────── */
+        .contact { background: var(--darker); }
+
+        .contact-intro {
+            max-width: 700px;
+            margin-bottom: 3rem;
+        }
+
+        .contact-intro p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 4rem;
+        }
+
+        .contact-sidebar {
+            position: sticky;
+            top: 120px;
+            align-self: start;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-detail-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .contact-detail span { color: var(--text-muted); font-size: 0.9rem; }
+        .contact-detail a { color: var(--flame-gold); text-decoration: none; transition: color 0.3s; }
+        .contact-detail a:hover { color: var(--flame-gold-light); }
+
+        .contact-social {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .contact-social a {
+            width: 38px;
+            height: 38px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: all 0.3s;
+        }
+
+        .contact-social a:hover {
+            border-color: var(--flame-gold);
+            color: var(--flame-gold);
+        }
+
+        /* ── Booking Form ─────────────────────────────────────── */
+        .booking-form { display: flex; flex-direction: column; gap: 0; }
+
+        .form-section {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .form-section:first-child { padding-top: 0; }
+        .form-section:last-child { border-bottom: none; }
+
+        .form-section-title {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--flame-gold);
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row:last-child { margin-bottom: 0; }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 2px;
+            padding: 0.8rem 1rem;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--flame-gold);
+        }
+
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        .form-group select option { background: var(--surface); color: var(--text); }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .checkbox-group input[type="radio"],
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--flame-gold);
+            cursor: pointer;
+        }
+
+        .form-submit {
+            margin-top: 1.5rem;
+            padding: 1.1rem 3rem;
+            background: transparent;
+            color: var(--flame-gold);
+            border: 1px solid var(--flame-gold);
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            align-self: flex-start;
+        }
+
+        .form-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--flame-orange), var(--flame-red));
+            transform: translateX(-101%);
+            transition: transform 0.4s;
+            z-index: -1;
+        }
+
+        .form-submit:hover {
+            color: white;
+            border-color: var(--flame-orange);
+            box-shadow: 0 8px 30px rgba(232, 96, 10, 0.3);
+        }
+
+        .form-submit:hover::before { transform: translateX(0); }
+
+        /* ── Footer ───────────────────────────────────────────── */
+        footer {
+            background: var(--dark);
+            border-top: 1px solid var(--border-subtle);
+            padding: 3rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-brand img { height: 32px; width: 32px; object-fit: contain; }
+
+        .footer-brand span {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .footer-copy { color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.05em; }
+
+        .footer-social { display: flex; gap: 0.75rem; }
+
+        .footer-social a {
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer-social a:hover {
+            border-color: var(--flame-gold);
+            color: var(--flame-gold);
+        }
+
+        /* ── Lightbox ─────────────────────────────────────────── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.96);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .lightbox.active { display: flex; }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .lightbox-close:hover { color: white; }
+
+        /* ── Responsive ───────────────────────────────────────── */
+        @media (max-width: 1000px) {
+            .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .video-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+            .video-embed { order: -1; }
+            .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+            .contact-sidebar { position: static; }
+            .reviews-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .services-grid { grid-template-columns: 1fr 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 250px; }
+            .gallery-item.tall { grid-row: span 1; }
+            .gallery-item.wide { grid-column: span 1; }
+            .about-image img { height: 400px; }
+            .footer-container { flex-direction: column; gap: 1.5rem; text-align: center; }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0; right: 0;
+                background: rgba(5, 5, 5, 0.98);
+                backdrop-filter: blur(16px);
+                flex-direction: column;
+                padding: 1.5rem 2rem;
+                gap: 1rem;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+            .nav-links.open { display: flex; }
+            .nav-toggle { display: block; }
+            .gallery-grid { grid-template-columns: 1fr; grid-auto-rows: 280px; }
+            .services-grid { grid-template-columns: 1fr; }
+            section { padding: 4rem 1.5rem; }
+            .hero-content img.hero-logo { width: 110px; height: 110px; }
+            .form-row { flex-direction: column; }
+            .about-stats { gap: 2rem; }
+            .review-featured { padding: 2rem; }
+            .review-featured blockquote { font-size: 1.1rem; }
+        }
+
+        /* ── Animations ───────────────────────────────────────── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <img src="assets/images/logo.jpg" alt="Flames of Passion Entertainment">
+                <span class="nav-logo-text">Flames of Passion</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#showreel">Showreel</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Book Now</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="fire-container" id="fireContainer"></div>
+        <div class="hero-content">
+            <img src="assets/images/logo.jpg" alt="Flames of Passion Entertainment" class="hero-logo">
+            <h1><span>Flames of Passion</span></h1>
+            <p class="hero-tagline">Sparking the Light Into the Darkness of the Night</p>
+            <p class="hero-subtitle">Luxury Fire Performance &bull; Dance &bull; Acrobatics</p>
+            <a href="#contact" class="hero-cta">Inquire About Your Event</a>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about flame-glow" id="about">
+        <div class="section-container">
+            <div class="about-grid">
+                <div class="about-image fade-in">
+                    <img src="assets/images/portrait-fire-blue-wall.jpg" alt="Daisy de la Cruz — The Girl on Fire">
+                </div>
+                <div class="about-text fade-in">
+                    <p class="section-label">The Artist</p>
+                    <h2 class="section-title">Daisy de la Cruz</h2>
+                    <div class="section-divider"></div>
+                    <p class="highlight">
+                        Known as "The Girl on Fire" &mdash; a luxury fire performer
+                        who transforms any event into an unforgettable spectacle.
+                    </p>
+                    <p>
+                        Flames of Passion Entertainment delivers bespoke fire performances
+                        that fuse bold athleticism with refined artistry. From intimate beachside
+                        ceremonies to high-profile galas and festival stages, every show is
+                        meticulously crafted to captivate, elevate, and leave audiences breathless.
+                    </p>
+                    <p>
+                        Traveling nationwide and beyond, Daisy brings fiery elegance and
+                        unmatched energy to every performance &mdash; fire spinning, acrobatic
+                        handstands, fire staffs, poi, fans, and full stunt productions. Fully
+                        customizable to match your event's theme, aesthetic, and vision.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <h3>500+</h3>
+                            <p>Performances</p>
+                        </div>
+                        <div class="stat">
+                            <h3>50+</h3>
+                            <p>Cities</p>
+                        </div>
+                        <div class="stat">
+                            <h3>10+</h3>
+                            <p>Fire Props</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showreel / Video -->
+    <section class="video-section" id="showreel">
+        <div class="section-container">
+            <div class="video-layout">
+                <div class="video-text fade-in">
+                    <p class="section-label">Showreel</p>
+                    <h2 class="section-title">See the Fire in Action</h2>
+                    <div class="section-divider"></div>
+                    <p>
+                        Every performance is a one-of-a-kind experience &mdash; fire, music, and
+                        movement woven together into something extraordinary. Watch Daisy bring
+                        the flames to life.
+                    </p>
+                    <p>
+                        From poolside resort shows to high-energy stunt productions, this is
+                        what it looks like when passion meets fire.
+                    </p>
+                </div>
+                <div class="video-embed fade-in">
+                    <iframe
+                        width="340"
+                        height="605"
+                        src="https://www.youtube.com/embed/1IJEN_jUIQY"
+                        title="Flames of Passion Entertainment Showreel"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="gallery flame-glow" id="gallery">
+        <div class="section-container">
+            <p class="section-label fade-in">Gallery</p>
+            <h2 class="section-title fade-in">Captured in Flame</h2>
+            <div class="section-divider"></div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item tall" onclick="openLightbox(this)">
+                    <img src="assets/images/performance-fire-staff-theatrical.jpg" alt="Theatrical fire staff performance" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/handstand-fire-inverted.jpg" alt="Inverted handstand with fire" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/artistic-fire-crown-blue.jpg" alt="Artistic fire crown in blue light" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/fire-hoop-poolside.jpg" alt="Fire hoop at luxury resort pool" loading="lazy">
+                </div>
+                <div class="gallery-item tall" onclick="openLightbox(this)">
+                    <img src="assets/images/beach-sunset-fire-staff.jpg" alt="Fire staff on the beach at sunset" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/stunt-games-car-handstand.jpg" alt="Fire stunt handstand on car" loading="lazy">
+                </div>
+                <div class="gallery-item wide" onclick="openLightbox(this)">
+                    <img src="assets/images/handstand-splits-fire.jpg" alt="Handstand splits with fire" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/crowd-watching-event.jpg" alt="Captivated audience at fire performance" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section class="reviews" id="reviews">
+        <div class="section-container">
+            <div class="section-center">
+                <p class="section-label fade-in">Client Testimonials</p>
+                <h2 class="section-title fade-in">What Clients Are Saying</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <!-- Two smaller reviews side by side -->
+            <div class="reviews-grid fade-in">
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote>
+                        <!-- REPLACE with actual Google review text -->
+                        "Daisy was absolutely phenomenal at our event! The fire performance was breathtaking
+                        and our guests couldn't stop talking about it. She was professional, on time, and
+                        went above and beyond to make the night magical. Highly recommend!"
+                    </blockquote>
+                    <div class="review-author"><!-- REPLACE with actual reviewer name -->&mdash; Google Review</div>
+                    <div class="review-source">Google Reviews &#9733; 5.0</div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote>
+                        <!-- REPLACE with actual GigSalad review text -->
+                        "We hired Flames of Passion for our company holiday party and it was the highlight
+                        of the entire evening. Daisy is incredibly talented and her performance was both
+                        elegant and thrilling. The energy she brought was unmatched!"
+                    </blockquote>
+                    <div class="review-author"><!-- REPLACE with actual reviewer name -->&mdash; GigSalad Review</div>
+                    <div class="review-source">GigSalad &#9733; 5.0</div>
+                </div>
+            </div>
+
+            <!-- FEATURED REVIEW — most visible -->
+            <div class="review-featured fade-in">
+                <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>
+                    <!-- REPLACE with actual best GigSalad review text (the one you want most visible) -->
+                    "I cannot say enough about how incredible Daisy was. From the moment we first
+                    spoke, she took the time to understand our vision and designed a performance
+                    that exceeded every expectation. The fire dancing was absolutely mesmerizing &mdash;
+                    our guests were completely captivated. She brought a level of artistry and
+                    professionalism that truly elevated our entire event. If you want something
+                    unforgettable, book her immediately."
+                </blockquote>
+                <div class="review-author"><!-- REPLACE with actual reviewer name -->&mdash; GigSalad Review</div>
+                <div class="review-source">GigSalad &#9733; 5.0</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Quote Break -->
+    <section class="featured">
+        <div class="featured-bg"></div>
+        <div class="featured-overlay"></div>
+        <div class="fire-container" id="fireContainer2"></div>
+        <div class="featured-content fade-in">
+            <blockquote>"She doesn't just perform with fire &mdash; she becomes it."</blockquote>
+            <cite>Flames of Passion Entertainment</cite>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services flame-glow" id="services">
+        <div class="section-container">
+            <p class="section-label fade-in">Services</p>
+            <h2 class="section-title fade-in">Bespoke Fire Experiences</h2>
+            <div class="section-divider"></div>
+
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F525;</div>
+                    <h3>Private Events</h3>
+                    <p>Birthday celebrations, anniversaries, and exclusive gatherings. Every performance tailored to your event's atmosphere.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F3AA;</div>
+                    <h3>Festivals &amp; Shows</h3>
+                    <p>High-energy stage performances for music festivals, fairs, and live entertainment. Full production with custom choreography.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F490;</div>
+                    <h3>Weddings &amp; Galas</h3>
+                    <p>Elegant fire performances that add a magical, luxurious touch to your special day. Ceremony ambiance to reception spectacle.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F3E2;</div>
+                    <h3>Corporate Events</h3>
+                    <p>Captivate your team and clients with an unforgettable performance. Launch parties, holiday events, and VIP celebrations.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F3B2;</div>
+                    <h3>Stunt Shows</h3>
+                    <p>Adrenaline-fueled fire stunts and acrobatics for productions, motorsport events, and specialty entertainment.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#x1F3A5;</div>
+                    <h3>Film &amp; Photo</h3>
+                    <p>Professional fire performance for film, TV, music videos, and editorial shoots. Fully insured with safety protocols.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / Booking -->
+    <section class="contact flame-glow" id="contact">
+        <div class="section-container">
+            <p class="section-label fade-in">Book Your Experience</p>
+            <h2 class="section-title fade-in">Let's Create Something Unforgettable</h2>
+            <div class="section-divider"></div>
+            <div class="contact-intro fade-in">
+                <p>
+                    Ready to bring fire to your next event? Fill out the details below so I can
+                    design a performance that excites, elevates, and delivers an experience
+                    tailored specifically to your vision.
+                </p>
+            </div>
+
+            <div class="contact-layout">
+                <!-- Sidebar -->
+                <div class="contact-sidebar fade-in">
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">&#x2709;</div>
+                        <span><a href="mailto:GirlonFire@FlamesOfPassionEntertainment.com">GirlonFire@FlamesOfPassion<wbr>Entertainment.com</a></span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">&#x260E;</div>
+                        <span><a href="tel:+12397846792">(239) 784-6792</a></span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="contact-detail-icon">&#x1F4CD;</div>
+                        <span>Florida-based &bull; Available for travel nationwide</span>
+                    </div>
+
+                    <div class="contact-social">
+                        <a href="https://www.instagram.com/flamesofpassionent" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+                        <a href="https://www.facebook.com/FlamesofPassionEnt" target="_blank" rel="noopener" aria-label="Facebook">FB</a>
+                        <a href="https://www.youtube.com/@FlamesofPassionEntertainment" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+                        <a href="https://www.tiktok.com/@flamesofpassionent" target="_blank" rel="noopener" aria-label="TikTok">TK</a>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <form class="booking-form fade-in" onsubmit="handleSubmit(event)">
+
+                    <!-- Client Information -->
+                    <div class="form-section">
+                        <div class="form-section-title">Client Information</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullname">Full Name *</label>
+                                <input type="text" id="fullname" name="fullname" required placeholder="Your full name">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required placeholder="you@email.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Event Details -->
+                    <div class="form-section">
+                        <div class="form-section-title">Event Details</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="event-date">Event Date *</label>
+                                <input type="date" id="event-date" name="event-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-time">Event Start Time</label>
+                                <input type="time" id="event-time" name="event-time">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="duration">Event Duration</label>
+                                <select id="duration" name="duration">
+                                    <option value="">Select duration</option>
+                                    <option value="15min">15 minutes</option>
+                                    <option value="30min">30 minutes</option>
+                                    <option value="45min">45 minutes</option>
+                                    <option value="1hr">1 hour</option>
+                                    <option value="1.5hr">1.5 hours</option>
+                                    <option value="2hr">2 hours</option>
+                                    <option value="custom">Custom / Not sure</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Event Location / Venue *</label>
+                                <input type="text" id="location" name="location" required placeholder="Venue name and city">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Environment -->
+                    <div class="form-section">
+                        <div class="form-section-title">Performance Environment</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="surface">Performance Surface</label>
+                                <select id="surface" name="surface">
+                                    <option value="">Select surface type</option>
+                                    <option value="stage">Stage</option>
+                                    <option value="floor">Indoor Floor</option>
+                                    <option value="grass">Grass / Lawn</option>
+                                    <option value="concrete">Concrete / Pavement</option>
+                                    <option value="poolside">Poolside</option>
+                                    <option value="sand">Sand / Beach</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="space">Available Performance Space</label>
+                                <input type="text" id="space" name="space" placeholder="e.g., 10x10 ft, small stage, open floor">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Music & Sound -->
+                    <div class="form-section">
+                        <div class="form-section-title">Music &amp; Sound Experience</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Performance Music Preference</label>
+                                <div class="checkbox-group">
+                                    <label><input type="radio" name="music-pref" value="client"> Client-provided music</label>
+                                    <label><input type="radio" name="music-pref" value="performer"> Custom music curated by performer</label>
+                                    <label><input type="radio" name="music-pref" value="collaborate"> Let's collaborate on the music</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Sound Equipment</label>
+                                <div class="checkbox-group">
+                                    <label><input type="radio" name="sound-equip" value="venue"> Venue will provide sound equipment</label>
+                                    <label><input type="radio" name="sound-equip" value="performer"> Please bring professional sound system</label>
+                                    <label><input type="radio" name="sound-equip" value="unsure"> Not sure yet</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Creative Direction -->
+                    <div class="form-section">
+                        <div class="form-section-title">Creative Direction</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="theme">Theme, Aesthetic, or Color Palette</label>
+                                <input type="text" id="theme" name="theme" placeholder="e.g., Tropical elegance, gothic, neon rave, bohemian">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="music-vibe">Songs, Genres, or Moods You Envision</label>
+                                <input type="text" id="music-vibe" name="music-vibe" placeholder="e.g., Dark electronic, tribal drums, Top 40, cinematic">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Your Vision -->
+                    <div class="form-section">
+                        <div class="form-section-title">Your Vision</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="vision">Describe Your Vision *</label>
+                                <textarea id="vision" name="vision" required rows="5" placeholder="Share your vision, atmosphere, and expectations so I can design a performance that excites, elevates, and delivers an unforgettable experience tailored specifically to your event."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="form-submit">Submit Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/images/logo.jpg" alt="Flames of Passion">
+                <span>Flames of Passion Entertainment LLC</span>
+            </div>
+            <p class="footer-copy">&copy; 2025 Flames of Passion Entertainment. All rights reserved.</p>
+            <div class="footer-social">
+                <a href="https://www.instagram.com/flamesofpassionent" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+                <a href="https://www.facebook.com/FlamesofPassionEnt" target="_blank" rel="noopener" aria-label="Facebook">FB</a>
+                <a href="https://www.youtube.com/@FlamesofPassionEntertainment" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+                <a href="https://www.tiktok.com/@flamesofpassionent" target="_blank" rel="noopener" aria-label="TikTok">TK</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" aria-label="Close">&times;</button>
+        <img id="lightboxImg" src="" alt="">
+    </div>
+
+    <script>
+        // ── Animated Fire Particles ──────────────────────────────
+        function createFireParticles(containerId, count) {
+            var container = document.getElementById(containerId);
+            if (!container) return;
+            var colors = [
+                'radial-gradient(circle, #ff6600, #ff3300)',
+                'radial-gradient(circle, #ff9900, #ff6600)',
+                'radial-gradient(circle, #ffcc00, #ff9900)',
+                'radial-gradient(circle, #ff4400, #cc0000)',
+                'radial-gradient(circle, #ffdd44, #ff8800)',
+            ];
+            for (var i = 0; i < count; i++) {
+                var particle = document.createElement('div');
+                particle.className = 'fire-particle';
+                var size = Math.random() * 12 + 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                particle.style.animationDelay = (Math.random() * 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        createFireParticles('fireContainer', 50);
+        createFireParticles('fireContainer2', 30);
+
+        // ── Mobile Nav Toggle ────────────────────────────────────
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.getElementById('navLinks').classList.remove('open');
+            });
+        });
+
+        // ── Scroll Fade-In ───────────────────────────────────────
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+            observer.observe(el);
+        });
+
+        // ── Gallery Lightbox ─────────────────────────────────────
+        function openLightbox(el) {
+            var img = el.querySelector('img');
+            document.getElementById('lightboxImg').src = img.src;
+            document.getElementById('lightboxImg').alt = img.alt;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // ── Form Submit Handler ──────────────────────────────────
+        function handleSubmit(e) {
+            e.preventDefault();
+            var btn = e.target.querySelector('.form-submit');
+            var origText = btn.textContent;
+            btn.textContent = 'Inquiry Sent!';
+            btn.style.background = 'linear-gradient(135deg, #16a34a, #15803d)';
+            btn.style.borderColor = '#16a34a';
+            btn.style.color = 'white';
+            setTimeout(function() {
+                btn.textContent = origText;
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                e.target.reset();
+            }, 3000);
+        }
+
+        // ── Nav background on scroll ─────────────────────────────
+        window.addEventListener('scroll', function() {
+            var nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(5, 5, 5, 0.95)';
+            } else {
+                nav.style.background = 'rgba(5, 5, 5, 0.88)';
+            }
+        });
+    </script>
+
+</body>
+</html>

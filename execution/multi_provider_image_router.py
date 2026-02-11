@@ -10,7 +10,10 @@ Routes image generation across multiple providers to:
 Providers (in priority order):
 - BUDGET: Stable Diffusion via Replicate (~$0.003/image)
 - STANDARD: xAI Grok ($0.07/image)
-- PREMIUM: DALL-E 3 (~$0.04-0.12/image)
+
+Retired providers (see docs/service-standards.md):
+- DALL-E 3: Quota exceeded, marginal quality gain over Grok
+- Ideogram: Underused, same quality tier as Grok
 
 Usage:
     # Auto-select best provider
@@ -42,15 +45,12 @@ class ImageQualityTier(Enum):
     """Quality tiers for image generation."""
     BUDGET = "budget"      # Replicate/SD
     STANDARD = "standard"  # Grok
-    PREMIUM = "premium"    # DALL-E 3
 
 
 class ImageProvider(Enum):
     """Available image generation providers."""
     REPLICATE_SD = "replicate_sd"
     GROK = "grok"
-    DALLE3 = "dalle3"
-    IDEOGRAM = "ideogram"
 
 
 # Provider configurations
@@ -75,26 +75,6 @@ IMAGE_PROVIDER_CONFIGS = {
         "resolution": "1024x768",
         "quality_score": 8
     },
-    ImageProvider.DALLE3: {
-        "name": "DALL-E 3 (OpenAI)",
-        "tier": ImageQualityTier.PREMIUM,
-        "cost_per_image": 0.08,  # HD quality
-        "rate_limit_per_hour": 50,
-        "rate_limit_per_day": 200,
-        "api_key_env": "OPENAI_API_KEY",
-        "resolution": "1024x1024",
-        "quality_score": 9
-    },
-    ImageProvider.IDEOGRAM: {
-        "name": "Ideogram",
-        "tier": ImageQualityTier.STANDARD,
-        "cost_per_image": 0.05,
-        "rate_limit_per_hour": 100,
-        "rate_limit_per_day": 1000,
-        "api_key_env": "IDEOGRAM_API_KEY",
-        "resolution": "1024x1024",
-        "quality_score": 8
-    }
 }
 
 
@@ -246,14 +226,8 @@ class MultiProviderImageRouter:
         ],
         ImageQualityTier.STANDARD: [
             ImageProvider.GROK,
-            ImageProvider.IDEOGRAM,
             ImageProvider.REPLICATE_SD
         ],
-        ImageQualityTier.PREMIUM: [
-            ImageProvider.DALLE3,
-            ImageProvider.GROK,
-            ImageProvider.IDEOGRAM
-        ]
     }
 
     def __init__(self, data_dir: str = ".tmp"):
@@ -265,21 +239,13 @@ class MultiProviderImageRouter:
         """Initialize available providers."""
         self.providers = {}
 
-        # xAI Grok
+        # xAI Grok (standard tier)
         if os.getenv("XAI_API_KEY"):
             self.providers[ImageProvider.GROK] = GrokImageClient()
 
-        # Replicate
+        # Replicate Stable Diffusion (budget tier)
         if os.getenv("REPLICATE_API_TOKEN"):
             self.providers[ImageProvider.REPLICATE_SD] = ReplicateSDClient()
-
-        # OpenAI DALL-E 3
-        if os.getenv("OPENAI_API_KEY"):
-            self.providers[ImageProvider.DALLE3] = DallE3Client()
-
-        # Ideogram
-        if os.getenv("IDEOGRAM_API_KEY"):
-            self.providers[ImageProvider.IDEOGRAM] = IdeogramClient()
 
         print(f"Initialized {len(self.providers)} image providers: {[p.value for p in self.providers.keys()]}")
 
@@ -522,119 +488,12 @@ class ReplicateSDClient:
         return paths
 
 
-class DallE3Client:
-    """DALL-E 3 via OpenAI."""
-
-    def __init__(self):
-        self.api_key = os.getenv("OPENAI_API_KEY")
-
-    def generate(self, prompt: str, count: int = 1, output_dir: str = None) -> Dict:
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=self.api_key)
-
-            urls = []
-            # DALL-E 3 only supports n=1, so loop
-            for _ in range(count):
-                response = client.images.generate(
-                    model="dall-e-3",
-                    prompt=prompt,
-                    size="1024x1024",
-                    quality="hd",
-                    n=1
-                )
-                if response.data:
-                    urls.append(response.data[0].url)
-
-            if output_dir:
-                paths = self._download(urls, output_dir)
-                return {"success": True, "paths": paths, "urls": urls}
-
-            return {"success": True, "urls": urls}
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    def _download(self, urls: List[str], output_dir: str) -> List[str]:
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
-        paths = []
-        for i, url in enumerate(urls):
-            try:
-                resp = requests.get(url, timeout=30)
-                path = f"{output_dir}/dalle_image_{i+1}.png"
-                with open(path, 'wb') as f:
-                    f.write(resp.content)
-                paths.append(path)
-            except:
-                pass
-        return paths
-
-
-class IdeogramClient:
-    """Ideogram image generation."""
-
-    def __init__(self):
-        self.api_key = os.getenv("IDEOGRAM_API_KEY")
-
-    def generate(self, prompt: str, count: int = 1, output_dir: str = None) -> Dict:
-        headers = {
-            "Api-Key": self.api_key,
-            "Content-Type": "application/json"
-        }
-
-        payload = {
-            "image_request": {
-                "prompt": prompt,
-                "model": "V_2",
-                "magic_prompt_option": "AUTO"
-            }
-        }
-
-        try:
-            urls = []
-            for _ in range(count):
-                response = requests.post(
-                    "https://api.ideogram.ai/generate",
-                    headers=headers,
-                    json=payload,
-                    timeout=60
-                )
-                if response.status_code == 200:
-                    data = response.json()
-                    for img in data.get("data", []):
-                        if img.get("url"):
-                            urls.append(img["url"])
-
-            if output_dir:
-                paths = self._download(urls, output_dir)
-                return {"success": True, "paths": paths, "urls": urls}
-
-            return {"success": True, "urls": urls}
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    def _download(self, urls: List[str], output_dir: str) -> List[str]:
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
-        paths = []
-        for i, url in enumerate(urls):
-            try:
-                resp = requests.get(url, timeout=30)
-                path = f"{output_dir}/ideogram_image_{i+1}.png"
-                with open(path, 'wb') as f:
-                    f.write(resp.content)
-                paths.append(path)
-            except:
-                pass
-        return paths
-
-
 def main():
     parser = argparse.ArgumentParser(description="Multi-provider image router")
 
     parser.add_argument('--prompt', help='Image description')
     parser.add_argument('--count', type=int, default=1, help='Number of images')
-    parser.add_argument('--tier', choices=['budget', 'standard', 'premium'],
+    parser.add_argument('--tier', choices=['budget', 'standard'],
                        default='standard', help='Quality tier')
     parser.add_argument('--provider', choices=[p.value for p in ImageProvider],
                        help='Force specific provider')

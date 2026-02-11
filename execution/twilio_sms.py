@@ -54,43 +54,116 @@ class TwilioSMS:
     - Cost monitoring
     """
     
-    # Message templates for lead nurturing
+    # Message templates for lead nurturing and coaching
     TEMPLATES = {
-        "welcome": (
-            "Hi {name}! 👋 Thanks for signing up for Marceau Solutions Fitness "
-            "Influencer AI. We're excited to help you grow your fitness business! "
-            "Check your email for next steps. Reply STOP to opt out."
+        # === PROSPECT OUTREACH (7-touch sequence) ===
+        "outreach_day0": (
+            "Hey {name}, I help people optimize their training with peptide-informed "
+            "fitness programs and AI-powered progress tracking. Would a free 30-min "
+            "strategy call be useful? Reply STOP to opt out."
         ),
-        "followup_1": (
-            "Hey {name}! Just checking in from Marceau Solutions. Did you get a "
-            "chance to explore your AI assistant? We'd love to hear your feedback. "
-            "Reply with any questions!"
+        "outreach_day2": (
+            "Hey {name}, still looking for a better approach to your fitness?"
         ),
-        "followup_2": (
-            "Hi {name}, your Fitness AI assistant is ready to create amazing "
-            "content! Try asking it to generate a workout video or social media "
-            "graphic. Need help? Just reply!"
+        "outreach_day5": (
+            "Hey {name}, just helped a client dial in their training with "
+            "peptide-informed protocols. Happy to share the approach if you're "
+            "interested."
         ),
-        "feature_highlight": (
-            "{name}, did you know your AI can automatically edit videos with "
-            "jump cuts? Upload a raw video and watch the magic happen! ✨ "
-            "Questions? Reply here."
+        "outreach_day10": (
+            "Hey {name}, quick yes or no - would a free strategy call be helpful? "
+            "No pitch, just an honest convo about your goals."
         ),
+        "outreach_day15": (
+            "Hey {name}, I put together a free guide on peptide-informed training. "
+            "Want me to send it over?"
+        ),
+        "outreach_day30": (
+            "Hey {name}, closing my books for new coaching clients soon. Last "
+            "chance for a free strategy call: {calendly_link}"
+        ),
+        "outreach_day60": (
+            "Hey {name}, checking back in. Still interested in dialing in your "
+            "training? Happy to chat whenever you're ready."
+        ),
+
+        # === CLIENT ONBOARDING ===
+        "coaching_welcome": (
+            "Hey {name}! Welcome aboard - I'm pumped to work with you. Check "
+            "your email for next steps and book your kickoff call here: "
+            "{calendly_link}"
+        ),
+        "coaching_kickoff_reminder": (
+            "Hey {name}, don't forget to book your kickoff call! The sooner we "
+            "meet, the sooner you start seeing results: {calendly_link}"
+        ),
+        "coaching_pre_call": (
+            "Hey {name}, looking forward to our call in 1 hour! Have your "
+            "intake form filled out? If not, no worries - we'll cover it on "
+            "the call."
+        ),
+
+        # === WEEKLY CHECK-INS ===
+        "coaching_monday_checkin": (
+            "Good morning {name}! New week, new gains. How are you feeling "
+            "after last week? Rate 1-10 and any notes. Your updated program "
+            "is in your Drive folder."
+        ),
+        "coaching_midweek_tip": (
+            "Quick tip {name}: {tip}"
+        ),
+        "coaching_no_response": (
+            "Hey {name}, didn't hear from you on Monday's check-in. Everything "
+            "good? Just need a quick 1-10 rating so I can adjust if needed."
+        ),
+
+        # === OFFBOARDING ===
+        "coaching_cancel_feedback": (
+            "Hey {name}, I saw your subscription was cancelled. No hard feelings "
+            "at all. Would you be open to a quick 5-min call so I can learn what "
+            "I could do better? Either way, I appreciate you."
+        ),
+        "coaching_cancel_day7": (
+            "Hey {name}, hope you're doing well. Your progress was real - don't "
+            "lose it. If you ever want to pick back up, I'm here."
+        ),
+        "coaching_cancel_day30": (
+            "Hey {name}, it's been a month. Missing our Monday check-ins! If "
+            "you're ready to get back at it, I have a returning client discount. "
+            "No pressure."
+        ),
+
+        # === BILLING ===
+        "coaching_payment_failed": (
+            "Hey {name}, heads up - your card didn't go through for this month's "
+            "coaching. Stripe will retry automatically, but if you need to update "
+            "your card: {billing_link}"
+        ),
+        "coaching_payment_failed_followup": (
+            "Hey {name}, your payment is still bouncing. Want me to pause your "
+            "account while you sort it out? No stress."
+        ),
+
+        # === TESTIMONIALS & REFERRALS ===
+        "coaching_testimonial_30day": (
+            "Hey {name}, you've been at this for a month now. How are you feeling "
+            "about your progress? If you're comfortable, a quick sentence about "
+            "your experience would mean the world to me."
+        ),
+        "coaching_testimonial_90day": (
+            "Hey {name}, 3 months in! Would you be open to a quick before/after "
+            "share? Totally optional, but it helps other people trust the process."
+        ),
+        "coaching_referral_reward": (
+            "Hey {name}, {friend} just signed up! Your next month is on me. "
+            "Thanks for spreading the word."
+        ),
+
+        # === GENERAL (kept from original) ===
         "appointment_reminder": (
-            "Hi {name}! Just a reminder about your scheduled call with Marceau "
-            "Solutions tomorrow at {time}. Looking forward to chatting! "
-            "Reply to reschedule."
+            "Hi {name}! Just a reminder about your scheduled call tomorrow at "
+            "{time}. Looking forward to chatting! Reply to reschedule."
         ),
-        "new_inquiry": (
-            "Thanks for your interest in a custom AI assistant, {name}! "
-            "We've received your inquiry and will reach out within 24 hours. "
-            "In the meantime, check out marceausolutions.com/ai"
-        ),
-        "custom_project": (
-            "Hi {name}! Thanks for submitting your custom AI project request. "
-            "Our team is reviewing your requirements for: {project_type}. "
-            "We'll be in touch soon!"
-        )
     }
     
     def __init__(self):

@@ -1,0 +1,36 @@
+{
+  "fal.ai": {
+    "status": "blocked",
+    "reason": "Balance exhausted",
+    "blocked_date": "2026-02-11",
+    "renewal": "pay-as-you-go — top up at fal.ai/billing",
+    "action": "Add $10 credit at https://fal.ai/billing to resume"
+  },
+  "openai-tts": {
+    "status": "blocked",
+    "reason": "TTS rate limit exceeded",
+    "blocked_date": "2026-02-11",
+    "renewal": "Rate limits reset per-minute, may need higher usage tier",
+    "action": "Check usage at https://platform.openai.com/usage"
+  },
+  "replicate": {
+    "status": "active",
+    "note": "Pay-as-you-go, <$5 credit remaining"
+  },
+  "elevenlabs": {
+    "status": "active",
+    "note": "Creator plan $22/mo, ~100K chars/mo, resets on billing date"
+  },
+  "xai": {
+    "status": "active",
+    "note": "Pay-as-you-go"
+  },
+  "ideogram": {
+    "status": "active",
+    "note": "Pay-as-you-go"
+  },
+  "kie.ai": {
+    "status": "active",
+    "note": "Pay-as-you-go, Veo 3 access"
+  }
+}

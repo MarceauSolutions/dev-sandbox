@@ -65,6 +65,16 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/api-cost-guard.sh",
+            "timeout": 10
+          }
+        ]
       }
     ]
   }

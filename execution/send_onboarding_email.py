@@ -29,98 +29,191 @@ def validate_email(email):
 
 
 def create_onboarding_email(client_email, client_name=None, project_context=None):
-    """Create the onboarding email content"""
+    """Create the onboarding email content for fitness coaching clients."""
 
     # Get configuration from environment
-    sender_name = os.getenv('SENDER_NAME', 'Marceau Solutions')
+    sender_name = os.getenv('SENDER_NAME', 'William Marceau')
     sender_email = os.getenv('SENDER_EMAIL')
-    calendly_url = os.getenv('CALENDLY_URL')
+    calendly_url = os.getenv('CALENDLY_KICKOFF_URL', 'https://calendly.com/wmarceau/kickoff-call')
+    intake_form_url = os.getenv('INTAKE_FORM_URL', 'https://docs.google.com/forms/d/e/1FAIpQLSfscvTEGRc7YxRiJdMslS6fj33ca3MOij1erZN6zy82JPNS4Q/viewform')
 
     if not sender_email:
         raise ValueError("SENDER_EMAIL not set in .env file")
 
-    if not calendly_url:
-        print("⚠️  Warning: CALENDLY_URL not set in .env file. Using placeholder.")
-        calendly_url = "[YOUR_CALENDLY_LINK]"
-
     # Personalize greeting
-    if client_name:
-        greeting = f"Hi {client_name},"
-    else:
-        greeting = "Hello,"
+    greeting = f"Hey {client_name}," if client_name else "Hey,"
 
     # Create email
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f"Welcome to {sender_name} - Let's Get Started!"
+    msg['Subject'] = "Welcome to Coaching - Here's What Happens Next"
     msg['From'] = f"{sender_name} <{sender_email}>"
     msg['To'] = client_email
 
     # Email body (plain text version)
     text_body = f"""{greeting}
 
-Thanks for coming to work with us - we're excited to have you onboard.
+Welcome aboard - I'm genuinely excited to work with you.
 
-About Us
---------
-At Marceau Solutions, we specialize in building high-quality web applications and software solutions that help businesses grow and succeed.
+Here's what happens next (keep this email handy):
 
-What to Expect
---------------
-✓ Collaborative approach - We work closely with you to understand your vision
-✓ Regular updates - You'll receive daily updates until the project is complete
-✓ Quality focus - Clean code, modern design, and robust functionality
-✓ On-time delivery - We respect your timeline and budget
 
-Next Steps
-----------
-- We'll hop on a quick kickoff call to align on your goals
-- You'll meet the team and get familiar with the culture
-- From there we'll map out a plan tailored to you (on the call)
+STEP 1: BOOK YOUR KICKOFF CALL
+-------------------------------
+This is where we map out your goals, review your training history, and design your program. 30 minutes, no fluff.
 
-Book your kickoff call here: {calendly_url}
+Book here: {calendly_url}
 
-Best regards,
 
-{sender_name}
-{sender_email}
+STEP 2: FILL OUT YOUR INTAKE FORM
+-----------------------------------
+The more I know about you upfront, the better your program will be. This covers health history, goals, equipment, schedule, and food preferences.
+
+Fill it out here: {intake_form_url}
+
+Please complete this BEFORE our kickoff call if possible.
+
+
+STEP 3: WHAT TO EXPECT AFTER OUR CALL
+---------------------------------------
+Within 48 hours of our kickoff call, you'll receive:
+- Your custom training program (PDF in a shared Google Drive folder)
+- Nutrition protocol with macro targets
+- Weekly check-in schedule
+- Peptide education resources (if applicable to your goals)
+
+
+HOW WE'LL COMMUNICATE
+----------------------
+- SMS (texts): Quick questions, weekly check-ins, reminders
+- Email: Program updates, detailed recaps, documents
+- Google Meet: Kickoff call + monthly progress reviews
+- Google Drive: Your program files, progress tracking, resources
+
+I respond to texts within 4 hours (Mon-Fri, 8am-7pm ET).
+I respond to emails within 24 hours on business days.
+
+
+WHAT I NEED FROM YOU
+--------------------
+- Honest Monday check-in responses (even just a number 1-10)
+- Monthly progress photos (front/side/back)
+- 48 hours notice for session reschedules
+- Tell me when something isn't working - I'd rather adjust than have you suffer in silence
+
+
+IMPORTANT DOCUMENTS
+-------------------
+Attached to this email or in your Drive folder:
+- Liability waiver (please sign and return before our kickoff call)
+- Cancellation policy (cancel anytime, no contracts)
+
+
+YOUR SUBSCRIPTION
+-----------------
+$197/month, billed on the same day each month.
+Cancel anytime through your Stripe billing portal.
+No contracts. No cancellation fees. I earn your loyalty every month.
+
+
+Let's get to work.
+
+William Marceau
+wmarceau@marceausolutions.com
+marceausolutions.com/coaching
 """
 
     # Email body (HTML version)
     html_body = f"""
 <html>
 <head></head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-    <p>{greeting}</p>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.7; color: #1a1a2e; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
 
-    <p>Thanks for coming to work with us - we're excited to have you onboard.</p>
+    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+        <h1 style="color: #22c55e; margin: 0; font-size: 24px;">Welcome to Coaching</h1>
+        <p style="color: #94a3b8; margin: 8px 0 0;">Let's get you set up.</p>
+    </div>
 
-    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">About Us</h2>
-    <p>At Marceau Solutions, we specialize in building high-quality web applications and software solutions that help businesses grow and succeed.</p>
+    <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 
-    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">What to Expect</h2>
-    <ul style="list-style-type: none; padding-left: 0;">
-        <li>✓ <strong>Collaborative approach</strong> - We work closely with you to understand your vision</li>
-        <li>✓ <strong>Regular updates</strong> - You'll receive daily updates until the project is complete</li>
-        <li>✓ <strong>Quality focus</strong> - Clean code, modern design, and robust functionality</li>
-        <li>✓ <strong>On-time delivery</strong> - We respect your timeline and budget</li>
-    </ul>
+        <p style="font-size: 16px;">{greeting}</p>
+        <p>Welcome aboard - I'm genuinely excited to work with you. Here's what happens next (keep this email handy).</p>
 
-    <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">Next Steps</h2>
-    <ul style="padding-left: 20px;">
-        <li>We'll hop on a quick kickoff call to align on your goals</li>
-        <li>You'll meet the team and get familiar with the culture</li>
-        <li>From there we'll map out a plan tailored to you (on the call)</li>
-    </ul>
+        <!-- Step 1 -->
+        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #0f172a; margin: 0 0 8px;">Step 1: Book Your Kickoff Call</h3>
+            <p style="margin: 0; color: #475569;">30 minutes to map out your goals, review your training history, and design your program.</p>
+            <p style="margin: 12px 0 0;">
+                <a href="{calendly_url}" style="background-color: #22c55e; color: #0f172a; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Book Your Kickoff Call</a>
+            </p>
+        </div>
 
-    <p><strong>Book your kickoff call here:</strong></p>
-    <p style="margin: 30px 0;">
-        <a href="{calendly_url}" style="background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">📅 Schedule Your Kickoff Call</a>
-    </p>
+        <!-- Step 2 -->
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #0f172a; margin: 0 0 8px;">Step 2: Fill Out Your Intake Form</h3>
+            <p style="margin: 0; color: #475569;">Health history, goals, equipment, schedule, and food preferences. The more I know, the better your program.</p>
+            <p style="margin: 12px 0 0;">
+                <a href="{intake_form_url}" style="background-color: #3b82f6; color: white; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Complete Intake Form</a>
+            </p>
+            <p style="margin: 8px 0 0; font-size: 13px; color: #64748b;">Please complete before our kickoff call if possible.</p>
+        </div>
 
-    <p style="margin-top: 30px;">
-        Best regards,<br><br>
-        <strong>{sender_name}</strong><br>
-        <a href="mailto:{sender_email}">{sender_email}</a>
+        <!-- What You'll Receive -->
+        <h3 style="color: #0f172a; margin: 24px 0 12px;">Within 48 Hours of Our Call, You'll Get:</h3>
+        <ul style="padding-left: 0; list-style: none;">
+            <li style="padding: 6px 0;">&#x2705; Custom training program (PDF in your Google Drive folder)</li>
+            <li style="padding: 6px 0;">&#x2705; Nutrition protocol with macro targets</li>
+            <li style="padding: 6px 0;">&#x2705; Weekly check-in schedule</li>
+            <li style="padding: 6px 0;">&#x2705; Peptide education resources (if applicable)</li>
+        </ul>
+
+        <!-- Communication -->
+        <h3 style="color: #0f172a; margin: 24px 0 12px;">How We'll Communicate</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px 0; font-weight: 600;">SMS</td>
+                <td style="padding: 8px 0; color: #475569;">Quick questions, weekly check-ins, reminders</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px 0; font-weight: 600;">Email</td>
+                <td style="padding: 8px 0; color: #475569;">Program updates, recaps, documents</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 8px 0; font-weight: 600;">Google Meet</td>
+                <td style="padding: 8px 0; color: #475569;">Kickoff + monthly progress reviews</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 0; font-weight: 600;">Google Drive</td>
+                <td style="padding: 8px 0; color: #475569;">Programs, progress tracking, resources</td>
+            </tr>
+        </table>
+        <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Texts: within 4 hours (Mon-Fri, 8am-7pm ET) &middot; Email: within 24 hours on business days</p>
+
+        <!-- What I Need -->
+        <h3 style="color: #0f172a; margin: 24px 0 12px;">What I Need From You</h3>
+        <ul style="padding-left: 20px; color: #475569;">
+            <li style="padding: 4px 0;">Honest Monday check-in responses (even just a 1-10 rating)</li>
+            <li style="padding: 4px 0;">Monthly progress photos (front/side/back)</li>
+            <li style="padding: 4px 0;">48 hours notice for session reschedules</li>
+            <li style="padding: 4px 0;">Tell me when something isn't working</li>
+        </ul>
+
+        <!-- Billing -->
+        <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0; text-align: center;">
+            <p style="margin: 0; color: #64748b; font-size: 14px;"><strong>$197/month</strong> &middot; Cancel anytime &middot; No contracts &middot; No cancellation fees</p>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+
+        <p style="font-size: 15px;">Let's get to work.</p>
+        <p style="margin-top: 16px;">
+            <strong>William Marceau</strong><br>
+            <a href="mailto:wmarceau@marceausolutions.com" style="color: #3b82f6;">wmarceau@marceausolutions.com</a><br>
+            <a href="https://marceausolutions.com/coaching" style="color: #3b82f6;">marceausolutions.com/coaching</a>
+        </p>
+    </div>
+
+    <p style="text-align: center; font-size: 12px; color: #94a3b8; margin-top: 16px;">
+        Disclaimer: This is not medical advice. Consult a healthcare provider before starting any fitness program.
     </p>
 </body>
 </html>

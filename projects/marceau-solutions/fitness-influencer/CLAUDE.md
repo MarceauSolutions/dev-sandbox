@@ -34,8 +34,9 @@ rq worker --with-scheduler
 - **`frontend/`** - HTML/CSS/JS dashboard with gamification UI
 - **`mcp/`** - MCP server wrapper for Claude integration
 - **`data/`** - Exercise library, hashtags, gamification state, B-roll, LUTs, music, SFX
-- **`content/`** - Weekly content strategy, video scripts, production plans
 - **`alembic/`** - Database migration scripts (SQLite default)
+
+**Note:** Business operations docs (coaching runbook, legal docs, intake forms, content strategy, financial projections) have been moved to `projects/marceau-solutions/pt-business/`. This directory is product code only.
 
 ## Project-Specific Rules
 - FastAPI v2.0 with structured JSON logging and rate limiting (Free/Pro/Enterprise tiers)

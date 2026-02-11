@@ -30,6 +30,7 @@
 | `/test` | Testing strategy |
 | `/market-check` | Market viability analysis (4 agents) |
 | `/inventory` | Search existing tools |
+| `/photos` | Interactive photo export + resize from Photos.app |
 
 | Quick Command | Run |
 |--------------|-----|
@@ -53,6 +54,7 @@
 | "Roll back" | `docs/sops/sop-07-rollback.md` |
 | "Publish to registry" | `/publish-mcp` |
 | "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
+| "Download photos" / "Export photos" | `/photos` interactive flow |
 
 ## Where Things Live
 
@@ -84,7 +86,8 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 │   └── archive/                # Old/superseded docs
 ├── projects/
 │   ├── marceau-solutions/      # Company-specific projects
-│   │   ├── fitness-influencer/ # Content automation platform
+│   │   ├── pt-business/        # PT coaching business hub (ops, legal, content, planning)
+│   │   ├── fitness-influencer/ # AI content platform (product code only)
 │   │   ├── amazon-seller/      # SP-API seller tools
 │   │   └── ...
 │   ├── shared/                 # Multi-tenant tools (2+ companies)
