@@ -34,7 +34,7 @@ except ImportError:
 
 MODELS = {
     "sadtalker": {
-        "id": "cjwbw/sadtalker",
+        "id": "cjwbw/sadtalker:a519cc0cfebaaeade068b23899165a11ec76aaa1d2b313d40d214f204ec957a3",
         "name": "SadTalker",
         "cost_per_run": 0.05,
         "description": "Audio-driven talking head from single image (head movement + lip sync)"

@@ -49,6 +49,12 @@ from backend.gamification_routes import router as gamification_router
 # Task management routes (v2.0)
 from backend.tasks_routes import router as tasks_router
 
+# SMS routes — hybrid n8n + Python (v2.1)
+from backend.sms_routes import router as sms_router
+
+# Collaborator management routes (v2.1)
+from backend.collaborators_routes import router as collaborators_router
+
 # Initialize structured JSON logging
 setup_logging()
 logger = get_logger(__name__)
@@ -80,6 +86,12 @@ app.include_router(gamification_router)
 
 # Include task management routes (v2.0)
 app.include_router(tasks_router)
+
+# Include SMS routes — hybrid n8n + Python (v2.1)
+app.include_router(sms_router)
+
+# Include collaborator management routes (v2.1)
+app.include_router(collaborators_router)
 
 # Base path for execution scripts
 SCRIPTS_PATH = Path(__file__).parent
@@ -3878,66 +3890,8 @@ async def submit_lead(lead: LeadSubmission):
             "data": lead.dict()
         }
 
-@app.post("/api/sms/optin")
-async def sms_optin(opt_in: SMSOptIn):
-    """
-    Handle SMS opt-in webhook.
-    Sends welcome SMS via Twilio and stores consent record.
-    """
-    try:
-        from twilio.rest import Client
-        import os
-
-        # Twilio credentials from environment variables
-        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
-        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
-        from_number = os.getenv('TWILIO_PHONE_NUMBER', '+18552399364')
-
-        if not account_sid or not auth_token:
-            print(f"⚠️  SMS Opt-In (Twilio not configured): {opt_in.firstName} {opt_in.lastName} - {opt_in.phone}")
-            return {
-                "success": False,
-                "message": "Twilio credentials not configured",
-                "data": opt_in.dict()
-            }
-
-        # Initialize Twilio client
-        client = Client(account_sid, auth_token)
-
-        # Send welcome message
-        welcome_message = f"""Hi {opt_in.firstName}! 👋
-
-Welcome to Marceau Solutions AI Automation.
-
-We're excited to help you scale your fitness business with cutting-edge AI tools.
-
-Reply STOP to opt-out anytime.
-
-- Marceau Solutions Team"""
-
-        message = client.messages.create(
-            body=welcome_message,
-            from_=from_number,
-            to=opt_in.phone
-        )
-
-        print(f"📱 SMS Opt-In Success: {opt_in.firstName} {opt_in.lastName} - {opt_in.phone}")
-        print(f"   Message SID: {message.sid}")
-
-        return {
-            "success": True,
-            "message": "Welcome SMS sent",
-            "message_sid": message.sid,
-            "data": opt_in.dict()
-        }
-
-    except Exception as e:
-        print(f"Error sending SMS: {e}")
-        return {
-            "success": False,
-            "error": str(e),
-            "data": opt_in.dict()
-        }
+# NOTE: /api/sms/optin is now handled by sms_routes.py (hybrid n8n + Python)
+# Migrated 2026-02-10: SMS sending goes through n8n on EC2 instead of direct Twilio calls
 
 @app.post("/api/email/optin")
 async def email_optin(opt_in: EmailOptIn):

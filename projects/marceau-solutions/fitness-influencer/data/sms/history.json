@@ -1,0 +1,16 @@
+[
+  {
+    "phone": "+12393985676",
+    "template_id": "collaborator_asset_request_casual",
+    "message": "Hey William! Working on something cool - an AI fitness avatar thing. Need a good headshot of you (fr",
+    "response": {
+      "success": true,
+      "message_sid": "SM782fac6f706ea54ff95024963d9584e2",
+      "status": "queued",
+      "phone": "+12393985676",
+      "template_id": "collaborator_asset_request_casual",
+      "timestamp": "2026-02-10T23:55:28.317Z"
+    },
+    "sent_at": "2026-02-10T23:55:28.465829"
+  }
+]

@@ -35,18 +35,20 @@ except ImportError:
 
 MODELS = {
     "gfpgan": {
-        "id": "tencentarc/gfpgan",
+        "id": "tencentarc/gfpgan:0fbacf7afc6c144e5be9767cff80f25aff23e52b0708f17e20f9879b2f21516c",
         "name": "GFPGAN v1.4",
         "cost_per_run": 0.005,
         "description": "Face-specific restoration — best for AI-generated faces",
-        "supports_scale": False,
+        "supports_scale": True,
+        "input_image_key": "img",
     },
     "realesrgan": {
-        "id": "xinntao/realesrgan",
+        "id": "nightmareai/real-esrgan:b3ef194191d13140337468c916c2c5b96dd0cb06dffc032a022a31807f6a5ea8",
         "name": "Real-ESRGAN",
-        "cost_per_run": 0.01,
-        "description": "General image upscaling — faces + backgrounds",
+        "cost_per_run": 0.002,
+        "description": "General image upscaling — faces + backgrounds + GFPGAN option",
         "supports_scale": True,
+        "input_image_key": "image",
     },
 }
 
@@ -144,13 +146,16 @@ def restore_face(image_path: str, model_key: str = DEFAULT_MODEL,
     start_time = time.time()
 
     # Build input payload
-    input_payload = {"img": open(image_path, "rb")}
+    image_key = model["input_image_key"]
+    input_payload = {image_key: open(image_path, "rb")}
 
-    if model_key == "realesrgan" and scale:
+    if scale:
         input_payload["scale"] = scale
 
     if model_key == "gfpgan":
         input_payload["version"] = "v1.4"
+    elif model_key == "realesrgan":
+        input_payload["face_enhance"] = True
 
     try:
         output = replicate.run(model["id"], input=input_payload)

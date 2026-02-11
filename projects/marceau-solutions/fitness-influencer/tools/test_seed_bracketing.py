@@ -128,12 +128,21 @@ def run_seed_bracket(prompt: str, seeds: list, tier: str = "standard",
 
         try:
             if router:
-                # Router may or may not support seeds depending on provider
-                result = router.generate_image(
+                seed_dir = os.path.join(output_dir, f"_tmp_seed_{seed}")
+                Path(seed_dir).mkdir(exist_ok=True)
+                result = router.generate_images(
                     prompt=f"{prompt} --seed {seed}",
+                    count=1,
                     tier=tier_enum,
-                    output_path=output_path
+                    output_dir=seed_dir
                 )
+                # Move generated file to expected path
+                if result.get("success"):
+                    generated = list(Path(seed_dir).glob("*.*"))
+                    if generated:
+                        import shutil
+                        shutil.move(str(generated[0]), output_path)
+                    shutil.rmtree(seed_dir, ignore_errors=True)
             elif grok_gen:
                 result = grok_gen.generate(
                     prompt=prompt,
@@ -143,7 +152,7 @@ def run_seed_bracket(prompt: str, seeds: list, tier: str = "standard",
             else:
                 result = None
 
-            if result and os.path.exists(output_path):
+            if os.path.exists(output_path):
                 file_size = os.path.getsize(output_path)
                 print(f"OK ({file_size / 1024:.0f} KB)")
                 results.append({"seed": seed, "path": output_path, "size": file_size})

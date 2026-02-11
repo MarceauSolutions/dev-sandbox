@@ -89,7 +89,7 @@ def list_voices():
         print("ERROR: requests required. Run: pip install requests")
         sys.exit(1)
 
-    response = requests.get(f"{RESEMBLE_API_BASE}/voices", headers=_headers(), timeout=30)
+    response = requests.get(f"{RESEMBLE_API_BASE}/voices?page=1&page_size=50", headers=_headers(), timeout=30)
 
     if response.status_code == 200:
         data = response.json()
@@ -149,7 +149,7 @@ def generate_speech(text: str, voice_uuid: str = None, output_path: str = None):
 
     # If no voice UUID, try to get first available voice
     if not voice_uuid:
-        resp = requests.get(f"{RESEMBLE_API_BASE}/voices", headers=_headers(), timeout=30)
+        resp = requests.get(f"{RESEMBLE_API_BASE}/voices?page=1&page_size=50", headers=_headers(), timeout=30)
         if resp.status_code == 200:
             data = resp.json()
             voices = data.get("items", []) if isinstance(data, dict) else data

@@ -1,0 +1,192 @@
+{
+  "name": "SMS-Response-Handler-v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sms-response",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Twilio Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        304
+      ],
+      "webhookId": "4d4b17ac-ca64-4418-93bc-6a3c65df7828"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "phone",
+              "name": "phone",
+              "value": "={{ $json.From }}",
+              "type": "string"
+            },
+            {
+              "id": "message",
+              "name": "message",
+              "value": "={{ $json.Body }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "numMedia",
+              "name": "numMedia",
+              "value": "={{ $json.NumMedia || '0' }}",
+              "type": "string"
+            },
+            {
+              "id": "mediaUrl0",
+              "name": "mediaUrl0",
+              "value": "={{ $json.MediaUrl0 || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "mediaType0",
+              "name": "mediaType0",
+              "value": "={{ $json.MediaContentType0 || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "mediaUrl1",
+              "name": "mediaUrl1",
+              "value": "={{ $json.MediaUrl1 || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "mediaType1",
+              "name": "mediaType1",
+              "value": "={{ $json.MediaContentType1 || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "messageSid",
+              "name": "messageSid",
+              "value": "={{ $json.MessageSid }}",
+              "type": "string"
+            },
+            {
+              "id": "to",
+              "name": "to",
+              "value": "={{ $json.To }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-data",
+      "name": "Extract SMS Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response></Response>",
+        "options": {}
+      },
+      "id": "respond-twilio",
+      "name": "Respond to Twilio",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  const phone = data.phone || 'Unknown';\n  const message = data.message || '';\n  const numMedia = parseInt(data.numMedia || '0', 10);\n  const messageSid = data.messageSid || '';\n\n  let notification = '';\n\n  if (numMedia > 0) {\n    const media = [];\n    for (let i = 0; i < Math.min(numMedia, 5); i++) {\n      const url = data['mediaUrl' + i] || '';\n      const type = data['mediaType' + i] || '';\n      if (url) media.push({ url, type });\n    }\n\n    const hasPhoto = media.some(m => m.type.startsWith('image/'));\n    const hasVoice = media.some(m => m.type.startsWith('audio/'));\n    const hasVideo = media.some(m => m.type.startsWith('video/'));\n\n    let icon = '\ud83d\udcce';\n    let label = 'MEDIA';\n    if (hasPhoto && hasVoice) { icon = '\ud83d\udcf8\ud83c\udfa4'; label = 'PHOTO + VOICE'; }\n    else if (hasPhoto) { icon = '\ud83d\udcf8'; label = 'PHOTO'; }\n    else if (hasVoice) { icon = '\ud83c\udfa4'; label = 'VOICE CLIP'; }\n    else if (hasVideo) { icon = '\ud83c\udfac'; label = 'VIDEO'; }\n\n    notification += icon + ' ' + label + ' RECEIVED\\n\\n';\n    notification += 'From: ' + phone + '\\n';\n    if (message) notification += 'Text: ' + message + '\\n';\n    notification += '\\nMedia (' + numMedia + '):\\n';\n    media.forEach(function(m) {\n      notification += '  ' + m.type + '\\n  ' + m.url + '\\n';\n    });\n    notification += '\\nSID: ' + messageSid;\n  } else {\n    notification += '\ud83d\udcac SMS RECEIVED\\n\\n';\n    notification += 'From: ' + phone + '\\n';\n    notification += 'Text: ' + message + '\\n';\n    notification += '\\nSID: ' + messageSid;\n  }\n\n  results.push({\n    json: {\n      notification: notification,\n      phone: phone,\n      message: message,\n      numMedia: numMedia,\n      messageSid: messageSid\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "process-inbound",
+      "name": "Process Inbound",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "={{ $json.notification }}",
+        "additionalFields": {}
+      },
+      "id": "notify-william",
+      "name": "Notify William",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        420
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Twilio Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract SMS Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract SMS Data": {
+      "main": [
+        [
+          {
+            "node": "Respond to Twilio",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Process Inbound",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Inbound": {
+      "main": [
+        [
+          {
+            "node": "Notify William",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  }
+}

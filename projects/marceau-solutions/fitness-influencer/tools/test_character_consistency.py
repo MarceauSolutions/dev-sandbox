@@ -123,38 +123,43 @@ def generate_batch(prompt: str, count: int, tier: str = "standard",
     results = []
     total_cost = 0.0
 
-    for i in range(count):
-        output_path = os.path.join(output_dir, f"character_{i+1:02d}.png")
-        print(f"\n  Generating {i+1}/{count}...")
-
-        if use_router:
-            try:
-                tier_enum = ImageQualityTier(tier)
-                result = router.generate_image(
-                    prompt=prompt,
-                    tier=tier_enum,
-                    output_path=output_path
-                )
-                if result and os.path.exists(output_path):
-                    file_size = os.path.getsize(output_path)
-                    print(f"    Saved: {output_path} ({file_size / 1024:.1f} KB)")
-                    results.append(output_path)
-                    # Try to get cost from router
-                    if hasattr(result, "get"):
-                        total_cost += result.get("cost", 0)
-                else:
-                    print(f"    FAILED: No output generated")
-            except Exception as e:
-                print(f"    ERROR: {e}")
-        else:
-            # Direct Grok fallback
+    if use_router:
+        try:
+            tier_enum = ImageQualityTier(tier)
+            print(f"\n  Generating {count} images via router...")
+            result = router.generate_images(
+                prompt=prompt,
+                count=count,
+                tier=tier_enum,
+                output_dir=output_dir
+            )
+            if result.get("success"):
+                total_cost = result.get("cost", 0)
+                # Find generated images in output dir
+                for f in sorted(Path(output_dir).glob("*.png")):
+                    file_size = f.stat().st_size
+                    print(f"    Saved: {f} ({file_size / 1024:.1f} KB)")
+                    results.append(str(f))
+                if not results:
+                    # Check for other image formats
+                    for ext in ("*.jpg", "*.jpeg", "*.webp"):
+                        for f in sorted(Path(output_dir).glob(ext)):
+                            results.append(str(f))
+            else:
+                print(f"    FAILED: {result.get('error', 'Unknown error')}")
+        except Exception as e:
+            print(f"    ERROR: {e}")
+    else:
+        for i in range(count):
+            output_path = os.path.join(output_dir, f"character_{i+1:02d}.png")
+            print(f"\n  Generating {i+1}/{count}...")
             try:
                 from grok_image_gen import GrokImageGenerator
                 gen = GrokImageGenerator()
                 result = gen.generate(prompt=prompt, output_path=output_path)
                 if result:
                     results.append(output_path)
-                    total_cost += 0.07  # Grok cost estimate
+                    total_cost += 0.07
             except ImportError:
                 print("    ERROR: Neither router nor grok_image_gen available")
                 break
