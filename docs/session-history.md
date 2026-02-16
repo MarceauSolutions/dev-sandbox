@@ -4,6 +4,50 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-02-15/16: Agent Infrastructure Upgrade — Mem0, Task Classifier, PR Reviews, Ralph v2 PRD
+
+**Context:** Major agent tooling upgrade across all three agents (Claude Code, Clawdbot, Ralph). Implemented cutting-edge AI dev tools after deep research.
+
+### What Was Built
+
+1. **Mem0 Shared Memory** (EC2:5020) — Cross-agent memory via REST API
+   - ChromaDB + HuggingFace embeddings + Anthropic Haiku LLM
+   - Fixed Mem0's temperature+top_p bug with `_get_common_params` monkey-patch
+   - Systemd service: `mem0-api.service`, client library: `execution/mem0_client.py`
+
+2. **Haiku Task Classifier** (`execution/task_classifier.py`) — Auto-routes tasks
+   - 0-4 → Clawdbot, 5-7 → Agent Team/Claude Code, 8-10 → Ralph
+   - ~$0.001/classification, tested with 3 sample tasks
+
+3. **Qodo Merge PR-Agent** (`.github/workflows/pr-agent.yml`) — Automated PR reviews
+   - Uses Claude Sonnet via Anthropic key (set as GitHub secret)
+   - Auto-describe, auto-review, auto-improve on every PR
+
+4. **AI Monitoring** (`execution/ai_monitoring.py`) — Langfuse + Helicone
+   - Langfuse keys configured in `.env` (cloud.langfuse.com, org: Marceausolutions)
+   - Helicone key configured in `.env`
+
+5. **Ralph v2 PRD** (`ralph/RALPH-V2-PRD.md`) — 897 lines, 36 stories, 4 phases
+   - Rebuild on Claude Agent SDK, Mem0 integration, self-healing, queue management
+
+6. **Agent Teams** enabled via `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+7. **Handoff System** (`.claude/commands/handoff.md`) — `/handoff` slash command
+
+### Previous Session (same chain)
+- Context7 MCP added to `~/.claude.json`
+- n8n GitHub Push → Telegram notification workflow (ID: `BsoplLFe1brLCBof`)
+- Telegram MCP configured with API credentials
+- Coaching tracker Google Sheet created
+
+### What's Next
+- Sign up for Helicone dashboard (key already in .env, explore the UI)
+- Start Ralph v2 Phase 1 implementation (Claude Agent SDK core loop)
+- Create first PR to test Qodo Merge auto-review
+- Explore Langfuse dashboard — traces should appear when monitoring is used
+
+---
+
 ## 2026-02-04: Fitness Influencer Content Pipeline + Social Media Automation + EC2 Sync
 
 **Context:** Extended fitness influencer project with peptide video production workflow, enhanced social media automation with peptide content generator, updated n8n EC2 documentation, and synced all progress to GitHub.
