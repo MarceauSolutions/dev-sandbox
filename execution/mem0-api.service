@@ -1,0 +1,25 @@
+[Unit]
+Description=Mem0 Agent Memory API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/dev-sandbox
+Environment="PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+EnvironmentFile=/home/ubuntu/dev-sandbox/.env
+ExecStart=/usr/bin/python3 -m execution.mem0_api --host 127.0.0.1 --port 5020
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mem0-api
+
+# Resource limits (important for low-memory EC2)
+MemoryMax=400M
+MemoryHigh=300M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

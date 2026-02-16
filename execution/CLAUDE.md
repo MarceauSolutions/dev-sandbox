@@ -47,6 +47,8 @@ Is this script used by 2+ projects?
 
 ### Infrastructure
 - **`agent_bridge_api.py`** - n8n Agent Orchestrator Python Bridge (runs on EC2 localhost:5010)
+- **`mem0_api.py`** - AI Memory REST API for all 3 agents (runs on EC2 localhost:5020)
+- **`mem0_client.py`** - Python client library for Mem0 API
 - **`deploy_to_skills.py`** - Deployment script for all projects
 - **`secrets_manager.py`** + **`security_scanner.py`** + **`mcp_security.py`** - Security utilities
 - **`revenue_analytics.py`** - Cross-project revenue tracking
@@ -62,6 +64,7 @@ Is this script used by 2+ projects?
 - When promoting a script: move file, update imports in all consuming projects, test
 - Multi-provider routers track per-provider costs and rate limits with 30-day history
 - `agent_bridge_api.py` is the Python Bridge for n8n on EC2 (v5.1-Ultra, 200+ endpoints)
+- `mem0_api.py` is the AI Memory layer for Claude Code, Clawdbot, and Ralph (localhost:5020)
 - All scripts read credentials from root `.env` via `python-dotenv`
 
 ## Relevant SOPs
