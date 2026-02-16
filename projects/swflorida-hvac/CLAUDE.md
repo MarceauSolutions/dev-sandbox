@@ -12,8 +12,7 @@ Client of Marceau Solutions. HVAC services company in Southwest Florida.
 
 ## Deployment
 
-Website deploys automatically via GitHub Actions when files in `website/` change on main.
-Deploy repo: `MarceauSolutions/swflorida-comfort-hvac` (GitHub Pages).
+Website: `./scripts/deploy_website.sh hvac` → pushes to `MarceauSolutions/swflorida-comfort-hvac` (GitHub Pages).
 
 ## Shared Tools Used
 

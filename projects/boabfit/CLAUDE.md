@@ -11,5 +11,4 @@ Client of Marceau Solutions. Shower spray / fitness product company.
 
 ## Deployment
 
-Website deploys automatically via GitHub Actions when files in `website/` change on main.
-Deploy repo: `MarceauSolutions/boabfit-website` (GitHub Pages).
+Website: `./scripts/deploy_website.sh boabfit` → pushes to `MarceauSolutions/boabfit-website` (GitHub Pages).

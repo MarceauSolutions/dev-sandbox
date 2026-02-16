@@ -10,5 +10,4 @@ Client of Marceau Solutions. Candle / lifestyle brand.
 
 ## Deployment
 
-Website deploys automatically via GitHub Actions when files in `website/` change on main.
-Deploy repo: `MarceauSolutions/flames-of-passion-website` (GitHub Pages).
+Website: `./scripts/deploy_website.sh flames` → pushes to `MarceauSolutions/flames-of-passion-website` (GitHub Pages).
