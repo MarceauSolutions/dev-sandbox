@@ -13,7 +13,7 @@
 ## Critical Rules (Always Enforced)
 
 1. **Check existing tools BEFORE creating new ones** — Run: `python scripts/inventory.py search <keyword>`
-2. **Never nest git repos** — `find . -name ".git" -type d` should only show `./.git`
+2. **Never nest git repos** — `find . -name ".git" \( -type d -o -type f \)` should only show `./.git`
 3. **Test before committing** — New `.py` files must at minimum pass syntax check. Pre-commit hook enforces this.
 4. **DOE discipline** — Directive must exist before deploying. Never deploy untested code.
 5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
@@ -37,7 +37,7 @@
 | Search tools | `python scripts/inventory.py search <keyword>` |
 | List projects | `python scripts/inventory.py list` |
 | List scripts | `python scripts/inventory.py scripts` |
-| Check nested repos | `find . -name ".git" -type d` |
+| Check nested repos | `find . -name ".git" \( -type d -o -type f \)` |
 | Deploy | `python deploy_to_skills.py --project <name> --version X.Y.Z` |
 
 ## Communication Patterns
@@ -85,11 +85,23 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 │   ├── sops/                   # Individual SOP files (loaded on-demand)
 │   └── archive/                # Old/superseded docs
 ├── projects/
-│   ├── marceau-solutions/      # Company-specific projects
-│   │   ├── pt-business/        # PT coaching business hub (ops, legal, content, planning)
-│   │   ├── fitness-influencer/ # AI content platform (product code only)
-│   │   ├── amazon-seller/      # SP-API seller tools
+│   ├── marceau-solutions/      # Our company (owner)
+│   │   ├── website/            # marceausolutions.com (static HTML)
+│   │   ├── pt-business/        # PT coaching business hub
+│   │   ├── fitness-influencer/ # AI content platform (product code)
+│   │   ├── website-builder/    # AI website generation service
+│   │   ├── portfolio/          # Demo showcases for clients
 │   │   └── ...
+│   ├── swflorida-hvac/         # Client: SW Florida Comfort HVAC
+│   │   ├── website/            # Client website (static HTML)
+│   │   └── ...
+│   ├── boabfit/                # Client: BoabFit (shower spray)
+│   │   ├── website/            # Client website
+│   │   └── research/           # Market analysis
+│   ├── flames-of-passion/      # Client: Flames of Passion (candles)
+│   │   └── website/            # Client website
+│   ├── square-foot-shipping/   # Client: Square Foot Shipping
+│   │   └── lead-gen/           # Lead generation
 │   ├── shared/                 # Multi-tenant tools (2+ companies)
 │   │   ├── lead-scraper/       # Lead scraping + SMS campaigns
 │   │   ├── personal-assistant/ # Morning digest, calendar, routines
@@ -110,6 +122,7 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 | Skills (dev-sandbox Claude) | `~/production/[name]-prod/` | `docs/sops/sop-03-deployment.md` |
 | AI Assistants (standalone) | `~/ai-assistants/[name]/` | `docs/sops/sop-31-ai-assistant.md` |
 | MCP Packages | PyPI + MCP Registry | `docs/sops/sop-11-mcp-structure.md` through `sop-14` |
+| Client Websites | GitHub Pages (auto via Actions) | `.github/workflows/deploy-websites.yml` |
 
 ## Three-Agent Model
 

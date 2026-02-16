@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peptides | William Marceau - Evidence-Based Peptide Guidance</title>
+    <meta name="description" content="Cutting through the peptide hype with science. FDA-approved peptide protocols with physician oversight. Tesamorelin, GH secretagogues, and more.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Peptides | William Marceau">
+    <meta property="og:description" content="Evidence-based peptide guidance with physician oversight. No bro science.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/peptides">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --warning: #ef4444;
+            --dark: #0f172a;
+            --darker: #020617;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: var(--dark) !important;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            color: white !important;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            max-width: 80%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 5rem 2rem 2rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-links li {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu-links a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: var(--primary);
+            margin: 1rem 0;
+            opacity: 0.3;
+        }
+
+        .mobile-menu-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-links .business-link a {
+            color: var(--accent, #f59e0b);
+        }
+
+        .mobile-menu-cta {
+            margin-top: 2rem;
+        }
+
+        .mobile-menu-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Hero */
+        .page-hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center right, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+        }
+
+        .page-hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Section Container */
+        .section-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* What Are Peptides Section */
+        .what-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .what-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .what-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .what-text p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .evidence-spectrum {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .evidence-spectrum h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .spectrum-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .spectrum-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .spectrum-strong {
+            background: var(--primary);
+            flex: 1;
+        }
+
+        .spectrum-moderate {
+            background: var(--accent);
+            flex: 1;
+        }
+
+        .spectrum-weak {
+            background: var(--warning);
+            flex: 1;
+        }
+
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .compound-list {
+            margin-top: 1.5rem;
+        }
+
+        .compound-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .compound-item:last-child {
+            border-bottom: none;
+        }
+
+        .compound-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .compound-dot.strong { background: var(--primary); }
+        .compound-dot.moderate { background: var(--accent); }
+        .compound-dot.weak { background: var(--warning); }
+
+        .compound-info {
+            flex: 1;
+        }
+
+        .compound-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .compound-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* My Approach Section */
+        .approach-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .approach-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .approach-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .approach-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .approach-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(59, 130, 246, 0.2));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .approach-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .approach-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Doctor Partnership Section */
+        .partnership-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
+        }
+
+        .partnership-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .partnership-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .partnership-text h2 .highlight {
+            color: var(--primary);
+        }
+
+        .partnership-text > p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+
+        .fda-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .fda-badge .icon {
+            font-size: 1.25rem;
+        }
+
+        .fda-badge span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .approved-compounds {
+            list-style: none;
+        }
+
+        .approved-compounds li {
+            display: flex;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .compound-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .compound-details h4 {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .compound-details p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .process-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+        }
+
+        .process-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .process-card h3 .badge {
+            background: var(--primary);
+            color: var(--dark);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .process-steps {
+            list-style: none;
+        }
+
+        .process-steps li {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .process-steps li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            color: var(--dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Framework Section */
+        .framework-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .framework-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .framework-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .framework-card.consider {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .framework-card.holdoff {
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .framework-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .framework-card.consider h3 {
+            color: var(--primary);
+        }
+
+        .framework-card.holdoff h3 {
+            color: var(--warning);
+        }
+
+        .framework-card ul {
+            list-style: none;
+        }
+
+        .framework-card li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .framework-card.consider li .check {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .framework-card.holdoff li .x {
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Video Embed Section */
+        .video-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .video-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .video-container > p {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .video-placeholder {
+            aspect-ratio: 16/9;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .video-placeholder .play-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .video-placeholder p {
+            color: var(--text-muted);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .disclaimer-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer-box h4 {
+            color: var(--warning);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .disclaimer-box p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .copyright {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .what-content,
+            .partnership-content,
+            .framework-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .approach-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .page-hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">WILLIAM MARCEAU</a>
+            <ul class="nav-links">
+                <li><a href="/coaching.html">Coaching</a></li>
+                <li><a href="/peptides.html" class="active">Peptides</a></li>
+                <li><a href="/about.html">My Story</a></li>
+                <li><a href="/programs.html">Programs</a></li>
+                <li><a href="/for-influencers.html">For Influencers</a></li>
+                <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu">
+        <ul class="mobile-menu-links">
+            <li><a href="/coaching.html">Coaching</a></li>
+            <li><a href="/peptides.html">Peptides</a></li>
+            <li><a href="/programs.html">Programs</a></li>
+            <li><a href="/about.html">My Story</a></li>
+            <li><a href="/for-influencers.html">For Influencers</a></li>
+        </ul>
+        <div class="mobile-menu-divider"></div>
+        <p class="mobile-menu-section">Business Services</p>
+        <ul class="mobile-menu-links">
+            <li class="business-link"><a href="/ai-automation.html">AI Automation</a></li>
+        </ul>
+        <div class="mobile-menu-cta">
+            <a href="/contact.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-container">
+            <div class="page-hero-badge">
+                <span>Evidence-Based Peptide Guidance</span>
+            </div>
+            <h1>Peptides: <span class="highlight">Cutting Through the Hype</span></h1>
+            <p>Most peptide information online is either overhyped marketing or sketchy gray market advice. I take a different approach: work with physicians, use FDA-approved compounds, and track everything.</p>
+        </div>
+    </section>
+
+    <!-- What Are Peptides -->
+    <section class="what-section">
+        <div class="section-container">
+            <div class="what-content">
+                <div class="what-text">
+                    <h2>What Are Peptides?</h2>
+                    <p>Peptides are short chains of amino acids that act as signaling molecules in your body. Some can influence growth hormone, recovery, sleep, and body composition.</p>
+                    <p>But here's the thing: <strong>not all peptides are created equal</strong>. The evidence varies wildly from compound to compound. Some have decades of clinical research. Others have basically zero human data.</p>
+                    <p>My job is to help you understand the difference and make informed decisions with physician oversight.</p>
+                </div>
+                <div class="evidence-spectrum">
+                    <h3>The Evidence Spectrum</h3>
+                    <div class="spectrum-bar">
+                        <div class="spectrum-segment spectrum-strong">Strong</div>
+                        <div class="spectrum-segment spectrum-moderate">Moderate</div>
+                        <div class="spectrum-segment spectrum-weak">Weak/None</div>
+                    </div>
+                    <div class="spectrum-labels">
+                        <span>FDA-Approved</span>
+                        <span>Research Phase</span>
+                        <span>Anecdotal Only</span>
+                    </div>
+                    <div class="compound-list">
+                        <div class="compound-item">
+                            <span class="compound-dot strong"></span>
+                            <div class="compound-info">
+                                <span class="compound-name">Tesamorelin</span>
+                                <span class="compound-desc">FDA-approved, extensive clinical data</span>
+                            </div>
+                        </div>
+                        <div class="compound-item">
+                            <span class="compound-dot strong"></span>
+                            <div class="compound-info">
+                                <span class="compound-name">GH Secretagogues</span>
+                                <span class="compound-desc">Physician-supervised, clinical studies</span>
+                            </div>
+                        </div>
+                        <div class="compound-item">
+                            <span class="compound-dot moderate"></span>
+                            <div class="compound-info">
+                                <span class="compound-name">BPC-157</span>
+                                <span class="compound-desc">Animal studies, limited human data</span>
+                            </div>
+                        </div>
+                        <div class="compound-item">
+                            <span class="compound-dot weak"></span>
+                            <div class="compound-info">
+                                <span class="compound-name">"Research" Peptides</span>
+                                <span class="compound-desc">Gray market, minimal/no human data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Approach -->
+    <section class="approach-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>My Approach to Peptides</h2>
+                <p>No bro science. No gray market sketchy stuff. Just evidence-based decisions with professional oversight.</p>
+            </div>
+            <div class="approach-grid">
+                <div class="approach-card">
+                    <div class="approach-icon">📊</div>
+                    <h3>Evidence First</h3>
+                    <p>I only work with compounds that have clinical data behind them. If the research isn't there, I won't recommend it.</p>
+                </div>
+                <div class="approach-card">
+                    <div class="approach-icon">👨‍⚕️</div>
+                    <h3>Physician Partnership</h3>
+                    <p>Every client works directly with licensed physicians. I coordinate, educate, and support - doctors prescribe.</p>
+                </div>
+                <div class="approach-card">
+                    <div class="approach-icon">🔬</div>
+                    <h3>Track Everything</h3>
+                    <p>Baseline labs, ongoing monitoring, and measurable outcomes. If we can't measure it, we can't optimize it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Doctor Partnership -->
+    <section class="partnership-section">
+        <div class="section-container">
+            <div class="partnership-content">
+                <div class="partnership-text">
+                    <h2>The <span class="highlight">Physician Partnership</span></h2>
+                    <p>Unlike gray market peptide "coaches," I work with licensed physicians who can legally prescribe FDA-approved compounds. This means real medical oversight, proper lab work, and legal, pharmaceutical-grade products.</p>
+
+                    <div class="fda-badge">
+                        <span class="icon">✓</span>
+                        <span>FDA-Approved Compounds Only</span>
+                    </div>
+
+                    <ul class="approved-compounds">
+                        <li>
+                            <div class="compound-icon">💊</div>
+                            <div class="compound-details">
+                                <h4>Tesamorelin (Egrifta)</h4>
+                                <p>FDA-approved GHRH analog with the most clinical data. Originally approved for HIV-associated lipodystrophy, studied for body composition benefits.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="compound-icon">⚡</div>
+                            <div class="compound-details">
+                                <h4>GH Secretagogues</h4>
+                                <p>Physician-supervised protocols that stimulate natural growth hormone release. Requires proper monitoring and titration.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="process-card">
+                    <h3>How It Works <span class="badge">5-Step Process</span></h3>
+                    <ul class="process-steps">
+                        <li>
+                            <span class="step-number">1</span>
+                            <div class="step-content">
+                                <h4>Initial Consultation</h4>
+                                <p>We discuss your goals, health history, and whether peptides make sense for you. Many people don't need them.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">2</span>
+                            <div class="step-content">
+                                <h4>Joint Call with Physician</h4>
+                                <p>Synchronous meeting with me and a licensed doctor to review your case. I educate, they evaluate.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">3</span>
+                            <div class="step-content">
+                                <h4>Lab Work & Baseline</h4>
+                                <p>Comprehensive blood panels before starting any protocol. IGF-1, metabolic panel, lipids, and more.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">4</span>
+                            <div class="step-content">
+                                <h4>Personalized Protocol</h4>
+                                <p>If appropriate, FDA-approved peptides prescribed by the physician. Pharmaceutical grade, legal, legitimate.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="step-number">5</span>
+                            <div class="step-content">
+                                <h4>Ongoing Monitoring</h4>
+                                <p>Regular check-ins, follow-up labs, and protocol adjustments. Optimization is a process, not an event.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who Is This For -->
+    <section class="framework-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Is This Right for You?</h2>
+                <p>Peptides aren't for everyone. Here's my honest framework for deciding.</p>
+            </div>
+            <div class="framework-grid">
+                <div class="framework-card consider">
+                    <h3>✓ Consider It If...</h3>
+                    <ul>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You've already optimized the basics (sleep, nutrition, training, stress)</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You're over 30 and noticing recovery decline despite good habits</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You want to work with physicians, not gray market sources</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You're committed to regular lab work and monitoring</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You understand this is optimization, not a magic bullet</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span>You have realistic expectations about outcomes</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="framework-card holdoff">
+                    <h3>✗ Hold Off If...</h3>
+                    <ul>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>Your sleep, nutrition, or training are still inconsistent</span>
+                        </li>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>You're looking for a shortcut or "magic" solution</span>
+                        </li>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>You're under 25-30 with naturally optimized hormones</span>
+                        </li>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>You have unaddressed health conditions or contraindications</span>
+                        </li>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>You're not willing to invest in proper medical oversight</span>
+                        </li>
+                        <li>
+                            <span class="x">✗</span>
+                            <span>You want to use research chemicals from random sources</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="video-container">
+            <h2>Watch: Peptides Explained</h2>
+            <p>A deep dive into what peptides are, how they work, and how to think about them rationally.</p>
+            <div class="video-placeholder">
+                <!-- Replace with YouTube embed when video is published -->
+                <div class="play-icon">▶</div>
+                <p>Video coming soon</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to Learn More?</h2>
+            <p>Schedule a consultation to discuss your goals and whether peptides might be right for you. No pressure, just honest conversation.</p>
+            <div class="cta-buttons">
+                <a href="/contact.html" class="btn btn-primary">Schedule Peptide Consultation</a>
+                <a href="/coaching.html" class="btn btn-secondary">Explore Coaching Programs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">My Story</a>
+                <a href="/blog.html">Blog</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+                <a href="https://twitter.com/wmarceau" target="_blank">@wmarceau</a>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <div class="disclaimer-box">
+                <h4>Medical Disclaimer</h4>
+                <p>This website is for educational and informational purposes only and does not constitute medical advice, diagnosis, or treatment. The information provided should not be used as a substitute for professional medical advice. Always consult with a licensed healthcare provider before starting any supplement, medication, or peptide protocol. Individual results may vary. Never use research chemicals or gray market products. William Marceau is not a physician and does not prescribe medications - all prescriptions come from licensed physicians.</p>
+            </div>
+            <p class="copyright">&copy; 2026 William Marceau. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.mobile-menu').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>

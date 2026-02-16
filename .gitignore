@@ -32,6 +32,10 @@ wheels/
 .installed.cfg
 *.egg
 
+# Node.js
+node_modules/
+package-lock.json
+
 # Virtual environments
 venv/
 env/

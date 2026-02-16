@@ -165,7 +165,7 @@
         "README updated if needed"
       ],
       "files_to_create": [],
-      "files_to_modify": ["projects/Go-Tracker/README.md"],
+      "files_to_modify": ["projects/product-ideas/go-tracker/README.md"],
       "passes": false,
       "dependencies": [],
       "checkpoint": false

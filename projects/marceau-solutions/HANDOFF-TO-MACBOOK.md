@@ -78,7 +78,7 @@ I defaulted to 8:30 AM start. If you prefer different:
 | Project | Location | Status |
 |---------|----------|--------|
 | Lead Scraper | `projects/shared/lead-scraper/` | Ready to deploy |
-| AutoInsure Saver | `projects/insurance-savings-app/` | MVP needs polish |
+| AutoInsure Saver | `projects/product-ideas/insurance-savings-app/` | MVP needs polish |
 | Sora 2 | Check DOCKET.md for promo codes | Integration needed |
 | Campaign Dashboard | `projects/shared/lead-scraper/campaign_dashboard.py` | Partially built |
 | YouTube Shorts | `projects/marceau-solutions/youtube-creator/` | Needs scheduler |

@@ -48,7 +48,8 @@ def main():
             {"name": "🎯 Marceau Solutions", "path": "projects/marceau-solutions"},
             {"name": "❄️ SW Florida HVAC", "path": "projects/swflorida-hvac"},
             {"name": "📦 Square Foot Shipping", "path": "projects/square-foot-shipping"},
-            {"name": "🔧 Global Utilities", "path": "projects/global-utility"},
+            {"name": "🧴 BoabFit", "path": "projects/boabfit"},
+            {"name": "🕯️ Flames of Passion", "path": "projects/flames-of-passion"},
             {"name": "💡 Product Ideas", "path": "projects/product-ideas"},
             {"name": "📚 Infrastructure", "path": "."}
         ]

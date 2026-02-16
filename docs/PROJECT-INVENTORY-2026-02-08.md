@@ -76,14 +76,14 @@
 
 | Project | Description | Readiness | Recommended Action |
 |---------|-------------|-----------|-------------------|
-| Go-Tracker | Go game tracker | ⚠️ Personal | iOS app - keep |
-| boabfit-market-analysis | Market research | ✅ Research | Keep as reference |
-| boabfit-website | BoabFit site | ✅ Static | Just HTML files, minimal |
-| insurance-savings-app | Insurance calc | ✅ Has PRD | Full src/, PRD.md exists, needs testing |
-| portfolio | Portfolio site | ⚠️ Evaluate | Check completion |
-| product-ideas | Idea storage | ✅ Keep | Reference only |
-| square-foot-shipping | Shipping biz | ⚠️ Minimal | Just README and lead-gen folder |
-| swflorida-hvac | HVAC business | ⚠️ Evaluate | Check completion |
+| product-ideas/go-tracker | Go game tracker | ⚠️ Personal | iOS app - keep |
+| boabfit/ | BoabFit client (website + research) | ✅ Static | Consolidated client namespace |
+| product-ideas/insurance-savings-app | Insurance calc | ✅ Has PRD | Full src/, PRD.md exists, needs testing |
+| marceau-solutions/portfolio | Portfolio demos | ⚠️ Evaluate | Check completion |
+| product-ideas/ | Idea storage | ✅ Keep | Reference only |
+| square-foot-shipping/ | Shipping client | ⚠️ Minimal | Just README and lead-gen folder |
+| swflorida-hvac/ | HVAC client (website + tools) | ✅ Active | Website + hvac-mcp + distributors |
+| flames-of-passion/ | Candle brand client (website) | ✅ Static | Promoted from client-sites/ |
 
 ---
 

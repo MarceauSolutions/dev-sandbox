@@ -1,6 +1,0 @@
-[submodule "projects/marceau-solutions/website"]
-	path = projects/marceau-solutions/website
-	url = https://github.com/MarceauSolutions/marceausolutions.com
-[submodule "projects/swflorida-hvac/website"]
-	path = projects/swflorida-hvac/website
-	url = https://github.com/MarceauSolutions/swflorida-comfort-hvac

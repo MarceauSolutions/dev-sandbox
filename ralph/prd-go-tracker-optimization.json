@@ -7,7 +7,7 @@
       "title": "Code review and bug analysis",
       "description": "Review App.js for potential bugs, edge cases, and code quality issues.",
       "acceptanceCriteria": [
-        "Read projects/go-tracker/GoTracker/App.js thoroughly",
+        "Read projects/product-ideas/go-tracker/GoTracker/App.js thoroughly",
         "Identify any potential bugs or crashes",
         "Check for memory leaks (useEffect cleanup, subscriptions)",
         "Check for edge cases in GPS tracking",

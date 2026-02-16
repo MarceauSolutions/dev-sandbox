@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | William Marceau</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.svg">
+
+    <!-- Google Analytics GA4 -->
+    <!-- TODO: Replace G-XXXXXXXXXX with real Measurement ID from analytics.google.com -->
+    <!-- To activate: Uncomment the lines below after obtaining your GA4 Measurement ID -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --dark: #0f172a;
+            --darker: #020617;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            opacity: 0.7;
+            font-size: 1rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(34, 197, 94, 0.3);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem 0;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .highlight-box h4 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            opacity: 0.6;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .contact-box h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .contact-box p {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-box a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+        </a>
+
+        <div class="header">
+            <div class="logo">WILLIAM MARCEAU</div>
+            <h1>Terms of Service</h1>
+            <p class="subtitle">Last Updated: January 20, 2026</p>
+        </div>
+
+        <div class="content-card">
+            <h2>1. Agreement to Terms</h2>
+            <p>By accessing or using Marceau Solutions' services, including our AI automation tools, website development, and consulting services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>2. Services Description</h2>
+            <p>Marceau Solutions provides AI-powered business automation services, including but not limited to:</p>
+            <ul>
+                <li><strong>Voice AI:</strong> 24/7 call answering and routing systems</li>
+                <li><strong>Lead Capture:</strong> Automated form handling and lead management</li>
+                <li><strong>Follow-Up Automation:</strong> Email and SMS sequence automation</li>
+                <li><strong>CRM Integration:</strong> Connection with ClickUp and other business tools</li>
+                <li><strong>Website Development:</strong> Professional websites with automation built-in</li>
+                <li><strong>Custom AI Solutions:</strong> Tailored automation for specific business needs</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2>3. Payment Terms</h2>
+
+            <h3>3.1 Setup Fees</h3>
+            <p>One-time setup fees are payable as follows:</p>
+            <ul>
+                <li><strong>50% deposit</strong> due upon project acceptance to begin work</li>
+                <li><strong>50% balance</strong> due at project launch before final delivery</li>
+            </ul>
+
+            <h3>3.2 Retainer Services</h3>
+            <p>Monthly retainer fees are billed in advance on the 1st of each month. Late payments may result in service suspension after 5 days past due.</p>
+
+            <h3>3.3 Refund Policy</h3>
+            <p>Setup fees are non-refundable once work has commenced. Retainer fees are refundable on a pro-rata basis if you cancel within the first 30 days of service.</p>
+
+            <h3>3.4 Price Changes</h3>
+            <p>We reserve the right to modify pricing with 30 days' notice. Existing contracts will honor the original pricing until renewal.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>4. Service Level & Warranties</h2>
+
+            <h3>4.1 Warranty Period</h3>
+            <ul>
+                <li><strong>Digital Storefront / Automation Starter:</strong> 30-day warranty for bug fixes</li>
+                <li><strong>Growth System / Automation Growth:</strong> 60-day warranty for bug fixes</li>
+                <li><strong>Enterprise Package / Automation Enterprise:</strong> 90-day warranty for bug fixes</li>
+            </ul>
+
+            <h3>4.2 What's Covered</h3>
+            <p>During the warranty period, we will fix bugs and errors in the originally delivered system at no additional charge. This includes:</p>
+            <ul>
+                <li>Code errors preventing intended functionality</li>
+                <li>Integration failures with documented third-party services</li>
+                <li>Performance issues not caused by external factors</li>
+            </ul>
+
+            <h3>4.3 What's Not Covered</h3>
+            <p>The warranty does not cover:</p>
+            <ul>
+                <li>New feature requests (considered change orders)</li>
+                <li>Issues caused by third-party service changes (API updates, pricing changes)</li>
+                <li>Problems resulting from unauthorized modifications</li>
+                <li>Downtime due to hosting provider or infrastructure issues</li>
+                <li>Content updates or minor text changes</li>
+            </ul>
+
+            <h3>4.4 Limitation of Warranty</h3>
+            <div class="highlight-box">
+                <h4>Important Notice</h4>
+                <p>Services are provided "as is" without warranties of any kind, express or implied. We do not guarantee uninterrupted service, error-free operation, or specific business results. We are not liable for lost revenue, missed opportunities, or consequential damages.</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>5. Intellectual Property</h2>
+
+            <h3>5.1 Your Content</h3>
+            <p>You retain all rights to content you provide (logos, text, images, business information). By providing content, you grant us a license to use it solely for delivering services to you.</p>
+
+            <h3>5.2 Our Technology</h3>
+            <p>Marceau Solutions retains all rights to our underlying technology, code frameworks, and proprietary systems. You receive a non-exclusive license to use the delivered system for your business.</p>
+
+            <h3>5.3 Third-Party Services</h3>
+            <p>Our services integrate with third-party platforms (Twilio, Google, ClickUp, etc.). You are responsible for maintaining valid accounts and licenses with these providers.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>6. Client Responsibilities</h2>
+            <p>To ensure successful project delivery, you agree to:</p>
+            <ul>
+                <li>Provide timely feedback and approvals (within 5 business days of requests)</li>
+                <li>Supply accurate content, branding materials, and business information</li>
+                <li>Maintain active accounts with required third-party services</li>
+                <li>Test and approve deliverables before final launch</li>
+                <li>Pay invoices on time according to the payment schedule</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h4>Project Delays</h4>
+                <p>Failure to provide timely responses may result in project delays. We are not responsible for missed deadlines caused by delayed client feedback or missing content.</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2>7. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by law:</p>
+            <ul>
+                <li>Marceau Solutions' total liability shall not exceed the amount you paid for services in the 12 months prior to the claim</li>
+                <li>We are not liable for indirect, incidental, special, or consequential damages</li>
+                <li>We are not responsible for third-party service outages, API changes, or pricing increases</li>
+                <li>We are not liable for business losses, lost revenue, or missed opportunities</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2>8. Acceptable Use Policy</h2>
+            <p>You agree not to use our services to:</p>
+            <ul>
+                <li>Violate any applicable laws or regulations</li>
+                <li>Infringe on intellectual property rights of others</li>
+                <li>Transmit malware, viruses, or harmful code</li>
+                <li>Engage in fraudulent or deceptive practices</li>
+                <li>Send unsolicited spam or violate TCPA regulations</li>
+                <li>Harass, abuse, or harm others</li>
+            </ul>
+
+            <p>Violation of this policy may result in immediate service termination without refund.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>9. Termination</h2>
+
+            <h3>9.1 By You</h3>
+            <p>You may terminate retainer services with 30 days' written notice. One-time project fees are non-refundable once work begins.</p>
+
+            <h3>9.2 By Us</h3>
+            <p>We may terminate services immediately if you:</p>
+            <ul>
+                <li>Fail to pay invoices (5 days past due for retainers)</li>
+                <li>Violate these Terms of Service</li>
+                <li>Engage in abusive or harassing behavior toward our team</li>
+            </ul>
+
+            <h3>9.3 Effect of Termination</h3>
+            <p>Upon termination, you will receive:</p>
+            <ul>
+                <li>Access to your completed work (code, website files)</li>
+                <li>Export of your data from our systems</li>
+                <li>Documentation for managing systems independently</li>
+            </ul>
+            <p>Ongoing service costs (hosting, third-party APIs) become your responsibility after termination.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>10. Data & Privacy</h2>
+            <p>Our handling of your personal information is governed by our <a href="privacy.html" style="color: var(--primary);">Privacy Policy</a>, which is incorporated into these terms by reference.</p>
+
+            <p>Key points:</p>
+            <ul>
+                <li>We collect only data necessary to provide services</li>
+                <li>We do not sell your personal information</li>
+                <li>You retain ownership of your business data</li>
+                <li>We comply with GDPR, CCPA, and other privacy regulations</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2>11. Dispute Resolution</h2>
+
+            <h3>11.1 Informal Negotiation</h3>
+            <p>If a dispute arises, you agree to contact us first at <a href="mailto:wmarceau@marceausolutions.com" style="color: var(--primary);">wmarceau@marceausolutions.com</a> to attempt resolution through good-faith negotiation.</p>
+
+            <h3>11.2 Governing Law</h3>
+            <p>These terms are governed by the laws of the State of Florida, United States, without regard to conflict of law provisions.</p>
+
+            <h3>11.3 Jurisdiction</h3>
+            <p>Any legal action must be brought in the state or federal courts located in Collier County, Florida.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>12. Changes to Terms</h2>
+            <p>We may update these Terms of Service from time to time. We will notify you of material changes via:</p>
+            <ul>
+                <li>Email to your registered email address</li>
+                <li>Prominent notice on our website</li>
+            </ul>
+            <p>Continued use of services after changes constitutes acceptance of the updated terms. If you do not agree to changes, you may terminate services as outlined in Section 9.</p>
+        </div>
+
+        <div class="content-card">
+            <h2>13. Miscellaneous</h2>
+
+            <h3>13.1 Entire Agreement</h3>
+            <p>These terms, along with our Privacy Policy and any executed service agreements, constitute the entire agreement between you and Marceau Solutions.</p>
+
+            <h3>13.2 Severability</h3>
+            <p>If any provision of these terms is found to be unenforceable, the remaining provisions will remain in full effect.</p>
+
+            <h3>13.3 No Waiver</h3>
+            <p>Failure to enforce any provision does not constitute a waiver of our right to enforce it in the future.</p>
+
+            <h3>13.4 Assignment</h3>
+            <p>You may not assign or transfer these terms without our written consent. We may assign our rights and obligations to a successor entity.</p>
+        </div>
+
+        <div class="content-card">
+            <div class="contact-box">
+                <h4>Questions About These Terms?</h4>
+                <p><strong>Marceau Solutions LLC</strong><br>
+                Naples, Florida</p>
+                <p>Email: <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a><br>
+                Phone: <a href="tel:+18552399364">+1 (855) 239-9364</a><br>
+                Website: <a href="https://marceausolutions.com">marceausolutions.com</a></p>
+            </div>
+        </div>
+
+        <p class="last-updated">Last Updated: January 20, 2026 • Effective Date: January 20, 2026</p>
+    </div>
+</body>
+</html>

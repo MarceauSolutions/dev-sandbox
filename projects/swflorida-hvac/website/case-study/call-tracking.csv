@@ -1,0 +1,3 @@
+Date,Time,Caller_Phone,Call_Type,AI_Handled,Appointment_Booked,Appointment_DateTime,Estimated_Value,Transferred_to_Bill,Notes
+2026-01-20,09:15,+1-239-555-0100,New_Customer,Yes,Yes,2026-01-22 14:00,$2500,No,AC repair - unit not cooling
+2026-01-20,11:30,+1-239-555-0101,Existing_Customer,Yes,No,,,No,General inquiry about maintenance

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programs & Pricing | William Marceau - Coaching & Peptide Consultation</title>
+    <meta name="description" content="Coaching programs and peptide consultation packages. Evidence-based training with physician-partnered optimization.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Programs & Pricing | William Marceau">
+    <meta property="og:description" content="Coaching programs and peptide consultation packages.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/programs">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: var(--dark) !important;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            color: white !important;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            max-width: 80%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 5rem 2rem 2rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-links li {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu-links a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: var(--primary);
+            margin: 1rem 0;
+            opacity: 0.3;
+        }
+
+        .mobile-menu-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-links .business-link a {
+            color: var(--accent, #f59e0b);
+        }
+
+        .mobile-menu-cta {
+            margin-top: 2rem;
+        }
+
+        .mobile-menu-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Hero */
+        .page-hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center right, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+        }
+
+        .page-hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Section Container */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Coaching Programs Section */
+        .coaching-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .program-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .program-card.featured {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.05));
+        }
+
+        .program-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: 1rem;
+            right: -2.5rem;
+            background: var(--primary);
+            color: var(--dark);
+            padding: 0.25rem 3rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transform: rotate(45deg);
+        }
+
+        .program-header {
+            text-align: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .program-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .program-header .duration {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .program-header .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .program-header .price-note {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .program-card ul {
+            list-style: none;
+            margin-bottom: 2rem;
+            flex: 1;
+        }
+
+        .program-card ul li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .program-card ul li .check {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .program-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Peptide Consultation Section */
+        .peptide-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .peptide-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .peptide-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .peptide-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .peptide-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .peptide-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .peptide-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .peptide-card ul li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .peptide-card ul li .check {
+            color: var(--primary);
+        }
+
+        /* Backend Services Preview */
+        .backend-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .backend-preview {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .backend-preview-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .backend-preview-text .label {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .backend-preview-text p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .backend-services-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .backend-service-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .backend-service-mini .icon {
+            font-size: 1.25rem;
+        }
+
+        /* Guarantee Section */
+        .guarantee-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .guarantee-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .guarantee-box h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .guarantee-box p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
+        .disclaimer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .programs-grid,
+            .peptide-grid,
+            .backend-preview {
+                grid-template-columns: 1fr;
+            }
+
+            .page-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .page-hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .backend-services-mini {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">WILLIAM MARCEAU</a>
+            <ul class="nav-links">
+                <li><a href="/coaching.html">Coaching</a></li>
+                <li><a href="/peptides.html">Peptides</a></li>
+                <li><a href="/about.html">My Story</a></li>
+                <li><a href="/programs.html" class="active">Programs</a></li>
+                <li><a href="/for-influencers.html">For Influencers</a></li>
+                <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu">
+        <ul class="mobile-menu-links">
+            <li><a href="/coaching.html">Coaching</a></li>
+            <li><a href="/peptides.html">Peptides</a></li>
+            <li><a href="/programs.html">Programs</a></li>
+            <li><a href="/about.html">My Story</a></li>
+            <li><a href="/for-influencers.html">For Influencers</a></li>
+        </ul>
+        <div class="mobile-menu-divider"></div>
+        <p class="mobile-menu-section">Business Services</p>
+        <ul class="mobile-menu-links">
+            <li class="business-link"><a href="/ai-automation.html">AI Automation</a></li>
+        </ul>
+        <div class="mobile-menu-cta">
+            <a href="/contact.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-container">
+            <h1>Programs & <span class="highlight">Pricing</span></h1>
+            <p>Transparent pricing. No hidden fees. Choose the program that fits your goals and commitment level.</p>
+        </div>
+    </section>
+
+    <!-- Coaching Programs -->
+    <section class="coaching-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Coaching Programs</h2>
+                <p>Custom training and nutrition with regular accountability check-ins.</p>
+            </div>
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Starter</h3>
+                        <span class="duration">3 Month Foundation</span>
+                        <div class="price">$299<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
+                        <span class="price-note">$897 total • Billed monthly</span>
+                    </div>
+                    <ul>
+                        <li><span class="check">✓</span> Custom training program</li>
+                        <li><span class="check">✓</span> Nutrition guidelines</li>
+                        <li><span class="check">✓</span> Bi-weekly check-ins</li>
+                        <li><span class="check">✓</span> Form review videos</li>
+                        <li><span class="check">✓</span> Messaging support</li>
+                        <li><span class="check">✓</span> Progress tracking</li>
+                    </ul>
+                    <a href="/contact.html" class="btn btn-secondary">Apply Now</a>
+                </div>
+                <div class="program-card featured">
+                    <div class="program-header">
+                        <h3>Performance</h3>
+                        <span class="duration">6 Month Transformation</span>
+                        <div class="price">$399<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
+                        <span class="price-note">$2,394 total • Billed monthly</span>
+                    </div>
+                    <ul>
+                        <li><span class="check">✓</span> Everything in Starter</li>
+                        <li><span class="check">✓</span> <strong>Weekly</strong> check-ins</li>
+                        <li><span class="check">✓</span> Detailed macro tracking</li>
+                        <li><span class="check">✓</span> Performance analytics</li>
+                        <li><span class="check">✓</span> Priority support</li>
+                        <li><span class="check">✓</span> Periodized programming</li>
+                    </ul>
+                    <a href="/contact.html" class="btn btn-primary">Apply Now</a>
+                </div>
+                <div class="program-card">
+                    <div class="program-header">
+                        <h3>Elite</h3>
+                        <span class="duration">12 Month Optimization</span>
+                        <div class="price">$599<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
+                        <span class="price-note">$7,188 total • Billed monthly</span>
+                    </div>
+                    <ul>
+                        <li><span class="check">✓</span> Everything in Performance</li>
+                        <li><span class="check">✓</span> Peptide consultation included</li>
+                        <li><span class="check">✓</span> Physician coordination</li>
+                        <li><span class="check">✓</span> Lab work guidance</li>
+                        <li><span class="check">✓</span> Monthly 1:1 video calls</li>
+                        <li><span class="check">✓</span> Full optimization stack</li>
+                    </ul>
+                    <a href="/contact.html" class="btn btn-secondary">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Peptide Consultation -->
+    <section class="peptide-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Peptide Consultation</h2>
+                <p>Standalone peptide guidance with physician oversight. For those focused specifically on optimization.</p>
+            </div>
+            <div class="peptide-grid">
+                <div class="peptide-card">
+                    <h3>Initial Consultation</h3>
+                    <div class="price">$250</div>
+                    <p>One-time deep dive into whether peptides are right for you.</p>
+                    <ul>
+                        <li><span class="check">✓</span> 60-minute consultation with me</li>
+                        <li><span class="check">✓</span> Health history review</li>
+                        <li><span class="check">✓</span> Goals assessment</li>
+                        <li><span class="check">✓</span> Education on FDA-approved options</li>
+                        <li><span class="check">✓</span> Decision framework walkthrough</li>
+                        <li><span class="check">✓</span> Referral to physician if appropriate</li>
+                    </ul>
+                </div>
+                <div class="peptide-card">
+                    <h3>Ongoing Protocol Support</h3>
+                    <div class="price">$150<span style="font-size: 1rem; font-weight: 400;">/mo</span></div>
+                    <p>Monthly support while on a physician-prescribed protocol.</p>
+                    <ul>
+                        <li><span class="check">✓</span> Monthly check-in call</li>
+                        <li><span class="check">✓</span> Lab work interpretation</li>
+                        <li><span class="check">✓</span> Protocol tracking</li>
+                        <li><span class="check">✓</span> Physician coordination</li>
+                        <li><span class="check">✓</span> Ongoing education</li>
+                        <li><span class="check">✓</span> Messaging support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Backend Services Preview -->
+    <section class="backend-section">
+        <div class="section-container">
+            <div class="backend-preview">
+                <div class="backend-preview-text">
+                    <p class="label">For Fitness Influencers</p>
+                    <h2>Backend Automation Services</h2>
+                    <p>The same systems I use to run my own fitness business—available for other coaches and creators. Custom pricing based on your needs.</p>
+                    <div class="backend-services-mini">
+                        <div class="backend-service-mini">
+                            <span class="icon">🎬</span>
+                            <span>AI Video Editing</span>
+                        </div>
+                        <div class="backend-service-mini">
+                            <span class="icon">📧</span>
+                            <span>Email Automation</span>
+                        </div>
+                        <div class="backend-service-mini">
+                            <span class="icon">📊</span>
+                            <span>Analytics Dashboard</span>
+                        </div>
+                        <div class="backend-service-mini">
+                            <span class="icon">📱</span>
+                            <span>Content Scheduling</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="/for-influencers.html" class="btn btn-secondary">Learn More →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guarantee -->
+    <section class="guarantee-section">
+        <div class="section-container">
+            <div class="guarantee-box">
+                <h2>My Commitment to You</h2>
+                <p>I guarantee my effort, expertise, and availability throughout your program. If you follow the programming and check in consistently, you will see results. If at any point you feel I'm not delivering on my end, let's talk—I'll make it right.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Not Sure Which Program?</h2>
+            <p>Book a free discovery call. We'll discuss your goals and figure out the best fit together. No pressure, no sales pitch.</p>
+            <div class="cta-buttons">
+                <a href="/contact.html" class="btn btn-primary">Schedule Free Call</a>
+                <a href="/about.html" class="btn btn-secondary">Read My Story First</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">My Story</a>
+                <a href="/blog.html">Blog</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+                <a href="https://twitter.com/wmarceau" target="_blank">@wmarceau</a>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <p><strong>Disclaimer:</strong> This website is for educational purposes only and does not constitute medical advice. Peptide protocols require physician oversight. Always consult with a licensed healthcare provider. Individual results may vary.</p>
+        </div>
+    </footer>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.mobile-menu').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>

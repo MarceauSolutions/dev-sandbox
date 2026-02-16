@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Influencers | Backend Automation That Powers My Fitness Business</title>
+    <meta name="description" content="The same AI automation and backend systems that run my fitness influencer business - now available for other coaches and content creators.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Backend Automation for Fitness Influencers">
+    <meta property="og:description" content="AI video editing, content automation, email systems, and analytics dashboards for coaches and creators.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/for-influencers">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: var(--dark) !important;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            color: white !important;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            max-width: 80%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 5rem 2rem 2rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-links li {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu-links a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: var(--primary);
+            margin: 1rem 0;
+            opacity: 0.3;
+        }
+
+        .mobile-menu-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-links .business-link a {
+            color: var(--accent, #f59e0b);
+        }
+
+        .mobile-menu-cta {
+            margin-top: 2rem;
+        }
+
+        .mobile-menu-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Hero */
+        .page-hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center right, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+        }
+
+        .page-hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Section Container */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Story Section */
+        .story-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .story-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-text p {
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
+
+        .story-text .emphasis {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .pain-points {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .pain-points h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .pain-list {
+            list-style: none;
+        }
+
+        .pain-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .pain-list li .icon {
+            font-size: 1.25rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+        }
+
+        .service-card .icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(245, 158, 11, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .service-features li .check {
+            color: var(--primary);
+        }
+
+        /* How It Works */
+        .how-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .how-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .how-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            top: 2rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .how-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 auto 1.25rem;
+        }
+
+        .how-step h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .how-step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .result-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Who It's For */
+        .who-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .who-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .who-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .who-card.yes {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .who-card.no {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .who-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .who-card.yes h3 {
+            color: var(--primary);
+        }
+
+        .who-card.no h3 {
+            color: var(--text-muted);
+        }
+
+        .who-card ul {
+            list-style: none;
+        }
+
+        .who-card li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .who-card.yes li .icon {
+            color: var(--primary);
+        }
+
+        .who-card.no li .icon {
+            color: #ef4444;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--secondary);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
+        .disclaimer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .story-content,
+            .services-grid,
+            .who-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .how-grid,
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .how-step:not(:last-child)::after {
+                display: none;
+            }
+
+            .page-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .page-hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .how-grid,
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">WILLIAM MARCEAU</a>
+            <ul class="nav-links">
+                <li><a href="/coaching.html">Coaching</a></li>
+                <li><a href="/peptides.html">Peptides</a></li>
+                <li><a href="/about.html">My Story</a></li>
+                <li><a href="/programs.html">Programs</a></li>
+                <li><a href="/for-influencers.html" class="active">For Influencers</a></li>
+                <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu">
+        <ul class="mobile-menu-links">
+            <li><a href="/coaching.html">Coaching</a></li>
+            <li><a href="/peptides.html">Peptides</a></li>
+            <li><a href="/programs.html">Programs</a></li>
+            <li><a href="/about.html">My Story</a></li>
+            <li><a href="/for-influencers.html">For Influencers</a></li>
+        </ul>
+        <div class="mobile-menu-divider"></div>
+        <p class="mobile-menu-section">Business Services</p>
+        <ul class="mobile-menu-links">
+            <li class="business-link"><a href="/ai-automation.html">AI Automation</a></li>
+        </ul>
+        <div class="mobile-menu-cta">
+            <a href="/contact.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-container">
+            <div class="page-hero-badge">
+                <span>For Fitness Influencers & Coaches</span>
+            </div>
+            <h1>The Backend That <span class="highlight">Powers My Business</span></h1>
+            <p>AI automation systems I built to run my own fitness influencer business—now available for other coaches and creators who want to scale without burning out.</p>
+        </div>
+    </section>
+
+    <!-- The Story -->
+    <section class="story-section">
+        <div class="section-container">
+            <div class="story-content">
+                <div class="story-text">
+                    <h2>I Built This Because I Needed It</h2>
+                    <p>As a fitness influencer, I was <span class="emphasis">drowning in admin work</span>.</p>
+                    <p>Video editing took hours. Every. Single. Day. Email was chaos—client questions, sponsorship inquiries, and spam all mixed together. Analytics were scattered across 5 different platforms.</p>
+                    <p>I was spending more time on the <em>business</em> of content creation than actually creating content or coaching clients.</p>
+                    <p>So I built automation systems to handle it all. AI video editing. Automated email triage. Unified analytics dashboards. Content scheduling.</p>
+                    <p class="emphasis">Now I'm offering the same backend to other influencers and coaches.</p>
+                </div>
+                <div class="pain-points">
+                    <h3>Sound Familiar?</h3>
+                    <ul class="pain-list">
+                        <li>
+                            <span class="icon">😩</span>
+                            <span>Spending 3+ hours editing every video</span>
+                        </li>
+                        <li>
+                            <span class="icon">📧</span>
+                            <span>Inbox overflowing with unread emails</span>
+                        </li>
+                        <li>
+                            <span class="icon">📊</span>
+                            <span>Analytics scattered across 10 platforms</span>
+                        </li>
+                        <li>
+                            <span class="icon">📱</span>
+                            <span>Posting content manually every day</span>
+                        </li>
+                        <li>
+                            <span class="icon">🔥</span>
+                            <span>Burning out trying to do it all yourself</span>
+                        </li>
+                        <li>
+                            <span class="icon">💸</span>
+                            <span>Hiring a team feels too expensive</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Backend Services</h2>
+                <p>Pick what you need. Start with one, add more as you grow.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="icon">🎬</div>
+                    <h3>AI Video Editing</h3>
+                    <p>Automated jump cuts, silence removal, and caption generation. Turn 2 hours of editing into 15 minutes of review.</p>
+                    <ul class="service-features">
+                        <li><span class="check">✓</span> Auto-detect and remove dead air</li>
+                        <li><span class="check">✓</span> Smart jump cuts on pauses</li>
+                        <li><span class="check">✓</span> Auto-generate captions</li>
+                        <li><span class="check">✓</span> Export for YouTube, TikTok, Reels</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">📧</div>
+                    <h3>Email Automation</h3>
+                    <p>Smart inbox triage, auto-responses, and follow-up sequences. Never miss an important email again.</p>
+                    <ul class="service-features">
+                        <li><span class="check">✓</span> AI-powered email categorization</li>
+                        <li><span class="check">✓</span> Auto-replies for common questions</li>
+                        <li><span class="check">✓</span> Lead nurture sequences</li>
+                        <li><span class="check">✓</span> Sponsorship inquiry alerts</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">📊</div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>All your metrics in one place. Track what matters without logging into 10 different platforms.</p>
+                    <ul class="service-features">
+                        <li><span class="check">✓</span> Unified cross-platform analytics</li>
+                        <li><span class="check">✓</span> Revenue tracking</li>
+                        <li><span class="check">✓</span> Audience growth metrics</li>
+                        <li><span class="check">✓</span> Weekly automated reports</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">📱</div>
+                    <h3>Content Scheduling</h3>
+                    <p>Plan, schedule, and auto-post across platforms. Batch your content creation, automate the distribution.</p>
+                    <ul class="service-features">
+                        <li><span class="check">✓</span> Multi-platform scheduling</li>
+                        <li><span class="check">✓</span> Optimal posting time suggestions</li>
+                        <li><span class="check">✓</span> Content calendar management</li>
+                        <li><span class="check">✓</span> Automated cross-posting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section class="results-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Real Results</h2>
+                <p>What I save using these systems every week.</p>
+            </div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-number">10+</div>
+                    <div class="result-label">Hours saved on video editing</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">90%</div>
+                    <div class="result-label">Reduction in email time</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">1</div>
+                    <div class="result-label">Dashboard instead of 10</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">0</div>
+                    <div class="result-label">Missed posting days</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Getting started is simple.</p>
+            </div>
+            <div class="how-grid">
+                <div class="how-step">
+                    <div class="how-number">1</div>
+                    <h3>Discovery Call</h3>
+                    <p>We discuss your workflow, pain points, and which systems would help most.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">2</div>
+                    <h3>Setup & Integration</h3>
+                    <p>I configure the systems for your accounts and train them on your content style.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">3</div>
+                    <h3>Handoff & Training</h3>
+                    <p>Quick walkthrough so you know how to use everything. Takes about an hour.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">4</div>
+                    <h3>Ongoing Support</h3>
+                    <p>Questions? Issues? I'm here. Monthly check-ins to optimize as you grow.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who It's For -->
+    <section class="who-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Is This Right for You?</h2>
+            </div>
+            <div class="who-grid">
+                <div class="who-card yes">
+                    <h3><span class="icon">✓</span> Great Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">✓</span>
+                            <span>You're a fitness influencer or coach with 10K+ followers</span>
+                        </li>
+                        <li>
+                            <span class="icon">✓</span>
+                            <span>You create content regularly (3+ videos/week)</span>
+                        </li>
+                        <li>
+                            <span class="icon">✓</span>
+                            <span>You're spending 10+ hours/week on admin tasks</span>
+                        </li>
+                        <li>
+                            <span class="icon">✓</span>
+                            <span>You want to scale without hiring a full team</span>
+                        </li>
+                        <li>
+                            <span class="icon">✓</span>
+                            <span>You're ready to invest in systems that save time</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="who-card no">
+                    <h3><span class="icon">✗</span> Not the Right Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">✗</span>
+                            <span>You're just starting out (under 5K followers)</span>
+                        </li>
+                        <li>
+                            <span class="icon">✗</span>
+                            <span>You only post occasionally</span>
+                        </li>
+                        <li>
+                            <span class="icon">✗</span>
+                            <span>You don't have consistent content to automate</span>
+                        </li>
+                        <li>
+                            <span class="icon">✗</span>
+                            <span>You're looking for someone to create content for you</span>
+                        </li>
+                        <li>
+                            <span class="icon">✗</span>
+                            <span>You're not ready to invest in infrastructure</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to Automate?</h2>
+            <p>Let's talk about which systems would save you the most time. Free discovery call, no pressure.</p>
+            <div class="cta-buttons">
+                <a href="/contact.html" class="btn btn-primary">Schedule Discovery Call</a>
+                <a href="/about.html" class="btn btn-secondary">Learn About Me First</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">My Story</a>
+                <a href="/blog.html">Blog</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+                <a href="https://twitter.com/wmarceau" target="_blank">@wmarceau</a>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <p>&copy; 2026 William Marceau. All rights reserved. | Marceau Solutions - Backend Services</p>
+        </div>
+    </footer>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.mobile-menu').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
+</body>
+</html>
