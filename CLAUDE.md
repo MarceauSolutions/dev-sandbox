@@ -122,7 +122,7 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 | Skills (dev-sandbox Claude) | `~/production/[name]-prod/` | `docs/sops/sop-03-deployment.md` |
 | AI Assistants (standalone) | `~/ai-assistants/[name]/` | `docs/sops/sop-31-ai-assistant.md` |
 | MCP Packages | PyPI + MCP Registry | `docs/sops/sop-11-mcp-structure.md` through `sop-14` |
-| Client Websites | GitHub Pages (auto via Actions) | `.github/workflows/deploy-websites.yml` |
+| Client Websites | GitHub Pages | `./scripts/deploy_website.sh <client>` |
 
 ## Three-Agent Model
 
