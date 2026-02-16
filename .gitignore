@@ -85,3 +85,12 @@ projects/lead-scraper/
 *.mp4
 *.avi
 *.mkv
+
+# Video work files (Premiere projects, renders, B-roll)
+projects/marceau-solutions/pt-business/content/peptide-video/Final_Product/work/
+
+# Photo processor output (generated/resized images)
+projects/shared/photo-processor/output/
+
+# OAuth token files
+token_sheets.json
