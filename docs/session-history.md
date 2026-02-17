@@ -4,6 +4,48 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-02-16: GitHub Profile Cleanup + Job Application Blitz (11 Tailored Resumes)
+
+**Context:** William pivoting to job search. Cleaned up GitHub profile for employer visibility, then tailored 11 resume+cover letter packages for specific job postings.
+
+### GitHub Profile Changes (All Live)
+- Created **profile README** at `github.com/wmarceau/wmarceau` — professional summary, featured projects, tech stack
+- **Archived junk repos:** NewProject, git_practice, excursion-project, AIFitnessWebsite, awesome-mcp-servers (fork)
+- **Made Focal-Dystonia- public** — EEG/ML project, fixed description (was "electromyography", corrected to "electroencephalography")
+- **Added topics/tags** to all 6 showcase repos (amazon-seller-mcp, Focal-Dystonia-, fitness-influencer-mcp, md-to-pdf-mcp, rideshare-comparison-mcp, hvac-quotes-mcp)
+- **Transferred squarefoot-shipping-website** to MarceauSolutions org (keeps Pages live, removes from personal profile)
+- **Archived flames-of-passion-website** from personal (org copy still serves GitHub Pages)
+- **Pending:** Profile bio/location/hireable + pinned repos need `gh auth refresh -h github.com -s user` (requires browser auth)
+
+### Resumes + Cover Letters Created (all in `projects/shared/resume/output/`)
+
+| # | Company | Role | Match Quality | Files |
+|---|---------|------|---------------|-------|
+| 1 | Trend Capital Holdings | AI & Automation Specialist | Strong — Naples hybrid, n8n+Zapier+LLM | `*_trend_capital_*` |
+| 2 | symplistic.ai | Jr. AI Software Engineer | Strong — Bonita Springs, agentic AI, FGCU alum | `*_symplistic_*` |
+| 3 | Garver | AI Development Specialist | Strong — remote, MCP in requirements | `*_garver_ai_*` |
+| 4 | Garver | Scheduler I | **Skipped** — construction scheduling, no match | — |
+| 5 | Vista Equity Partners | AI-First Orchestration Engineer | **Best match** — n8n, RAG, ChromaDB, Mem0, $90-170K | `*_vista_*` |
+| 6 | Piper Companies | AI Automation Engineer | Reach — needs RPA/Fabric, but life sciences angle | `*_piper_*` |
+| 7 | Talently | AI Solutions Engineer | Strong — "build vs tool", end-to-end ownership | `*_talently_*` |
+| 8 | PharmaForce | Jr. AI Engineer | Strong — Claude Code, agentic systems, healthcare | `*_pharmaforce_*` |
+| 9 | Kyo | Integration Engineer | Strong — MCP, Florida resident, FGCU alum | `*_kyo_*` |
+| 10 | Oracle | AI Engineer | Good — RAG, monetizable AI, governance | `*_oracle_*` |
+| 11 | Abacus.AI | Technical Demo Engineer | Strong — 3yr teaching + AI agent builder | `*_abacus_*` |
+| 12 | Convergent | AI Automation Intern | **Skipped** — intern, $1.6K/mo, overqualified | — |
+| 13 | Insight Global | AI Engineer | Moderate — LangGraph gap, but RAG transferable | `*_insight_global_*` |
+| 14 | Tria Federal | Jr. AI Engineer | Strong — MCP in description, U.S. citizen, FGCU alum | `*_tria_federal_*` |
+| 15 | Peraton | GenAI Intern (Graduate) | **Skipped** — requires current Master's/PhD enrollment | — |
+| 16 | Healthcasts | AI Engineer | Reach — needs PyTorch/NLP, but healthcare angle | `*_healthcasts_*` |
+
+### Key Patterns
+- **Strongest differentiators:** MCP experience (rare), n8n production workflows (73+), biomedical/healthcare background, FGCU alumni network
+- **Most common gaps:** LangGraph/LangChain (uses MCP instead), Azure (uses AWS), enterprise RPA tools
+- **Best comp opportunities:** Vista ($90-170K), Piper ($190-225K), Abacus ($150K+$30K), Talently ($130-155K)
+- **FGCU connections found at:** symplistic.ai, Kyo, Oracle, Insight Global, Tria Federal
+
+---
+
 ## 2026-02-15/16: Agent Infrastructure Upgrade — Mem0, Task Classifier, PR Reviews, Ralph v2 PRD
 
 **Context:** Major agent tooling upgrade across all three agents (Claude Code, Clawdbot, Ralph). Implemented cutting-edge AI dev tools after deep research.
