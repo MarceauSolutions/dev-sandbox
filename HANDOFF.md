@@ -20,7 +20,65 @@ _Tasks that need Mac-specific tools or interactive work_
 - **Action**: What Claude Code should do
 -->
 
-_No pending tasks_
+### Task: Clawdbot Security Fixes + Brave API Setup
+- **From**: clawdbot
+- **Priority**: high
+- **Created**: 2026-02-18 17:10 UTC
+- **Context**: Security audit found issues; also need Brave Search API for web search capability
+
+#### 🚨 Security Fixes (Run on EC2 via SSH)
+
+```bash
+# SSH to EC2
+ssh clawdbot@34.193.98.97
+
+# Fix 1: Config file permissions (CRITICAL)
+chmod 600 /home/clawdbot/.clawdbot/clawdbot.json
+
+# Fix 2: Credentials directory permissions (WARN)
+chmod 700 /home/clawdbot/.clawdbot/credentials
+
+# Verify fixes
+ls -la /home/clawdbot/.clawdbot/clawdbot.json
+ls -la /home/clawdbot/.clawdbot/credentials
+```
+
+#### 🔍 Add Brave Search API
+
+1. Get free API key: https://brave.com/search/api/
+2. Configure Clawdbot:
+```bash
+ssh clawdbot@34.193.98.97
+clawdbot configure --section web
+# Paste the Brave API key when prompted
+```
+
+#### 🔐 Optional: Gateway Auth (Extra Security)
+
+If you want to secure the gateway:
+```bash
+# Generate a random token
+openssl rand -hex 32
+
+# Edit config
+nano /home/clawdbot/.clawdbot/clawdbot.json
+# Add under "gateway": { "auth": { "token": "YOUR_TOKEN_HERE" } }
+
+# Restart gateway
+clawdbot gateway restart
+```
+
+#### 📱 Optional: Isolate Telegram DM Sessions
+
+To prevent context leaking between different Telegram users:
+```bash
+# Edit config and add under "channels.telegram":
+# "session": { "dmScope": "per-channel-peer" }
+```
+
+#### ✅ After Completing
+- Move this task to "Completed" section
+- Commit and push: `git add HANDOFF.md && git commit -m "fix: security hardening complete" && git push`
 
 ---
 
