@@ -20,65 +20,13 @@ _Tasks that need Mac-specific tools or interactive work_
 - **Action**: What Claude Code should do
 -->
 
-### Task: Clawdbot Security Fixes + Brave API Setup
-- **From**: clawdbot
-- **Priority**: high
+### Task: Sign Up for Brave Search API
+- **From**: clawdbot → claude code (completed security fixes)
+- **Priority**: medium
 - **Created**: 2026-02-18 17:10 UTC
-- **Context**: Security audit found issues; also need Brave Search API for web search capability
-
-#### 🚨 Security Fixes (Run on EC2 via SSH)
-
-```bash
-# SSH to EC2
-ssh clawdbot@34.193.98.97
-
-# Fix 1: Config file permissions (CRITICAL)
-chmod 600 /home/clawdbot/.clawdbot/clawdbot.json
-
-# Fix 2: Credentials directory permissions (WARN)
-chmod 700 /home/clawdbot/.clawdbot/credentials
-
-# Verify fixes
-ls -la /home/clawdbot/.clawdbot/clawdbot.json
-ls -la /home/clawdbot/.clawdbot/credentials
-```
-
-#### 🔍 Add Brave Search API
-
-1. Get free API key: https://brave.com/search/api/
-2. Configure Clawdbot:
-```bash
-ssh clawdbot@34.193.98.97
-clawdbot configure --section web
-# Paste the Brave API key when prompted
-```
-
-#### 🔐 Optional: Gateway Auth (Extra Security)
-
-If you want to secure the gateway:
-```bash
-# Generate a random token
-openssl rand -hex 32
-
-# Edit config
-nano /home/clawdbot/.clawdbot/clawdbot.json
-# Add under "gateway": { "auth": { "token": "YOUR_TOKEN_HERE" } }
-
-# Restart gateway
-clawdbot gateway restart
-```
-
-#### 📱 Optional: Isolate Telegram DM Sessions
-
-To prevent context leaking between different Telegram users:
-```bash
-# Edit config and add under "channels.telegram":
-# "session": { "dmScope": "per-channel-peer" }
-```
-
-#### ✅ After Completing
-- Move this task to "Completed" section
-- Commit and push: `git add HANDOFF.md && git commit -m "fix: security hardening complete" && git push`
+- **Context**: Brave Search API gives Clawdbot web search. Requires signup with credit card for identity verification.
+- **Action**: Go to https://brave.com/search/api/ → sign up → get API key → SSH to EC2 and run `clawdbot configure --section web`
+- **Cost**: Free tier = $5/mo credits (~1,000 queries). Requires attribution.
 
 ---
 
@@ -102,7 +50,22 @@ _None_
 
 _Last 10 completed handoffs (auto-archived)_
 
-_None yet_
+### ✅ Clawdbot Security Fixes + Full Capability Upgrade
+- **Completed**: 2026-02-18 17:16 UTC
+- **By**: Claude Code (Mac)
+- **What was done**:
+  - Fixed config file permissions (`chmod 600 clawdbot.json`)
+  - Fixed credentials dir permissions (`chmod 700 credentials/`)
+  - Secured all .env, backup configs, API key files
+  - Added gateway auth token
+  - Fixed .env parse errors (unquoted values with spaces)
+  - Installed Python 3.11 packages: n8n-mcp-server, mcp-telegram, google-api-python-client, tweepy
+  - Configured 3 MCP servers: n8n (localhost:5678), Context7, Telegram
+  - Deployed 33 API keys to both .clawdbot/.env and dev-sandbox/.env
+  - Copied Google OAuth tokens (calendar, gmail, sheets, marceausolutions)
+  - Updated SOUL.md v1.0 → v2.0 with full capability docs
+  - Updated systemd service PATH + dual .env sourcing
+  - Telegram DM isolation: NOT supported by clawdbot config schema (skipped)
 
 ---
 
