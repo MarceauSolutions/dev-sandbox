@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Safety Guide | Flames of Passion Entertainment</title>
+    <meta name="description" content="Flames of Passion Entertainment — comprehensive fire safety guide. NFPA-compliant safety protocols for professional fire performance.">
+
+    <!-- Google Fonts (matches main site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── Reset & Variables (from main site) ──────────────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --flame-orange: #e8600a;
+            --flame-gold: #d4a24e;
+            --flame-gold-light: #e8c174;
+            --flame-red: #b91c1c;
+            --flame-deep: #7f1d1d;
+            --flame-ember: #f97316;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --surface: #0f0f0f;
+            --surface-light: #161616;
+            --border-subtle: rgba(212, 162, 78, 0.12);
+            --text: #f5f0e8;
+            --text-muted: #9a9087;
+            --font-display: 'Cinzel', serif;
+            --font-decorative: 'Cinzel Decorative', serif;
+            --font-elegant: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* ── Navigation ──────────────────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo img { height: 40px; width: 40px; object-fit: contain; }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: var(--flame-gold);
+            letter-spacing: 0.08em;
+        }
+
+        .nav-back {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+        }
+
+        .nav-back:hover { color: var(--flame-gold); }
+
+        /* ── Hero Banner ─────────────────────────────────────── */
+        .safety-hero {
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            background:
+                radial-gradient(ellipse at 50% 100%, rgba(232,96,10,0.08) 0%, transparent 60%),
+                var(--darker);
+        }
+
+        .safety-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--flame-deep) 15%,
+                var(--flame-orange) 30%,
+                var(--flame-gold) 50%,
+                var(--flame-orange) 70%,
+                var(--flame-deep) 85%,
+                transparent 100%
+            );
+        }
+
+        .safety-hero h1 {
+            font-family: var(--font-decorative);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--flame-gold);
+            letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+
+        .safety-hero .tagline {
+            font-family: var(--font-elegant);
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-muted);
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .nfpa-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--flame-gold);
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--flame-gold);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nfpa-badge a {
+            color: var(--flame-gold-light);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .nfpa-badge a:hover { color: #fff; }
+
+        /* ── Table of Contents ───────────────────────────────── */
+        .toc {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .toc-title {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            color: var(--flame-gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .toc-grid a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-left: 2px solid var(--border-subtle);
+            transition: all 0.3s;
+        }
+
+        .toc-grid a:hover {
+            color: var(--flame-gold);
+            border-left-color: var(--flame-gold);
+            background: rgba(212, 162, 78, 0.04);
+        }
+
+        /* ── Content Sections ────────────────────────────────── */
+        .content { max-width: 800px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+        .safety-section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 6rem;
+        }
+
+        .safety-section h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            color: var(--flame-gold);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--flame-orange), var(--flame-gold));
+            margin-bottom: 1.5rem;
+        }
+
+        .safety-section p {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.9;
+        }
+
+        .safety-section h3 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            color: var(--flame-gold-light);
+            margin: 2rem 0 0.75rem;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Warning / Tip Callouts ──────────────────────────── */
+        .callout {
+            border-left: 3px solid;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+        }
+
+        .callout-warning {
+            border-color: var(--flame-red);
+            background: rgba(185, 28, 28, 0.08);
+        }
+
+        .callout-warning strong { color: var(--flame-red); }
+
+        .callout-tip {
+            border-color: var(--flame-gold);
+            background: rgba(212, 162, 78, 0.06);
+        }
+
+        .callout-tip strong { color: var(--flame-gold); }
+
+        .callout-nfpa {
+            border-color: var(--flame-orange);
+            background: rgba(232, 96, 10, 0.06);
+        }
+
+        .callout-nfpa strong { color: var(--flame-orange); }
+        .callout-nfpa a { color: var(--flame-gold-light); text-decoration: underline; }
+        .callout-nfpa a:hover { color: #fff; }
+
+        /* ── Fiber Table ─────────────────────────────────────── */
+        .fiber-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .fiber-table th {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        .fiber-table th:first-child {
+            color: #4ade80;
+            border-bottom: 2px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .fiber-table th:last-child {
+            color: var(--flame-red);
+            border-bottom: 2px solid rgba(185, 28, 28, 0.3);
+        }
+
+        .fiber-table td {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* ── Ordered / Unordered Lists ───────────────────────── */
+        .safety-section ul, .safety-section ol {
+            margin: 1rem 0 1rem 1.5rem;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .safety-section li {
+            margin-bottom: 0.5rem;
+            line-height: 1.8;
+        }
+
+        .safety-section li strong { color: var(--flame-gold-light); }
+
+        /* ── PASS Acronym ────────────────────────────────────── */
+        .pass-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .pass-step {
+            text-align: center;
+            padding: 1.25rem 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+        }
+
+        .pass-step .letter {
+            font-family: var(--font-decorative);
+            font-size: 2rem;
+            color: var(--flame-orange);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .pass-step .word {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ── Equipment Checklist ──────────────────────────────── */
+        .checklist {
+            list-style: none;
+            margin: 1.5rem 0;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.95rem;
+        }
+
+        .checklist li::before {
+            content: '🔥';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        /* ── Links ───────────────────────────────────────────── */
+        a.ref-link {
+            color: var(--flame-gold-light);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.3s;
+        }
+
+        a.ref-link:hover { color: #fff; }
+
+        /* ── Footer ──────────────────────────────────────────── */
+        footer {
+            background: var(--dark);
+            border-top: 1px solid var(--border-subtle);
+            padding: 3rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-brand img { height: 32px; width: 32px; object-fit: contain; }
+
+        .footer-brand span {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .footer-copy { color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.05em; }
+
+        /* ── Responsive ──────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .pass-grid { grid-template-columns: repeat(2, 1fr); }
+            .toc-grid { grid-template-columns: 1fr; }
+            .footer-container { flex-direction: column; gap: 1rem; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/images/LogoDark.png" alt="Flames of Passion Entertainment">
+                <span class="nav-logo-text">Flames of Passion</span>
+            </a>
+            <a href="index.html" class="nav-back">&larr; Back to Main Site</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="safety-hero">
+        <h1>Fire Safety Guide</h1>
+        <p class="tagline">Light the night up safely. Read thoroughly &amp; burn bright.</p>
+        <div class="nfpa-badge">
+            NFPA Compliant &bull;
+            <a href="https://www.nfpa.org/product/nfpa-1-fire-code/p0001code" target="_blank" rel="noopener">NFPA 1: Fire Code</a>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <p class="toc-title">Guide Contents</p>
+        <div class="toc-grid">
+            <a href="#clothing">Clothing &amp; Attire</a>
+            <a href="#hair">Hair Safety</a>
+            <a href="#environment">Environment &amp; Venue</a>
+            <a href="#fuel">Fuel Selection</a>
+            <a href="#fuel-station">Fuel Station Setup</a>
+            <a href="#preparation">Preparing to Burn</a>
+            <a href="#during">During the Burn</a>
+            <a href="#safety-person">Fire Safety Person</a>
+            <a href="#equipment">Safety Equipment</a>
+            <a href="#first-aid">First Aid</a>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+        <!-- ─── CLOTHING ─────────────────────────────────────── -->
+        <section class="safety-section" id="clothing">
+            <h2>Clothing &amp; Attire</h2>
+            <div class="section-divider"></div>
+            <p>
+                It is extremely important to make sure your clothing is fire-safe before lighting up.
+                Avoid any clothing that can get caught in your props. <strong>Tight-fitted clothing is much safer</strong>
+                because the more oxygen within the clothing, the more likely it is to ignite.
+            </p>
+            <p>
+                Wearing clothing with <strong>natural fibers</strong> is the safest choice. When natural fibers burn,
+                they burn into ash and away from your skin. Nylon, plastic, and fleece burn slowly and <em>into</em>
+                your skin, causing severe burns. Wear natural fibers and avoid synthetic fibers.
+            </p>
+
+            <div class="callout callout-tip">
+                <strong>Pro Tip:</strong> When shopping for fire-resistant clothing, look for
+                <strong>Kevlar</strong>, <strong>Nomex</strong>, and <strong>Rayon</strong>. Do a burn test on a
+                small corner of fabric before performing in it.
+            </div>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-2112-standard/p2112code" target="_blank" rel="noopener">NFPA 2112</a>
+                — Standard on Flame-Resistant Clothing for Protection of Industrial Personnel Against Short-Duration Thermal Exposures.
+            </div>
+
+            <h3>Fiber Safety Chart</h3>
+            <table class="fiber-table">
+                <thead>
+                    <tr>
+                        <th>Natural Fibers (Fire Safe)</th>
+                        <th>Synthetic Fibers (Fire Hazard)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Cotton</td><td>Nylon / Mesh</td></tr>
+                    <tr><td>Rayon</td><td>Polyester</td></tr>
+                    <tr><td>Wool</td><td>Spandex</td></tr>
+                    <tr><td>Leather</td><td>Acrylic</td></tr>
+                    <tr><td>Denim</td><td>Acetate</td></tr>
+                    <tr><td>Hemp</td><td>Silk (varies)</td></tr>
+                    <tr><td>Linen</td><td>&mdash;</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ─── HAIR ─────────────────────────────────────────── -->
+        <section class="safety-section" id="hair">
+            <h2>Hair Safety</h2>
+            <div class="section-divider"></div>
+            <p>
+                Hair should be <strong>pulled back tightly with no flyaways</strong>. Singed hair becomes
+                brittle with an unpleasant burnt smell. Those with long hair should keep it braided, in a
+                bun, or covered with a fire-safe hat or wrap.
+            </p>
+            <p>
+                A headband or bandana is essential for preventing flyaways, especially with short hair.
+                Use a <strong>spray bottle to dampen your hair</strong> right before lighting up.
+            </p>
+
+            <div class="callout callout-warning">
+                <strong>Warning:</strong> NEVER use hairspray, gel, or any other flammable hair
+                products when working with fire.
+            </div>
+        </section>
+
+        <!-- ─── ENVIRONMENT ──────────────────────────────────── -->
+        <section class="safety-section" id="environment">
+            <h2>Environment &amp; Venue</h2>
+            <div class="section-divider"></div>
+            <p>
+                Choosing the right environment is critical. Consider the surface you'll be performing on
+                and ensure you have ample space. Give yourself <strong>more room than you think you need</strong>,
+                especially for beginners.
+            </p>
+            <ul>
+                <li>Minimum recommended space: <strong>10&times;10 ft</strong> (preferred: 15&times;15 ft or larger)</li>
+                <li>Check for overhead obstructions (awnings, branches, decorations)</li>
+                <li>Confirm venue fire code compliance with the local <a class="ref-link" href="https://www.nfpa.org/product/nfpa-1-fire-code/p0001code" target="_blank" rel="noopener">NFPA 1: Fire Code</a></li>
+                <li>Identify all exits and evacuation routes per <a class="ref-link" href="https://www.nfpa.org/product/nfpa-101-code/p0101code" target="_blank" rel="noopener">NFPA 101: Life Safety Code</a></li>
+                <li>Ensure adequate ventilation for indoor performances</li>
+            </ul>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-160-standard/p0160code" target="_blank" rel="noopener">NFPA 160</a>
+                — Standard for the Use of Flame Effects Before an Audience. This is the primary code governing live
+                fire performances and requires a permit from the Authority Having Jurisdiction (AHJ).
+            </div>
+        </section>
+
+        <!-- ─── FUEL ─────────────────────────────────────────── -->
+        <section class="safety-section" id="fuel">
+            <h2>Fuel Selection</h2>
+            <div class="section-divider"></div>
+            <p>
+                <strong>White gas (camp fuel)</strong> is recommended for clean, bright burns. While kerosene
+                burns longer, its downsides include black smoke and a lingering unpleasant smell.
+            </p>
+            <p>
+                For <strong>fire eating and fire breathing</strong>, lamp oil is the safer option due to its
+                lower volatility and reduced toxicity.
+            </p>
+
+            <div class="callout callout-warning">
+                <strong>Fuel Storage:</strong> Keep fuel stored in a cool, well-ventilated location away from all
+                ignition sources. Only transport fuel when en route to a performance. Always store in
+                approved containers per
+                <a class="ref-link" href="https://www.nfpa.org/product/nfpa-30-code/p0030code" target="_blank" rel="noopener">NFPA 30: Flammable and Combustible Liquids Code</a>.
+            </div>
+        </section>
+
+        <!-- ─── FUEL STATION ─────────────────────────────────── -->
+        <section class="safety-section" id="fuel-station">
+            <h2>Fuel Station Setup</h2>
+            <div class="section-divider"></div>
+            <p>
+                Your fuel station must be positioned <strong>at least 15 feet away</strong> from your
+                performance area. If a prop goes flying, the entire fuel supply must remain safe.
+            </p>
+            <ul>
+                <li>Keep the fuel station away from all bystanders and spectators</li>
+                <li>Use <strong>red safety cones</strong> to mark the station perimeter, especially around children</li>
+                <li><strong>No smoking</strong> anywhere near the fuel station</li>
+                <li>Never place fuel on or near a flammable surface</li>
+                <li>Keep the fuel container <strong>closed tightly</strong> when not actively fueling</li>
+                <li>Use a funnel to return excess fuel to its container</li>
+                <li>After sealing, flip the container to check for leaks</li>
+            </ul>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-30-code/p0030code" target="_blank" rel="noopener">NFPA 30A</a>
+                — Code for Motor Fuel Dispensing Facilities and Repair Garages, provides additional guidance
+                on safe handling and dispensing of flammable liquids.
+            </div>
+        </section>
+
+        <!-- ─── PREPARATION ──────────────────────────────────── -->
+        <section class="safety-section" id="preparation">
+            <h2>Preparing to Burn</h2>
+            <div class="section-divider"></div>
+            <ol>
+                <li><strong>Inspect your props</strong> — Ensure all bolts are tight and secure. Check for fraying on Kevlar wicks and trim any loose threads.</li>
+                <li><strong>Fuel the wicks</strong> — Dip props in fuel for approximately 5 seconds until bubbles appear, then let excess fuel drip back into the container.</li>
+                <li><strong>Secure your fuel</strong> — Close and move the fuel container before proceeding.</li>
+                <li><strong>Spin off excess fuel</strong> — Step into an open area away from people and anything flammable. Spin off your prop until all excess fuel is gone. This is crucial for avoiding tiny fireballs.</li>
+                <li><strong>Wipe down</strong> — Use a rag to remove any fuel from yourself or any non-wick part of your prop.</li>
+                <li><strong>Dampen skin &amp; hair</strong> — Use a spray bottle or bucket of water. Apply fire-retardant spray to clothing if desired.</li>
+                <li><strong>Confirm your fire safety person is ready</strong> — then light up.</li>
+            </ol>
+
+            <div class="callout callout-tip">
+                <strong>Pro Tip:</strong> A clean spin-off is the single most important step for audience safety.
+                Never skip this step, no matter how experienced you are.
+            </div>
+        </section>
+
+        <!-- ─── DURING THE BURN ──────────────────────────────── -->
+        <section class="safety-section" id="during">
+            <h2>During the Burn</h2>
+            <div class="section-divider"></div>
+            <p>
+                Give yourself <strong>more room than you think you need</strong>. Minimum performance area is
+                10&times;10 ft, but 15&times;15 ft or larger is strongly preferred.
+            </p>
+            <ul>
+                <li><strong>Stay focused</strong> on your prop and your fire at all times</li>
+                <li>Avoid getting too close to anything flammable or out of reach of safety equipment</li>
+                <li>If you <strong>drop a prop</strong>, pick it up immediately</li>
+                <li>On pavement or concrete, flames will self-extinguish quickly</li>
+                <li>On grass or other surfaces, <strong>pat the area immediately</strong> to prevent spread</li>
+                <li>When performing on grass, only execute tricks you can confidently land without dropping</li>
+            </ul>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-160-standard/p0160code" target="_blank" rel="noopener">NFPA 160 &sect;6.3</a>
+                — Requires a minimum clearance between flame effects and the audience, combustible materials,
+                and overhead structures. Always confirm clearance distances with the AHJ before performing.
+            </div>
+        </section>
+
+        <!-- ─── FIRE SAFETY PERSON ───────────────────────────── -->
+        <section class="safety-section" id="safety-person">
+            <h2>Fire Safety Person</h2>
+            <div class="section-divider"></div>
+            <p>
+                A dedicated fire safety person <strong>must be present and actively monitoring</strong> the
+                environment at all times during a burn. This is non-negotiable.
+            </p>
+            <ul>
+                <li>Must have a <strong>fire blanket and extinguisher</strong> on hand at all times</li>
+                <li>Must understand how each prop works and how to effectively extinguish it</li>
+                <li>Should <strong>immediately call out</strong> whichever body part catches fire</li>
+                <li>Must be ready to pat the performer down with a fire blanket until the fire is fully extinguished</li>
+                <li><strong>Must NOT be distracted</strong> — no filming, no music duty, no phone use</li>
+                <li>Their sole priority is the performer's safety</li>
+            </ul>
+
+            <div class="callout callout-warning">
+                <strong>Critical:</strong> The fire safety person is not a spectator role. They are emergency
+                response personnel. In the flow community, performers commonly take turns being each other's
+                fire safety — but when it's your turn, your <em>only</em> job is watching.
+            </div>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-160-standard/p0160code" target="_blank" rel="noopener">NFPA 160 &sect;5.4</a>
+                — Requires a "fire watch" with trained personnel and appropriate extinguishing equipment
+                during and after any flame effect performance.
+            </div>
+        </section>
+
+        <!-- ─── SAFETY EQUIPMENT ─────────────────────────────── -->
+        <section class="safety-section" id="equipment">
+            <h2>Safety Equipment</h2>
+            <div class="section-divider"></div>
+            <p>
+                Safety equipment is the most critical component of professional fire performance. Never perform
+                without the following on-site:
+            </p>
+
+            <ul class="checklist">
+                <li><strong>Fire Extinguisher (Class B or ABC)</strong> — Fuel fires are Class B fires (flammable liquids and gases). Ensure your extinguisher covers Class B. An ABC-rated combination extinguisher is recommended.</li>
+                <li><strong>Fire Blanket</strong> — Essential for smothering prop fires and protecting the performer. Keep one at the fuel station and one near the performance area.</li>
+                <li><strong>Spray Bottle / Water Bucket</strong> — For dampening hair, skin, and clothing before performing.</li>
+                <li><strong>Fire-Retardant Spray</strong> — Optional but recommended for treating clothing before each performance.</li>
+                <li><strong>First Aid Kit</strong> — Burn-specific supplies including burn gel, sterile gauze, and cold packs.</li>
+                <li><strong>Safety Cones</strong> — To mark the fuel station perimeter and performance boundaries.</li>
+                <li><strong>Rags / Towels</strong> — For wiping excess fuel from props and skin.</li>
+                <li><strong>Fuel Funnel</strong> — For safe fuel transfer without spillage.</li>
+            </ul>
+
+            <h3>Using a Fire Extinguisher — Remember P.A.S.S.</h3>
+            <div class="pass-grid">
+                <div class="pass-step">
+                    <span class="letter">P</span>
+                    <span class="word">Pull</span>
+                </div>
+                <div class="pass-step">
+                    <span class="letter">A</span>
+                    <span class="word">Aim</span>
+                </div>
+                <div class="pass-step">
+                    <span class="letter">S</span>
+                    <span class="word">Squeeze</span>
+                </div>
+                <div class="pass-step">
+                    <span class="letter">S</span>
+                    <span class="word">Sweep</span>
+                </div>
+            </div>
+
+            <div class="callout callout-nfpa">
+                <strong>NFPA Reference:</strong>
+                <a href="https://www.nfpa.org/product/nfpa-10-standard/p0010code" target="_blank" rel="noopener">NFPA 10</a>
+                — Standard for Portable Fire Extinguishers. Covers selection, installation, inspection,
+                maintenance, and testing of portable fire extinguishers.
+            </div>
+        </section>
+
+        <!-- ─── FIRST AID ────────────────────────────────────── -->
+        <section class="safety-section" id="first-aid">
+            <h2>First Aid for Burns</h2>
+            <div class="section-divider"></div>
+            <p>
+                Even with all precautions, minor burns can happen. Knowing how to respond immediately
+                makes all the difference.
+            </p>
+
+            <h3>Minor Burns (First Degree)</h3>
+            <ol>
+                <li>Cool the burn under cool (not cold) running water for <strong>at least 10 minutes</strong></li>
+                <li>Apply burn gel or aloe vera</li>
+                <li>Cover loosely with sterile, non-stick gauze</li>
+                <li>Take over-the-counter pain relief if needed</li>
+            </ol>
+
+            <h3>Serious Burns (Second Degree or Worse)</h3>
+            <ol>
+                <li><strong>Call 911 immediately</strong></li>
+                <li>Do NOT remove clothing stuck to the burn</li>
+                <li>Do NOT apply ice, butter, or any home remedies</li>
+                <li>Cover with a clean, dry cloth and keep the person calm until help arrives</li>
+            </ol>
+
+            <div class="callout callout-warning">
+                <strong>When in doubt, seek professional medical attention.</strong> Burns can be deeper
+                than they appear. Any burn larger than 3 inches, on the face, hands, feet, or joints,
+                or that appears white/charred requires emergency care.
+            </div>
+        </section>
+
+        <!-- ─── NFPA QUICK REFERENCE ─────────────────────────── -->
+        <section class="safety-section" id="nfpa-reference">
+            <h2>NFPA Quick Reference</h2>
+            <div class="section-divider"></div>
+            <p>The following NFPA codes and standards are most relevant to professional fire performance:</p>
+            <ul>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-1-fire-code/p0001code" target="_blank" rel="noopener">NFPA 1</a> — Fire Code (general fire safety requirements)</li>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-10-standard/p0010code" target="_blank" rel="noopener">NFPA 10</a> — Standard for Portable Fire Extinguishers</li>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-30-code/p0030code" target="_blank" rel="noopener">NFPA 30</a> — Flammable and Combustible Liquids Code</li>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-101-code/p0101code" target="_blank" rel="noopener">NFPA 101</a> — Life Safety Code (egress &amp; exits)</li>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-160-standard/p0160code" target="_blank" rel="noopener">NFPA 160</a> — Standard for the Use of Flame Effects Before an Audience</li>
+                <li><a class="ref-link" href="https://www.nfpa.org/product/nfpa-2112-standard/p2112code" target="_blank" rel="noopener">NFPA 2112</a> — Standard on Flame-Resistant Clothing</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/images/LogoDark.png" alt="Flames of Passion">
+                <span>Flames of Passion Entertainment</span>
+            </div>
+            <p class="footer-copy">&copy; 2025 Flames of Passion Entertainment. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
