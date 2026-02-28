@@ -2,7 +2,7 @@
 
 > Canonical reference for which service to use for each capability. Every new script MUST use these services. No exceptions without updating this document first.
 
-**Last updated:** 2026-02-11
+**Last updated:** 2026-02-21
 **API keys:** All in `.env` (root of dev-sandbox)
 
 ## Media Generation
@@ -14,6 +14,7 @@
 | **Video (free)** | MoviePy (local) | None | $0 | Always try first, 70-85% success |
 | **Video (paid)** | Grok Imagine (xAI) | `XAI_API_KEY` | $0.07/sec ($0.35 min) | Default paid video |
 | **Video (premium)** | Veo 3 via Kie.ai | `KIE_API_KEY` | $0.40-$2.00/8s | Premium quality only |
+| **Video (character-consistent)** | Kling 3.0 Omni (Replicate) | `REPLICATE_API_TOKEN` | ~$0.50/5s (pro) | Up to 7 reference images for character lock |
 | **Video (template)** | Creatomate | `CREATOMATE_API_KEY` | $0.05/video | Template-based overlays, different paradigm |
 | **Voice/TTS** | ElevenLabs | `ELEVENLABS_API_KEY` | $22/mo flat (Creator) | Only TTS provider. Voice cloning included |
 | **Talking Head** | OmniHuman 1.5 (Replicate) | `REPLICATE_API_TOKEN` | $2.80/20s | ByteDance model, best quality |
@@ -36,7 +37,7 @@
 
 | Platform | Status | What We Use It For |
 |----------|--------|-------------------|
-| **Replicate** | PRIMARY | Images (SD), Talking Head (OmniHuman), Lip Sync (LatentSync) |
+| **Replicate** | PRIMARY | Images (SD), Talking Head (OmniHuman), Lip Sync (LatentSync), Kling 3.0 Omni (character video), Veo 3 (premium video) |
 | **Kie.ai** | EXCEPTION | Veo 3 only (not available elsewhere) |
 | ~~fal.ai~~ | RETIRED | Balance exhausted. All models available on Replicate |
 

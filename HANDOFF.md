@@ -20,13 +20,7 @@ _Tasks that need Mac-specific tools or interactive work_
 - **Action**: What Claude Code should do
 -->
 
-### Task: Sign Up for Brave Search API
-- **From**: clawdbot → claude code (completed security fixes)
-- **Priority**: medium
-- **Created**: 2026-02-18 17:10 UTC
-- **Context**: Brave Search API gives Clawdbot web search. Requires signup with credit card for identity verification.
-- **Action**: Go to https://brave.com/search/api/ → sign up → get API key → SSH to EC2 and run `clawdbot configure --section web`
-- **Cost**: Free tier = $5/mo credits (~1,000 queries). Requires attribution.
+_No pending tasks_
 
 ---
 

@@ -1231,6 +1231,15 @@
                 <div class="gallery-item" onclick="openLightbox(this)">
                     <img src="assets/images/crowd-watching-event.jpg" alt="Captivated audience at fire performance" loading="lazy">
                 </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/IMG_7419.jpg" alt="Daisy with fire poi close-up portrait" loading="lazy">
+                </div>
+                <div class="gallery-item tall" onclick="openLightbox(this)">
+                    <img src="assets/images/RenderedImage.jpg" alt="Daisy wielding fire staff in dramatic lighting" loading="lazy">
+                </div>
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="assets/images/9212237353640356529.jpg" alt="Fire performance framed through industrial architecture" loading="lazy">
+                </div>
             </div>
         </div>
     </section>
@@ -1622,21 +1631,78 @@
         });
 
         // ── Form Submit Handler ──────────────────────────────────
-        function handleSubmit(e) {
+        async function handleSubmit(e) {
             e.preventDefault();
-            var btn = e.target.querySelector('.form-submit');
+            var form = e.target;
+            var btn = form.querySelector('.form-submit');
             var origText = btn.textContent;
-            btn.textContent = 'Inquiry Sent!';
-            btn.style.background = 'linear-gradient(135deg, #16a34a, #15803d)';
-            btn.style.borderColor = '#16a34a';
-            btn.style.color = 'white';
-            setTimeout(function() {
-                btn.textContent = origText;
-                btn.style.background = '';
-                btn.style.borderColor = '';
-                btn.style.color = '';
-                e.target.reset();
-            }, 3000);
+
+            // Collect form data and map to n8n expected fields
+            var formData = new FormData(form);
+            var data = {
+                name: formData.get('fullname') || '',
+                email: formData.get('email') || '',
+                phone: formData.get('phone') || '',
+                message: formData.get('vision') || '',
+                source: 'flames-of-passion-website',
+                event_date: formData.get('event-date') || '',
+                event_time: formData.get('event-time') || '',
+                duration: formData.get('duration') || '',
+                location: formData.get('location') || '',
+                surface: formData.get('surface') || '',
+                space: formData.get('space') || '',
+                music_pref: formData.get('music-pref') || '',
+                sound_equip: formData.get('sound-equip') || '',
+                theme: formData.get('theme') || '',
+                music_vibe: formData.get('music-vibe') || ''
+            };
+
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                var response = await fetch('https://n8n.marceausolutions.com/webhook/form-submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    btn.textContent = 'Inquiry Sent!';
+                    btn.style.background = 'linear-gradient(135deg, #16a34a, #15803d)';
+                    btn.style.borderColor = '#16a34a';
+                    btn.style.color = 'white';
+                    form.reset();
+                    setTimeout(function() {
+                        btn.textContent = origText;
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                        btn.disabled = false;
+                    }, 3000);
+                } else {
+                    btn.textContent = 'Error — Please Try Again';
+                    btn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
+                    btn.style.borderColor = '#dc2626';
+                    setTimeout(function() {
+                        btn.textContent = origText;
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                        btn.disabled = false;
+                    }, 3000);
+                }
+            } catch (err) {
+                console.error('Form submission error:', err);
+                btn.textContent = 'Error — Please Try Again';
+                btn.style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
+                btn.style.borderColor = '#dc2626';
+                setTimeout(function() {
+                    btn.textContent = origText;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.disabled = false;
+                }, 3000);
+            }
         }
 
         // ── Nav background on scroll ─────────────────────────────
