@@ -12,6 +12,7 @@
     <meta property="og:description" content="From brain cancer survivor to fitness coach. The story behind the mission.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com/about">
+    <meta property="og:image" content="https://marceausolutions.com/assets/images/william/side-pose.jpg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -418,6 +419,61 @@
             font-size: 0.95rem;
         }
 
+        /* Story Photo */
+        .story-photo {
+            float: right;
+            margin: 0 0 1.5rem 2rem;
+            max-width: 280px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .story-photo-left {
+            float: left;
+            margin: 0 2rem 1.5rem 0;
+        }
+
+        .story-video-embed {
+            max-width: 300px;
+            float: right;
+            margin: 0 0 1.5rem 2rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .story-video-embed video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .story-photo,
+            .story-photo-left,
+            .story-video-embed {
+                float: none;
+                margin: 0 auto 1.5rem;
+                display: block;
+                max-width: 220px;
+            }
+        }
+
         /* Quote Box */
         .quote-box {
             background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
@@ -680,7 +736,7 @@
 
     <!-- The Battle -->
     <section class="story-section">
-        <div class="story-container">
+        <div class="story-container reveal">
             <h2>The Battle That Changed Everything</h2>
             <p class="lead">At 17, most teenagers worry about college applications and prom.</p>
             <p class="lead">I was fighting for my life.</p>
@@ -694,8 +750,9 @@
 
     <!-- The Comeback -->
     <section class="story-section">
-        <div class="story-container">
+        <div class="story-container reveal">
             <h2>The Comeback</h2>
+            <img src="/assets/images/william/bicep-pose.jpg" alt="William Marceau physique transformation after brain cancer recovery" class="story-photo" loading="lazy" width="280">
             <p>While battling dystonia, I didn't just recover—I <strong>transformed</strong>.</p>
             <p>I taught myself:</p>
             <ul class="story-list">
@@ -731,7 +788,7 @@
 
     <!-- The Choice -->
     <section class="story-section">
-        <div class="story-container">
+        <div class="story-container reveal">
             <h2>The Decision That Changed My Path</h2>
             <p class="lead">I deferred Carnegie Mellon.</p>
             <p>Why would someone who fought so hard for a future walk away from a guaranteed path to success?</p>
@@ -748,8 +805,9 @@
 
     <!-- Fitness Journey -->
     <section class="story-section">
-        <div class="story-container">
+        <div class="story-container reveal">
             <h2>Why Fitness. Why Peptides.</h2>
+            <img src="/assets/images/william/side-pose.jpg" alt="William Marceau training in gym - evidence-based fitness coaching" class="story-photo" loading="lazy" width="280">
             <p>When you've had your brain operated on at 17 and spent years fighting to regain motor control, you develop a different relationship with your body.</p>
             <p>Every movement is intentional. Every rep is earned. Every pound of muscle is proof that the human body can overcome what seems impossible.</p>
             <p>I became obsessed with the <strong>science of optimization</strong>:</p>
@@ -793,8 +851,9 @@
 
     <!-- Philosophy -->
     <section class="story-section">
-        <div class="story-container">
+        <div class="story-container reveal">
             <h2>My Philosophy</h2>
+            <img src="/assets/images/william/coaching-front.jpg" alt="William Marceau - fitness coach ready to help you transform" class="story-photo" loading="lazy" width="280">
             <p>After everything I've been through, here's what I believe:</p>
 
             <div class="philosophy-grid">
@@ -860,6 +919,17 @@
             document.querySelector('.menu-overlay').classList.toggle('active');
             document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
+
+        // Scroll reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>

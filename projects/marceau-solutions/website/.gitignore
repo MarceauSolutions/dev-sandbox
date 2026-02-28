@@ -1,0 +1,3 @@
+# Override root .gitignore — website video assets must be deployed
+!*.mp4
+!*.mov

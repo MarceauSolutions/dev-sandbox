@@ -12,6 +12,7 @@
     <meta property="og:description" content="$197/mo personalized coaching: custom training, nutrition protocols, peptide guidance, and AI-powered progress tracking.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com/coaching">
+    <meta property="og:image" content="https://marceausolutions.com/assets/images/william/coaching-front.jpg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -228,7 +229,6 @@
             background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
             position: relative;
             overflow: hidden;
-            text-align: center;
         }
 
         .hero::before {
@@ -242,10 +242,52 @@
         }
 
         .hero-container {
-            max-width: 800px;
+            max-width: 1100px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text {
+            text-align: left;
+        }
+
+        .hero-photo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hero-photo img {
+            width: 280px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            object-fit: cover;
+            aspect-ratio: 3/4;
+        }
+
+        .hero-photo .coach-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .hero-badge {
@@ -706,6 +748,27 @@
 
         /* Mobile Responsive */
         @media (max-width: 968px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text {
+                text-align: center;
+            }
+
+            .hero-photo {
+                order: -1;
+            }
+
+            .hero-photo img {
+                width: 220px;
+            }
+
+            .hero-ctas {
+                justify-content: center;
+            }
+
             .includes-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -815,25 +878,31 @@
     <!-- Hero -->
     <section class="hero">
         <div class="hero-container">
-            <div class="hero-badge">
-                Peptide-Informed Fitness Coaching
+            <div class="hero-text">
+                <div class="hero-badge">
+                    Peptide-Informed Fitness Coaching
+                </div>
+                <h1>Get Stronger, Leaner, and <span class="highlight">Optimized</span></h1>
+                <p class="hero-subtitle">Evidence-based training programs, peptide-informed protocols, and AI-powered progress tracking. Personalized coaching from someone who rebuilt himself from the ground up.</p>
+                <div class="hero-price">
+                    <span class="amount">$197</span><span class="period">/month</span>
+                </div>
+                <div class="hero-ctas">
+                    <a href="#book" class="btn btn-primary btn-large">Book a Free Strategy Call</a>
+                    <a href="https://buy.stripe.com/14A14n29hdqU48wf5wg3601" class="btn btn-stripe btn-large" target="_blank">Subscribe Now</a>
+                </div>
+                <p class="hero-note">Cancel anytime. No contracts. No commitment beyond this month.</p>
             </div>
-            <h1>Get Stronger, Leaner, and <span class="highlight">Optimized</span></h1>
-            <p class="hero-subtitle">Evidence-based training programs, peptide-informed protocols, and AI-powered progress tracking. Personalized coaching from someone who rebuilt himself from the ground up.</p>
-            <div class="hero-price">
-                <span class="amount">$197</span><span class="period">/month</span>
+            <div class="hero-photo">
+                <img src="/assets/images/william/coaching-front.jpg" alt="William Marceau - your fitness coach in Naples, FL" width="280" height="373">
+                <span class="coach-label">Your Coach: William Marceau</span>
             </div>
-            <div class="hero-ctas">
-                <a href="#book" class="btn btn-primary btn-large">Book a Free Strategy Call</a>
-                <a href="https://buy.stripe.com/14A14n29hdqU48wf5wg3601" class="btn btn-stripe btn-large" target="_blank">Subscribe Now</a>
-            </div>
-            <p class="hero-note">Cancel anytime. No contracts. No commitment beyond this month.</p>
         </div>
     </section>
 
     <!-- What You Get -->
     <section class="includes-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="section-header">
                 <h2>What You Get for $197/mo</h2>
                 <p>Everything you need to transform your physique and performance.</p>
@@ -875,7 +944,7 @@
 
     <!-- What Makes This Different -->
     <section class="different-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="section-header">
                 <h2>Not Your Typical Online Coach</h2>
                 <p>I combine three things most coaches can't: training science, peptide knowledge, and technology.</p>
@@ -903,7 +972,7 @@
 
     <!-- How It Works -->
     <section class="process-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="section-header">
                 <h2>How It Works</h2>
                 <p>From first call to full optimization in four simple steps.</p>
@@ -1069,6 +1138,17 @@
             document.querySelector('.menu-overlay').classList.toggle('active');
             document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
+
+        // Scroll reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -12,6 +12,10 @@
     <meta property="og:description" content="Evidence-based fitness coaching and peptide protocols with physician oversight.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com">
+    <meta property="og:image" content="https://marceausolutions.com/assets/images/william/hero-pose.jpg">
+
+    <!-- Preload hero image -->
+    <link rel="preload" as="image" href="/assets/images/william/hero-pose.jpg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -343,16 +347,120 @@
             z-index: 1;
         }
 
-        .hero-image-placeholder {
+        .hero-image img {
             width: 100%;
-            aspect-ratio: 4/5;
-            background: linear-gradient(135deg, var(--dark), rgba(34, 197, 94, 0.2));
+            max-width: 450px;
             border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            object-fit: cover;
+            aspect-ratio: 3/4;
+        }
+
+        .hero-video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.12;
+            z-index: 0;
+        }
+
+        /* Training Videos Section */
+        .training-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 50%, var(--dark) 100%);
+            overflow: hidden;
+        }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .training-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            aspect-ratio: 9/16;
+            max-height: 400px;
+        }
+
+        .training-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(34, 197, 94, 0.15);
+        }
+
+        .training-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .training-card .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
-            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+
+        .training-card:hover .play-overlay {
+            background: rgba(0,0,0,0.15);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(34, 197, 94, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+
+        .training-card:hover .play-btn {
+            transform: scale(1.1);
+        }
+
+        .play-btn::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 18px;
+            border-color: transparent transparent transparent var(--dark);
+            margin-left: 3px;
+        }
+
+        .training-card.playing .play-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Value Props Section */
@@ -743,12 +851,26 @@
                 grid-template-columns: 1fr;
             }
 
+            .training-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+
+            .training-card {
+                max-height: 300px;
+            }
+
             .nav-links {
                 display: none;
             }
 
             .hero-image {
                 order: -1;
+                text-align: center;
+            }
+
+            .hero-image img {
+                max-width: 300px;
             }
 
             .backend-services {
@@ -772,6 +894,22 @@
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .training-grid {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .training-card {
+                max-height: 500px;
+            }
+
+            .play-btn {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>
@@ -819,6 +957,9 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <video class="hero-video-bg" autoplay muted loop playsinline>
+            <source src="/assets/videos/hero-bg.mp4" type="video/mp4">
+        </video>
         <div class="hero-container">
             <div class="hero-content">
                 <div class="hero-badge">
@@ -832,17 +973,14 @@
                 </div>
             </div>
             <div class="hero-image">
-                <div class="hero-image-placeholder">
-                    <!-- Replace with actual photo -->
-                    💪
-                </div>
+                <img src="/assets/images/william/hero-pose.jpg" alt="William Marceau - Fitness Coach & Peptide Expert in Naples, FL" width="450" height="600">
             </div>
         </div>
     </section>
 
     <!-- Value Props -->
     <section class="value-props">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="section-header">
                 <h2>Why Work With Me</h2>
                 <p>Evidence-based approach to training and optimization</p>
@@ -867,9 +1005,39 @@
         </div>
     </section>
 
+    <!-- Training in Action -->
+    <section class="training-section">
+        <div class="section-container reveal">
+            <div class="section-header">
+                <h2>Training in Action</h2>
+                <p>Real sessions. Real work. See the approach firsthand.</p>
+            </div>
+            <div class="training-grid">
+                <div class="training-card" onclick="toggleVideo(this)">
+                    <video poster="/assets/videos/training/poster-1.jpg" preload="none" muted loop playsinline loading="lazy">
+                        <source src="/assets/videos/training/training-1.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay"><div class="play-btn"></div></div>
+                </div>
+                <div class="training-card" onclick="toggleVideo(this)">
+                    <video poster="/assets/videos/training/poster-4.jpg" preload="none" muted loop playsinline loading="lazy">
+                        <source src="/assets/videos/training/training-4.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay"><div class="play-btn"></div></div>
+                </div>
+                <div class="training-card" onclick="toggleVideo(this)">
+                    <video poster="/assets/videos/training/poster-5.jpg" preload="none" muted loop playsinline loading="lazy">
+                        <source src="/assets/videos/training/training-5.mp4" type="video/mp4">
+                    </video>
+                    <div class="play-overlay"><div class="play-btn"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Peptide Section -->
     <section class="peptide-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="peptide-content">
                 <div class="peptide-text">
                     <h2>Peptides: <span class="highlight">Cutting Through the Hype</span></h2>
@@ -933,7 +1101,7 @@
 
     <!-- Coaching Section -->
     <section class="coaching-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="section-header">
                 <h2>Coaching Programs</h2>
                 <p>Personalized training and nutrition to reach your goals</p>
@@ -981,7 +1149,7 @@
 
     <!-- Backend Services Section -->
     <section class="backend-section">
-        <div class="section-container">
+        <div class="section-container reveal">
             <div class="backend-content">
                 <div class="backend-text">
                     <p class="label">For Influencers & Coaches</p>
@@ -1031,13 +1199,63 @@
         </div>
     </footer>
 
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "William Marceau Fitness Coaching",
+        "description": "Evidence-based fitness coaching and peptide-informed protocols in Naples, FL",
+        "url": "https://marceausolutions.com",
+        "image": "https://marceausolutions.com/assets/images/william/hero-pose.jpg",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Naples",
+            "addressRegion": "FL",
+            "addressCountry": "US"
+        },
+        "priceRange": "$197/mo",
+        "openingHours": "Mo-Sa 06:00-20:00",
+        "sameAs": []
+    }
+    </script>
+
     <script>
+        // Mobile menu toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');
             document.querySelector('.mobile-menu').classList.toggle('active');
             document.querySelector('.menu-overlay').classList.toggle('active');
             document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
+
+        // Video play/pause on training cards
+        function toggleVideo(card) {
+            const video = card.querySelector('video');
+            if (card.classList.contains('playing')) {
+                video.pause();
+                card.classList.remove('playing');
+            } else {
+                // Pause any other playing videos
+                document.querySelectorAll('.training-card.playing').forEach(c => {
+                    c.querySelector('video').pause();
+                    c.classList.remove('playing');
+                });
+                video.play();
+                card.classList.add('playing');
+            }
+        }
+
+        // Scroll reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
 </html>
