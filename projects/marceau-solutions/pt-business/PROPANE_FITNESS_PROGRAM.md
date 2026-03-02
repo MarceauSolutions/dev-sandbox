@@ -1,7 +1,8 @@
 # Propane Fitness Business Program — Overview & Progress Tracker
 
-**Program Start Date:** TBD
-**Coach Assigned:** TBD
+**Status:** ✅ ENROLLED
+**Program Start Date:** 2026-03-02 (Week 1)
+**Coach Assigned:** TBD (waiting for assignment)
 **1:1 Call Frequency:** Every couple days (weeks 1-4), then weekly coaching clinics (lifetime)
 
 ---
@@ -148,9 +149,9 @@
 ## Progress Tracker
 
 ### Pre-Start Checklist
-- [ ] Review contract/terms
-- [ ] Finalize payment plan
-- [ ] Process initial payment ($2,500)
+- [x] Review contract/terms ✓
+- [x] Finalize payment plan ✓
+- [x] Process initial payment ✓
 - [ ] Get assigned 1:1 coach
 - [ ] Schedule first call
 
