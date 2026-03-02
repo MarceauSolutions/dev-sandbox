@@ -190,6 +190,64 @@
 
 ---
 
+## Refund Eligibility Tracker
+
+**Their Guarantee:** 30 paying clients within 12 weeks (or they continue working with you)
+
+### Requirements to Request Refund
+
+To be eligible for refund, document that YOU held up your end:
+
+#### Attendance & Engagement
+- [ ] Attended all scheduled 1:1 coach calls
+- [ ] Attended weekly coaching clinics
+- [ ] Responded within 40 hours to coach messages (their SLA works both ways)
+
+#### Work Completed
+- [ ] Completed Stage 1: Niche defined, 4-6 creatives created
+- [ ] Completed Stage 2: Automated selling system built
+- [ ] Completed Stage 3: Coaching model & delivery set up
+- [ ] Completed Stage 4: Ads launched by week 4
+
+#### Ad Spend & Effort
+- [ ] Spent recommended ad budget (document amount)
+- [ ] Put in 8-10+ hours/week minimum
+- [ ] Implemented coach feedback/changes promptly
+
+#### Documentation (KEEP EVERYTHING)
+- [ ] Screenshot all coach conversations
+- [ ] Save all Zoom call recordings (if they record)
+- [ ] Document hours worked per week
+- [ ] Track ad spend receipts
+- [ ] Save all emails from Propane team
+- [ ] Screenshot any promises made in writing
+
+#### Results Tracking
+| Week | Leads Generated | Clients Signed | Ad Spend | Notes |
+|------|-----------------|----------------|----------|-------|
+| 1 | | | | |
+| 2 | | | | |
+| 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| 7 | | | | |
+| 8 | | | | |
+| 9 | | | | |
+| 10 | | | | |
+| 11 | | | | |
+| 12 | | | | |
+| **TOTAL** | | **/30 target** | | |
+
+#### If Requesting Refund
+- [ ] Document all completed milestones
+- [ ] Compile proof of effort/hours
+- [ ] Show ad spend documentation
+- [ ] Reference the guarantee in contract
+- [ ] Request in writing via email
+
+---
+
 ## Financial Projections
 
 | Milestone | Target |
