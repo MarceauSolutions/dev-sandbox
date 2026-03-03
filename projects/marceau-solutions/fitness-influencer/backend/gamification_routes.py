@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Gamification API Routes
+Gamification API Routes — Marceau Solutions Business Growth Tracker
 
-Endpoints for the personal trainer gamification system:
+Endpoints for the PT coaching business gamification system:
 - Player stats (XP, level, coins, streaks)
-- Daily quests tracking
-- Achievements
-- Rewards shop
-- Action logging
+- Daily quests tracking (Propane tasks, content, outreach)
+- Achievements (business milestones)
+- Rewards shop (self-rewards for hitting goals)
+- Action logging (leads, calls, clients)
 
 Data Source: JSON file (can be synced from EC2 or stored locally)
 """
@@ -26,58 +26,65 @@ router = APIRouter(prefix="/api/gamification", tags=["gamification"])
 DATA_DIR = Path(__file__).parent.parent / "data" / "gamification"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# Default player state (matches Clawdbot's structure)
+# Default player state — Marceau Solutions PT Coaching Business
 DEFAULT_PLAYER_STATE = {
     "player": {
         "level": 1,
         "xp": 0,
         "xp_total": 0,
         "coins": 0,
-        "title": "Aspiring Coach",
+        "title": "Getting Started",
         "current_streak": 0,
         "best_streak": 0,
         "last_active_date": None
     },
     "levels": [
-        {"level": 1, "title": "Aspiring Coach", "xp_required": 0},
-        {"level": 2, "title": "Rising Star", "xp_required": 100},
+        {"level": 1, "title": "Getting Started", "xp_required": 0},
+        {"level": 2, "title": "Foundation Builder", "xp_required": 100},
         {"level": 3, "title": "Content Creator", "xp_required": 300},
-        {"level": 4, "title": "Community Builder", "xp_required": 600},
-        {"level": 5, "title": "Client Magnet", "xp_required": 1000},
-        {"level": 6, "title": "Revenue Generator", "xp_required": 1500},
-        {"level": 7, "title": "Brand Ambassador", "xp_required": 2500},
-        {"level": 8, "title": "Industry Expert", "xp_required": 4000},
-        {"level": 9, "title": "Thought Leader", "xp_required": 6000},
+        {"level": 4, "title": "Niche Expert", "xp_required": 600},
+        {"level": 5, "title": "Lead Magnet", "xp_required": 1000},
+        {"level": 6, "title": "Conversion Machine", "xp_required": 1500},
+        {"level": 7, "title": "Client Crusher", "xp_required": 2500},
+        {"level": 8, "title": "Revenue Generator", "xp_required": 4000},
+        {"level": 9, "title": "Scaling Pro", "xp_required": 6000},
         {"level": 10, "title": "Fitness Empire", "xp_required": 10000}
     ],
     "daily_quests": [
-        {"id": "post_content", "name": "Post content", "xp": 15, "coins": 5, "completed": False},
-        {"id": "respond_comments", "name": "Respond to comments", "xp": 10, "coins": 3, "completed": False},
-        {"id": "check_dms", "name": "Check and reply to DMs", "xp": 10, "coins": 3, "completed": False},
-        {"id": "engage_posts", "name": "Engage with 5 posts", "xp": 10, "coins": 3, "completed": False},
-        {"id": "post_story", "name": "Post a Story", "xp": 15, "coins": 5, "completed": False}
+        {"id": "propane_task", "name": "Complete Propane task", "xp": 20, "coins": 8, "completed": False},
+        {"id": "content_created", "name": "Create content piece", "xp": 15, "coins": 5, "completed": False},
+        {"id": "community_engage", "name": "Engage with community", "xp": 10, "coins": 3, "completed": False},
+        {"id": "outreach", "name": "Outreach/networking", "xp": 15, "coins": 5, "completed": False},
+        {"id": "analytics_review", "name": "Review analytics/metrics", "xp": 10, "coins": 3, "completed": False}
     ],
     "power_actions": [
-        {"id": "consultation_booked", "name": "Consultation booked", "xp": 100, "coins": 50},
-        {"id": "client_signed", "name": "Client signed", "xp": 500, "coins": 200},
-        {"id": "first_payment", "name": "First payment received", "xp": 1000, "coins": 500}
+        {"id": "lead_generated", "name": "Lead generated", "xp": 50, "coins": 20},
+        {"id": "call_booked", "name": "Strategy call booked", "xp": 100, "coins": 50},
+        {"id": "client_signed", "name": "Client signed ($197/mo)", "xp": 500, "coins": 200},
+        {"id": "first_payment", "name": "First payment received", "xp": 1000, "coins": 500},
+        {"id": "ad_creative", "name": "Ad creative completed", "xp": 75, "coins": 30},
+        {"id": "funnel_step", "name": "Funnel step built", "xp": 75, "coins": 30}
     ],
     "achievements": [
-        {"id": "first_post", "name": "First Steps", "description": "Made your first post", "xp_bonus": 50, "unlocked": False},
-        {"id": "week_streak", "name": "Week Warrior", "description": "7-day streak", "xp_bonus": 100, "unlocked": False},
-        {"id": "month_streak", "name": "Iron Will", "description": "30-day streak", "xp_bonus": 500, "unlocked": False},
-        {"id": "first_client", "name": "Client Crusher", "description": "Signed first client", "xp_bonus": 250, "unlocked": False},
-        {"id": "5k_goal", "name": "5K Goal", "description": "Reached $5,000 revenue", "xp_bonus": 500, "unlocked": False},
-        {"id": "level_5", "name": "Halfway There", "description": "Reached Level 5", "xp_bonus": 200, "unlocked": False},
-        {"id": "level_10", "name": "Empire Builder", "description": "Reached Level 10", "xp_bonus": 1000, "unlocked": False}
+        {"id": "first_steps", "name": "First Steps", "description": "Completed first Propane task", "xp_bonus": 50, "unlocked": False},
+        {"id": "week_warrior", "name": "Week Warrior", "description": "7-day streak", "xp_bonus": 100, "unlocked": False},
+        {"id": "content_machine", "name": "Content Machine", "description": "Created 10 content pieces", "xp_bonus": 150, "unlocked": False},
+        {"id": "iron_will", "name": "Iron Will", "description": "30-day streak", "xp_bonus": 500, "unlocked": False},
+        {"id": "first_lead", "name": "First Lead", "description": "Generated first lead", "xp_bonus": 200, "unlocked": False},
+        {"id": "closer", "name": "Closer", "description": "Signed first client", "xp_bonus": 500, "unlocked": False},
+        {"id": "5k_club", "name": "5K Club", "description": "Hit $5K monthly revenue", "xp_bonus": 1000, "unlocked": False},
+        {"id": "ad_master", "name": "Ad Master", "description": "Completed 6 ad creatives", "xp_bonus": 200, "unlocked": False},
+        {"id": "funnel_builder", "name": "Funnel Builder", "description": "Built complete sales funnel (6 steps)", "xp_bonus": 300, "unlocked": False},
+        {"id": "halfway_there", "name": "Halfway There", "description": "Reached Level 5", "xp_bonus": 200, "unlocked": False},
+        {"id": "empire_builder", "name": "Empire Builder", "description": "Reached Level 10", "xp_bonus": 1000, "unlocked": False}
     ],
     "rewards": [
-        {"id": "coffee_break", "name": "Coffee Break", "description": "Take 15 min guilt-free break", "cost": 50},
-        {"id": "cheat_meal", "name": "Cheat Meal", "description": "Enjoy a cheat meal", "cost": 100},
-        {"id": "game_time", "name": "Game Time", "description": "1 hour of gaming", "cost": 200},
-        {"id": "movie_night", "name": "Movie Night", "description": "Watch a movie guilt-free", "cost": 300},
-        {"id": "spa_day", "name": "Spa Treatment", "description": "Get a massage/spa treatment", "cost": 500},
-        {"id": "day_off", "name": "Day Off", "description": "Take a full day off", "cost": 1000}
+        {"id": "coffee_break", "name": "Coffee Break", "description": "Take 30 min off guilt-free", "cost": 50, "icon": "coffee"},
+        {"id": "nice_meal", "name": "Nice Meal Out", "description": "Treat yourself to a good restaurant", "cost": 100, "icon": "meal"},
+        {"id": "game_session", "name": "Game Session", "description": "2 hours of gaming, no guilt", "cost": 200, "icon": "game"},
+        {"id": "new_gear", "name": "New Gear", "description": "Buy something for the gym", "cost": 300, "icon": "gear"},
+        {"id": "day_trip", "name": "Day Trip", "description": "Take a full day off to explore", "cost": 500, "icon": "trip"},
+        {"id": "major_purchase", "name": "Major Purchase", "description": "That thing you've been eyeing", "cost": 1000, "icon": "gift"}
     ],
     "streak_multipliers": [
         {"days": 3, "multiplier": 1.25},
@@ -86,12 +93,17 @@ DEFAULT_PLAYER_STATE = {
         {"days": 30, "multiplier": 3.0}
     ],
     "stats": {
-        "total_posts": 0,
-        "total_comments": 0,
-        "total_dms": 0,
-        "consultations_booked": 0,
-        "clients_signed": 0,
+        "total_content": 0,
+        "total_outreach": 0,
+        "total_leads": 0,
+        "calls_booked": 0,
+        "total_clients": 0,
         "total_revenue": 0,
+        "ad_creatives": 0,
+        "funnel_steps": 0,
+        "propane_tasks": 0,
+        "community_engagements": 0,
+        "analytics_reviews": 0,
         "quests_completed": 0,
         "rewards_purchased": []
     },
@@ -109,9 +121,20 @@ def load_player_state(tenant_id: str = "wmarceau") -> dict:
     player_file = get_player_file(tenant_id)
     if player_file.exists():
         with open(player_file, 'r') as f:
-            return json.load(f)
+            state = json.load(f)
+        # Migrate: ensure all new stats fields exist
+        default_stats = DEFAULT_PLAYER_STATE["stats"].copy()
+        for key, val in default_stats.items():
+            if key not in state.get("stats", {}):
+                state.setdefault("stats", {})[key] = val
+        # Migrate: ensure all new keys exist in state
+        for key in DEFAULT_PLAYER_STATE:
+            if key not in state:
+                state[key] = DEFAULT_PLAYER_STATE[key]
+        return state
     # Create default state
-    state = DEFAULT_PLAYER_STATE.copy()
+    import copy
+    state = copy.deepcopy(DEFAULT_PLAYER_STATE)
     save_player_state(state, tenant_id)
     return state
 
@@ -137,12 +160,30 @@ def check_level_up(state: dict) -> bool:
     player = state["player"]
     levels = state["levels"]
 
+    leveled_up = False
     for level_info in reversed(levels):
         if player["xp_total"] >= level_info["xp_required"] and player["level"] < level_info["level"]:
             player["level"] = level_info["level"]
             player["title"] = level_info["title"]
-            return True
-    return False
+            leveled_up = True
+            break
+
+    # Check level-based achievements
+    if leveled_up:
+        if player["level"] >= 5:
+            for a in state["achievements"]:
+                if a["id"] == "halfway_there" and not a["unlocked"]:
+                    a["unlocked"] = True
+                    player["xp"] += a["xp_bonus"]
+                    player["xp_total"] += a["xp_bonus"]
+        if player["level"] >= 10:
+            for a in state["achievements"]:
+                if a["id"] == "empire_builder" and not a["unlocked"]:
+                    a["unlocked"] = True
+                    player["xp"] += a["xp_bonus"]
+                    player["xp_total"] += a["xp_bonus"]
+
+    return leveled_up
 
 
 def reset_daily_quests_if_needed(state: dict):
@@ -152,6 +193,69 @@ def reset_daily_quests_if_needed(state: dict):
         for quest in state["daily_quests"]:
             quest["completed"] = False
         state["last_quest_reset"] = today
+
+
+def check_stat_achievements(state: dict) -> list:
+    """Check for stat-based achievements and return list of newly unlocked names."""
+    player = state["player"]
+    stats = state["stats"]
+    unlocked = []
+
+    # First Steps — completed first Propane task
+    if stats.get("propane_tasks", 0) >= 1:
+        for a in state["achievements"]:
+            if a["id"] == "first_steps" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    # Content Machine — created 10 content pieces
+    if stats.get("total_content", 0) >= 10:
+        for a in state["achievements"]:
+            if a["id"] == "content_machine" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    # First Lead — generated first lead
+    if stats.get("total_leads", 0) >= 1:
+        for a in state["achievements"]:
+            if a["id"] == "first_lead" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    # Closer — signed first client
+    if stats.get("total_clients", 0) >= 1:
+        for a in state["achievements"]:
+            if a["id"] == "closer" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    # Ad Master — completed 6 ad creatives
+    if stats.get("ad_creatives", 0) >= 6:
+        for a in state["achievements"]:
+            if a["id"] == "ad_master" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    # Funnel Builder — built 6 funnel steps
+    if stats.get("funnel_steps", 0) >= 6:
+        for a in state["achievements"]:
+            if a["id"] == "funnel_builder" and not a["unlocked"]:
+                a["unlocked"] = True
+                player["xp"] += a["xp_bonus"]
+                player["xp_total"] += a["xp_bonus"]
+                unlocked.append(a["name"])
+
+    return unlocked
 
 
 # ============================================================================
@@ -168,6 +272,7 @@ class PlayerStatsResponse(BaseModel):
     current_streak: int
     best_streak: int
     streak_multiplier: float
+    stats: Optional[Dict[str, Any]] = None
 
 
 class QuestStatus(BaseModel):
@@ -224,7 +329,7 @@ class ActionResponse(BaseModel):
 # API Endpoints
 # ============================================================================
 
-@router.get("/player/stats", response_model=PlayerStatsResponse)
+@router.get("/player/stats")
 async def get_player_stats(tenant_id: str = "wmarceau"):
     """Get current player statistics."""
     state = load_player_state(tenant_id)
@@ -239,37 +344,38 @@ async def get_player_stats(tenant_id: str = "wmarceau"):
     xp_progress = player["xp_total"] - xp_for_current
     xp_needed = max(xp_for_next - xp_for_current, 1)
 
-    return PlayerStatsResponse(
-        level=player["level"],
-        title=player["title"],
-        xp=player["xp_total"],
-        xp_to_next_level=xp_for_next - player["xp_total"],
-        xp_progress_percent=min((xp_progress / xp_needed) * 100, 100),
-        coins=player["coins"],
-        current_streak=player["current_streak"],
-        best_streak=player["best_streak"],
-        streak_multiplier=get_streak_multiplier(player["current_streak"], state["streak_multipliers"])
-    )
+    return {
+        "level": player["level"],
+        "title": player["title"],
+        "xp": player["xp_total"],
+        "xp_to_next_level": max(xp_for_next - player["xp_total"], 0),
+        "xp_progress_percent": min((xp_progress / xp_needed) * 100, 100),
+        "coins": player["coins"],
+        "current_streak": player["current_streak"],
+        "best_streak": player["best_streak"],
+        "streak_multiplier": get_streak_multiplier(player["current_streak"], state["streak_multipliers"]),
+        "stats": state.get("stats", {})
+    }
 
 
-@router.get("/quests/daily", response_model=DailyQuestsResponse)
+@router.get("/quests/daily")
 async def get_daily_quests(tenant_id: str = "wmarceau"):
     """Get today's daily quests and their status."""
     state = load_player_state(tenant_id)
     reset_daily_quests_if_needed(state)
     save_player_state(state, tenant_id)
 
-    quests = [QuestStatus(**q) for q in state["daily_quests"]]
-    all_complete = all(q.completed for q in quests)
+    quests = state["daily_quests"]
+    all_complete = all(q["completed"] for q in quests)
 
-    return DailyQuestsResponse(
-        quests=quests,
-        all_complete=all_complete,
-        bonus_available=all_complete
-    )
+    return {
+        "quests": quests,
+        "all_complete": all_complete,
+        "bonus_available": all_complete
+    }
 
 
-@router.post("/quests/{quest_id}/complete", response_model=ActionResponse)
+@router.post("/quests/{quest_id}/complete")
 async def complete_quest(quest_id: str, tenant_id: str = "wmarceau"):
     """Mark a daily quest as complete."""
     state = load_player_state(tenant_id)
@@ -305,12 +411,21 @@ async def complete_quest(quest_id: str, tenant_id: str = "wmarceau"):
     player["coins"] += coins_gained
     state["stats"]["quests_completed"] += 1
 
+    # Update stat counters based on quest type
+    _update_stat_for_action(state, quest_id)
+
     # Check for all quests complete bonus
     if all(q["completed"] for q in state["daily_quests"]):
         bonus_xp = int(50 * multiplier)
         player["xp"] += bonus_xp
         player["xp_total"] += bonus_xp
         xp_gained += bonus_xp
+
+    # Check stat-based achievements
+    newly_unlocked = check_stat_achievements(state)
+    for name in newly_unlocked:
+        # XP already added inside check_stat_achievements
+        pass
 
     # Check level up
     leveled_up = check_level_up(state)
@@ -323,23 +438,32 @@ async def complete_quest(quest_id: str, tenant_id: str = "wmarceau"):
         xp_gained=xp_gained,
         coins_gained=coins_gained,
         new_level=player["level"] if leveled_up else None,
-        new_title=player["title"] if leveled_up else None
+        new_title=player["title"] if leveled_up else None,
+        achievement_unlocked=newly_unlocked[0] if newly_unlocked else None
     )
 
 
-@router.post("/player/action", response_model=ActionResponse)
+@router.post("/player/action")
 async def log_power_action(request: LogActionRequest):
-    """Log a power action (consultation, client signed, etc.)."""
+    """Log a power action or quick action (lead gen, call booked, client signed, etc.)."""
     state = load_player_state(request.tenant_id)
 
+    # Check power actions first
     action = None
     for a in state["power_actions"]:
         if a["id"] == request.action:
             action = a
             break
 
+    # Also allow logging daily quest actions via this endpoint
     if not action:
-        raise HTTPException(status_code=404, detail="Action not found")
+        for q in state["daily_quests"]:
+            if q["id"] == request.action:
+                action = {"id": q["id"], "name": q["name"], "xp": q["xp"], "coins": q["coins"]}
+                break
+
+    if not action:
+        raise HTTPException(status_code=404, detail=f"Action '{request.action}' not found")
 
     player = state["player"]
     multiplier = get_streak_multiplier(player["current_streak"], state["streak_multipliers"])
@@ -351,22 +475,11 @@ async def log_power_action(request: LogActionRequest):
     player["xp_total"] += xp_gained
     player["coins"] += coins_gained
 
-    # Update stats
-    if request.action == "consultation_booked":
-        state["stats"]["consultations_booked"] += 1
-    elif request.action == "client_signed":
-        state["stats"]["clients_signed"] += 1
+    # Update stats based on action type
+    _update_stat_for_action(state, request.action)
 
-    # Check for achievements
-    achievement_unlocked = None
-    if request.action == "client_signed" and state["stats"]["clients_signed"] == 1:
-        for a in state["achievements"]:
-            if a["id"] == "first_client" and not a["unlocked"]:
-                a["unlocked"] = True
-                player["xp"] += a["xp_bonus"]
-                player["xp_total"] += a["xp_bonus"]
-                xp_gained += a["xp_bonus"]
-                achievement_unlocked = a["name"]
+    # Check stat-based achievements
+    newly_unlocked = check_stat_achievements(state)
 
     # Check level up
     leveled_up = check_level_up(state)
@@ -380,18 +493,38 @@ async def log_power_action(request: LogActionRequest):
         coins_gained=coins_gained,
         new_level=player["level"] if leveled_up else None,
         new_title=player["title"] if leveled_up else None,
-        achievement_unlocked=achievement_unlocked
+        achievement_unlocked=newly_unlocked[0] if newly_unlocked else None
     )
 
 
-@router.get("/achievements", response_model=List[AchievementStatus])
+def _update_stat_for_action(state: dict, action_id: str):
+    """Update the appropriate stat counter for a given action."""
+    stats = state["stats"]
+    stat_map = {
+        "propane_task": "propane_tasks",
+        "content_created": "total_content",
+        "community_engage": "community_engagements",
+        "outreach": "total_outreach",
+        "analytics_review": "analytics_reviews",
+        "lead_generated": "total_leads",
+        "call_booked": "calls_booked",
+        "client_signed": "total_clients",
+        "ad_creative": "ad_creatives",
+        "funnel_step": "funnel_steps",
+    }
+    stat_key = stat_map.get(action_id)
+    if stat_key and stat_key in stats:
+        stats[stat_key] += 1
+
+
+@router.get("/achievements")
 async def get_achievements(tenant_id: str = "wmarceau"):
     """Get all achievements and their status."""
     state = load_player_state(tenant_id)
     return [AchievementStatus(**a) for a in state["achievements"]]
 
 
-@router.get("/rewards", response_model=List[RewardItem])
+@router.get("/rewards")
 async def get_rewards(tenant_id: str = "wmarceau"):
     """Get available rewards."""
     state = load_player_state(tenant_id)
@@ -409,7 +542,7 @@ async def get_rewards(tenant_id: str = "wmarceau"):
     ]
 
 
-@router.post("/rewards/purchase", response_model=ActionResponse)
+@router.post("/rewards/purchase")
 async def purchase_reward(request: PurchaseRewardRequest):
     """Purchase a reward with coins."""
     state = load_player_state(request.tenant_id)
@@ -494,14 +627,14 @@ async def update_streak(tenant_id: str = "wmarceau"):
     # Check for streak achievements
     if player["current_streak"] >= 7:
         for a in state["achievements"]:
-            if a["id"] == "week_streak" and not a["unlocked"]:
+            if a["id"] == "week_warrior" and not a["unlocked"]:
                 a["unlocked"] = True
                 player["xp"] += a["xp_bonus"]
                 player["xp_total"] += a["xp_bonus"]
 
     if player["current_streak"] >= 30:
         for a in state["achievements"]:
-            if a["id"] == "month_streak" and not a["unlocked"]:
+            if a["id"] == "iron_will" and not a["unlocked"]:
                 a["unlocked"] = True
                 player["xp"] += a["xp_bonus"]
                 player["xp_total"] += a["xp_bonus"]

@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Coach Game | Gamification Dashboard</title>
+    <title>Marceau Solutions | Business Growth Tracker</title>
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --warning-gradient: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
-            --dark-bg: #1a1a2e;
-            --card-bg: #16213e;
-            --card-border: #0f3460;
-            --text-primary: #ffffff;
+            --primary-gold: #C9963C;
+            --light-gold: #D4AF37;
+            --dark-gold: #8B6914;
+            --gold-gradient: linear-gradient(135deg, #C9963C 0%, #D4AF37 50%, #8B6914 100%);
+            --gold-gradient-subtle: linear-gradient(135deg, #C9963C 0%, #D4AF37 100%);
+            --success-gradient: linear-gradient(135deg, #C9963C 0%, #D4AF37 100%);
+            --warning-gradient: linear-gradient(135deg, #D4AF37 0%, #C9963C 100%);
+            --error-gradient: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            --dark-bg: #1a1a1a;
+            --card-bg: #2D2D2D;
+            --card-border: #3d3d3d;
+            --text-primary: #f0f4f8;
             --text-secondary: #a0a0b0;
-            --xp-bar-bg: #2d2d44;
-            --gold-accent: #ffd700;
+            --text-accent: #C9963C;
+            --xp-bar-bg: #3d3d3d;
         }
 
         * {
@@ -40,7 +44,7 @@
 
         /* Header Section */
         .header {
-            background: var(--primary-gradient);
+            background: var(--gold-gradient);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 24px;
@@ -49,6 +53,38 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-name {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
         }
 
         .player-info {
@@ -61,7 +97,8 @@
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -69,7 +106,7 @@
         }
 
         .player-details h1 {
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 4px;
         }
 
@@ -112,6 +149,8 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
+            color: var(--text-accent);
+            font-weight: 500;
         }
 
         .xp-bar-container {
@@ -124,7 +163,7 @@
 
         .xp-bar-fill {
             height: 100%;
-            background: var(--primary-gradient);
+            background: var(--gold-gradient-subtle);
             border-radius: 10px;
             transition: width 0.5s ease;
         }
@@ -136,6 +175,8 @@
             transform: translate(-50%, -50%);
             font-size: 12px;
             font-weight: bold;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
         /* Grid Layout */
@@ -172,6 +213,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--text-accent);
         }
 
         /* Daily Quests */
@@ -184,19 +226,21 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(201, 150, 60, 0.05);
             border-radius: 8px;
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
         .quest-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(201, 150, 60, 0.12);
+            border-color: rgba(201, 150, 60, 0.2);
         }
 
         .quest-item.completed {
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .quest-checkbox {
@@ -208,11 +252,14 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .quest-item.completed .quest-checkbox {
-            background: var(--success-gradient);
+            background: var(--gold-gradient-subtle);
             border-color: transparent;
+            color: #1a1a1a;
+            font-weight: bold;
         }
 
         .quest-info {
@@ -224,9 +271,9 @@
             margin-bottom: 4px;
         }
 
-        .quest-xp {
+        .quest-rewards {
             font-size: 12px;
-            color: var(--gold-accent);
+            color: var(--text-accent);
         }
 
         /* Streak Section */
@@ -243,7 +290,7 @@
         .streak-count {
             font-size: 36px;
             font-weight: bold;
-            background: var(--warning-gradient);
+            background: var(--gold-gradient-subtle);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -251,7 +298,7 @@
 
         .streak-multiplier {
             font-size: 14px;
-            color: var(--gold-accent);
+            color: var(--text-accent);
             margin-top: 8px;
         }
 
@@ -265,19 +312,21 @@
         .achievement-item {
             text-align: center;
             padding: 16px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(201, 150, 60, 0.05);
             border-radius: 12px;
             transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
         .achievement-item:hover {
             transform: translateY(-2px);
-            background: rgba(255,255,255,0.1);
+            background: rgba(201, 150, 60, 0.12);
+            border-color: rgba(201, 150, 60, 0.2);
         }
 
         .achievement-item.locked {
-            opacity: 0.4;
-            filter: grayscale(1);
+            opacity: 0.35;
+            filter: grayscale(0.8);
         }
 
         .achievement-icon {
@@ -288,6 +337,12 @@
         .achievement-name {
             font-size: 12px;
             font-weight: 500;
+        }
+
+        .achievement-xp {
+            font-size: 10px;
+            color: var(--text-accent);
+            margin-top: 4px;
         }
 
         /* Rewards Shop */
@@ -302,13 +357,15 @@
             align-items: center;
             gap: 12px;
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(201, 150, 60, 0.05);
             border-radius: 8px;
             transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
         .reward-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(201, 150, 60, 0.12);
+            border-color: rgba(201, 150, 60, 0.2);
         }
 
         .reward-icon {
@@ -325,18 +382,24 @@
             font-weight: 500;
         }
 
+        .reward-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
         .reward-cost {
             font-size: 14px;
-            color: var(--gold-accent);
+            color: var(--text-accent);
         }
 
         .reward-btn {
             padding: 8px 16px;
             border: none;
             border-radius: 6px;
-            background: var(--primary-gradient);
-            color: white;
-            font-weight: 500;
+            background: var(--gold-gradient-subtle);
+            color: #1a1a1a;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -347,25 +410,25 @@
         }
 
         .reward-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
 
-        /* Log Action Button */
+        /* Quick Action Buttons */
         .log-action-section {
             margin-bottom: 24px;
         }
 
         .action-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 12px;
         }
 
         .action-btn {
-            padding: 16px;
-            border: 2px solid var(--card-border);
+            padding: 16px 12px;
+            border: 1px solid var(--card-border);
             border-radius: 12px;
             background: var(--card-bg);
             color: var(--text-primary);
@@ -375,8 +438,23 @@
         }
 
         .action-btn:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-gold);
+            background: rgba(201, 150, 60, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.power-action {
+            border-color: rgba(201, 150, 60, 0.3);
+            background: rgba(201, 150, 60, 0.08);
+        }
+
+        .action-btn.power-action:hover {
+            border-color: var(--light-gold);
+            background: rgba(201, 150, 60, 0.18);
         }
 
         .action-btn-icon {
@@ -385,13 +463,13 @@
         }
 
         .action-btn-label {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .action-btn-xp {
             font-size: 12px;
-            color: var(--gold-accent);
+            color: var(--text-accent);
             margin-top: 4px;
         }
 
@@ -401,13 +479,14 @@
             bottom: 20px;
             right: 20px;
             padding: 16px 24px;
-            background: var(--success-gradient);
+            background: var(--gold-gradient-subtle);
             border-radius: 12px;
-            color: white;
-            font-weight: 500;
+            color: #1a1a1a;
+            font-weight: 600;
             transform: translateX(150%);
             transition: transform 0.3s ease;
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(201, 150, 60, 0.4);
         }
 
         .toast.show {
@@ -415,7 +494,9 @@
         }
 
         .toast.error {
-            background: var(--secondary-gradient);
+            background: var(--error-gradient);
+            color: white;
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.4);
         }
 
         /* Loading State */
@@ -431,7 +512,7 @@
             height: 40px;
             border: 3px solid var(--card-border);
             border-radius: 50%;
-            border-top-color: #667eea;
+            border-top-color: var(--primary-gold);
             animation: spin 1s linear infinite;
         }
 
@@ -450,20 +531,35 @@
         .stats-item {
             text-align: center;
             padding: 12px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(201, 150, 60, 0.05);
             border-radius: 8px;
         }
 
         .stats-item-value {
             font-size: 24px;
             font-weight: bold;
-            color: var(--gold-accent);
+            color: var(--text-accent);
         }
 
         .stats-item-label {
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
+        }
+
+        /* Bonus complete banner */
+        .bonus-banner {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(201, 150, 60, 0.1);
+            border: 1px solid rgba(201, 150, 60, 0.2);
+            border-radius: 8px;
+        }
+
+        .bonus-banner span {
+            color: var(--text-accent);
+            font-weight: 500;
         }
     </style>
 </head>
@@ -472,7 +568,7 @@
         <!-- Loading State -->
         <div id="loading" class="loading">
             <div class="loading-spinner"></div>
-            <p style="margin-top: 16px;">Loading your game stats...</p>
+            <p style="margin-top: 16px;">Loading your growth stats...</p>
         </div>
 
         <!-- Main Content (hidden until loaded) -->
@@ -480,10 +576,11 @@
             <!-- Header with Player Info -->
             <div class="header">
                 <div class="player-info">
-                    <div class="player-avatar" id="player-avatar">🏋️</div>
+                    <div class="player-avatar" id="player-avatar">&#x1F3AF;</div>
                     <div class="player-details">
-                        <h1>Level <span id="player-level">1</span>: <span id="player-title">Aspiring Coach</span></h1>
-                        <div class="player-title">Fitness Content Creator</div>
+                        <div class="brand-name">Marceau Solutions</div>
+                        <h1>Level <span id="player-level">1</span>: <span id="player-title">Getting Started</span></h1>
+                        <div class="player-title">Business Growth Tracker</div>
                     </div>
                 </div>
                 <div class="stats-row">
@@ -517,48 +614,48 @@
             <!-- Quick Actions -->
             <div class="card log-action-section">
                 <div class="card-header">
-                    <h2 class="card-title">📝 Log Action</h2>
+                    <h2 class="card-title">&#x26A1; Quick Actions</h2>
                 </div>
                 <div class="action-grid" id="action-grid">
-                    <button class="action-btn" data-action="post">
-                        <div class="action-btn-icon">📱</div>
-                        <div class="action-btn-label">Posted Content</div>
+                    <button class="action-btn" data-action="propane_task">
+                        <div class="action-btn-icon">&#x1F4CB;</div>
+                        <div class="action-btn-label">Propane Task</div>
+                        <div class="action-btn-xp">+20 XP</div>
+                    </button>
+                    <button class="action-btn" data-action="content_created">
+                        <div class="action-btn-icon">&#x270D;&#xFE0F;</div>
+                        <div class="action-btn-label">Content Created</div>
                         <div class="action-btn-xp">+15 XP</div>
                     </button>
-                    <button class="action-btn" data-action="comment">
-                        <div class="action-btn-icon">💬</div>
-                        <div class="action-btn-label">Comments</div>
+                    <button class="action-btn" data-action="community_engage">
+                        <div class="action-btn-icon">&#x1F4AC;</div>
+                        <div class="action-btn-label">Community</div>
                         <div class="action-btn-xp">+10 XP</div>
                     </button>
-                    <button class="action-btn" data-action="dm">
-                        <div class="action-btn-icon">✉️</div>
-                        <div class="action-btn-label">Checked DMs</div>
-                        <div class="action-btn-xp">+10 XP</div>
-                    </button>
-                    <button class="action-btn" data-action="story">
-                        <div class="action-btn-icon">📸</div>
-                        <div class="action-btn-label">Posted Story</div>
+                    <button class="action-btn" data-action="outreach">
+                        <div class="action-btn-icon">&#x1F4E7;</div>
+                        <div class="action-btn-label">Outreach</div>
                         <div class="action-btn-xp">+15 XP</div>
                     </button>
-                    <button class="action-btn" data-action="engage">
-                        <div class="action-btn-icon">👍</div>
-                        <div class="action-btn-label">Engaged 5 Posts</div>
+                    <button class="action-btn" data-action="analytics_review">
+                        <div class="action-btn-icon">&#x1F4CA;</div>
+                        <div class="action-btn-label">Analytics</div>
                         <div class="action-btn-xp">+10 XP</div>
                     </button>
-                    <button class="action-btn" data-action="consultation">
-                        <div class="action-btn-icon">📞</div>
-                        <div class="action-btn-label">Consultation</div>
+                    <button class="action-btn power-action" data-action="lead_generated">
+                        <div class="action-btn-icon">&#x1F9F2;</div>
+                        <div class="action-btn-label">Lead Gen</div>
+                        <div class="action-btn-xp">+50 XP</div>
+                    </button>
+                    <button class="action-btn power-action" data-action="call_booked">
+                        <div class="action-btn-icon">&#x1F4DE;</div>
+                        <div class="action-btn-label">Call Booked</div>
                         <div class="action-btn-xp">+100 XP</div>
                     </button>
-                    <button class="action-btn" data-action="client_signed">
-                        <div class="action-btn-icon">🤝</div>
+                    <button class="action-btn power-action" data-action="client_signed">
+                        <div class="action-btn-icon">&#x1F91D;</div>
                         <div class="action-btn-label">Client Signed</div>
                         <div class="action-btn-xp">+500 XP</div>
-                    </button>
-                    <button class="action-btn" data-action="revenue">
-                        <div class="action-btn-icon">💰</div>
-                        <div class="action-btn-label">Revenue Goal</div>
-                        <div class="action-btn-xp">+200 XP</div>
                     </button>
                 </div>
             </div>
@@ -568,39 +665,39 @@
                 <!-- Daily Quests -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">📋 Daily Quests</h2>
+                        <h2 class="card-title">&#x1F4CB; Daily Quests</h2>
                         <span id="quests-progress">0/5</span>
                     </div>
                     <ul class="quest-list" id="quest-list">
                         <!-- Populated by JavaScript -->
                     </ul>
-                    <div style="text-align: center; margin-top: 16px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 8px;">
-                        <span style="color: var(--gold-accent);">🏆 Complete all for +50 XP bonus!</span>
+                    <div class="bonus-banner">
+                        <span>&#x1F3C6; Complete all 5 for +50 XP bonus!</span>
                     </div>
                 </div>
 
                 <!-- Streak & Stats -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">🔥 Streak</h2>
+                        <h2 class="card-title">&#x1F525; Streak</h2>
                     </div>
                     <div class="streak-display">
-                        <div class="streak-flame">🔥</div>
+                        <div class="streak-flame">&#x1F525;</div>
                         <div class="streak-count" id="streak-count">0 Days</div>
                         <div class="streak-multiplier" id="streak-bonus">Keep your streak to earn bonus XP!</div>
                     </div>
                     <div class="stats-grid">
                         <div class="stats-item">
-                            <div class="stats-item-value" id="total-posts">0</div>
-                            <div class="stats-item-label">Total Posts</div>
+                            <div class="stats-item-value" id="total-content">0</div>
+                            <div class="stats-item-label">Content Pieces</div>
+                        </div>
+                        <div class="stats-item">
+                            <div class="stats-item-value" id="total-leads">0</div>
+                            <div class="stats-item-label">Leads</div>
                         </div>
                         <div class="stats-item">
                             <div class="stats-item-value" id="total-clients">0</div>
-                            <div class="stats-item-label">Clients Signed</div>
-                        </div>
-                        <div class="stats-item">
-                            <div class="stats-item-value" id="total-revenue">$0</div>
-                            <div class="stats-item-label">Revenue</div>
+                            <div class="stats-item-label">Clients</div>
                         </div>
                     </div>
                 </div>
@@ -608,7 +705,7 @@
                 <!-- Achievements -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">🏅 Achievements</h2>
+                        <h2 class="card-title">&#x1F3C5; Achievements</h2>
                         <span id="achievements-count">0/11</span>
                     </div>
                     <div class="achievements-grid" id="achievements-grid">
@@ -619,8 +716,8 @@
                 <!-- Rewards Shop -->
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="card-title">🛒 Rewards Shop</h2>
-                        <span id="coins-balance">💰 0 coins</span>
+                        <h2 class="card-title">&#x1F381; Rewards Shop</h2>
+                        <span id="coins-balance" style="color: var(--text-accent);">0 coins</span>
                     </div>
                     <div class="rewards-list" id="rewards-list">
                         <!-- Populated by JavaScript -->
@@ -636,7 +733,7 @@
     <script>
         // Configuration
         const API_BASE = window.location.origin;
-        const TENANT_ID = 'wmarceau'; // Default tenant
+        const TENANT_ID = 'wmarceau';
 
         // State
         let playerData = null;
@@ -644,39 +741,44 @@
         let achievementsData = [];
         let rewardsData = [];
 
-        // Level titles
+        // Level titles (must match backend)
         const LEVEL_TITLES = {
-            1: 'Aspiring Coach',
-            2: 'Content Rookie',
-            3: 'Rising Star',
-            4: 'Fitness Creator',
-            5: 'Content Pro',
-            6: 'Influence Builder',
-            7: 'Community Leader',
-            8: 'Fitness Authority',
-            9: 'Industry Expert',
-            10: 'Fitness Legend'
+            1: 'Getting Started',
+            2: 'Foundation Builder',
+            3: 'Content Creator',
+            4: 'Niche Expert',
+            5: 'Lead Magnet',
+            6: 'Conversion Machine',
+            7: 'Client Crusher',
+            8: 'Revenue Generator',
+            9: 'Scaling Pro',
+            10: 'Fitness Empire'
         };
 
         // Achievement icons
         const ACHIEVEMENT_ICONS = {
-            'first_steps': '👣',
-            'week_warrior': '⚔️',
-            'consistency_king': '👑',
-            'month_master': '📅',
-            'quarter_champion': '🏆',
-            'yearly_legend': '⭐',
-            'first_sale': '💵',
-            '5k_goal': '💎',
-            '10k_goal': '💰',
-            '50k_goal': '🎯',
-            '100k_goal': '🚀'
+            'first_steps': '\u{1F463}',
+            'week_warrior': '\u{2694}\uFE0F',
+            'content_machine': '\u{270D}\uFE0F',
+            'iron_will': '\u{1F3C6}',
+            'first_lead': '\u{1F9F2}',
+            'closer': '\u{1F91D}',
+            '5k_club': '\u{1F4B0}',
+            'ad_master': '\u{1F3AF}',
+            'funnel_builder': '\u{1F3D7}\uFE0F',
+            'halfway_there': '\u{2B50}',
+            'empire_builder': '\u{1F451}'
         };
 
-        // XP per level
-        function getXpForLevel(level) {
-            return level * 100;
-        }
+        // Reward icons
+        const REWARD_ICONS = {
+            'coffee_break': '\u{2615}',
+            'nice_meal': '\u{1F37D}\uFE0F',
+            'game_session': '\u{1F3AE}',
+            'new_gear': '\u{1F4AA}',
+            'day_trip': '\u{1F3D6}\uFE0F',
+            'major_purchase': '\u{1F381}'
+        };
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
@@ -687,24 +789,21 @@
         // Load all data
         async function loadPlayerData() {
             try {
-                // Load player stats
-                const statsRes = await fetch(`${API_BASE}/api/gamification/player/stats?tenant_id=${TENANT_ID}`);
+                const [statsRes, questsRes, achievementsRes, rewardsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/gamification/player/stats?tenant_id=${TENANT_ID}`),
+                    fetch(`${API_BASE}/api/gamification/quests/daily?tenant_id=${TENANT_ID}`),
+                    fetch(`${API_BASE}/api/gamification/achievements?tenant_id=${TENANT_ID}`),
+                    fetch(`${API_BASE}/api/gamification/rewards?tenant_id=${TENANT_ID}`)
+                ]);
+
                 if (!statsRes.ok) throw new Error('Failed to load player stats');
-                playerData = await statsRes.json();
-
-                // Load quests
-                const questsRes = await fetch(`${API_BASE}/api/gamification/quests/daily?tenant_id=${TENANT_ID}`);
                 if (!questsRes.ok) throw new Error('Failed to load quests');
-                questsData = await questsRes.json();
-
-                // Load achievements
-                const achievementsRes = await fetch(`${API_BASE}/api/gamification/achievements?tenant_id=${TENANT_ID}`);
                 if (!achievementsRes.ok) throw new Error('Failed to load achievements');
-                achievementsData = await achievementsRes.json();
-
-                // Load rewards
-                const rewardsRes = await fetch(`${API_BASE}/api/gamification/rewards?tenant_id=${TENANT_ID}`);
                 if (!rewardsRes.ok) throw new Error('Failed to load rewards');
+
+                playerData = await statsRes.json();
+                questsData = await questsRes.json();
+                achievementsData = await achievementsRes.json();
                 rewardsData = await rewardsRes.json();
 
                 // Render everything
@@ -720,9 +819,9 @@
             } catch (error) {
                 console.error('Error loading data:', error);
                 document.getElementById('loading').innerHTML = `
-                    <p style="color: #f5576c;">Failed to load data. Make sure the API is running.</p>
+                    <p style="color: #e74c3c;">Failed to load data. Make sure the API is running.</p>
                     <p style="margin-top: 8px; font-size: 14px;">Error: ${error.message}</p>
-                    <button onclick="location.reload()" style="margin-top: 16px; padding: 12px 24px; border: none; border-radius: 8px; background: var(--primary-gradient); color: white; cursor: pointer;">Retry</button>
+                    <button onclick="location.reload()" style="margin-top: 16px; padding: 12px 24px; border: none; border-radius: 8px; background: var(--gold-gradient-subtle); color: #1a1a1a; font-weight: 600; cursor: pointer;">Retry</button>
                 `;
             }
         }
@@ -733,55 +832,68 @@
 
             // Update header
             document.getElementById('player-level').textContent = level;
-            document.getElementById('player-title').textContent = title || LEVEL_TITLES[level] || 'Fitness Coach';
+            document.getElementById('player-title').textContent = title || LEVEL_TITLES[level] || 'Getting Started';
             document.getElementById('coins-display').textContent = coins;
             document.getElementById('streak-display').textContent = current_streak;
             document.getElementById('multiplier-display').textContent = `${streak_multiplier}x`;
 
-            // Update XP bar
-            const xpForCurrentLevel = getXpForLevel(level);
-            const xpProgress = (xp / xpForCurrentLevel) * 100;
-            document.getElementById('xp-bar').style.width = `${Math.min(xpProgress, 100)}%`;
-            document.getElementById('xp-text').textContent = `${xp} / ${xpForCurrentLevel} XP`;
-            document.getElementById('xp-percent').textContent = `${Math.round(xpProgress)}%`;
+            // Update XP bar - use xp_to_next_level and xp_progress_percent if available
+            if (playerData.xp_progress_percent !== undefined) {
+                const progress = playerData.xp_progress_percent;
+                document.getElementById('xp-bar').style.width = `${Math.min(progress, 100)}%`;
+                document.getElementById('xp-percent').textContent = `${Math.round(progress)}%`;
+                const xpToNext = playerData.xp_to_next_level || 0;
+                document.getElementById('xp-text').textContent = `${xp} XP total | ${xpToNext} XP to next level`;
+            } else {
+                // Fallback for simple XP display
+                const xpForLevel = level * 100;
+                const xpProgress = (xp / xpForLevel) * 100;
+                document.getElementById('xp-bar').style.width = `${Math.min(xpProgress, 100)}%`;
+                document.getElementById('xp-text').textContent = `${xp} / ${xpForLevel} XP`;
+                document.getElementById('xp-percent').textContent = `${Math.round(xpProgress)}%`;
+            }
 
             // Update streak section
             document.getElementById('streak-count').textContent = `${current_streak} Days`;
             if (current_streak >= 30) {
-                document.getElementById('streak-bonus').textContent = `🔥 3x XP Multiplier Active! Best: ${best_streak} days`;
+                document.getElementById('streak-bonus').textContent = `3x XP Multiplier Active! Best: ${best_streak} days`;
             } else if (current_streak >= 14) {
-                document.getElementById('streak-bonus').textContent = `🔥 2x XP Multiplier Active! Best: ${best_streak} days`;
+                document.getElementById('streak-bonus').textContent = `2x XP Multiplier Active! Best: ${best_streak} days`;
             } else if (current_streak >= 7) {
-                document.getElementById('streak-bonus').textContent = `🔥 1.5x XP Multiplier Active! Best: ${best_streak} days`;
+                document.getElementById('streak-bonus').textContent = `1.5x XP Multiplier Active! Best: ${best_streak} days`;
             } else if (current_streak >= 3) {
-                document.getElementById('streak-bonus').textContent = `🔥 1.25x XP Multiplier Active! Best: ${best_streak} days`;
+                document.getElementById('streak-bonus').textContent = `1.25x XP Multiplier Active! Best: ${best_streak} days`;
             } else {
                 document.getElementById('streak-bonus').textContent = `Keep a 3+ day streak for bonus XP!`;
             }
 
             // Update stats
-            document.getElementById('total-posts').textContent = stats?.total_posts || 0;
-            document.getElementById('total-clients').textContent = stats?.total_clients || 0;
-            document.getElementById('total-revenue').textContent = `$${(stats?.total_revenue || 0).toLocaleString()}`;
+            if (stats) {
+                document.getElementById('total-content').textContent = stats.total_content || 0;
+                document.getElementById('total-leads').textContent = stats.total_leads || 0;
+                document.getElementById('total-clients').textContent = stats.total_clients || 0;
+            }
 
             // Update coins in rewards section
-            document.getElementById('coins-balance').textContent = `💰 ${coins} coins`;
+            document.getElementById('coins-balance').textContent = `${coins} coins`;
         }
 
         // Render quests
         function renderQuests() {
             const questList = document.getElementById('quest-list');
-            const completedCount = questsData.filter(q => q.completed).length;
-            document.getElementById('quests-progress').textContent = `${completedCount}/${questsData.length}`;
+            // Handle both array and object response formats
+            const quests = Array.isArray(questsData) ? questsData : (questsData.quests || questsData);
+            const completedCount = quests.filter(q => q.completed).length;
+            document.getElementById('quests-progress').textContent = `${completedCount}/${quests.length}`;
 
-            questList.innerHTML = questsData.map(quest => `
+            questList.innerHTML = quests.map(quest => `
                 <li class="quest-item ${quest.completed ? 'completed' : ''}" onclick="completeQuest('${quest.id}')">
                     <div class="quest-checkbox">
-                        ${quest.completed ? '✓' : ''}
+                        ${quest.completed ? '\u2713' : ''}
                     </div>
                     <div class="quest-info">
                         <div class="quest-name">${quest.name}</div>
-                        <div class="quest-xp">+${quest.xp_reward} XP</div>
+                        <div class="quest-rewards">+${quest.xp_reward || quest.xp} XP | +${quest.coins_reward || quest.coins} coins</div>
                     </div>
                 </li>
             `).join('');
@@ -795,8 +907,9 @@
 
             grid.innerHTML = achievementsData.map(achievement => `
                 <div class="achievement-item ${achievement.unlocked ? '' : 'locked'}" title="${achievement.description}">
-                    <div class="achievement-icon">${ACHIEVEMENT_ICONS[achievement.id] || '🏅'}</div>
+                    <div class="achievement-icon">${ACHIEVEMENT_ICONS[achievement.id] || '\u{1F3C5}'}</div>
                     <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-xp">+${achievement.xp_bonus} XP</div>
                 </div>
             `).join('');
         }
@@ -807,15 +920,16 @@
 
             list.innerHTML = rewardsData.map(reward => `
                 <div class="reward-item">
-                    <div class="reward-icon">${reward.icon || '🎁'}</div>
+                    <div class="reward-icon">${REWARD_ICONS[reward.id] || reward.icon || '\u{1F381}'}</div>
                     <div class="reward-info">
                         <div class="reward-name">${reward.name}</div>
+                        <div class="reward-description">${reward.description || ''}</div>
                         <div class="reward-cost">${reward.cost} coins</div>
                     </div>
                     <button class="reward-btn"
                         onclick="purchaseReward('${reward.id}')"
-                        ${playerData.coins < reward.cost ? 'disabled' : ''}>
-                        Buy
+                        ${(playerData.coins < reward.cost) ? 'disabled' : ''}>
+                        Redeem
                     </button>
                 </div>
             `).join('');
@@ -831,14 +945,14 @@
             });
         }
 
-        // Log action
+        // Log action (handles both quest completion and power actions)
         async function logAction(actionType) {
             try {
                 const res = await fetch(`${API_BASE}/api/gamification/player/action`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        action_type: actionType,
+                        action: actionType,
                         tenant_id: TENANT_ID
                     })
                 });
@@ -847,8 +961,13 @@
 
                 const result = await res.json();
 
-                // Show toast
-                showToast(`+${result.xp_earned} XP${result.coins_earned ? ` | +${result.coins_earned} coins` : ''}${result.level_up ? ' | 🎉 LEVEL UP!' : ''}`);
+                // Build toast message
+                let msg = `+${result.xp_gained} XP`;
+                if (result.coins_gained > 0) msg += ` | +${result.coins_gained} coins`;
+                if (result.new_level) msg += ` | LEVEL UP to ${result.new_title}!`;
+                if (result.achievement_unlocked) msg += ` | Achievement: ${result.achievement_unlocked}!`;
+
+                showToast(msg);
 
                 // Reload data
                 await loadPlayerData();
@@ -873,7 +992,10 @@
                 }
 
                 const result = await res.json();
-                showToast(`Quest complete! +${result.xp_earned} XP`);
+                let msg = `Quest complete! +${result.xp_gained} XP`;
+                if (result.coins_gained > 0) msg += ` | +${result.coins_gained} coins`;
+                if (result.new_level) msg += ` | LEVEL UP!`;
+                showToast(msg);
 
                 // Reload data
                 await loadPlayerData();
@@ -901,7 +1023,7 @@
                 }
 
                 const result = await res.json();
-                showToast(`🎉 ${result.reward_name} purchased!`);
+                showToast(`${result.message}`);
 
                 // Reload data
                 await loadPlayerData();
@@ -919,7 +1041,7 @@
 
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 3000);
+            }, 3500);
         }
     </script>
 </body>
