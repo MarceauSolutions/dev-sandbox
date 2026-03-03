@@ -128,8 +128,8 @@ marceausolutions.com/coaching
 <head></head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.7; color: #1a1a2e; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
 
-    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-        <h1 style="color: #22c55e; margin: 0; font-size: 24px;">Welcome to Coaching</h1>
+    <div style="background: linear-gradient(135deg, #333333, #2D2D2D); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+        <h1 style="color: #C9963C; margin: 0; font-size: 24px;">Welcome to Coaching</h1>
         <p style="color: #94a3b8; margin: 8px 0 0;">Let's get you set up.</p>
     </div>
 
@@ -139,26 +139,26 @@ marceausolutions.com/coaching
         <p>Welcome aboard - I'm genuinely excited to work with you. Here's what happens next (keep this email handy).</p>
 
         <!-- Step 1 -->
-        <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
-            <h3 style="color: #0f172a; margin: 0 0 8px;">Step 1: Book Your Kickoff Call</h3>
+        <div style="background: #FDF8EF; border-left: 4px solid #C9963C; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #333333; margin: 0 0 8px;">Step 1: Book Your Kickoff Call</h3>
             <p style="margin: 0; color: #475569;">30 minutes to map out your goals, review your training history, and design your program.</p>
             <p style="margin: 12px 0 0;">
-                <a href="{calendly_url}" style="background-color: #22c55e; color: #0f172a; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Book Your Kickoff Call</a>
+                <a href="{calendly_url}" style="background-color: #C9963C; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Book Your Kickoff Call</a>
             </p>
         </div>
 
         <!-- Step 2 -->
-        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
-            <h3 style="color: #0f172a; margin: 0 0 8px;">Step 2: Fill Out Your Intake Form</h3>
+        <div style="background: #FDF8EF; border-left: 4px solid #D4AF37; padding: 16px 20px; margin: 24px 0; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #333333; margin: 0 0 8px;">Step 2: Fill Out Your Intake Form</h3>
             <p style="margin: 0; color: #475569;">Health history, goals, equipment, schedule, and food preferences. The more I know, the better your program.</p>
             <p style="margin: 12px 0 0;">
-                <a href="{intake_form_url}" style="background-color: #3b82f6; color: white; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Complete Intake Form</a>
+                <a href="{intake_form_url}" style="background-color: #D4AF37; color: #ffffff; padding: 10px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">Complete Intake Form</a>
             </p>
             <p style="margin: 8px 0 0; font-size: 13px; color: #64748b;">Please complete before our kickoff call if possible.</p>
         </div>
 
         <!-- What You'll Receive -->
-        <h3 style="color: #0f172a; margin: 24px 0 12px;">Within 48 Hours of Our Call, You'll Get:</h3>
+        <h3 style="color: #333333; margin: 24px 0 12px;">Within 48 Hours of Our Call, You'll Get:</h3>
         <ul style="padding-left: 0; list-style: none;">
             <li style="padding: 6px 0;">&#x2705; Custom training program (PDF in your Google Drive folder)</li>
             <li style="padding: 6px 0;">&#x2705; Nutrition protocol with macro targets</li>
@@ -167,7 +167,7 @@ marceausolutions.com/coaching
         </ul>
 
         <!-- Communication -->
-        <h3 style="color: #0f172a; margin: 24px 0 12px;">How We'll Communicate</h3>
+        <h3 style="color: #333333; margin: 24px 0 12px;">How We'll Communicate</h3>
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 8px 0; font-weight: 600;">SMS</td>
@@ -189,7 +189,7 @@ marceausolutions.com/coaching
         <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Texts: within 4 hours (Mon-Fri, 8am-7pm ET) &middot; Email: within 24 hours on business days</p>
 
         <!-- What I Need -->
-        <h3 style="color: #0f172a; margin: 24px 0 12px;">What I Need From You</h3>
+        <h3 style="color: #333333; margin: 24px 0 12px;">What I Need From You</h3>
         <ul style="padding-left: 20px; color: #475569;">
             <li style="padding: 4px 0;">Honest Monday check-in responses (even just a 1-10 rating)</li>
             <li style="padding: 4px 0;">Monthly progress photos (front/side/back)</li>
@@ -207,8 +207,8 @@ marceausolutions.com/coaching
         <p style="font-size: 15px;">Let's get to work.</p>
         <p style="margin-top: 16px;">
             <strong>William Marceau</strong><br>
-            <a href="mailto:wmarceau@marceausolutions.com" style="color: #3b82f6;">wmarceau@marceausolutions.com</a><br>
-            <a href="https://marceausolutions.com/coaching" style="color: #3b82f6;">marceausolutions.com/coaching</a>
+            <a href="mailto:wmarceau@marceausolutions.com" style="color: #C9963C;">wmarceau@marceausolutions.com</a><br>
+            <a href="https://marceausolutions.com/coaching" style="color: #C9963C;">marceausolutions.com/coaching</a>
         </p>
     </div>
 

@@ -265,12 +265,59 @@ class WorkoutPlanGenerator:
     def export_json(self, plan, filename):
         """Export plan as JSON."""
         json_path = self.output_dir / f"{filename}.json"
-        
+
         with open(json_path, 'w') as f:
             json.dump(plan, f, indent=2)
-        
+
         print(f"✓ JSON exported: {json_path}")
         return json_path
+
+    def export_pdf(self, plan, filename, client_name="Client"):
+        """Export plan as branded PDF using the branded PDF engine."""
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent))
+        from branded_pdf_engine import BrandedPDFEngine
+
+        # Convert generator format → WorkoutProgramData format
+        schedule = []
+        for day in plan["weekly_schedule"]:
+            exercises = []
+            for ex in day["exercises"]:
+                rest_str = ex.get("rest", "90 seconds")
+                rest_sec = int("".join(c for c in rest_str.split("-")[0] if c.isdigit()) or 90)
+                exercises.append({
+                    "name": ex["exercise"],
+                    "muscle_group": ex.get("muscle_group", ""),
+                    "sets": ex["sets"],
+                    "reps": str(ex["reps"]),
+                    "rest_seconds": rest_sec,
+                })
+            schedule.append({
+                "day_number": day["day"],
+                "day_name": f"Day {day['day']}",
+                "focus": day["focus"],
+                "exercises": exercises,
+                "warmup": plan.get("notes", {}).get("warm_up"),
+                "cooldown": plan.get("notes", {}).get("cool_down"),
+            })
+
+        data = {
+            "client_name": client_name,
+            "program_name": f"{plan['goal']} Program",
+            "start_date": datetime.now().strftime("%B %d, %Y"),
+            "goal": plan["goal"],
+            "experience_level": plan["experience"],
+            "equipment": plan["equipment"],
+            "days_per_week": plan["days_per_week"],
+            "schedule": schedule,
+            "program_notes": plan.get("notes"),
+        }
+
+        engine = BrandedPDFEngine()
+        pdf_path = self.output_dir / f"{filename}.pdf"
+        engine.generate_to_file("workout_program", data, str(pdf_path))
+        print(f"✓ Branded PDF exported: {pdf_path}")
+        return pdf_path
 
 
 def main():

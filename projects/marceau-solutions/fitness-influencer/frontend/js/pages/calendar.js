@@ -191,7 +191,7 @@ const CalendarPage = {
               const platform = c.platform || 'General';
               const text = c.caption || c.text || c;
               return `
-                <div style="padding:12px;background:var(--bg-secondary);border-radius:8px">
+                <div style="padding:12px;background:var(--surface-2);border-radius:8px">
                   <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent-secondary);margin-bottom:6px">${platform}</div>
                   <div style="font-size:13px;color:var(--text-primary);white-space:pre-wrap">${text}</div>
                 </div>
@@ -213,7 +213,7 @@ const CalendarPage = {
           ${platforms.map(([platform, text]) => {
             const caption = typeof text === 'object' ? (text.caption || text.text || JSON.stringify(text)) : text;
             return `
-              <div style="padding:12px;background:var(--bg-secondary);border-radius:8px">
+              <div style="padding:12px;background:var(--surface-2);border-radius:8px">
                 <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--accent-secondary);margin-bottom:6px">${platform}</div>
                 <div style="font-size:13px;color:var(--text-primary);white-space:pre-wrap">${caption}</div>
               </div>

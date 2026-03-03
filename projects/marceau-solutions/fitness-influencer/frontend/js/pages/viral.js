@@ -112,7 +112,7 @@ const ViralPage = {
         ${clips.map((clip, i) => {
           const score = clip.score || clip.viral_score || 0;
           const pct = Math.round(score * 100);
-          const scoreColor = pct >= 80 ? 'var(--status-complete)' : pct >= 60 ? 'var(--status-processing)' : 'var(--text-muted)';
+          const scoreColor = pct >= 80 ? 'var(--status-success)' : pct >= 60 ? 'var(--status-processing)' : 'var(--text-muted)';
 
           return `
             <div class="card">
@@ -143,7 +143,7 @@ const ViralPage = {
 
               <div style="display:flex;align-items:center;gap:12px">
                 <div style="font-size:13px;font-weight:600;min-width:42px;color:${scoreColor}">${pct}%</div>
-                <div style="flex:1;height:8px;background:var(--bg-tertiary);border-radius:4px;overflow:hidden">
+                <div style="flex:1;height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden">
                   <div style="width:${pct}%;height:100%;background:${scoreColor};border-radius:4px;transition:width 0.3s"></div>
                 </div>
               </div>

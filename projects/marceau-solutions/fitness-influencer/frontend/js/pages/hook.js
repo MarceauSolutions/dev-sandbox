@@ -88,7 +88,7 @@ const HookPage = {
 
     const score = data.hook_score || data.score || data.overall_score || 0;
     const pct = Math.round(typeof score === 'number' && score <= 1 ? score * 100 : score);
-    const scoreColor = pct >= 80 ? 'var(--status-complete)' : pct >= 50 ? 'var(--status-processing)' : 'var(--status-error)';
+    const scoreColor = pct >= 80 ? 'var(--status-success)' : pct >= 50 ? 'var(--status-processing)' : 'var(--status-error)';
 
     // Extract component scores
     const components = data.components || data.breakdown || data.scores || {};
@@ -109,7 +109,7 @@ const HookPage = {
       <div class="card" style="text-align:center;margin-bottom:24px;padding:32px">
         <div style="font-size:56px;font-weight:800;color:${scoreColor};line-height:1">${pct}</div>
         <div style="font-size:14px;color:var(--text-secondary);margin-top:4px">Hook Score out of 100</div>
-        <div style="width:200px;height:8px;background:var(--bg-tertiary);border-radius:4px;margin:16px auto 0;overflow:hidden">
+        <div style="width:200px;height:8px;background:var(--surface-2);border-radius:4px;margin:16px auto 0;overflow:hidden">
           <div style="width:${pct}%;height:100%;background:${scoreColor};border-radius:4px"></div>
         </div>
       </div>
@@ -120,7 +120,7 @@ const HookPage = {
           if (val === undefined && !Object.keys(components).length) return '';
           const v = val !== undefined ? val : '--';
           const display = typeof v === 'number' ? (v <= 1 ? Math.round(v * 100) : Math.round(v)) : v;
-          const cColor = typeof display === 'number' ? (display >= 70 ? 'var(--status-complete)' : display >= 40 ? 'var(--status-processing)' : 'var(--status-error)') : 'var(--text-primary)';
+          const cColor = typeof display === 'number' ? (display >= 70 ? 'var(--status-success)' : display >= 40 ? 'var(--status-processing)' : 'var(--status-error)') : 'var(--text-primary)';
           return `
             <div class="stat-card">
               <div class="stat-value" style="color:${cColor}">${display}</div>

@@ -200,7 +200,7 @@ const GamificationPage = {
       return '<div style="color:var(--text-muted);font-size:13px;padding:12px 0">No daily quests available</div>';
     }
     return this._quests.map(q => `
-      <div class="job-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;opacity:${q.completed ? '0.6' : '1'}" data-quest-id="${q.id}">
+      <div class="job-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-default);cursor:pointer;opacity:${q.completed ? '0.6' : '1'}" data-quest-id="${q.id}">
         <span style="font-size:20px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid ${q.completed ? 'var(--accent-primary)' : 'var(--text-muted)'};background:${q.completed ? 'var(--accent-primary)' : 'transparent'};color:${q.completed ? '#fff' : 'transparent'};font-size:12px">${q.completed ? '&#10003;' : ''}</span>
         <div style="flex:1">
           <div style="font-weight:600">${q.title || q.name}</div>
@@ -233,7 +233,7 @@ const GamificationPage = {
       const cost = r.cost || r.price || 0;
       const canAfford = coins >= cost;
       return `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-default)">
           <span style="font-size:22px;width:36px;text-align:center">${r.icon || '&#x1F381;'}</span>
           <div style="flex:1">
             <div style="font-weight:600;font-size:13px">${r.name}</div>

@@ -63,10 +63,10 @@ const JobsPage = {
 
     return filtered.map(j => {
       const statusColors = {
-        completed: 'var(--status-completed)',
+        completed: 'var(--status-success)',
         processing: 'var(--status-processing)',
         queued: 'var(--status-processing)',
-        failed: 'var(--status-failed)',
+        failed: 'var(--status-error)',
         cancelled: 'var(--text-muted)'
       };
       const statusColor = statusColors[j.status] || 'var(--text-muted)';

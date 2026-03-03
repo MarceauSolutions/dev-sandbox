@@ -144,7 +144,7 @@ const LeadsPage = {
             ${digest.items ? `
               <div style="margin-top:12px">
                 ${digest.items.map(item => `
-                  <div style="padding:8px 0;border-top:1px solid var(--border);font-size:13px">
+                  <div style="padding:8px 0;border-top:1px solid var(--border-default);font-size:13px">
                     <strong>${item.subject || item.title || '--'}</strong>
                     <span style="color:var(--text-muted);margin-left:8px">${item.from || item.sender || ''}</span>
                   </div>

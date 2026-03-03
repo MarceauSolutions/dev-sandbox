@@ -358,12 +358,53 @@ class NutritionGuideGenerator:
     def export_json(self, guide, filename):
         """Export guide as JSON."""
         json_path = self.output_dir / f"{filename}.json"
-        
+
         with open(json_path, 'w') as f:
             json.dump(guide, f, indent=2)
-        
+
         print(f"✓ JSON exported: {json_path}")
         return json_path
+
+    def export_pdf(self, guide, filename, client_name="Client"):
+        """Export guide as branded PDF using the branded PDF engine."""
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent))
+        from branded_pdf_engine import BrandedPDFEngine
+
+        macros = guide["macros"]
+        meal_timing = guide.get("meal_timing", {})
+
+        # Build meal plan from meal timing schedule
+        meal_plan = []
+        for meal_name, time_str in meal_timing.get("sample_schedule", {}).items():
+            meal_plan.append({
+                "meal_name": meal_name.replace("_", " ").title(),
+                "time": time_str.split(":")[0] if ":" in time_str else time_str,
+                "foods": [],
+            })
+
+        data = {
+            "client_name": client_name,
+            "goal": guide["user_stats"]["goal"],
+            "weight_lbs": guide["user_stats"]["weight_lbs"],
+            "daily_targets": {
+                "calories": macros["calories"],
+                "protein_g": macros["protein_g"],
+                "carbs_g": macros["carbs_g"],
+                "fats_g": macros["fats_g"],
+            },
+            "meal_plan": meal_plan,
+            "food_lists": guide.get("food_lists"),
+            "supplements": guide.get("supplements"),
+            "hydration_oz": guide.get("hydration", {}).get("water_oz_per_day", 100),
+            "tips": guide.get("tips", []),
+        }
+
+        engine = BrandedPDFEngine()
+        pdf_path = self.output_dir / f"{filename}.pdf"
+        engine.generate_to_file("nutrition_guide", data, str(pdf_path))
+        print(f"✓ Branded PDF exported: {pdf_path}")
+        return pdf_path
 
 
 def main():

@@ -55,6 +55,9 @@ from backend.sms_routes import router as sms_router
 # Collaborator management routes (v2.1)
 from backend.collaborators_routes import router as collaborators_router
 
+# Branded PDF generation routes (v2.2)
+from backend.pdf_routes import router as pdf_router
+
 # Initialize structured JSON logging
 setup_logging()
 logger = get_logger(__name__)
@@ -92,6 +95,9 @@ app.include_router(sms_router)
 
 # Include collaborator management routes (v2.1)
 app.include_router(collaborators_router)
+
+# Include branded PDF generation routes (v2.2)
+app.include_router(pdf_router)
 
 # Base path for execution scripts
 SCRIPTS_PATH = Path(__file__).parent

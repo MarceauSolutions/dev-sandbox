@@ -207,7 +207,7 @@ const ExercisePage = {
         <div class="table-wrap">
           <table style="width:100%;border-collapse:collapse">
             <thead>
-              <tr style="border-bottom:1px solid var(--border-subtle);text-align:left">
+              <tr style="border-bottom:1px solid var(--border-muted);text-align:left">
                 <th style="padding:12px 16px;font-weight:600">Exercise</th>
                 <th style="padding:12px 16px;font-weight:600">Confidence</th>
                 <th style="padding:12px 16px;font-weight:600">Timestamps</th>
@@ -224,9 +224,9 @@ const ExercisePage = {
                   : timestamps;
                 const reps = d.rep_count != null ? d.rep_count : d.reps != null ? d.reps : '--';
                 const confVal = d.confidence || 0;
-                const confColor = confVal >= 0.9 ? 'var(--accent-primary)' : confVal >= 0.7 ? 'var(--status-processing)' : 'var(--status-failed)';
+                const confColor = confVal >= 0.9 ? 'var(--accent-primary)' : confVal >= 0.7 ? 'var(--status-processing)' : 'var(--status-error)';
                 return `
-                  <tr style="border-bottom:1px solid var(--border-subtle)">
+                  <tr style="border-bottom:1px solid var(--border-muted)">
                     <td style="padding:10px 16px;font-weight:500">${name}</td>
                     <td style="padding:10px 16px;color:${confColor}">${confidence}</td>
                     <td style="padding:10px 16px;color:var(--text-secondary);font-size:13px">${tsDisplay || '--'}</td>

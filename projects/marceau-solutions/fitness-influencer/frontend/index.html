@@ -5,16 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FitAI Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/frontend/css/dashboard.css">
   <style>
     /* Inline critical: prevent FOUC */
-    body { background: #161b22; color: #e6edf3; }
+    body { background: #060b18; color: #f0f4f8; }
   </style>
 </head>
 <body>
 
 <div class="app-shell" id="app-shell">
+
+  <!-- Noise texture overlay -->
+  <div class="noise-overlay"></div>
 
   <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
@@ -195,7 +198,7 @@
   <!-- Job Queue Bar -->
   <footer class="job-bar" id="job-bar" onclick="App.toggleJobBar()">
     <div class="job-bar-summary">
-      <span style="font-weight:600;font-size:12px;">Jobs</span>
+      <span style="font-weight:700;font-size:12px;letter-spacing:0.02em">Jobs</span>
       <span class="job-badge processing" id="jb-processing">0 processing</span>
       <span class="job-badge queued" id="jb-queued">0 queued</span>
       <span class="job-badge completed" id="jb-completed">0 completed</span>

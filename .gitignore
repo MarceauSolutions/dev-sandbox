@@ -98,3 +98,6 @@ projects/shared/photo-processor/output/
 
 # OAuth token files
 token_sheets.json
+
+# Deploy backups (auto-generated safety snapshots)
+.deploy-backups/

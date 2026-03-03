@@ -88,7 +88,7 @@ const RetentionPage = {
 
     const retention = data.predicted_retention || data.retention || data.retention_rate || data.overall_retention || 0;
     const pct = Math.round(typeof retention === 'number' && retention <= 1 ? retention * 100 : retention);
-    const retColor = pct >= 60 ? 'var(--status-complete)' : pct >= 35 ? 'var(--status-processing)' : 'var(--status-error)';
+    const retColor = pct >= 60 ? 'var(--status-success)' : pct >= 35 ? 'var(--status-processing)' : 'var(--status-error)';
 
     const dropOffs = data.drop_off_points || data.dropoffs || data.cliffs || [];
     const suggestions = data.suggestions || data.improvements || data.recommendations || [];
@@ -100,7 +100,7 @@ const RetentionPage = {
       <div class="card" style="text-align:center;margin-bottom:24px;padding:32px">
         <div style="font-size:56px;font-weight:800;color:${retColor};line-height:1">${pct}%</div>
         <div style="font-size:14px;color:var(--text-secondary);margin-top:4px">Predicted Average Retention</div>
-        <div style="width:200px;height:8px;background:var(--bg-tertiary);border-radius:4px;margin:16px auto 0;overflow:hidden">
+        <div style="width:200px;height:8px;background:var(--surface-2);border-radius:4px;margin:16px auto 0;overflow:hidden">
           <div style="width:${pct}%;height:100%;background:${retColor};border-radius:4px"></div>
         </div>
       </div>
@@ -112,7 +112,7 @@ const RetentionPage = {
             ${curveData.map((point, i) => {
               const val = point.retention || point.value || point;
               const v = typeof val === 'number' ? (val <= 1 ? val : val / 100) : 0;
-              const bg = v >= 0.6 ? 'var(--status-complete)' : v >= 0.35 ? 'var(--status-processing)' : 'var(--status-error)';
+              const bg = v >= 0.6 ? 'var(--status-success)' : v >= 0.35 ? 'var(--status-processing)' : 'var(--status-error)';
               return `<div class="timeline-segment" style="flex:1;background:${bg};opacity:${0.4 + v * 0.6}" title="${this._formatTime(point.time || i)}s: ${Math.round(v * 100)}%"></div>`;
             }).join('')}
           </div>
@@ -133,7 +133,7 @@ const RetentionPage = {
               const dropPct = Math.round(typeof drop === 'number' && drop <= 1 ? drop * 100 : drop);
               const reason = d.reason || d.cause || d.description || 'Viewer attention lost';
               return `
-                <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-default)">
                   <div style="min-width:50px;font-weight:700;color:var(--status-error)">${this._formatTime(time)}</div>
                   <div style="flex:1">
                     <div style="font-size:14px;font-weight:500">${reason}</div>

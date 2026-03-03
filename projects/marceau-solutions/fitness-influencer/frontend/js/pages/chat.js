@@ -26,7 +26,7 @@ const ChatPage = {
             </div>
           </div>
 
-          <div class="quick-prompts" style="padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border)">
+          <div class="quick-prompts" style="padding:8px 16px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border-default)">
             <button class="tag quick-prompt-btn">Workout Plan</button>
             <button class="tag quick-prompt-btn">Nutrition Guide</button>
             <button class="tag quick-prompt-btn">Content Ideas</button>
@@ -34,7 +34,7 @@ const ChatPage = {
             <button class="tag quick-prompt-btn">Hook Ideas</button>
           </div>
 
-          <div class="chat-input-area" style="padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px">
+          <div class="chat-input-area" style="padding:12px 16px;border-top:1px solid var(--border-default);display:flex;gap:8px">
             <input type="text" id="chat-input" class="form-input" placeholder="Ask me anything about fitness content..." style="flex:1" autocomplete="off">
             <button class="btn btn-primary" id="chat-send-btn">Send</button>
           </div>

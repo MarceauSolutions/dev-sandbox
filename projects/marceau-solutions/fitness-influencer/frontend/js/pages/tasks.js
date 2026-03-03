@@ -47,7 +47,7 @@ const TasksPage = {
           <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" style="color:var(--status-completed)">${completed}</div>
+          <div class="stat-value" style="color:var(--status-success)">${completed}</div>
           <div class="stat-label">Completed</div>
         </div>
       </div>
@@ -105,7 +105,7 @@ const TasksPage = {
         </div>
         <div class="task-list" data-section="${section}">
           ${tasks.length ? tasks.map(t => `
-            <div class="job-item" data-id="${t.id}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div class="job-item" data-id="${t.id}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-default)">
               <span style="flex:1;${section === 'completed' ? 'text-decoration:line-through;opacity:0.6' : ''}">${t.content || t.title || t.text}</span>
               ${t.priority ? `<span class="tag${t.priority === 'high' ? ' active' : ''}" style="font-size:11px">${t.priority}</span>` : ''}
               ${section !== 'completed' ? `

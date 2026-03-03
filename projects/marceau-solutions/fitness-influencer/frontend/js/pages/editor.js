@@ -106,8 +106,8 @@ const EditorPage = {
             <div class="viral-gauge-label">Before</div>
             <div class="viral-gauge">
               <svg viewBox="0 0 120 60" class="viral-gauge-svg">
-                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--surface-border)" stroke-width="8" stroke-linecap="round"/>
-                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--error)" stroke-width="8" stroke-linecap="round"
+                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--border-default)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--status-error)" stroke-width="8" stroke-linecap="round"
                   id="viral-gauge-before-arc" stroke-dasharray="0 157" style="transition:stroke-dasharray 1.2s ease"/>
               </svg>
               <div class="viral-gauge-value" id="viral-score-before">--</div>
@@ -123,7 +123,7 @@ const EditorPage = {
             <div class="viral-gauge-label">After</div>
             <div class="viral-gauge">
               <svg viewBox="0 0 120 60" class="viral-gauge-svg">
-                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--surface-border)" stroke-width="8" stroke-linecap="round"/>
+                <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--border-default)" stroke-width="8" stroke-linecap="round"/>
                 <path d="M10 55 A50 50 0 0 1 110 55" fill="none" stroke="var(--accent-primary)" stroke-width="8" stroke-linecap="round"
                   id="viral-gauge-after-arc" stroke-dasharray="0 157" style="transition:stroke-dasharray 1.2s ease"/>
               </svg>
@@ -148,7 +148,7 @@ const EditorPage = {
           <button class="btn" onclick="EditorPage._reset()">Edit Another</button>
         </div>
         <!-- Export package details (hidden until requested) -->
-        <div id="editor-package-card" style="display:none;margin-top:12px;padding:12px;border-radius:8px;background:var(--bg-secondary);">
+        <div id="editor-package-card" style="display:none;margin-top:12px;padding:12px;border-radius:8px;background:var(--surface-2);">
           <div style="font-weight:600;margin-bottom:8px;">Export Package</div>
           <div id="editor-package-list"></div>
         </div>
@@ -312,7 +312,7 @@ const EditorPage = {
         ).join('');
         if (data.steps_failed) {
           log.innerHTML += data.steps_failed.map(s =>
-            `<div style="color:var(--error)">&#10007; ${s}</div>`
+            `<div style="color:var(--status-error)">&#10007; ${s}</div>`
           ).join('');
         }
       }
@@ -382,7 +382,7 @@ const EditorPage = {
       deltaEl.style.display = 'flex';
       const valEl = document.getElementById('viral-delta-value');
       valEl.textContent = (delta >= 0 ? '+' : '') + Math.round(delta);
-      valEl.style.color = delta >= 0 ? 'var(--accent-primary)' : 'var(--error)';
+      valEl.style.color = delta >= 0 ? 'var(--accent-primary)' : 'var(--status-error)';
 
       // Grade badge
       const badge = document.getElementById('viral-grade-badge');
@@ -456,7 +456,7 @@ const EditorPage = {
       if (data.packages && data.packages.length > 0) {
         const listEl = document.getElementById('editor-package-list');
         listEl.innerHTML = data.packages.map(pkg => `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--surface-border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-default);">
             <div>
               <span style="font-weight:500;text-transform:capitalize;">${pkg.platform.replace(/_/g, ' ')}</span>
               ${pkg.thumbnail_path ? '<span class="badge" style="margin-left:6px;font-size:0.7rem">Thumbnail</span>' : ''}

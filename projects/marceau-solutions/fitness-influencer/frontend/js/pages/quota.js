@@ -89,10 +89,10 @@ const QuotaPage = {
 
       return `
         <div class="card" style="text-align:center">
-          <div style="font-weight:700;font-size:24px;color:${isNearLimit ? 'var(--status-failed)' : m.color}">${m.used}</div>
+          <div style="font-weight:700;font-size:24px;color:${isNearLimit ? 'var(--status-error)' : m.color}">${m.used}</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">${m.label}</div>
           <div class="job-progress" style="height:8px;border-radius:4px;margin-bottom:4px">
-            <div class="job-progress-fill" style="width:${percent}%;${isNearLimit ? 'background:var(--status-failed)' : ''}"></div>
+            <div class="job-progress-fill" style="width:${percent}%;${isNearLimit ? 'background:var(--status-error)' : ''}"></div>
           </div>
           <div style="font-size:11px;color:var(--text-muted)">${m.used} / ${m.limit} used (${percent}%)</div>
         </div>
