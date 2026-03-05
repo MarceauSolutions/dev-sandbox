@@ -60,6 +60,17 @@ I'm one person, not an app. I will always respond during business hours, but I'm
 
 ---
 
+## Peptide & Supplement Disclaimer
+
+Any discussion of peptides, supplements, or optimization protocols during coaching is **educational only**. I am not a licensed physician and I do not prescribe medications or peptides. Specifically:
+
+- Peptide information is shared to help you understand current research and make informed decisions with your doctor
+- I may suggest supplements (e.g., creatine, magnesium, protein) based on your goals, but these are suggestions, not prescriptions
+- Always consult your healthcare provider before starting any new supplement or peptide protocol
+- If you are interested in peptide therapy, I can help you understand the landscape and, when partnerships are established, refer you to licensed physicians
+
+---
+
 ## Billing
 
 - **$197/month**, billed on the same date each month

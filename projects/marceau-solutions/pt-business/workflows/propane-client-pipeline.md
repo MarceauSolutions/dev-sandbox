@@ -187,7 +187,7 @@ This is the full scalable, repeatable system. Every step is automated. 5-tier of
 │   Day 7: THE OFFER — "Ready to stop guessing?" (SMS + Email)   │
 │                                                                 │
 │   DELIVERY: n8n workflow with scheduled delays                  │
-│   SMS: Twilio (+1 855 239 9364)                                 │
+│   SMS: Twilio (+1 239 880 3365)                                 │
 │   Email: Gmail SMTP (already configured)                        │
 └──────────────────────────────┬──────────────────────────────────┘
                                │

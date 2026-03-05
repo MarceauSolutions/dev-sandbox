@@ -1,25 +1,20 @@
 #!/usr/bin/env python3
 """
-Stripe Webhook Server
+stripe_webhook_server.py - Stripe Webhook Receiver
 
-Simple Flask server to receive Stripe webhooks on EC2.
-Processes payment events and updates ClickUp/sends notifications.
+WHAT: Flask server that receives Stripe webhooks and triggers downstream actions
+WHY: Processes payment events in real-time -- sends notifications, updates CRM,
+     triggers onboarding flows (SOP 19 Day 0 automation)
+INPUT: Stripe webhook POST requests (signed with STRIPE_WEBHOOK_SECRET)
+OUTPUT: SMS/email notifications, ClickUp task updates, event logs
+COST: FREE (runs on EC2)
 
-DEPLOYMENT:
-1. Add to .env:
-   STRIPE_WEBHOOK_SECRET=whsec_xxx
+QUICK USAGE:
+  python execution/stripe_webhook_server.py --port 5002
+  # Then configure Stripe Dashboard webhook to: https://your-ec2/webhooks/stripe
 
-2. Run on EC2:
-   python execution/stripe_webhook_server.py --port 5002
-
-3. Configure Stripe webhook:
-   URL: http://your-ec2-ip:5002/webhooks/stripe
-   Events: checkout.session.completed, invoice.paid, payment_intent.succeeded
-
-4. (Optional) Put behind nginx with SSL for production
-
-Usage:
-    python -m execution.stripe_webhook_server --port 5002
+DEPENDENCIES: flask, stripe, python-dotenv
+API_KEYS: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, NOTIFICATION_PHONE (optional)
 """
 
 import os
@@ -41,7 +36,7 @@ from execution.stripe_payments import StripePayments
 
 # Optional integrations
 try:
-    from execution.twilio_sms import send_sms
+    from execution.twilio_sms import TwilioSMS
     HAS_SMS = True
 except ImportError:
     HAS_SMS = False
@@ -126,6 +121,15 @@ def handle_payment_event(event: dict):
     if event_type in ["checkout.session.completed", "invoice.paid", "payment_intent.succeeded"]:
         notify_payment_received(amount_dollars, event_type, customer_id)
 
+    # Handle subscription cancellation
+    if event_type == "customer.subscription.deleted":
+        notify_subscription_cancelled(customer_id, event)
+
+    # Handle failed payment
+    if event_type == "invoice.payment_failed":
+        attempt_count = event.get("attempt_count", 0)
+        notify_payment_failed(amount_dollars, customer_id, attempt_count)
+
     # Update ClickUp if task ID in metadata
     task_id = event.get("metadata", {}).get("clickup_task_id")
     if task_id:
@@ -145,10 +149,50 @@ def notify_payment_received(amount: float, event_type: str, customer_id: Optiona
 
     if HAS_SMS and admin_phone:
         try:
-            send_sms(admin_phone, message)
+            sms_client = TwilioSMS()
+            sms_client.send_message(to=admin_phone, message=message)
             logger.info(f"SMS sent to {admin_phone}")
         except Exception as e:
             logger.error(f"Failed to send SMS: {e}")
+
+
+def notify_subscription_cancelled(customer_id: Optional[str], event: dict):
+    """Send notification when a subscription is cancelled."""
+    admin_phone = os.getenv("NOTIFICATION_PHONE")
+
+    message = f"Client subscription cancelled"
+    if customer_id:
+        message += f"\nCustomer: {customer_id}"
+    message += f"\nAction: Check offboarding workflow"
+
+    logger.info(f"Cancellation notification: {message}")
+
+    if HAS_SMS and admin_phone:
+        try:
+            sms_client = TwilioSMS()
+            sms_client.send_message(to=admin_phone, message=message, force_send=True)
+        except Exception as e:
+            logger.error(f"Failed to send cancellation SMS: {e}")
+
+
+def notify_payment_failed(amount: float, customer_id: Optional[str], attempt_count: int):
+    """Send notification when a payment fails."""
+    admin_phone = os.getenv("NOTIFICATION_PHONE")
+
+    message = f"Payment FAILED: ${amount:.2f}"
+    if customer_id:
+        message += f"\nCustomer: {customer_id}"
+    message += f"\nAttempt: {attempt_count}"
+    message += f"\nAction: Check dunning flow"
+
+    logger.info(f"Payment failure notification: {message}")
+
+    if HAS_SMS and admin_phone:
+        try:
+            sms_client = TwilioSMS()
+            sms_client.send_message(to=admin_phone, message=message, force_send=True)
+        except Exception as e:
+            logger.error(f"Failed to send payment failure SMS: {e}")
 
 
 def update_clickup_status(task_id: str, amount: float, event_type: str):

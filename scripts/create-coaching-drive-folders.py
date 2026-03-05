@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
-create-coaching-drive-folders.py - Create Google Drive folder structure for coaching clients.
+create-coaching-drive-folders.py - Create Google Drive Folder Structure
 
-Creates:
-  Coaching Clients/
-  └── _TEMPLATE (Client Name)/
-      ├── Program/
-      ├── Progress/
-      └── Resources/   ← uploads 3 PDFs here
+WHAT: Creates standardized Google Drive folder structure for coaching clients
+WHY: Every client gets the same folder layout with legal docs pre-loaded
+INPUT: Google OAuth credentials (credentials.json + token_sheets.json)
+OUTPUT: Drive folder tree: Coaching Clients/_TEMPLATE (Client Name)/{Program,Progress,Resources}
 
-Usage:
-    python scripts/create-coaching-drive-folders.py
+QUICK USAGE:
+  python scripts/create-coaching-drive-folders.py
+
+DEPENDENCIES: google-auth, google-auth-oauthlib, google-api-python-client
+API_KEYS: Google OAuth credentials (credentials.json at project root)
 """
 
 import os
@@ -34,8 +35,8 @@ PROJECT_ROOT = Path(__file__).parent.parent
 CREDENTIALS_FILE = PROJECT_ROOT / "credentials.json"
 TOKEN_FILE = PROJECT_ROOT / "token_sheets.json"
 
-# PDFs to upload to Resources folder
-DOCS_DIR = PROJECT_ROOT / "projects" / "marceau-solutions" / "fitness-influencer" / "docs"
+# PDFs to upload to Resources folder (legal docs in pt-business hub)
+DOCS_DIR = PROJECT_ROOT / "projects" / "marceau-solutions" / "pt-business" / "legal"
 PDFS_TO_UPLOAD = [
     DOCS_DIR / "working-together.pdf",
     DOCS_DIR / "liability-waiver.pdf",

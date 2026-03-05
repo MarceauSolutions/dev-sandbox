@@ -112,6 +112,7 @@ a:hover { color: #D4AF37; text-decoration: none; }
   inset: 0;
   background: var(--bg-gradient);
   z-index: 0;
+  pointer-events: none;
 }
 
 .app-shell::after {
@@ -364,6 +365,16 @@ a:hover { color: #D4AF37; text-decoration: none; }
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* --- Sidebar Overlay (mobile only) --- */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 40;
 }
 
 /* --- Main Content --- */
@@ -1641,15 +1652,6 @@ tr:hover td { background: var(--surface-1); }
     display: block;
   }
 
-  .sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 40;
-  }
-
   .topbar-toggle { display: flex; }
   .sidebar .logo-text { display: block; }
   .sidebar .nav-group-label { text-align: left; font-size: 10px; }
@@ -1678,4 +1680,167 @@ tr:hover td { background: var(--surface-1); }
 
 .main-content > *:not(.loading-overlay) {
   animation: fade-up 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   Collapsible Nav Groups
+   ============================================================ */
+
+.nav-group-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.nav-group-toggle:hover {
+  color: var(--text-secondary);
+}
+
+.nav-chevron {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s ease;
+  opacity: 0.5;
+}
+
+.nav-group[data-collapsed="true"] .nav-chevron {
+  transform: rotate(-90deg);
+}
+
+.nav-group[data-collapsed="true"] .nav-group-items {
+  display: none;
+}
+
+.nav-group-items {
+  display: block;
+}
+
+/* ============================================================
+   XP Bar (Topbar)
+   ============================================================ */
+
+.xp-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.xp-level {
+  color: var(--accent-primary);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.xp-progress {
+  width: 80px;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.xp-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 6px rgba(201, 150, 60, 0.3);
+}
+
+.xp-coins, .xp-streak {
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+/* ============================================================
+   Document Viewer Modal
+   ============================================================ */
+
+.doc-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-modal-overlay.active {
+  display: flex;
+}
+
+.doc-modal {
+  width: 90vw;
+  max-width: 900px;
+  height: 85vh;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.doc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-default);
+  flex-shrink: 0;
+}
+
+.doc-modal-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.doc-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+}
+
+.doc-modal-close:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+}
+
+.doc-modal-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Toast with Undo
+   ============================================================ */
+
+.toast-with-undo {
+  position: relative;
+  padding-bottom: 18px;
+}
+
+/* ============================================================
+   Responsive: XP bar
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .xp-bar {
+    display: none;
+  }
 }

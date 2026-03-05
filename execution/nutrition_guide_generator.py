@@ -22,6 +22,9 @@ CAPABILITIES:
   • Provide food lists by macro category
   • Accommodate dietary restrictions (vegan, keto, etc.)
   • Export as PDF with meal prep tips
+
+DEPENDENCIES: (none for markdown/json; branded_pdf_engine for PDF export)
+API_KEYS: (none required)
 """
 
 import argparse

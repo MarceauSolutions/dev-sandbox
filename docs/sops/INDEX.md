@@ -39,6 +39,7 @@
 | **30** | n8n Workflow Management | Creating, managing, or transitioning automations to n8n | `sop-30-n8n-workflow.md` |
 | **31** | AI Assistant Deployment | Deploying standalone AI assistant for fresh Claude or sale | `sop-31-ai-assistant.md` |
 | **32** | Project Routing & Classification | FIRST step for ANY new idea (before SOP 0 or SOP 17) | `sop-32-project-routing.md` |
+| **33** | Pre-Flight Checklist | MANDATORY before EVERY task — inventory, service status, standards | `sop-33-preflight-checklist.md` |
 
 ## By Category
 
@@ -86,6 +87,7 @@
 - **SOP 21** - SOP Creation Method (Meta-Method)
 - **SOP 25** - Documentation Decision Framework
 - **SOP 26** - User Statement Validation Protocol
+- **Tool Selection Framework** - `docs/service-standards.md` (integrated, not a separate SOP)
 
 ### Agent Routing
 - **SOP 27** - Clawdbot Usage

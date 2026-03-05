@@ -59,11 +59,16 @@ const Router = {
     };
 
     if (page.init && !page._initialized) {
-      Promise.resolve(page.init()).then(() => {
+      const initWithTimeout = Promise.race([
+        Promise.resolve(page.init()),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Page init timeout')), 8000))
+      ]);
+      initWithTimeout.then(() => {
         page._initialized = true;
         doRender();
       }).catch(err => {
-        console.error('Page init error:', err);
+        console.warn('Page init issue:', err.message);
+        page._initialized = true;
         doRender();
       });
     } else {

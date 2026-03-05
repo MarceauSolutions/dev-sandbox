@@ -49,7 +49,7 @@ class GrokImageGenerator:
     """
 
     API_URL = "https://api.x.ai/v1/images/generations"
-    MODEL = "grok-2-image-1212"
+    MODEL = "grok-imagine-image"
     COST_PER_IMAGE = 0.07  # USD
 
     def __init__(self, api_key=None):

@@ -37,9 +37,9 @@ If the answer is NO with $0-500 marketing spend, a loan won't fix it.
    ```
 
 3. Offer founding client pricing:
-   - Regular rate: $150/session
-   - Founding rate: $75/session (50% off)
-   - Commitment: 8 sessions minimum
+   - Regular rate: $197/month (online coaching subscription)
+   - Founding rate: $99/month (50% off first 2 months)
+   - No long-term commitment — cancel anytime
 
 **Success Metric:** 3+ people say yes and pay deposit
 
@@ -84,15 +84,17 @@ Happy to chat about it sometime if you're interested."
 
 **Actions:**
 1. Post peptide video (when complete) to:
-   - YouTube (long form)
-   - Instagram Reel (60-sec version)
-   - TikTok (60-sec version)
+   - YouTube (long form) — PRIMARY platform for peptide education
+   - X/Twitter (thread summary with YouTube link)
+   - Instagram Reel (60-sec fitness clips only — avoid peptide specifics on IG)
+   - **Do NOT post peptide content on TikTok** (banned under their drug policy)
 
-2. Post 5-7 additional pieces in 2 weeks:
+2. Post 5-7 additional pieces in 2 weeks on **X and Instagram** (primary platforms):
    - Training tips (form corrections, programming)
    - Nutrition insights
    - Recovery protocols
-   - Client transformation stories (with permission)
+   - Personal story / build-in-public posts
+   - **NOTE**: Post peptide content on YouTube/X only — TikTok bans peptide content
 
 3. Include clear CTA:
    ```

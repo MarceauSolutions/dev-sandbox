@@ -2,17 +2,16 @@
 """
 create-coaching-tracker-sheet.py - Create Coaching Client Tracker Google Sheet
 
-Creates a "Coaching Client Tracker" spreadsheet with 5 tabs:
-  1. Client Roster
-  2. Weekly Check-Ins
-  3. Progress Tracking
-  4. Billing
-  5. Program History
+WHAT: Creates a Google Sheets spreadsheet with 5 tabs for tracking coaching clients
+WHY: Central hub for client data, check-ins, progress, billing, and program history
+INPUT: Google OAuth credentials (credentials.json + token_sheets.json)
+OUTPUT: New Google Sheet in "Coaching Clients" Drive folder with formatted tabs
 
-Uses existing OAuth credentials (same auth pattern as create-social-media-sheet.py).
+QUICK USAGE:
+  python scripts/create-coaching-tracker-sheet.py
 
-USAGE:
-    python scripts/create-coaching-tracker-sheet.py
+DEPENDENCIES: google-auth, google-auth-oauthlib, google-api-python-client
+API_KEYS: Google OAuth credentials (credentials.json at project root)
 """
 
 import os

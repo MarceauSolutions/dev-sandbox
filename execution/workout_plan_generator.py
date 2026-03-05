@@ -22,6 +22,9 @@ CAPABILITIES:
   • Adjust for experience level (beginner/intermediate/advanced)
   • Include exercise descriptions and form cues
   • Export as PDF and markdown
+
+DEPENDENCIES: (none for markdown/json; branded_pdf_engine for PDF export)
+API_KEYS: (none required)
 """
 
 import argparse

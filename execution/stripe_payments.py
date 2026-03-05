@@ -1,33 +1,21 @@
 #!/usr/bin/env python3
 """
-Stripe Payments Integration
+stripe_payments.py - Stripe Payment Processing
 
-Revenue collection system for the "Company on Computer" architecture.
-Handles customer creation, payment links, invoices, and webhook processing.
+WHAT: Customer creation, payment links, invoices, subscriptions, and webhook handling
+WHY: Automates revenue collection for coaching ($197/mo) and future services
+INPUT: Customer email/name, service key or amount, webhook payloads
+OUTPUT: Payment links, invoices, revenue reports, webhook processing results
+COST: 2.9% + $0.30 per transaction (Stripe fees)
 
-SETUP:
-1. Add to .env:
-   STRIPE_SECRET_KEY=sk_live_xxx (or sk_test_xxx for testing)
-   STRIPE_WEBHOOK_SECRET=whsec_xxx
-   STRIPE_PUBLIC_KEY=pk_live_xxx (optional, for frontend)
+QUICK USAGE:
+  python execution/stripe_payments.py create-customer --email "client@example.com" --name "John"
+  python execution/stripe_payments.py create-link --service coaching_monthly
+  python execution/stripe_payments.py report --days 30
+  python execution/stripe_payments.py services
 
-2. Create webhook endpoint in Stripe Dashboard:
-   URL: https://your-ec2-ip/webhooks/stripe
-   Events: checkout.session.completed, invoice.paid, payment_intent.succeeded
-
-Usage:
-    from execution.stripe_payments import StripePayments
-
-    stripe = StripePayments()
-
-    # Create customer
-    customer_id = stripe.create_customer("client@example.com", "Acme Corp")
-
-    # Create payment link
-    url = stripe.create_payment_link(1500, "Website Setup", customer_id)
-
-    # Send via existing channels
-    # execution.twilio_sms.send_sms(phone, f"Invoice ready: {url}")
+DEPENDENCIES: stripe, python-dotenv
+API_KEYS: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
 """
 
 import os
@@ -78,8 +66,31 @@ class StripePayments:
             with open(catalog_path, 'r') as f:
                 return json.load(f)
 
-        # Default catalog
+        # Default catalog -- fitness coaching primary, legacy services kept for flexibility
         return {
+            "coaching_monthly": {
+                "name": "1:1 Coaching - Monthly",
+                "price": 197,
+                "currency": "usd",
+                "description": "Monthly 1:1 fitness coaching with peptide-informed protocols",
+                "deliverables": [
+                    "Custom training program (PDF)",
+                    "Nutrition protocol with macro targets",
+                    "Weekly check-ins via SMS",
+                    "Monthly progress review (video call)",
+                    "Peptide education resources"
+                ],
+                "sla_days": 2,
+                "recurring": True
+            },
+            "strategy_call": {
+                "name": "Free Strategy Call",
+                "price": 0,
+                "currency": "usd",
+                "description": "30-minute no-pitch strategy call",
+                "deliverables": ["Goal mapping", "Training history review", "Recommendation"],
+                "sla_days": 0
+            },
             "website_setup": {
                 "name": "Business Website Setup",
                 "price": 1500,
@@ -452,10 +463,14 @@ class StripePayments:
             result = self._handle_checkout_completed(data)
         elif event_type == "invoice.paid":
             result = self._handle_invoice_paid(data)
+        elif event_type == "invoice.payment_failed":
+            result = self._handle_payment_failed(data)
         elif event_type == "payment_intent.succeeded":
             result = self._handle_payment_succeeded(data)
         elif event_type == "customer.subscription.created":
             result = self._handle_subscription_created(data)
+        elif event_type == "customer.subscription.deleted":
+            result = self._handle_subscription_cancelled(data)
 
         return result
 
@@ -511,6 +526,30 @@ class StripePayments:
             "subscription_id": subscription.get("id"),
             "customer_id": subscription.get("customer"),
             "action": "subscription_created"
+        }
+
+    def _handle_subscription_cancelled(self, subscription: Dict) -> Dict[str, Any]:
+        """Handle subscription cancellation (triggers offboarding flow)."""
+        return {
+            "event_type": "customer.subscription.deleted",
+            "processed": True,
+            "subscription_id": subscription.get("id"),
+            "customer_id": subscription.get("customer"),
+            "cancel_at": subscription.get("canceled_at"),
+            "action": "subscription_cancelled"
+        }
+
+    def _handle_payment_failed(self, invoice: Dict) -> Dict[str, Any]:
+        """Handle failed payment (triggers dunning SMS via coaching_payment_failed template)."""
+        return {
+            "event_type": "invoice.payment_failed",
+            "processed": True,
+            "invoice_id": invoice.get("id"),
+            "customer_id": invoice.get("customer"),
+            "amount": invoice.get("amount_due", 0),
+            "attempt_count": invoice.get("attempt_count", 0),
+            "next_attempt": invoice.get("next_payment_attempt"),
+            "action": "payment_failed"
         }
 
     # =========================================================================

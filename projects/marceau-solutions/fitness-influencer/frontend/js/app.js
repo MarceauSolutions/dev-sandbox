@@ -28,6 +28,8 @@ const App = {
     Router.register('analytics', AnalyticsPage);
     Router.register('leads', LeadsPage);
     Router.register('tasks', TasksPage);
+    Router.register('clients', ClientsPage);
+    Router.register('propane', PropanePage);
     Router.register('gamification', GamificationPage);
     Router.register('quota', QuotaPage);
     Router.register('oauth', OAuthPage);
@@ -49,6 +51,9 @@ const App = {
 
     // Check API health
     this.checkHealth();
+
+    // Load XP bar
+    this.loadXpBar();
   },
 
   async checkHealth() {
@@ -68,12 +73,34 @@ const App = {
 
   toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    // Mobile: toggle open class
     if (window.innerWidth <= 768) {
       sidebar.classList.toggle('open');
     } else {
       document.getElementById('app-shell').classList.toggle('sidebar-collapsed');
     }
+  },
+
+  toggleNavGroup(labelEl) {
+    const group = labelEl.closest('.nav-group');
+    if (!group) return;
+    const isCollapsed = group.dataset.collapsed === 'true';
+    group.dataset.collapsed = isCollapsed ? 'false' : 'true';
+  },
+
+  async loadXpBar() {
+    try {
+      const p = await API.get('/api/gamification/player/stats');
+      if (!p) return;
+      const LEVEL_XP = [0, 100, 250, 500, 1000, 2000, 4000, 7500, 12000, 20000, 35000];
+      const lvl = p.level || 1;
+      const cur = LEVEL_XP[lvl - 1] || 0;
+      const nxt = LEVEL_XP[lvl] || (cur + 1000);
+      const pct = Math.min(100, Math.max(0, ((p.xp - cur) / (nxt - cur)) * 100));
+      document.getElementById('xp-level').textContent = 'Lv ' + lvl;
+      document.getElementById('xp-fill').style.width = Math.round(pct) + '%';
+      document.getElementById('xp-coins').innerHTML = (p.coins || 0) + ' &#x1FA99;';
+      document.getElementById('xp-streak').innerHTML = (p.day_streak || 0) + '&#x1F525;';
+    } catch {}
   },
 
   toggleJobBar() {

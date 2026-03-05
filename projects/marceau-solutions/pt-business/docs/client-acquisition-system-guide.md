@@ -1,8 +1,8 @@
 # Client Acquisition System
 ## A Complete Operations Manual for William Marceau Fitness Coaching
 
-**Version**: 1.0
-**Date**: March 2, 2026
+**Version**: 2.0
+**Date**: March 3, 2026 (v2 — Client Portal integration, funnel improvements)
 **Author**: William Marceau & Claude Code (AI Engineering Partner)
 **Website**: marceausolutions.com
 **Business**: William Marceau — Fitness Coach & Peptide Expert
@@ -23,7 +23,8 @@
 10. The Operator's Playbook — How You Interact With the System
 11. The End User's Journey — What Your Clients Experience
 12. Troubleshooting & Maintenance
-13. Growth Roadmap
+13. Client Portal Integration (v2) — Decisions, Trade-offs & Improvements
+14. Growth Roadmap
 
 ---
 
@@ -35,11 +36,12 @@ This document is a comprehensive reference for your entire client acquisition sy
 
 You built a fully automated fitness coaching sales funnel modeled after Propane Fitness's proven $3.4M+ playbook, adapted for your unique positioning: evidence-based training combined with peptide expertise. The system includes:
 
-- **6 website pages** that form a complete marketing funnel
+- **6 core funnel pages** (plus contact, about, blog, for-influencers, and utility pages) that form a complete marketing funnel
 - **8 n8n automation workflows** that handle lead capture, nurture sequences, challenge delivery, upsells, payment processing, and digital product fulfillment
 - **4 Stripe payment products** covering digital programs ($37–$97) and monthly coaching ($197/mo)
 - **A 5-tier revenue structure** from free community to premium peptide coaching
 - **Automated SMS and email sequences** that nurture leads over 7–30 days
+- **A gamified client portal** (v2) at `fitai.marceausolutions.com/client/` that provides instant onboarding with workouts, AI coaching chat, form analysis, progress tracking, achievements, and a level system — so clients experience value within 60 seconds of paying
 
 ### What It Costs to Run
 
@@ -224,7 +226,7 @@ Both funnels converge at the same Stripe payment links and the same Google Sheet
 
 # Chapter 4: Website Pages — What They Do & How to Use Them
 
-All pages are static HTML hosted on GitHub Pages at marceausolutions.com. They share a dark theme design system (navy/black backgrounds, green primary, amber accents, Montserrat headings, Inter body text).
+All pages are static HTML hosted on GitHub Pages at marceausolutions.com. They share a dark theme design system (dark charcoal backgrounds, gold primary (#C9963C), amber accents (#D4AF37), Montserrat headings, Inter body text).
 
 ### Page Map
 
@@ -876,7 +878,261 @@ curl -X POST https://n8n.marceausolutions.com/webhook/premium-waitlist \
 
 ---
 
-# Chapter 13: Growth Roadmap
+# Chapter 13: Client Portal Integration (v2 — March 3, 2026)
+
+### What Changed
+
+The client acquisition funnel now connects directly to a **live client portal** at `fitai.marceausolutions.com/client/`. When someone pays $197/mo, they don't just get a welcome text — they get instant access to a gamified coaching experience with workouts, AI coaching chat, form checks, progress tracking, and achievements.
+
+This changes the funnel from "pay → wait for manual onboarding" to "pay → immediately start your coaching experience."
+
+### The Portal (What Clients Get)
+
+| Feature | What It Does | How It Helps Conversion |
+|---------|-------------|------------------------|
+| Dashboard | XP bar, streak counter, today's workout, quick actions | Instant gratification — they see value immediately |
+| My Workouts | Weekly schedule, exercise details, mark complete | No waiting for you to build a program — starter template assigned instantly |
+| Form Check | Upload video, get AI exercise analysis | Premium feature that justifies $197/mo price point |
+| Ask Coach | AI chat with their context injected (goals, program, progress) | 24/7 coaching access, reduces "is this worth it?" objections |
+| My Progress | Achievements, streak calendar, level system, rewards | Gamification = retention. Clients who see progress stay longer |
+| My Profile | Contact info, goals, coach contact button | Easy access to you when they need it |
+
+### How It Connects to the Funnel
+
+**Before v2 (manual gap):**
+```
+Stripe $197 → Welcome SMS + Email → Client books kickoff call → You build program → They start coaching
+Timeline: 3-7 days before client experiences any coaching
+```
+
+**After v2 (instant activation):**
+```
+Stripe $197 → n8n creates portal account → Magic link in welcome SMS/Email → Client clicks link →
+Dashboard loads with Beginner Full Body template pre-assigned → They start workout Day 1 TODAY
+Timeline: Under 60 seconds from payment to first coaching experience
+```
+
+### Decision 9: Instant Portal Activation (Not Gate Behind Kickoff Call)
+
+**What**: When someone pays, they immediately get portal access with a pre-assigned beginner workout template. They don't need to wait for a kickoff call.
+
+**Why**: The biggest churn risk is the gap between payment and first value. If someone pays at 11 PM on a Saturday and doesn't hear from you until Monday, buyer's remorse sets in. Instant portal access means:
+1. They start exercising immediately (30 XP + "First Workout" achievement = dopamine)
+2. They see the full coaching experience before the kickoff call
+3. The kickoff call becomes about *customization*, not justification
+4. If they cancel in the first week, they've already gotten value, reducing refund requests
+
+**The kickoff call still matters**: It's where you learn about their injuries, preferences, and customize their program. But now it's an enhancement, not a prerequisite.
+
+### Decision 10: Gamification as Retention Engine (Not Gimmick)
+
+**What**: Every client action (complete workout, log meal, do form check, hit streak) earns XP, coins, and progress toward achievements. Level system from "New Member" (Lv 1) to "Legend" (Lv 10).
+
+**Why**: Fitness coaching churn averages 50% in the first 3 months. The #1 reason is "I wasn't seeing results." But results take 8-12 weeks. Gamification bridges that gap — clients see progress *every day* through XP and levels, even before physical changes are visible. A client who's Level 4 with a 14-day streak and 3 achievements unlocked feels invested, even if the scale hasn't moved yet.
+
+**Actions & XP values**:
+
+| Action | XP | Coins | Rationale |
+|--------|-----|-------|-----------|
+| workout_completed | 30 | 10 | Core behavior — most XP goes here |
+| meal_logged | 15 | 5 | Nutrition compliance is half the battle |
+| check_in | 10 | 3 | Daily habit, low barrier |
+| form_check | 25 | 10 | Premium feature, rewards engagement |
+| personal_record | 100 | 50 | Big milestone, big reward |
+| extra_workout | 40 | 15 | Rewards going above and beyond |
+
+**Streak multiplier**: 1.0x at 0 days, 1.5x at 7 days, 2.0x at 14 days, 2.5x at 30 days. A 30-day streak workout completion = 30 XP × 2.5 = 75 XP. This makes breaking a streak feel costly.
+
+**Coin rewards**: Guilt-Free Rest Day (50 coins), Cheat Meal Pass (100 coins), Bonus Coaching Call (200 coins). These create a fun economy while encouraging engagement.
+
+### Decision 11: Magic Link Auth (Not Username/Password)
+
+**What**: Clients authenticate with a URL token (magic link) that you generate and send them. No passwords, no signup form, no forgotten password flow.
+
+**Why**: Three reasons:
+1. **Zero friction**: Client clicks one link and they're in. No creating an account, no password requirements, no email verification.
+2. **You control access**: Only people you explicitly create accounts for can access the portal. No random signups, no billing disputes from people who "accidentally subscribed."
+3. **Simpler code**: No password hashing, no password reset flows, no brute force protection. The token is a 44-character random string — computationally infeasible to guess.
+
+**Trade-off accepted**: If a client loses their magic link bookmark, they have to ask you for a new one. At <30 clients this is fine (one Slack message). At 100+ clients, add a "forgot access" email flow.
+
+### Decision 12: Separate Portal (Not Role Filter on Admin Dashboard)
+
+**What**: The client portal is a completely separate SPA at `/client/` with its own HTML, CSS, and JS. It shares the same FastAPI backend but has its own authenticated routes (`/api/client/*`).
+
+**Why**: The admin dashboard has 28 tools for running a content business (video editing, caption generation, analytics, etc.). Adding role-based filtering would mean:
+1. Clients see "hidden" nav items or get access-denied errors → confusing
+2. Every new admin feature needs client-permission checks → developer tax
+3. The admin UI aesthetic (command center, job bar) doesn't match client UX expectations
+4. When it inevitably needs to change, you'd rip it out → wasted work
+
+**Trade-offs considered**:
+- ❌ Role-based routing (rejected): "We'd be setting up systems that need to change later"
+- ❌ Shared codebase with conditional rendering (rejected): Complexity tax on every feature
+- ✅ Separate SPA, shared backend (chosen): Clean separation, each UI can evolve independently, shared data through API
+
+### Portal-Funnel Connection (COMPLETED — March 3, 2026)
+
+**Workflow Updated: Coaching-Payment-Welcome (ID: 1wS9VvXIt95BrR9V)**
+
+The workflow now has 10 nodes (was 7). New flow:
+
+```
+Stripe $197 → Extract Client Info → Create Portal Account (HTTP POST to fitai API)
+  → Extract Portal Info (token + magic link URL)
+    → [Assign Starter Workout | Add to Roster | Welcome SMS | Welcome Email]
+      → Roster → Log Billing
+      → Email → Notify Admin
+```
+
+**3 nodes added:**
+1. **Create Portal Account**: POST to `https://fitai.marceausolutions.com/api/admin/clients` — creates the client, generates magic link token
+2. **Extract Portal Info**: Pulls `token`, `client_id`, and builds the full portal URL
+3. **Assign Starter Workout**: POST to `/api/admin/clients/{id}/assign-workout` with the Beginner Full Body template (`tpl_530e4037df`), sets `week_start` to next Monday
+
+**Welcome SMS now includes portal link:**
+```
+Hey {name}! Welcome to Marceau Coaching!
+
+Your coaching portal is ready — workouts, AI coach, progress tracking, and more:
+{portal_magic_link}
+
+Bookmark that link! Your first workout is already loaded.
+
+Book your kickoff call: calendly.com/wmarceau/kickoff-call
+— William
+```
+
+**Welcome email now features:**
+- Prominent "Open Your Portal" CTA button (gold gradient, centered)
+- Feature list: My Workouts, Ask Coach, Form Check, Progress
+- Kickoff call booking button
+- Intake form button
+- Dark+gold branded header matching portal theme
+
+**Client Roster sheet** now includes a `Portal_Link` column so you can always find a client's magic link.
+
+**Admin notification** confirms portal account was created and starter workout was assigned.
+
+### Funnel Improvement Opportunities
+
+**1. Non-Converter Portal Preview (Day 10 follow-up enhancement)**
+Instead of just "Still thinking about it?", send a screenshot or short video showing what the coaching portal looks like. Give them FOMO about the gamification, the AI coach, the streak system. This is a show-don't-tell upgrade to the non-converter sequence.
+
+**2. Challenge Completers → Portal Teaser**
+After the 7-day challenge, leads who don't convert could get a "Here's what coaching clients see" preview. This bridges the gap between "free challenge" and "$197/mo" by showing the premium experience.
+
+**3. Digital Product Buyer Nurture Enhancement**
+People who buy the $37-$97 digital products are warm leads. Add a follow-up sequence (Day 3, 7, 14 after purchase) that showcases portal features: "Your $37 Nutrition Blueprint is great for getting started. But coaching clients get AI-powered form checks, a personalized workout portal, and a gamified progress system that makes the gym actually fun."
+
+**4. Automated Testimonial Collection (Day 30 + Day 90)**
+At Day 30, auto-send: "You've been coaching for a month! Would you share a quick testimonial? Just reply to this text with what's changed so far."
+At Day 90, auto-send: "3 months in! Your results are worth sharing. Would you be open to a quick video testimonial?"
+These feed back into the Day 4 social proof messages and website.
+
+**5. Churn Prevention via Portal Analytics**
+When a client hasn't logged into the portal or completed a workout in 7+ days, trigger an automatic check-in SMS: "Hey {name}, noticed you haven't been in the portal this week. Everything okay? Let me know if you need to adjust your program."
+This is data you now have (via gamification/workout tracking) that you didn't have before the portal.
+
+**6. Streak Break Re-engagement**
+When a client's streak breaks (was 7+ days, now 0), auto-send an encouraging message: "Hey {name}, streaks break — it happens. The important thing is getting back in. Your next workout is ready in the portal. One session and you're building again."
+
+### Updated Funnel Architecture (v2)
+
+```
+                     TRAFFIC SOURCES
+                     ──────────────
+                     Meta Ads ($15-20/day)
+                     Instagram Reels / YouTube
+                     Local partnerships (Naples)
+                     Warm network outreach
+                            │
+                            ▼
+              ┌──────────────────────────┐
+              │     WEBSITE PAGES         │
+              │  index / coaching /        │
+              │  peptides / programs       │
+              └────────────┬──────────────┘
+                           │
+              ┌────────────┼────────────┐
+              ▼                         ▼
+    ┌──────────────────┐    ┌──────────────────┐
+    │  QUIZ PAGE        │    │  CHALLENGE PAGE   │
+    │  7-step quiz →    │    │  7-day free →     │
+    │  archetype +      │    │  daily SMS        │
+    │  custom macros    │    │  workouts         │
+    └────────┬──────────┘    └────────┬──────────┘
+             │                        │
+    ┌────────┴────────┐    ┌──────────┴──────────┐
+    │  7-DAY NURTURE   │    │  DAY 7 SEGMENTED   │
+    │  SMS + Email     │    │  UPSELL            │
+    │  → Day 7: OFFER  │    │                    │
+    └────────┬─────────┘    └──────────┬─────────┘
+             │                         │
+             ▼                         ▼
+    ┌─────────────────────────────────────────┐
+    │           STRIPE $197/mo PAYMENT         │
+    └────────────────────┬────────────────────┘
+                         │
+    ┌────────────────────┴────────────────────┐
+    │     COACHING-PAYMENT-WELCOME (n8n)       │
+    │                                          │
+    │  1. Google Sheet (Client Roster)         │
+    │  2. Create Portal Account (fitai API)    │  ← NEW
+    │  3. Assign Starter Workout Template      │  ← NEW
+    │  4. Welcome SMS with magic link          │  ← UPDATED
+    │  5. Welcome Email with portal preview    │  ← UPDATED
+    │  6. Admin notification to William        │
+    └────────────────────┬────────────────────┘
+                         │
+                         ▼
+    ┌─────────────────────────────────────────┐
+    │       CLIENT PORTAL (INSTANT)            │
+    │  fitai.marceausolutions.com/client/       │
+    │                                          │
+    │  ┌─────────────────────────────────┐     │
+    │  │ Dashboard: XP bar + today's     │     │
+    │  │   workout + quick actions       │     │
+    │  ├─────────────────────────────────┤     │
+    │  │ My Workouts: Starter template   │     │
+    │  │   pre-assigned, ready to go     │     │
+    │  ├─────────────────────────────────┤     │
+    │  │ Form Check: AI exercise analysis│     │
+    │  ├─────────────────────────────────┤     │
+    │  │ Ask Coach: AI chat with context │     │
+    │  ├─────────────────────────────────┤     │
+    │  │ Progress: Gamification, streaks │     │
+    │  │   achievements, coin rewards    │     │
+    │  └─────────────────────────────────┘     │
+    └──────────────────────────────────────────┘
+                         │
+                         ▼
+    ┌─────────────────────────────────────────┐
+    │        RETENTION AUTOMATIONS             │
+    │                                          │
+    │  Day 30: Auto testimonial request        │
+    │  Day 90: Video testimonial request       │
+    │  7-day inactivity: Check-in SMS          │
+    │  Streak break: Re-engagement SMS         │
+    │  Monthly: Value email with portal stats  │
+    └─────────────────────────────────────────┘
+```
+
+### Tools Needed Per Funnel Stage
+
+| Stage | Tools/Platforms | Status |
+|-------|----------------|--------|
+| **Attract** (Traffic) | Instagram, Meta Ads, YouTube, local partnerships | Manual — content creation needed |
+| **Capture** (Lead Magnet) | Website quiz + challenge pages, n8n webhooks, Google Sheets, Twilio | All LIVE and automated |
+| **Nurture** (7-Day Drip) | n8n workflows (Lead-Magnet-Capture, Nurture-Sequence-7Day, Challenge-Signup-7Day), Twilio, Gmail | All LIVE and automated |
+| **Convert** (Day 7 Offer) | n8n (Non-Converter-Followup, Challenge-Day7-Upsell), Stripe payment links, Calendly | All LIVE and automated |
+| **Activate** (Portal Onboarding) | n8n (Coaching-Payment-Welcome — updated), fitai API, client portal | LIVE — auto-creates portal account + assigns starter workout |
+| **Retain** (Gamification) | Client portal (workouts, form check, AI chat, progress), n8n (planned retention workflows) | Portal LIVE, retention automations PENDING |
+| **Expand** (Testimonials/Referrals) | n8n (planned auto-requests), referral program (planned) | NOT YET BUILT |
+
+---
+
+# Chapter 14: Growth Roadmap (Updated)
 
 ### Phase 1: First 10 Clients (Weeks 1-8)
 

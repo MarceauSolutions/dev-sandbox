@@ -131,7 +131,7 @@ git clone --depth 1 "https://github.com/$DEPLOY_REPO.git" "$DEPLOY_TMPDIR/repo" 
 safety_check "$DEPLOY_TMPDIR/repo"
 
 # Remove old files (except .git)
-find "$DEPLOY_TMPDIR/repo" -maxdepth 1 -not -name '.git' -not -name '.' -not -name '..' -exec rm -rf {} +
+find "$DEPLOY_TMPDIR/repo" -mindepth 1 -maxdepth 1 -not -name '.git' -exec rm -rf {} +
 
 # Copy new files
 cp -R "$WEBSITE_DIR"/* "$DEPLOY_TMPDIR/repo/"

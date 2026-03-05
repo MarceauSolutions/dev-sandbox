@@ -1,132 +1,209 @@
+/* ============================================================
+   Command Center Dashboard — Unified business operations view
+   ============================================================ */
+
 const DashboardPage = {
-  title: 'Home',
-  data: {},
+  title: 'Dashboard',
+  data: { stats: null, tasks: [], calendar: null },
 
   async init() {
     try {
-      const [calendar, quota] = await Promise.allSettled([
-        API.get('/api/content/calendar/today'),
-        API.get('/api/quota/status')
+      const [stats, tasks, calendar] = await Promise.allSettled([
+        API.get('/api/gamification/player/stats'),
+        API.get('/api/tasks/'),
+        API.get('/api/content/calendar/today')
       ]);
+      this.data.stats = stats.status === 'fulfilled' ? stats.value : null;
+      const taskData = tasks.status === 'fulfilled' ? tasks.value : { tasks: [] };
+      this.data.tasks = Array.isArray(taskData) ? taskData : (taskData && taskData.tasks ? taskData.tasks : []);
       this.data.calendar = calendar.status === 'fulfilled' ? calendar.value : null;
-      this.data.quota = quota.status === 'fulfilled' ? quota.value : null;
     } catch {}
   },
 
   render(container) {
-    const cal = this.data.calendar;
-    const todayTheme = cal?.theme || cal?.day_theme || 'No plan set';
-    const todayTopic = cal?.topic || cal?.hook_idea || '';
-    const todayFormat = cal?.format || cal?.content_format || '';
-
+    const s = this.data.stats || {};
+    const st = s.stats || {};
+    const allTasks = this.data.tasks;
+    const propaneTasks = allTasks.filter(t => t.tags && t.tags.includes('propane') && t.section !== 'RECENTLY_DONE');
+    const todayTasks = allTasks.filter(t => (t.section === 'TODAY' || t.section === 'THIS_WEEK') && !(t.tags && t.tags.includes('propane')));
     container.innerHTML = `
       <div class="page-header">
-        <h1>Welcome back, Coach</h1>
-        <p>Your fitness content command center</p>
+        <h1>Command Center</h1>
+        <p>Your daily business operations at a glance</p>
       </div>
 
-      <div class="grid-2" style="margin-bottom:28px">
+      <!-- Quick Stats -->
+      <div class="grid-5" style="margin-bottom:24px">
+        ${this._stat('&#x1F91D;', st.totalClients || 0, 'Clients')}
+        ${this._stat('&#x1F4B0;', '$' + (st.totalRevenue || 0), 'Revenue')}
+        ${this._stat('&#x1F3AF;', st.totalLeads || 0, 'Leads')}
+        ${this._stat('&#x1F525;', (s.day_streak || 0) + 'd', 'Streak')}
+        ${this._stat('&#11088;', 'Lv ' + (s.level || 1), s.title || 'Rookie')}
+      </div>
+
+      <div class="grid-2" style="margin-bottom:24px">
+        <!-- Today's Mission -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Today's Content Plan</span>
-            <button class="btn btn-sm btn-ghost" onclick="Router.go('calendar')">View Week &rarr;</button>
+            <div class="card-title">&#x1F525; Today's Mission</div>
+            <span class="badge">${propaneTasks.length} Propane tasks</span>
           </div>
-          <div style="font-size:20px;font-weight:800;margin-bottom:10px;color:var(--accent-primary);letter-spacing:-0.01em">${todayTheme}</div>
-          ${todayTopic ? `<p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;line-height:1.5">${todayTopic}</p>` : ''}
-          ${todayFormat ? `<div class="badge" style="margin-top:8px">${todayFormat}</div>` : ''}
+          ${this._renderMissionTasks(propaneTasks, todayTasks)}
+          <div style="margin-top:14px;display:flex;gap:8px">
+            <button class="btn btn-sm btn-primary" onclick="Router.go('propane')">Propane Program</button>
+            <button class="btn btn-sm btn-ghost" onclick="Router.go('tasks')">All Tasks</button>
+          </div>
         </div>
 
+        <!-- Quick Actions -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Active Jobs</span>
-            <button class="btn btn-sm btn-ghost" onclick="Router.go('jobs')">View All &rarr;</button>
+            <div class="card-title">&#9889; Quick Actions</div>
           </div>
-          <div id="dash-active-jobs">
-            <div style="color:var(--text-muted);font-size:13px">No active jobs</div>
+          <div class="grid-2" style="gap:10px">
+            ${this._action('content_created', '&#x1F4F1;', 'Content Created', 15)}
+            ${this._action('outreach', '&#x1F4E8;', 'Outreach', 15)}
+            ${this._action('community_engage', '&#x1F4AC;', 'Community', 10)}
+            ${this._action('lead_generated', '&#x1F3AF;', 'Lead Generated', 50)}
+            ${this._action('call_booked', '&#x1F4DE;', 'Call Booked', 100)}
+            ${this._action('client_signed', '&#x1F91D;', 'Client Signed', 500)}
           </div>
         </div>
       </div>
 
-      <div class="section-divider"><span>Quick Actions</span></div>
+      <div class="grid-2">
+        <!-- Tool Launcher -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#x1F6E0; Tools</div>
+          </div>
+          <div class="grid-auto-sm" style="gap:10px">
+            ${this._tool('editor', '&#x1F3AC;', 'Video Editor')}
+            ${this._tool('caption', '&#x1F4DD;', 'Captions')}
+            ${this._tool('images', '&#x1F5BC;', 'Image Gen')}
+            ${this._tool('chat', '&#x1F916;', 'AI Assistant')}
+            ${this._tool('calendar', '&#x1F4C5;', 'Calendar')}
+            ${this._tool('analytics', '&#x1F4CA;', 'Analytics')}
+            ${this._tool('ads', '&#x1F4E2;', 'Ad Builder')}
+            ${this._tool('leads', '&#x1F465;', 'Leads')}
+          </div>
+        </div>
 
-      <div class="grid-4" style="margin-bottom:28px">
-        <div class="quick-action" onclick="Router.go('editor')">
-          <div class="qa-icon" style="background:var(--accent-secondary-dim);color:var(--accent-secondary)">&#127909;</div>
-          <span class="qa-label">Video Editor</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('caption')">
-          <div class="qa-icon" style="background:var(--accent-primary-dim);color:var(--accent-primary)">&#9998;</div>
-          <span class="qa-label">Add Captions</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('images')">
-          <div class="qa-icon" style="background:var(--accent-tertiary-dim);color:var(--accent-tertiary)">&#127912;</div>
-          <span class="qa-label">Generate Images</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('chat')">
-          <div class="qa-icon" style="background:var(--accent-secondary-dim);color:var(--accent-secondary)">&#10024;</div>
-          <span class="qa-label">AI Assistant</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('viral')">
-          <div class="qa-icon" style="background:rgba(255,82,82,0.12);color:#FF5252">&#128293;</div>
-          <span class="qa-label">Find Viral Clips</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('export')">
-          <div class="qa-icon" style="background:rgba(255,215,64,0.12);color:#FFD740">&#128640;</div>
-          <span class="qa-label">Export Video</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('graphics')">
-          <div class="qa-icon" style="background:rgba(0,176,255,0.12);color:#00B0FF">&#127752;</div>
-          <span class="qa-label">Create Graphic</span>
-        </div>
-        <div class="quick-action" onclick="Router.go('analyze')">
-          <div class="qa-icon" style="background:var(--accent-primary-dim);color:var(--accent-primary)">&#128202;</div>
-          <span class="qa-label">Analyze Video</span>
-        </div>
-      </div>
-
-      <div class="section-divider"><span>System Status</span></div>
-
-      <div class="grid-3">
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent-primary)" id="dash-quota-used">--</div>
-          <div class="stat-label">Jobs Used Today</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent-secondary)" id="dash-tier">--</div>
-          <div class="stat-label">Current Tier</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" style="color:var(--accent-tertiary)" id="dash-api-version">v2.0</div>
-          <div class="stat-label">API Version</div>
+        <!-- Documents -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">&#x1F4C4; Documents</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            ${this._doc('legal/cancellation-refund-policy.pdf', 'Cancellation Policy', 'pdf')}
+            ${this._doc('legal/privacy-policy.md', 'Privacy Policy', 'md')}
+            ${this._doc('ops/runbook.md', 'Operations Runbook', 'md')}
+            ${this._doc('ops/coaching-onboarding-runbook.md', 'Onboarding Runbook', 'md')}
+            ${this._doc('research/peptides/tesamorelin-deep-dive.md', 'Tesamorelin Research', 'md')}
+            ${this._doc('business-planning/propane-fitness-tracker.md', 'Propane Tracker', 'md')}
+          </div>
         </div>
       </div>
     `;
-
-    // Fill quota data
-    if (this.data.quota) {
-      const q = this.data.quota;
-      document.getElementById('dash-quota-used').textContent = q.used_today ?? q.video_jobs_used ?? '--';
-      document.getElementById('dash-tier').textContent = q.tier || q.plan || '--';
-    }
-
-    // Load active jobs
-    this.loadActiveJobs();
   },
 
-  async loadActiveJobs() {
+  _stat(icon, value, label) {
+    return `<div class="stat-card">
+      <div style="font-size:18px;margin-bottom:4px">${icon}</div>
+      <div class="stat-value" style="font-size:22px">${value}</div>
+      <div class="stat-label">${label}</div>
+    </div>`;
+  },
+
+  _renderMissionTasks(propane, other) {
+    const tasks = [...propane.slice(0, 5), ...other.slice(0, 3)];
+    if (!tasks.length) return '<div class="empty-state" style="padding:24px"><p>No tasks today. Start your Propane Program!</p></div>';
+    return '<div>' + tasks.map(t => {
+      const title = (t.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const isPropane = t.tags && t.tags.includes('propane');
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-muted)">
+        <input type="checkbox" onchange="DashboardPage.completeTask('${t.id}', ${t.xp_value || 20}, '${title}')"
+          style="accent-color:var(--accent-primary);width:16px;height:16px;cursor:pointer;flex-shrink:0">
+        <span style="flex:1;font-size:13px;font-weight:500">${t.title}</span>
+        ${t.xp_value ? '<span class="badge">' + t.xp_value + ' XP</span>' : ''}
+        ${isPropane ? '<span style="font-size:9px;color:var(--accent-primary);font-weight:700;letter-spacing:0.05em">PROPANE</span>' : ''}
+      </div>`;
+    }).join('') + '</div>';
+  },
+
+  _action(action, icon, label, xp) {
+    return `<button class="quick-action" style="padding:14px" onclick="DashboardPage.logAction('${action}', ${xp})">
+      <div class="qa-icon">${icon}</div>
+      <div class="qa-label">${label}</div>
+      <div style="font-size:10px;color:var(--accent-primary);font-weight:700">+${xp} XP</div>
+    </button>`;
+  },
+
+  _tool(page, icon, label) {
+    return `<div class="quick-action" style="padding:12px" onclick="Router.go('${page}')">
+      <div style="font-size:20px">${icon}</div>
+      <div style="font-size:11px;font-weight:600">${label}</div>
+    </div>`;
+  },
+
+  _doc(path, label, ext) {
+    const url = ext === 'md' ? '/api/docs/' + path + '?format=html' : '/api/docs/' + path;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.2s"
+      onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background=''"
+      onclick="DocViewer.open('${url}', '${label}')">
+      <span style="font-size:16px">${ext === 'pdf' ? '&#x1F4D1;' : '&#x1F4C3;'}</span>
+      <span style="font-size:13px;font-weight:500">${label}</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--text-muted);text-transform:uppercase">${ext}</span>
+    </div>`;
+  },
+
+  async logAction(action, xp) {
     try {
-      const jobs = await API.get('/api/jobs');
-      const list = (jobs.jobs || jobs || []).filter(j => j.status === 'processing' || j.status === 'queued').slice(0, 3);
-      const el = document.getElementById('dash-active-jobs');
-      if (!el) return;
-      if (!list.length) return;
-      el.innerHTML = list.map(j => `
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px">
-          <div class="spinner" style="width:14px;height:14px"></div>
-          <span style="font-weight:500">${j.job_type || j.type || 'Job'}</span>
-          <span style="margin-left:auto;color:var(--text-muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em">${j.status}</span>
-        </div>
-      `).join('');
-    } catch {}
+      const result = await API.post('/api/gamification/player/action', {
+        action: action,
+        tenant_id: 'wmarceau'
+      });
+      const actionId = result && result.action_id;
+      Toast.showWithUndo(
+        '+' + xp + ' XP \u2014 ' + action.replace(/_/g, ' '),
+        actionId,
+        async (aid) => {
+          await API.post('/api/gamification/player/undo', { action_id: aid, tenant_id: 'wmarceau' });
+          App.loadXpBar();
+        }
+      );
+      App.loadXpBar();
+    } catch (err) {
+      Toast.error('Action failed: ' + err.message);
+    }
+  },
+
+  async completeTask(taskId, xpValue, title) {
+    try {
+      await API.put('/api/tasks/' + taskId, { section: 'RECENTLY_DONE' });
+      const result = await API.post('/api/gamification/player/action', {
+        action: 'task_completed',
+        tenant_id: 'wmarceau',
+        metadata: { xp_override: xpValue, task_title: title }
+      });
+      const actionId = result && result.action_id;
+      Toast.showWithUndo(
+        '+' + xpValue + ' XP \u2014 ' + title,
+        actionId,
+        async (aid) => {
+          await API.put('/api/tasks/' + taskId, { section: 'THIS_WEEK' });
+          await API.post('/api/gamification/player/undo', { action_id: aid, tenant_id: 'wmarceau' });
+          await DashboardPage.init();
+          DashboardPage.render(document.getElementById('main-content'));
+          App.loadXpBar();
+        }
+      );
+      // Re-render
+      await this.init();
+      this.render(document.getElementById('main-content'));
+      App.loadXpBar();
+    } catch (err) {
+      Toast.error('Failed: ' + err.message);
+    }
   }
 };

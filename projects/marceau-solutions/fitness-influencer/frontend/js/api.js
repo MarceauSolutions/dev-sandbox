@@ -35,6 +35,21 @@ const API = {
     }
   },
 
+  async put(path, body = {}) {
+    try {
+      const res = await fetch(this.baseUrl + path, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) return this._handleError(res);
+      return await res.json();
+    } catch (err) {
+      if (err instanceof APIError) throw err;
+      throw new APIError(0, 'Network error: ' + err.message);
+    }
+  },
+
   async delete(path) {
     try {
       const res = await fetch(this.baseUrl + path, { method: 'DELETE' });

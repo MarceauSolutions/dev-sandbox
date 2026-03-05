@@ -27,7 +27,7 @@ import os
 import sys
 import argparse
 import json
-from datetime import datetime
+from datetime import datetime, time
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
@@ -57,112 +57,156 @@ class TwilioSMS:
     # Message templates for lead nurturing and coaching
     TEMPLATES = {
         # === PROSPECT OUTREACH (7-touch sequence) ===
+        # TCPA: First message MUST have identification + opt-out
         "outreach_day0": (
-            "Hey {name}, I help people optimize their training with peptide-informed "
-            "fitness programs and AI-powered progress tracking. Would a free 30-min "
-            "strategy call be useful? Reply STOP to opt out."
+            "Hey {name}, this is William from Marceau Solutions. I help people "
+            "optimize their training with peptide-informed fitness programs. "
+            "Would a free 30-min strategy call be useful? "
+            "Reply STOP to opt out."
         ),
         "outreach_day2": (
-            "Hey {name}, still looking for a better approach to your fitness?"
+            "Hey {name}, this is William. Still looking for a better approach "
+            "to your fitness? Happy to chat — no pitch. — William"
         ),
         "outreach_day5": (
             "Hey {name}, just helped a client dial in their training with "
             "peptide-informed protocols. Happy to share the approach if you're "
-            "interested."
+            "interested. — William"
         ),
         "outreach_day10": (
-            "Hey {name}, quick yes or no - would a free strategy call be helpful? "
-            "No pitch, just an honest convo about your goals."
+            "Hey {name}, quick yes or no — would a free strategy call be helpful? "
+            "No pitch, just an honest convo about your goals. — William"
         ),
         "outreach_day15": (
             "Hey {name}, I put together a free guide on peptide-informed training. "
-            "Want me to send it over?"
+            "Want me to send it over? — William"
         ),
         "outreach_day30": (
             "Hey {name}, closing my books for new coaching clients soon. Last "
-            "chance for a free strategy call: {calendly_link}"
+            "chance for a free strategy call: {calendly_link} — William"
         ),
         "outreach_day60": (
             "Hey {name}, checking back in. Still interested in dialing in your "
-            "training? Happy to chat whenever you're ready."
+            "training? Happy to chat whenever you're ready. — William"
         ),
 
         # === CLIENT ONBOARDING ===
+        # TCPA: Express consent via payment. First message has opt-out.
         "coaching_welcome": (
-            "Hey {name}! Welcome aboard - I'm pumped to work with you. Check "
-            "your email for next steps and book your kickoff call here: "
-            "{calendly_link}"
+            "Hey {name}! This is William — welcome aboard! I'm pumped to work "
+            "with you. Check your email for next steps and book your kickoff "
+            "call here: {calendly_link} Reply STOP to opt out of texts."
         ),
         "coaching_kickoff_reminder": (
             "Hey {name}, don't forget to book your kickoff call! The sooner we "
-            "meet, the sooner you start seeing results: {calendly_link}"
+            "meet, the sooner you start seeing results: {calendly_link} — William"
         ),
         "coaching_pre_call": (
             "Hey {name}, looking forward to our call in 1 hour! Have your "
-            "intake form filled out? If not, no worries - we'll cover it on "
-            "the call."
+            "intake form filled out? If not, no worries — we'll cover it on "
+            "the call. — William"
         ),
 
         # === WEEKLY CHECK-INS ===
         "coaching_monday_checkin": (
             "Good morning {name}! New week, new gains. How are you feeling "
             "after last week? Rate 1-10 and any notes. Your updated program "
-            "is in your Drive folder."
+            "is in your portal. — William"
         ),
         "coaching_midweek_tip": (
-            "Quick tip {name}: {tip}"
+            "Quick tip {name}: {tip} — William"
         ),
         "coaching_no_response": (
             "Hey {name}, didn't hear from you on Monday's check-in. Everything "
-            "good? Just need a quick 1-10 rating so I can adjust if needed."
+            "good? Just need a quick 1-10 rating so I can adjust if needed. "
+            "— William"
         ),
 
         # === OFFBOARDING ===
+        # TCPA: Prior business relationship (18-month window)
         "coaching_cancel_feedback": (
-            "Hey {name}, I saw your subscription was cancelled. No hard feelings "
-            "at all. Would you be open to a quick 5-min call so I can learn what "
-            "I could do better? Either way, I appreciate you."
+            "Hey {name}, this is William. I saw your subscription was cancelled. "
+            "No hard feelings at all. Would you be open to a quick text about "
+            "what I could do better? Either way, I appreciate you. "
+            "Reply STOP to opt out."
         ),
         "coaching_cancel_day7": (
-            "Hey {name}, hope you're doing well. Your progress was real - don't "
-            "lose it. If you ever want to pick back up, I'm here."
+            "Hey {name}, hope you're doing well. Your progress was real — don't "
+            "lose it. If you ever want to pick back up, I'm here. — William"
         ),
         "coaching_cancel_day30": (
             "Hey {name}, it's been a month. Missing our Monday check-ins! If "
             "you're ready to get back at it, I have a returning client discount. "
-            "No pressure."
+            "No pressure. — William"
         ),
 
         # === BILLING ===
         "coaching_payment_failed": (
-            "Hey {name}, heads up - your card didn't go through for this month's "
+            "Hey {name}, heads up — your card didn't go through for this month's "
             "coaching. Stripe will retry automatically, but if you need to update "
-            "your card: {billing_link}"
+            "your card: {billing_link} — William"
         ),
         "coaching_payment_failed_followup": (
             "Hey {name}, your payment is still bouncing. Want me to pause your "
-            "account while you sort it out? No stress."
+            "account while you sort it out? No stress. — William"
         ),
 
         # === TESTIMONIALS & REFERRALS ===
         "coaching_testimonial_30day": (
             "Hey {name}, you've been at this for a month now. How are you feeling "
             "about your progress? If you're comfortable, a quick sentence about "
-            "your experience would mean the world to me."
+            "your experience would mean the world to me. — William"
         ),
         "coaching_testimonial_90day": (
             "Hey {name}, 3 months in! Would you be open to a quick before/after "
-            "share? Totally optional, but it helps other people trust the process."
+            "share? Totally optional, but it helps other people trust the process. "
+            "— William"
         ),
         "coaching_referral_reward": (
             "Hey {name}, {friend} just signed up! Your next month is on me. "
-            "Thanks for spreading the word."
+            "Thanks for spreading the word. — William"
         ),
 
-        # === GENERAL (kept from original) ===
+
+        # === WEB DEV CLIENT COMMUNICATION ===
+        "webdev_welcome": (
+            "Hey {name}, this is William from Marceau Solutions. Your website "
+            "project is officially underway! I'll have a first draft for you "
+            "within a few days. Questions anytime — just reply here."
+        ),
+        "webdev_site_live": (
+            "Hey {name}, your website is live! Check it out: {url} — "
+            "Let me know if you want any changes. I'm here to help."
+        ),
+        "webdev_dns_instructions": (
+            "Hey {name}, I put together a visual guide for pointing your domain "
+            "to your new website. Follow the steps here: {guide_url} — "
+            "Text me if you get stuck on any step."
+        ),
+        "webdev_dns_reminder": (
+            "Hey {name}, just checking in — were you able to update your DNS "
+            "records? Once that's done I can turn on HTTPS and your site will "
+            "be fully live. Happy to walk you through it if needed."
+        ),
+        "webdev_update_deployed": (
+            "Hey {name}, just pushed an update to your website. Here's what "
+            "changed: {changes} — Check it out at {url}"
+        ),
+        "webdev_monthly_checkin": (
+            "Hey {name}, just checking in on your website. Need any updates "
+            "or changes? Content refreshes, new photos, anything at all — "
+            "just let me know. — William"
+        ),
+        "webdev_subscription_advice": (
+            "Hey {name}, quick heads up — since your website is now hosted "
+            "for free through me, you may be able to cancel {service} and "
+            "save {amount}/month. Happy to walk you through it."
+        ),
+        # === GENERAL ===
         "appointment_reminder": (
-            "Hi {name}! Just a reminder about your scheduled call tomorrow at "
-            "{time}. Looking forward to chatting! Reply to reschedule."
+            "Hi {name}! This is William — just a reminder about your scheduled "
+            "call tomorrow at {time}. Looking forward to chatting! Reply to "
+            "reschedule."
         ),
     }
     
@@ -180,35 +224,82 @@ class TwilioSMS:
         
         self.client = Client(self.account_sid, self.auth_token)
         self.messages_sent = 0
-        
+
+        # Default template variables (pulled from env or hardcoded fallbacks)
+        self.default_template_vars = {
+            "calendly_link": os.getenv(
+                "CALENDLY_STRATEGY_URL",
+                "https://calendly.com/wmarceau/30min"
+            ),
+            "billing_link": os.getenv(
+                "STRIPE_BILLING_PORTAL_URL",
+                "https://billing.stripe.com/p/login/bIY6oT8Vs8FvdOM000"
+            ),
+        }
+
         # Log directory for message tracking
         self.log_dir = Path(".tmp/logs")
         self.log_dir.mkdir(parents=True, exist_ok=True)
         self.log_file = self.log_dir / "sms_log.jsonl"
     
+    # TCPA quiet hours (SOP 18): no messages before 8am or after 9pm local time
+    TCPA_QUIET_START = time(21, 0)  # 9:00 PM
+    TCPA_QUIET_END = time(8, 0)     # 8:00 AM
+
+    def _check_tcpa_hours(self) -> bool:
+        """
+        Check if current time is within TCPA-allowed sending hours.
+
+        TCPA requires no messages before 8am or after 9pm local time.
+        Uses server local time (Naples, FL = ET).
+
+        Returns:
+            True if OK to send, False if in quiet hours
+        """
+        now = datetime.now().time()
+        # Quiet hours: 9pm to 8am
+        if now >= self.TCPA_QUIET_START or now < self.TCPA_QUIET_END:
+            return False
+        return True
+
     def send_message(
         self,
         to: str,
         message: str = "",
         template: str = None,
-        template_vars: Dict[str, str] = None
+        template_vars: Dict[str, str] = None,
+        force_send: bool = False
     ) -> Dict[str, Any]:
         """
         Send an SMS message.
-        
+
         Args:
             to: Phone number to send to (E.164 format: +1XXXXXXXXXX)
             message: Message text (ignored if template is provided)
             template: Template name from TEMPLATES
             template_vars: Variables to substitute in template
-            
+            force_send: If True, bypass TCPA quiet hours check (e.g., urgent notifications)
+
         Returns:
             Dict with message_sid, status, and delivery info
         """
         print(f"\n{'='*70}")
         print("TWILIO SMS")
         print(f"{'='*70}")
-        
+
+        # TCPA quiet hours check (SOP 18)
+        if not force_send and not self._check_tcpa_hours():
+            current_time = datetime.now().strftime('%I:%M %p')
+            print(f"\n  BLOCKED: TCPA quiet hours (current time: {current_time})")
+            print("  No messages allowed before 8:00 AM or after 9:00 PM local time.")
+            print("  Use force_send=True to override (e.g., for urgent notifications).")
+            return {
+                "success": False,
+                "error": f"TCPA quiet hours - current time {current_time}. "
+                         "Sending not allowed before 8am or after 9pm.",
+                "blocked_by": "tcpa_quiet_hours"
+            }
+
         # Format phone number
         to = self._format_phone(to)
         if not to:
@@ -222,9 +313,18 @@ class TwilioSMS:
                     "error": f"Unknown template: {template}",
                     "available_templates": list(self.TEMPLATES.keys())
                 }
-            
-            template_vars = template_vars or {}
-            message = self.TEMPLATES[template].format(**template_vars)
+
+            # Merge default vars with user-provided vars (user overrides defaults)
+            merged_vars = {**self.default_template_vars, **(template_vars or {})}
+            try:
+                message = self.TEMPLATES[template].format(**merged_vars)
+            except KeyError as e:
+                return {
+                    "success": False,
+                    "error": f"Missing template variable: {e}",
+                    "template": template,
+                    "provided_vars": list(merged_vars.keys())
+                }
         
         print(f"To: {to}")
         print(f"From: {self.from_number}")

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Started | William Marceau - Coaching & Peptide Consultation</title>
-    <meta name="description" content="Apply for coaching or schedule a peptide consultation. Free discovery call to discuss your goals.">
+    <title>Get Started | William Marceau - Fitness Coaching</title>
+    <meta name="description" content="Book a free strategy call, start 1:1 coaching, or take the Body Recomp Quiz. William Marceau — evidence-based fitness coaching in Naples, FL and online.">
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 
     <!-- Open Graph -->
     <meta property="og:title" content="Get Started | William Marceau">
-    <meta property="og:description" content="Apply for coaching or schedule a peptide consultation. Free discovery call to discuss your goals.">
+    <meta property="og:description" content="Book a free strategy call, start 1:1 coaching at $197/mo, or take the free Body Recomp Quiz.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com/contact.html">
 
@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Calendly -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
     <style>
         * {
@@ -183,19 +187,6 @@
             opacity: 0.3;
         }
 
-        .mobile-menu-section {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mobile-menu-links .business-link a {
-            color: var(--accent, #f59e0b);
-        }
-
         .mobile-menu-cta {
             margin-top: 2rem;
         }
@@ -223,23 +214,101 @@
             visibility: visible;
         }
 
-        /* Main Container */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 8rem 2rem 4rem;
+        /* Scroll animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+        }
+
+        .btn-large {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-stripe {
+            background: #635bff;
+            color: white;
+        }
+
+        .btn-stripe:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
         .hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
             text-align: center;
-            margin-bottom: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(201, 150, 60, 0.08) 0%, transparent 70%);
+        }
+
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 2.5rem;
+            font-size: 3.25rem;
             font-weight: 900;
-            margin-bottom: 1rem;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
         }
 
         .hero h1 .highlight {
@@ -249,248 +318,244 @@
             background-clip: text;
         }
 
-        .hero p {
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        /* Section Shared */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
             color: var(--text-muted);
             font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* Contact Card */
-        .contact-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .form-group select {
-            cursor: pointer;
-        }
-
-        .form-group select option {
+        /* Options Section */
+        .options-section {
+            padding: 5rem 2rem;
             background: var(--dark);
-            color: #fff;
         }
 
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
         }
 
-        /* Communication Preferences */
-        .comm-prefs {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin: 1.5rem 0;
-        }
-
-        .comm-prefs-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .comm-prefs > p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        .checkbox-group {
+        .option-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
         }
 
-        .checkbox-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(201, 150, 60, 0.1);
         }
 
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-top: 2px;
-            accent-color: var(--primary);
-            cursor: pointer;
-            flex-shrink: 0;
+        .option-card.featured {
+            border-color: var(--primary);
+            background: rgba(201, 150, 60, 0.05);
+            position: relative;
         }
 
-        .checkbox-item label {
-            font-size: 0.9rem;
-            cursor: pointer;
-            line-height: 1.4;
-        }
-
-        .checkbox-item label strong {
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .checkbox-item label span {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            background: var(--primary);
+        .option-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: var(--dark);
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            padding: 0.35rem 1.25rem;
+            border-radius: 0 0 8px 8px;
         }
 
-        .btn-submit:hover {
-            background: var(--primary-dark);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .form-footer {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .form-footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Direct Contact */
-        .direct-contact {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .direct-contact h3 {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .contact-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #fff;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        .contact-link:hover {
-            color: var(--primary);
-        }
-
-        /* Success Message */
-        .success-message {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .success-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--primary);
+        .option-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(201, 150, 60, 0.05));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin: 0 auto 1.5rem;
         }
 
-        .success-message h3 {
-            font-size: 1.5rem;
+        .option-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
+        }
+
+        .option-price {
             color: var(--primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
         }
 
-        .success-message p {
+        .option-card p {
             color: var(--text-muted);
-            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            flex-grow: 1;
         }
 
-        .success-message a {
+        .option-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Calendly Section */
+        .calendly-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .calendly-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .calendly-inline-widget {
+            min-width: 320px;
+            height: 700px;
+        }
+
+        /* Direct Contact Section */
+        .contact-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            border-color: var(--primary);
+        }
+
+        .contact-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(201, 150, 60, 0.05));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.25rem;
+        }
+
+        .contact-item h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-item p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .contact-item a {
             color: var(--primary);
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        .success-message a:hover {
+        .contact-item a:hover {
+            color: var(--secondary);
             text-decoration: underline;
         }
 
-        .contact-form.hidden {
-            display: none;
+        /* Personal Touch */
+        .personal-section {
+            padding: 4rem 2rem;
+            background: var(--darker);
+        }
+
+        .personal-container {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            background: rgba(201, 150, 60, 0.06);
+            border: 1px solid rgba(201, 150, 60, 0.2);
+            border-radius: 16px;
+            padding: 3rem 2.5rem;
+        }
+
+        .personal-container h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .personal-container p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .personal-container p strong {
+            color: var(--primary);
         }
 
         /* Footer */
@@ -498,7 +563,6 @@
             padding: 3rem 2rem;
             background: var(--darker);
             border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 4rem;
         }
 
         .footer-content {
@@ -526,6 +590,20 @@
             color: var(--primary);
         }
 
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
         .disclaimer {
             max-width: 1200px;
             margin: 0 auto;
@@ -536,26 +614,63 @@
             border-top: 1px solid rgba(255,255,255,0.05);
         }
 
+        /* Mobile Responsive */
         @media (max-width: 968px) {
             .hamburger {
                 display: flex;
             }
+
             .nav-links {
                 display: none;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
             }
         }
 
         @media (max-width: 600px) {
-            .container {
-                padding: 6rem 1.5rem 2rem;
+            .hero {
+                padding: 6rem 1.5rem 3rem;
             }
 
             .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.05rem;
+            }
+
+            .section-header h2 {
                 font-size: 1.75rem;
             }
 
-            .contact-links {
-                flex-direction: column;
+            .option-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .calendly-inline-widget {
+                height: 800px;
+            }
+
+            .personal-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
                 gap: 1rem;
             }
         }
@@ -575,9 +690,7 @@
                 <li><a href="/contact.html" class="nav-cta active">Get Started</a></li>
             </ul>
             <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </div>
         </div>
     </nav>
@@ -593,119 +706,106 @@
             <li><a href="/for-influencers.html">For Influencers</a></li>
         </ul>
         <div class="mobile-menu-divider"></div>
-        <p class="mobile-menu-section">Business Services</p>
-        <ul class="mobile-menu-links">
-            <li class="business-link"><a href="/ai-automation.html">AI Automation</a></li>
-        </ul>
         <div class="mobile-menu-cta">
             <a href="/contact.html" class="btn btn-primary">Get Started</a>
         </div>
     </div>
 
-    <div class="container">
-        <section class="hero">
-            <h1>Let's <span class="highlight">Connect</span></h1>
-            <p>Apply for coaching, schedule a peptide consultation, or just ask a question. I'll get back to you within 24 hours.</p>
-        </section>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>Let's <span class="highlight">Get Started</span></h1>
+            <p class="hero-subtitle">Choose the path that fits where you are right now.</p>
+        </div>
+    </section>
 
-        <div class="contact-card">
-            <form id="contactForm" class="contact-form" data-form-handler="contact">
-                <div class="form-group">
-                    <label for="name">Name *</label>
-                    <input type="text" id="name" name="name" placeholder="Your name" required>
+    <!-- Three Options -->
+    <section class="options-section">
+        <div class="section-container reveal">
+            <div class="section-header">
+                <h2>Your Next Step</h2>
+                <p>Whether you want to explore, commit, or just learn more about your body — there's a path for you.</p>
+            </div>
+            <div class="options-grid">
+                <!-- Option 1: Free Strategy Call -->
+                <div class="option-card">
+                    <div class="option-icon">&#x1F4DE;</div>
+                    <h3>Free Strategy Call</h3>
+                    <div class="option-price">Free &mdash; 30 Minutes</div>
+                    <p>Not sure where to start? Book a free 30-minute call. No sales pitch — just an honest conversation about your goals, what's worked, what hasn't, and what the next steps could look like.</p>
+                    <a href="#book" class="btn btn-secondary">Book a Call</a>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                <!-- Option 2: Start Coaching -->
+                <div class="option-card featured">
+                    <div class="option-icon">&#x1F4AA;</div>
+                    <h3>Start Coaching</h3>
+                    <div class="option-price">$197/month</div>
+                    <p>Ready to go? Jump straight into 1:1 coaching with a custom training program, personalized nutrition, AI-powered progress tracking, and weekly check-ins. Cancel anytime.</p>
+                    <a href="https://buy.stripe.com/14A14n29hdqU48wf5wg3601" class="btn btn-stripe" target="_blank">Start Now &mdash; $197/mo</a>
                 </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone (optional)</label>
-                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                <!-- Option 3: Take the Quiz -->
+                <div class="option-card">
+                    <div class="option-icon">&#x1F9EE;</div>
+                    <h3>Take the Quiz</h3>
+                    <div class="option-price">Free &mdash; 3 Minutes</div>
+                    <p>Curious what your body needs? Take the free Body Recomp Calculator and get personalized macro targets, training recommendations, and a snapshot of where you stand.</p>
+                    <a href="/quiz.html" class="btn btn-secondary">Take the Quiz</a>
                 </div>
-
-                <div class="form-group">
-                    <label for="interest">I'm interested in...</label>
-                    <select id="interest" name="interest">
-                        <option value="">Select an option</option>
-                        <option value="coaching-starter">Coaching - Starter (3 month)</option>
-                        <option value="coaching-performance">Coaching - Performance (6 month)</option>
-                        <option value="coaching-elite">Coaching - Elite (12 month)</option>
-                        <option value="peptide-consultation">Peptide Consultation</option>
-                        <option value="peptide-ongoing">Peptide Ongoing Support</option>
-                        <option value="backend-services">Backend Services (For Influencers)</option>
-                        <option value="general">General Question</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="message">Tell me about your goals *</label>
-                    <textarea id="message" name="message" placeholder="What are you looking to achieve? Any relevant background (training history, health considerations, etc.)..." required></textarea>
-                </div>
-
-                <!-- Communication Preferences -->
-                <div class="comm-prefs">
-                    <div class="comm-prefs-header">
-                        <span>📬</span> Communication Preferences
-                    </div>
-                    <p>Stay informed about fitness tips, peptide research, and updates. Unsubscribe anytime.</p>
-
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="emailOptIn" name="emailOptIn" checked>
-                            <label for="emailOptIn">
-                                <strong>Email Updates</strong>
-                                <span>Weekly tips, research summaries, and content</span>
-                            </label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="smsOptIn" name="smsOptIn" checked>
-                            <label for="smsOptIn">
-                                <strong>SMS Notifications</strong>
-                                <span>Appointment reminders and urgent updates only</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hidden tracking fields -->
-                <input type="hidden" name="source" value="contact-page">
-                <input type="hidden" name="business_id" value="fitness-influencer">
-                <input type="hidden" name="timestamp" id="timestamp">
-
-                <button type="submit" class="btn-submit">Send Message</button>
-
-                <p class="form-footer">
-                    I typically respond within 24 hours.
-                    <a href="terms.html">Terms</a> & <a href="privacy.html">Privacy</a>
-                </p>
-            </form>
-
-            <div id="successMessage" class="success-message">
-                <div class="success-icon">✓</div>
-                <h3>Message Sent!</h3>
-                <p>Thanks for reaching out. I'll review your submission and get back to you within 24 hours.</p>
-                <a href="/">Return to Home</a>
             </div>
         </div>
+    </section>
 
-        <div class="direct-contact">
-            <h3>Or reach out directly</h3>
-            <div class="contact-links">
-                <a href="mailto:wmarceau@marceausolutions.com" class="contact-link">
-                    <span>📧</span>
-                    wmarceau@marceausolutions.com
-                </a>
-                <a href="https://twitter.com/wmarceau" target="_blank" class="contact-link">
-                    <span>🐦</span>
-                    @wmarceau
-                </a>
+    <!-- Calendly Embed -->
+    <section class="calendly-section" id="book">
+        <div class="section-container reveal">
+            <div class="section-header">
+                <h2>Book Your Free Strategy Call</h2>
+                <p>30 minutes. No commitment. Let's talk about your goals and see if we're a good fit.</p>
+            </div>
+            <div class="calendly-wrapper">
+                <div class="calendly-inline-widget" data-url="https://calendly.com/wmarceau/30min?hide_gdpr_banner=1&background_color=0f172a&text_color=f8fafc&primary_color=D4AF37"></div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Direct Contact -->
+    <section class="contact-section">
+        <div class="section-container reveal">
+            <div class="section-header">
+                <h2>Get in Touch Directly</h2>
+                <p>Prefer to reach out the old-fashioned way? I'm here.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <div class="contact-icon">&#x2709;</div>
+                    <h3>Email</h3>
+                    <p><a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a></p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">&#x1F4CD;</div>
+                    <h3>Location</h3>
+                    <p>Naples, FL<br><span style="font-size: 0.85rem;">In-person + online clients welcome</span></p>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">&#x23F0;</div>
+                    <h3>Response Time</h3>
+                    <p>I personally respond to every message within 24 hours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personal Touch -->
+    <section class="personal-section">
+        <div class="section-container reveal">
+            <div class="personal-container">
+                <h3>No Gatekeeping. No Corporate Runaround.</h3>
+                <p>When you reach out, you're talking to <strong>me</strong> — not a sales team, not an assistant, not a chatbot. I read every message and respond personally. If I can help you, I'll tell you how. If I'm not the right fit, I'll tell you that too.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer>
@@ -716,25 +816,45 @@
                 <a href="/terms.html">Terms</a>
                 <a href="/privacy.html">Privacy</a>
             </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+            </div>
         </div>
         <div class="disclaimer">
-            <p><strong>Disclaimer:</strong> This website is for educational purposes only and does not constitute medical advice. Always consult with a licensed healthcare provider before starting any fitness program or peptide protocol. Individual results may vary.</p>
+            <p><strong>Disclaimer:</strong> This website is for educational purposes only and does not constitute medical advice. Always consult with a licensed healthcare provider before starting any supplement or peptide protocol. Individual results may vary.</p>
         </div>
     </footer>
 
-    <!-- Form Handler -->
-    <script src="/assets/js/form-handler.js"></script>
     <script>
-        // Set timestamp on form load
-        document.getElementById('timestamp').value = new Date().toISOString();
-    </script>
-    <script>
+        // Mobile Menu Toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');
             document.querySelector('.mobile-menu').classList.toggle('active');
             document.querySelector('.menu-overlay').classList.toggle('active');
             document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
+
+        // Scroll reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (document.querySelector('.mobile-menu').classList.contains('active')) {
+                        toggleMenu();
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>

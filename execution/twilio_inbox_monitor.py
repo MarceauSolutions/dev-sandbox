@@ -23,6 +23,7 @@ USAGE:
     python twilio_inbox_monitor.py daemon --forward-to "+12395551234"
 
 DEPENDENCIES: twilio, python-dotenv
+API_KEYS: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, SMTP_USERNAME (optional), SMTP_PASSWORD (optional)
 """
 
 import os
@@ -350,8 +351,8 @@ This message was sent to your Twilio number: {message.to_phone}
             try:
                 with open(self.replies_file) as f:
                     data = json.load(f)
-            except:
-                pass
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"Warning: Could not load existing replies file: {e}")
 
         # Add new reply
         data["replies"].append(asdict(message))

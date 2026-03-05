@@ -42,6 +42,64 @@ const Toast = {
     return toast;
   },
 
+  showWithUndo(message, actionId, undoCallback, duration = 10000) {
+    this.init();
+    const toast = document.createElement('div');
+    toast.className = 'toast success toast-with-undo';
+
+    const icons = {
+      success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>'
+    };
+
+    toast.innerHTML = `
+      <span style="color:var(--status-success)">${icons.success}</span>
+      <span style="flex:1">${message}</span>
+      <button class="toast-undo-btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">UNDO</button>
+      <div class="toast-countdown" style="position:absolute;bottom:0;left:0;height:3px;background:var(--accent-primary,#C9963C);width:100%;border-radius:0 0 8px 8px;transition:width linear"></div>
+    `;
+
+    const undoBtn = toast.querySelector('.toast-undo-btn');
+    let undone = false;
+
+    undoBtn.addEventListener('click', async () => {
+      if (undone) return;
+      undone = true;
+      undoBtn.textContent = '...';
+      undoBtn.disabled = true;
+      try {
+        await undoCallback(actionId);
+        toast.querySelector('span:nth-child(2)').textContent = 'Action undone';
+        undoBtn.style.display = 'none';
+        setTimeout(() => {
+          toast.style.animation = 'toast-out 0.3s ease forwards';
+          setTimeout(() => toast.remove(), 300);
+        }, 1500);
+      } catch (err) {
+        undoBtn.textContent = 'Failed';
+        setTimeout(() => toast.remove(), 2000);
+      }
+    });
+
+    this.container.appendChild(toast);
+
+    // Animate countdown bar
+    const bar = toast.querySelector('.toast-countdown');
+    requestAnimationFrame(() => {
+      bar.style.width = '0%';
+      bar.style.transitionDuration = duration + 'ms';
+    });
+
+    // Auto-remove after duration
+    setTimeout(() => {
+      if (!undone) {
+        toast.style.animation = 'toast-out 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, duration);
+
+    return toast;
+  },
+
   success(msg, dur) { return this.show(msg, 'success', dur); },
   error(msg, dur) { return this.show(msg, 'error', dur); },
   warning(msg, dur) { return this.show(msg, 'warning', dur); },

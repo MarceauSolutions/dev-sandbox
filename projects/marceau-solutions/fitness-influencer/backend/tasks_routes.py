@@ -74,6 +74,7 @@ class TaskCreate(BaseModel):
     trigger_condition: Optional[str] = None  # For CIRCLE_BACK items
     tags: List[str] = []
     project: Optional[str] = None  # e.g., "fitness-influencer", "x-automation"
+    xp_value: Optional[int] = 0  # XP awarded on completion (0 = use priority default)
 
 
 class TaskUpdate(BaseModel):
@@ -88,6 +89,7 @@ class TaskUpdate(BaseModel):
     tags: Optional[List[str]] = None
     project: Optional[str] = None
     progress: Optional[int] = None  # 0-100
+    xp_value: Optional[int] = None  # XP awarded on completion
 
 
 class Task(BaseModel):
@@ -255,6 +257,7 @@ async def create_task(
         "tags": task.tags,
         "project": task.project,
         "progress": 0,
+        "xp_value": task.xp_value or 0,
         "created_at": now,
         "updated_at": now,
         "completed_at": None
@@ -325,6 +328,8 @@ async def update_task(
                 task["project"] = update.project
             if update.progress is not None:
                 task["progress"] = min(100, max(0, update.progress))
+            if update.xp_value is not None:
+                task["xp_value"] = update.xp_value
 
             task["updated_at"] = datetime.utcnow().isoformat()
 

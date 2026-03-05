@@ -24,11 +24,22 @@ I, the undersigned, acknowledge that I am voluntarily participating in an online
 
 3. **This program is not a substitute for medical advice.** I understand that my Coach is not a licensed physician, physical therapist, or registered dietitian. I will consult with my healthcare provider before starting any new exercise or nutrition protocol.
 
-4. **Peptide education is for informational purposes only.** Any information provided about peptides, supplements, or optimization protocols is educational and does not constitute medical advice or a prescription. I understand that only licensed physicians can prescribe medications and peptides.
+4. **Peptide education is for informational purposes only.** Any information provided about peptides, supplements, or optimization protocols is educational and does not constitute medical advice, a diagnosis, or a prescription. I understand that only licensed physicians can prescribe medications and peptides. I will consult with a qualified healthcare provider before using any peptide, supplement, or optimization protocol discussed during coaching.
 
 5. **I am responsible for my own safety** during training sessions. I will use proper form, appropriate weights, and stop any exercise that causes pain or discomfort.
 
 6. **Results are not guaranteed.** Individual results vary based on effort, consistency, genetics, and other factors outside of the Coach's control.
+
+---
+
+## Supplement & Nutrition Disclaimer
+
+I understand that any nutritional advice, supplement recommendations, or dietary guidance provided during this coaching program is for general educational purposes only. I acknowledge that:
+
+- My Coach is not a registered dietitian or licensed nutritionist (unless separately credentialed)
+- Supplements are not evaluated by the FDA for safety or efficacy
+- I am solely responsible for deciding whether to use any supplement, and I will consult with my healthcare provider before doing so, especially if I have pre-existing conditions, take medications, or am pregnant or nursing
+- Any adverse reactions to dietary changes or supplements should be reported to a healthcare provider immediately
 
 ---
 

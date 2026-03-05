@@ -381,6 +381,14 @@ class BrandedPDFEngine:
 
     def _load_templates(self):
         """Import all template modules to trigger registration."""
+        # Fix __main__ double-import: when run as `python branded_pdf_engine.py`,
+        # the module name is __main__, but templates do `from branded_pdf_engine import ...`
+        # which would import a second copy with its own TEMPLATES dict.
+        # Ensure this module is findable as 'branded_pdf_engine' in sys.modules.
+        this_module = sys.modules[__name__]
+        if "branded_pdf_engine" not in sys.modules:
+            sys.modules["branded_pdf_engine"] = this_module
+
         templates_dir = Path(__file__).parent / "pdf_templates"
         if templates_dir.exists():
             for f in templates_dir.glob("*_template.py"):

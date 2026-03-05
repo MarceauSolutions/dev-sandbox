@@ -12,13 +12,27 @@
 
 ## Critical Rules (Always Enforced)
 
-1. **Check existing tools BEFORE creating new ones** — Run: `python scripts/inventory.py search <keyword>`
+1. **Check existing tools BEFORE creating new ones** — `python scripts/inventory.py search <keyword>`. Hook: `check-existing-tools.sh`
 2. **Never nest git repos** — `find . -name ".git" \( -type d -o -type f \)` should only show `./.git`
-3. **Test before committing** — New `.py` files must at minimum pass syntax check. Pre-commit hook enforces this.
+3. **Test before committing** — New `.py` files must pass syntax check. Pre-commit hook enforces.
 4. **DOE discipline** — Directive must exist before deploying. Never deploy untested code.
 5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
-6. **Document efforts >30 min** immediately using `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` decision tree.
-7. **Rule of Three** — If same approach fails 3 times, STOP. Research root cause before retrying.
+6. **Document efforts >30 min** — `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md`
+7. **Rule of Three** — Same approach fails 3x? STOP. Research root cause.
+
+## Execution Discipline (Hook-Enforced Where Possible)
+
+> These exist because they were violated repeatedly. Hooks BLOCK where they can. The rest is self-discipline.
+
+- **E1 Just do it** — Never ask "want me to?" for obvious next steps. DO IT.
+- **E2 Stay on track** — Never pursue a direction William said no to.
+- **E3 Failures compound** — Incomplete deliverables, skipped steps = zero tolerance.
+- **E4 Verify before spending** — Check existing capabilities before paid services. Hook: `api-cost-guard.sh`
+- **E5 Use APIs, never delegate** — Check `.env`, `execution/`, MCP tools BEFORE telling William to do anything manually.
+- **E6 Build foundations** — "Will this need redoing later?" If yes, do it right now.
+- **E7 Complete the loop** — Send SMS/email → ALWAYS run inbox monitor after. Hook: `complete-the-loop-guard.sh`
+- **E8 Stay in the stack** — No ngrok, Netlify, FormSubmit, random services. Hook: `stack-guard.sh` (BLOCKING)
+- **E9 Pre-flight mandatory** — SOP 33 before every task. Search inventory, check service status, verify standards.
 
 ## Commands & Shortcuts
 
@@ -55,6 +69,10 @@
 | "Publish to registry" | `/publish-mcp` |
 | "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
 | "Download photos" / "Export photos" | `/photos` interactive flow |
+| "What tool for X?" / "Should we use Y?" | Tool Selection Framework in `docs/service-standards.md` |
+| "New web dev client" | `projects/marceau-solutions/web-dev/workflows/client-onboarding.md` |
+| "Deploy {client} website" | `./scripts/deploy_website.sh {client}` |
+| "PT client needs a website" | POST to `/webhook/cross-referral` (cross-business handoff) |
 
 ## Where Things Live
 
@@ -71,6 +89,9 @@
 | **Task procedures** | `[project]/workflows/` |
 | **Session learnings** | `docs/session-history.md` |
 | **Archived docs** | `docs/archive/` |
+| **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
+| **PT coaching hub** | `projects/marceau-solutions/pt-business/CLAUDE.md` |
+| **Web dev hub** | `projects/marceau-solutions/web-dev/CLAUDE.md` |
 
 ## Project Layout
 

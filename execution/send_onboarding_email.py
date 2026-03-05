@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 """
-Send onboarding email to new clients for Marceau Solutions
+send_onboarding_email.py - Client Onboarding Email
 
-Usage:
-    python send_onboarding_email.py client@example.com
-    python send_onboarding_email.py client@example.com --name "John"
-    python send_onboarding_email.py client@example.com --name "John" --context "Website redesign project"
+WHAT: Send branded onboarding email to new coaching clients
+WHY: Automates the first touchpoint after Stripe payment -- includes Calendly,
+     intake form, expectations, and billing info (SOP 19 follow-up sequence Day 0)
+INPUT: Client email address, optional name and context
+OUTPUT: Sent email via Gmail SMTP (HTML + plain text)
+COST: FREE (Gmail SMTP)
+
+QUICK USAGE:
+  python execution/send_onboarding_email.py client@example.com
+  python execution/send_onboarding_email.py client@example.com --name "John"
+
+DEPENDENCIES: python-dotenv
+API_KEYS: SMTP_USERNAME, SMTP_PASSWORD, SENDER_EMAIL, CALENDLY_KICKOFF_URL, INTAKE_FORM_URL
 """
 
 import smtplib

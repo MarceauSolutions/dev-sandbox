@@ -58,6 +58,13 @@ from backend.collaborators_routes import router as collaborators_router
 # Branded PDF generation routes (v2.2)
 from backend.pdf_routes import router as pdf_router
 
+# Document serving routes (v2.3)
+from backend.docs_routes import router as docs_router
+
+# Client portal routes (v2.4)
+from backend.client_routes import router as client_router
+from backend.workout_routes import router as workout_router
+
 # Initialize structured JSON logging
 setup_logging()
 logger = get_logger(__name__)
@@ -99,6 +106,13 @@ app.include_router(collaborators_router)
 # Include branded PDF generation routes (v2.2)
 app.include_router(pdf_router)
 
+# Include document serving routes (v2.3)
+app.include_router(docs_router)
+
+# Include client portal routes (v2.4)
+app.include_router(client_router)
+app.include_router(workout_router)
+
 # Base path for execution scripts
 SCRIPTS_PATH = Path(__file__).parent
 PROJECT_PATH = SCRIPTS_PATH.parent  # fitness-influencer root
@@ -113,6 +127,11 @@ FRONTEND_PATH = PROJECT_PATH / "frontend"
 
 # Mount static files for video downloads
 app.mount("/static", StaticFiles(directory=str(STATIC_PATH)), name="static")
+
+# Mount client portal SPA (v2.4 — must be before /frontend mount)
+CLIENT_PATH = PROJECT_PATH / "client"
+if CLIENT_PATH.exists():
+    app.mount("/client", StaticFiles(directory=str(CLIENT_PATH), html=True), name="client")
 
 # Mount frontend assets (CSS, JS) for dashboard
 app.mount("/frontend", StaticFiles(directory=str(FRONTEND_PATH)), name="frontend")
@@ -129,6 +148,15 @@ async def dashboard_page():
     if dashboard_html.exists():
         return FileResponse(dashboard_html, media_type="text/html")
     raise HTTPException(status_code=404, detail="Dashboard not found")
+
+
+@app.get("/portal")
+async def client_portal_page():
+    """Serve the client portal SPA."""
+    client_html = CLIENT_PATH / "index.html"
+    if client_html.exists():
+        return FileResponse(client_html, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Client portal not found")
 
 
 @app.get("/gamification")

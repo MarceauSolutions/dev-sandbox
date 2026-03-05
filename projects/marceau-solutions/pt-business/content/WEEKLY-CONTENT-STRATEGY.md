@@ -136,68 +136,33 @@ Based on [Brand24](https://brand24.com/blog/twitter-tips/) and [Exercise.com](ht
 
 ---
 
-## This Week's Content Calendar (Feb 10-16, 2026)
+## Starter Calendar Template (Adapt Weekly)
 
-### Monday - Motivation
-| Time | Platform | Content |
-|------|----------|---------|
-| 6:00 AM | X | Motivational quote + workout teaser |
-| 9:00 AM | Instagram Feed | Mindset carousel (5 slides) |
-| 12:00 PM | X | "Monday tip" - quick fitness hack |
-| 7:00 PM | Instagram Reels | "Start your week right" workout clip |
-| 8:00 PM | TikTok | Same reel, adapted for TikTok trends |
+> **NOTE (March 2026):** You are starting from 0 followers on all platforms. The full Hormozi-level 35+ posts/week is aspirational. Start with the Starter Tier below and scale up as you build momentum and content inventory.
 
-### Tuesday - Tactical Tips
-| Time | Platform | Content |
-|------|----------|---------|
-| 7:00 AM | X | Form tip with image |
-| 10:00 AM | Instagram Feed | How-to post (form correction) |
-| 1:00 PM | X | Nutrition quick tip |
-| 7:30 PM | Instagram Reels | "3 exercises most people do wrong" |
-| 8:30 PM | TikTok | Same content, native format |
+### Starter Tier (Weeks 1-4: 0 Followers)
+Focus on **X + Instagram only** (2 platforms max). See `MULTI-PLATFORM-CONTENT-STRATEGY.md` for platform rationale.
 
-### Wednesday - Deep Dive
-| Time | Platform | Content |
-|------|----------|---------|
-| 8:00 AM | X | Thread: Complete guide to [topic] |
-| 11:00 AM | Instagram Carousel | Same thread as carousel |
-| 3:00 PM | X | Engagement post (poll) |
-| 8:00 PM | Instagram Reels | Talking head: explanation video |
-| 9:00 PM | TikTok | Split version of reel |
+| Day | X (2 posts) | Instagram (1 post) |
+|-----|-------------|-------------------|
+| Monday | Morning motivation + afternoon tip | 1 Reel (workout clip) |
+| Tuesday | Form tip + nutrition insight | 1 Story (behind-the-scenes) |
+| Wednesday | Thread (deep dive) + engagement poll | 1 Carousel (educational) |
+| Thursday | AMA post + answer top questions | 1 Story (Q&A sticker) |
+| Friday | Personal story / build-in-public | 1 Reel (form correction) |
+| Saturday | Weekend challenge | 1 Story (day in the life) |
+| Sunday | Meal prep tip | Rest or batch-create content |
 
-### Thursday - Q&A / Engagement
-| Time | Platform | Content |
-|------|----------|---------|
-| 7:00 AM | X | "Ask me anything about [topic]" |
-| 10:00 AM | Instagram Stories | Q&A sticker |
-| 1:00 PM | X | Answer top questions |
-| 7:00 PM | Instagram Reels | Answering DM questions |
-| 8:30 PM | TikTok | "Replying to comments" style |
+**Weekly total: 14 X posts + 7 Instagram pieces = 21 posts/week**
 
-### Friday - Transformations / Results
-| Time | Platform | Content |
-|------|----------|---------|
-| 8:00 AM | X | Client/personal transformation story |
-| 10:00 AM | Instagram Feed | Before/after with story |
-| 3:00 PM | X | Weekly wins recap |
-| 8:00 PM | Instagram Reels | Transformation journey video |
-| 9:00 PM | TikTok | Same content |
+### Growth Tier (Weeks 5-12: Building Momentum)
+Add YouTube (1 video/week) and increase X to 3/day.
 
-### Saturday - Community
-| Time | Platform | Content |
-|------|----------|---------|
-| 9:00 AM | X | Weekend workout challenge |
-| 12:00 PM | Instagram Stories | Day in the life |
-| 6:00 PM | Instagram Reels | Lifestyle/personality content |
-| 7:00 PM | TikTok | Trend participation |
+### Scale Tier (Month 3+: With Content Inventory)
+Expand to full Hormozi framework (35+ posts/week) across X, Instagram, YouTube.
 
-### Sunday - Lifestyle / Prep
-| Time | Platform | Content |
-|------|----------|---------|
-| 10:00 AM | X | Meal prep tips |
-| 2:00 PM | Instagram Carousel | Week prep guide |
-| 6:00 PM | Instagram Stories | Sunday reset |
-| 7:00 PM | TikTok | "Get ready for the week" |
+### TikTok Note
+**Do NOT post peptide content on TikTok** — it is explicitly banned under their drug policy. TikTok is optional and limited to fitness-only clips cross-posted from Instagram Reels. See `MULTI-PLATFORM-CONTENT-STRATEGY.md` for details.
 
 ---
 
@@ -246,15 +211,37 @@ Long-form video (YouTube)
 
 ## Success Metrics
 
-### Weekly Targets
+### Weekly Targets (Tiered by Phase)
+
+**Starter Phase (Month 1 — 0 followers):**
 | Metric | Target | Current |
 |--------|--------|---------|
-| Total Posts | 35+ | TBD |
-| X Posts | 21+ (3/day) | TBD |
-| Instagram Posts | 10-14 | TBD |
-| TikTok Posts | 7-14 | TBD |
-| Engagement Rate | >5% | TBD |
-| Follower Growth | +100/week | TBD |
+| Total Posts | 21+ | 0 |
+| X Posts | 14 (2/day) | 0 |
+| Instagram Posts | 7 (1/day) | 0 |
+| TikTok Posts | 0 (optional) | 0 |
+| Engagement Rate | Track only | N/A |
+| Follower Growth | +25/week | 0 |
+
+**Growth Phase (Month 2-3):**
+| Metric | Target |
+|--------|--------|
+| Total Posts | 28+ |
+| X Posts | 21 (3/day) |
+| Instagram Posts | 7 (1/day) |
+| YouTube Videos | 1/week |
+| Engagement Rate | >3% |
+| Follower Growth | +50/week |
+
+**Scale Phase (Month 4+):**
+| Metric | Target |
+|--------|--------|
+| Total Posts | 35+ |
+| X Posts | 21+ (3/day) |
+| Instagram Posts | 10-14 |
+| YouTube Videos | 1-2/week |
+| Engagement Rate | >5% |
+| Follower Growth | +100/week |
 
 ### Quality Indicators
 - Video completion rate >50%

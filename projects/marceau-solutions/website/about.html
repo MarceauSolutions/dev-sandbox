@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Story | William Marceau - Brain Cancer Survivor to Fitness Coach</title>
-    <meta name="description" content="From brain cancer survivor at 17 to biomedical engineer to fitness coach and peptide expert. Learn the story behind the mission.">
+    <title>My Story | William Marceau - From TBI Recovery to Fitness Coaching</title>
+    <meta name="description" content="From traumatic brain injury to helping others transform their bodies. William Marceau's story of rebuilding through evidence-based training and peptide science.">
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 
     <!-- Open Graph -->
     <meta property="og:title" content="My Story | William Marceau">
-    <meta property="og:description" content="From brain cancer survivor to fitness coach. The story behind the mission.">
+    <meta property="og:description" content="From traumatic brain injury to helping others transform their bodies. Evidence-based training, peptide knowledge, and a personal story of rebuilding.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com/about">
-    <meta property="og:image" content="https://marceausolutions.com/assets/images/william/side-pose.jpg">
+    <meta property="og:image" content="https://marceausolutions.com/assets/images/william/coaching-front.jpg">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +41,7 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--darker);
             color: var(--text);
-            line-height: 1.7;
+            line-height: 1.6;
         }
 
         /* Navigation */
@@ -183,19 +183,6 @@
             opacity: 0.3;
         }
 
-        .mobile-menu-section {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .mobile-menu-links .business-link a {
-            color: var(--accent, #f59e0b);
-        }
-
         .mobile-menu-cta {
             margin-top: 2rem;
         }
@@ -236,17 +223,37 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 50%;
+            width: 60%;
             height: 100%;
-            background: radial-gradient(ellipse at center right, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+            background: radial-gradient(ellipse at center right, rgba(201, 150, 60, 0.08) 0%, transparent 70%);
         }
 
-        .page-hero-container {
-            max-width: 900px;
+        .hero-container {
+            max-width: 1100px;
             margin: 0 auto;
-            text-align: center;
             position: relative;
             z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text {
+            text-align: left;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(201, 150, 60, 0.15);
+            border: 1px solid rgba(201, 150, 60, 0.3);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
         }
 
         .page-hero h1 {
@@ -264,191 +271,33 @@
             background-clip: text;
         }
 
-        .page-hero p {
+        .hero-subtitle {
             font-size: 1.25rem;
             color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto;
+            max-width: 650px;
+            line-height: 1.7;
         }
 
-        /* Story Sections */
-        .story-section {
-            padding: 4rem 2rem;
-        }
-
-        .story-section:nth-child(odd) {
-            background: var(--dark);
-        }
-
-        .story-section:nth-child(even) {
-            background: var(--darker);
-        }
-
-        .story-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .story-container h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-        }
-
-        .story-container p {
-            margin-bottom: 1.25rem;
-            font-size: 1.1rem;
-        }
-
-        .story-container p.lead {
-            font-size: 1.25rem;
-            font-weight: 500;
-        }
-
-        .story-container strong {
-            color: var(--text);
-        }
-
-        .story-container .emphasis {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .story-list {
-            list-style: none;
-            margin: 1.5rem 0;
-        }
-
-        .story-list li {
+        .hero-photo {
             display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .story-list li .check {
-            color: var(--primary);
-            font-weight: bold;
-            margin-top: 0.2rem;
-        }
-
-        /* Credentials Section */
-        .credentials-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .credential-card {
-            background: rgba(255,255,255,0.03);
+        .hero-photo img {
+            width: 280px;
+            border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            object-fit: cover;
+            aspect-ratio: 3/4;
         }
 
-        .credential-card .icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .credential-card h4 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .credential-card p {
+        .hero-photo .photo-label {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 0;
-        }
-
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-            margin: 2rem 0;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-            padding-left: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 0.5rem;
-            width: 12px;
-            height: 12px;
-            background: var(--primary);
-            border-radius: 50%;
-            margin-left: -5px;
-        }
-
-        .timeline-year {
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-title {
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Story Photo */
-        .story-photo {
-            float: right;
-            margin: 0 0 1.5rem 2rem;
-            max-width: 280px;
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-        }
-
-        .story-photo-left {
-            float: left;
-            margin: 0 2rem 1.5rem 0;
-        }
-
-        .story-video-embed {
-            max-width: 300px;
-            float: right;
-            margin: 0 0 1.5rem 2rem;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .story-video-embed video {
-            width: 100%;
-            display: block;
+            font-weight: 500;
         }
 
         /* Scroll animations */
@@ -463,72 +312,236 @@
             transform: translateY(0);
         }
 
-        @media (max-width: 600px) {
-            .story-photo,
-            .story-photo-left,
-            .story-video-embed {
-                float: none;
-                margin: 0 auto 1.5rem;
-                display: block;
-                max-width: 220px;
-            }
+        /* Section Shared */
+        .section-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        /* Quote Box */
-        .quote-box {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2rem 0;
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
-        .quote-box blockquote {
-            font-size: 1.5rem;
-            font-weight: 600;
-            font-style: italic;
-            margin-bottom: 0.5rem;
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
         }
 
-        .quote-box cite {
+        .section-header p {
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* Philosophy Section */
-        .philosophy-grid {
+        /* Story Sections */
+        .story-section {
+            padding: 5rem 2rem;
+        }
+
+        .story-section.bg-dark {
+            background: var(--dark);
+        }
+
+        .story-section.bg-darker {
+            background: var(--darker);
+        }
+
+        .story-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .story-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            margin-bottom: 2rem;
+        }
+
+        .story-content h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-content h2 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .story-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .story-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .story-content .emphasis {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .story-content .gold {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Approach Grid */
+        .approach-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .philosophy-card {
+        .approach-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
         }
 
-        .philosophy-card h4 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        .approach-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .approach-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(212, 175, 55, 0.1));
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin: 0 auto 1.5rem;
+            color: var(--primary);
         }
 
-        .philosophy-card p {
+        .approach-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .approach-card p {
             color: var(--text-muted);
             font-size: 0.95rem;
-            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        /* Values Grid */
+        .values-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .value-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .value-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .value-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(212, 175, 55, 0.1));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1.25rem;
+            color: var(--primary);
+        }
+
+        .value-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .value-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-large {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
         }
 
         /* CTA Section */
         .cta-section {
             padding: 5rem 2rem;
-            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
             text-align: center;
         }
 
@@ -548,39 +561,6 @@
             color: var(--text-muted);
             font-size: 1.1rem;
             margin-bottom: 2rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--dark);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            color: var(--text);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: var(--primary);
         }
 
         .cta-buttons {
@@ -648,20 +628,45 @@
 
         /* Mobile Responsive */
         @media (max-width: 968px) {
-            .credentials-grid,
-            .philosophy-grid {
+            .hero-container {
                 grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text {
+                text-align: center;
+            }
+
+            .hero-photo {
+                order: -1;
+            }
+
+            .hero-photo img {
+                width: 220px;
             }
 
             .page-hero h1 {
                 font-size: 2.25rem;
             }
 
+            .approach-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .values-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
             .hamburger {
                 display: flex;
             }
+
             .nav-links {
                 display: none;
+            }
+
+            .story-content h2 {
+                font-size: 1.75rem;
             }
         }
 
@@ -674,13 +679,22 @@
                 font-size: 1.75rem;
             }
 
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+
             .cta-buttons {
                 flex-direction: column;
+                align-items: center;
             }
 
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .story-section {
+                padding: 3.5rem 1.5rem;
             }
         }
     </style>
@@ -699,9 +713,7 @@
                 <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
             </ul>
             <div class="hamburger" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </div>
         </div>
     </nav>
@@ -717,10 +729,6 @@
             <li><a href="/for-influencers.html">For Influencers</a></li>
         </ul>
         <div class="mobile-menu-divider"></div>
-        <p class="mobile-menu-section">Business Services</p>
-        <ul class="mobile-menu-links">
-            <li class="business-link"><a href="/ai-automation.html">AI Automation</a></li>
-        </ul>
         <div class="mobile-menu-cta">
             <a href="/contact.html" class="btn btn-primary">Get Started</a>
         </div>
@@ -728,168 +736,116 @@
 
     <!-- Page Hero -->
     <section class="page-hero">
-        <div class="page-hero-container">
-            <h1>From Brain Cancer Survivor to <span class="highlight">Fitness Coach</span></h1>
-            <p>The unconventional path that shaped my evidence-based approach to training and optimization.</p>
+        <div class="hero-container">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    Embrace the Pain &amp; Defy the Odds
+                </div>
+                <h1>My <span class="highlight">Story</span></h1>
+                <p class="hero-subtitle">From traumatic brain injury to helping others transform their bodies. This is why I coach, why I study peptides, and why I believe everyone deserves a science-based approach to getting stronger.</p>
+            </div>
+            <div class="hero-photo">
+                <img src="/assets/images/william/coaching-front.jpg" alt="William Marceau" width="280" height="373">
+                <span class="photo-label">William Marceau &mdash; Naples, FL</span>
+            </div>
         </div>
     </section>
 
-    <!-- The Battle -->
-    <section class="story-section">
-        <div class="story-container reveal">
-            <h2>The Battle That Changed Everything</h2>
-            <p class="lead">At 17, most teenagers worry about college applications and prom.</p>
-            <p class="lead">I was fighting for my life.</p>
-            <p>Brain cancer doesn't ask permission. It doesn't care about your plans, your dreams, or your future. When the diagnosis came, everything stopped. The tumor had to be removed—there was no other choice.</p>
-            <p>The surgery was successful. The cancer was gone.</p>
-            <p>But recovery brought a new challenge: <strong>dystonia</strong>—a neurological movement disorder causing involuntary muscle contractions. The very brain that had just been saved was now sending confused signals to my body.</p>
-            <p>Most people would have given up. Accepted limitations. Settled for less.</p>
-            <p class="emphasis">I refused.</p>
+    <!-- The Backstory -->
+    <section class="story-section bg-dark reveal">
+        <div class="story-content">
+            <div class="story-divider"></div>
+            <h2>The <span class="highlight">Backstory</span></h2>
+            <p>A traumatic brain injury changed everything. One moment I was living my life; the next, I was starting over from zero. Physically broken. Mentally foggy. The kind of setback that makes most people question whether they'll ever feel normal again.</p>
+            <p>I didn't just want normal. <span class="emphasis">I wanted stronger.</span></p>
+            <p>Recovery wasn't linear and it sure wasn't fast. But it taught me something most people never learn the hard way: your body is an incredibly adaptive machine when you give it the right inputs. The problem is that most fitness advice out there is built on trends, not science. I needed something that actually worked.</p>
+            <p>So I went deep. I studied evidence-based training methodologies. I learned how the body actually recovers and rebuilds at a hormonal and cellular level. I stopped listening to Instagram coaches and started reading the research. And piece by piece, I rebuilt myself &mdash; <span class="gold">stronger than I was before the injury.</span></p>
         </div>
     </section>
 
-    <!-- The Comeback -->
-    <section class="story-section">
-        <div class="story-container reveal">
-            <h2>The Comeback</h2>
-            <img src="/assets/images/william/bicep-pose.jpg" alt="William Marceau physique transformation after brain cancer recovery" class="story-photo" loading="lazy" width="280">
-            <p>While battling dystonia, I didn't just recover—I <strong>transformed</strong>.</p>
-            <p>I taught myself:</p>
-            <ul class="story-list">
-                <li><span class="check">✓</span><span>Advanced training techniques and nutrition science</span></li>
-                <li><span class="check">✓</span><span>How to push my body to athlete levels despite neurological challenges</span></li>
-                <li><span class="check">✓</span><span>The discipline to maintain excellence when everything felt impossible</span></li>
-            </ul>
-            <p>This wasn't just physical. I developed an obsession with <strong>understanding how the body works</strong>—at a molecular level.</p>
-            <p>I pursued a degree in <strong>Biomedical Engineering</strong> with a minor in <strong>Mathematics</strong>—studying the very systems that had both failed and saved me. I graduated with a <strong>3.8 GPA</strong>.</p>
-            <p>I was accepted to <strong>Carnegie Mellon University</strong>, one of the world's top engineering schools.</p>
-            <p>Everything was set. The path was clear. Graduate school. Research. A prestigious career.</p>
-            <p class="emphasis">And then I made a choice that shocked everyone.</p>
+    <!-- Why Peptides -->
+    <section class="story-section bg-darker reveal">
+        <div class="story-content">
+            <div class="story-divider"></div>
+            <h2>Why <span class="highlight">Peptides</span></h2>
+            <p>My recovery journey led me straight into the world of peptide science. Not the bro science version you see on social media &mdash; the actual clinical research. I spent hundreds of hours studying GH secretagogues, Tesamorelin, recovery compounds, and how they interact with training and nutrition at a physiological level.</p>
+            <p>I wanted to understand why my recovery was working. What was happening at the hormonal level when certain protocols clicked. Why some approaches accelerated healing while others did nothing. The answers kept pointing back to peptide signaling pathways.</p>
+            <p>Before long, I became <span class="emphasis">the guy friends called</span> when they wanted to understand what peptides could actually do versus the hype. Not because I was selling anything &mdash; because I'd done the work to separate clinical evidence from marketing noise. That distinction matters, and it's something most people in this space either can't or won't make.</p>
+        </div>
+    </section>
 
-            <div class="credentials-grid">
-                <div class="credential-card">
-                    <div class="icon">🎓</div>
-                    <h4>B.S. Biomedical Engineering</h4>
-                    <p>Math Minor, 3.8 GPA</p>
+    <!-- The Approach -->
+    <section class="story-section bg-dark reveal">
+        <div class="story-content">
+            <div class="story-divider"></div>
+            <h2>The <span class="highlight">Approach</span></h2>
+            <p>I coach the way I wish someone had coached me during my rebuild. Every decision is grounded in evidence. Every program is custom-built for the individual. And every recommendation comes from a place of personal experience backed by research.</p>
+            <p>My approach combines three things most coaches simply can't offer:</p>
+        </div>
+        <div class="approach-grid reveal" style="margin-top: 2.5rem;">
+            <div class="approach-card">
+                <div class="approach-icon">&#x1F4CA;</div>
+                <h3>Evidence-Based Training</h3>
+                <p>Programs built on research, periodization science, and progressive overload principles &mdash; not whatever's trending on social media this week.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon">&#x1F9EA;</div>
+                <h3>Peptide-Informed Protocols</h3>
+                <p>Deep understanding of how peptides interact with training, recovery, and body composition. This knowledge shapes every program I write.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon">&#x1F4BB;</div>
+                <h3>AI-Powered Tracking</h3>
+                <p>Technology-enhanced progress analysis that catches patterns and trends manual tracking misses. Data drives decisions, not guesswork.</p>
+            </div>
+            <div class="approach-card">
+                <div class="approach-icon">&#x1F4CD;</div>
+                <h3>In-Person &amp; Online</h3>
+                <p>Based in Naples, FL. Whether you're local and want hands-on coaching or anywhere in the world training online &mdash; the quality doesn't change.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Credentials / Values -->
+    <section class="values-section reveal">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>What I Stand For</h2>
+                <p>The principles behind everything I do as a coach.</p>
+            </div>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">&#x1F52C;</div>
+                    <h3>Evidence-Based</h3>
+                    <p>Every recommendation backed by research, not Instagram trends.</p>
                 </div>
-                <div class="credential-card">
-                    <div class="icon">🏛️</div>
-                    <h4>Carnegie Mellon</h4>
-                    <p>Accepted (Deferred)</p>
+                <div class="value-card">
+                    <div class="value-icon">&#x1F9EC;</div>
+                    <h3>Peptide Knowledge</h3>
+                    <p>Deep understanding of how peptides interact with training and recovery.</p>
                 </div>
-                <div class="credential-card">
-                    <div class="icon">🧬</div>
-                    <h4>Brain Cancer Survivor</h4>
-                    <p>Since Age 17</p>
+                <div class="value-card">
+                    <div class="value-icon">&#x1F916;</div>
+                    <h3>AI-Powered</h3>
+                    <p>Technology-enhanced tracking and analysis for better results.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">&#x1F4AA;</div>
+                    <h3>Personal Experience</h3>
+                    <p>I've been through the rebuild &mdash; I know what works and what doesn't.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- The Choice -->
-    <section class="story-section">
-        <div class="story-container reveal">
-            <h2>The Decision That Changed My Path</h2>
-            <p class="lead">I deferred Carnegie Mellon.</p>
-            <p>Why would someone who fought so hard for a future walk away from a guaranteed path to success?</p>
-            <p>Because surviving cancer taught me something most people never learn:</p>
-
-            <div class="quote-box">
-                <blockquote>"Tomorrow isn't guaranteed. If you have a dream, chase it now."</blockquote>
-            </div>
-
-            <p>My dream wasn't to sit in a lab. It was to take everything I'd learned—biomedical science, training methodology, recovery optimization—and <strong>help others transform their bodies and lives</strong>.</p>
-            <p>Not through theory. Through <strong>evidence</strong>. Through <strong>experience</strong>. Through the hard-won knowledge of someone who rebuilt himself from the ground up.</p>
-        </div>
-    </section>
-
-    <!-- Fitness Journey -->
-    <section class="story-section">
-        <div class="story-container reveal">
-            <h2>Why Fitness. Why Peptides.</h2>
-            <img src="/assets/images/william/side-pose.jpg" alt="William Marceau training in gym - evidence-based fitness coaching" class="story-photo" loading="lazy" width="280">
-            <p>When you've had your brain operated on at 17 and spent years fighting to regain motor control, you develop a different relationship with your body.</p>
-            <p>Every movement is intentional. Every rep is earned. Every pound of muscle is proof that the human body can overcome what seems impossible.</p>
-            <p>I became obsessed with the <strong>science of optimization</strong>:</p>
-            <ul class="story-list">
-                <li><span class="check">✓</span><span>How does progressive overload actually work at the cellular level?</span></li>
-                <li><span class="check">✓</span><span>What role do hormones play in recovery and adaptation?</span></li>
-                <li><span class="check">✓</span><span>How can we measure and optimize what most people just guess at?</span></li>
-            </ul>
-            <p>This led me to peptides—not the gray market, bro-science version, but the <strong>clinical, evidence-based application</strong> of compounds with real research behind them.</p>
-            <p>I studied the literature. I talked to physicians. I found a way to offer peptide guidance with proper medical oversight, not sketchy "coaching" from random internet sources.</p>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">Age 17</div>
-                    <div class="timeline-title">Brain Cancer Diagnosis & Surgery</div>
-                    <div class="timeline-desc">Survived against the odds. Developed dystonia during recovery.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">Recovery</div>
-                    <div class="timeline-title">Self-Taught Training & Nutrition</div>
-                    <div class="timeline-desc">Rebuilt my body while battling neurological challenges.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">University</div>
-                    <div class="timeline-title">Biomedical Engineering Degree</div>
-                    <div class="timeline-desc">3.8 GPA, studied the science behind human physiology.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">Carnegie Mellon</div>
-                    <div class="timeline-title">Accepted, Then Deferred</div>
-                    <div class="timeline-desc">Chose to build something real instead of following the "safe" path.</div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">Now</div>
-                    <div class="timeline-title">Fitness Coach & Peptide Expert</div>
-                    <div class="timeline-desc">Evidence-based training with physician-partnered peptide protocols.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Philosophy -->
-    <section class="story-section">
-        <div class="story-container reveal">
-            <h2>My Philosophy</h2>
-            <img src="/assets/images/william/coaching-front.jpg" alt="William Marceau - fitness coach ready to help you transform" class="story-photo" loading="lazy" width="280">
-            <p>After everything I've been through, here's what I believe:</p>
-
-            <div class="philosophy-grid">
-                <div class="philosophy-card">
-                    <h4>📊 Optimize the Basics First</h4>
-                    <p>Sleep, nutrition, and training are 90% of the equation. Peptides are for people who've already dialed in the fundamentals.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h4>🔬 Evidence Over Hype</h4>
-                    <p>If there's no research, I won't recommend it. Real science, not bro science.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h4>👨‍⚕️ Work with Professionals</h4>
-                    <p>I coordinate with licensed physicians. I educate and support. Doctors prescribe.</p>
-                </div>
-                <div class="philosophy-card">
-                    <h4>📈 Track Everything</h4>
-                    <p>If we can't measure it, we can't optimize it. Labs, metrics, and data drive decisions.</p>
-                </div>
-            </div>
-
-            <div class="quote-box">
-                <blockquote>"The fastest way to achieve your own goals is to help others achieve theirs."</blockquote>
-                <cite>— My guiding principle</cite>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
+    <!-- CTA -->
+    <section class="cta-section reveal">
         <div class="cta-container">
-            <h2>Ready to Transform?</h2>
-            <p>Whatever mountain you're climbing, I've probably faced steeper. Let's talk about how evidence-based coaching and optimization can help you reach your goals.</p>
+            <h2>Ready to Start?</h2>
+            <p>If my story resonates with you &mdash; if you're tired of generic programs, bro science, and coaches who've never had to rebuild anything themselves &mdash; let's talk. Book a free call and let's figure out your path forward.</p>
             <div class="cta-buttons">
-                <a href="/contact.html" class="btn btn-primary">Start Your Journey</a>
-                <a href="/peptides.html" class="btn btn-secondary">Learn About Peptides</a>
+                <a href="https://calendly.com/wmarceau/30min" class="btn btn-primary btn-large" target="_blank">Book a Free Strategy Call</a>
+                <a href="/coaching.html" class="btn btn-secondary btn-large">Explore Coaching Programs</a>
             </div>
         </div>
     </section>
@@ -905,14 +861,15 @@
             </div>
             <div class="footer-contact">
                 <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
-                <a href="https://twitter.com/wmarceau" target="_blank">@wmarceau</a>
             </div>
         </div>
         <div class="disclaimer">
             <p><strong>Disclaimer:</strong> This website is for educational purposes only and does not constitute medical advice. Always consult with a licensed healthcare provider before starting any supplement or peptide protocol. Individual results may vary.</p>
         </div>
     </footer>
+
     <script>
+        // Mobile Menu Toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');
             document.querySelector('.mobile-menu').classList.toggle('active');
@@ -923,12 +880,9 @@
         // Scroll reveal animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
-
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>

@@ -402,10 +402,17 @@ Until next time - train smart, stay curious."
 
 ## COMPLIANCE NOTES
 
-- Include disclaimer in description: "This video is for educational purposes only and is not medical advice. Always consult with a healthcare provider before starting any new supplement or peptide protocol."
+**YouTube Description Disclaimer (MUST include in every peptide video):**
+
+> DISCLAIMER: This video is for educational and informational purposes only and is NOT medical advice. I am not a licensed physician, pharmacist, or healthcare provider. The information presented about peptides, supplements, and optimization protocols reflects current research and personal observations — it does not constitute a diagnosis, treatment plan, or prescription. Always consult with a qualified healthcare provider before starting any new supplement, peptide, or health protocol. Individual results vary. Most peptides discussed are NOT FDA-approved for fitness or anti-aging uses.
+
+**Content Rules:**
 - Avoid specific dosing recommendations
-- Don't make medical claims
+- Do not make medical claims or promise outcomes
 - Reference that these are not FDA-approved for fitness uses
+- Always frame as "the research suggests" not "this will"
+- Include "consult your doctor" at least once in every peptide discussion
+- Do NOT post peptide content on TikTok (banned under their drug policy)
 
 ---
 

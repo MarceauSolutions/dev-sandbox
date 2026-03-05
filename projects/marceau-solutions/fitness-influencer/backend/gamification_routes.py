@@ -19,6 +19,7 @@ from datetime import datetime, date
 from pathlib import Path
 import json
 import os
+import uuid
 
 router = APIRouter(prefix="/api/gamification", tags=["gamification"])
 
@@ -107,6 +108,7 @@ DEFAULT_PLAYER_STATE = {
         "quests_completed": 0,
         "rewards_purchased": []
     },
+    "action_log": [],
     "last_quest_reset": None
 }
 
@@ -131,6 +133,9 @@ def load_player_state(tenant_id: str = "wmarceau") -> dict:
         for key in DEFAULT_PLAYER_STATE:
             if key not in state:
                 state[key] = DEFAULT_PLAYER_STATE[key]
+        # Migrate: ensure action_log exists
+        if "action_log" not in state:
+            state["action_log"] = []
         return state
     # Create default state
     import copy
@@ -308,11 +313,17 @@ class RewardItem(BaseModel):
 class LogActionRequest(BaseModel):
     action: str  # quest id or power action id
     tenant_id: Optional[str] = "wmarceau"
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class PurchaseRewardRequest(BaseModel):
     reward_id: str
     tenant_id: Optional[str] = "wmarceau"
+
+
+class UndoRequest(BaseModel):
+    action_id: str
+    tenant_id: str = "wmarceau"
 
 
 class ActionResponse(BaseModel):
@@ -421,6 +432,21 @@ async def complete_quest(quest_id: str, tenant_id: str = "wmarceau"):
         player["xp_total"] += bonus_xp
         xp_gained += bonus_xp
 
+    # Generate action_id and append to action_log
+    action_id = str(uuid.uuid4())[:8]
+    action_log = state.setdefault("action_log", [])
+    action_log.append({
+        "id": action_id,
+        "action": quest_id,
+        "xp_gained": xp_gained,
+        "coins_gained": coins_gained,
+        "timestamp": datetime.now().isoformat(),
+        "undone": False
+    })
+    # Keep only last 50 entries
+    if len(action_log) > 50:
+        state["action_log"] = action_log[-50:]
+
     # Check stat-based achievements
     newly_unlocked = check_stat_achievements(state)
     for name in newly_unlocked:
@@ -432,15 +458,16 @@ async def complete_quest(quest_id: str, tenant_id: str = "wmarceau"):
 
     save_player_state(state, tenant_id)
 
-    return ActionResponse(
-        success=True,
-        message=f"Quest completed! +{xp_gained} XP, +{coins_gained} coins",
-        xp_gained=xp_gained,
-        coins_gained=coins_gained,
-        new_level=player["level"] if leveled_up else None,
-        new_title=player["title"] if leveled_up else None,
-        achievement_unlocked=newly_unlocked[0] if newly_unlocked else None
-    )
+    return {
+        "success": True,
+        "message": f"Quest completed! +{xp_gained} XP, +{coins_gained} coins",
+        "xp_gained": xp_gained,
+        "coins_gained": coins_gained,
+        "action_id": action_id,
+        "new_level": player["level"] if leveled_up else None,
+        "new_title": player["title"] if leveled_up else None,
+        "achievement_unlocked": newly_unlocked[0] if newly_unlocked else None
+    }
 
 
 @router.post("/player/action")
@@ -448,22 +475,27 @@ async def log_power_action(request: LogActionRequest):
     """Log a power action or quick action (lead gen, call booked, client signed, etc.)."""
     state = load_player_state(request.tenant_id)
 
-    # Check power actions first
-    action = None
-    for a in state["power_actions"]:
-        if a["id"] == request.action:
-            action = a
-            break
-
-    # Also allow logging daily quest actions via this endpoint
-    if not action:
-        for q in state["daily_quests"]:
-            if q["id"] == request.action:
-                action = {"id": q["id"], "name": q["name"], "xp": q["xp"], "coins": q["coins"]}
+    # Handle task_completed with xp_override from metadata
+    if request.action == "task_completed" and request.metadata and "xp_override" in request.metadata:
+        xp_override = int(request.metadata["xp_override"])
+        action = {"id": "task_completed", "name": "Task Completed", "xp": xp_override, "coins": xp_override // 3}
+    else:
+        # Check power actions first
+        action = None
+        for a in state["power_actions"]:
+            if a["id"] == request.action:
+                action = a
                 break
 
-    if not action:
-        raise HTTPException(status_code=404, detail=f"Action '{request.action}' not found")
+        # Also allow logging daily quest actions via this endpoint
+        if not action:
+            for q in state["daily_quests"]:
+                if q["id"] == request.action:
+                    action = {"id": q["id"], "name": q["name"], "xp": q["xp"], "coins": q["coins"]}
+                    break
+
+        if not action:
+            raise HTTPException(status_code=404, detail=f"Action '{request.action}' not found")
 
     player = state["player"]
     multiplier = get_streak_multiplier(player["current_streak"], state["streak_multipliers"])
@@ -478,6 +510,21 @@ async def log_power_action(request: LogActionRequest):
     # Update stats based on action type
     _update_stat_for_action(state, request.action)
 
+    # Generate action_id and append to action_log
+    action_id = str(uuid.uuid4())[:8]
+    action_log = state.setdefault("action_log", [])
+    action_log.append({
+        "id": action_id,
+        "action": request.action,
+        "xp_gained": xp_gained,
+        "coins_gained": coins_gained,
+        "timestamp": datetime.now().isoformat(),
+        "undone": False
+    })
+    # Keep only last 50 entries
+    if len(action_log) > 50:
+        state["action_log"] = action_log[-50:]
+
     # Check stat-based achievements
     newly_unlocked = check_stat_achievements(state)
 
@@ -486,15 +533,16 @@ async def log_power_action(request: LogActionRequest):
 
     save_player_state(state, request.tenant_id)
 
-    return ActionResponse(
-        success=True,
-        message=f"{action['name']}! +{xp_gained} XP, +{coins_gained} coins",
-        xp_gained=xp_gained,
-        coins_gained=coins_gained,
-        new_level=player["level"] if leveled_up else None,
-        new_title=player["title"] if leveled_up else None,
-        achievement_unlocked=newly_unlocked[0] if newly_unlocked else None
-    )
+    return {
+        "success": True,
+        "message": f"{action['name']}! +{xp_gained} XP, +{coins_gained} coins",
+        "xp_gained": xp_gained,
+        "coins_gained": coins_gained,
+        "action_id": action_id,
+        "new_level": player["level"] if leveled_up else None,
+        "new_title": player["title"] if leveled_up else None,
+        "achievement_unlocked": newly_unlocked[0] if newly_unlocked else None
+    }
 
 
 def _update_stat_for_action(state: dict, action_id: str):
@@ -515,6 +563,26 @@ def _update_stat_for_action(state: dict, action_id: str):
     stat_key = stat_map.get(action_id)
     if stat_key and stat_key in stats:
         stats[stat_key] += 1
+
+
+def _reverse_stat_for_action(state: dict, action_id: str):
+    """Reverse the stat counter for a given action (undo). Floor at 0."""
+    stats = state["stats"]
+    stat_map = {
+        "propane_task": "propane_tasks",
+        "content_created": "total_content",
+        "community_engage": "community_engagements",
+        "outreach": "total_outreach",
+        "analytics_review": "analytics_reviews",
+        "lead_generated": "total_leads",
+        "call_booked": "calls_booked",
+        "client_signed": "total_clients",
+        "ad_creative": "ad_creatives",
+        "funnel_step": "funnel_steps",
+    }
+    stat_key = stat_map.get(action_id)
+    if stat_key and stat_key in stats:
+        stats[stat_key] = max(0, stats[stat_key] - 1)
 
 
 @router.get("/achievements")
@@ -646,4 +714,62 @@ async def update_streak(tenant_id: str = "wmarceau"):
         "message": "Streak updated",
         "streak": player["current_streak"],
         "multiplier": get_streak_multiplier(player["current_streak"], state["streak_multipliers"])
+    }
+
+
+@router.post("/player/undo")
+async def undo_action(request: UndoRequest):
+    """Undo a recent action within the 5-minute window."""
+    state = load_player_state(request.tenant_id)
+    action_log = state.get("action_log", [])
+
+    # Find the action by ID
+    entry = None
+    for item in action_log:
+        if item["id"] == request.action_id:
+            entry = item
+            break
+
+    if not entry:
+        raise HTTPException(status_code=404, detail="Action not found")
+
+    if entry.get("undone"):
+        raise HTTPException(status_code=400, detail="Already undone")
+
+    # Check 5-minute undo window
+    action_time = datetime.fromisoformat(entry["timestamp"])
+    elapsed = (datetime.now() - action_time).total_seconds()
+    if elapsed > 300:
+        raise HTTPException(status_code=400, detail="Undo window expired")
+
+    player = state["player"]
+    xp_gained = entry["xp_gained"]
+    coins_gained = entry["coins_gained"]
+
+    # Subtract XP and coins (floor at 0)
+    player["xp"] = max(0, player["xp"] - xp_gained)
+    player["xp_total"] = max(0, player["xp_total"] - xp_gained)
+    player["coins"] = max(0, player["coins"] - coins_gained)
+
+    # Reverse the stat increment
+    _reverse_stat_for_action(state, entry["action"])
+
+    # Mark as undone
+    entry["undone"] = True
+
+    # Check if level should decrease after XP removal
+    levels = state["levels"]
+    for level_info in reversed(levels):
+        if player["xp_total"] >= level_info["xp_required"]:
+            if player["level"] != level_info["level"]:
+                player["level"] = level_info["level"]
+                player["title"] = level_info["title"]
+            break
+
+    save_player_state(state, request.tenant_id)
+
+    return {
+        "success": True,
+        "xp_removed": xp_gained,
+        "coins_removed": coins_gained
     }

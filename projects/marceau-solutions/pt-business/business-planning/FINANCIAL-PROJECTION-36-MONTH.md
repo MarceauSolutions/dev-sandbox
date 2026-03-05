@@ -152,27 +152,31 @@
 
 ## Part 5: Revenue Projections
 
-### Service Pricing (Naples Market - Premium)
+### Active Pricing (As of March 2026)
 
-| Service | Price | Sessions/Month | Monthly Revenue |
-|---------|-------|----------------|-----------------|
-| **1-on-1 Training Session** | $100 | Variable | - |
-| **4-Session Package** | $380 | - | - |
-| **8-Session Package** | $720 | - | - |
-| **Online Coaching (Monthly)** | $299 | - | - |
-| **Peptide Education Consult** | $150/hr | - | - |
-| **Group Training (4 people)** | $40/person | - | - |
+| Tier | Price | Type | Status |
+|------|-------|------|--------|
+| **Free Community + 7-Day Challenge** | $0 | Lead magnet | LIVE |
+| **Nutrition Blueprint** | $37 | One-time digital | LIVE |
+| **8-Week Recomp Program** | $67 | One-time digital | LIVE |
+| **Peptide Masterclass** | $97 | One-time digital | LIVE |
+| **1:1 Coaching** | $197/month | Recurring subscription | LIVE |
+| **Premium + Peptides** | $497/month | Recurring subscription | WAITLIST (physician partnerships pending) |
 
-### Revenue Ramp-Up Projection
+> **Note:** The original per-session pricing ($100/session, $380/4-pack, etc.) was replaced with a subscription model. The $197/mo recurring subscription is the core revenue driver. Digital products ($37-97) fund ad spend and serve as entry points to coaching.
 
-| Month | Clients | Sessions | Gross Revenue | Net (After Fees) |
-|-------|---------|----------|---------------|------------------|
-| 1-3 | 3-5 | 20 | $2,000 | $1,940 |
-| 4-6 | 8-10 | 40 | $4,000 | $3,880 |
-| 7-9 | 12-15 | 60 | $6,000 | $5,820 |
-| 10-12 | 15-20 | 80 | $8,000 | $7,760 |
-| Year 2 Avg | 20-25 | 100 | $10,000 | $9,700 |
-| Year 3 Avg | 25-30 | 120+ | $12,000+ | $11,640+ |
+### Revenue Ramp-Up Projection ($197/mo Subscription Model)
+
+| Month | Coaching Clients | Digital Product Sales | MRR (Coaching) | Digital Revenue | Total Monthly | Net (After Stripe) |
+|-------|-----------------|----------------------|----------------|-----------------|---------------|-------------------|
+| 1-3 | 3-5 | 5-10 | $591-985 | $185-500 | $776-1,485 | $753-1,441 |
+| 4-6 | 8-12 | 10-15 | $1,576-2,364 | $370-750 | $1,946-3,114 | $1,888-3,021 |
+| 7-9 | 15-20 | 10-15 | $2,955-3,940 | $370-750 | $3,325-4,690 | $3,226-4,550 |
+| 10-12 | 20-25 | 10-15 | $3,940-4,925 | $370-750 | $4,310-5,675 | $4,180-5,505 |
+| Year 2 Avg | 25-30 | 15-20 | $4,925-5,910 | $555-1,000 | $5,480-6,910 | $5,316-6,703 |
+| Year 3 Avg | 30-40 | 15-20 | $5,910-7,880 | $555-1,000 | $6,465-8,880 | $6,271-8,614 |
+
+> **Note:** Revenue projections are more conservative than the original session-based model. The $197/mo subscription model produces predictable MRR but requires higher client retention. Digital products ($37-97) provide supplementary revenue and fund ad spend.
 
 ### Additional Revenue Streams
 

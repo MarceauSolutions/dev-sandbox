@@ -120,3 +120,109 @@ The two canonical routers that all code should use:
 | Google Drive | `execution/google_drive_share.py` | `from execution.google_drive_share import upload_and_share` |
 
 **Rule:** If a utility exists in `execution/`, import from there. Never copy the file into your project.
+
+---
+
+## Tool Selection Framework
+
+> When a new capability need arises that isn't covered above, use this framework to evaluate and select the right tool. The goal: one tool per capability, documented here, no redundancy.
+
+### When This Triggers
+
+- "We need [capability] — what should we use?"
+- New business function requires a platform/service
+- Existing tool isn't cutting it and replacement is being considered
+- Client project needs a tool we haven't standardized on
+
+### Step 1: Check Before You Shop
+
+Before evaluating ANY new tool:
+
+| Check | How | Why |
+|-------|-----|-----|
+| Already have it? | `python scripts/inventory.py search <keyword>` | Avoid duplication |
+| Similar capability exists? | Search this file for related domains | Maybe extend, not add |
+| Can existing tool cover it? | Review capabilities of current stack | Fewer tools = less overhead |
+| Is it a one-time need? | Honest assessment | Don't add a tool for a single use |
+
+**If existing tools can cover 80%+ of the need, extend — don't add.**
+
+### Step 2: Define Requirements
+
+Before comparing options, pin down exactly what you need:
+
+```
+Capability needed: _______________
+Primary use case: _______________
+Frequency of use: [ Daily | Weekly | Monthly | Rare ]
+Who uses it: [ Just us | Us + clients | Clients only ]
+Must integrate with: [ List existing tools/services ]
+Budget ceiling: $___/month
+Deal-breakers: [ List non-negotiables ]
+```
+
+### Step 3: Evaluate Candidates (Max 3-4)
+
+Score each candidate 1-5 on these criteria. Weight by what matters most for YOUR use case.
+
+| Criteria | Weight | Description |
+|----------|--------|-------------|
+| **Cost** | Variable | Total cost at expected usage (not just sticker price) |
+| **Integration** | High | Works with existing stack (n8n, APIs, Google workspace, Stripe) |
+| **Learning curve** | Medium | Time to productive use (we're a 1-person operation) |
+| **API/Automation** | High | Can be automated — no manual-only tools in our stack |
+| **Reliability** | High | Uptime, support quality, company stability |
+| **Scalability** | Low | Only matters if client-facing or expected growth |
+| **Lock-in risk** | Medium | Data portability, contract flexibility |
+| **Free tier** | Medium | Can we validate before paying? |
+
+**Scoring template:**
+
+```
+| Candidate | Cost | Integration | Learning | API | Reliability | Score |
+|-----------|------|-------------|----------|-----|-------------|-------|
+| Tool A    |  /5  |     /5      |    /5    | /5  |     /5      |  /25  |
+| Tool B    |  /5  |     /5      |    /5    | /5  |     /5      |  /25  |
+| Tool C    |  /5  |     /5      |    /5    | /5  |     /5      |  /25  |
+```
+
+### Step 4: Decision Rules
+
+Apply in order — first matching rule wins:
+
+1. **Free + already integrated > Paid alternative** — If a free tool we already use can do it, use it
+2. **API access is mandatory** — No tool enters our stack without API or automation capability
+3. **One tool per domain** — If we pick Zoom for video calls, we don't also add Google Meet
+4. **Favor consolidation** — A tool that covers 2 needs at 85% beats 2 tools at 95% each
+5. **Clients shouldn't need accounts** — Prefer tools where clients can participate without signing up
+6. **Monthly cost < value created** — If it doesn't save time or make money, skip it
+
+### Step 5: Document and Standardize
+
+After selecting a tool, it MUST be added to the appropriate table in this file:
+
+1. Add to the relevant domain table (or create a new one if needed)
+2. Include: Capability, Service, API Key location, Cost, Notes
+3. If replacing a tool, move the old one to "Retired Services" with reason
+4. Update API Key Count if applicable
+5. Create `execution/` wrapper if it will be used by 2+ projects
+
+### Quick Reference: Common Evaluation Scenarios
+
+| Scenario | Likely Best Path |
+|----------|-----------------|
+| Video calls with clients | Compare: Zoom / Google Meet / Discord — score on client friction |
+| Design/graphics beyond Pillow | Compare: Canva API / Figma / keep Pillow + templates |
+| Project management beyond ClickUp | Evaluate if ClickUp can cover it first |
+| New payment method | Stripe covers most — only evaluate if Stripe literally can't do it |
+| Client communication channel | Compare: SMS (have it) / Email (have it) / Slack / Discord |
+| Document signing | Compare: DocuSign / HelloSign / PandaDoc — score on API + cost |
+| Scheduling beyond Calendly | Evaluate if Calendly paid tier covers it first |
+
+### Anti-Patterns (Do NOT Do These)
+
+- Adding a tool "just in case" without a concrete use case
+- Keeping 2 tools for the same job because "they're both good"
+- Choosing a tool because it's popular without scoring it against our criteria
+- Manual-only tools (if you can't automate it, it doesn't belong in our stack)
+- Paying for enterprise tier when free/starter covers actual usage

@@ -7,23 +7,23 @@ const GamificationPage = {
   _stats: null,
 
   ACHIEVEMENT_ICONS: {
-    first_steps: '&#x1F463;', week_warrior: '&#9876;&#65039;', consistency_king: '&#x1F451;',
-    month_master: '&#x1F4C5;', quarter_champion: '&#x1F3C6;', yearly_legend: '&#11088;',
-    first_sale: '&#x1F4B5;', '5k_goal': '&#x1F48E;', '10k_goal': '&#x1F4B0;',
-    '50k_goal': '&#x1F3AF;', '100k_goal': '&#x1F680;',
-    first_post: '&#x1F4F1;', week_streak: '&#x1F525;', month_streak: '&#x1F451;',
-    first_client: '&#x1F91D;', level_5: '&#11088;', level_10: '&#x1F680;'
+    first_steps: '&#x1F463;', week_warrior: '&#9876;&#65039;', content_machine: '&#x1F4F1;',
+    iron_will: '&#x1F451;', first_lead: '&#x1F3AF;', closer: '&#x1F91D;',
+    '5k_club': '&#x1F4B0;', ad_master: '&#x1F3A8;', funnel_builder: '&#x1F6E0;',
+    halfway_there: '&#11088;', empire_builder: '&#x1F680;'
   },
 
   ACTIONS: [
-    { id: 'post',           icon: '&#x1F4F1;', label: 'Posted Content',  xp: 15 },
-    { id: 'comment',        icon: '&#x1F4AC;', label: 'Comments',        xp: 10 },
-    { id: 'dm',             icon: '&#9993;&#65039;',  label: 'Checked DMs',     xp: 10 },
-    { id: 'story',          icon: '&#x1F4F8;', label: 'Posted Story',    xp: 15 },
-    { id: 'engage',         icon: '&#x1F44D;', label: 'Engaged 5 Posts', xp: 10 },
-    { id: 'consultation',   icon: '&#x1F4DE;', label: 'Consultation',    xp: 100 },
-    { id: 'client_signed',  icon: '&#x1F91D;', label: 'Client Signed',   xp: 500 },
-    { id: 'revenue',        icon: '&#x1F4B0;', label: 'Revenue Goal',    xp: 200 }
+    { id: 'propane_task',     icon: '&#x1F525;', label: 'Propane Task',     xp: 20 },
+    { id: 'content_created',  icon: '&#x1F4F1;', label: 'Content Created',  xp: 15 },
+    { id: 'community_engage', icon: '&#x1F4AC;', label: 'Community',        xp: 10 },
+    { id: 'outreach',         icon: '&#x1F4E8;', label: 'Outreach',         xp: 15 },
+    { id: 'analytics_review', icon: '&#x1F4CA;', label: 'Analytics',        xp: 10 },
+    { id: 'lead_generated',   icon: '&#x1F3AF;', label: 'Lead Generated',   xp: 50 },
+    { id: 'call_booked',      icon: '&#x1F4DE;', label: 'Call Booked',      xp: 100 },
+    { id: 'client_signed',    icon: '&#x1F91D;', label: 'Client Signed',    xp: 500 },
+    { id: 'ad_creative',      icon: '&#x1F3A8;', label: 'Ad Creative',      xp: 75 },
+    { id: 'funnel_step',      icon: '&#x1F6E0;', label: 'Funnel Step',      xp: 75 }
   ],
 
   async init() {
@@ -54,7 +54,7 @@ const GamificationPage = {
     const level = p.level || 1;
     const title = p.title || 'Aspiring Coach';
     const xp = p.xp || p.experience || 0;
-    const xpNext = p.next_level_xp || p.xp_to_next || (level * 100);
+    const xpNext = p.xp_to_next_level || p.next_level_xp || p.xp_to_next || (level * 100);
     const xpPercent = Math.min(100, Math.round((xp / xpNext) * 100));
     const coins = p.coins || p.currency || 0;
     const streak = p.current_streak || p.streak || p.daily_streak || 0;
@@ -62,7 +62,8 @@ const GamificationPage = {
     const multiplier = p.streak_multiplier || p.multiplier || '1.0';
 
     const stats = this._stats || p.stats || {};
-    const totalPosts = stats.total_posts || 0;
+    const totalContent = stats.total_content || stats.total_posts || 0;
+    const totalLeads = stats.total_leads || 0;
     const totalClients = stats.total_clients || 0;
     const totalRevenue = stats.total_revenue || 0;
 
@@ -150,10 +151,14 @@ const GamificationPage = {
             <div style="font-size:28px;font-weight:700;color:var(--status-processing)">${streak} Days</div>
             <div style="font-size:13px;color:var(--accent-secondary);margin-top:6px">${this._getStreakMessage(streak, bestStreak)}</div>
           </div>
-          <div class="grid-3" style="gap:8px;margin-top:8px">
+          <div class="grid-4" style="gap:8px;margin-top:8px">
             <div class="stat-card" style="padding:10px">
-              <div class="stat-value" style="font-size:18px;color:var(--accent-secondary)">${totalPosts}</div>
-              <div class="stat-label" style="font-size:11px">Total Posts</div>
+              <div class="stat-value" style="font-size:18px;color:var(--accent-secondary)">${totalContent}</div>
+              <div class="stat-label" style="font-size:11px">Content</div>
+            </div>
+            <div class="stat-card" style="padding:10px">
+              <div class="stat-value" style="font-size:18px;color:var(--accent-secondary)">${totalLeads}</div>
+              <div class="stat-label" style="font-size:11px">Leads</div>
             </div>
             <div class="stat-card" style="padding:10px">
               <div class="stat-value" style="font-size:18px;color:var(--accent-secondary)">${totalClients}</div>
@@ -206,7 +211,7 @@ const GamificationPage = {
           <div style="font-weight:600">${q.title || q.name}</div>
           <div style="font-size:12px;color:var(--text-muted)">${q.description || ''}</div>
         </div>
-        <span class="tag" style="color:var(--accent-secondary)">${q.xp_reward || q.reward || 0} XP</span>
+        <span class="tag" style="color:var(--accent-secondary)">${q.xp || q.xp_reward || q.reward || 0} XP</span>
       </div>
     `).join('');
   },
@@ -292,13 +297,28 @@ const GamificationPage = {
 
           const xpGained = res.xp_earned || res.xp_gained || res.xp || 0;
           const coinsGained = res.coins_earned || res.coins_gained || res.coins || 0;
-          Toast.success(`+${xpGained} XP${coinsGained ? `, +${coinsGained} coins` : ''}!`);
+          const actionId = res.action_id;
+
+          if (actionId) {
+            Toast.showWithUndo(
+              `+${xpGained} XP${coinsGained ? `, +${coinsGained} coins` : ''}`,
+              actionId,
+              async (aid) => {
+                await API.post('/api/gamification/player/undo', { action_id: aid, tenant_id: 'wmarceau' });
+                await this._refreshAndRender(container);
+                App.loadXpBar();
+              }
+            );
+          } else {
+            Toast.success(`+${xpGained} XP${coinsGained ? `, +${coinsGained} coins` : ''}!`);
+          }
 
           if (res.level_up) {
             Toast.success('Level Up! You are now level ' + (res.new_level || res.level));
           }
 
           await this._refreshAndRender(container);
+          App.loadXpBar();
         } catch (err) {
           Toast.error('Failed to record action: ' + err.message);
           btn.disabled = false;
@@ -326,8 +346,22 @@ const GamificationPage = {
             tenant_id: 'wmarceau'
           });
           const xpEarned = res.xp_earned || res.xp || 0;
-          Toast.success(`Quest complete! +${xpEarned} XP`);
+          const questActionId = res.action_id;
+          if (questActionId) {
+            Toast.showWithUndo(
+              `Quest complete! +${xpEarned} XP`,
+              questActionId,
+              async (aid) => {
+                await API.post('/api/gamification/player/undo', { action_id: aid, tenant_id: 'wmarceau' });
+                await this._refreshAndRender(container);
+                App.loadXpBar();
+              }
+            );
+          } else {
+            Toast.success(`Quest complete! +${xpEarned} XP`);
+          }
           await this._refreshAndRender(container);
+          App.loadXpBar();
         } catch (err) {
           Toast.error(err.message || 'Failed to complete quest');
           item.style.opacity = '1';

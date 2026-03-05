@@ -2,6 +2,8 @@
 
 > Peptide-focused online coaching, $197/month. Naples FL, local + remote.
 > This directory is the BUSINESS hub. The PRODUCT (SaaS platform) lives at `projects/marceau-solutions/fitness-influencer/`.
+> Unified ops architecture (shared tools across PT + Web Dev): `docs/UNIFIED-BUSINESS-OPS.md`
+> Cross-business integration: `docs/BUSINESS-INTEGRATION-PROTOCOL.md`
 
 ## Quick Reference
 
@@ -16,7 +18,7 @@
 | Client Tracker Sheet | https://docs.google.com/spreadsheets/d/1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA/edit |
 | Drive: Coaching Clients | Folder ID `1v9iYh6Cb-1WC9ZRQXAl44LxgJS25mczJ` |
 | n8n Dashboard | https://n8n.marceausolutions.com |
-| Twilio Phone (clients) | +1 855 239 9364 |
+| Twilio Phone (clients) | +1 (855) 239-9364 |
 | Admin Phone (notifications) | +1 239 398 5676 |
 
 ## Status
@@ -45,18 +47,28 @@
 | Current Week Calendar | `content/current-week/` | Rolling weekly content plan |
 | Peptide Video Assets | `content/peptide-video/` | B-roll MP4s, graphics PNGs, talking head MOVs, Premiere projects |
 | Financial Projections | `business-planning/FINANCIAL-PROJECTION-36-MONTH.md` | 36-month P&L ($4,650/mo Y1 personal expenses) |
+| Expense Strategy | `business-planning/EXPENSE-MANAGEMENT-STRATEGY.md` | Two-card strategy, categories, tracking cadence |
 | Viability Testing | `business-planning/BUSINESS-VIABILITY-TESTING-PLAN.md` | 8-week testing roadmap |
 | Funding Prep | `business-planning/7-FIGURE-FUNDING-MEETING-PREP.md` | Due diligence FAQ |
 | Strategic Analysis | `business-planning/WILLIAM-STRATEGIC-ANALYSIS.md` | Business strategy doc |
 | Peptide Research | `research/peptide-business/` | 4-agent viability study (telemedicine, clinics, legal, certs) |
 | Midweek Tips | `data/midweek-tips.json` | 30 coaching tips for SMS |
 | Collaborators | `data/collaborators.json` | Julia + William asset tracking |
+| **Workflows** | | |
+| Client Onboarding | `workflows/client-onboarding.md` | Automated + manual steps, SLA, troubleshooting |
+| Client Offboarding | `workflows/client-offboarding.md` | Cancel flow, re-engagement, reason tracking |
+| Cold Outreach Strategy | `workflows/cold-outreach-strategy.md` | Target segment, A/B testing, follow-up sequence |
+| SMS Compliance | `workflows/sms-compliance-checklist.md` | TCPA rules, template audit, opt-out handling |
+| Funnel Testing Guide | `workflows/SALES-FUNNEL-TESTING-GUIDE.md` | End-to-end test all 5 pages + webhooks + Stripe |
+| Client Acquisition Guide | `docs/client-acquisition-system-guide.md` | 14-chapter comprehensive funnel documentation |
+| Propane Pipeline | `workflows/propane-client-pipeline.md` | Business coaching SOPs |
 
 ### Shared Code (DO NOT MOVE -- used by multiple projects)
 
 | What | Path | Description |
 |------|------|-------------|
-| SMS templates (19) | `execution/twilio_sms.py` | coaching_welcome, monday_checkin, cancel_feedback, etc. |
+| SMS templates (19 coaching + 7 webdev) | `execution/twilio_sms.py` | PT uses `coaching_*` prefix. Web dev uses `webdev_*` prefix. |
+| Coaching analytics | `execution/coaching_analytics.py` | SMS metrics, funnel, template performance, health check |
 | Onboarding email | `execution/send_onboarding_email.py` | Post-payment email with Calendly + intake links |
 | Stripe payments | `execution/stripe_payments.py` | Customer creation, payment links, invoices |
 | Stripe webhooks | `execution/stripe_webhook_server.py` | Webhook handler for payment events |
@@ -65,6 +77,7 @@
 | Nutrition generator | `execution/nutrition_guide_generator.py` | Nutrition guide generation |
 | Coaching tracker sheet | `scripts/create-coaching-tracker-sheet.py` | Creates Google Sheets tracker per client |
 | Drive folder creator | `scripts/create-coaching-drive-folders.py` | Creates Drive folders per client |
+| n8n backup | `scripts/backup-n8n-workflows.sh` | Exports all n8n workflows to local backup |
 
 ### Website (Deployment Source -- DO NOT MOVE)
 
@@ -92,6 +105,10 @@
 | Coaching-Cancellation-Exit | `uKjqRexDIheaDJJH` | ACTIVE | Stripe cancel → feedback SMS + re-engage Day 7/30 |
 | Fitness-SMS-Outreach | `89XxmBQMEej15nak` | ACTIVE | Prospect outreach via webhook |
 | Fitness-SMS-Followup-Sequence | `VKC5cifm595JNcwG` | ACTIVE | Multi-step drip with delays |
+| SMS-Response-Handler-v2 | `G14Mb6lpeFZVYGwa` | ACTIVE | Webhook `/webhook/sms-response` -- categorizes inbound SMS |
+| n8n-Health-Check | `QhDtNagsZFUrKFsG` | ACTIVE | Scheduled health check of n8n + services |
+| Weekly-Campaign-Analytics | `M62QBpROE48mEgDC` | ACTIVE | Weekly SMS campaign metrics aggregation |
+| Monthly-Workflow-Backup | `2QaQbhIUlL7ctfq4` | ACTIVE | Monthly export of all workflows to backup |
 
 **n8n Credentials (on EC2):**
 - Twilio: `hduvneOOzFzKMfOa` | Stripe: `IRNFASlnSdGSicwk` | Google Sheets: `RIFdaHtNYdTpFnlu` | Gmail SMTP: `xJL5bzXyMeTkr1WQ`
@@ -110,10 +127,12 @@
 | Day | Time | What | Automated? |
 |-----|------|------|-----------|
 | Sunday PM | 7pm | Upload program PDF to client Drive | Manual |
-| Monday | 9am | Check-in SMS to all active clients | YES (n8n) |
-| Tuesday | - | Follow up non-responders | Manual |
-| Wednesday | - | Mid-week tip SMS (uses midweek-tips.json) | Manual |
+| Monday | 9am | Check-in SMS to all active clients | YES (n8n: Coaching-Monday-Checkin) |
+| Tuesday | - | Follow up non-responders (coaching_no_response template) | Manual |
+| Wednesday | - | Mid-week tip SMS (uses midweek-tips.json) | Manual (candidate for n8n) |
 | Friday | EOD | Review check-ins, update Sheet | Manual |
+| Weekly | - | SMS campaign analytics aggregation | YES (n8n: Weekly-Campaign-Analytics) |
+| Monthly | 1st | Workflow backup export | YES (n8n: Monthly-Workflow-Backup) |
 | Month end | - | 15-min progress review via Calendly | Manual |
 
 ## Pricing
@@ -126,8 +145,10 @@
 
 | Task | How |
 |------|-----|
-| New client onboarding | See `ops/coaching-ops-runbook.md` > Onboarding Checklist |
-| Client cancellation | See `ops/coaching-ops-runbook.md` > Offboarding Checklist |
+| New client onboarding | `workflows/client-onboarding.md` (mostly automated via n8n) |
+| Client cancellation | `workflows/client-offboarding.md` (automated + manual steps) |
+| Test the funnel | `workflows/SALES-FUNNEL-TESTING-GUIDE.md` |
+| SMS compliance check | `workflows/sms-compliance-checklist.md` |
 | Send mid-week tip | `python execution/twilio_sms.py --template coaching_midweek_tip --to <phone>` |
 | Create tracker sheet | `python scripts/create-coaching-tracker-sheet.py` |
 | Create Drive folders | `python scripts/create-coaching-drive-folders.py` |
