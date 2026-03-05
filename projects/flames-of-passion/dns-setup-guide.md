@@ -3,119 +3,145 @@
 ## Flames of Passion Entertainment
 
 **Prepared by:** Marceau Solutions
-**Date:** February 2026
+**Date:** March 2026
 
 ---
 
 ## What This Guide Does
 
-This will connect your domain name (e.g., `flamesofpassionentertainment.com`) to your live website. After completing these steps, visitors who type your domain into their browser will see your website.
+This guide walks you through pointing your domain (`flamesofpassionentertainment.com`) to your website. Your website is already built and hosted for free — we just need to update a few settings in your Google Admin Console.
+
+**Time needed:** ~10 minutes
+**Difficulty:** Easy — just copying and pasting values
 
 ---
 
-## Step 1: Log Into Your Domain Registrar
+## Where Your Domain Lives
 
-Go to the website where you purchased your domain (e.g., Namecheap, GoDaddy, Google Domains) and log in.
-
-- **Namecheap:** namecheap.com > Sign In > Dashboard
-- **GoDaddy:** godaddy.com > Sign In > My Products
-- **Google Domains:** domains.google.com
+Your domain is registered through Squarespace, but your DNS (the settings that control where your domain points) is managed through **Google Workspace**. That's why you can see it in your Google Admin Console. All the steps below are done in Google.
 
 ---
 
-## Step 2: Find DNS Settings
+## Step 1: Log Into Google Admin Console
 
-Navigate to your domain's DNS management page:
-
-- **Namecheap:** Domain List > click your domain > "Advanced DNS" tab
-- **GoDaddy:** My Products > Domains > DNS > "Manage DNS"
-- **Google Domains:** Click your domain > DNS
+1. Go to **admin.google.com**
+2. Sign in with your Google Workspace account
 
 ---
 
-## Step 3: Add A Records
+## Step 2: Navigate to DNS Settings
 
-These records point your domain to GitHub's servers where your website is hosted.
+1. In the left sidebar, click **Domains**
+2. Click **Manage domains**
+3. Find `flamesofpassionentertainment.com` and click on it
+4. Look for **DNS** or **Advanced DNS settings**
 
-**Add these 4 A records** (delete any existing A records first):
-
-| Type | Host | Value | TTL |
-|------|------|-------|-----|
-| A | @ | `185.199.108.153` | Automatic |
-| A | @ | `185.199.109.153` | Automatic |
-| A | @ | `185.199.110.153` | Automatic |
-| A | @ | `185.199.111.153` | Automatic |
-
-**Note:** The `@` symbol means "root domain" (e.g., `flamesofpassionentertainment.com` without any prefix).
+If you see a link that says "Manage DNS" or "Google Domains" — click it. It may open a separate DNS management page.
 
 ---
 
-## Step 4: Add CNAME Record
+## Step 3: Remove Any Existing A Records
 
-This makes `www.yourdomain.com` also work:
+Before adding new records, look for any existing **A records** in the list.
 
-| Type | Host | Value | TTL |
-|------|------|-------|-----|
-| CNAME | www | `marceausolutions.github.io` | Automatic |
-
----
-
-## Step 5: Remove Conflicting Records
-
-If you see any of these existing records, **delete them** (they'll conflict with the new ones):
-
-- Any existing **A records** pointing to different IP addresses
-- Any **URL Redirect** or **URL Frame** records
-- Any existing **CNAME** for `www` pointing somewhere else
-
-**Keep** any existing MX records (email) and TXT records (email verification) — those are separate and won't conflict.
+- If you see any A records, delete them by clicking the **trash icon** or **X**
+- **DO NOT delete** any MX records (those are for your email)
+- **DO NOT delete** any TXT records (those verify your domain)
 
 ---
 
-## Step 6: Wait for Propagation
+## Step 4: Add the 4 A Records
 
-DNS changes can take **up to 48 hours** to propagate worldwide, but usually complete within **15-30 minutes**.
+Click **Add new record** (or **Create new record**) and select type **A**.
+
+You need to add 4 records, one at a time:
+
+| Record # | Host name | Type | Data (copy exactly) |
+|----------|-----------|------|---------------------|
+| 1 | `@` | A | `185.199.108.153` |
+| 2 | `@` | A | `185.199.109.153` |
+| 3 | `@` | A | `185.199.110.153` |
+| 4 | `@` | A | `185.199.111.153` |
+
+Click **Save** after each one.
 
 ---
 
-## Step 7: Verify It's Working
+## Step 5: Add the CNAME Record
 
-After waiting 15-30 minutes:
+Click **Add new record** one more time:
 
-1. Open a browser and go to your domain (e.g., `flamesofpassionentertainment.com`)
-2. You should see your Flames of Passion website
-3. Also try `www.flamesofpassionentertainment.com` — this should work too
+| Host name | Type | Data (copy exactly) |
+|-----------|------|---------------------|
+| `www` | CNAME | `marceausolutions.github.io` |
+
+Click **Save**.
+
+---
+
+## Step 6: Check Your Work
+
+Your DNS records should now include these 5 new entries:
+
+| Type | Host | Data |
+|------|------|------|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | marceausolutions.github.io |
+
+(You'll also see MX and TXT records — leave those alone, they're for email.)
+
+---
+
+## Step 7: Wait & Test
+
+DNS changes take a little time to spread across the internet:
+
+- **Usually:** 15–30 minutes
+- **Worst case:** Up to 48 hours (rare)
+
+After waiting 15–30 minutes:
+
+1. Open a browser in incognito/private mode
+2. Go to `flamesofpassionentertainment.com`
+3. You should see your Flames of Passion website!
+4. Also try `www.flamesofpassionentertainment.com`
 
 **If it's not working after 30 minutes:**
-- Double-check all IP addresses are entered correctly
-- Make sure there are no conflicting A records
-- Try clearing your browser cache or using an incognito window
-- DNS can take up to 48 hours in rare cases
+- Double-check the IP addresses for typos
+- Make sure old A records are deleted
+- Clear your browser cache or try a different browser
 
 ---
 
-## Step 8: Let Us Know
+## Step 8: Text William When It's Working!
 
-Once your domain is pointing to the site, send a message so we can:
-- Enable HTTPS (free SSL certificate via GitHub Pages)
-- Verify the booking form is working on your domain
-- Set up any custom email addresses if needed
+Once you see your website on your domain, text me so I can:
+
+- Turn on HTTPS (the padlock icon in the browser)
+- Make sure everything looks perfect
 
 ---
 
 ## Need Help?
 
-Contact William Marceau:
-- **Email:** wmarceau@marceausolutions.com
-- **Phone:** (239) 398-5676
+If you get stuck, just text or call:
+
+**William Marceau**
+Phone: (239) 398-5676
+Email: wmarceau@marceausolutions.com
 
 ---
 
-## Quick Reference
+## Quick Reference — All Values
 
 | What | Value |
 |------|-------|
-| A Record IPs | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` |
-| CNAME for www | `marceausolutions.github.io` |
-| Website host | GitHub Pages |
-| DNS propagation | 15 min - 48 hours |
+| A Record IP #1 | `185.199.108.153` |
+| A Record IP #2 | `185.199.109.153` |
+| A Record IP #3 | `185.199.110.153` |
+| A Record IP #4 | `185.199.111.153` |
+| CNAME Host | `www` |
+| CNAME Points To | `marceausolutions.github.io` |

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Setup Guide — Flames of Passion</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background: #1a1a1a;
+            color: #C9963C;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .header h1 { font-size: 1.4rem; letter-spacing: 2px; text-transform: uppercase; }
+        .header p { color: #aaa; font-size: 0.9rem; margin-top: 5px; }
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
+        .step {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .step-num {
+            background: #C9963C;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .step-header h2 { font-size: 1.1rem; color: #1a1a1a; }
+        .step p { margin-bottom: 12px; color: #555; }
+
+        /* Mock UI screenshots */
+        .mock-ui {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            position: relative;
+        }
+        .mock-ui .browser-bar {
+            background: #e8eaed;
+            border-radius: 6px 6px 0 0;
+            padding: 8px 12px;
+            margin: -16px -16px 16px -16px;
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mock-ui .browser-bar .dots {
+            display: flex;
+            gap: 4px;
+        }
+        .mock-ui .browser-bar .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .mock-ui .browser-bar .dot.red { background: #ff5f57; }
+        .mock-ui .browser-bar .dot.yellow { background: #ffbd2e; }
+        .mock-ui .browser-bar .dot.green { background: #28ca42; }
+        .mock-ui .browser-bar .url {
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 4px;
+            flex: 1;
+            color: #333;
+        }
+
+        .mock-sidebar {
+            display: flex;
+            gap: 0;
+        }
+        .mock-sidebar .sidebar {
+            width: 180px;
+            background: #fff;
+            border-right: 1px solid #e0e0e0;
+            padding: 12px 0;
+            flex-shrink: 0;
+        }
+        .mock-sidebar .sidebar-item {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: #555;
+            cursor: default;
+        }
+        .mock-sidebar .sidebar-item.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-weight: 600;
+            border-right: 3px solid #1a73e8;
+        }
+        .mock-sidebar .main-content {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .mock-btn {
+            display: inline-block;
+            background: #1a73e8;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .mock-btn.outline {
+            background: #fff;
+            color: #1a73e8;
+            border: 1px solid #1a73e8;
+        }
+
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 12px 0;
+        }
+        .mock-table th {
+            background: #f1f3f4;
+            text-align: left;
+            padding: 8px 12px;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .mock-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .highlight-box {
+            border: 3px solid #C9963C;
+            border-radius: 6px;
+            padding: 2px;
+            display: inline-block;
+            position: relative;
+        }
+        .highlight-box::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -12px;
+            right: -4px;
+            background: #C9963C;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .arrow {
+            color: #C9963C;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 8px 0;
+        }
+
+        .copy-box {
+            background: #1a1a1a;
+            color: #4ade80;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Courier New', monospace;
+            font-size: 0.95rem;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .copy-box:active { background: #333; }
+        .copy-box .tap { color: #888; font-size: 0.75rem; font-family: sans-serif; }
+
+        .record-card {
+            background: #f0f7ff;
+            border: 1px solid #b3d4fc;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            display: grid;
+            grid-template-columns: 60px 60px 1fr;
+            gap: 8px;
+            align-items: center;
+        }
+        .record-card .field-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 600; }
+        .record-card .field-value { font-weight: 600; color: #1a1a1a; }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+        }
+        .warning strong { color: #856404; }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .footer a { color: #C9963C; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Marceau Solutions</h1>
+        <p>Domain Setup Guide for Flames of Passion</p>
+    </div>
+
+    <div class="container">
+
+        <!-- STEP 1 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">1</div>
+                <h2>Go to Google Admin Console</h2>
+            </div>
+            <p>Open your browser and go to:</p>
+            <div class="copy-box" onclick="navigator.clipboard.writeText('admin.google.com')">
+                admin.google.com
+                <span class="tap">tap to copy</span>
+            </div>
+            <p>Sign in with the Google account you use for your business.</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">admin.google.com</div>
+                </div>
+                <div style="text-align:center; padding: 20px;">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">Google</div>
+                    <div style="color: #555;">Sign in to your Admin Console</div>
+                    <div style="margin-top: 16px; background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 4px; max-width: 300px; margin-left: auto; margin-right: auto; color: #888;">your-email@gmail.com</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">2</div>
+                <h2>Click "Domains" in the sidebar</h2>
+            </div>
+            <p>Once logged in, look at the left side of the screen. Click <strong>Domains</strong>, then <strong>Manage domains</strong>.</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">admin.google.com</div>
+                </div>
+                <div class="mock-sidebar">
+                    <div class="sidebar">
+                        <div class="sidebar-item">Dashboard</div>
+                        <div class="sidebar-item">Users</div>
+                        <div class="sidebar-item">Groups</div>
+                        <div class="sidebar-item active">
+                            <span class="highlight-box" data-label="Click this">Domains</span>
+                        </div>
+                        <div class="sidebar-item" style="padding-left: 32px; font-size: 0.8rem;">
+                            <span class="highlight-box" data-label="Then this">Manage domains</span>
+                        </div>
+                        <div class="sidebar-item">Billing</div>
+                        <div class="sidebar-item">Account</div>
+                    </div>
+                    <div class="main-content">
+                        <h3 style="color: #333; margin-bottom: 12px;">Admin Console</h3>
+                        <p style="color: #666; font-size: 0.85rem;">Welcome to your Google Admin Console</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">3</div>
+                <h2>Click on your domain name</h2>
+            </div>
+            <p>You should see your domain listed. Click on it.</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">admin.google.com/ac/domains</div>
+                </div>
+                <div style="padding: 8px;">
+                    <h3 style="margin-bottom: 12px; color: #333;">Manage domains</h3>
+                    <table class="mock-table">
+                        <tr><th>Domain</th><th>Type</th><th>Status</th></tr>
+                        <tr>
+                            <td>
+                                <span class="highlight-box" data-label="Click this">
+                                    <strong style="color: #1a73e8;">flamesofpassionentertainment.com</strong>
+                                </span>
+                            </td>
+                            <td>Primary</td>
+                            <td style="color: #28a745;">Active</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">4</div>
+                <h2>Find DNS settings</h2>
+            </div>
+            <p>Look for a link or button that says <strong>DNS</strong>, <strong>Advanced DNS</strong>, or <strong>Manage DNS</strong>. It might also say <strong>"See DNS records"</strong> or <strong>"DNS settings"</strong>.</p>
+            <p>If you see a link that opens Google Domains — click it. That's where the DNS records are managed.</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">admin.google.com/ac/domains/manage</div>
+                </div>
+                <div style="padding: 8px;">
+                    <h3 style="margin-bottom: 8px; color: #333;">flamesofpassionentertainment.com</h3>
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 16px;">Domain details</p>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <span class="mock-btn outline">Verify domain</span>
+                        <span class="highlight-box" data-label="Click this">
+                            <span class="mock-btn">DNS settings</span>
+                        </span>
+                        <span class="mock-btn outline">Set as primary</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">5</div>
+                <h2>Delete any existing A records</h2>
+            </div>
+            <p>Before adding new records, look for any existing <strong>A records</strong> in the list. If you see any, delete them by clicking the trash icon.</p>
+
+            <div class="warning">
+                <strong>DO NOT delete MX records</strong> (those are for email) or <strong>TXT records</strong> (those verify your domain). Only delete A records.
+            </div>
+        </div>
+
+        <!-- STEP 6 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">6</div>
+                <h2>Add 4 new A records</h2>
+            </div>
+            <p>Click <strong>"Add record"</strong> or <strong>"Create new record"</strong>. Select type <strong>A</strong>. Add these one at a time:</p>
+
+            <div class="record-card">
+                <div><div class="field-label">Type</div><div class="field-value">A</div></div>
+                <div><div class="field-label">Host</div><div class="field-value">@</div></div>
+                <div>
+                    <div class="field-label">Points to</div>
+                    <div class="copy-box" onclick="navigator.clipboard.writeText('185.199.108.153')" style="margin: 0; padding: 8px 12px;">
+                        185.199.108.153
+                        <span class="tap">tap to copy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="record-card">
+                <div><div class="field-label">Type</div><div class="field-value">A</div></div>
+                <div><div class="field-label">Host</div><div class="field-value">@</div></div>
+                <div>
+                    <div class="field-label">Points to</div>
+                    <div class="copy-box" onclick="navigator.clipboard.writeText('185.199.109.153')" style="margin: 0; padding: 8px 12px;">
+                        185.199.109.153
+                        <span class="tap">tap to copy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="record-card">
+                <div><div class="field-label">Type</div><div class="field-value">A</div></div>
+                <div><div class="field-label">Host</div><div class="field-value">@</div></div>
+                <div>
+                    <div class="field-label">Points to</div>
+                    <div class="copy-box" onclick="navigator.clipboard.writeText('185.199.110.153')" style="margin: 0; padding: 8px 12px;">
+                        185.199.110.153
+                        <span class="tap">tap to copy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="record-card">
+                <div><div class="field-label">Type</div><div class="field-value">A</div></div>
+                <div><div class="field-label">Host</div><div class="field-value">@</div></div>
+                <div>
+                    <div class="field-label">Points to</div>
+                    <div class="copy-box" onclick="navigator.clipboard.writeText('185.199.111.153')" style="margin: 0; padding: 8px 12px;">
+                        185.199.111.153
+                        <span class="tap">tap to copy</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>Click <strong>Save</strong> after each one.</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">admin.google.com &mdash; DNS Records</div>
+                </div>
+                <div style="padding: 8px;">
+                    <h4 style="margin-bottom: 12px; color: #333;">Add a record</h4>
+                    <div style="display: grid; grid-template-columns: 100px 100px 1fr; gap: 8px; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 4px;">Type</div>
+                            <div style="background: #fff; border: 1px solid #ddd; padding: 6px 10px; border-radius: 4px; font-size: 0.85rem;">
+                                <span class="highlight-box" data-label="Select A">A</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 4px;">Host name</div>
+                            <div style="background: #fff; border: 1px solid #ddd; padding: 6px 10px; border-radius: 4px; font-size: 0.85rem;">
+                                <span class="highlight-box" data-label="Type @">@</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 4px;">Data / Points to</div>
+                            <div style="background: #fff; border: 1px solid #ddd; padding: 6px 10px; border-radius: 4px; font-size: 0.85rem;">
+                                <span class="highlight-box" data-label="Paste IP">185.199.108.153</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="highlight-box" data-label="Click">
+                        <span class="mock-btn">Save</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 7 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">7</div>
+                <h2>Add 1 CNAME record</h2>
+            </div>
+            <p>Click <strong>"Add record"</strong> one more time. Select type <strong>CNAME</strong>.</p>
+
+            <div class="record-card" style="background: #f0fff4; border-color: #86efac;">
+                <div><div class="field-label">Type</div><div class="field-value">CNAME</div></div>
+                <div><div class="field-label">Host</div><div class="field-value">www</div></div>
+                <div>
+                    <div class="field-label">Points to</div>
+                    <div class="copy-box" onclick="navigator.clipboard.writeText('marceausolutions.github.io')" style="margin: 0; padding: 8px 12px;">
+                        marceausolutions.github.io
+                        <span class="tap">tap to copy</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>Click <strong>Save</strong>.</p>
+        </div>
+
+        <!-- STEP 8 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">8</div>
+                <h2>Check your work</h2>
+            </div>
+            <p>Your DNS records should now look like this:</p>
+
+            <div class="mock-ui">
+                <div class="browser-bar">
+                    <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+                    <div class="url">DNS Records for flamesofpassionentertainment.com</div>
+                </div>
+                <table class="mock-table">
+                    <tr><th>Type</th><th>Host</th><th>Data</th></tr>
+                    <tr><td>A</td><td>@</td><td>185.199.108.153</td></tr>
+                    <tr><td>A</td><td>@</td><td>185.199.109.153</td></tr>
+                    <tr><td>A</td><td>@</td><td>185.199.110.153</td></tr>
+                    <tr><td>A</td><td>@</td><td>185.199.111.153</td></tr>
+                    <tr style="background: #f0fff4;"><td>CNAME</td><td>www</td><td>marceausolutions.github.io</td></tr>
+                </table>
+            </div>
+
+            <div class="success-box">
+                <strong>If your records match the table above, you're done!</strong> It may take 15-30 minutes for everything to go live.
+            </div>
+        </div>
+
+        <!-- STEP 9 -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-num">9</div>
+                <h2>Text William when done!</h2>
+            </div>
+            <p>Once you've added all 5 records, send a text to <strong>(239) 398-5676</strong> and I'll turn on HTTPS and make sure everything looks perfect.</p>
+            <p>You can test it yourself in about 15-30 minutes by going to <strong>flamesofpassionentertainment.com</strong> in your browser.</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <p>Need help? Call or text <a href="tel:+12393985676">(239) 398-5676</a></p>
+        <p style="margin-top: 8px;">Marceau Solutions</p>
+    </div>
+</body>
+</html>
