@@ -105,12 +105,11 @@
 > 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
-27 of 35 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`).
-All business-critical workflows are wired. Nurture sequences and low-priority webhooks are not.
+34 of 36 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 7.
 
-**Wired (27):** Coaching-Payment-Welcome, Coaching-Monday-Checkin, Coaching-Cancellation-Exit, SMS-Response-Handler-v2, Webdev-Payment-Welcome, Webdev-Monthly-Checkin, Fitness-SMS-Outreach, Fitness-SMS-Followup-Sequence, GitHub-Push-Telegram, Lead-Magnet-Capture, Website-Lead-Capture, Automation-Lead-Capture, Creator-Lead-Capture, Premium-Waitlist-Capture, Flames-Form-Pipeline, Webdev-Cross-Referral, Webdev-Deploy-Notification, Challenge-Day7-Upsell, Challenge-Signup-7Day, Daily-Operations-Digest, Weekly-Campaign-Analytics, X-Social-Post-Scheduler-v2, X-Batch-Image-Generator, Monthly-Workflow-Backup, Follow-Up-Sequence-Engine, Non-Converter-Followup, Digital-Product-Delivery.
+**Not wired (2 — intentional):** Self-Annealing-Error-Handler (can't self-reference), n8n-Health-Check (circular).
 
-**Not wired (8):** Nurture sequences (×4), n8n-Health-Check (circular), Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator.
+**All other 34 active workflows wired**, including: Nurture sequences (×4), Add-Posts-Webhook, Resume Builder, X-Post-Image-Generator (newly wired session 7).
 
 ---
 
@@ -224,3 +223,4 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | health_check.py missing n8n restart + domain checks | FIXED 2026-03-06 (session 7) | Added n8n restart counter (warns >1, fails >3 restarts/24h) and external domain health (n8n, api, fitai — all 200). |
 | invoice.payment_failed unhandled | **Low** | No n8n workflow for Stripe payment failures. Acceptable with 0 paying clients — add when first subscriber onboards. |
 | flamesofpassionentertainment.com DNS not configured | **Client-blocked** | Domain on Google Cloud DNS (ns-cloud-c1-c4.googledomains.com). No A records pointing to GitHub Pages. Client or William must add A records: 185.199.108-111.153. GitHub Pages site is live at `marceausolutions.github.io/flames-of-passion-website`. |
+| 7 workflows not wired to Self-Annealing | FIXED 2026-03-06 (session 7) | Wired 7 remaining workflows (nurture sequences ×4, Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator). Now 34/36 active workflows wired. Only Self-Annealing + n8n-Health-Check excluded intentionally. |

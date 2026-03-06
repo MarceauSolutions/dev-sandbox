@@ -31,6 +31,8 @@ Running log of significant learnings, decisions, and patterns discovered during 
 22. **n8n re-reads from DB on restart** — SQLite patches auto-apply after full service restart. No manual bounce needed post-restart.
 23. **"Could not find property option"** in n8n logs = telemetry noise on workflow saves. Not execution failures. Ignore.
 24. **Telegram bot token in n8n is encrypted** — use n8n credential PATCH API to update. Verify via `curl .../getMe` before patching.
+25. **Self-Annealing wiring in `settings` JSON** — `json_set(settings, '$.errorWorkflow', 'WORKFLOW_ID')` to wire. No workflow_history update needed (settings ≠ nodes). Bounce to apply.
+26. **flamesofpassionentertainment.com domain blocked** — still on Google Cloud DNS (pre-transfer). No A records. GitHub Pages site live at `marceausolutions.github.io/flames-of-passion-website`. Client/William must add A records (185.199.108-111.153) to unblock.
 
 ## 2026-03-06: Company on a Laptop — Session 6 (External Integration Audit)
 
