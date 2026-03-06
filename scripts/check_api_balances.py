@@ -188,6 +188,40 @@ def check_key_only(provider_name, env_key):
     return {"status": "active", "detail": f"Key valid ({key[:4]}...{key[-4:]})"}
 
 
+def check_xai():
+    """Check xAI (Grok) API key validity via models endpoint."""
+    try:
+        import requests
+    except ImportError:
+        return check_key_only("xai", "XAI_API_KEY")
+
+    key = os.environ.get("XAI_API_KEY")
+    if not key:
+        return {"status": "no_key", "detail": "XAI_API_KEY not set"}
+
+    try:
+        resp = requests.get(
+            "https://api.x.ai/v1/models",
+            headers={"Authorization": f"Bearer {key}"},
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            models = [m.get("id") for m in resp.json().get("data", [])]
+            has_image = any("image" in m for m in models)
+            return {
+                "status": "active",
+                "detail": f"Key valid, {len(models)} models" + (" (image gen available)" if has_image else ""),
+            }
+        elif resp.status_code == 401:
+            return {"status": "blocked", "detail": "Invalid API key (401)"}
+        elif resp.status_code == 403:
+            return {"status": "blocked", "detail": f"Access denied (403) — key expired or plan issue"}
+        else:
+            return {"status": "unknown", "detail": f"HTTP {resp.status_code}"}
+    except Exception as e:
+        return {"status": "unknown", "detail": str(e)[:60]}
+
+
 def check_all():
     """Check all providers and return results."""
     results = {}
@@ -195,9 +229,10 @@ def check_all():
     # Providers with real balance APIs
     results["replicate"] = check_replicate()
     results["elevenlabs"] = check_elevenlabs()
+    results["xai"] = check_xai()
 
     # Key-only checks
-    for name in ("xai", "fal.ai", "openai-tts", "ideogram", "kie.ai"):
+    for name in ("fal.ai", "openai-tts", "ideogram", "kie.ai"):
         env_key = PROVIDERS[name]["env_key"]
         results[name] = check_key_only(name, env_key)
 
