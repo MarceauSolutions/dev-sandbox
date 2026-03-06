@@ -132,6 +132,22 @@ def check_disk_memory():
                     color = YELLOW if pct > 65 else GREEN
                     print(f"  {color}{label}{RESET}")
 
+    # CPU load average (1min)
+    out, _ = ssh("uptime | awk -F'load average:' '{print $2}' | awk '{print $1}'")
+    if out:
+        load = out.strip().rstrip(",")
+        try:
+            load_f = float(load)
+            label = f"CPU load: {load:.2f}"
+            if load_f > 2.0:
+                print(f"  {fail(label)}")
+            elif load_f > 1.0:
+                print(f"  {YELLOW}{label}{RESET}")
+            else:
+                print(f"  {GREEN}{label}{RESET}")
+        except ValueError:
+            pass
+
     out, _ = ssh("sudo journalctl --disk-usage 2>/dev/null | grep 'take up'")
     if out:
         print(f"  Journal: {out.strip()}")
