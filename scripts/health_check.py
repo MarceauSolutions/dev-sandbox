@@ -276,6 +276,32 @@ def check_local_env():
     else:
         print(f"  {fail('.env not found')}")
 
+    # Check Twilio balance (SMS fails silently when account runs low)
+    twilio_sid = os.getenv("TWILIO_ACCOUNT_SID", "")
+    twilio_token = os.getenv("TWILIO_AUTH_TOKEN", "")
+    if twilio_sid and twilio_token:
+        try:
+            import base64, ssl as _ssl
+            creds = base64.b64encode(f"{twilio_sid}:{twilio_token}".encode()).decode()
+            ctx = _ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = _ssl.CERT_NONE
+            req = urllib.request.Request(
+                f"https://api.twilio.com/2010-04-01/Accounts/{twilio_sid}/Balance.json",
+                headers={"Authorization": f"Basic {creds}"}
+            )
+            resp = urllib.request.urlopen(req, timeout=8, context=ctx)
+            bal = json.loads(resp.read())
+            balance = float(bal.get("balance", 0))
+            if balance < 5:
+                print(f"  {fail(f'Twilio balance: ${balance:.2f} — CRITICAL, SMS will fail')}")
+            elif balance < 10:
+                print(f"  {warn(f'Twilio balance: ${balance:.2f} — low, top up soon')}")
+            else:
+                print(f"  {ok(f'Twilio balance: ${balance:.2f}')}")
+        except Exception:
+            print(f"  {warn('Twilio balance: check failed')}")
+
     # Check git status (uncommitted + unpushed)
     try:
         repo = str(Path(__file__).parent.parent)
@@ -325,6 +351,8 @@ def check_stripe_webhooks():
         )
         import ssl
         ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
         resp = urllib.request.urlopen(req, timeout=10, context=ctx)
         data = json.loads(resp.read())
         endpoints = data.get("data", [])

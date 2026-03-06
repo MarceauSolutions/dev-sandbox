@@ -160,6 +160,20 @@ def generate_report(days: int = 7) -> str:
             for p in stripe["recent_payments"][:5]:
                 desc = p.get("description") or "No description"
                 report.append(f"    ${p['amount']:.2f} - {desc[:30]}")
+
+        if stripe.get("by_customer"):
+            report.append("")
+            report.append("  Top Clients by Revenue:")
+            sorted_clients = sorted(
+                stripe["by_customer"].items(),
+                key=lambda x: x[1].get("total_charged", 0),
+                reverse=True
+            )
+            for email, data in sorted_clients[:5]:
+                total = data.get("total_charged", 0)
+                count = data.get("charge_count", 0)
+                label = email[:35]
+                report.append(f"    {label:<35} ${total:.2f} ({count} charge{'s' if count != 1 else ''})")
     report.append("")
 
     # Leads Section
