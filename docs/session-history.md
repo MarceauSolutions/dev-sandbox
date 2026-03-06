@@ -4,6 +4,18 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 7b (Stripe Payment Failure Coverage)
+
+**Context:** "I don't care if there's no clients yet — the point is to be ready for clients." Built invoice.payment_failed handler.
+
+**Built:**
+- `Stripe-Payment-Failed` workflow (`QMWkhAb8SWMSImc4`) — webhook → extract customer/amount/reason → Telegram alert to William
+- Stripe webhook `we_1T85t0DeeD1eRvzzjpNKpvGA` registered for `invoice.payment_failed`
+- Wired to Self-Annealing error handler. Now **5 Stripe webhooks** total.
+
+**Key Learning:**
+27. **Build for client-readiness, not current state** — "No clients yet" is not a reason to skip critical business logic. Build the full funnel now.
+
 ## 2026-03-06: Company on a Laptop — Session 7 (Post-Fix Audit + Health Check Hardening)
 
 **Context:** Seventh pass — verified session 6 commits, diagnosed post-fix workflow errors, hardened health_check.py.

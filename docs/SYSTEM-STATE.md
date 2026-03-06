@@ -166,6 +166,7 @@
 | `/webhook/stripe-webdev-payment` | checkout.session.completed | WebDev client onboard |
 | `/webhook/stripe-cancellation` | customer.subscription.deleted | Coaching offboard |
 | `/webhook/stripe-digital-delivery` | checkout.session.completed | Digital product delivery |
+| `/webhook/stripe-payment-failed` | invoice.payment_failed | Telegram alert to William |
 
 ### Twilio Inbound SMS (all → `sms-response`)
 | Number | Label | SMS Webhook |
@@ -221,6 +222,6 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | Mac has no autonomous health monitoring | FIXED 2026-03-06 (session 4) | Added launchd: daily health check (7am) + weekly revenue report (Mon 9am). Both loaded and registered. |
 | GitHub→Telegram stale Telegram credential | FIXED 2026-03-06 (session 7) | "Clawdbot Telegram" cred `RlAwU3xzcX4hifgj` had stale/encrypted token. Re-PATCHED via n8n API. Was causing 5 errors per push. |
 | health_check.py missing n8n restart + domain checks | FIXED 2026-03-06 (session 7) | Added n8n restart counter (warns >1, fails >3 restarts/24h) and external domain health (n8n, api, fitai — all 200). |
-| invoice.payment_failed unhandled | **Low** | No n8n workflow for Stripe payment failures. Acceptable with 0 paying clients — add when first subscriber onboards. |
+| invoice.payment_failed unhandled | FIXED 2026-03-06 (session 7b) | Created `Stripe-Payment-Failed` workflow (`QMWkhAb8SWMSImc4`). Stripe webhook `we_1T85t0DeeD1eRvzzjpNKpvGA` registered. Payment failures now trigger Telegram alert to William. |
 | flamesofpassionentertainment.com DNS not configured | **Client-blocked** | Domain on Google Cloud DNS (ns-cloud-c1-c4.googledomains.com). No A records pointing to GitHub Pages. Client or William must add A records: 185.199.108-111.153. GitHub Pages site is live at `marceausolutions.github.io/flames-of-passion-website`. |
 | 7 workflows not wired to Self-Annealing | FIXED 2026-03-06 (session 7) | Wired 7 remaining workflows (nurture sequences ×4, Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator). Now 34/36 active workflows wired. Only Self-Annealing + n8n-Health-Check excluded intentionally. |
