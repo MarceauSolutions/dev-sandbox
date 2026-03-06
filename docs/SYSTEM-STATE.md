@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06.
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 2).
 
 ---
 
@@ -17,15 +17,15 @@
 | `webhook_server.py` | ACTIVE | Ralph webhook handler (port 5002) |
 | `stripe-webhook` | STOPPED | Disabled 2026-03-06 — was crash-looping (port conflict with webhook_server.py on 5002). n8n handles Stripe natively. |
 
-### EC2 Resources (as of 2026-03-06)
-- **Disk**: 21G/30G (71%)
-- **Memory**: ~1.1-1.2G/1.8G (~61-67%)
+### EC2 Resources (as of 2026-03-06 session 2)
+- **Disk**: 21G/30G (70%) — freed ~220MB (old SQLite backups + /tmp/jiti cache + journals)
+- **Memory**: ~999M-1.1G/1.8G (~54-61%)
 - **Journal**: Capped at 500MB (`/etc/systemd/journald.conf.d/size-limit.conf`)
 - **n8n memory**: Capped at 700M max, 600M high watermark
 
 ---
 
-## n8n Workflows (37 active / 12 inactive)
+## n8n Workflows (36 active / 4 inactive)
 
 > Full inventory: `python scripts/backup-n8n.py --list`
 
@@ -57,7 +57,7 @@
 | Creator-Lead-Capture | `8pvrmdtI0MfPbdsC` | Creator/influencer lead capture |
 | Premium-Waitlist-Capture | `j306crRxCmWW3dMo` | Premium product waitlist |
 | Challenge-Signup-7Day | `WTZDxLDQuSkIkcqf` | 7-day challenge signup flow |
-| Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | Route hot leads to CRM |
+| Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | Route hot leads to CRM (INACTIVE — ClickUp not in stack) |
 
 ### Nurture & Conversion
 | Workflow | ID | Purpose |
@@ -97,17 +97,12 @@
 ### Known Inactive (intentionally off)
 | Workflow | ID | Reason |
 |----------|-----|--------|
-| Universal-Agent-Orchestrator-v5.0-Ultra | `1s52PkA1lY1lHfGP` | Dev/test — Ralph handles orchestration |
-| Agent-Orchestrator-Debug | `bfHJLnWjyhUESQdU` | Debug build |
-| Agent-Orchestrator-Minimal | `xmFDSIrmCO01echh` | Minimal build |
-| X-Social-Post-Scheduler | `yBcHFdspRnc4gVUB` | Superseded by v2 (`CT5em35LljouaCrU`) |
-| Automated AI YouTube Shorts (Seedance) x2 | `TPDUMHbP3njO2jrN`, `ZaVyQf0C4Ptj4DAQ` | Duplicate — keep one |
-| WhatsAppAgent | `T6i0ukvjlet197aC` | Not in active use |
-| MyAIagent | `G62V1Uk2yuprxZaB` | Not in active use |
-| Naples Real Estate Lead Nurture | `MrYaOZuzF7bJGUt0` | Prospect workflow, not current focus |
-| Weather Notification | `Xbj63cGjToMM8Tgp` | Low priority |
+| Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | ClickUp not in stack — deactivated 2026-03-06 |
+| Weather Notification | `Xbj63cGjToMM8Tgp` | Low priority, on-demand |
+| Automated AI YouTube Shorts (Seedance) | `ZaVyQf0C4Ptj4DAQ` | Content pipeline paused |
 | Grok Imagine B-Roll Generator | `sYvUyTooDcHQQuKN` | On-demand, no need for always-on |
-| Ultimate Amazon Personal Assistant | `Dv2tGyqE1B59URMJ` | On-demand |
+
+> 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
 Workflows wired to Self-Annealing-Error-Handler:
@@ -124,7 +119,7 @@ Workflows wired to Self-Annealing-Error-Handler:
 | Agent | Location | Status | Model |
 |-------|----------|--------|-------|
 | Claude Code | Mac (this session) | ACTIVE | claude-sonnet-4-6 |
-| Clawdbot | EC2 systemd | ACTIVE | claude-opus-4-5 |
+| Clawdbot | EC2 systemd | ACTIVE | Anthropic OAuth (model not configurable via clawdbot.json) |
 | Ralph | EC2 (PRD-driven) | STANDBY | TBD |
 
 ### Clawdbot
@@ -137,13 +132,13 @@ Workflows wired to Self-Annealing-Error-Handler:
 ## Business Automations
 
 ### PT Coaching
-- Payment → Stripe → n8n webhook → Welcome SMS + ClickUp lead
+- Payment → Stripe → n8n webhook → Welcome SMS
 - Monday 9am ET → SMS check-in to all active clients
 - Tracker: https://docs.google.com/spreadsheets/d/1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA
 
 ### Web Dev
-- Payment → Stripe → n8n webhook → Welcome SMS + ClickUp lead
-- Monthly check-in workflow active
+- Payment → Stripe → n8n webhook → Welcome SMS
+- Monthly check-in workflow active (1st of month)
 - Client Tracker: https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q
 
 ### Client Lead Sheets (form submissions routed here)
@@ -173,12 +168,18 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 ## Known Issues / Open Items
 | Item | Priority | Notes |
 |------|----------|-------|
-| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (49 workflows). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
+| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (40 workflows after cleanup). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
 | `lead_manager.py:760` | Low | TODO: email notification on CRM stage transitions |
 | `amazon_sp_api.py:417` | Low | Hardcoded USD — doesn't support multi-marketplace |
 | `agent_bridge_api.py` | Medium | 13,050 lines — modularization planned |
 | n8n MCP string/int ID bug | Low | MCP tools expect int IDs, n8n uses strings — use curl via SSH as workaround |
 | PT Monday Check-in cron corruption | FIXED 2026-03-06 | Was corrupted with ls output, fixed to 0 14 * * 1 |
 | Self-Annealing Switch node | FIXED 2026-03-06 | typeVersion 3 incompatible with n8n 2.4.8, downgraded to v1 |
-| GitHub→Telegram credential | FIXED 2026-03-06 | "Clawdbot Telegram" n8n credential had stale bot token. Updated via API. |
-| Deleted Google Sheets credential `RIFdaHtNYdTpFnlu` | FIXED 2026-03-06 | 3 webdev workflows referenced deleted credential. Remapped to `mywn8S0xjRx9YM9K` (Google Sheets account 4): Webdev-Monthly-Checkin, Webdev-Payment-Welcome, Webdev-Cross-Referral. |
+| GitHub→Telegram credential | FIXED 2026-03-06 | "Clawdbot Telegram" n8n credential had stale bot token. Updated via API. Verified working on next push. |
+| Deleted Google Sheets credential `RIFdaHtNYdTpFnlu` | FIXED 2026-03-06 | 3 webdev workflows referenced deleted credential. Remapped to `mywn8S0xjRx9YM9K`. |
+| X-Batch-Image-Generator broken connection | FIXED 2026-03-06 | `Update Media_URL` pointed to non-existent "Rate Limit (Wait)" node. Fixed via SQLite to "Wait 5s (Rate Limit)". |
+| Challenge-Day7-Upsell sheetName lookup | FIXED 2026-03-06 | `mode:name` caused runtime API lookup failure. Changed to `mode:id` (gid=0). |
+| Weekly-Campaign-Analytics Twilio type mismatch | FIXED 2026-03-06 | httpBasicAuth cred created (`hS85CMA24G8bUxDY`) for Twilio HTTP node. |
+| Follow-Up-Sequence-Engine no credentials | FIXED 2026-03-06 | Google Sheets + 3 Twilio nodes had empty credential refs. Fixed via SQLite. |
+| Hot-Lead-to-ClickUp active with no ClickUp stack | FIXED 2026-03-06 | Deactivated. ClickUp not in stack — Hot-Lead-to-ClickUp moved to inactive. |
+| Clawdbot invalid `model` key in config | FIXED 2026-03-06 | Top-level `model` key not valid in clawdbot.json schema — caused config reload failures. Removed. |
