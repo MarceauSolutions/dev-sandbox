@@ -4,6 +4,25 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 4 (Autonomous Monitoring + Cron Root Fix)
+
+**Context:** Fourth pass — closed the remaining gaps after session 3: autonomous Mac monitoring, in-memory vs DB SQLite fix bug, cron format issues.
+
+**Accomplished:**
+- Added 2 Mac launchd jobs: daily health check (7am) + weekly revenue report email (Mon 9am)
+- Discovered n8n reads `workflow_history` (not `workflow_entity`) on activation — session 3 SQLite fixes only updated entity, not history. Daily-Operations-Digest couldn't activate for this reason.
+- Fixed `workflow_history.nodes` for Daily-Ops corrupted cron version — now activates clean
+- Found and fixed 6 workflows with 5-field cron (scheduleTrigger v1.2 requires 6-field with seconds): X-Batch, X-Social-Scheduler (×2), PT-Monday-Checkin, Challenge-Day7, Monthly-Backup
+- Found and fixed `triggerAtMonth:1` bug in Webdev-Monthly-Checkin — was only running in January, not monthly
+- Bounced all 8 SQLite-patched workflows (deactivate→activate via API) to reload from DB
+- Verified X-Batch "Cannot read properties of undefined" was in-memory stale state, now resolved
+- All 36 active workflows verified active via API
+
+**Key Learnings:**
+13. **n8n SQLite fix rule**: After any SQLite node patch, ALSO update `workflow_history.nodes` for the row matching `workflow_entity.versionId`. Then bounce (deactivate→activate) via API to reload. Failing either step leaves workflows broken.
+14. **n8n scheduleTrigger cron format**: `typeVersion 1.2` with `field: "cronExpression"` requires 6-field cron (sec min hour dom month dow). Standard 5-field (without seconds) silently fails with "Invalid cron expression" at activation time.
+15. **n8n `triggerAtMonth`**: Setting `triggerAtMonth: N` in schedule interval limits the workflow to that specific month. Omit entirely for "every month" behavior.
+
 ## 2026-03-06: Company on a Laptop — Final Deep Audit (Session 3)
 
 **Context:** Third "make it better" pass — exhaustive audit of every active workflow, credential, cron, and error handler.

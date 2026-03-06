@@ -183,6 +183,11 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | Follow-Up-Sequence-Engine no credentials | FIXED 2026-03-06 | Google Sheets + 3 Twilio nodes had empty credential refs. Fixed via SQLite. |
 | Hot-Lead-to-ClickUp active with no ClickUp stack | FIXED 2026-03-06 | Deactivated. ClickUp not in stack — Hot-Lead-to-ClickUp moved to inactive. |
 | Clawdbot invalid `model` key in config | FIXED 2026-03-06 | Top-level `model` key not valid in clawdbot.json schema — caused config reload failures. Removed. |
-| Daily-Operations-Digest corrupted cron + no credentials | FIXED 2026-03-06 | Same ls-injection bug as PT Monday Check-in. Fixed cron to `0 13 * * *` (8am ET). Assigned Gmail/Sheets/SMTP credentials to all nodes. Workflow was never running. |
+| Daily-Operations-Digest corrupted cron + no credentials | FIXED 2026-03-06 | Same ls-injection bug as PT Monday Check-in. Fixed cron to `0 0 13 * * *` (8am ET, 6-field). Assigned Gmail/Sheets/SMTP credentials. Fixed workflow_history version. Now active and scheduled. |
 | Resume-Builder Email Delivery no Gmail credential | FIXED 2026-03-06 | Gmail node had no credential assigned. Assigned Gmail account (`Fy8WXPJMuD57XWjw`). |
 | Follow-Up-Sequence-Engine no credentials | FIXED 2026-03-06 | Twilio (×3) and Google Sheets nodes had empty credentials. All fixed. |
+| SQLite cron fixes missing workflow_history update | FIXED 2026-03-06 (session 4) | n8n reads workflow_history (not workflow_entity) on activation. All SQLite node fixes must also update workflow_history.nodes for the current versionId. |
+| Webdev-Monthly-Checkin only ran in January | FIXED 2026-03-06 (session 4) | triggerAtMonth:1 in schedule parameters limited workflow to January. Removed field — now runs 1st of every month. |
+| 5-field cronExpression in scheduleTrigger nodes | FIXED 2026-03-06 (session 4) | n8n scheduleTrigger (typeVersion 1.2) requires 6-field cron (seconds first). Fixed 6 workflows: X-Batch, X-Social-Scheduler (×2), PT-Monday-Checkin, Challenge-Day7, Monthly-Backup. All bounced and active. |
+| SQLite-patched workflows stale in n8n memory | FIXED 2026-03-06 (session 4) | All 8 workflows patched via SQLite in session 3 were bounced (deactivate/activate via API) to reload from DB. |
+| Mac has no autonomous health monitoring | FIXED 2026-03-06 (session 4) | Added launchd: daily health check (7am) + weekly revenue report (Mon 9am). Both loaded and registered. |
