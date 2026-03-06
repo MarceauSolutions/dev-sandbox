@@ -48,6 +48,7 @@
 
 | Quick Command | Run |
 |--------------|-----|
+| **System health** | `python scripts/health_check.py` |
 | Search tools | `python scripts/inventory.py search <keyword>` |
 | List projects | `python scripts/inventory.py list` |
 | List scripts | `python scripts/inventory.py scripts` |

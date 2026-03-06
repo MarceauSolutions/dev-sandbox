@@ -96,7 +96,7 @@ Marceau Solutions
         owner_email="wmarceau@marceausolutions.com",  # Notifications go to you for management
         owner_phone="+12397666129",  # Business phone
         clickup_list_id="901709854724",  # HVAC Leads list
-        google_sheet_id="",  # TODO: Create Google Sheet for HVAC (needs OAuth)
+        google_sheet_id="1Lli3vWKErLR2eUo_623eJbyfohqhaqhKcWndss74eTM",
         is_client_business=True,  # Family business (your father's HVAC company)
         auto_response_sms_template="""Hi {name}! Thanks for contacting SW Florida Comfort HVAC.
 
@@ -129,7 +129,7 @@ Serving Naples, Fort Myers, and surrounding areas
         owner_email="wgeorge@squarefootshipping.com",  # Goes to client owner
         owner_phone="+12397666129",  # Using HVAC phone as fallback until we get dedicated number
         clickup_list_id="901709854725",  # Square Foot Leads list
-        google_sheet_id="",  # TODO: Create Google Sheet (needs OAuth)
+        google_sheet_id="1Gk-y0G9x30zJnB7YDj1AYmcmaM_Z08pxkw1lodp_8i8",
         is_client_business=True,  # This is a CLIENT business
         auto_response_sms_template="""Hi {name}! Thanks for contacting Square Foot Shipping & Storage.
 
