@@ -25,7 +25,7 @@
 
 ---
 
-## n8n Workflows (38 active / 4 inactive)
+## n8n Workflows (37 active / 5 inactive)
 
 > Full inventory: `python scripts/backup-n8n.py --list`
 
@@ -84,7 +84,7 @@
 | Workflow | ID | Purpose |
 |----------|-----|---------|
 | X-Social-Post-Scheduler-v2 | `CT5em35LljouaCrU` | X/Twitter post scheduling |
-| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | Batch image generation for X |
+| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | **DEACTIVATED 2026-03-06** — xAI API key invalid (403). Was erroring daily. Re-activate when xAI key renewed. |
 | X-Post-Image-Generator | `Hv8ybyKYNYDFwSgm` | Single post image generation |
 | Add-Posts-Webhook | `bzt3KFpwWmPbrp34` | Add posts via webhook trigger |
 | Weekly-Campaign-Analytics | `M62QBpROE48mEgDC` | Weekly campaign performance report |
@@ -105,17 +105,18 @@
 |----------|-----|--------|
 | Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | ClickUp not in stack — deactivated 2026-03-06 |
 | Weather Notification | `Xbj63cGjToMM8Tgp` | Low priority, on-demand |
+| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | xAI API key invalid — deactivated 2026-03-06 |
 | Automated AI YouTube Shorts (Seedance) | `ZaVyQf0C4Ptj4DAQ` | Content pipeline paused |
 | Grok Imagine B-Roll Generator | `sYvUyTooDcHQQuKN` | On-demand, no need for always-on |
 
 > 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
-36 of 38 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 8.
+35 of 37 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 9.
 
 **Not wired (2 — intentional):** Self-Annealing-Error-Handler (can't self-reference), n8n-Health-Check (circular).
 
-**All other 36 active workflows wired** — 100% of wireable workflows covered. Stripe-Payment-Failed and Stripe-Invoice-Paid both included at creation time.
+**All other 35 active workflows wired** — 100% of wireable workflows covered. X-Batch-Image-Generator deactivated 2026-03-06 (xAI key invalid).
 
 ---
 
@@ -245,3 +246,5 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | boabfit.com not in domain monitoring | FIXED 2026-03-06 (session 8) | Added `www.boabfit.com` to `check_domains()` in health_check.py. Live at 200. |
 | health_check.py key-only AI API checks | FIXED 2026-03-06 (session 9) | Added `check_ai_apis()` — live validation of Anthropic (GET /v1/models, zero token cost) and ElevenLabs (character quota). Fires before Stripe webhooks check. Both keys valid as of session 9. |
 | revenue-report.py missing top-client breakdown | FIXED 2026-03-06 (session 9) | Added "Top Clients by Revenue" section (top 5 by total_charged). Uses existing `by_customer` dict from `get_stripe_metrics()`. |
+| X-Batch-Image-Generator erroring daily | FIXED 2026-03-06 (session 9) | xAI API key invalid (403 on all endpoints from EC2). Was silently firing Self-Annealing handler 3x/day. Deactivated until key renewed at console.x.ai. X-Post-Image-Generator also uses xAI (webhook-triggered, no auto-errors). |
+| daily_standup.sh broken morning digest command | FIXED 2026-03-06 (session 9) | `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path). Fixed to subshell `(cd projects/shared/personal-assistant && python -m src.morning_digest --preview)`. |
