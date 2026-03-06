@@ -4,6 +4,26 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 5 (Final Verification)
+
+**Context:** Fifth pass — verified all session 4 fixes held, closed remaining minor gaps.
+
+**Accomplished:**
+- GitHub→Telegram confirmed working post session 4 push (20:33 UTC success)
+- Revenue report email verified end-to-end (sends to wmarceau@marceausolutions.com)
+- Clawdbot weekly restart cron confirmed active (Sun 3am UTC via /etc/cron.d)
+- n8n.marceausolutions.com confirmed accessible (HTTP 200) — all Stripe/GitHub webhooks reach n8n
+- Webhook registry audit: 27 registered, 1 orphan deleted (workflow 1s52PkA1lY1lHfGP was deleted without webhook cleanup)
+- fitai (8001) and voice-api (8000) both healthy
+- Nurture-Sequence-7Day: 15:03 UTC error confirmed as test call, not structural — Lead-Magnet-Capture data mapping correct
+- n8n-Health-Check verified: SMS + Telegram credentials wired, monitors 10 critical workflows
+- Fresh n8n backup committed (40 workflows, post all session 4+5 changes)
+
+**Key Learnings:**
+16. **n8n orphan webhook cleanup**: after deleting workflows, run `DELETE FROM webhook_entity WHERE workflowId NOT IN (SELECT id FROM workflow_entity)` to remove stale registrations
+17. **voice-api (port 8000)** responds to `GET /` (JSON status), not `/health` — 404 on /health is normal
+18. **health_check.py double output with `2>&1`** is a display artifact of exit code 1 in Bash tool, not a real bug
+
 ## 2026-03-06: Company on a Laptop — Session 4 (Autonomous Monitoring + Cron Root Fix)
 
 **Context:** Fourth pass — closed the remaining gaps after session 3: autonomous Mac monitoring, in-memory vs DB SQLite fix bug, cron format issues.
