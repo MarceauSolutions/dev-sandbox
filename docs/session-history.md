@@ -22,6 +22,8 @@ Running log of significant learnings, decisions, and patterns discovered during 
 28. **Billing sheet column alignment matters** — checked existing `Coaching-Payment-Welcome` "Log Billing" node to get correct column names (Date, Client_Name, Amount, Status, Stripe_Payment_ID) before building invoice.paid workflow. Prevents silently mismatched columns.
 29. **Stripe `invoice.paid` fires on ALL invoices**, including initial subscription creation. Filter by `billing_reason === 'subscription_cycle'` to target renewals only. Initial payments are already handled by `checkout.session.completed`.
 30. **Stripe webhook health belongs in daily check** — added Stripe API call to health_check.py to verify all 6 expected webhooks are registered and enabled. Without this, a deleted webhook would cause silent revenue loss.
+31. **n8n Telegram credential re-patch: always use Python urllib from Mac** — SSH shell variable interpolation can corrupt the token. `$TOKEN` in remote SSH commands may be interpreted differently. Use `python3 -c "from dotenv ... urllib.request.Request(..., method='PATCH')"` directly from Mac. SSH-based patch caused 404 (malformed URL) while Python-based patch works correctly.
+32. **Automated payment failure loop**: When Stripe fires `invoice.payment_failed`, look up client phone in PT Tracker → SMS client to update payment method + Telegram to William. Never just alert William manually — automate the client-facing response too.
 
 ## 2026-03-06: Company on a Laptop — Session 7b (Stripe Payment Failure Coverage)
 
