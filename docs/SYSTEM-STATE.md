@@ -105,12 +105,12 @@
 > 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
-Workflows wired to Self-Annealing-Error-Handler:
-- Coaching-Payment-Welcome
-- PT-Cancellation-Exit
-- Webdev-Payment-Welcome
-- Webdev-Monthly-Checkin
-- SMS-Response-Handler-v2
+27 of 35 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`).
+All business-critical workflows are wired. Nurture sequences and low-priority webhooks are not.
+
+**Wired (27):** Coaching-Payment-Welcome, Coaching-Monday-Checkin, Coaching-Cancellation-Exit, SMS-Response-Handler-v2, Webdev-Payment-Welcome, Webdev-Monthly-Checkin, Fitness-SMS-Outreach, Fitness-SMS-Followup-Sequence, GitHub-Push-Telegram, Lead-Magnet-Capture, Website-Lead-Capture, Automation-Lead-Capture, Creator-Lead-Capture, Premium-Waitlist-Capture, Flames-Form-Pipeline, Webdev-Cross-Referral, Webdev-Deploy-Notification, Challenge-Day7-Upsell, Challenge-Signup-7Day, Daily-Operations-Digest, Weekly-Campaign-Analytics, X-Social-Post-Scheduler-v2, X-Batch-Image-Generator, Monthly-Workflow-Backup, Follow-Up-Sequence-Engine, Non-Converter-Followup, Digital-Product-Delivery.
+
+**Not wired (8):** Nurture sequences (×4), n8n-Health-Check (circular), Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator.
 
 ---
 
