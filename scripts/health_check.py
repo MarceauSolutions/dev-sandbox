@@ -144,6 +144,8 @@ def check_domains():
         "n8n.marceausolutions.com": "n8n automation",
         "api.marceausolutions.com": "Python bridge API",
         "fitai.marceausolutions.com": "Fitness influencer platform",
+        "marceausolutions.com": "Marceau Solutions website",
+        "swfloridacomfort.com": "HVAC client website",
     }
     import ssl
     for domain, desc in domains.items():
