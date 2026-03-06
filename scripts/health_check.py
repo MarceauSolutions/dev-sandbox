@@ -276,7 +276,7 @@ def check_recent_executions():
         for name in recent_errors:
             counts[name] = counts.get(name, 0) + 1
         summary = ", ".join(f"{n} ×{c}" if c > 1 else n for n, c in counts.items())
-        print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {summary[:100]}")
+        print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {summary}")
     else:
         print(f"  {ok('0 workflow errors in last 24h')}")
 
