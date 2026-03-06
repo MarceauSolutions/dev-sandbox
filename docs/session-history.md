@@ -4,6 +4,40 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Full System Optimization
+
+**Context:** Multi-session deep fix. Started with Clawdbot not responding on Telegram (85% context buildup), escalated to full infrastructure audit and optimization pass.
+
+### Fixes Applied
+- **Clawdbot 85% context**: cleared by renaming JSONL + resetting sessions.json. Added weekly Sunday 3am UTC restart cron + `OnFailure` crash alert to Telegram.
+- **stripe-webhook.service**: stopped after 518,821 crash loops since Feb 14. Root cause: port conflict with webhook_server.py on 5002. n8n handles Stripe natively — service was redundant.
+- **PT Monday Check-in (aBxCj48nGQVLRRnq)**: corrupted cron had `ls` output in it. Fixed to `0 14 * * 1` (Mon 9am ET). Now active.
+- **Self-Annealing Error Handler (Ob7kiVvCnmDHAfNW)**: was blocked from activation by Switch node typeVersion 3 incompatibility with n8n 2.4.8. Fixed by downgrading to typeVersion 1. Now active.
+- **SMS STOP compliance**: added STOPALL + END to SMS-Response-Handler-v2 (was: 4 keywords, now: all 6 required by CTIA/A2P).
+- **HVAC + Square Foot form integrations**: Google Sheet IDs wired into `execution/form_handler/business_config.py`. Form submissions now land correctly.
+- **journald**: vacuumed 2.4GB, capped at 500MB permanently.
+- **n8n memory**: added MemoryMax=700M/MemoryHigh=600M to n8n.service.
+
+### Infrastructure Built
+- `scripts/health_check.py`: one-command full system status (EC2 services, disk/memory, all 7 key n8n workflows, Clawdbot context%, .env keys, business links)
+- `scripts/daily_standup.sh`: morning routine — health check + digest preview + quick links
+- `docs/SYSTEM-STATE.md`: live source of truth for EC2, workflows, SMS compliance, known issues
+
+### Docs Cleanup
+- Moved SOPs 25-29 from `docs/` root → `docs/sops/` (all 33 SOPs now in one place)
+- Archived 54 stale docs → `docs/archive/legacy-docs-2026/`
+- Added CLAUDE.md hubs for 11 projects that were missing them
+- Removed: ghost projects (hub/, portfolio/, 5x product-ideas), broken symlinks
+
+### Key Learnings
+1. **n8n Switch node v3 incompatibility** — n8n 2.4.8 can't activate workflows with Switch typeVersion 3 using the `outputKey`/conditions block format. Fix: downgrade to typeVersion 1 (simple `dataType: string, value1, rules` format).
+2. **systemd StartLimitIntervalSec** must go in `[Unit]` section, not `[Service]`. Putting it in `[Service]` silently does nothing.
+3. **n8n API key** — now in `.env` as `N8N_API_KEY`. Don't hardcode. Fallback: `sqlite3 ~/.n8n/database.sqlite 'SELECT apiKey FROM user_api_keys LIMIT 1;'`
+4. **Clawdbot session recovery**: stop service → rename `.jsonl` → reset sessions.json to keep only `systemSent` + `skillsSnapshot` → restart.
+5. **cron expression corruption** — PT Monday Check-in had shell `ls` output injected into the cron field. Always verify workflow node parameters after bulk edits.
+
+---
+
 ## 2026-02-16: GitHub Profile Cleanup + Job Application Blitz (11 Tailored Resumes)
 
 **Context:** William pivoting to job search. Cleaned up GitHub profile for employer visibility, then tailored 11 resume+cover letter packages for specific job postings.

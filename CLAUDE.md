@@ -64,7 +64,7 @@
 | "New project" | `/new-project` SOP |
 | "Should we build X?" | Auto-launch SOP 17 (market viability, 4 agents) |
 | "How should we implement X?" | Auto-launch SOP 9 (architecture exploration, 3-4 agents) |
-| "Run morning digest" | `cd projects/shared/personal-assistant && python -m src.morning_digest --preview` |
+| "Run morning digest" | `python -m projects.shared.personal-assistant.src.morning_digest --preview` |
 | "Check leads" | `cd projects/shared/lead-scraper && python -m src.campaign_analytics report` |
 | "Continue from last session" | Check `docs/session-history.md` |
 | "Roll back" | `docs/sops/sop-07-rollback.md` |

@@ -180,6 +180,7 @@ def check_local_env():
     required_keys = [
         "ANTHROPIC_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN",
         "STRIPE_SECRET_KEY", "OPENAI_API_KEY", "GOOGLE_SHEETS_SPREADSHEET_ID",
+        "N8N_API_KEY",
     ]
     if env_path.exists():
         content = env_path.read_text()
