@@ -242,58 +242,43 @@ def check_local_env():
 
 def check_recent_executions():
     print(header("RECENT ACTIVITY"))
-    checks = [
-        ("aBxCj48nGQVLRRnq", "PT Monday Check-in"),
-        ("G14Mb6lpeFZVYGwa", "SMS Response Handler"),
-        ("hgInaJCLffLFBX1G", "Lead Magnet Capture"),
-        ("WHFIE3Ej7Y3SCtHk", "Website Lead Capture"),
-        ("Hz05R5SeJGb4VNCl", "Daily Operations Digest"),
-        ("Ob7kiVvCnmDHAfNW", "Self-Annealing Error Handler"),
-    ]
-    for wf_id, name in checks:
-        data = n8n_api(f"executions?workflowId={wf_id}&limit=1&status=success")
-        if not data:
-            print(f"  {warn(name)}: API unreachable")
-            continue
-        execs = data.get("data", [])
-        if not execs:
-            print(f"  {warn(name)}: no successful executions on record")
-            continue
-        started = execs[0].get("startedAt", "")
-        if started:
-            dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
-            ago = (datetime.now(timezone.utc) - dt).total_seconds()
-            if ago < 3600:
-                display = f"{int(ago / 60)}m ago"
-            elif ago < 86400:
-                display = f"{int(ago / 3600)}h ago"
-            else:
-                display = f"{int(ago / 86400)}d ago"
-            print(f"  {ok(name)}: last ran {display}")
-        else:
-            print(f"  {warn(name)}: no timestamp")
 
-    # Check for recent workflow errors across all workflows
-    print()
-    data = n8n_api("executions?status=error&limit=50")
-    if data:
-        errors = data.get("data", [])
-        cutoff = datetime.now(timezone.utc).timestamp() - 86400  # last 24h
-        recent_errors = []
-        for e in errors:
-            started = e.get("startedAt", "")
-            if started:
-                try:
-                    dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
-                    if dt.timestamp() > cutoff:
-                        recent_errors.append(e.get("workflowData", {}).get("name", "unknown"))
-                except Exception:
-                    pass
-        if recent_errors:
-            names = ", ".join(dict.fromkeys(recent_errors))  # deduplicated, order-preserved
-            print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {names[:80]}")
-        else:
-            print(f"  {ok('0 workflow errors in last 24h')}")
+    # Build workflow ID → name map for error display
+    wf_data = n8n_api("workflows?limit=200")
+    wf_names = {}
+    if wf_data:
+        wf_names = {w["id"]: w["name"] for w in wf_data.get("data", [])}
+
+    # Check for recent workflow errors across all workflows (last 24h)
+    # Note: n8n is configured to prune successful executions — only errors are stored
+    data = n8n_api("executions?status=error&limit=100")
+    if not data:
+        print(f"  {warn('n8n execution API unreachable')}")
+        return
+
+    errors = data.get("data", [])
+    cutoff = datetime.now(timezone.utc).timestamp() - 86400
+    recent_errors = []
+    for e in errors:
+        started = e.get("startedAt", "")
+        if started:
+            try:
+                dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
+                if dt.timestamp() > cutoff:
+                    wf_id = e.get("workflowId", "")
+                    recent_errors.append(wf_names.get(wf_id, wf_id))
+            except Exception:
+                pass
+
+    if recent_errors:
+        # Group by workflow name with counts
+        counts = {}
+        for name in recent_errors:
+            counts[name] = counts.get(name, 0) + 1
+        summary = ", ".join(f"{n} ×{c}" if c > 1 else n for n, c in counts.items())
+        print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {summary[:100]}")
+    else:
+        print(f"  {ok('0 workflow errors in last 24h')}")
 
 
 def main():
