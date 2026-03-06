@@ -220,3 +220,6 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | 5-field cronExpression in scheduleTrigger nodes | FIXED 2026-03-06 (session 4) | n8n scheduleTrigger (typeVersion 1.2) requires 6-field cron (seconds first). Fixed 6 workflows: X-Batch, X-Social-Scheduler (×2), PT-Monday-Checkin, Challenge-Day7, Monthly-Backup. All bounced and active. |
 | SQLite-patched workflows stale in n8n memory | FIXED 2026-03-06 (session 4) | All 8 workflows patched via SQLite in session 3 were bounced (deactivate/activate via API) to reload from DB. |
 | Mac has no autonomous health monitoring | FIXED 2026-03-06 (session 4) | Added launchd: daily health check (7am) + weekly revenue report (Mon 9am). Both loaded and registered. |
+| GitHub→Telegram stale Telegram credential | FIXED 2026-03-06 (session 7) | "Clawdbot Telegram" cred `RlAwU3xzcX4hifgj` had stale/encrypted token. Re-PATCHED via n8n API. Was causing 5 errors per push. |
+| health_check.py missing n8n restart + domain checks | FIXED 2026-03-06 (session 7) | Added n8n restart counter (warns >1, fails >3 restarts/24h) and external domain health (n8n, api, fitai — all 200). |
+| invoice.payment_failed unhandled | **Low** | No n8n workflow for Stripe payment failures. Acceptable with 0 paying clients — add when first subscriber onboards. |

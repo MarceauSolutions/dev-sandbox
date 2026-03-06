@@ -4,6 +4,34 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 7 (Post-Fix Audit + Health Check Hardening)
+
+**Context:** Seventh pass — verified session 6 commits, diagnosed post-fix workflow errors, hardened health_check.py.
+
+**Critical fixes:**
+- **GitHub→Telegram**: 5 errors on every push — "Clawdbot Telegram" n8n cred `RlAwU3xzcX4hifgj` had stale token. Re-PATCHED via n8n API. Token valid per Telegram API.
+- **health_check.py**: Added n8n restart counter (>3 restarts/24h = fail) + external domain health (n8n.marceausolutions.com, api, fitai — all 200 OK).
+
+**Root cause analysis of 10 pre-fix errors:**
+- All "empty execution data" errors are in `execution_data` table (separate from `execution_entity`). n8n serialized format (array with int refs) — look for string elements for error messages.
+- X-Batch: `Cannot read properties of undefined (reading 'disabled')` — pre-crash (16:00 < 17:42 restart). Auto-fixed by n8n reload from DB.
+- Challenge-Day7-Upsell: `Could not get parameter` from broken sheetName mode. Pre-fix (13:00 < 20:20 patch).
+- Webdev-Monthly-Checkin: `Credential 'RIFdaHtNYdTpFnlu' does not exist` — pre-fix (15:00 < 20:20 patch). Fix confirmed: nodes now reference `mywn8S0xjRx9YM9K`.
+- Nurture-Sequence-7Day: `No recipients defined` — test trigger with missing payload. Expected behavior.
+- "Could not find property option": n8n telemetry noise on workflow saves. Harmless.
+- n8n crash at 17:42 UTC: SIGTERM from our manual restart during session 4. Loaded all SQLite fixes from DB on restart.
+
+**Verified state:**
+- Google OAuth auto-refresh working, all 3 launchd jobs loaded, all 3 external domains 200 OK
+- Revenue tracking correct: `stripe.Charge.list()` captures both initial + recurring charges — no gap
+- `invoice.payment_failed` unhandled — documented as future work (0 clients currently)
+
+**Key Learnings:**
+21. **n8n execution data is in `execution_data` table**, not `execution_entity`. JSON array with int-keyed refs. Find strings for actual error messages.
+22. **n8n re-reads from DB on restart** — SQLite patches auto-apply after full service restart. No manual bounce needed post-restart.
+23. **"Could not find property option"** in n8n logs = telemetry noise on workflow saves. Not execution failures. Ignore.
+24. **Telegram bot token in n8n is encrypted** — use n8n credential PATCH API to update. Verify via `curl .../getMe` before patching.
+
 ## 2026-03-06: Company on a Laptop — Session 6 (External Integration Audit)
 
 **Context:** Sixth pass — audited all external integrations (Stripe, Twilio, domains).

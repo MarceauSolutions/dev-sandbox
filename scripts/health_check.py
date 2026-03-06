@@ -94,6 +94,16 @@ def check_ec2_services():
         else:
             print(f"  {fail(svc)}: {desc} [{status}]")
 
+    # Check n8n restart count in last 24h (unexpected restarts = instability)
+    out, _ = ssh("sudo journalctl -u n8n --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Started n8n.service'")
+    n8n_restarts = int(out.strip()) if out.strip().isdigit() else 0
+    if n8n_restarts <= 1:
+        print(f"  {ok('n8n stable')}: {n8n_restarts} restart(s) in 24h")
+    elif n8n_restarts <= 3:
+        print(f"  {warn('n8n restarted')}: {n8n_restarts} restart(s) in 24h")
+    else:
+        print(f"  {fail('n8n unstable')}: {n8n_restarts} restart(s) in 24h")
+
 
 def check_disk_memory():
     print(header("EC2 RESOURCES"))
@@ -125,6 +135,33 @@ def check_disk_memory():
     out, _ = ssh("sudo journalctl --disk-usage 2>/dev/null | grep 'take up'")
     if out:
         print(f"  Journal: {out.strip()}")
+
+
+def check_domains():
+    """Check that external-facing domains are reachable."""
+    print(header("EXTERNAL DOMAINS"))
+    domains = {
+        "n8n.marceausolutions.com": "n8n automation",
+        "api.marceausolutions.com": "Python bridge API",
+        "fitai.marceausolutions.com": "Fitness influencer platform",
+    }
+    import ssl
+    for domain, desc in domains.items():
+        try:
+            ctx = ssl.create_default_context()
+            ctx.check_hostname = False
+            ctx.verify_mode = ssl.CERT_NONE
+            url = f"https://{domain}"
+            req = urllib.request.Request(url, headers={"User-Agent": "HealthCheck/1.0"})
+            with urllib.request.urlopen(req, timeout=10, context=ctx) as r:
+                code = r.status
+                if code < 500:
+                    print(f"  {ok(domain)}: {desc} [{code}]")
+                else:
+                    print(f"  {fail(domain)}: {desc} [HTTP {code}]")
+        except Exception as e:
+            err = str(e)[:60]
+            print(f"  {fail(domain)}: {desc} [{err}]")
 
 
 def check_n8n():
@@ -294,6 +331,7 @@ def main():
     if not args.fast:
         check_ec2_services()
         check_disk_memory()
+        check_domains()
         check_n8n()
         check_clawdbot()
 
