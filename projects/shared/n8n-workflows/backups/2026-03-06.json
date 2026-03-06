@@ -9885,6 +9885,208 @@
       "tags": []
     },
     {
+      "updatedAt": "2026-03-06T21:25:59.132Z",
+      "createdAt": "2026-03-06T21:25:59.132Z",
+      "id": "QMWkhAb8SWMSImc4",
+      "name": "Stripe-Payment-Failed",
+      "active": true,
+      "isArchived": false,
+      "nodes": [
+        {
+          "id": "payment-failed-webhook",
+          "name": "Stripe Payment Failed",
+          "type": "n8n-nodes-base.webhook",
+          "position": [
+            250,
+            300
+          ],
+          "typeVersion": 2,
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "stripe-payment-failed",
+            "authentication": "none",
+            "responseMode": "onReceived",
+            "responseData": "noData",
+            "options": {}
+          },
+          "webhookId": "stripe-payment-failed"
+        },
+        {
+          "id": "extract-data",
+          "name": "Extract Payment Data",
+          "type": "n8n-nodes-base.code",
+          "position": [
+            500,
+            300
+          ],
+          "typeVersion": 2,
+          "parameters": {
+            "jsCode": "const event = $input.first().json;\nconst invoice = event.data?.object || {};\nconst customer_email = invoice.customer_email || invoice.customer || 'unknown';\nconst amount = ((invoice.amount_due || 0) / 100).toFixed(2);\nconst currency = (invoice.currency || 'usd').toUpperCase();\nconst failure_reason = invoice.last_payment_error?.message || 'Card declined';\nconst invoice_url = invoice.hosted_invoice_url || '';\nconst invoice_id = invoice.id || 'unknown';\n\nreturn [{ json: { customer_email, amount, currency, failure_reason, invoice_url, invoice_id } }];"
+          }
+        },
+        {
+          "id": "alert-telegram",
+          "name": "Alert William \u2014 Payment Failed",
+          "type": "n8n-nodes-base.telegram",
+          "position": [
+            750,
+            300
+          ],
+          "typeVersion": 1.2,
+          "parameters": {
+            "resource": "message",
+            "operation": "sendMessage",
+            "chatId": "5692454753",
+            "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nAction: Contact customer to update payment method.",
+            "additionalFields": {}
+          },
+          "credentials": {
+            "telegramApi": {
+              "id": "RlAwU3xzcX4hifgj",
+              "name": "Clawdbot Telegram"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Stripe Payment Failed": {
+          "main": [
+            [
+              {
+                "node": "Extract Payment Data",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Extract Payment Data": {
+          "main": [
+            [
+              {
+                "node": "Alert William \u2014 Payment Failed",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "settings": {
+        "executionOrder": "v1",
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW",
+        "callerPolicy": "workflowsFromSameOwner",
+        "availableInMCP": false
+      },
+      "staticData": null,
+      "meta": null,
+      "pinData": null,
+      "versionId": "9581c35c-b387-46dc-9565-eb664361281b",
+      "activeVersionId": "9581c35c-b387-46dc-9565-eb664361281b",
+      "triggerCount": 1,
+      "shared": [
+        {
+          "updatedAt": "2026-03-06T21:25:59.141Z",
+          "createdAt": "2026-03-06T21:25:59.141Z",
+          "role": "workflow:owner",
+          "workflowId": "QMWkhAb8SWMSImc4",
+          "projectId": "K0tuXr7ScEf3VOi6"
+        }
+      ],
+      "activeVersion": {
+        "updatedAt": "2026-03-06T21:25:59.150Z",
+        "createdAt": "2026-03-06T21:25:59.150Z",
+        "versionId": "9581c35c-b387-46dc-9565-eb664361281b",
+        "workflowId": "QMWkhAb8SWMSImc4",
+        "nodes": [
+          {
+            "id": "payment-failed-webhook",
+            "name": "Stripe Payment Failed",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+              250,
+              300
+            ],
+            "typeVersion": 2,
+            "parameters": {
+              "httpMethod": "POST",
+              "path": "stripe-payment-failed",
+              "authentication": "none",
+              "responseMode": "onReceived",
+              "responseData": "noData",
+              "options": {}
+            },
+            "webhookId": "stripe-payment-failed"
+          },
+          {
+            "id": "extract-data",
+            "name": "Extract Payment Data",
+            "type": "n8n-nodes-base.code",
+            "position": [
+              500,
+              300
+            ],
+            "typeVersion": 2,
+            "parameters": {
+              "jsCode": "const event = $input.first().json;\nconst invoice = event.data?.object || {};\nconst customer_email = invoice.customer_email || invoice.customer || 'unknown';\nconst amount = ((invoice.amount_due || 0) / 100).toFixed(2);\nconst currency = (invoice.currency || 'usd').toUpperCase();\nconst failure_reason = invoice.last_payment_error?.message || 'Card declined';\nconst invoice_url = invoice.hosted_invoice_url || '';\nconst invoice_id = invoice.id || 'unknown';\n\nreturn [{ json: { customer_email, amount, currency, failure_reason, invoice_url, invoice_id } }];"
+            }
+          },
+          {
+            "id": "alert-telegram",
+            "name": "Alert William \u2014 Payment Failed",
+            "type": "n8n-nodes-base.telegram",
+            "position": [
+              750,
+              300
+            ],
+            "typeVersion": 1.2,
+            "parameters": {
+              "resource": "message",
+              "operation": "sendMessage",
+              "chatId": "5692454753",
+              "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nAction: Contact customer to update payment method.",
+              "additionalFields": {}
+            },
+            "credentials": {
+              "telegramApi": {
+                "id": "RlAwU3xzcX4hifgj",
+                "name": "Clawdbot Telegram"
+              }
+            }
+          }
+        ],
+        "connections": {
+          "Stripe Payment Failed": {
+            "main": [
+              [
+                {
+                  "node": "Extract Payment Data",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Extract Payment Data": {
+            "main": [
+              [
+                {
+                  "node": "Alert William \u2014 Payment Failed",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "William Marceau",
+        "name": null,
+        "description": null,
+        "autosaved": false
+      },
+      "tags": []
+    },
+    {
       "updatedAt": "2026-03-05T15:12:46.987Z",
       "createdAt": "2026-03-05T04:01:40.231Z",
       "id": "QhDtNagsZFUrKFsG",
@@ -24166,6 +24368,300 @@
               [
                 {
                   "node": "Day 30 Win-Back SMS",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "William Marceau",
+        "name": null,
+        "description": null,
+        "autosaved": false
+      },
+      "tags": []
+    },
+    {
+      "updatedAt": "2026-03-06T21:39:49.528Z",
+      "createdAt": "2026-03-06T21:35:49.317Z",
+      "id": "unF3M3IfnGPqV0xU",
+      "name": "Stripe-Invoice-Paid",
+      "active": true,
+      "isArchived": false,
+      "nodes": [
+        {
+          "id": "invoice-paid-webhook",
+          "name": "Stripe Invoice Paid",
+          "type": "n8n-nodes-base.webhook",
+          "position": [
+            250,
+            300
+          ],
+          "typeVersion": 2,
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "stripe-invoice-paid",
+            "authentication": "none",
+            "responseMode": "onReceived",
+            "responseData": "noData",
+            "options": {}
+          },
+          "webhookId": "stripe-invoice-paid"
+        },
+        {
+          "id": "extract-invoice-data",
+          "name": "Extract Invoice Data",
+          "type": "n8n-nodes-base.code",
+          "position": [
+            500,
+            300
+          ],
+          "typeVersion": 2,
+          "parameters": {
+            "jsCode": "const event = $input.first().json;\nconst invoice = event.data?.object || {};\n\n// Only process subscription renewals (not initial payments \u2014 those are handled by checkout.session.completed)\nconst billing_reason = invoice.billing_reason || '';\nif (billing_reason !== 'subscription_cycle') {\n  return [];\n}\n\nconst customer_email = invoice.customer_email || invoice.customer || 'unknown';\nconst amount = ((invoice.amount_paid || 0) / 100).toFixed(2);\nconst currency = (invoice.currency || 'usd').toUpperCase();\nconst invoice_id = invoice.id || 'unknown';\nconst subscription_id = invoice.subscription || 'unknown';\nconst period_start = invoice.period_start ? new Date(invoice.period_start * 1000).toISOString().split('T')[0] : '';\nconst period_end = invoice.period_end ? new Date(invoice.period_end * 1000).toISOString().split('T')[0] : '';\nconst paid_at = new Date().toISOString().split('T')[0];\n\nreturn [{ json: { customer_email, amount, currency, invoice_id, subscription_id, period_start, period_end, paid_at } }];"
+          }
+        },
+        {
+          "id": "log-to-sheets",
+          "name": "Log Renewal to Sheets",
+          "type": "n8n-nodes-base.googleSheets",
+          "position": [
+            750,
+            200
+          ],
+          "typeVersion": 4.4,
+          "parameters": {
+            "resource": "sheet",
+            "operation": "append",
+            "documentId": {
+              "__rl": true,
+              "value": "1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA",
+              "mode": "id"
+            },
+            "sheetName": {
+              "__rl": true,
+              "value": "Billing",
+              "mode": "name"
+            },
+            "columns": {
+              "mappingMode": "defineBelow",
+              "value": {
+                "Date": "={{ $json.paid_at }}",
+                "Client_Name": "={{ $json.customer_email }}",
+                "Amount": "={{ $json.amount }}",
+                "Status": "Renewal",
+                "Stripe_Payment_ID": "={{ $json.invoice_id }}"
+              }
+            },
+            "options": {}
+          },
+          "credentials": {
+            "googleSheetsOAuth2Api": {
+              "id": "mywn8S0xjRx9YM9K",
+              "name": "Google Sheets account 4"
+            }
+          }
+        },
+        {
+          "id": "notify-telegram",
+          "name": "Notify William \u2014 Renewal",
+          "type": "n8n-nodes-base.telegram",
+          "position": [
+            750,
+            400
+          ],
+          "typeVersion": 1.2,
+          "parameters": {
+            "resource": "message",
+            "operation": "sendMessage",
+            "chatId": "5692454753",
+            "text": "\u2705 SUBSCRIPTION RENEWED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nPeriod: {{ $json.period_start }} \u2192 {{ $json.period_end }}\n\nRevenue logged to PT Client Tracker.",
+            "additionalFields": {}
+          },
+          "credentials": {
+            "telegramApi": {
+              "id": "RlAwU3xzcX4hifgj",
+              "name": "Clawdbot Telegram"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Stripe Invoice Paid": {
+          "main": [
+            [
+              {
+                "node": "Extract Invoice Data",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Extract Invoice Data": {
+          "main": [
+            [
+              {
+                "node": "Log Renewal to Sheets",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Notify William \u2014 Renewal",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "settings": {
+        "executionOrder": "v1",
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW",
+        "callerPolicy": "workflowsFromSameOwner",
+        "availableInMCP": false
+      },
+      "staticData": {},
+      "meta": null,
+      "pinData": null,
+      "versionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
+      "activeVersionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
+      "triggerCount": 1,
+      "shared": [
+        {
+          "updatedAt": "2026-03-06T21:35:49.320Z",
+          "createdAt": "2026-03-06T21:35:49.320Z",
+          "role": "workflow:owner",
+          "workflowId": "unF3M3IfnGPqV0xU",
+          "projectId": "K0tuXr7ScEf3VOi6"
+        }
+      ],
+      "activeVersion": {
+        "updatedAt": "2026-03-06T21:39:49.529Z",
+        "createdAt": "2026-03-06T21:39:49.529Z",
+        "versionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
+        "workflowId": "unF3M3IfnGPqV0xU",
+        "nodes": [
+          {
+            "id": "invoice-paid-webhook",
+            "name": "Stripe Invoice Paid",
+            "type": "n8n-nodes-base.webhook",
+            "position": [
+              250,
+              300
+            ],
+            "typeVersion": 2,
+            "parameters": {
+              "httpMethod": "POST",
+              "path": "stripe-invoice-paid",
+              "authentication": "none",
+              "responseMode": "onReceived",
+              "responseData": "noData",
+              "options": {}
+            },
+            "webhookId": "stripe-invoice-paid"
+          },
+          {
+            "id": "extract-invoice-data",
+            "name": "Extract Invoice Data",
+            "type": "n8n-nodes-base.code",
+            "position": [
+              500,
+              300
+            ],
+            "typeVersion": 2,
+            "parameters": {
+              "jsCode": "const event = $input.first().json;\nconst invoice = event.data?.object || {};\n\n// Only process subscription renewals (not initial payments \u2014 those are handled by checkout.session.completed)\nconst billing_reason = invoice.billing_reason || '';\nif (billing_reason !== 'subscription_cycle') {\n  return [];\n}\n\nconst customer_email = invoice.customer_email || invoice.customer || 'unknown';\nconst amount = ((invoice.amount_paid || 0) / 100).toFixed(2);\nconst currency = (invoice.currency || 'usd').toUpperCase();\nconst invoice_id = invoice.id || 'unknown';\nconst subscription_id = invoice.subscription || 'unknown';\nconst period_start = invoice.period_start ? new Date(invoice.period_start * 1000).toISOString().split('T')[0] : '';\nconst period_end = invoice.period_end ? new Date(invoice.period_end * 1000).toISOString().split('T')[0] : '';\nconst paid_at = new Date().toISOString().split('T')[0];\n\nreturn [{ json: { customer_email, amount, currency, invoice_id, subscription_id, period_start, period_end, paid_at } }];"
+            }
+          },
+          {
+            "id": "log-to-sheets",
+            "name": "Log Renewal to Sheets",
+            "type": "n8n-nodes-base.googleSheets",
+            "position": [
+              750,
+              200
+            ],
+            "typeVersion": 4.4,
+            "parameters": {
+              "resource": "sheet",
+              "operation": "append",
+              "documentId": {
+                "__rl": true,
+                "value": "1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA",
+                "mode": "id"
+              },
+              "sheetName": {
+                "__rl": true,
+                "value": "Billing",
+                "mode": "name"
+              },
+              "columns": {
+                "mappingMode": "defineBelow",
+                "value": {
+                  "Date": "={{ $json.paid_at }}",
+                  "Client_Name": "={{ $json.customer_email }}",
+                  "Amount": "={{ $json.amount }}",
+                  "Status": "Renewal",
+                  "Stripe_Payment_ID": "={{ $json.invoice_id }}"
+                }
+              },
+              "options": {}
+            },
+            "credentials": {
+              "googleSheetsOAuth2Api": {
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
+              }
+            }
+          },
+          {
+            "id": "notify-telegram",
+            "name": "Notify William \u2014 Renewal",
+            "type": "n8n-nodes-base.telegram",
+            "position": [
+              750,
+              400
+            ],
+            "typeVersion": 1.2,
+            "parameters": {
+              "resource": "message",
+              "operation": "sendMessage",
+              "chatId": "5692454753",
+              "text": "\u2705 SUBSCRIPTION RENEWED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nPeriod: {{ $json.period_start }} \u2192 {{ $json.period_end }}\n\nRevenue logged to PT Client Tracker.",
+              "additionalFields": {}
+            },
+            "credentials": {
+              "telegramApi": {
+                "id": "RlAwU3xzcX4hifgj",
+                "name": "Clawdbot Telegram"
+              }
+            }
+          }
+        ],
+        "connections": {
+          "Stripe Invoice Paid": {
+            "main": [
+              [
+                {
+                  "node": "Extract Invoice Data",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Extract Invoice Data": {
+            "main": [
+              [
+                {
+                  "node": "Log Renewal to Sheets",
+                  "type": "main",
+                  "index": 0
+                },
+                {
+                  "node": "Notify William \u2014 Renewal",
                   "type": "main",
                   "index": 0
                 }
