@@ -183,9 +183,16 @@
 | +1 239-766-6129 | HVAC client | n8n sms-response |
 Voice: all → `https://api.marceausolutions.com/twilio/voice` (POST 200 OK)
 
+### Client Websites (Domain Monitoring)
+| Domain | Status | Client |
+|--------|--------|--------|
+| `swfloridacomfort.com` | HTTP 200 ✓ | SW Florida Comfort HVAC |
+| `www.boabfit.com` | HTTP 200 ✓ (301 from apex) | BoabFit |
+| `flamesofpassionentertainment.com` | DNS not configured | Flames of Passion (client-blocked) |
+
 ### n8n Webhook Domain
 - `https://n8n.marceausolutions.com` — public-facing, HTTP 200 ✓
-- 27 registered webhooks, 0 orphans (cleaned 2026-03-06)
+- 29 registered webhooks (added stripe-invoice-paid, stripe-payment-failed)
 
 ---
 
