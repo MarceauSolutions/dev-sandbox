@@ -27,7 +27,7 @@ python scripts/revenue-report.py 2>&1 || echo "  (revenue data unavailable)"
 echo ""
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 echo -e "${BOLD}[3/5] MORNING DIGEST (preview — no email sent)${RESET}"
-python -m projects.shared.personal-assistant.src.morning_digest --preview 2>&1 || echo "  (digest unavailable)"
+(cd projects/shared/personal-assistant && python -m src.morning_digest --preview 2>&1) || echo "  (digest unavailable)"
 
 echo ""
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
