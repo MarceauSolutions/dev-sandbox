@@ -172,7 +172,7 @@
 | `/webhook/stripe-webdev-payment` | checkout.session.completed | WebDev client onboard | — |
 | `/webhook/stripe-cancellation` | customer.subscription.deleted | Coaching offboard | — |
 | `/webhook/stripe-digital-delivery` | checkout.session.completed | Digital product delivery | — |
-| `/webhook/stripe-payment-failed` | invoice.payment_failed | Telegram alert to William | `we_1T85t0DeeD1eRvzzjpNKpvGA` |
+| `/webhook/stripe-payment-failed` | invoice.payment_failed | Lookup phone → SMS client + Telegram to William | `we_1T85t0DeeD1eRvzzjpNKpvGA` |
 | `/webhook/stripe-invoice-paid` | invoice.paid | Log renewal to PT Tracker + Telegram | `we_1T862eDeeD1eRvzzdYkDJUzb` |
 
 ### Twilio Inbound SMS (all → `sms-response`)
@@ -239,6 +239,7 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | invoice.payment_failed unhandled | FIXED 2026-03-06 (session 7b) | Created `Stripe-Payment-Failed` workflow (`QMWkhAb8SWMSImc4`). Stripe webhook `we_1T85t0DeeD1eRvzzjpNKpvGA` registered. Payment failures now trigger Telegram alert to William. |
 | flamesofpassionentertainment.com DNS not configured | **Client-blocked** | Domain on Google Cloud DNS (ns-cloud-c1-c4.googledomains.com). No A records pointing to GitHub Pages. Client or William must add A records: 185.199.108-111.153. GitHub Pages site is live at `marceausolutions.github.io/flames-of-passion-website`. |
 | 7 workflows not wired to Self-Annealing | FIXED 2026-03-06 (session 7) | Wired 7 remaining workflows (nurture sequences ×4, Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator). Now 34/36 active workflows wired. Only Self-Annealing + n8n-Health-Check excluded intentionally. |
+| Stripe-Payment-Failed no client notification | FIXED 2026-03-06 (session 8) | Updated workflow to: lookup client phone in PT Tracker → SMS client to update payment method → Telegram alert to William. Fully automated payment failure response. |
 | invoice.paid unhandled (subscription renewals) | FIXED 2026-03-06 (session 8) | Created `Stripe-Invoice-Paid` (`unF3M3IfnGPqV0xU`). Stripe webhook `we_1T862eDeeD1eRvzzdYkDJUzb` registered. Renewals now log to PT Tracker "Billing" tab + Telegram. Column mapping aligned with Coaching-Payment-Welcome (Date, Client_Name, Amount, Status=Renewal, Stripe_Payment_ID). |
 | health_check.py missing Stripe webhook verification | FIXED 2026-03-06 (session 8) | Added `check_stripe_webhooks()` — verifies all 6 Stripe webhooks are registered and enabled in Stripe. Fires as part of full health check. |
 | boabfit.com not in domain monitoring | FIXED 2026-03-06 (session 8) | Added `www.boabfit.com` to `check_domains()` in health_check.py. Live at 200. |
