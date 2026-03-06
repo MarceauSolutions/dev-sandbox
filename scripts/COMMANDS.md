@@ -287,7 +287,7 @@ python scripts/inventory.py list
 | Command | Path | Description |
 |---------|------|-------------|
 | `./scripts/daily_standup.sh` | `scripts/daily_standup.sh` | Morning routine: health + revenue + digest + API balances + links (5 sections) |
-| `python scripts/health_check.py` | `scripts/health_check.py` | Full system health check (EC2, n8n, disk, clawdbot, .env, errors). Exit 1 on failure. |
+| `python scripts/health_check.py` | `scripts/health_check.py` | Full system health check (EC2, n8n, disk, clawdbot, .env, errors). Exit 1 + Telegram alert on failure. |
 | `python scripts/health_check.py --fast` | `scripts/health_check.py` | Local-only health check (skips SSH) |
 | `python scripts/backup-n8n.py` | `scripts/backup-n8n.py` | Export ALL n8n workflows to dated JSON (launchd runs Sun 4am) |
 | `python scripts/backup-n8n.py --list` | `scripts/backup-n8n.py` | List all n8n workflows with IDs (no backup written) |

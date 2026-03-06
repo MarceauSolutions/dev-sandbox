@@ -4,6 +4,28 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Final Deep Audit (Session 3)
+
+**Context:** Third "make it better" pass — exhaustive audit of every active workflow, credential, cron, and error handler.
+
+**Accomplished:**
+- Deleted 9 dead inactive workflows (49→40 total) — old orchestrators, Naples RE, WhatsApp, MyAIagent, etc.
+- Deactivated Hot-Lead-to-ClickUp (ClickUp not in stack)
+- Deep credential scan: fixed Follow-Up-Sequence-Engine (4 creds), Resume-Builder email, Daily-Ops-Digest (4 creds)
+- Cron corruption scan: found and fixed Daily-Operations-Digest (was NEVER running — ls-injection bug + no credentials)
+- Wired 21 more workflows to Self-Annealing error handler (now 27/35 covered)
+- Added Telegram alert to health_check.py — fires when critical failures detected
+- Gitignored provider-status.json (runtime file was causing spurious "uncommitted" warnings)
+- Cleaned EC2: old SQLite backups (34MB), /tmp/jiti (15MB), inject scripts, journal vacuum (179MB)
+- GitHub→Telegram verified working end-to-end on 2 consecutive pushes
+- SYSTEM-STATE.md fully updated with all fixes, correct counts, new items
+
+**Key Learnings:**
+9. Cron corruption pattern (`ls` injection) can silently affect multiple workflows — always scan ALL schedule nodes after any cron edit.
+10. "Active" in n8n ≠ "working" — a workflow can be active with no credentials, broken connections, or corrupt crons, and never error until triggered.
+11. The `errorWorkflow` setting is in the `settings` JSON column in SQLite `workflow_entity`, not in `nodes`. Set to error handler workflow ID.
+12. Clawdbot `model` field — NOT configurable via `clawdbot.json` (top-level key is invalid per schema). Model determined by auth profile.
+
 ## 2026-03-06: Company on a Laptop — Continued Tightening (Iterations 2-N)
 
 **Context:** Continued from full system optimization. Each iteration asked "make it better" — closed remaining operational gaps.
