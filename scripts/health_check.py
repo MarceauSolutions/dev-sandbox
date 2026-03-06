@@ -31,6 +31,8 @@ except ImportError:
 EC2_HOST = os.getenv("EC2_HOST", "34.193.98.97")
 EC2_KEY = os.path.expanduser(os.getenv("EC2_KEY_PATH", "~/.ssh/marceau-ec2-key.pem"))
 N8N_API_KEY = os.getenv("N8N_API_KEY", "")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "5692454753")
 
 GREEN = "\033[32m"
 RED = "\033[31m"
@@ -305,10 +307,34 @@ def main():
     if FAILURES:
         print(f"  {RED}✗{RESET} {len(FAILURES)} critical failure(s): {', '.join(FAILURES[:3])}")
         print(f"{'━' * 50}\n")
+        _send_telegram_alert(FAILURES)
         sys.exit(1)
     else:
         print(f"  {ok('All systems healthy')}")
         print(f"{'━' * 50}\n")
+
+
+def _send_telegram_alert(failures):
+    """Send Telegram alert when health check finds critical failures."""
+    import ssl
+    token = TELEGRAM_BOT_TOKEN or os.getenv("TELEGRAM_BOT_TOKEN", "")
+    if not token:
+        return  # No token configured, skip silently
+    msg = f"⚠️ Health Check Alert — {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+    msg += "\n".join(f"• {f}" for f in failures[:5])
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=json.dumps({"chat_id": TELEGRAM_CHAT_ID, "text": msg}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        urllib.request.urlopen(req, timeout=5, context=ctx)
+    except Exception:
+        pass  # Never let alerting break the health check
 
 
 if __name__ == "__main__":
