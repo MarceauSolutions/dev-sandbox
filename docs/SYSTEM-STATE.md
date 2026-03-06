@@ -194,7 +194,7 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 ## Known Issues / Open Items
 | Item | Priority | Notes |
 |------|----------|-------|
-| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (40 workflows, post all fixes). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
+| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 21:20 (40 workflows, post all session 7 fixes including Self-Annealing wiring). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
 | Stripe: legacy `webhooks.marceausolutions.com` endpoint | FIXED 2026-03-06 (session 6) | Was returning 404 but still registered in Stripe — removed. Added missing `stripe-webdev-payment` endpoint. All 4 Stripe webhooks now point to n8n. |
 | Twilio SMS webhook empty on local PT + HVAC numbers | FIXED 2026-03-06 (session 6) | +12398803365 and +12397666129 had no SMS webhook — inbound texts dropped. Set to `sms-response` handler. |
 | `lead_manager.py:760` | Low | TODO: email notification on CRM stage transitions |
