@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 8).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 9).
 
 ---
 
@@ -243,3 +243,5 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | invoice.paid unhandled (subscription renewals) | FIXED 2026-03-06 (session 8) | Created `Stripe-Invoice-Paid` (`unF3M3IfnGPqV0xU`). Stripe webhook `we_1T862eDeeD1eRvzzdYkDJUzb` registered. Renewals now log to PT Tracker "Billing" tab + Telegram. Column mapping aligned with Coaching-Payment-Welcome (Date, Client_Name, Amount, Status=Renewal, Stripe_Payment_ID). |
 | health_check.py missing Stripe webhook verification | FIXED 2026-03-06 (session 8) | Added `check_stripe_webhooks()` — verifies all 6 Stripe webhooks are registered and enabled in Stripe. Fires as part of full health check. |
 | boabfit.com not in domain monitoring | FIXED 2026-03-06 (session 8) | Added `www.boabfit.com` to `check_domains()` in health_check.py. Live at 200. |
+| health_check.py key-only AI API checks | FIXED 2026-03-06 (session 9) | Added `check_ai_apis()` — live validation of Anthropic (GET /v1/models, zero token cost) and ElevenLabs (character quota). Fires before Stripe webhooks check. Both keys valid as of session 9. |
+| revenue-report.py missing top-client breakdown | FIXED 2026-03-06 (session 9) | Added "Top Clients by Revenue" section (top 5 by total_charged). Uses existing `by_customer` dict from `get_stripe_metrics()`. |

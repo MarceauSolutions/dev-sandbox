@@ -327,6 +327,69 @@ def check_local_env():
         pass
 
 
+def check_ai_apis():
+    """Validate critical AI API keys are working (not just present)."""
+    print(header("AI API STATUS"))
+    import ssl
+
+    def ssl_ctx():
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
+
+    # Anthropic — GET /v1/models (no token cost)
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "")
+    if not anthropic_key:
+        print(f"  {fail('Anthropic: key missing')}")
+    else:
+        try:
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/models",
+                headers={"x-api-key": anthropic_key, "anthropic-version": "2023-06-01"}
+            )
+            resp = urllib.request.urlopen(req, timeout=8, context=ssl_ctx())
+            print(f"  {ok('Anthropic: key valid')}")
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                print(f"  {fail('Anthropic: invalid key (401)')}")
+            elif e.code == 429:
+                print(f"  {warn('Anthropic: rate limited (429)')}")
+            else:
+                print(f"  {warn(f'Anthropic: HTTP {e.code}')}")
+        except Exception as e:
+            print(f"  {warn(f'Anthropic: check failed ({str(e)[:40]})')}")
+
+    # ElevenLabs — GET /v1/user/subscription (character quota)
+    el_key = os.getenv("ELEVENLABS_API_KEY", "")
+    if not el_key:
+        print(f"  {warn('ElevenLabs: key missing')}")
+    else:
+        try:
+            req = urllib.request.Request(
+                "https://api.elevenlabs.io/v1/user/subscription",
+                headers={"xi-api-key": el_key}
+            )
+            resp = urllib.request.urlopen(req, timeout=8, context=ssl_ctx())
+            data = json.loads(resp.read())
+            used = data.get("character_count", 0)
+            limit = data.get("character_limit", 0)
+            pct = (used / limit * 100) if limit > 0 else 0
+            if pct > 95:
+                print(f"  {fail(f'ElevenLabs: {used:,}/{limit:,} chars ({pct:.0f}% — EXHAUSTED)')}")
+            elif pct > 80:
+                print(f"  {warn(f'ElevenLabs: {used:,}/{limit:,} chars ({pct:.0f}% — low)')}")
+            else:
+                print(f"  {ok(f'ElevenLabs: {used:,}/{limit:,} chars ({pct:.0f}% used)')}")
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                print(f"  {fail('ElevenLabs: invalid key (401)')}")
+            else:
+                print(f"  {warn(f'ElevenLabs: HTTP {e.code}')}")
+        except Exception as e:
+            print(f"  {warn(f'ElevenLabs: check failed ({str(e)[:40]})')}")
+
+
 def check_stripe_webhooks():
     """Verify all expected Stripe webhooks are registered and enabled."""
     print(header("STRIPE WEBHOOKS"))
@@ -439,6 +502,7 @@ def main():
         check_domains()
         check_n8n()
         check_clawdbot()
+        check_ai_apis()
         check_stripe_webhooks()
 
     check_local_env()
