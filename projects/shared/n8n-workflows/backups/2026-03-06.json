@@ -995,7 +995,8 @@
         "executionOrder": "v1",
         "timezone": "America/New_York",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:1st of Month 3 AM ET": {
@@ -1816,7 +1817,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -2317,7 +2319,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -2718,7 +2721,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -3337,7 +3341,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:Weekday Post Schedule": {
@@ -4027,7 +4032,8 @@
         "saveDataErrorExecution": "all",
         "saveDataSuccessExecution": "all",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -4587,7 +4593,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:Daily 6 AM": {
@@ -7708,7 +7715,8 @@
         "availableInMCP": false,
         "saveDataErrorExecution": "all",
         "saveDataSuccessExecution": "all",
-        "saveExecutionProgress": true
+        "saveExecutionProgress": true,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -7970,7 +7978,8 @@
         "executionOrder": "v1",
         "timezone": "America/New_York",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:Monday 7 AM ET": {
@@ -10532,7 +10541,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -11210,7 +11220,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -12216,7 +12227,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -13325,7 +13337,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:Every Morning 8am": {
@@ -14177,7 +14190,8 @@
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
         "availableInMCP": false,
-        "timezone": "America/New_York"
+        "timezone": "America/New_York",
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -17562,7 +17576,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -18077,7 +18092,8 @@
         "saveDataErrorExecution": "all",
         "saveDataSuccessExecution": "all",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -18640,7 +18656,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -19167,7 +19184,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -20052,7 +20070,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {
         "node:Stripe Payment": {}
@@ -20392,7 +20411,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -24267,7 +24287,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
