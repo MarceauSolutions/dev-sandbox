@@ -15,7 +15,7 @@ import json
 import subprocess
 import argparse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -39,8 +39,12 @@ BOLD = "\033[1m"
 RESET = "\033[0m"
 GOLD = "\033[33m"
 
+FAILURES = []
+
 def ok(msg): return f"{GREEN}✓{RESET} {msg}"
-def fail(msg): return f"{RED}✗{RESET} {msg}"
+def fail(msg):
+    FAILURES.append(msg)
+    return f"{RED}✗{RESET} {msg}"
 def warn(msg): return f"{YELLOW}⚠{RESET} {msg}"
 def header(msg): return f"\n{BOLD}{GOLD}{'━' * 50}{RESET}\n{BOLD}  {msg}{RESET}\n{'━' * 50}"
 
@@ -98,15 +102,23 @@ def check_disk_memory():
             parts = lines[0].split()
             if len(parts) >= 5:
                 used_pct = int(parts[4].replace("%", ""))
-                color = RED if used_pct > 85 else YELLOW if used_pct > 75 else GREEN
-                print(f"  Disk: {color}{parts[2]}/{parts[1]} ({parts[4]}){RESET}")
+                label = f"Disk: {parts[2]}/{parts[1]} ({parts[4]})"
+                if used_pct > 85:
+                    print(f"  {fail(label)}")
+                else:
+                    color = YELLOW if used_pct > 75 else GREEN
+                    print(f"  {color}{label}{RESET}")
         if len(lines) > 1:
             mem = lines[1].split()
             if len(mem) >= 3:
                 total, used = int(mem[1]), int(mem[2])
                 pct = int(used / total * 100)
-                color = RED if pct > 80 else YELLOW if pct > 65 else GREEN
-                print(f"  Memory: {color}{used}M/{total}M ({pct}%){RESET}")
+                label = f"Memory: {used}M/{total}M ({pct}%)"
+                if pct > 80:
+                    print(f"  {fail(label)}")
+                else:
+                    color = YELLOW if pct > 65 else GREEN
+                    print(f"  {color}{label}{RESET}")
 
     out, _ = ssh("sudo journalctl --disk-usage 2>/dev/null | grep 'take up'")
     if out:
@@ -126,15 +138,26 @@ def check_n8n():
 
     print(f"  {ok(f'{len(active)} active workflows')}  |  {len(inactive)} inactive")
 
-    # Check key workflows
+    # Check key workflows — infrastructure + revenue-critical business workflows
     key_workflows = {
-        "1wS9VvXIt95BrR9V": "PT Payment Welcome",
-        "aBxCj48nGQVLRRnq": "PT Monday Check-in",
-        "5GXwor2hHuij614l": "WebDev Payment Welcome",
-        "G14Mb6lpeFZVYGwa": "SMS Response Handler",
+        # Infrastructure
+        "Ob7kiVvCnmDHAfNW": "Self-Annealing Error Handler",
         "QhDtNagsZFUrKFsG": "n8n Health Check",
         "BsoplLFe1brLCBof": "GitHub → Telegram",
-        "Ob7kiVvCnmDHAfNW": "Self-Annealing Error Handler",
+        "Hz05R5SeJGb4VNCl": "Daily Operations Digest",
+        # PT Coaching
+        "1wS9VvXIt95BrR9V": "PT Payment Welcome",
+        "aBxCj48nGQVLRRnq": "PT Monday Check-in",
+        "uKjqRexDIheaDJJH": "PT Cancellation Exit",
+        "89XxmBQMEej15nak": "Fitness SMS Outreach",
+        # Lead capture
+        "hgInaJCLffLFBX1G": "Lead Magnet Capture",
+        "WHFIE3Ej7Y3SCtHk": "Website Lead Capture",
+        # Web Dev
+        "5GXwor2hHuij614l": "WebDev Payment Welcome",
+        "N8HIFsZdE5Go7Lky": "WebDev Monthly Checkin",
+        # SMS
+        "G14Mb6lpeFZVYGwa": "SMS Response Handler",
     }
     wf_map = {w["id"]: w for w in workflows}
     print()
@@ -188,7 +211,7 @@ def check_local_env():
             if key + "=" in content and f"{key}=\n" not in content:
                 print(f"  {ok(key)}")
             else:
-                print(f"  {warn(key)}: missing or empty")
+                print(f"  {fail(key)}: missing or empty")
     else:
         print(f"  {fail('.env not found')}")
 
@@ -205,23 +228,38 @@ def check_local_env():
         pass
 
 
-def check_business_ops():
-    print(header("BUSINESS OPERATIONS"))
-
-    # PT Coaching
-    print(f"  PT Coaching:")
-    print(f"    Stripe: https://dashboard.stripe.com/customers")
-    print(f"    Tracker: https://docs.google.com/spreadsheets/d/1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA")
-    print(f"    Calendly: https://calendly.com/wmarceau/30min")
-
-    # Web Dev
-    print(f"  Web Dev:")
-    print(f"    Client Tracker: https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q")
-
-    # Client lead sheets
-    print(f"  Lead Sheets:")
-    print(f"    HVAC: https://docs.google.com/spreadsheets/d/1Lli3vWKErLR2eUo_623eJbyfohqhaqhKcWndss74eTM")
-    print(f"    Square Foot: https://docs.google.com/spreadsheets/d/1Gk-y0G9x30zJnB7YDj1AYmcmaM_Z08pxkw1lodp_8i8")
+def check_recent_executions():
+    print(header("RECENT ACTIVITY"))
+    checks = [
+        ("aBxCj48nGQVLRRnq", "PT Monday Check-in"),
+        ("G14Mb6lpeFZVYGwa", "SMS Response Handler"),
+        ("hgInaJCLffLFBX1G", "Lead Magnet Capture"),
+        ("WHFIE3Ej7Y3SCtHk", "Website Lead Capture"),
+        ("Hz05R5SeJGb4VNCl", "Daily Operations Digest"),
+        ("Ob7kiVvCnmDHAfNW", "Self-Annealing Error Handler"),
+    ]
+    for wf_id, name in checks:
+        data = n8n_api(f"executions?workflowId={wf_id}&limit=1&status=success")
+        if not data:
+            print(f"  {warn(name)}: API unreachable")
+            continue
+        execs = data.get("data", [])
+        if not execs:
+            print(f"  {warn(name)}: no successful executions on record")
+            continue
+        started = execs[0].get("startedAt", "")
+        if started:
+            dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
+            ago = (datetime.now(timezone.utc) - dt).total_seconds()
+            if ago < 3600:
+                display = f"{int(ago / 60)}m ago"
+            elif ago < 86400:
+                display = f"{int(ago / 3600)}h ago"
+            else:
+                display = f"{int(ago / 86400)}d ago"
+            print(f"  {ok(name)}: last ran {display}")
+        else:
+            print(f"  {warn(name)}: no timestamp")
 
 
 def main():
@@ -239,9 +277,19 @@ def main():
         check_clawdbot()
 
     check_local_env()
-    check_business_ops()
 
-    print(f"\n{'━' * 50}\n")
+    if not args.fast:
+        check_recent_executions()
+
+    # Summary + exit code (don't call fail() here — it would mutate FAILURES)
+    print(f"\n{'━' * 50}")
+    if FAILURES:
+        print(f"  {RED}✗{RESET} {len(FAILURES)} critical failure(s): {', '.join(FAILURES[:3])}")
+        print(f"{'━' * 50}\n")
+        sys.exit(1)
+    else:
+        print(f"  {ok('All systems healthy')}")
+        print(f"{'━' * 50}\n")
 
 
 if __name__ == "__main__":

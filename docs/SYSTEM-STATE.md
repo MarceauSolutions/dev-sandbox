@@ -27,16 +27,72 @@
 
 ## n8n Workflows (37 active / 12 inactive)
 
-### Critical — Must Stay Active
-| Workflow | ID | Status | Purpose |
-|----------|-----|--------|---------|
-| Self-Annealing-Error-Handler | `Ob7kiVvCnmDHAfNW` | ACTIVE | Fires when any wired workflow errors |
-| Coaching-Payment-Welcome | `1wS9VvXIt95BrR9V` | ACTIVE | Onboard new PT clients |
-| PT-Monday-Check-in | `aBxCj48nGQVLRRnq` | ACTIVE | Weekly client check-in SMS (Mon 9am ET) |
-| Webdev-Payment-Welcome | `5GXwor2hHuij614l` | ACTIVE | Onboard new web dev clients |
-| SMS-Response-Handler-v2 | `G14Mb6lpeFZVYGwa` | ACTIVE | Handle inbound SMS (STOP compliance: all 6 keywords) |
-| n8n-Health-Check | `QhDtNagsZFUrKFsG` | ACTIVE | Periodic n8n self-check |
-| GitHub-Push-to-Telegram | `BsoplLFe1brLCBof` | ACTIVE | Notify on every git push |
+> Full inventory: `python scripts/backup-n8n.py --list`
+
+### Infrastructure — Must Stay Active
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Self-Annealing-Error-Handler | `Ob7kiVvCnmDHAfNW` | Fires when any wired workflow errors |
+| SMS-Response-Handler-v2 | `G14Mb6lpeFZVYGwa` | Handle inbound SMS (STOP compliance: all 6 keywords) |
+| n8n-Health-Check | `QhDtNagsZFUrKFsG` | Periodic n8n self-check |
+| GitHub-Push-to-Telegram | `BsoplLFe1brLCBof` | Notify on every git push |
+| Daily-Operations-Digest | `Hz05R5SeJGb4VNCl` | Daily business metrics digest |
+| Monthly-Workflow-Backup | `2QaQbhIUlL7ctfq4` | n8n workflow DR backup (monthly) |
+
+### PT Coaching — Must Stay Active
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Coaching-Payment-Welcome | `1wS9VvXIt95BrR9V` | Onboard new PT clients |
+| Coaching-Monday-Checkin | `aBxCj48nGQVLRRnq` | Weekly check-in SMS (Mon 9am ET) |
+| Coaching-Cancellation-Exit | `uKjqRexDIheaDJJH` | Cancellation flow + offboarding |
+| Fitness-SMS-Outreach | `89XxmBQMEej15nak` | Outbound prospect outreach via webhook |
+| Fitness-SMS-Followup-Sequence | `VKC5cifm595JNcwG` | Multi-step drip after initial outreach |
+
+### Lead Generation & Funnels — Must Stay Active
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Lead-Magnet-Capture | `hgInaJCLffLFBX1G` | marceausolutions.com lead magnet submissions |
+| Website-Lead-Capture | `WHFIE3Ej7Y3SCtHk` | marceausolutions.com contact form |
+| Automation-Lead-Capture | `dATO8F4MoPcpOKiA` | Automation service lead capture |
+| Creator-Lead-Capture | `8pvrmdtI0MfPbdsC` | Creator/influencer lead capture |
+| Premium-Waitlist-Capture | `j306crRxCmWW3dMo` | Premium product waitlist |
+| Challenge-Signup-7Day | `WTZDxLDQuSkIkcqf` | 7-day challenge signup flow |
+| Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | Route hot leads to CRM |
+
+### Nurture & Conversion
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Automation-Nurture-7Day | `cV2e9opfEKR1Tx5v` | 7-day automation nurture sequence |
+| Creator-Nurture-7Day | `Fv0tGHevTfVOUnj2` | 7-day creator nurture sequence |
+| Nurture-Sequence-7Day | `szuYee7gtQkzRn3L` | General 7-day nurture |
+| Website-Nurture-7Day | `tbTB4XmjlvNqrBaQ` | Website lead nurture |
+| Follow-Up-Sequence-Engine | `w8PYKJyeozM3qJQW` | Multi-step follow-up engine |
+| Non-Converter-Followup | `Y2jfeIlTRDlbCHeS` | Re-engage non-converters |
+| Challenge-Day7-Upsell | `Xza1DB4f4PIHw2lZ` | Day 7 challenge upsell trigger |
+| Digital-Product-Delivery | `kk7ZjWtjmZgylVzi` | Digital product delivery automation |
+
+### Web Dev Business
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Webdev-Payment-Welcome | `5GXwor2hHuij614l` | Onboard new web dev clients |
+| Webdev-Monthly-Checkin | `N8HIFsZdE5Go7Lky` | 1st of month SMS to all active clients |
+| Webdev-Deploy-Notification | `E0DivEtTGgVZm3v6` | Deploy webhook → client SMS + admin |
+| Webdev-Cross-Referral | `eoQMjVYQSibMALaZ` | PT→WebDev cross-business handoff |
+| Flames-Form-Pipeline | `mrfVYqg5H12Z2l5K` | Flames client form → Sheets + Telegram |
+
+### Content & Social
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| X-Social-Post-Scheduler-v2 | `CT5em35LljouaCrU` | X/Twitter post scheduling |
+| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | Batch image generation for X |
+| X-Post-Image-Generator | `Hv8ybyKYNYDFwSgm` | Single post image generation |
+| Add-Posts-Webhook | `bzt3KFpwWmPbrp34` | Add posts via webhook trigger |
+| Weekly-Campaign-Analytics | `M62QBpROE48mEgDC` | Weekly campaign performance report |
+
+### Other Active
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Resume-Builder-Webhook | `jxL3AYDNAGDo0Gf7` | Resume builder webhook pipeline |
 
 ### Known Inactive (intentionally off)
 | Workflow | ID | Reason |
@@ -104,15 +160,20 @@ Workflows wired to Self-Annealing-Error-Handler:
 
 ---
 
-## Health Check
+## Operations Commands
 ```bash
-python scripts/health_check.py        # Full check (EC2 + n8n + local)
+./scripts/daily_standup.sh            # Morning routine (health + revenue + digest + links)
+python scripts/health_check.py        # Full check (EC2 + n8n + local) — exits 1 on failure
 python scripts/health_check.py --fast # Local only (no SSH)
+python scripts/revenue-report.py      # Revenue snapshot (last 7 days)
+python scripts/backup-n8n.py          # Export all n8n workflows → backups/YYYY-MM-DD.json
+python scripts/backup-n8n.py --list   # List all workflows (no backup)
 ```
 
 ## Known Issues / Open Items
 | Item | Priority | Notes |
 |------|----------|-------|
+| n8n workflow backup | **Medium** | Run `python scripts/backup-n8n.py` weekly + commit. Last backup: NEVER. Old `backup-n8n-workflows.sh` is stale (hardcoded IDs) — use new script. |
 | `lead_manager.py:760` | Low | TODO: email notification on CRM stage transitions |
 | `amazon_sp_api.py:417` | Low | Hardcoded USD — doesn't support multi-marketplace |
 | `agent_bridge_api.py` | Medium | 13,050 lines — modularization planned |

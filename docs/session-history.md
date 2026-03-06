@@ -35,6 +35,13 @@ Running log of significant learnings, decisions, and patterns discovered during 
 3. **n8n API key** — now in `.env` as `N8N_API_KEY`. Don't hardcode. Fallback: `sqlite3 ~/.n8n/database.sqlite 'SELECT apiKey FROM user_api_keys LIMIT 1;'`
 4. **Clawdbot session recovery**: stop service → rename `.jsonl` → reset sessions.json to keep only `systemSent` + `skillsSnapshot` → restart.
 5. **cron expression corruption** — PT Monday Check-in had shell `ls` output injected into the cron field. Always verify workflow node parameters after bulk edits.
+6. **Never call a tracking function inside the summary that reads from the same list** — `fail()` appends to `FAILURES[]`; calling it in the "N failures" summary line would corrupt the count.
+
+### Polish Pass (same session — iterations 2-3)
+- **`health_check.py`**: exit code 1 on any failure, FAILURES[] list, execution recency check replacing static URL dump, FAILURES bug fixed in summary
+- **`.gitignore`**: OAuth tokens, `*-export.json` lead data, `assets/*.pdf/png`, `personal-assistant/output/` all now ignored — git status is clean
+- **Clawdbot SOUL.md** (EC2): `Last Updated` date, script/SOP counts, Active Projects refreshed from parcelLab/BCI → current state (PT coaching, 4 web dev clients)
+- **MEMORY.md Decision Log**: 4 new 2026-03-06 entries, 4 oldest dropped (rolling window of 10)
 
 ---
 

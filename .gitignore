@@ -66,9 +66,10 @@ data/stripe/*.jsonl
 .mcpregistry_*_token
 .archive/
 
-# Generated outputs (resumes, cover letters, PDFs)
+# Generated outputs (resumes, cover letters, PDFs, digests)
 projects/global-utility/resume/output/
 projects/shared/resume/output/
+projects/shared/personal-assistant/output/
 ralph/output/
 
 # AI tool testing outputs
@@ -98,6 +99,15 @@ projects/shared/photo-processor/output/
 
 # OAuth token files
 token_sheets.json
+token_marceausolutions.json
+
+# Lead capture export data (sensitive — don't commit)
+*-export.json
+*-capture-export.json
+
+# Business assets (PDFs, images — managed outside git)
+assets/*.pdf
+assets/*.png
 
 # Deploy backups (auto-generated safety snapshots)
 .deploy-backups/

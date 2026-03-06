@@ -1,13 +1,23 @@
 # CLI Commands Reference
 
 > Single source of truth for all runnable commands in dev-sandbox.
-> Last updated: 2026-02-11 | ~140 commands across 13 categories
+> Last updated: 2026-03-06 | ~140 commands across 13 categories
 
 ---
 
 ## Quick Reference
 
 ```bash
+# Start the day (health + revenue + digest + links)
+./scripts/daily_standup.sh
+
+# System health check
+python scripts/health_check.py          # Full: EC2 services, n8n workflows, disk, clawdbot
+python scripts/health_check.py --fast   # Local only (no SSH)
+
+# Revenue snapshot
+python scripts/revenue-report.py        # Last 7 days: Stripe, leads, SMS campaigns
+
 # Search for a tool
 python scripts/inventory.py search <keyword>
 
@@ -16,9 +26,6 @@ python scripts/check_api_balances.py
 
 # List all projects
 python scripts/inventory.py list
-
-# List all scripts
-python scripts/inventory.py scripts
 ```
 
 ---
@@ -279,8 +286,13 @@ python scripts/inventory.py scripts
 
 | Command | Path | Description |
 |---------|------|-------------|
+| `./scripts/daily_standup.sh` | `scripts/daily_standup.sh` | Morning routine: health + revenue + digest + quick links |
+| `python scripts/health_check.py` | `scripts/health_check.py` | Full system health check (EC2, n8n, disk, clawdbot, .env). Exit 1 on failure. |
+| `python scripts/health_check.py --fast` | `scripts/health_check.py` | Local-only health check (skips SSH) |
+| `python scripts/backup-n8n.py` | `scripts/backup-n8n.py` | Export ALL n8n workflows to dated JSON — run weekly + commit |
+| `python scripts/backup-n8n.py --list` | `scripts/backup-n8n.py` | List all n8n workflows with IDs (no backup written) |
 | `python scripts/check_api_balances.py` | `scripts/check_api_balances.py` | API provider balance dashboard |
-| `python scripts/revenue-report.py` | `scripts/revenue-report.py` | Weekly revenue dashboard |
+| `python scripts/revenue-report.py` | `scripts/revenue-report.py` | Weekly revenue dashboard (Stripe + leads + SMS) |
 | `python scripts/create-coaching-tracker-sheet.py` | `scripts/create-coaching-tracker-sheet.py` | Create coaching tracker Google Sheet |
 | `python scripts/create-coaching-drive-folders.py` | `scripts/create-coaching-drive-folders.py` | Create coaching Google Drive folders |
 | `python scripts/create-social-media-sheet.py` | `scripts/create-social-media-sheet.py` | Create social media content sheet |
