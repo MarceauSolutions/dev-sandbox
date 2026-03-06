@@ -1,5 +1,5 @@
 #!/bin/bash
-# daily_standup.sh — Start the day: health + revenue + digest + links
+# daily_standup.sh — Start the day: health + revenue + digest + api status + links
 # Usage: ./scripts/daily_standup.sh
 
 set -uo pipefail
@@ -16,22 +16,27 @@ echo -e "${BOLD}${GOLD}  $(date '+%A, %B %d %Y — %I:%M %p')${RESET}"
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n"
 
 # 1. System health
-echo -e "${BOLD}[1/4] SYSTEM HEALTH${RESET}"
+echo -e "${BOLD}[1/5] SYSTEM HEALTH${RESET}"
 python scripts/health_check.py 2>&1 || true
 
 echo ""
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
-echo -e "${BOLD}[2/4] REVENUE SNAPSHOT (last 7 days)${RESET}"
+echo -e "${BOLD}[2/5] REVENUE SNAPSHOT (last 7 days)${RESET}"
 python scripts/revenue-report.py 2>&1 || echo "  (revenue data unavailable)"
 
 echo ""
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
-echo -e "${BOLD}[3/4] MORNING DIGEST (preview — no email sent)${RESET}"
+echo -e "${BOLD}[3/5] MORNING DIGEST (preview — no email sent)${RESET}"
 python -m projects.shared.personal-assistant.src.morning_digest --preview 2>&1 || echo "  (digest unavailable)"
 
 echo ""
 echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
-echo -e "${BOLD}[4/4] QUICK LINKS${RESET}"
+echo -e "${BOLD}[4/5] API BALANCES${RESET}"
+python scripts/check_api_balances.py 2>&1 || echo "  (api balance check unavailable)"
+
+echo ""
+echo -e "${BOLD}${GOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+echo -e "${BOLD}[5/5] QUICK LINKS${RESET}"
 echo "  Stripe:        https://dashboard.stripe.com/customers"
 echo "  PT Tracker:    https://docs.google.com/spreadsheets/d/1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA"
 echo "  WebDev Tracker:https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"

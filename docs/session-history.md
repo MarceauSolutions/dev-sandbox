@@ -4,6 +4,27 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Continued Tightening (Iterations 2-N)
+
+**Context:** Continued from full system optimization. Each iteration asked "make it better" — closed remaining operational gaps.
+
+### What Shipped (Iterations 2-N)
+- **`scripts/backup-n8n.py`** — new tool replacing stale `backup-n8n-workflows.sh`. API-based export of all 49 workflows to dated JSON. `--list` flag for inventory. `--commit` flag auto-commits + pushes. First backup: `2026-03-06.json`.
+- **Weekly launchd job** — `com.marceausolutions.backup-n8n` (Sun 4am) runs `backup-n8n.py --commit`. Backup → commit → push, fully automatic.
+- **`health_check.py` git section** — now reports both uncommitted files AND unpushed commits. "Git: clean, fully pushed" is the zero-noise success state.
+- **`SYSTEM-STATE.md` workflow inventory** — expanded from 7 documented workflows to all 37 active in 7 categories (Infra, PT, Lead Gen, Nurture, Web Dev, Content, Other).
+- **`health_check.py` key_workflows** — expanded from 8 to 13 monitored workflows (added PT Cancellation, Fitness SMS Outreach, WebDev Payment Welcome, WebDev Monthly Checkin, Lead Magnet Capture).
+- **`daily_standup.sh` → 5 sections** — added `[4/5] API BALANCES` using existing `check_api_balances.py`. Now shows ElevenLabs chars remaining, API key validity every morning.
+- **`backup-n8n-workflows.sh`** — deleted. Stale hardcoded IDs. Replaced completely.
+- **`scripts/health-check.py`** — deleted. Old URL checker, superseded by `health_check.py`.
+- **`SYSTEM-STATE.md` open items** — n8n backup resolved (was "NEVER", updated to reflect weekly schedule).
+
+### Key Learnings
+7. **backup --commit without --push = unpushed commit buildup** — the launchd job runs weekly and the health check would warn "N unpushed commits" every morning. Always close the loop: commit AND push in the same automated job.
+8. **Orphaned tools drift** — `check_api_balances.py` and `backup-n8n-workflows.sh` were both "existing tools" that weren't wired into anything. The former got integrated (standup), the latter got deleted. If a tool isn't called from somewhere, it doesn't exist operationally.
+
+---
+
 ## 2026-03-06: Company on a Laptop — Full System Optimization
 
 **Context:** Multi-session deep fix. Started with Clawdbot not responding on Telegram (85% context buildup), escalated to full infrastructure audit and optimization pass.
