@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "updatedAt": "2026-03-06T17:52:52.052Z",
+      "updatedAt": "2026-03-06T22:31:31.284Z",
       "createdAt": "2026-02-11T15:26:08.447Z",
       "id": "1wS9VvXIt95BrR9V",
       "name": "Coaching-Payment-Welcome",
@@ -207,8 +207,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Client Roster",
-              "mode": "name"
+              "value": "gid=1584175390",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -293,8 +293,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Billing",
-              "mode": "name"
+              "value": "gid=1695379925",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -432,8 +432,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "7876c8d7-a236-424c-b37c-974232ed621f",
-      "activeVersionId": "7876c8d7-a236-424c-b37c-974232ed621f",
+      "versionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
+      "activeVersionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
       "triggerCount": 1,
       "shared": [
         {
@@ -445,9 +445,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T15:01:48.852Z",
-        "createdAt": "2026-03-05T15:01:48.852Z",
-        "versionId": "7876c8d7-a236-424c-b37c-974232ed621f",
+        "updatedAt": "2026-03-06T22:31:31.286Z",
+        "createdAt": "2026-03-06T22:31:31.286Z",
+        "versionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
         "workflowId": "1wS9VvXIt95BrR9V",
         "nodes": [
           {
@@ -649,8 +649,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Client Roster",
-                "mode": "name"
+                "value": "gid=1584175390",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -735,8 +735,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Billing",
-                "mode": "name"
+                "value": "gid=1695379925",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -1145,7 +1145,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T17:52:52.873Z",
+      "updatedAt": "2026-03-06T22:47:10.437Z",
       "createdAt": "2026-03-05T18:22:25.221Z",
       "id": "5GXwor2hHuij614l",
       "name": "Webdev-Payment-Welcome",
@@ -1235,12 +1235,12 @@
           "parameters": {
             "operation": "appendOrUpdate",
             "documentId": {
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+              "mode": "id",
+              "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
             },
             "sheetName": {
-              "mode": "list",
-              "value": "Web Dev Clients"
+              "mode": "id",
+              "value": "1059444855"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -1383,8 +1383,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "2aa1061e-3441-4856-9a93-9bfab7dc8ff3",
-      "activeVersionId": "2aa1061e-3441-4856-9a93-9bfab7dc8ff3",
+      "versionId": "e66d8285-4f91-4efe-99a4-b9dc088ab4e2",
+      "activeVersionId": "e66d8285-4f91-4efe-99a4-b9dc088ab4e2",
       "triggerCount": 1,
       "shared": [
         {
@@ -1396,9 +1396,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T18:36:54.393Z",
-        "createdAt": "2026-03-05T18:36:54.393Z",
-        "versionId": "2aa1061e-3441-4856-9a93-9bfab7dc8ff3",
+        "updatedAt": "2026-03-06T22:47:10.438Z",
+        "createdAt": "2026-03-06T22:47:10.438Z",
+        "versionId": "e66d8285-4f91-4efe-99a4-b9dc088ab4e2",
         "workflowId": "5GXwor2hHuij614l",
         "nodes": [
           {
@@ -1484,12 +1484,12 @@
             "parameters": {
               "operation": "appendOrUpdate",
               "documentId": {
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+                "mode": "id",
+                "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
               },
               "sheetName": {
-                "mode": "list",
-                "value": "Web Dev Clients"
+                "mode": "id",
+                "value": "1059444855"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -1507,8 +1507,8 @@
             },
             "credentials": {
               "googleSheetsOAuth2Api": {
-                "id": "RIFdaHtNYdTpFnlu",
-                "name": "Google Sheets"
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
               }
             }
           },
@@ -2028,7 +2028,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:40:02.204Z",
+      "updatedAt": "2026-03-06T22:47:17.690Z",
       "createdAt": "2026-03-02T02:55:12.745Z",
       "id": "8pvrmdtI0MfPbdsC",
       "name": "Creator-Lead-Capture",
@@ -2112,13 +2112,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Creator Tool Leads"
+              "mode": "id",
+              "value": "37201560"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -2325,8 +2325,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "3cb46c79-d881-4a96-8454-b0c5c8bada30",
-      "activeVersionId": "3cb46c79-d881-4a96-8454-b0c5c8bada30",
+      "versionId": "02a5b89d-c712-47ec-aad4-c9460df8ff62",
+      "activeVersionId": "02a5b89d-c712-47ec-aad4-c9460df8ff62",
       "triggerCount": 1,
       "shared": [
         {
@@ -2338,9 +2338,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:40:02.205Z",
-        "createdAt": "2026-03-02T18:40:02.205Z",
-        "versionId": "3cb46c79-d881-4a96-8454-b0c5c8bada30",
+        "updatedAt": "2026-03-06T22:47:17.691Z",
+        "createdAt": "2026-03-06T22:47:17.691Z",
+        "versionId": "02a5b89d-c712-47ec-aad4-c9460df8ff62",
         "workflowId": "8pvrmdtI0MfPbdsC",
         "nodes": [
           {
@@ -2420,13 +2420,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Creator Tool Leads"
+                "mode": "id",
+                "value": "37201560"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -2832,7 +2832,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-02-09T19:01:23.608Z",
+      "updatedAt": "2026-03-06T22:34:20.286Z",
       "createdAt": "2026-02-09T18:39:21.831Z",
       "id": "CT5em35LljouaCrU",
       "name": "X-Social-Post-Scheduler-v2",
@@ -2872,8 +2872,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "X_Post_Queue"
+              "value": "gid=322285793",
+              "mode": "id"
             },
             "options": {}
           },
@@ -3110,8 +3110,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "X_Post_Queue"
+              "value": "gid=322285793",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -3176,8 +3176,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "X_Post_Analytics"
+              "value": "gid=87150563",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -3351,8 +3351,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "35fc0aaf-b188-4f5a-86ac-7a106eb12e8d",
-      "activeVersionId": "35fc0aaf-b188-4f5a-86ac-7a106eb12e8d",
+      "versionId": "6c28bb01-586e-4fc5-a489-7756e78feb2f",
+      "activeVersionId": "6c28bb01-586e-4fc5-a489-7756e78feb2f",
       "triggerCount": 1,
       "shared": [
         {
@@ -3364,9 +3364,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-02-09T19:01:23.609Z",
-        "createdAt": "2026-02-09T19:01:23.609Z",
-        "versionId": "35fc0aaf-b188-4f5a-86ac-7a106eb12e8d",
+        "updatedAt": "2026-03-06T22:34:20.287Z",
+        "createdAt": "2026-03-06T22:34:20.287Z",
+        "versionId": "6c28bb01-586e-4fc5-a489-7756e78feb2f",
         "workflowId": "CT5em35LljouaCrU",
         "nodes": [
           {
@@ -3375,11 +3375,11 @@
                 "interval": [
                   {
                     "field": "cronExpression",
-                    "expression": "0 14,17,20,23 * * 1-5"
+                    "expression": "0 0 14,17,20,23 * * 1-5"
                   },
                   {
                     "field": "cronExpression",
-                    "expression": "0 15,21 * * 0,6"
+                    "expression": "0 0 15,21 * * 0,6"
                   }
                 ]
               }
@@ -3402,8 +3402,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "X_Post_Queue"
+                "value": "gid=322285793",
+                "mode": "id"
               },
               "options": {}
             },
@@ -3640,8 +3640,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "X_Post_Queue"
+                "value": "gid=322285793",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -3706,8 +3706,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "X_Post_Analytics"
+                "value": "gid=87150563",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -4211,7 +4211,7 @@
       "createdAt": "2026-02-09T18:39:20.622Z",
       "id": "EgLcSeovV58t5OJS",
       "name": "X-Batch-Image-Generator",
-      "active": true,
+      "active": false,
       "isArchived": false,
       "nodes": [
         {
@@ -4604,7 +4604,7 @@
       "meta": null,
       "pinData": null,
       "versionId": "60e3d0df-a75c-469d-ae7c-469a7f20ea10",
-      "activeVersionId": "60e3d0df-a75c-469d-ae7c-469a7f20ea10",
+      "activeVersionId": null,
       "triggerCount": 1,
       "shared": [
         {
@@ -4615,393 +4615,7 @@
           "projectId": "K0tuXr7ScEf3VOi6"
         }
       ],
-      "activeVersion": {
-        "updatedAt": "2026-02-09T19:01:30.965Z",
-        "createdAt": "2026-02-09T19:01:30.965Z",
-        "versionId": "60e3d0df-a75c-469d-ae7c-469a7f20ea10",
-        "workflowId": "EgLcSeovV58t5OJS",
-        "nodes": [
-          {
-            "parameters": {
-              "rule": {
-                "interval": [
-                  {
-                    "field": "cronExpression",
-                    "expression": "0 11 * * *"
-                  }
-                ]
-              }
-            },
-            "id": "daily-trigger",
-            "name": "Daily 6 AM",
-            "type": "n8n-nodes-base.scheduleTrigger",
-            "typeVersion": 1.2,
-            "position": [
-              0,
-              300
-            ]
-          },
-          {
-            "parameters": {
-              "documentId": {
-                "__rl": true,
-                "mode": "id",
-                "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
-              },
-              "sheetName": {
-                "__rl": true,
-                "mode": "name",
-                "value": "X_Post_Queue"
-              },
-              "options": {}
-            },
-            "id": "get-posts",
-            "name": "Get All Posts",
-            "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4.5,
-            "position": [
-              220,
-              300
-            ],
-            "credentials": {
-              "googleSheetsOAuth2Api": {
-                "id": "mywn8S0xjRx9YM9K",
-                "name": "Google Sheets account 4"
-              }
-            }
-          },
-          {
-            "parameters": {
-              "conditions": {
-                "options": {
-                  "version": 2,
-                  "caseSensitive": true
-                },
-                "combinator": "and",
-                "conditions": [
-                  {
-                    "id": "pending",
-                    "leftValue": "={{ $json.Status }}",
-                    "rightValue": "PENDING",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  },
-                  {
-                    "id": "no-media",
-                    "leftValue": "={{ $json.Media_URL }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ]
-              },
-              "options": {}
-            },
-            "id": "filter-needs-image",
-            "name": "Filter: Needs Image",
-            "type": "n8n-nodes-base.filter",
-            "typeVersion": 2.2,
-            "position": [
-              440,
-              300
-            ]
-          },
-          {
-            "parameters": {
-              "conditions": {
-                "options": {
-                  "caseSensitive": false,
-                  "typeValidation": "loose"
-                },
-                "conditions": [
-                  {
-                    "id": "milestone",
-                    "leftValue": "={{ $json.Category }}",
-                    "rightValue": "bip_milestone",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  },
-                  {
-                    "id": "tech",
-                    "leftValue": "={{ $json.Category }}",
-                    "rightValue": "bip_tech",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  },
-                  {
-                    "id": "behind",
-                    "leftValue": "={{ $json.Category }}",
-                    "rightValue": "bip_behind_scenes",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "or"
-              },
-              "options": {}
-            },
-            "id": "qualifies-for-image",
-            "name": "Qualifies for Image?",
-            "type": "n8n-nodes-base.if",
-            "typeVersion": 2,
-            "position": [
-              660,
-              300
-            ]
-          },
-          {
-            "parameters": {
-              "options": {
-                "reset": false
-              },
-              "batchSize": 1
-            },
-            "id": "loop",
-            "name": "Process Each",
-            "type": "n8n-nodes-base.splitInBatches",
-            "typeVersion": 3,
-            "position": [
-              880,
-              200
-            ]
-          },
-          {
-            "parameters": {
-              "jsCode": "const category = $input.first().json.Category;\nconst content = $input.first().json.Content;\nconst postId = $input.first().json.Post_ID;\nconst rowNumber = $input.first().json.row_number;\n\nconst firstLine = content.split('\\n')[0].replace(/[^a-zA-Z0-9 ]/g, '').trim().substring(0, 50);\n\nconst prompts = {\n  'bip_milestone': `Create a celebratory social media graphic. Theme: \"${firstLine}\". Style: Modern bold typography, dark purple-blue gradient background, subtle confetti elements. Professional, inspiring. Square 1080x1080. Minimal text.`,\n  'bip_tech': `Create a tech infographic. Theme: \"${firstLine}\". Style: Dark theme with cyan accents, abstract tech elements (code, workflow nodes). Professional, developer-friendly. Square 1080x1080.`,\n  'bip_behind_scenes': `Create a lifestyle graphic for entrepreneur. Theme: \"${firstLine}\". Style: Warm sunrise gradient, fitness/productivity icons. Professional but approachable. Square 1080x1080.`\n};\n\nreturn [{\n  json: {\n    prompt: prompts[category] || prompts['bip_milestone'],\n    post_id: postId,\n    category: category,\n    row_number: rowNumber\n  }\n}];"
-            },
-            "id": "build-prompt",
-            "name": "Build Prompt",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 2,
-            "position": [
-              1100,
-              200
-            ]
-          },
-          {
-            "parameters": {
-              "method": "POST",
-              "url": "https://api.x.ai/v1/images/generations",
-              "authentication": "genericCredentialType",
-              "genericAuthType": "httpHeaderAuth",
-              "sendHeaders": true,
-              "headerParameters": {
-                "parameters": [
-                  {
-                    "name": "Content-Type",
-                    "value": "application/json"
-                  }
-                ]
-              },
-              "sendBody": true,
-              "specifyBody": "json",
-              "jsonBody": "={\n  \"model\": \"grok-2-image-1212\",\n  \"prompt\": \"{{ $json.prompt }}\",\n  \"n\": 1\n}",
-              "options": {
-                "timeout": 60000
-              }
-            },
-            "id": "generate-image",
-            "name": "Generate Image (Grok)",
-            "type": "n8n-nodes-base.httpRequest",
-            "typeVersion": 4.2,
-            "position": [
-              1320,
-              200
-            ],
-            "credentials": {
-              "httpHeaderAuth": {
-                "id": "P1H6Vz9nbdj2q1KU",
-                "name": "XAi_API_key"
-              }
-            }
-          },
-          {
-            "parameters": {
-              "operation": "update",
-              "documentId": {
-                "__rl": true,
-                "mode": "id",
-                "value": "1frkdH8tqlNtnLXGAUiPioYQuU8e_g7Gev-C_Rhxb20o"
-              },
-              "sheetName": {
-                "__rl": true,
-                "mode": "name",
-                "value": "X_Post_Queue"
-              },
-              "columns": {
-                "mappingMode": "defineBelow",
-                "value": {
-                  "row_number": "={{ $('Build Prompt').item.json.row_number }}",
-                  "Media_URL": "={{ $json.data[0].url }}"
-                },
-                "matchingColumns": [
-                  "row_number"
-                ],
-                "schema": [
-                  {
-                    "id": "row_number",
-                    "displayName": "row_number",
-                    "type": "number",
-                    "canBeUsedToMatch": true,
-                    "readOnly": true
-                  },
-                  {
-                    "id": "Media_URL",
-                    "displayName": "Media_URL",
-                    "type": "string"
-                  }
-                ]
-              },
-              "options": {}
-            },
-            "id": "update-media-url",
-            "name": "Update Media_URL",
-            "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4.5,
-            "position": [
-              1540,
-              200
-            ],
-            "credentials": {
-              "googleSheetsOAuth2Api": {
-                "id": "mywn8S0xjRx9YM9K",
-                "name": "Google Sheets account 4"
-              }
-            }
-          },
-          {
-            "parameters": {
-              "amount": 5
-            },
-            "id": "rate-limit-wait",
-            "name": "Wait 5s (Rate Limit)",
-            "type": "n8n-nodes-base.wait",
-            "typeVersion": 1.1,
-            "position": [
-              1760,
-              200
-            ],
-            "webhookId": "rate-limit-wait"
-          }
-        ],
-        "connections": {
-          "Daily 6 AM": {
-            "main": [
-              [
-                {
-                  "node": "Get All Posts",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Get All Posts": {
-            "main": [
-              [
-                {
-                  "node": "Filter: Needs Image",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Filter: Needs Image": {
-            "main": [
-              [
-                {
-                  "node": "Qualifies for Image?",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Qualifies for Image?": {
-            "main": [
-              [
-                {
-                  "node": "Process Each",
-                  "type": "main",
-                  "index": 0
-                }
-              ],
-              []
-            ]
-          },
-          "Process Each": {
-            "main": [
-              [
-                {
-                  "node": "Build Prompt",
-                  "type": "main",
-                  "index": 0
-                }
-              ],
-              []
-            ]
-          },
-          "Build Prompt": {
-            "main": [
-              [
-                {
-                  "node": "Generate Image (Grok)",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Generate Image (Grok)": {
-            "main": [
-              [
-                {
-                  "node": "Update Media_URL",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Update Media_URL": {
-            "main": [
-              [
-                {
-                  "node": "Rate Limit (Wait)",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          },
-          "Wait 5s (Rate Limit)": {
-            "main": [
-              [
-                {
-                  "node": "Process Each",
-                  "type": "main",
-                  "index": 0
-                }
-              ]
-            ]
-          }
-        },
-        "authors": "William Marceau",
-        "name": null,
-        "description": null,
-        "autosaved": false
-      },
+      "activeVersion": null,
       "tags": []
     },
     {
@@ -6037,7 +5651,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T18:11:35.312Z",
+      "updatedAt": "2026-03-06T22:47:20.429Z",
       "createdAt": "2026-01-31T03:07:23.462Z",
       "id": "G14Mb6lpeFZVYGwa",
       "name": "SMS-Response-Handler-v2",
@@ -6211,13 +5825,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Leads"
+              "mode": "id",
+              "value": "0"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -6278,13 +5892,13 @@
             "operation": "append",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Responses"
+              "mode": "id",
+              "value": "888740858"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -6502,8 +6116,8 @@
         "templateCredsSetupCompleted": true
       },
       "pinData": {},
-      "versionId": "36d08aec-7104-4300-be62-7212a756e66c",
-      "activeVersionId": "36d08aec-7104-4300-be62-7212a756e66c",
+      "versionId": "3296a3b9-a079-4274-8806-8e0b97f12244",
+      "activeVersionId": "3296a3b9-a079-4274-8806-8e0b97f12244",
       "triggerCount": 1,
       "shared": [
         {
@@ -6515,9 +6129,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T18:11:35.314Z",
-        "createdAt": "2026-03-06T18:11:35.314Z",
-        "versionId": "36d08aec-7104-4300-be62-7212a756e66c",
+        "updatedAt": "2026-03-06T22:47:20.430Z",
+        "createdAt": "2026-03-06T22:47:20.430Z",
+        "versionId": "3296a3b9-a079-4274-8806-8e0b97f12244",
         "workflowId": "G14Mb6lpeFZVYGwa",
         "nodes": [
           {
@@ -6687,13 +6301,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Leads"
+                "mode": "id",
+                "value": "0"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -6754,13 +6368,13 @@
               "operation": "append",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Responses"
+                "mode": "id",
+                "value": "888740858"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -7468,7 +7082,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T20:29:08.000Z",
+      "updatedAt": "2026-03-06T22:33:53.567Z",
       "createdAt": "2026-01-31T03:08:57.584Z",
       "id": "Hz05R5SeJGb4VNCl",
       "name": "Daily-Operations-Digest",
@@ -7538,8 +7152,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "Form_Submissions"
+              "value": "gid=0",
+              "mode": "id"
             },
             "options": {}
           },
@@ -7568,8 +7182,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "SMS_Responses"
+              "value": "gid=1308010506",
+              "mode": "id"
             },
             "options": {}
           },
@@ -7727,8 +7341,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
-      "activeVersionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
+      "versionId": "96d8877e-2239-4265-b451-8966b0acc2db",
+      "activeVersionId": "96d8877e-2239-4265-b451-8966b0acc2db",
       "triggerCount": 1,
       "shared": [
         {
@@ -7740,9 +7354,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T17:46:27.654Z",
-        "createdAt": "2026-03-06T17:46:27.654Z",
-        "versionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
+        "updatedAt": "2026-03-06T22:33:53.572Z",
+        "createdAt": "2026-03-06T22:33:53.572Z",
+        "versionId": "96d8877e-2239-4265-b451-8966b0acc2db",
         "workflowId": "Hz05R5SeJGb4VNCl",
         "nodes": [
           {
@@ -7782,6 +7396,12 @@
               "options": {
                 "maxResults": 50
               }
+            },
+            "credentials": {
+              "gmailOAuth2": {
+                "id": "Fy8WXPJMuD57XWjw",
+                "name": "Gmail account"
+              }
             }
           },
           {
@@ -7802,10 +7422,16 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "Form_Submissions"
+                "value": "gid=0",
+                "mode": "id"
               },
               "options": {}
+            },
+            "credentials": {
+              "googleSheetsOAuth2Api": {
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
+              }
             }
           },
           {
@@ -7826,10 +7452,16 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "SMS_Responses"
+                "value": "gid=1308010506",
+                "mode": "id"
               },
               "options": {}
+            },
+            "credentials": {
+              "googleSheetsOAuth2Api": {
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
+              }
             }
           },
           {
@@ -7876,6 +7508,12 @@
               "emailType": "text",
               "message": "={{ $json.emailBody }}",
               "options": {}
+            },
+            "credentials": {
+              "smtp": {
+                "id": "xJL5bzXyMeTkr1WQ",
+                "name": "Gmail SMTP Coaching"
+              }
             }
           }
         ],
@@ -7965,7 +7603,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T04:01:40.659Z",
+      "updatedAt": "2026-03-06T22:47:21.831Z",
       "createdAt": "2026-03-05T04:01:40.659Z",
       "id": "M62QBpROE48mEgDC",
       "name": "Weekly-Campaign-Analytics",
@@ -8055,13 +7693,13 @@
             "operation": "append",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Campaign Analytics"
+              "mode": "id",
+              "value": "1367234528"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -8216,8 +7854,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "cfe5ad0f-5db9-436f-9757-24e616580cc8",
-      "activeVersionId": "cfe5ad0f-5db9-436f-9757-24e616580cc8",
+      "versionId": "01c34a0c-9d8b-4970-b9a6-2ac033b8dbd2",
+      "activeVersionId": "01c34a0c-9d8b-4970-b9a6-2ac033b8dbd2",
       "triggerCount": 1,
       "shared": [
         {
@@ -8229,9 +7867,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T04:01:40.670Z",
-        "createdAt": "2026-03-05T04:01:40.670Z",
-        "versionId": "cfe5ad0f-5db9-436f-9757-24e616580cc8",
+        "updatedAt": "2026-03-06T22:47:21.832Z",
+        "createdAt": "2026-03-06T22:47:21.832Z",
+        "versionId": "01c34a0c-9d8b-4970-b9a6-2ac033b8dbd2",
         "workflowId": "M62QBpROE48mEgDC",
         "nodes": [
           {
@@ -8286,8 +7924,8 @@
             },
             "credentials": {
               "httpBasicAuth": {
-                "id": "hduvneOOzFzKMfOa",
-                "name": "Twilio Fitness SMS"
+                "id": "hS85CMA24G8bUxDY",
+                "name": "Twilio HTTP Basic Auth"
               }
             }
           },
@@ -8317,13 +7955,13 @@
               "operation": "append",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Campaign Analytics"
+                "mode": "id",
+                "value": "1367234528"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -8472,7 +8110,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T17:52:53.053Z",
+      "updatedAt": "2026-03-06T22:47:13.059Z",
       "createdAt": "2026-03-05T18:22:43.907Z",
       "id": "N8HIFsZdE5Go7Lky",
       "name": "Webdev-Monthly-Checkin",
@@ -8492,8 +8130,8 @@
             "rule": {
               "interval": [
                 {
-                  "triggerAtDayOfMonth": 1,
-                  "triggerAtHour": 10
+                  "field": "cronExpression",
+                  "expression": "0 0 10 1 * *"
                 }
               ]
             }
@@ -8511,12 +8149,12 @@
           "parameters": {
             "operation": "read",
             "documentId": {
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+              "mode": "id",
+              "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
             },
             "sheetName": {
-              "mode": "list",
-              "value": "Web Dev Clients"
+              "mode": "id",
+              "value": "1059444855"
             },
             "options": {}
           },
@@ -8589,8 +8227,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "2425beba-6676-4855-ac53-e50c255205ac",
-      "activeVersionId": "2425beba-6676-4855-ac53-e50c255205ac",
+      "versionId": "a2ff7dc5-3e2a-4ed0-8b41-c82d67460ee8",
+      "activeVersionId": "a2ff7dc5-3e2a-4ed0-8b41-c82d67460ee8",
       "triggerCount": 1,
       "shared": [
         {
@@ -8602,9 +8240,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T18:36:59.215Z",
-        "createdAt": "2026-03-05T18:36:59.215Z",
-        "versionId": "2425beba-6676-4855-ac53-e50c255205ac",
+        "updatedAt": "2026-03-06T22:47:13.060Z",
+        "createdAt": "2026-03-06T22:47:13.060Z",
+        "versionId": "a2ff7dc5-3e2a-4ed0-8b41-c82d67460ee8",
         "workflowId": "N8HIFsZdE5Go7Lky",
         "nodes": [
           {
@@ -8620,9 +8258,8 @@
               "rule": {
                 "interval": [
                   {
-                    "triggerAtMonth": 1,
-                    "triggerAtDayOfMonth": 1,
-                    "triggerAtHour": 10
+                    "field": "cronExpression",
+                    "expression": "0 0 10 1 * *"
                   }
                 ]
               }
@@ -8640,19 +8277,19 @@
             "parameters": {
               "operation": "read",
               "documentId": {
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+                "mode": "id",
+                "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
               },
               "sheetName": {
-                "mode": "list",
-                "value": "Web Dev Clients"
+                "mode": "id",
+                "value": "1059444855"
               },
               "options": {}
             },
             "credentials": {
               "googleSheetsOAuth2Api": {
-                "id": "RIFdaHtNYdTpFnlu",
-                "name": "Google Sheets"
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
               }
             }
           },
@@ -9885,7 +9522,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T21:25:59.132Z",
+      "updatedAt": "2026-03-06T22:31:29.017Z",
       "createdAt": "2026-03-06T21:25:59.132Z",
       "id": "QMWkhAb8SWMSImc4",
       "name": "Stripe-Payment-Failed",
@@ -9925,19 +9562,120 @@
           }
         },
         {
+          "id": "lookup-client-phone",
+          "name": "Lookup Client Phone",
+          "type": "n8n-nodes-base.googleSheets",
+          "position": [
+            750,
+            180
+          ],
+          "typeVersion": 4.4,
+          "parameters": {
+            "resource": "sheet",
+            "operation": "read",
+            "documentId": {
+              "__rl": true,
+              "value": "1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA",
+              "mode": "id"
+            },
+            "sheetName": {
+              "__rl": true,
+              "value": "gid=1584175390",
+              "mode": "id"
+            },
+            "filters": {
+              "conditions": [
+                {
+                  "value1": "Email",
+                  "condition": "equal",
+                  "value2": "={{ $json.customer_email }}"
+                }
+              ]
+            },
+            "options": {},
+            "filtersUI": {
+              "values": [
+                {
+                  "lookupColumn": "Email",
+                  "lookupValue": "={{ $json.customer_email }}"
+                }
+              ]
+            }
+          },
+          "credentials": {
+            "googleSheetsOAuth2Api": {
+              "id": "mywn8S0xjRx9YM9K",
+              "name": "Google Sheets account 4"
+            }
+          }
+        },
+        {
+          "id": "check-phone-found",
+          "name": "Client Phone Found?",
+          "type": "n8n-nodes-base.if",
+          "position": [
+            1000,
+            180
+          ],
+          "typeVersion": 2,
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": false,
+                "leftValue": "",
+                "typeValidation": "loose"
+              },
+              "conditions": [
+                {
+                  "id": "phone-check",
+                  "leftValue": "={{ $json.Phone }}",
+                  "rightValue": "",
+                  "operator": {
+                    "type": "string",
+                    "operation": "notEmpty"
+                  }
+                }
+              ],
+              "combinator": "and"
+            }
+          }
+        },
+        {
+          "id": "sms-client",
+          "name": "SMS Client \u2014 Update Payment",
+          "type": "n8n-nodes-base.twilio",
+          "position": [
+            1250,
+            100
+          ],
+          "typeVersion": 1,
+          "parameters": {
+            "operation": "send",
+            "from": "+18552399364",
+            "to": "={{ $json.Phone }}",
+            "message": "Hi {{ $json.Full_Name }}, your Marceau Solutions coaching payment of ${{ $('Extract Payment Data').item.json.amount }} failed. Please update your payment method at your client portal or reply for help. \u2014 William Marceau"
+          },
+          "credentials": {
+            "twilioApi": {
+              "id": "hduvneOOzFzKMfOa",
+              "name": "Twilio Fitness SMS"
+            }
+          }
+        },
+        {
           "id": "alert-telegram",
           "name": "Alert William \u2014 Payment Failed",
           "type": "n8n-nodes-base.telegram",
           "position": [
             750,
-            300
+            420
           ],
           "typeVersion": 1.2,
           "parameters": {
             "resource": "message",
             "operation": "sendMessage",
             "chatId": "5692454753",
-            "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nAction: Contact customer to update payment method.",
+            "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nClient SMS reminder sent automatically if phone on file.",
             "additionalFields": {}
           },
           "credentials": {
@@ -9964,11 +9702,39 @@
           "main": [
             [
               {
+                "node": "Lookup Client Phone",
+                "type": "main",
+                "index": 0
+              },
+              {
                 "node": "Alert William \u2014 Payment Failed",
                 "type": "main",
                 "index": 0
               }
             ]
+          ]
+        },
+        "Lookup Client Phone": {
+          "main": [
+            [
+              {
+                "node": "Client Phone Found?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Client Phone Found?": {
+          "main": [
+            [
+              {
+                "node": "SMS Client \u2014 Update Payment",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            []
           ]
         }
       },
@@ -9978,11 +9744,11 @@
         "callerPolicy": "workflowsFromSameOwner",
         "availableInMCP": false
       },
-      "staticData": null,
+      "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "9581c35c-b387-46dc-9565-eb664361281b",
-      "activeVersionId": "9581c35c-b387-46dc-9565-eb664361281b",
+      "versionId": "fc94370b-e580-4986-a830-d6fe52e48421",
+      "activeVersionId": "fc94370b-e580-4986-a830-d6fe52e48421",
       "triggerCount": 1,
       "shared": [
         {
@@ -9994,9 +9760,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T21:25:59.150Z",
-        "createdAt": "2026-03-06T21:25:59.150Z",
-        "versionId": "9581c35c-b387-46dc-9565-eb664361281b",
+        "updatedAt": "2026-03-06T22:31:29.018Z",
+        "createdAt": "2026-03-06T22:31:29.018Z",
+        "versionId": "fc94370b-e580-4986-a830-d6fe52e48421",
         "workflowId": "QMWkhAb8SWMSImc4",
         "nodes": [
           {
@@ -10032,19 +9798,120 @@
             }
           },
           {
+            "id": "lookup-client-phone",
+            "name": "Lookup Client Phone",
+            "type": "n8n-nodes-base.googleSheets",
+            "position": [
+              750,
+              180
+            ],
+            "typeVersion": 4.4,
+            "parameters": {
+              "resource": "sheet",
+              "operation": "read",
+              "documentId": {
+                "__rl": true,
+                "value": "1ZkzOY9SxMcDrDtq69rDcQ0ZMd9Ss8YaE-qeJmS7FuBA",
+                "mode": "id"
+              },
+              "sheetName": {
+                "__rl": true,
+                "value": "gid=1584175390",
+                "mode": "id"
+              },
+              "filters": {
+                "conditions": [
+                  {
+                    "value1": "Email",
+                    "condition": "equal",
+                    "value2": "={{ $json.customer_email }}"
+                  }
+                ]
+              },
+              "options": {},
+              "filtersUI": {
+                "values": [
+                  {
+                    "lookupColumn": "Email",
+                    "lookupValue": "={{ $json.customer_email }}"
+                  }
+                ]
+              }
+            },
+            "credentials": {
+              "googleSheetsOAuth2Api": {
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
+              }
+            }
+          },
+          {
+            "id": "check-phone-found",
+            "name": "Client Phone Found?",
+            "type": "n8n-nodes-base.if",
+            "position": [
+              1000,
+              180
+            ],
+            "typeVersion": 2,
+            "parameters": {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "phone-check",
+                    "leftValue": "={{ $json.Phone }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          },
+          {
+            "id": "sms-client",
+            "name": "SMS Client \u2014 Update Payment",
+            "type": "n8n-nodes-base.twilio",
+            "position": [
+              1250,
+              100
+            ],
+            "typeVersion": 1,
+            "parameters": {
+              "operation": "send",
+              "from": "+18552399364",
+              "to": "={{ $json.Phone }}",
+              "message": "Hi {{ $json.Full_Name }}, your Marceau Solutions coaching payment of ${{ $('Extract Payment Data').item.json.amount }} failed. Please update your payment method at your client portal or reply for help. \u2014 William Marceau"
+            },
+            "credentials": {
+              "twilioApi": {
+                "id": "hduvneOOzFzKMfOa",
+                "name": "Twilio Fitness SMS"
+              }
+            }
+          },
+          {
             "id": "alert-telegram",
             "name": "Alert William \u2014 Payment Failed",
             "type": "n8n-nodes-base.telegram",
             "position": [
               750,
-              300
+              420
             ],
             "typeVersion": 1.2,
             "parameters": {
               "resource": "message",
               "operation": "sendMessage",
               "chatId": "5692454753",
-              "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nAction: Contact customer to update payment method.",
+              "text": "\u26a0\ufe0f PAYMENT FAILED\n\nCustomer: {{ $json.customer_email }}\nAmount: ${{ $json.amount }} {{ $json.currency }}\nReason: {{ $json.failure_reason }}\n{{ $json.invoice_url ? 'Invoice: ' + $json.invoice_url : '' }}\n\nClient SMS reminder sent automatically if phone on file.",
               "additionalFields": {}
             },
             "credentials": {
@@ -10071,11 +9938,39 @@
             "main": [
               [
                 {
+                  "node": "Lookup Client Phone",
+                  "type": "main",
+                  "index": 0
+                },
+                {
                   "node": "Alert William \u2014 Payment Failed",
                   "type": "main",
                   "index": 0
                 }
               ]
+            ]
+          },
+          "Lookup Client Phone": {
+            "main": [
+              [
+                {
+                  "node": "Client Phone Found?",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Client Phone Found?": {
+            "main": [
+              [
+                {
+                  "node": "SMS Client \u2014 Update Payment",
+                  "type": "main",
+                  "index": 0
+                }
+              ],
+              []
             ]
           }
         },
@@ -10087,7 +9982,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T15:12:46.987Z",
+      "updatedAt": "2026-03-06T22:00:49.037Z",
       "createdAt": "2026-03-05T04:01:40.231Z",
       "id": "QhDtNagsZFUrKFsG",
       "name": "n8n-Health-Check",
@@ -10143,7 +10038,7 @@
             300
           ],
           "parameters": {
-            "jsCode": "// Critical coaching workflow IDs that MUST be active\nconst criticalWorkflows = {\n  'aBxCj48nGQVLRRnq': 'Coaching-Monday-Checkin',\n  '1wS9VvXIt95BrR9V': 'Coaching-Payment-Welcome',\n  'uKjqRexDIheaDJJH': 'Coaching-Cancellation-Exit',\n  '89XxmBQMEej15nak': 'Fitness-SMS-Outreach',\n  'VKC5cifm595JNcwG': 'Fitness-SMS-Followup-Sequence',\n  'hgInaJCLffLFBX1G': 'Lead-Magnet-Capture',\n  'szuYee7gtQkzRn3L': 'Nurture-Sequence-7Day',\n  'Y2jfeIlTRDlbCHeS': 'Non-Converter-Followup',\n  'G14Mb6lpeFZVYGwa': 'SMS-Response-Handler-v2',\n  'WTZDxLDQuSkIkcqf': 'Challenge-Signup-7Day',\n  'Xza1DB4f4PIHw2lZ': 'Challenge-Day7-Upsell',\n  'j306crRxCmWW3dMo': 'Premium-Waitlist-Capture',\n  'kk7ZjWtjmZgylVzi': 'Digital-Product-Delivery'\n};\n\nconst healthOk = $input.first().json.statusCode !== undefined ? $input.first().json.statusCode === 200 : true;\nconst issues = [];\n\nif (!healthOk) {\n  issues.push('n8n health endpoint returned non-200');\n}\n\n// Check each critical workflow via internal API\nfor (const [id, name] of Object.entries(criticalWorkflows)) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `http://localhost:5678/api/v1/workflows/${id}`,\n      headers: {\n        'Accept': 'application/json',\n        'X-N8N-API-KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTYyMmJmOC1jZTc0LTRhZjAtYTQ3MS03MTM5YjFjMmRlZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5ODI2NDAzLCJleHAiOjE3Nzc1MjE2MDB9.wZy3CtUhWnUMHG-tl6oPrpg3Z34Ol794qsvLa4D8yRY'\n      }\n    });\n    if (!response.active) {\n      issues.push(`INACTIVE: ${name} (${id})`);\n    }\n  } catch (err) {\n    issues.push(`ERROR checking ${name}: ${err.message}`);\n  }\n}\n\nconst allOk = issues.length === 0;\nconst timestamp = new Date().toISOString();\n\nlet report = '';\nif (allOk) {\n  report = `\u2705 n8n HEALTH CHECK PASSED\\n\\nAll ${Object.keys(criticalWorkflows).length} critical workflows active.\\nTime: ${timestamp}`;\n} else {\n  report = `\ud83d\udea8 n8n HEALTH CHECK FAILED\\n\\nIssues found:\\n${issues.map(i => '\u2022 ' + i).join('\\n')}\\n\\nTime: ${timestamp}\\n\\nCheck: https://n8n.marceausolutions.com`;\n}\n\nreturn [{\n  json: {\n    allOk,\n    issues,\n    report,\n    timestamp,\n    workflowCount: Object.keys(criticalWorkflows).length\n  }\n}];"
+            "jsCode": "// Critical workflow IDs that MUST be active\nconst criticalWorkflows = {\n  // Infrastructure\n  'Ob7kiVvCnmDHAfNW': 'Self-Annealing-Error-Handler',\n  'BsoplLFe1brLCBof': 'GitHub-Push-Telegram',\n  'Hz05R5SeJGb4VNCl': 'Daily-Operations-Digest',\n  'G14Mb6lpeFZVYGwa': 'SMS-Response-Handler-v2',\n  // PT Coaching\n  'aBxCj48nGQVLRRnq': 'Coaching-Monday-Checkin',\n  '1wS9VvXIt95BrR9V': 'Coaching-Payment-Welcome',\n  'uKjqRexDIheaDJJH': 'Coaching-Cancellation-Exit',\n  '89XxmBQMEej15nak': 'Fitness-SMS-Outreach',\n  'VKC5cifm595JNcwG': 'Fitness-SMS-Followup-Sequence',\n  // Lead capture\n  'hgInaJCLffLFBX1G': 'Lead-Magnet-Capture',\n  'szuYee7gtQkzRn3L': 'Nurture-Sequence-7Day',\n  'Y2jfeIlTRDlbCHeS': 'Non-Converter-Followup',\n  'WTZDxLDQuSkIkcqf': 'Challenge-Signup-7Day',\n  'Xza1DB4f4PIHw2lZ': 'Challenge-Day7-Upsell',\n  'j306crRxCmWW3dMo': 'Premium-Waitlist-Capture',\n  'kk7ZjWtjmZgylVzi': 'Digital-Product-Delivery',\n  // Stripe event handlers\n  'QMWkhAb8SWMSImc4': 'Stripe-Payment-Failed',\n  'unF3M3IfnGPqV0xU': 'Stripe-Invoice-Paid',\n  // Web Dev\n  '5GXwor2hHuij614l': 'Webdev-Payment-Welcome',\n  'N8HIFsZdE5Go7Lky': 'Webdev-Monthly-Checkin'\n};\n\nconst healthOk = $input.first().json.statusCode !== undefined ? $input.first().json.statusCode === 200 : true;\nconst issues = [];\n\nif (!healthOk) {\n  issues.push('n8n health endpoint returned non-200');\n}\n\nfor (const [id, name] of Object.entries(criticalWorkflows)) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `http://localhost:5678/api/v1/workflows/${id}`,\n      headers: {\n        'Accept': 'application/json',\n        'X-N8N-API-KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTYyMmJmOC1jZTc0LTRhZjAtYTQ3MS03MTM5YjFjMmRlZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5ODI2NDAzLCJleHAiOjE3Nzc1MjE2MDB9.wZy3CtUhWnUMHG-tl6oPrpg3Z34Ol794qsvLa4D8yRY'\n      }\n    });\n    if (!response.active) {\n      issues.push(`INACTIVE: ${name} (${id})`);\n    }\n  } catch (err) {\n    issues.push(`ERROR checking ${name}: ${err.message}`);\n  }\n}\n\nconst allOk = issues.length === 0;\nconst timestamp = new Date().toISOString();\n\nlet report = '';\nif (allOk) {\n  report = `\u2705 n8n HEALTH CHECK PASSED\\n\\nAll ${Object.keys(criticalWorkflows).length} critical workflows active.\\nTime: ${timestamp}`;\n} else {\n  report = `\ud83d\udea8 n8n HEALTH CHECK FAILED\\n\\nIssues found:\\n${issues.map(i => '\u2022 ' + i).join('\\n')}\\n\\nTime: ${timestamp}\\n\\nCheck: https://n8n.marceausolutions.com`;\n}\n\nreturn [{\n  json: {\n    allOk,\n    issues,\n    report,\n    timestamp,\n    workflowCount: Object.keys(criticalWorkflows).length\n  }\n}];"
           }
         },
         {
@@ -10310,8 +10205,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "65f3cb43-1e43-407d-9b11-a88858ef43e4",
-      "activeVersionId": "65f3cb43-1e43-407d-9b11-a88858ef43e4",
+      "versionId": "96b2a3f6-f125-4075-bd1b-a6d3efed5092",
+      "activeVersionId": "96b2a3f6-f125-4075-bd1b-a6d3efed5092",
       "triggerCount": 1,
       "shared": [
         {
@@ -10323,9 +10218,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T15:12:46.990Z",
-        "createdAt": "2026-03-05T15:12:46.990Z",
-        "versionId": "65f3cb43-1e43-407d-9b11-a88858ef43e4",
+        "updatedAt": "2026-03-06T22:00:49.038Z",
+        "createdAt": "2026-03-06T22:00:49.038Z",
+        "versionId": "96b2a3f6-f125-4075-bd1b-a6d3efed5092",
         "workflowId": "QhDtNagsZFUrKFsG",
         "nodes": [
           {
@@ -10377,7 +10272,7 @@
               300
             ],
             "parameters": {
-              "jsCode": "// Critical coaching workflow IDs that MUST be active\nconst criticalWorkflows = {\n  'aBxCj48nGQVLRRnq': 'Coaching-Monday-Checkin',\n  '1wS9VvXIt95BrR9V': 'Coaching-Payment-Welcome',\n  'uKjqRexDIheaDJJH': 'Coaching-Cancellation-Exit',\n  '89XxmBQMEej15nak': 'Fitness-SMS-Outreach',\n  'VKC5cifm595JNcwG': 'Fitness-SMS-Followup-Sequence',\n  'hgInaJCLffLFBX1G': 'Lead-Magnet-Capture',\n  'szuYee7gtQkzRn3L': 'Nurture-Sequence-7Day',\n  'Y2jfeIlTRDlbCHeS': 'Non-Converter-Followup',\n  'G14Mb6lpeFZVYGwa': 'SMS-Response-Handler-v2',\n  'WTZDxLDQuSkIkcqf': 'Challenge-Signup-7Day',\n  'Xza1DB4f4PIHw2lZ': 'Challenge-Day7-Upsell',\n  'j306crRxCmWW3dMo': 'Premium-Waitlist-Capture',\n  'kk7ZjWtjmZgylVzi': 'Digital-Product-Delivery'\n};\n\nconst healthOk = $input.first().json.statusCode !== undefined ? $input.first().json.statusCode === 200 : true;\nconst issues = [];\n\nif (!healthOk) {\n  issues.push('n8n health endpoint returned non-200');\n}\n\n// Check each critical workflow via internal API\nfor (const [id, name] of Object.entries(criticalWorkflows)) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `http://localhost:5678/api/v1/workflows/${id}`,\n      headers: {\n        'Accept': 'application/json',\n        'X-N8N-API-KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTYyMmJmOC1jZTc0LTRhZjAtYTQ3MS03MTM5YjFjMmRlZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5ODI2NDAzLCJleHAiOjE3Nzc1MjE2MDB9.wZy3CtUhWnUMHG-tl6oPrpg3Z34Ol794qsvLa4D8yRY'\n      }\n    });\n    if (!response.active) {\n      issues.push(`INACTIVE: ${name} (${id})`);\n    }\n  } catch (err) {\n    issues.push(`ERROR checking ${name}: ${err.message}`);\n  }\n}\n\nconst allOk = issues.length === 0;\nconst timestamp = new Date().toISOString();\n\nlet report = '';\nif (allOk) {\n  report = `\u2705 n8n HEALTH CHECK PASSED\\n\\nAll ${Object.keys(criticalWorkflows).length} critical workflows active.\\nTime: ${timestamp}`;\n} else {\n  report = `\ud83d\udea8 n8n HEALTH CHECK FAILED\\n\\nIssues found:\\n${issues.map(i => '\u2022 ' + i).join('\\n')}\\n\\nTime: ${timestamp}\\n\\nCheck: https://n8n.marceausolutions.com`;\n}\n\nreturn [{\n  json: {\n    allOk,\n    issues,\n    report,\n    timestamp,\n    workflowCount: Object.keys(criticalWorkflows).length\n  }\n}];"
+              "jsCode": "// Critical workflow IDs that MUST be active\nconst criticalWorkflows = {\n  // Infrastructure\n  'Ob7kiVvCnmDHAfNW': 'Self-Annealing-Error-Handler',\n  'BsoplLFe1brLCBof': 'GitHub-Push-Telegram',\n  'Hz05R5SeJGb4VNCl': 'Daily-Operations-Digest',\n  'G14Mb6lpeFZVYGwa': 'SMS-Response-Handler-v2',\n  // PT Coaching\n  'aBxCj48nGQVLRRnq': 'Coaching-Monday-Checkin',\n  '1wS9VvXIt95BrR9V': 'Coaching-Payment-Welcome',\n  'uKjqRexDIheaDJJH': 'Coaching-Cancellation-Exit',\n  '89XxmBQMEej15nak': 'Fitness-SMS-Outreach',\n  'VKC5cifm595JNcwG': 'Fitness-SMS-Followup-Sequence',\n  // Lead capture\n  'hgInaJCLffLFBX1G': 'Lead-Magnet-Capture',\n  'szuYee7gtQkzRn3L': 'Nurture-Sequence-7Day',\n  'Y2jfeIlTRDlbCHeS': 'Non-Converter-Followup',\n  'WTZDxLDQuSkIkcqf': 'Challenge-Signup-7Day',\n  'Xza1DB4f4PIHw2lZ': 'Challenge-Day7-Upsell',\n  'j306crRxCmWW3dMo': 'Premium-Waitlist-Capture',\n  'kk7ZjWtjmZgylVzi': 'Digital-Product-Delivery',\n  // Stripe event handlers\n  'QMWkhAb8SWMSImc4': 'Stripe-Payment-Failed',\n  'unF3M3IfnGPqV0xU': 'Stripe-Invoice-Paid',\n  // Web Dev\n  '5GXwor2hHuij614l': 'Webdev-Payment-Welcome',\n  'N8HIFsZdE5Go7Lky': 'Webdev-Monthly-Checkin'\n};\n\nconst healthOk = $input.first().json.statusCode !== undefined ? $input.first().json.statusCode === 200 : true;\nconst issues = [];\n\nif (!healthOk) {\n  issues.push('n8n health endpoint returned non-200');\n}\n\nfor (const [id, name] of Object.entries(criticalWorkflows)) {\n  try {\n    const response = await this.helpers.httpRequest({\n      method: 'GET',\n      url: `http://localhost:5678/api/v1/workflows/${id}`,\n      headers: {\n        'Accept': 'application/json',\n        'X-N8N-API-KEY': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTYyMmJmOC1jZTc0LTRhZjAtYTQ3MS03MTM5YjFjMmRlZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5ODI2NDAzLCJleHAiOjE3Nzc1MjE2MDB9.wZy3CtUhWnUMHG-tl6oPrpg3Z34Ol794qsvLa4D8yRY'\n      }\n    });\n    if (!response.active) {\n      issues.push(`INACTIVE: ${name} (${id})`);\n    }\n  } catch (err) {\n    issues.push(`ERROR checking ${name}: ${err.message}`);\n  }\n}\n\nconst allOk = issues.length === 0;\nconst timestamp = new Date().toISOString();\n\nlet report = '';\nif (allOk) {\n  report = `\u2705 n8n HEALTH CHECK PASSED\\n\\nAll ${Object.keys(criticalWorkflows).length} critical workflows active.\\nTime: ${timestamp}`;\n} else {\n  report = `\ud83d\udea8 n8n HEALTH CHECK FAILED\\n\\nIssues found:\\n${issues.map(i => '\u2022 ' + i).join('\\n')}\\n\\nTime: ${timestamp}\\n\\nCheck: https://n8n.marceausolutions.com`;\n}\n\nreturn [{\n  json: {\n    allOk,\n    issues,\n    report,\n    timestamp,\n    workflowCount: Object.keys(criticalWorkflows).length\n  }\n}];"
             }
           },
           {
@@ -10418,7 +10313,7 @@
               420
             ],
             "parameters": {
-              "from": "+12398803365",
+              "from": "+18552399364",
               "to": "+12393985676",
               "message": "={{ $json.report }}",
               "options": {}
@@ -11262,7 +11157,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:40:07.857Z",
+      "updatedAt": "2026-03-06T22:47:26.842Z",
       "createdAt": "2026-03-02T02:55:11.818Z",
       "id": "WHFIE3Ej7Y3SCtHk",
       "name": "Website-Lead-Capture",
@@ -11394,13 +11289,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Website Design Leads"
+              "mode": "id",
+              "value": "2082055740"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -11655,8 +11550,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "745113a9-1923-4d3d-a731-9153ce107834",
-      "activeVersionId": "745113a9-1923-4d3d-a731-9153ce107834",
+      "versionId": "4639c85e-a07c-4c23-9893-53a910c26991",
+      "activeVersionId": "4639c85e-a07c-4c23-9893-53a910c26991",
       "triggerCount": 1,
       "shared": [
         {
@@ -11668,9 +11563,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:40:07.858Z",
-        "createdAt": "2026-03-02T18:40:07.858Z",
-        "versionId": "745113a9-1923-4d3d-a731-9153ce107834",
+        "updatedAt": "2026-03-06T22:47:26.843Z",
+        "createdAt": "2026-03-06T22:47:26.843Z",
+        "versionId": "4639c85e-a07c-4c23-9893-53a910c26991",
         "workflowId": "WHFIE3Ej7Y3SCtHk",
         "nodes": [
           {
@@ -11798,13 +11693,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Website Design Leads"
+                "mode": "id",
+                "value": "2082055740"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -12058,7 +11953,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:39:54.963Z",
+      "updatedAt": "2026-03-06T22:47:28.652Z",
       "createdAt": "2026-03-01T21:57:25.584Z",
       "id": "WTZDxLDQuSkIkcqf",
       "name": "Challenge-Signup-7Day",
@@ -12112,13 +12007,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit",
-              "mode": "url"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "value": "Leads",
-              "mode": "list"
+              "mode": "id",
+              "value": "0"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -12662,8 +12557,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "8cfa4723-e8c9-48d1-8f89-2741f3db3376",
-      "activeVersionId": "8cfa4723-e8c9-48d1-8f89-2741f3db3376",
+      "versionId": "c6897d14-483e-4d71-83b1-c38b8bf65d22",
+      "activeVersionId": "c6897d14-483e-4d71-83b1-c38b8bf65d22",
       "triggerCount": 1,
       "shared": [
         {
@@ -12675,9 +12570,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:39:54.965Z",
-        "createdAt": "2026-03-02T18:39:54.965Z",
-        "versionId": "8cfa4723-e8c9-48d1-8f89-2741f3db3376",
+        "updatedAt": "2026-03-06T22:47:28.653Z",
+        "createdAt": "2026-03-06T22:47:28.653Z",
+        "versionId": "c6897d14-483e-4d71-83b1-c38b8bf65d22",
         "workflowId": "WTZDxLDQuSkIkcqf",
         "nodes": [
           {
@@ -12727,13 +12622,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit",
-                "mode": "url"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "list"
+                "mode": "id",
+                "value": "0"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -13404,7 +13299,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:39:53.935Z",
+      "updatedAt": "2026-03-06T22:31:30.147Z",
       "createdAt": "2026-03-02T03:11:44.764Z",
       "id": "Xza1DB4f4PIHw2lZ",
       "name": "Challenge-Day7-Upsell",
@@ -13604,8 +13499,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Leads",
-              "mode": "name"
+              "value": "gid=0",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -13652,8 +13547,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Leads",
-              "mode": "name"
+              "value": "gid=0",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -13776,8 +13671,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "4d030a6c-dea6-403c-b99a-582f907545cf",
-      "activeVersionId": "4d030a6c-dea6-403c-b99a-582f907545cf",
+      "versionId": "a0e4ddd3-80f4-4c16-a386-b20cf3dd06f0",
+      "activeVersionId": "a0e4ddd3-80f4-4c16-a386-b20cf3dd06f0",
       "triggerCount": 1,
       "shared": [
         {
@@ -13789,9 +13684,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:39:53.936Z",
-        "createdAt": "2026-03-02T18:39:53.936Z",
-        "versionId": "4d030a6c-dea6-403c-b99a-582f907545cf",
+        "updatedAt": "2026-03-06T22:31:30.148Z",
+        "createdAt": "2026-03-06T22:31:30.148Z",
+        "versionId": "a0e4ddd3-80f4-4c16-a386-b20cf3dd06f0",
         "workflowId": "Xza1DB4f4PIHw2lZ",
         "nodes": [
           {
@@ -13809,7 +13704,7 @@
                   {
                     "triggerAtHour": 8,
                     "field": "cronExpression",
-                    "expression": "0 8 * * *"
+                    "expression": "0 0 8 * * *"
                   }
                 ]
               }
@@ -13839,8 +13734,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "name"
+                "value": "0",
+                "mode": "id"
               }
             }
           },
@@ -13987,8 +13882,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "name"
+                "value": "gid=0",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -14035,8 +13930,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "name"
+                "value": "gid=0",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -14154,7 +14049,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T04:01:39.857Z",
+      "updatedAt": "2026-03-06T22:47:30.208Z",
       "createdAt": "2026-03-01T16:41:23.186Z",
       "id": "Y2jfeIlTRDlbCHeS",
       "name": "Non-Converter-Followup",
@@ -14426,13 +14321,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Leads"
+              "mode": "id",
+              "value": "0"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -14625,8 +14520,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "cda78008-8f06-492c-8684-eb162ebdce93",
-      "activeVersionId": "cda78008-8f06-492c-8684-eb162ebdce93",
+      "versionId": "3fa2191e-74cf-4379-93fd-17d9efa9916b",
+      "activeVersionId": "3fa2191e-74cf-4379-93fd-17d9efa9916b",
       "triggerCount": 1,
       "shared": [
         {
@@ -14638,9 +14533,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T04:01:39.858Z",
-        "createdAt": "2026-03-05T04:01:39.858Z",
-        "versionId": "cda78008-8f06-492c-8684-eb162ebdce93",
+        "updatedAt": "2026-03-06T22:47:30.209Z",
+        "createdAt": "2026-03-06T22:47:30.209Z",
+        "versionId": "3fa2191e-74cf-4379-93fd-17d9efa9916b",
         "workflowId": "Y2jfeIlTRDlbCHeS",
         "nodes": [
           {
@@ -14908,13 +14803,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Leads"
+                "mode": "id",
+                "value": "0"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -16056,7 +15951,7 @@
       ]
     },
     {
-      "updatedAt": "2026-03-06T17:58:52.992Z",
+      "updatedAt": "2026-03-06T22:31:28.284Z",
       "createdAt": "2026-02-11T15:26:07.195Z",
       "id": "aBxCj48nGQVLRRnq",
       "name": "Coaching-Monday-Checkin",
@@ -16101,8 +15996,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Client Roster",
-              "mode": "name"
+              "value": "gid=1584175390",
+              "mode": "id"
             },
             "filtersUI": {
               "values": [
@@ -16160,8 +16055,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Weekly Check-Ins",
-              "mode": "name"
+              "value": "gid=1875514153",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -16230,8 +16125,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "7c7af3c4-047f-4303-9d19-d7322d21a776",
-      "activeVersionId": "7c7af3c4-047f-4303-9d19-d7322d21a776",
+      "versionId": "cd293fa9-2265-4ed6-9e59-6bf036f1b978",
+      "activeVersionId": "cd293fa9-2265-4ed6-9e59-6bf036f1b978",
       "triggerCount": 1,
       "shared": [
         {
@@ -16243,9 +16138,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T17:58:52.995Z",
-        "createdAt": "2026-03-06T17:58:52.995Z",
-        "versionId": "7c7af3c4-047f-4303-9d19-d7322d21a776",
+        "updatedAt": "2026-03-06T22:31:28.285Z",
+        "createdAt": "2026-03-06T22:31:28.285Z",
+        "versionId": "cd293fa9-2265-4ed6-9e59-6bf036f1b978",
         "workflowId": "aBxCj48nGQVLRRnq",
         "nodes": [
           {
@@ -16262,7 +16157,7 @@
                 "interval": [
                   {
                     "field": "cronExpression",
-                    "expression": "0 14 * * 1"
+                    "expression": "0 0 14 * * 1"
                   }
                 ]
               }
@@ -16286,8 +16181,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Client Roster",
-                "mode": "name"
+                "value": "gid=1584175390",
+                "mode": "id"
               },
               "filtersUI": {
                 "values": [
@@ -16345,8 +16240,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Weekly Check-Ins",
-                "mode": "name"
+                "value": "gid=1875514153",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -16409,7 +16304,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-02-09T18:20:33.139Z",
+      "updatedAt": "2026-03-06T22:47:37.767Z",
       "createdAt": "2026-02-09T18:20:33.139Z",
       "id": "bzt3KFpwWmPbrp34",
       "name": "Add-Posts-Webhook",
@@ -16451,9 +16346,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "gid=0",
-              "cachedResultName": "X_Post_Queue"
+              "mode": "id",
+              "value": "322285793"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -16528,11 +16422,11 @@
         "availableInMCP": false,
         "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
-      "staticData": null,
+      "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "8ef16d00-cd85-4d3d-b468-206e172e506d",
-      "activeVersionId": "8ef16d00-cd85-4d3d-b468-206e172e506d",
+      "versionId": "31683470-33f1-4b62-bba2-908c9a0d0db7",
+      "activeVersionId": "31683470-33f1-4b62-bba2-908c9a0d0db7",
       "triggerCount": 1,
       "shared": [
         {
@@ -16544,9 +16438,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-02-09T18:20:33.148Z",
-        "createdAt": "2026-02-09T18:20:33.148Z",
-        "versionId": "8ef16d00-cd85-4d3d-b468-206e172e506d",
+        "updatedAt": "2026-03-06T22:47:37.767Z",
+        "createdAt": "2026-03-06T22:47:37.767Z",
+        "versionId": "31683470-33f1-4b62-bba2-908c9a0d0db7",
         "workflowId": "bzt3KFpwWmPbrp34",
         "nodes": [
           {
@@ -16584,9 +16478,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "gid=0",
-                "cachedResultName": "X_Post_Queue"
+                "mode": "id",
+                "value": "322285793"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -17695,7 +17588,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:39:48.772Z",
+      "updatedAt": "2026-03-06T22:47:34.938Z",
       "createdAt": "2026-03-02T02:55:10.705Z",
       "id": "dATO8F4MoPcpOKiA",
       "name": "Automation-Lead-Capture",
@@ -17815,13 +17708,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Automation Leads"
+              "mode": "id",
+              "value": "545218649"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -18013,8 +17906,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "5d3ded0b-94b5-4019-9a60-14b484443250",
-      "activeVersionId": "5d3ded0b-94b5-4019-9a60-14b484443250",
+      "versionId": "fdb9e69c-8ea2-48be-815e-1afe70cdd9df",
+      "activeVersionId": "fdb9e69c-8ea2-48be-815e-1afe70cdd9df",
       "triggerCount": 1,
       "shared": [
         {
@@ -18026,9 +17919,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:39:48.773Z",
-        "createdAt": "2026-03-02T18:39:48.773Z",
-        "versionId": "5d3ded0b-94b5-4019-9a60-14b484443250",
+        "updatedAt": "2026-03-06T22:47:34.941Z",
+        "createdAt": "2026-03-06T22:47:34.941Z",
+        "versionId": "fdb9e69c-8ea2-48be-815e-1afe70cdd9df",
         "workflowId": "dATO8F4MoPcpOKiA",
         "nodes": [
           {
@@ -18144,13 +18037,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Automation Leads"
+                "mode": "id",
+                "value": "545218649"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -18341,7 +18234,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T18:37:01.276Z",
+      "updatedAt": "2026-03-06T22:47:12.334Z",
       "createdAt": "2026-03-05T18:23:09.463Z",
       "id": "eoQMjVYQSibMALaZ",
       "name": "Webdev-Cross-Referral",
@@ -18437,12 +18330,12 @@
           "parameters": {
             "operation": "appendOrUpdate",
             "documentId": {
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+              "mode": "id",
+              "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
             },
             "sheetName": {
-              "mode": "list",
-              "value": "Cross-Referrals"
+              "mode": "id",
+              "value": "1513866714"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -18529,8 +18422,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "108515bd-1aee-487b-a0c3-de7627265bf4",
-      "activeVersionId": "108515bd-1aee-487b-a0c3-de7627265bf4",
+      "versionId": "35eb4789-066d-46dd-90b9-8466fdd0e97d",
+      "activeVersionId": "35eb4789-066d-46dd-90b9-8466fdd0e97d",
       "triggerCount": 1,
       "shared": [
         {
@@ -18542,9 +18435,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T18:37:01.277Z",
-        "createdAt": "2026-03-05T18:37:01.277Z",
-        "versionId": "108515bd-1aee-487b-a0c3-de7627265bf4",
+        "updatedAt": "2026-03-06T22:47:12.335Z",
+        "createdAt": "2026-03-06T22:47:12.335Z",
+        "versionId": "35eb4789-066d-46dd-90b9-8466fdd0e97d",
         "workflowId": "eoQMjVYQSibMALaZ",
         "nodes": [
           {
@@ -18636,12 +18529,12 @@
             "parameters": {
               "operation": "appendOrUpdate",
               "documentId": {
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit"
+                "mode": "id",
+                "value": "1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q"
               },
               "sheetName": {
-                "mode": "list",
-                "value": "Cross-Referrals"
+                "mode": "id",
+                "value": "1513866714"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -18660,8 +18553,8 @@
             },
             "credentials": {
               "googleSheetsOAuth2Api": {
-                "id": "RIFdaHtNYdTpFnlu",
-                "name": "Google Sheets"
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
               }
             }
           },
@@ -18724,7 +18617,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-03T19:22:56.795Z",
+      "updatedAt": "2026-03-06T22:47:36.611Z",
       "createdAt": "2026-03-01T16:38:32.860Z",
       "id": "hgInaJCLffLFBX1G",
       "name": "Lead-Magnet-Capture",
@@ -18786,13 +18679,13 @@
             "operation": "appendOrUpdate",
             "documentId": {
               "__rl": true,
-              "mode": "url",
-              "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+              "mode": "id",
+              "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
             },
             "sheetName": {
               "__rl": true,
-              "mode": "list",
-              "value": "Leads"
+              "mode": "id",
+              "value": "0"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -19093,8 +18986,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "ba336862-17bb-4e57-b8dc-01b931a93dcd",
-      "activeVersionId": "ba336862-17bb-4e57-b8dc-01b931a93dcd",
+      "versionId": "6eda2e68-7ede-4f98-a0af-085835d18cfc",
+      "activeVersionId": "6eda2e68-7ede-4f98-a0af-085835d18cfc",
       "triggerCount": 1,
       "shared": [
         {
@@ -19106,9 +18999,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-03T19:22:56.796Z",
-        "createdAt": "2026-03-03T19:22:56.796Z",
-        "versionId": "ba336862-17bb-4e57-b8dc-01b931a93dcd",
+        "updatedAt": "2026-03-06T22:47:36.612Z",
+        "createdAt": "2026-03-06T22:47:36.612Z",
+        "versionId": "6eda2e68-7ede-4f98-a0af-085835d18cfc",
         "workflowId": "hgInaJCLffLFBX1G",
         "nodes": [
           {
@@ -19166,13 +19059,13 @@
               "operation": "appendOrUpdate",
               "documentId": {
                 "__rl": true,
-                "mode": "url",
-                "value": "https://docs.google.com/spreadsheets/d/13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E/edit"
+                "mode": "id",
+                "value": "13bEJ2eEdgRN3vM-wAOv1CrEp-7AtlKnAQTCnutP535E"
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "list",
-                "value": "Leads"
+                "mode": "id",
+                "value": "0"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -19472,7 +19365,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-03T19:22:57.649Z",
+      "updatedAt": "2026-03-06T22:33:55.163Z",
       "createdAt": "2026-03-02T17:46:17.936Z",
       "id": "j306crRxCmWW3dMo",
       "name": "Premium-Waitlist-Capture",
@@ -19538,8 +19431,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Premium Waitlist",
-              "mode": "name"
+              "value": "gid=1889393557",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -19621,8 +19514,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "f5b84f35-91a6-4039-b850-68e802cc2094",
-      "activeVersionId": "f5b84f35-91a6-4039-b850-68e802cc2094",
+      "versionId": "53f769b3-743f-497b-9bbe-4c7e3bf859fe",
+      "activeVersionId": "53f769b3-743f-497b-9bbe-4c7e3bf859fe",
       "triggerCount": 1,
       "shared": [
         {
@@ -19634,9 +19527,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-03T19:22:57.651Z",
-        "createdAt": "2026-03-03T19:22:57.651Z",
-        "versionId": "f5b84f35-91a6-4039-b850-68e802cc2094",
+        "updatedAt": "2026-03-06T22:33:55.164Z",
+        "createdAt": "2026-03-06T22:33:55.164Z",
+        "versionId": "53f769b3-743f-497b-9bbe-4c7e3bf859fe",
         "workflowId": "j306crRxCmWW3dMo",
         "nodes": [
           {
@@ -19698,8 +19591,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Premium Waitlist",
-                "mode": "name"
+                "value": "gid=1889393557",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -19780,7 +19673,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-02-17T14:42:46.459Z",
+      "updatedAt": "2026-03-06T22:37:29.563Z",
       "createdAt": "2026-02-17T13:58:36.648Z",
       "id": "jxL3AYDNAGDo0Gf7",
       "name": "Resume Builder - Webhook Pipeline",
@@ -19827,7 +19720,13 @@
           "position": [
             440,
             300
-          ]
+          ],
+          "credentials": {
+            "httpHeaderAuth": {
+              "id": "FvF3cFD3JUN9oQmV",
+              "name": "Stripe API Key"
+            }
+          }
         },
         {
           "parameters": {
@@ -20049,8 +19948,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "e7e1dbb8-36dd-4172-859d-297be40ef328",
-      "activeVersionId": "e7e1dbb8-36dd-4172-859d-297be40ef328",
+      "versionId": "6c52e28e-8d82-49c5-a418-df6786c83ed5",
+      "activeVersionId": "6c52e28e-8d82-49c5-a418-df6786c83ed5",
       "triggerCount": 1,
       "shared": [
         {
@@ -20062,9 +19961,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-02-17T14:42:46.460Z",
-        "createdAt": "2026-02-17T14:42:46.460Z",
-        "versionId": "e7e1dbb8-36dd-4172-859d-297be40ef328",
+        "updatedAt": "2026-03-06T22:37:29.565Z",
+        "createdAt": "2026-03-06T22:37:29.565Z",
+        "versionId": "6c52e28e-8d82-49c5-a418-df6786c83ed5",
         "workflowId": "jxL3AYDNAGDo0Gf7",
         "nodes": [
           {
@@ -20107,7 +20006,13 @@
             "position": [
               440,
               300
-            ]
+            ],
+            "credentials": {
+              "httpHeaderAuth": {
+                "id": "FvF3cFD3JUN9oQmV",
+                "name": "Stripe API Key"
+              }
+            }
           },
           {
             "parameters": {
@@ -20216,7 +20121,13 @@
             "position": [
               1540,
               200
-            ]
+            ],
+            "credentials": {
+              "gmailOAuth2": {
+                "id": "Fy8WXPJMuD57XWjw",
+                "name": "Gmail account"
+              }
+            }
           },
           {
             "parameters": {
@@ -20319,7 +20230,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T15:02:06.415Z",
+      "updatedAt": "2026-03-06T22:34:20.983Z",
       "createdAt": "2026-03-02T17:47:07.593Z",
       "id": "kk7ZjWtjmZgylVzi",
       "name": "Digital-Product-Delivery",
@@ -20426,8 +20337,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Leads",
-              "mode": "name"
+              "value": "gid=0",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -20510,8 +20421,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "df78f4bb-13d7-4ee6-be3b-f9fa9f635bb3",
-      "activeVersionId": "df78f4bb-13d7-4ee6-be3b-f9fa9f635bb3",
+      "versionId": "ff44da3e-1c19-49b8-8c32-360989760987",
+      "activeVersionId": "ff44da3e-1c19-49b8-8c32-360989760987",
       "triggerCount": 1,
       "shared": [
         {
@@ -20523,9 +20434,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T15:02:06.416Z",
-        "createdAt": "2026-03-05T15:02:06.416Z",
-        "versionId": "df78f4bb-13d7-4ee6-be3b-f9fa9f635bb3",
+        "updatedAt": "2026-03-06T22:34:20.984Z",
+        "createdAt": "2026-03-06T22:34:20.984Z",
+        "versionId": "ff44da3e-1c19-49b8-8c32-360989760987",
         "workflowId": "kk7ZjWtjmZgylVzi",
         "nodes": [
           {
@@ -20628,8 +20539,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "name"
+                "value": "gid=0",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -20709,7 +20620,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-02-24T00:55:16.977Z",
+      "updatedAt": "2026-03-06T22:34:21.768Z",
       "createdAt": "2026-02-24T00:47:58.633Z",
       "id": "mrfVYqg5H12Z2l5K",
       "name": "Flames-Form-Pipeline",
@@ -20766,8 +20677,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "Form_Submissions"
+              "value": "gid=735238227",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "autoMapInputData",
@@ -20849,8 +20760,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "cff510f9-528e-46b7-95f6-4f5c9864ad7a",
-      "activeVersionId": "cff510f9-528e-46b7-95f6-4f5c9864ad7a",
+      "versionId": "8316c743-b51f-4924-93f2-48c19a20f004",
+      "activeVersionId": "8316c743-b51f-4924-93f2-48c19a20f004",
       "triggerCount": 1,
       "shared": [
         {
@@ -20862,9 +20773,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-02-24T00:55:16.980Z",
-        "createdAt": "2026-02-24T00:55:16.980Z",
-        "versionId": "cff510f9-528e-46b7-95f6-4f5c9864ad7a",
+        "updatedAt": "2026-03-06T22:34:21.769Z",
+        "createdAt": "2026-03-06T22:34:21.769Z",
+        "versionId": "8316c743-b51f-4924-93f2-48c19a20f004",
         "workflowId": "mrfVYqg5H12Z2l5K",
         "nodes": [
           {
@@ -20917,8 +20828,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "Form_Submissions"
+                "value": "gid=735238227",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "autoMapInputData",
@@ -21560,7 +21471,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-02T18:40:06.030Z",
+      "updatedAt": "2026-03-06T22:34:22.431Z",
       "createdAt": "2026-03-01T16:40:24.611Z",
       "id": "szuYee7gtQkzRn3L",
       "name": "Nurture-Sequence-7Day",
@@ -21884,8 +21795,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Leads",
-              "mode": "name"
+              "value": "gid=0",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -22143,8 +22054,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "1e0bc139-5027-4cd7-9502-9b52d7af31a6",
-      "activeVersionId": "1e0bc139-5027-4cd7-9502-9b52d7af31a6",
+      "versionId": "0ce9298b-a160-435d-ba2f-f8c6858ddfa9",
+      "activeVersionId": "0ce9298b-a160-435d-ba2f-f8c6858ddfa9",
       "triggerCount": 1,
       "shared": [
         {
@@ -22156,9 +22067,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-02T18:40:06.031Z",
-        "createdAt": "2026-03-02T18:40:06.031Z",
-        "versionId": "1e0bc139-5027-4cd7-9502-9b52d7af31a6",
+        "updatedAt": "2026-03-06T22:34:22.433Z",
+        "createdAt": "2026-03-06T22:34:22.433Z",
+        "versionId": "0ce9298b-a160-435d-ba2f-f8c6858ddfa9",
         "workflowId": "szuYee7gtQkzRn3L",
         "nodes": [
           {
@@ -22478,8 +22389,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Leads",
-                "mode": "name"
+                "value": "gid=0",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -23768,7 +23679,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T17:52:52.626Z",
+      "updatedAt": "2026-03-06T22:31:31.951Z",
       "createdAt": "2026-02-11T15:26:10.757Z",
       "id": "uKjqRexDIheaDJJH",
       "name": "Coaching-Cancellation-Exit",
@@ -23840,8 +23751,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Client Roster",
-              "mode": "name"
+              "value": "gid=1584175390",
+              "mode": "id"
             },
             "filtersUI": {
               "values": [
@@ -24072,8 +23983,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "a0450582-2978-442e-8dff-10be568111f2",
-      "activeVersionId": "a0450582-2978-442e-8dff-10be568111f2",
+      "versionId": "4e2348ce-9476-474d-a013-2264004cb408",
+      "activeVersionId": "4e2348ce-9476-474d-a013-2264004cb408",
       "triggerCount": 1,
       "shared": [
         {
@@ -24085,9 +23996,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T15:02:07.218Z",
-        "createdAt": "2026-03-05T15:02:07.218Z",
-        "versionId": "a0450582-2978-442e-8dff-10be568111f2",
+        "updatedAt": "2026-03-06T22:31:31.952Z",
+        "createdAt": "2026-03-06T22:31:31.952Z",
+        "versionId": "4e2348ce-9476-474d-a013-2264004cb408",
         "workflowId": "uKjqRexDIheaDJJH",
         "nodes": [
           {
@@ -24155,8 +24066,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Client Roster",
-                "mode": "name"
+                "value": "gid=1584175390",
+                "mode": "id"
               },
               "filtersUI": {
                 "values": [
@@ -24383,7 +24294,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T21:39:49.528Z",
+      "updatedAt": "2026-03-06T22:31:26.462Z",
       "createdAt": "2026-03-06T21:35:49.317Z",
       "id": "unF3M3IfnGPqV0xU",
       "name": "Stripe-Invoice-Paid",
@@ -24441,8 +24352,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "value": "Billing",
-              "mode": "name"
+              "value": "gid=1695379925",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -24525,8 +24436,8 @@
       "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
-      "activeVersionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
+      "versionId": "3eefbea9-615f-442d-9736-a810c1787080",
+      "activeVersionId": "3eefbea9-615f-442d-9736-a810c1787080",
       "triggerCount": 1,
       "shared": [
         {
@@ -24538,9 +24449,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T21:39:49.529Z",
-        "createdAt": "2026-03-06T21:39:49.529Z",
-        "versionId": "3917c353-4d27-4c55-a37a-b88f15de45cd",
+        "updatedAt": "2026-03-06T22:31:26.464Z",
+        "createdAt": "2026-03-06T22:31:26.464Z",
+        "versionId": "3eefbea9-615f-442d-9736-a810c1787080",
         "workflowId": "unF3M3IfnGPqV0xU",
         "nodes": [
           {
@@ -24594,8 +24505,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "value": "Billing",
-                "mode": "name"
+                "value": "gid=1695379925",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -24677,7 +24588,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-01-31T03:12:13.863Z",
+      "updatedAt": "2026-03-06T22:34:00.898Z",
       "createdAt": "2026-01-31T03:12:13.863Z",
       "id": "w8PYKJyeozM3qJQW",
       "name": "Follow-Up-Sequence-Engine",
@@ -24767,8 +24678,8 @@
             },
             "sheetName": {
               "__rl": true,
-              "mode": "name",
-              "value": "Follow_Up_Sequences"
+              "value": "gid=893330505",
+              "mode": "id"
             },
             "columns": {
               "mappingMode": "defineBelow",
@@ -25018,11 +24929,11 @@
         "availableInMCP": false,
         "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
-      "staticData": null,
+      "staticData": {},
       "meta": null,
       "pinData": null,
-      "versionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
-      "activeVersionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
+      "versionId": "8976c984-84b2-4fdb-801c-d328c0496ada",
+      "activeVersionId": "8976c984-84b2-4fdb-801c-d328c0496ada",
       "triggerCount": 1,
       "shared": [
         {
@@ -25034,9 +24945,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-02-02T17:32:09.625Z",
-        "createdAt": "2026-02-02T17:32:09.625Z",
-        "versionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
+        "updatedAt": "2026-03-06T22:34:00.899Z",
+        "createdAt": "2026-03-06T22:34:00.899Z",
+        "versionId": "8976c984-84b2-4fdb-801c-d328c0496ada",
         "workflowId": "w8PYKJyeozM3qJQW",
         "nodes": [
           {
@@ -25122,8 +25033,8 @@
               },
               "sheetName": {
                 "__rl": true,
-                "mode": "name",
-                "value": "Follow_Up_Sequences"
+                "value": "gid=893330505",
+                "mode": "id"
               },
               "columns": {
                 "mappingMode": "defineBelow",
@@ -25138,6 +25049,12 @@
                 }
               },
               "options": {}
+            },
+            "credentials": {
+              "googleSheetsOAuth2Api": {
+                "id": "mywn8S0xjRx9YM9K",
+                "name": "Google Sheets account 4"
+              }
             }
           },
           {
@@ -25168,6 +25085,12 @@
               "from": "+18552399364",
               "to": "={{ $json.phone }}",
               "message": "Hi {{ $json.name }}, just checking in - are you still looking for help with {{ $json.business_name }}? Happy to answer any questions. - William"
+            },
+            "credentials": {
+              "twilioApi": {
+                "id": "hduvneOOzFzKMfOa",
+                "name": "Twilio Fitness SMS"
+              }
             }
           },
           {
@@ -25198,6 +25121,12 @@
               "from": "+18552399364",
               "to": "={{ $json.phone }}",
               "message": "Quick update - just helped another Naples business increase their online visibility. Would love to share what worked for them. Interested? - William"
+            },
+            "credentials": {
+              "twilioApi": {
+                "id": "hduvneOOzFzKMfOa",
+                "name": "Twilio Fitness SMS"
+              }
             }
           },
           {
@@ -25228,6 +25157,12 @@
               "from": "+18552399364",
               "to": "={{ $json.phone }}",
               "message": "Hey {{ $json.name }}, quick question - what's the #1 thing holding you back from growing {{ $json.business_name }} online? I'd love to help. - William"
+            },
+            "credentials": {
+              "twilioApi": {
+                "id": "hduvneOOzFzKMfOa",
+                "name": "Twilio Fitness SMS"
+              }
             }
           },
           {
@@ -25343,7 +25278,7 @@
             ]
           }
         },
-        "authors": "system migration",
+        "authors": "William Marceau",
         "name": null,
         "description": null,
         "autosaved": false
