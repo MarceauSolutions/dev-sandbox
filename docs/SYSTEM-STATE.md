@@ -183,3 +183,6 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | Follow-Up-Sequence-Engine no credentials | FIXED 2026-03-06 | Google Sheets + 3 Twilio nodes had empty credential refs. Fixed via SQLite. |
 | Hot-Lead-to-ClickUp active with no ClickUp stack | FIXED 2026-03-06 | Deactivated. ClickUp not in stack — Hot-Lead-to-ClickUp moved to inactive. |
 | Clawdbot invalid `model` key in config | FIXED 2026-03-06 | Top-level `model` key not valid in clawdbot.json schema — caused config reload failures. Removed. |
+| Daily-Operations-Digest corrupted cron + no credentials | FIXED 2026-03-06 | Same ls-injection bug as PT Monday Check-in. Fixed cron to `0 13 * * *` (8am ET). Assigned Gmail/Sheets/SMTP credentials to all nodes. Workflow was never running. |
+| Resume-Builder Email Delivery no Gmail credential | FIXED 2026-03-06 | Gmail node had no credential assigned. Assigned Gmail account (`Fy8WXPJMuD57XWjw`). |
+| Follow-Up-Sequence-Engine no credentials | FIXED 2026-03-06 | Twilio (×3) and Google Sheets nodes had empty credentials. All fixed. |
