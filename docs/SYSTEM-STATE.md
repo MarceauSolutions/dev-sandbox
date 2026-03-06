@@ -180,3 +180,5 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | n8n MCP string/int ID bug | Low | MCP tools expect int IDs, n8n uses strings — use curl via SSH as workaround |
 | PT Monday Check-in cron corruption | FIXED 2026-03-06 | Was corrupted with ls output, fixed to 0 14 * * 1 |
 | Self-Annealing Switch node | FIXED 2026-03-06 | typeVersion 3 incompatible with n8n 2.4.8, downgraded to v1 |
+| GitHub→Telegram credential | FIXED 2026-03-06 | "Clawdbot Telegram" n8n credential had stale bot token. Updated via API. |
+| Deleted Google Sheets credential `RIFdaHtNYdTpFnlu` | FIXED 2026-03-06 | 3 webdev workflows referenced deleted credential. Remapped to `mywn8S0xjRx9YM9K` (Google Sheets account 4): Webdev-Monthly-Checkin, Webdev-Payment-Welcome, Webdev-Cross-Referral. |
