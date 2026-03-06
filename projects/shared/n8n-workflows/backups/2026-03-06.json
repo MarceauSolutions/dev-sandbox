@@ -891,7 +891,7 @@
               "interval": [
                 {
                   "field": "cronExpression",
-                  "expression": "0 3 1 * *"
+                  "expression": "0 0 3 1 * *"
                 }
               ]
             }
@@ -2845,11 +2845,11 @@
               "interval": [
                 {
                   "field": "cronExpression",
-                  "expression": "0 14,17,20,23 * * 1-5"
+                  "expression": "0 0 14,17,20,23 * * 1-5"
                 },
                 {
                   "field": "cronExpression",
-                  "expression": "0 15,21 * * 0,6"
+                  "expression": "0 0 15,21 * * 0,6"
                 }
               ]
             }
@@ -4220,7 +4220,7 @@
               "interval": [
                 {
                   "field": "cronExpression",
-                  "expression": "0 11 * * *"
+                  "expression": "0 0 11 * * *"
                 }
               ]
             }
@@ -7466,7 +7466,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-06T17:46:27.650Z",
+      "updatedAt": "2026-03-06T20:29:08.000Z",
       "createdAt": "2026-01-31T03:08:57.584Z",
       "id": "Hz05R5SeJGb4VNCl",
       "name": "Daily-Operations-Digest",
@@ -7487,7 +7487,7 @@
               "interval": [
                 {
                   "field": "cronExpression",
-                  "expression": "0 13 * * *"
+                  "expression": "0 0 13 * * *"
                 }
               ]
             }
@@ -7718,12 +7718,16 @@
         "saveExecutionProgress": true,
         "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
-      "staticData": null,
+      "staticData": {
+        "node:Daily 8 AM Trigger": {
+          "recurrenceRules": []
+        }
+      },
       "meta": null,
       "pinData": null,
       "versionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
-      "activeVersionId": null,
-      "triggerCount": 0,
+      "activeVersionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
+      "triggerCount": 1,
       "shared": [
         {
           "updatedAt": "2026-01-31T03:08:57.585Z",
@@ -7733,7 +7737,229 @@
           "projectId": "K0tuXr7ScEf3VOi6"
         }
       ],
-      "activeVersion": null,
+      "activeVersion": {
+        "updatedAt": "2026-03-06T17:46:27.654Z",
+        "createdAt": "2026-03-06T17:46:27.654Z",
+        "versionId": "0ed8c618-6afc-4323-b075-78d84fc0ac7f",
+        "workflowId": "Hz05R5SeJGb4VNCl",
+        "nodes": [
+          {
+            "id": "schedule-trigger",
+            "name": "Daily 8 AM Trigger",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+              0,
+              300
+            ],
+            "parameters": {
+              "rule": {
+                "interval": [
+                  {
+                    "field": "cronExpression",
+                    "expression": "0 0 13 * * *"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "get-emails",
+            "name": "Get Unread Emails",
+            "type": "n8n-nodes-base.gmail",
+            "typeVersion": 2.1,
+            "position": [
+              220,
+              200
+            ],
+            "parameters": {
+              "operation": "getAll",
+              "filters": {
+                "q": "is:unread newer_than:1d"
+              },
+              "options": {
+                "maxResults": 50
+              }
+            }
+          },
+          {
+            "id": "get-form-submissions",
+            "name": "Get Form Submissions",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+              220,
+              400
+            ],
+            "parameters": {
+              "operation": "read",
+              "documentId": {
+                "__rl": true,
+                "mode": "id",
+                "value": "1AgdGdTLi0E8eZBUZ3yHVCCdVSlXOuxFhOZ7BSXmNbZM"
+              },
+              "sheetName": {
+                "__rl": true,
+                "mode": "name",
+                "value": "Form_Submissions"
+              },
+              "options": {}
+            }
+          },
+          {
+            "id": "get-sms-responses",
+            "name": "Get SMS Responses",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+              220,
+              600
+            ],
+            "parameters": {
+              "operation": "read",
+              "documentId": {
+                "__rl": true,
+                "mode": "id",
+                "value": "1AgdGdTLi0E8eZBUZ3yHVCCdVSlXOuxFhOZ7BSXmNbZM"
+              },
+              "sheetName": {
+                "__rl": true,
+                "mode": "name",
+                "value": "SMS_Responses"
+              },
+              "options": {}
+            }
+          },
+          {
+            "id": "aggregate-data",
+            "name": "Aggregate Digest",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+              500,
+              300
+            ],
+            "parameters": {
+              "mode": "runOnceForAllItems",
+              "jsCode": "// Aggregate all data into a digest\nconst allItems = $input.all();\n\n// Get data from each source (items come from parallel branches)\nlet emails = [];\nlet forms = [];\nlet smsResponses = [];\n\nfor (const item of allItems) {\n if (item.json.threadId) {\n // Gmail data has threadId\n emails.push(item.json);\n } else if (item.json.Score !== undefined) {\n // Form data has Score\n forms.push(item.json);\n } else if (item.json.Category !== undefined) {\n // SMS data has Category\n smsResponses.push(item.json);\n }\n}\n\n// Filter to last 24 hours\nconst oneDayAgo = new Date(Date.now() - 24 agent-bridge agent-bridge.log api.log bridge.log dev-sandbox ec2-hardening.sh enhance-v5-with-v417.py fitness-influencer inject-v414-endpoints.py inject-v415-endpoints.py inject-v417-advanced-resilience.py inject-v5-consolidated.py inject-v5-phase2.py n8n-workflows v5-ultra-inject.py v5-ultra-optimization.py 60 agent-bridge agent-bridge.log api.log bridge.log dev-sandbox ec2-hardening.sh enhance-v5-with-v417.py fitness-influencer inject-v414-endpoints.py inject-v415-endpoints.py inject-v417-advanced-resilience.py inject-v5-consolidated.py inject-v5-phase2.py n8n-workflows v5-ultra-inject.py v5-ultra-optimization.py 60 agent-bridge agent-bridge.log api.log bridge.log dev-sandbox ec2-hardening.sh enhance-v5-with-v417.py fitness-influencer inject-v414-endpoints.py inject-v415-endpoints.py inject-v417-advanced-resilience.py inject-v5-consolidated.py inject-v5-phase2.py n8n-workflows v5-ultra-inject.py v5-ultra-optimization.py 1000);\n\nconst recentForms = forms.filter(f => {\n const ts = new Date(f.Timestamp);\n return ts > oneDayAgo;\n});\n\nconst recentSMS = smsResponses.filter(s => {\n const ts = new Date(s.Timestamp);\n return ts > oneDayAgo;\n});\n\n// Count by category\nconst hotLeads = recentSMS.filter(s => s.Category === 'HOT_LEAD').length;\nconst warmLeads = recentSMS.filter(s => s.Category === 'WARM_LEAD').length;\nconst optOuts = recentSMS.filter(s => s.Category === 'OPT_OUT').length;\n\nconst highQualityForms = recentForms.filter(f => f.Quality === 'HIGH').length;\n\n// Build digest\nconst digest = {\n date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),\n summary: {\n unreadEmails: emails.length,\n newFormSubmissions: recentForms.length,\n newSMSResponses: recentSMS.length,\n hotLeads: hotLeads,\n warmLeads: warmLeads,\n optOuts: optOuts,\n highQualityForms: highQualityForms\n },\n actionItems: [],\n details: {\n emails: emails.slice(0, 10).map(e => ({ from: e.from?.emailAddress, subject: e.subject })),\n hotLeadDetails: recentSMS.filter(s => s.Category === 'HOT_LEAD').map(s => ({ phone: s.Phone, message: s.Message })),\n highQualityFormDetails: recentForms.filter(f => f.Quality === 'HIGH').map(f => ({ name: f.Name, email: f.Email, phone: f.Phone }))\n }\n};\n\n// Generate action items\nif (hotLeads > 0) {\n digest.actionItems.push(`\ud83d\udd25 ${hotLeads} HOT LEADS need immediate follow-up!`);\n}\nif (highQualityForms > 0) {\n digest.actionItems.push(`\ud83c\udfaf ${highQualityForms} high-quality form submissions to review`);\n}\nif (emails.length > 20) {\n digest.actionItems.push(`\ud83d\udce7 ${emails.length} unread emails - consider inbox triage`);\n}\nif (optOuts > 0) {\n digest.actionItems.push(`\u26a0\ufe0f ${optOuts} opt-outs processed - verify removal from sequences`);\n}\n\nreturn [{ json: digest }];"
+            }
+          },
+          {
+            "id": "format-email",
+            "name": "Format Digest Email",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+              720,
+              300
+            ],
+            "parameters": {
+              "mode": "runOnceForAllItems",
+              "jsCode": "const digest = $input.first().json;\n\nlet emailBody = `\n===========================================\n\ud83d\udcc5 DAILY OPERATIONS DIGEST\n${digest.date}\n===========================================\n\n\ud83d\udcca SUMMARY\n-----------\n\u2022 Unread Emails: ${digest.summary.unreadEmails}\n\u2022 New Form Submissions: ${digest.summary.newFormSubmissions}\n\u2022 New SMS Responses: ${digest.summary.newSMSResponses}\n - \ud83d\udd25 Hot Leads: ${digest.summary.hotLeads}\n - \ud83d\udfe1 Warm Leads: ${digest.summary.warmLeads}\n - \u26d4 Opt-Outs: ${digest.summary.optOuts}\n\u2022 High-Quality Forms: ${digest.summary.highQualityForms}\n\n`;\n\nif (digest.actionItems.length > 0) {\n emailBody += `\ud83d\udea8 ACTION ITEMS\n--------------\\n`;\n for (const item of digest.actionItems) {\n emailBody += `${item}\\n`;\n }\n emailBody += '\\n';\n}\n\nif (digest.details.hotLeadDetails.length > 0) {\n emailBody += `\ud83d\udd25 HOT LEAD DETAILS\n-----------------\\n`;\n for (const lead of digest.details.hotLeadDetails) {\n emailBody += `Phone: ${lead.phone}\\nMessage: ${lead.message}\\n\\n`;\n }\n}\n\nif (digest.details.highQualityFormDetails.length > 0) {\n emailBody += `\ud83c\udfaf HIGH-QUALITY FORM SUBMISSIONS\n------------------------------\\n`;\n for (const form of digest.details.highQualityFormDetails) {\n emailBody += `Name: ${form.name}\\nEmail: ${form.email}\\nPhone: ${form.phone}\\n\\n`;\n }\n}\n\nemailBody += `\\n---\\nGenerated by n8n Daily Operations Digest`;\n\nreturn [{\n json: {\n ...digest,\n emailBody: emailBody,\n subject: `\ud83d\udcc5 Daily Digest: ${digest.summary.hotLeads} Hot Leads | ${digest.summary.newFormSubmissions} Forms | ${digest.summary.unreadEmails} Emails`\n }\n}];"
+            }
+          },
+          {
+            "id": "send-digest",
+            "name": "Send Digest Email",
+            "type": "n8n-nodes-base.emailSend",
+            "typeVersion": 2.1,
+            "position": [
+              940,
+              300
+            ],
+            "parameters": {
+              "fromEmail": "wmarceau@marceausolutions.com",
+              "toEmail": "wmarceau@marceausolutions.com",
+              "subject": "={{ $json.subject }}",
+              "emailType": "text",
+              "message": "={{ $json.emailBody }}",
+              "options": {}
+            }
+          }
+        ],
+        "connections": {
+          "Daily 8 AM Trigger": {
+            "main": [
+              [
+                {
+                  "node": "Get Unread Emails",
+                  "type": "main",
+                  "index": 0
+                },
+                {
+                  "node": "Get Form Submissions",
+                  "type": "main",
+                  "index": 0
+                },
+                {
+                  "node": "Get SMS Responses",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Get Unread Emails": {
+            "main": [
+              [
+                {
+                  "node": "Aggregate Digest",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Get Form Submissions": {
+            "main": [
+              [
+                {
+                  "node": "Aggregate Digest",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Get SMS Responses": {
+            "main": [
+              [
+                {
+                  "node": "Aggregate Digest",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Aggregate Digest": {
+            "main": [
+              [
+                {
+                  "node": "Format Digest Email",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Format Digest Email": {
+            "main": [
+              [
+                {
+                  "node": "Send Digest Email",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "William Marceau",
+        "name": null,
+        "description": null,
+        "autosaved": false
+      },
       "tags": []
     },
     {
@@ -8264,7 +8490,6 @@
             "rule": {
               "interval": [
                 {
-                  "triggerAtMonth": 1,
                   "triggerAtDayOfMonth": 1,
                   "triggerAtHour": 10
                 }
@@ -12997,7 +13222,7 @@
                 {
                   "triggerAtHour": 8,
                   "field": "cronExpression",
-                  "expression": "0 8 * * *"
+                  "expression": "0 0 8 * * *"
                 }
               ]
             }
@@ -15648,7 +15873,7 @@
               "interval": [
                 {
                   "field": "cronExpression",
-                  "expression": "0 14 * * 1"
+                  "expression": "0 0 14 * * 1"
                 }
               ]
             }
@@ -24294,8 +24519,8 @@
       "meta": null,
       "pinData": null,
       "versionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
-      "activeVersionId": null,
-      "triggerCount": 0,
+      "activeVersionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
+      "triggerCount": 1,
       "shared": [
         {
           "updatedAt": "2026-01-31T03:12:13.864Z",
@@ -24305,7 +24530,321 @@
           "projectId": "K0tuXr7ScEf3VOi6"
         }
       ],
-      "activeVersion": null,
+      "activeVersion": {
+        "updatedAt": "2026-02-02T17:32:09.625Z",
+        "createdAt": "2026-02-02T17:32:09.625Z",
+        "versionId": "209c7f39-112c-4a8c-873c-639b9a1a8ff8",
+        "workflowId": "w8PYKJyeozM3qJQW",
+        "nodes": [
+          {
+            "id": "enroll-webhook",
+            "name": "Enroll Lead Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+              0,
+              300
+            ],
+            "parameters": {
+              "httpMethod": "POST",
+              "path": "enroll-followup",
+              "responseMode": "lastNode",
+              "options": {}
+            }
+          },
+          {
+            "id": "setup-sequence",
+            "name": "Setup Sequence Data",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+              220,
+              300
+            ],
+            "parameters": {
+              "mode": "manual",
+              "duplicateItem": false,
+              "assignments": {
+                "assignments": [
+                  {
+                    "id": "phone",
+                    "name": "phone",
+                    "value": "={{ $json.phone }}",
+                    "type": "string"
+                  },
+                  {
+                    "id": "name",
+                    "name": "name",
+                    "value": "={{ $json.name || 'there' }}",
+                    "type": "string"
+                  },
+                  {
+                    "id": "business_name",
+                    "name": "business_name",
+                    "value": "={{ $json.business_name || 'your business' }}",
+                    "type": "string"
+                  },
+                  {
+                    "id": "enrolled_at",
+                    "name": "enrolled_at",
+                    "value": "={{ $now.toISO() }}",
+                    "type": "string"
+                  },
+                  {
+                    "id": "touch_number",
+                    "name": "touch_number",
+                    "value": "1",
+                    "type": "number"
+                  }
+                ]
+              },
+              "options": {}
+            }
+          },
+          {
+            "id": "log-enrollment",
+            "name": "Log to Sequence Sheet",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+              440,
+              300
+            ],
+            "parameters": {
+              "operation": "append",
+              "documentId": {
+                "__rl": true,
+                "mode": "id",
+                "value": "1AgdGdTLi0E8eZBUZ3yHVCCdVSlXOuxFhOZ7BSXmNbZM"
+              },
+              "sheetName": {
+                "__rl": true,
+                "mode": "name",
+                "value": "Follow_Up_Sequences"
+              },
+              "columns": {
+                "mappingMode": "defineBelow",
+                "value": {
+                  "Phone": "={{ $json.phone }}",
+                  "Name": "={{ $json.name }}",
+                  "Business": "={{ $json.business_name }}",
+                  "Enrolled_At": "={{ $json.enrolled_at }}",
+                  "Current_Touch": "1",
+                  "Status": "ACTIVE",
+                  "Last_Touch_At": "={{ $json.enrolled_at }}"
+                }
+              },
+              "options": {}
+            }
+          },
+          {
+            "id": "wait-2-days",
+            "name": "Wait 2 Days",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+              660,
+              300
+            ],
+            "parameters": {
+              "amount": 2,
+              "unit": "days"
+            }
+          },
+          {
+            "id": "touch-2-message",
+            "name": "Touch 2: Still Looking",
+            "type": "n8n-nodes-base.twilio",
+            "typeVersion": 1,
+            "position": [
+              880,
+              300
+            ],
+            "parameters": {
+              "operation": "send",
+              "from": "+18552399364",
+              "to": "={{ $json.phone }}",
+              "message": "Hi {{ $json.name }}, just checking in - are you still looking for help with {{ $json.business_name }}? Happy to answer any questions. - William"
+            }
+          },
+          {
+            "id": "wait-3-days",
+            "name": "Wait 3 Days",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+              1100,
+              300
+            ],
+            "parameters": {
+              "amount": 3,
+              "unit": "days"
+            }
+          },
+          {
+            "id": "touch-3-message",
+            "name": "Touch 3: Social Proof",
+            "type": "n8n-nodes-base.twilio",
+            "typeVersion": 1,
+            "position": [
+              1320,
+              300
+            ],
+            "parameters": {
+              "operation": "send",
+              "from": "+18552399364",
+              "to": "={{ $json.phone }}",
+              "message": "Quick update - just helped another Naples business increase their online visibility. Would love to share what worked for them. Interested? - William"
+            }
+          },
+          {
+            "id": "wait-5-days",
+            "name": "Wait 5 Days",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+              1540,
+              300
+            ],
+            "parameters": {
+              "amount": 5,
+              "unit": "days"
+            }
+          },
+          {
+            "id": "touch-4-message",
+            "name": "Touch 4: Direct Question",
+            "type": "n8n-nodes-base.twilio",
+            "typeVersion": 1,
+            "position": [
+              1760,
+              300
+            ],
+            "parameters": {
+              "operation": "send",
+              "from": "+18552399364",
+              "to": "={{ $json.phone }}",
+              "message": "Hey {{ $json.name }}, quick question - what's the #1 thing holding you back from growing {{ $json.business_name }} online? I'd love to help. - William"
+            }
+          },
+          {
+            "id": "respond-enrolled",
+            "name": "Enrollment Response",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+              660,
+              500
+            ],
+            "parameters": {
+              "respondWith": "json",
+              "responseBody": "={\"success\": true, \"message\": \"Lead enrolled in follow-up sequence\", \"phone\": \"{{ $json.phone }}\"}",
+              "options": {
+                "responseCode": 200
+              }
+            }
+          }
+        ],
+        "connections": {
+          "Enroll Lead Webhook": {
+            "main": [
+              [
+                {
+                  "node": "Setup Sequence Data",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Setup Sequence Data": {
+            "main": [
+              [
+                {
+                  "node": "Log to Sequence Sheet",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Log to Sequence Sheet": {
+            "main": [
+              [
+                {
+                  "node": "Wait 2 Days",
+                  "type": "main",
+                  "index": 0
+                },
+                {
+                  "node": "Enrollment Response",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Wait 2 Days": {
+            "main": [
+              [
+                {
+                  "node": "Touch 2: Still Looking",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Touch 2: Still Looking": {
+            "main": [
+              [
+                {
+                  "node": "Wait 3 Days",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Wait 3 Days": {
+            "main": [
+              [
+                {
+                  "node": "Touch 3: Social Proof",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Touch 3: Social Proof": {
+            "main": [
+              [
+                {
+                  "node": "Wait 5 Days",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Wait 5 Days": {
+            "main": [
+              [
+                {
+                  "node": "Touch 4: Direct Question",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "system migration",
+        "name": null,
+        "description": null,
+        "autosaved": false
+      },
       "tags": []
     }
   ],
