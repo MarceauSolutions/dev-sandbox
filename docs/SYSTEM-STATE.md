@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 9).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 10).
 
 ---
 
@@ -249,3 +249,4 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | X-Batch-Image-Generator erroring daily | FIXED 2026-03-06 (session 9) | xAI API key invalid (403 on all endpoints from EC2). Was silently firing Self-Annealing handler 3x/day. Deactivated until key renewed at console.x.ai. X-Post-Image-Generator also uses xAI (webhook-triggered, no auto-errors). |
 | Webdev-Monthly-Checkin running DAILY instead of monthly | FIXED 2026-03-06 (session 9) | `{triggerAtDayOfMonth: 1, triggerAtHour: 10}` without `field` key defaults to DAILY in n8n. Was potentially SMS-ing web dev clients every day. Fixed to explicit `cronExpression: "0 0 10 1 * *"` (10 AM ET on 1st of month). Bounced. |
 | daily_standup.sh broken morning digest command | FIXED 2026-03-06 (session 9) | `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path). Fixed to subshell `(cd projects/shared/personal-assistant && python -m src.morning_digest --preview)`. |
+| All Google Sheets mode:name nodes (19 total) | FIXED 2026-03-06 (session 10) | mode:name does runtime API lookup that can fail under load. Converted ALL 19 nodes across 13 workflows to mode:id with verified GIDs. PT Tracker GIDs: Client Roster=1584175390, Billing=1695379925, Weekly Check-Ins=1875514153. Challenge GIDs: Leads=0. Also created 4 missing tabs: Form_Submissions, SMS_Responses, Follow_Up_Sequences (ops sheet), Premium Waitlist (challenge sheet). |
