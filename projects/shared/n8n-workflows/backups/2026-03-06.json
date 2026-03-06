@@ -5510,7 +5510,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -7209,7 +7210,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -16321,7 +16323,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -16963,7 +16966,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
@@ -19837,7 +19841,8 @@
         "saveDataSuccessExecution": "all",
         "executionTimeout": 300,
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -21930,7 +21935,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": {},
       "meta": null,
@@ -23033,7 +23039,8 @@
       "settings": {
         "executionOrder": "v1",
         "callerPolicy": "workflowsFromSameOwner",
-        "availableInMCP": false
+        "availableInMCP": false,
+        "errorWorkflow": "Ob7kiVvCnmDHAfNW"
       },
       "staticData": null,
       "meta": null,
