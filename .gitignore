@@ -111,3 +111,4 @@ assets/*.png
 
 # Deploy backups (auto-generated safety snapshots)
 .deploy-backups/
+.claude/hooks/provider-status.json
