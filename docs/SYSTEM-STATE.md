@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 10).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 11).
 
 ---
 
@@ -250,3 +250,4 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | Webdev-Monthly-Checkin running DAILY instead of monthly | FIXED 2026-03-06 (session 9) | `{triggerAtDayOfMonth: 1, triggerAtHour: 10}` without `field` key defaults to DAILY in n8n. Was potentially SMS-ing web dev clients every day. Fixed to explicit `cronExpression: "0 0 10 1 * *"` (10 AM ET on 1st of month). Bounced. |
 | daily_standup.sh broken morning digest command | FIXED 2026-03-06 (session 9) | `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path). Fixed to subshell `(cd projects/shared/personal-assistant && python -m src.morning_digest --preview)`. |
 | All Google Sheets mode:name nodes (19 total) | FIXED 2026-03-06 (session 10) | mode:name does runtime API lookup that can fail under load. Converted ALL 19 nodes across 13 workflows to mode:id with verified GIDs. PT Tracker GIDs: Client Roster=1584175390, Billing=1695379925, Weekly Check-Ins=1875514153. Challenge GIDs: Leads=0. Also created 4 missing tabs: Form_Submissions, SMS_Responses, Follow_Up_Sequences (ops sheet), Premium Waitlist (challenge sheet). |
+| All Google Sheets mode:list nodes (13 total) | FIXED 2026-03-06 (session 11) | mode:list does same runtime API lookup as mode:name. Converted all 13 nodes across 12 workflows to mode:id. WebDev Tracker GIDs: Web Dev Clients=1059444855, Cross-Referrals=1513866714. Challenge sheet GIDs: Responses=888740858, Campaign Analytics=1367234528. Created 3 new tabs: Creator Tool Leads=37201560, Website Design Leads=2082055740, Automation Leads=545218649. Zero mode:name/mode:list/mode:url nodes remain across all 37 active workflows. |

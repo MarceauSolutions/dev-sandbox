@@ -4,6 +4,25 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 11 (Zero mode:list — All Sheets Nodes Hardened)
+
+**Context:** Completing mode:list → mode:id conversion started in session 10. All Google Sheets nodes across all workflows now use deterministic numeric GIDs.
+
+**Fixed:**
+- Converted all 13 remaining `mode:list` Google Sheets nodes across 12 workflows to `mode:id` with verified numeric GIDs. Same runtime-lookup risk as `mode:name` — now eliminated.
+- Created 3 missing tabs on Challenge sheet that workflows were writing to but didn't exist: Creator Tool Leads (gid=37201560), Website Design Leads (gid=2082055740), Automation Leads (gid=545218649).
+- Extracted bare doc IDs from workflows storing full Google Sheets URLs (with `/edit` suffix) as documentId — URLs cause HTTP 404 from Sheets API, bare IDs work.
+- Refreshed expired OAuth token for Sheets API access.
+- Bounced all 12 updated workflows via n8n REST API (deactivate → activate).
+
+**Verified:**
+- Zero `mode:name`, `mode:list`, or `mode:url` nodes remain across all 37 active workflows (scanned via n8n API).
+
+**Key Learnings:**
+36. **mode:list is the same risk as mode:name** — both do runtime Sheets API lookups that can fail under load or when token is stale. The fix is always mode:id with a verified numeric GID.
+37. **Workflows often store full Google Sheets URLs as documentId** — strip everything before and after the 44-char ID (`/spreadsheets/d/{id}/edit`). The Sheets API returns 404 if you pass the full URL.
+38. **Missing tabs don't error loudly** — if a workflow's target sheet tab doesn't exist, Sheets API returns an error but n8n may not surface it clearly. Always verify tabs exist before converting to mode:id.
+
 ## 2026-03-06: Company on a Laptop — Session 9 (Gap Sweep + Silent Error Elimination)
 
 **Context:** Continued iteration — gap scanning after session 8 hardening.
