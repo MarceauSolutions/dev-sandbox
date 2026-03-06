@@ -87,8 +87,13 @@ def main():
                 cwd=str(ROOT), check=True, capture_output=True
             )
             print(f"✓ Committed backup to git")
+            subprocess.run(
+                ["git", "push"],
+                cwd=str(ROOT), check=True, capture_output=True
+            )
+            print(f"✓ Pushed to origin")
         except subprocess.CalledProcessError as e:
-            print(f"⚠ Git commit failed: {e.stderr.decode().strip() if e.stderr else e}")
+            print(f"⚠ Git operation failed: {e.stderr.decode().strip() if e.stderr else e}")
     else:
         print(f"  To commit: python scripts/backup-n8n.py --commit")
 
