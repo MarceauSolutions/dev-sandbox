@@ -4,6 +4,32 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 9 (Gap Sweep + Silent Error Elimination)
+
+**Context:** Continued iteration — gap scanning after session 8 hardening.
+
+**Built:**
+- `check_ai_apis()` in health_check.py — live Anthropic key validation (GET /v1/models, zero token cost) and ElevenLabs character quota check with warn (<80%) / fail (>95%) thresholds.
+- Revenue report "Top Clients by Revenue" section — top 5 by `total_charged` using existing `by_customer` dict.
+- Twilio balance check added to health_check.py (warn <$10, fail <$5, SSL/CERT_NONE for Mac Python 3.14).
+
+**Fixed:**
+- `daily_standup.sh` morning digest command — `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path not valid Python module). Fixed to subshell.
+- X-Batch-Image-Generator deactivated — xAI API key returning 403 from EC2 on ALL endpoints (key invalid/expired). Was silently firing Self-Annealing handler 3x/day. To fix: renew key at console.x.ai, then re-activate.
+- Workflow count corrected: 37 active (38 - 1 deactivated), 5 inactive.
+
+**Verified healthy:**
+- n8n-Health-Check: covers 20 critical workflows, runs 6 AM ET daily
+- GitHub→Telegram: 3+ consecutive successes (fix from session 8 holding)
+- Daily-Operations-Digest: no errors, pruning successfully (schedule 0 0 13 * * * = 8 AM ET)
+- All 35/37 active wireable workflows have Self-Annealing error handler (100% coverage)
+- Webdev-Monthly-Checkin: reads from correct tracker sheet, sends SMS 1st of month at 10 AM UTC
+
+**Key Learnings:**
+33. **xAI API key validation is not key-existence** — the key existed in `.env` and passed the key-only check, but was returning 403 on ALL xAI endpoints from EC2. The only way to detect this is a live API call. Added to check_api_balances.py pattern for future.
+34. **SQLite WAL mode blocks external reads on EC2** — n8n database in WAL mode; sqlite3 from ec2-user returns no output when n8n has the file locked. Use the n8n API or event logs for execution debugging, not direct SQLite queries.
+35. **Daily error storm pattern** — a scheduled workflow erroring silently fires Self-Annealing handler repeatedly. Always deactivate broken scheduled workflows rather than leaving them running; this prevents alert fatigue and noise in the error handler executions.
+
 ## 2026-03-06: Company on a Laptop — Session 8 (Renewal Tracking + Monitoring Hardening)
 
 **Context:** Continued "company on a laptop" iteration — coverage gap analysis post-session-7b.
