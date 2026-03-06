@@ -4,6 +4,20 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 6 (External Integration Audit)
+
+**Context:** Sixth pass — audited all external integrations (Stripe, Twilio, domains).
+
+**Critical fixes:**
+- **Stripe**: deleted stale legacy endpoint (`webhooks.marceausolutions.com` → 404). Added missing `stripe-webdev-payment` webhook (was absent — webdev client payments never triggered onboarding). All 4 Stripe webhooks now active and pointing to n8n.
+- **Twilio**: local PT number (+12398803365) and HVAC client number (+12397666129) had empty SMS webhooks — inbound texts were silently dropped. Set both to `sms-response` handler.
+- **Voice webhooks**: verified `api.marceausolutions.com/twilio/voice` returns 200 on POST.
+- Added "External Integrations" section to SYSTEM-STATE.md with full verified state.
+
+**Key Learnings:**
+19. **Always audit Stripe webhooks against n8n webhook paths** — easy to have n8n handler with no Stripe registration (or vice versa). Check: `stripe.com/webhook_endpoints` vs n8n `webhook_entity` table.
+20. **Twilio numbers can have empty SMS webhooks** — inbound texts silently dropped, no error. Check all numbers via Twilio API, not just the one you know you're using.
+
 ## 2026-03-06: Company on a Laptop — Session 5 (Final Verification)
 
 **Context:** Fifth pass — verified all session 4 fixes held, closed remaining minor gaps.

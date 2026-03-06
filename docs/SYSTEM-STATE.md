@@ -148,10 +148,37 @@ All business-critical workflows are wired. Nurture sequences and low-priority we
 ---
 
 ## SMS Compliance
-- **Number**: +1 855 239 9364 (toll-free, A2P registered)
+- **Primary number**: +1 855 239 9364 (toll-free, A2P registered) → SMS webhook: n8n `sms-response`
+- **PT local** (inactive): +1 239 880-3365 → SMS webhook: n8n `sms-response` (FIXED 2026-03-06 — was empty)
+- **HVAC client**: +1 239 766-6129 → SMS webhook: n8n `sms-response` (FIXED 2026-03-06 — was empty)
 - **Opt-out keywords handled**: STOP, STOPALL, UNSUBSCRIBE, CANCEL, QUIT, END
 - **TCPA hours enforced**: 8am–9pm local time (in `execution/twilio_sms.py`)
 - **Opt-out flow**: auto-reply confirmation → mark opted_out in Sheets → Telegram alert
+- **Voice webhooks**: all numbers → POST `https://api.marceausolutions.com/twilio/voice` (200 OK)
+
+---
+
+## External Integrations (Verified 2026-03-06)
+
+### Stripe Webhooks (4 active, all → n8n.marceausolutions.com)
+| Endpoint | Event | Workflow |
+|----------|-------|---------|
+| `/webhook/stripe-payment-welcome` | checkout.session.completed | PT coaching onboard |
+| `/webhook/stripe-webdev-payment` | checkout.session.completed | WebDev client onboard |
+| `/webhook/stripe-cancellation` | customer.subscription.deleted | Coaching offboard |
+| `/webhook/stripe-digital-delivery` | checkout.session.completed | Digital product delivery |
+
+### Twilio Inbound SMS (all → `sms-response`)
+| Number | Label | SMS Webhook |
+|--------|-------|-------------|
+| +1 855-239-9364 | Toll-free A2P (primary) | n8n sms-response |
+| +1 239-880-3365 | PT local (inactive outbound) | n8n sms-response |
+| +1 239-766-6129 | HVAC client | n8n sms-response |
+Voice: all → `https://api.marceausolutions.com/twilio/voice` (POST 200 OK)
+
+### n8n Webhook Domain
+- `https://n8n.marceausolutions.com` — public-facing, HTTP 200 ✓
+- 27 registered webhooks, 0 orphans (cleaned 2026-03-06)
 
 ---
 
@@ -168,7 +195,9 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 ## Known Issues / Open Items
 | Item | Priority | Notes |
 |------|----------|-------|
-| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (40 workflows after cleanup). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
+| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (40 workflows, post all fixes). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
+| Stripe: legacy `webhooks.marceausolutions.com` endpoint | FIXED 2026-03-06 (session 6) | Was returning 404 but still registered in Stripe — removed. Added missing `stripe-webdev-payment` endpoint. All 4 Stripe webhooks now point to n8n. |
+| Twilio SMS webhook empty on local PT + HVAC numbers | FIXED 2026-03-06 (session 6) | +12398803365 and +12397666129 had no SMS webhook — inbound texts dropped. Set to `sms-response` handler. |
 | `lead_manager.py:760` | Low | TODO: email notification on CRM stage transitions |
 | `amazon_sp_api.py:417` | Low | Hardcoded USD — doesn't support multi-marketplace |
 | `agent_bridge_api.py` | Medium | 13,050 lines — modularization planned |
