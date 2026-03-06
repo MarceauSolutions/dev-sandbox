@@ -215,15 +215,27 @@ def check_local_env():
     else:
         print(f"  {fail('.env not found')}")
 
-    # Check git status
+    # Check git status (uncommitted + unpushed)
     try:
-        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True,
-                                cwd=str(Path(__file__).parent.parent))
+        repo = str(Path(__file__).parent.parent)
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=repo)
         changed = len(result.stdout.strip().split("\n")) if result.stdout.strip() else 0
-        if changed == 0:
-            print(f"  {ok('Git: clean')}")
+
+        ahead = subprocess.run(
+            ["git", "rev-list", "--count", "@{u}..HEAD"],
+            capture_output=True, text=True, cwd=repo
+        )
+        unpushed = int(ahead.stdout.strip()) if ahead.returncode == 0 and ahead.stdout.strip().isdigit() else 0
+
+        if changed == 0 and unpushed == 0:
+            print(f"  {ok('Git: clean, fully pushed')}")
         else:
-            print(f"  {warn(f'Git: {changed} uncommitted file(s)')}")
+            parts = []
+            if changed:
+                parts.append(f"{changed} uncommitted")
+            if unpushed:
+                parts.append(f"{unpushed} unpushed commit(s)")
+            print(f"  {warn('Git: ' + ', '.join(parts))}")
     except Exception:
         pass
 

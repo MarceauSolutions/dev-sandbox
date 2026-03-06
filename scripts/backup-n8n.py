@@ -8,17 +8,17 @@ Backs up every workflow, not just a curated list.
 Usage:
     python scripts/backup-n8n.py            # Export all workflows
     python scripts/backup-n8n.py --list     # Show what would be backed up
+    python scripts/backup-n8n.py --commit   # Export + git commit automatically
 
 Output:
     projects/shared/n8n-workflows/backups/YYYY-MM-DD.json
-    
-After running: git add projects/shared/n8n-workflows/backups/ && git commit -m "n8n backup YYYY-MM-DD"
 """
 
 import os
 import sys
 import json
 import argparse
+import subprocess
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -47,6 +47,7 @@ def fetch_workflows():
 def main():
     parser = argparse.ArgumentParser(description="Backup all n8n workflows")
     parser.add_argument("--list", action="store_true", help="List workflows without saving")
+    parser.add_argument("--commit", action="store_true", help="Auto git commit after saving")
     args = parser.parse_args()
 
     try:
@@ -74,7 +75,22 @@ def main():
     backup_file.write_text(json.dumps(data, indent=2))
 
     print(f"✓ Backed up {len(workflows)} workflows ({len(active)} active) → backups/{date_str}.json")
-    print(f"  Commit: git add projects/shared/n8n-workflows/backups/ && git commit -m 'n8n backup {date_str}'")
+
+    if args.commit:
+        try:
+            subprocess.run(
+                ["git", "add", str(backup_file)],
+                cwd=str(ROOT), check=True, capture_output=True
+            )
+            subprocess.run(
+                ["git", "commit", "-m", f"chore: n8n workflow backup {date_str} ({len(workflows)} workflows)"],
+                cwd=str(ROOT), check=True, capture_output=True
+            )
+            print(f"✓ Committed backup to git")
+        except subprocess.CalledProcessError as e:
+            print(f"⚠ Git commit failed: {e.stderr.decode().strip() if e.stderr else e}")
+    else:
+        print(f"  To commit: python scripts/backup-n8n.py --commit")
 
 
 if __name__ == "__main__":

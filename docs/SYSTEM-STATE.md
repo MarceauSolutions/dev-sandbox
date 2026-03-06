@@ -173,7 +173,7 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 ## Known Issues / Open Items
 | Item | Priority | Notes |
 |------|----------|-------|
-| n8n workflow backup | **Medium** | Run `python scripts/backup-n8n.py` weekly + commit. Last backup: NEVER. Old `backup-n8n-workflows.sh` is stale (hardcoded IDs) — use new script. |
+| n8n workflow backup | **Low** | Weekly launchd job active (Sun 4am). Last backup: 2026-03-06 (49 workflows). Use `python scripts/backup-n8n.py --commit` to backup + auto-commit. |
 | `lead_manager.py:760` | Low | TODO: email notification on CRM stage transitions |
 | `amazon_sp_api.py:417` | Low | Hardcoded USD — doesn't support multi-marketplace |
 | `agent_bridge_api.py` | Medium | 13,050 lines — modularization planned |
