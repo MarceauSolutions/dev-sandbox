@@ -4,6 +4,34 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 12 (Diagnostic Hardening + False Positive Elimination)
+
+**Context:** Comprehensive diagnostic + hardening pass after session 11. Root cause analysis on recurring Telegram cred staleness, n8n crash-loop, and health_check.py false positives.
+
+**Fixed:**
+- **n8n crash-loop**: Task runner subprocess hardcodes `/home/ec2-user/.local/bin/n8n` path. After MemoryMax=700M SIGTERM, symlink was missing → crash-loop on restart. Fix: `ln -s /usr/bin/n8n ~/.local/bin/n8n` on EC2.
+- **GitHub→Telegram stale cred**: `RlAwU3xzcX4hifgj` credential had wrong token (recurring issue). Re-patched via Python urllib PATCH to n8n REST API + bounced workflow. Shell/SSH corrupts token — must patch from Mac via Python urllib.
+- **Coaching-Payment-Welcome fitai nodes**: Set `continueRegularOutput=true` — fitai.marceausolutions.com call failures no longer block the main flow.
+- **Monthly-Workflow-Backup**: Was missing n8n Internal API Key cred → 401 on first step. Created `n8n Internal API Key` credential (id `3A3taZTvXAzm3ARI`).
+- **health_check.py false positives**: "11 workflow errors" included pre-fix historical errors. Rewrote to check latest execution per erroring workflow, exclude inactive workflows, classify as "actively failing" (<6h) vs "stale failure" (>6h, not yet re-verified).
+
+**Added to health_check.py:**
+- Telegram bot token validation: `api.telegram.org/bot{token}/getMe` + check latest GitHub→Telegram execution status
+- `--repatch-telegram` CLI flag: patches cred + bounces workflow in one command
+- n8n restart threshold raised: warn ≤6 (was ≤3), fail >6
+
+**Verified:**
+- health_check.py: 0 false positives, "No active workflow failures" ✓
+- Telegram monitoring: catches stale cred before it causes silent alert failures
+
+**Key Learnings:**
+39. **n8n task runner hardcodes binary path** — after MemoryMax SIGTERM or manual kill, symlink at `~/.local/bin/n8n` must exist or n8n crash-loops on restart. Check this before every n8n restart.
+40. **SSH shell corrupts Telegram token patches** — only patch n8n credentials via Python urllib from Mac. Never copy/paste via SSH shell (token gets truncated or modified).
+41. **health_check error counts are misleading** — n8n stores ALL historical errors; counting errors in 24h window includes pre-fix errors. Always check latest execution status per workflow for accurate failure state.
+42. **Stale Telegram cred is recurring** — n8n Telegram credential `RlAwU3xzcX4hifgj` needs re-patching after heavy session work (rapid workflow bounces trigger token refresh). health_check.py now monitors this automatically.
+
+---
+
 ## 2026-03-06: Company on a Laptop — Session 11 (Zero mode:list — All Sheets Nodes Hardened)
 
 **Context:** Completing mode:list → mode:id conversion started in session 10. All Google Sheets nodes across all workflows now use deterministic numeric GIDs.

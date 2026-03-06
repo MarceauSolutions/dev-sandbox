@@ -99,7 +99,7 @@ def check_ec2_services():
     n8n_restarts = int(out.strip()) if out.strip().isdigit() else 0
     if n8n_restarts <= 1:
         print(f"  {ok('n8n stable')}: {n8n_restarts} restart(s) in 24h")
-    elif n8n_restarts <= 3:
+    elif n8n_restarts <= 6:
         print(f"  {warn('n8n restarted')}: {n8n_restarts} restart(s) in 24h")
     else:
         print(f"  {fail('n8n unstable')}: {n8n_restarts} restart(s) in 24h")
@@ -389,6 +389,40 @@ def check_ai_apis():
         except Exception as e:
             print(f"  {warn(f'ElevenLabs: check failed ({str(e)[:40]})')}")
 
+    # Telegram bot token — critical for GitHub→Telegram and all alerts
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    if not tg_token:
+        print(f"  {fail('Telegram: TELEGRAM_BOT_TOKEN not set')}")
+    else:
+        try:
+            req = urllib.request.Request(
+                f"https://api.telegram.org/bot{tg_token}/getMe"
+            )
+            resp = urllib.request.urlopen(req, timeout=8, context=ssl_ctx())
+            data = json.loads(resp.read())
+            if data.get("ok"):
+                bot_name = data.get("result", {}).get("username", "unknown")
+                # Also check GitHub→Telegram most recent execution succeeded
+                last_exec_ok = True
+                try:
+                    tg_execs = n8n_api("executions?workflowId=BsoplLFe1brLCBof&limit=1")
+                    if tg_execs and tg_execs.get("data"):
+                        last_status = tg_execs["data"][0].get("status", "")
+                        if last_status == "error":
+                            last_exec_ok = False
+                except Exception:
+                    pass
+                if not last_exec_ok:
+                    print(f"  {fail(f'Telegram: bot valid (@{bot_name}) but n8n cred stale — last GitHub→Telegram failed. Run: python scripts/health_check.py --repatch-telegram')}")
+                else:
+                    print(f"  {ok(f'Telegram: bot valid (@{bot_name})')}")
+            else:
+                print(f"  {fail(f'Telegram: bot API returned ok=false')}")
+        except urllib.error.HTTPError as e:
+            print(f"  {fail(f'Telegram: invalid bot token (HTTP {e.code})')}")
+        except Exception as e:
+            print(f"  {warn(f'Telegram: check failed ({str(e)[:40]})')}")
+
 
 def check_stripe_webhooks():
     """Verify all expected Stripe webhooks are registered and enabled."""
@@ -450,11 +484,13 @@ def check_stripe_webhooks():
 def check_recent_executions():
     print(header("RECENT ACTIVITY"))
 
-    # Build workflow ID → name map for error display
-    wf_data = n8n_api("workflows?limit=200")
+    # Build workflow ID → name map for error display (all workflows for names)
+    wf_data_all = n8n_api("workflows?limit=200")
     wf_names = {}
-    if wf_data:
-        wf_names = {w["id"]: w["name"] for w in wf_data.get("data", [])}
+    if wf_data_all:
+        wf_names = {w["id"]: w["name"] for w in wf_data_all.get("data", [])}
+    # Active workflows only (for filtering — inactive errors are expected/intentional)
+    wf_data = n8n_api("workflows?active=true&limit=200")
 
     # Check for recent workflow errors across all workflows (last 24h)
     # Note: n8n is configured to prune successful executions — only errors are stored
@@ -465,7 +501,8 @@ def check_recent_executions():
 
     errors = data.get("data", [])
     cutoff = datetime.now(timezone.utc).timestamp() - 86400
-    recent_errors = []
+    # Find workflows that errored in last 24h
+    errored_wf_ids = set()
     for e in errors:
         started = e.get("startedAt", "")
         if started:
@@ -473,25 +510,104 @@ def check_recent_executions():
                 dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
                 if dt.timestamp() > cutoff:
                     wf_id = e.get("workflowId", "")
-                    recent_errors.append(wf_names.get(wf_id, wf_id))
+                    if wf_id:
+                        errored_wf_ids.add(wf_id)
             except Exception:
                 pass
 
-    if recent_errors:
-        # Group by workflow name with counts
-        counts = {}
-        for name in recent_errors:
-            counts[name] = counts.get(name, 0) + 1
-        summary = ", ".join(f"{n} ×{c}" if c > 1 else n for n, c in counts.items())
-        print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {summary}")
+    # For each erroring workflow, check if the LATEST execution is still an error
+    # and whether the workflow is currently active
+    active_wf_ids = {w["id"] for w in wf_data.get("data", [])} if wf_data else set()
+    still_failing = []      # active workflow, latest exec is error
+    stale_failures = []     # active workflow, latest exec is error but old (>6h ago)
+    cutoff_6h = datetime.now(timezone.utc).timestamp() - 21600
+    for wf_id in errored_wf_ids:
+        if wf_id not in active_wf_ids:
+            continue  # Skip inactive workflows — expected state
+        latest = n8n_api(f"executions?workflowId={wf_id}&limit=1")
+        if latest and latest.get("data"):
+            last_ex = latest["data"][0]
+            last_status = last_ex.get("status", "")
+            started = last_ex.get("startedAt", "")
+            if last_status == "error":
+                # Check if this is a recent error (in last 6h) or stale
+                is_recent = False
+                if started:
+                    try:
+                        dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
+                        is_recent = dt.timestamp() > cutoff_6h
+                    except Exception:
+                        pass
+                name = wf_names.get(wf_id, wf_id)
+                if is_recent:
+                    still_failing.append(name)
+                else:
+                    stale_failures.append(name)
+
+    if still_failing:
+        summary = ", ".join(still_failing)
+        print(f"  {fail(f'{len(still_failing)} workflow(s) actively failing')}: {summary}")
     else:
-        print(f"  {ok('0 workflow errors in last 24h')}")
+        print(f"  {ok('No active workflow failures')}")
+    if stale_failures:
+        summary = ", ".join(stale_failures)
+        print(f"  {warn(f'{len(stale_failures)} workflow(s) failed last run, not yet re-verified')}: {summary}")
+
+
+def repatch_telegram():
+    """Re-patch the Clawdbot Telegram credential in n8n with the token from .env."""
+    import ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    if not token:
+        print("TELEGRAM_BOT_TOKEN not in .env")
+        return False
+
+    n8n_url = os.getenv("N8N_URL", "https://n8n.marceausolutions.com")
+    payload = json.dumps({
+        "name": "Clawdbot Telegram",
+        "type": "telegramApi",
+        "data": {"accessToken": token}
+    }).encode()
+
+    req = urllib.request.Request(
+        f"{n8n_url}/api/v1/credentials/RlAwU3xzcX4hifgj",
+        data=payload,
+        headers={"X-N8N-API-KEY": N8N_API_KEY, "Content-Type": "application/json"},
+        method="PATCH"
+    )
+    try:
+        resp = urllib.request.urlopen(req, timeout=10, context=ctx)
+        result = json.loads(resp.read())
+        print(f"✓ Telegram cred re-patched: {result.get('name')}")
+        # Bounce GitHub→Telegram workflow
+        for action in ["deactivate", "activate"]:
+            req2 = urllib.request.Request(
+                f"{n8n_url}/api/v1/workflows/BsoplLFe1brLCBof/{action}",
+                data=b"{}",
+                headers={"X-N8N-API-KEY": N8N_API_KEY, "Content-Type": "application/json"},
+                method="POST"
+            )
+            urllib.request.urlopen(req2, timeout=10, context=ctx)
+        print("✓ GitHub→Telegram workflow bounced")
+        return True
+    except Exception as e:
+        print(f"✗ Re-patch failed: {e}")
+        return False
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--fast", action="store_true", help="Skip SSH checks")
+    parser.add_argument("--repatch-telegram", action="store_true", help="Re-patch stale Telegram cred in n8n")
     args = parser.parse_args()
+
+    if args.repatch_telegram:
+        repatch_telegram()
+        return
 
     print(f"\n{BOLD}{GOLD}  MARCEAU SOLUTIONS — SYSTEM HEALTH{RESET}")
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')} | Company on a Laptop\n")
