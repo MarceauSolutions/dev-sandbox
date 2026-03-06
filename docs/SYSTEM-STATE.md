@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 11).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 12).
 
 ---
 
@@ -251,3 +251,7 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | daily_standup.sh broken morning digest command | FIXED 2026-03-06 (session 9) | `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path). Fixed to subshell `(cd projects/shared/personal-assistant && python -m src.morning_digest --preview)`. |
 | All Google Sheets mode:name nodes (19 total) | FIXED 2026-03-06 (session 10) | mode:name does runtime API lookup that can fail under load. Converted ALL 19 nodes across 13 workflows to mode:id with verified GIDs. PT Tracker GIDs: Client Roster=1584175390, Billing=1695379925, Weekly Check-Ins=1875514153. Challenge GIDs: Leads=0. Also created 4 missing tabs: Form_Submissions, SMS_Responses, Follow_Up_Sequences (ops sheet), Premium Waitlist (challenge sheet). |
 | All Google Sheets mode:list nodes (13 total) | FIXED 2026-03-06 (session 11) | mode:list does same runtime API lookup as mode:name. Converted all 13 nodes across 12 workflows to mode:id. WebDev Tracker GIDs: Web Dev Clients=1059444855, Cross-Referrals=1513866714. Challenge sheet GIDs: Responses=888740858, Campaign Analytics=1367234528. Created 3 new tabs: Creator Tool Leads=37201560, Website Design Leads=2082055740, Automation Leads=545218649. Zero mode:name/mode:list/mode:url nodes remain across all 37 active workflows. |
+| n8n crash-loop on restart (MODULE_NOT_FOUND) | FIXED 2026-03-06 (session 12) | n8n task runner subprocess looks for `/home/ec2-user/.local/bin/n8n` which was missing. Caused 5 rapid crash-restart cycles when MemoryMax=700M was hit during heavy session. Fixed: `ln -s /usr/bin/n8n ~/.local/bin/n8n`. Won't crash on next restart. |
+| GitHub→Telegram Clawdbot credential stale again | FIXED 2026-03-06 (session 12) | Same recurring issue: `RlAwU3xzcX4hifgj` token stale. Re-patched via Python urllib from Mac. Bounced workflow. Pattern: patch from Mac only, never SSH. |
+| Coaching-Payment-Welcome fitai nodes would block welcome flow | FIXED 2026-03-06 (session 12) | `Create Portal Account` and `Assign Starter Workout` nodes had no `onError` — fitai API failures would stop the whole welcome workflow before sending the client's SMS. Set `continueRegularOutput` on both. Portal account creation is nice-to-have, not critical path. |
+| Monthly-Workflow-Backup "List All Workflows" missing API key | FIXED 2026-03-06 (session 12) | httpRequest to localhost:5678 only sent `Accept` header — no API key → 401. Created `httpHeaderAuth` credential "n8n Internal API Key" (id=3A3taZTvXAzm3ARI) and assigned to node. |
