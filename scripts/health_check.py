@@ -18,11 +18,19 @@ import urllib.request
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 
-EC2_HOST = "34.193.98.97"
-EC2_KEY = os.path.expanduser("~/.ssh/marceau-ec2-key.pem")
-N8N_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTYyMmJmOC1jZTc0LTRhZjAtYTQ3MS03MTM5YjFjMmRlZWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5ODI2NDAzLCJleHAiOjE3Nzc1MjE2MDB9.wZy3CtUhWnUMHG-tl6oPrpg3Z34Ol794qsvLa4D8yRY"
+# Load .env — never hardcode secrets
+try:
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env")
+except ImportError:
+    pass
+
+EC2_HOST = os.getenv("EC2_HOST", "34.193.98.97")
+EC2_KEY = os.path.expanduser(os.getenv("EC2_KEY_PATH", "~/.ssh/marceau-ec2-key.pem"))
+N8N_API_KEY = os.getenv("N8N_API_KEY", "")
 
 GREEN = "\033[32m"
 RED = "\033[31m"

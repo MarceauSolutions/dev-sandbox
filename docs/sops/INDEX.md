@@ -31,11 +31,11 @@
 | **22** | Campaign Analytics & Tracking | Tracking campaign performance and response rates | `sop-22-campaign-analytics.md` |
 | **23** | Cold Outreach Strategy Development | Developing and testing outreach messaging | `sop-23-cold-outreach.md` |
 | **24** | Daily/Weekly Digest System | Reviewing business operations or digest setup | `sop-24-digest-system.md` |
-| **25** | Documentation Decision Framework | Documenting large efforts (>30 min) | `../SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md` |
-| **26** | User Statement Validation Protocol | MANDATORY: Never contradict user statements | `sop-26-user-validation.md` |
-| **27** | Clawdbot Usage | Quick tasks while mobile / away from computer | `../SOP-27-CLAWDBOT-USAGE.md` |
-| **28** | Ralph Usage | Complex multi-story development tasks | `../SOP-28-RALPH-USAGE.md` |
-| **29** | Three-Agent Collaboration | Deciding which agent to use | `../SOP-29-THREE-AGENT-COLLABORATION.md` |
+| **25** | Documentation Decision Framework | Documenting large efforts (>30 min) | `sop-25-documentation-decision-framework.md` |
+| **26** | User Statement Validation Protocol | MANDATORY: Never contradict user statements | `sop-26-user-statement-validation-protocol.md` |
+| **27** | Clawdbot Usage | Quick tasks while mobile / away from computer | `sop-27-clawdbot-usage.md` |
+| **28** | Ralph Usage | Complex multi-story development tasks | `sop-28-ralph-usage.md` |
+| **29** | Three-Agent Collaboration | Deciding which agent to use | `sop-29-three-agent-collaboration.md` |
 | **30** | n8n Workflow Management | Creating, managing, or transitioning automations to n8n | `sop-30-n8n-workflow.md` |
 | **31** | AI Assistant Deployment | Deploying standalone AI assistant for fresh Claude or sale | `sop-31-ai-assistant.md` |
 | **32** | Project Routing & Classification | FIRST step for ANY new idea (before SOP 0 or SOP 17) | `sop-32-project-routing.md` |
@@ -103,6 +103,7 @@ SOP 32 → SOP 17 (if needed) → SOP 0 → SOP 9 (if needed) → SOP 1 → Deve
 
 ## Notes
 
-- SOPs 25, 27, 28, 29 are stored in `docs/` (not in `docs/sops/`) as they predate this extraction
+- All SOPs (0-33) now live in `docs/sops/` — no exceptions
+- SOPs 25-29 were moved from `docs/` root into `docs/sops/` on 2026-03-06
 - All SOPs in this directory were extracted from the original monolithic CLAUDE.md
 - The original monolithic version is archived at `docs/archive/CLAUDE-v1-monolithic.md`

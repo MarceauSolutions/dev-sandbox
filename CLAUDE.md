@@ -17,7 +17,7 @@
 3. **Test before committing** — New `.py` files must pass syntax check. Pre-commit hook enforces.
 4. **DOE discipline** — Directive must exist before deploying. Never deploy untested code.
 5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
-6. **Document efforts >30 min** — `docs/SOP-25-DOCUMENTATION-DECISION-FRAMEWORK.md`
+6. **Document efforts >30 min** — `docs/sops/sop-25-documentation-decision-framework.md`
 7. **Rule of Three** — Same approach fails 3x? STOP. Research root cause.
 
 ## Execution Discipline (Hook-Enforced Where Possible)
@@ -48,6 +48,7 @@
 
 | Quick Command | Run |
 |--------------|-----|
+| **Daily standup** | `./scripts/daily_standup.sh` |
 | **System health** | `python scripts/health_check.py` |
 | Search tools | `python scripts/inventory.py search <keyword>` |
 | List projects | `python scripts/inventory.py list` |
@@ -79,7 +80,7 @@
 
 | What | Location |
 |------|----------|
-| **SOPs (all 28)** | `docs/sops/INDEX.md` — loaded on-demand |
+| **SOPs (all 33)** | `docs/sops/INDEX.md` — loaded on-demand |
 | **Architecture guide** | `docs/architecture-guide.md` |
 | **Testing strategy** | `docs/testing-strategy.md` |
 | **Deployment pipeline** | `docs/deployment.md` |
@@ -91,6 +92,7 @@
 | **Session learnings** | `docs/session-history.md` |
 | **Archived docs** | `docs/archive/` |
 | **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
+| **System state (live)** | `docs/SYSTEM-STATE.md` |
 | **PT coaching hub** | `projects/marceau-solutions/pt-business/CLAUDE.md` |
 | **Web dev hub** | `projects/marceau-solutions/web-dev/CLAUDE.md` |
 
@@ -101,7 +103,7 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 ├── CLAUDE.md                   # This file (always in context)
 ├── .env                        # All API keys and secrets
 ├── scripts/                    # Inventory, company setup, maintenance
-├── execution/                  # Shared utilities (76 scripts, 2+ project use)
+├── execution/                  # Shared utilities (106 scripts, 2+ project use)
 ├── directives/                 # Capability SOPs for projects
 ├── docs/                       # Reference documentation
 │   ├── sops/                   # Individual SOP files (loaded on-demand)
@@ -112,7 +114,6 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 │   │   ├── pt-business/        # PT coaching business hub
 │   │   ├── fitness-influencer/ # AI content platform (product code)
 │   │   ├── website-builder/    # AI website generation service
-│   │   ├── portfolio/          # Demo showcases for clients
 │   │   └── ...
 │   ├── swflorida-hvac/         # Client: SW Florida Comfort HVAC
 │   │   ├── website/            # Client website (static HTML)
@@ -154,7 +155,7 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 | **Clawdbot** | EC2 24/7 (Telegram) | Quick tasks, research, complexity 0-6 |
 | **Ralph** | EC2 (PRD-driven) | Complex builds, complexity 7-10 |
 
-See `docs/SOP-29-THREE-AGENT-COLLABORATION.md` for routing logic.
+See `docs/sops/sop-29-three-agent-collaboration.md` for routing logic.
 
 ## Session Start Checklist
 
