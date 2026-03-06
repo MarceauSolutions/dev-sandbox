@@ -162,6 +162,7 @@ def check_domains():
         "fitai.marceausolutions.com": "Fitness influencer platform",
         "marceausolutions.com": "Marceau Solutions website",
         "swfloridacomfort.com": "HVAC client website",
+        "www.boabfit.com": "BoabFit client website",
     }
     import ssl
     for domain, desc in domains.items():
@@ -213,6 +214,9 @@ def check_n8n():
         # Web Dev
         "5GXwor2hHuij614l": "WebDev Payment Welcome",
         "N8HIFsZdE5Go7Lky": "WebDev Monthly Checkin",
+        # Stripe
+        "QMWkhAb8SWMSImc4": "Stripe Payment Failed",
+        "unF3M3IfnGPqV0xU": "Stripe Invoice Paid (Renewals)",
         # SMS
         "G14Mb6lpeFZVYGwa": "SMS Response Handler",
     }
@@ -297,6 +301,61 @@ def check_local_env():
         pass
 
 
+def check_stripe_webhooks():
+    """Verify all expected Stripe webhooks are registered and enabled."""
+    print(header("STRIPE WEBHOOKS"))
+    stripe_key = os.getenv("STRIPE_SECRET_KEY", "")
+    if not stripe_key:
+        print(f"  {warn('STRIPE_SECRET_KEY not set — skipping')}")
+        return
+
+    expected = {
+        "stripe-payment-welcome": "checkout.session.completed",
+        "stripe-webdev-payment": "checkout.session.completed",
+        "stripe-cancellation": "customer.subscription.deleted",
+        "stripe-digital-delivery": "checkout.session.completed",
+        "stripe-payment-failed": "invoice.payment_failed",
+        "stripe-invoice-paid": "invoice.paid",
+    }
+
+    try:
+        req = urllib.request.Request(
+            "https://api.stripe.com/v1/webhook_endpoints?limit=20",
+            headers={"Authorization": f"Bearer {stripe_key}"}
+        )
+        import ssl
+        ctx = ssl.create_default_context()
+        resp = urllib.request.urlopen(req, timeout=10, context=ctx)
+        data = json.loads(resp.read())
+        endpoints = data.get("data", [])
+
+        registered = {}
+        for ep in endpoints:
+            url = ep.get("url", "")
+            status = ep.get("status", "")
+            events = ep.get("enabled_events", [])
+            for path_key in expected:
+                if path_key in url:
+                    registered[path_key] = {"status": status, "events": events}
+
+        all_ok = True
+        for path_key, expected_event in expected.items():
+            info = registered.get(path_key)
+            if not info:
+                print(f"  {fail(path_key)}: NOT REGISTERED in Stripe")
+                all_ok = False
+            elif info["status"] != "enabled":
+                print(f"  {warn(path_key)}: registered but status={info['status']}")
+                all_ok = False
+            else:
+                print(f"  {ok(path_key)}: enabled")
+
+        if all_ok:
+            print(f"  {ok(f'All {len(expected)} webhooks registered and enabled')}")
+    except Exception as e:
+        print(f"  {warn(f'Stripe API check failed: {str(e)[:60]}')}")
+
+
 def check_recent_executions():
     print(header("RECENT ACTIVITY"))
 
@@ -352,6 +411,7 @@ def main():
         check_domains()
         check_n8n()
         check_clawdbot()
+        check_stripe_webhooks()
 
     check_local_env()
 

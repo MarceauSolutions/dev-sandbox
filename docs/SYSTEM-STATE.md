@@ -1,7 +1,7 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 2).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 8).
 
 ---
 
@@ -25,7 +25,7 @@
 
 ---
 
-## n8n Workflows (36 active / 4 inactive)
+## n8n Workflows (38 active / 4 inactive)
 
 > Full inventory: `python scripts/backup-n8n.py --list`
 
@@ -89,6 +89,12 @@
 | Add-Posts-Webhook | `bzt3KFpwWmPbrp34` | Add posts via webhook trigger |
 | Weekly-Campaign-Analytics | `M62QBpROE48mEgDC` | Weekly campaign performance report |
 
+### Stripe Event Handlers
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Stripe-Payment-Failed | `QMWkhAb8SWMSImc4` | invoice.payment_failed → Telegram alert |
+| Stripe-Invoice-Paid | `unF3M3IfnGPqV0xU` | invoice.paid (renewals) → PT Tracker Sheets + Telegram |
+
 ### Other Active
 | Workflow | ID | Purpose |
 |----------|-----|---------|
@@ -105,11 +111,11 @@
 > 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
-34 of 36 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 7.
+36 of 38 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 8.
 
 **Not wired (2 — intentional):** Self-Annealing-Error-Handler (can't self-reference), n8n-Health-Check (circular).
 
-**All other 34 active workflows wired**, including: Nurture sequences (×4), Add-Posts-Webhook, Resume Builder, X-Post-Image-Generator (newly wired session 7).
+**All other 36 active workflows wired** — 100% of wireable workflows covered. Stripe-Payment-Failed and Stripe-Invoice-Paid both included at creation time.
 
 ---
 
@@ -159,14 +165,15 @@
 
 ## External Integrations (Verified 2026-03-06)
 
-### Stripe Webhooks (4 active, all → n8n.marceausolutions.com)
-| Endpoint | Event | Workflow |
-|----------|-------|---------|
-| `/webhook/stripe-payment-welcome` | checkout.session.completed | PT coaching onboard |
-| `/webhook/stripe-webdev-payment` | checkout.session.completed | WebDev client onboard |
-| `/webhook/stripe-cancellation` | customer.subscription.deleted | Coaching offboard |
-| `/webhook/stripe-digital-delivery` | checkout.session.completed | Digital product delivery |
-| `/webhook/stripe-payment-failed` | invoice.payment_failed | Telegram alert to William |
+### Stripe Webhooks (6 active, all → n8n.marceausolutions.com)
+| Endpoint | Event | Workflow | Stripe ID |
+|----------|-------|---------|-----------|
+| `/webhook/stripe-payment-welcome` | checkout.session.completed | PT coaching onboard | — |
+| `/webhook/stripe-webdev-payment` | checkout.session.completed | WebDev client onboard | — |
+| `/webhook/stripe-cancellation` | customer.subscription.deleted | Coaching offboard | — |
+| `/webhook/stripe-digital-delivery` | checkout.session.completed | Digital product delivery | — |
+| `/webhook/stripe-payment-failed` | invoice.payment_failed | Telegram alert to William | `we_1T85t0DeeD1eRvzzjpNKpvGA` |
+| `/webhook/stripe-invoice-paid` | invoice.paid | Log renewal to PT Tracker + Telegram | `we_1T862eDeeD1eRvzzdYkDJUzb` |
 
 ### Twilio Inbound SMS (all → `sms-response`)
 | Number | Label | SMS Webhook |
@@ -225,3 +232,6 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | invoice.payment_failed unhandled | FIXED 2026-03-06 (session 7b) | Created `Stripe-Payment-Failed` workflow (`QMWkhAb8SWMSImc4`). Stripe webhook `we_1T85t0DeeD1eRvzzjpNKpvGA` registered. Payment failures now trigger Telegram alert to William. |
 | flamesofpassionentertainment.com DNS not configured | **Client-blocked** | Domain on Google Cloud DNS (ns-cloud-c1-c4.googledomains.com). No A records pointing to GitHub Pages. Client or William must add A records: 185.199.108-111.153. GitHub Pages site is live at `marceausolutions.github.io/flames-of-passion-website`. |
 | 7 workflows not wired to Self-Annealing | FIXED 2026-03-06 (session 7) | Wired 7 remaining workflows (nurture sequences ×4, Add-Posts-Webhook, Resume-Builder, X-Post-Image-Generator). Now 34/36 active workflows wired. Only Self-Annealing + n8n-Health-Check excluded intentionally. |
+| invoice.paid unhandled (subscription renewals) | FIXED 2026-03-06 (session 8) | Created `Stripe-Invoice-Paid` (`unF3M3IfnGPqV0xU`). Stripe webhook `we_1T862eDeeD1eRvzzdYkDJUzb` registered. Renewals now log to PT Tracker "Billing" tab + Telegram. Column mapping aligned with Coaching-Payment-Welcome (Date, Client_Name, Amount, Status=Renewal, Stripe_Payment_ID). |
+| health_check.py missing Stripe webhook verification | FIXED 2026-03-06 (session 8) | Added `check_stripe_webhooks()` — verifies all 6 Stripe webhooks are registered and enabled in Stripe. Fires as part of full health check. |
+| boabfit.com not in domain monitoring | FIXED 2026-03-06 (session 8) | Added `www.boabfit.com` to `check_domains()` in health_check.py. Live at 200. |

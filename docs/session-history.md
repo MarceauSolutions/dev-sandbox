@@ -4,6 +4,25 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-06: Company on a Laptop — Session 8 (Renewal Tracking + Monitoring Hardening)
+
+**Context:** Continued "company on a laptop" iteration — coverage gap analysis post-session-7b.
+
+**Built:**
+- `Stripe-Invoice-Paid` workflow (`unF3M3IfnGPqV0xU`) — fires on subscription renewals only (`billing_reason === 'subscription_cycle'`). Logs to PT Tracker "Billing" tab (columns: Date, Client_Name, Amount, Status=Renewal, Stripe_Payment_ID) + Telegram alert. Self-Annealing wired at creation.
+- Stripe webhook `we_1T862eDeeD1eRvzzdYkDJUzb` registered for `invoice.paid`.
+- `check_stripe_webhooks()` in health_check.py — verifies all 6 Stripe webhooks are registered + enabled in Stripe. Runs on every full health check.
+- Added `www.boabfit.com` to `check_domains()` in health_check.py.
+- Added `Stripe-Payment-Failed` + `Stripe-Invoice-Paid` to `key_workflows` in health_check.py.
+
+**Fixed:**
+- SYSTEM-STATE.md workflow count updated: 36→38 active, Self-Annealing wiring 34/36→36/38 (100% of wireable).
+
+**Key Learnings:**
+28. **Billing sheet column alignment matters** — checked existing `Coaching-Payment-Welcome` "Log Billing" node to get correct column names (Date, Client_Name, Amount, Status, Stripe_Payment_ID) before building invoice.paid workflow. Prevents silently mismatched columns.
+29. **Stripe `invoice.paid` fires on ALL invoices**, including initial subscription creation. Filter by `billing_reason === 'subscription_cycle'` to target renewals only. Initial payments are already handled by `checkout.session.completed`.
+30. **Stripe webhook health belongs in daily check** — added Stripe API call to health_check.py to verify all 6 expected webhooks are registered and enabled. Without this, a deleted webhook would cause silent revenue loss.
+
 ## 2026-03-06: Company on a Laptop — Session 7b (Stripe Payment Failure Coverage)
 
 **Context:** "I don't care if there's no clients yet — the point is to be ready for clients." Built invoice.payment_failed handler.
