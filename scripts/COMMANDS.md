@@ -286,11 +286,12 @@ python scripts/inventory.py list
 
 | Command | Path | Description |
 |---------|------|-------------|
-| `./scripts/daily_standup.sh` | `scripts/daily_standup.sh` | Morning routine: health + revenue + digest + quick links |
-| `python scripts/health_check.py` | `scripts/health_check.py` | Full system health check (EC2, n8n, disk, clawdbot, .env). Exit 1 on failure. |
+| `./scripts/daily_standup.sh` | `scripts/daily_standup.sh` | Morning routine: health + revenue + digest + API balances + links (5 sections) |
+| `python scripts/health_check.py` | `scripts/health_check.py` | Full system health check (EC2, n8n, disk, clawdbot, .env, errors). Exit 1 on failure. |
 | `python scripts/health_check.py --fast` | `scripts/health_check.py` | Local-only health check (skips SSH) |
-| `python scripts/backup-n8n.py` | `scripts/backup-n8n.py` | Export ALL n8n workflows to dated JSON — run weekly + commit |
+| `python scripts/backup-n8n.py` | `scripts/backup-n8n.py` | Export ALL n8n workflows to dated JSON (launchd runs Sun 4am) |
 | `python scripts/backup-n8n.py --list` | `scripts/backup-n8n.py` | List all n8n workflows with IDs (no backup written) |
+| `python scripts/backup-n8n.py --commit` | `scripts/backup-n8n.py` | Export + git commit + push (launchd uses this flag) |
 | `python scripts/check_api_balances.py` | `scripts/check_api_balances.py` | API provider balance dashboard |
 | `python scripts/revenue-report.py` | `scripts/revenue-report.py` | Weekly revenue dashboard (Stripe + leads + SMS) |
 | `python scripts/create-coaching-tracker-sheet.py` | `scripts/create-coaching-tracker-sheet.py` | Create coaching tracker Google Sheet |

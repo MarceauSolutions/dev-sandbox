@@ -273,6 +273,28 @@ def check_recent_executions():
         else:
             print(f"  {warn(name)}: no timestamp")
 
+    # Check for recent workflow errors across all workflows
+    print()
+    data = n8n_api("executions?status=error&limit=50")
+    if data:
+        errors = data.get("data", [])
+        cutoff = datetime.now(timezone.utc).timestamp() - 86400  # last 24h
+        recent_errors = []
+        for e in errors:
+            started = e.get("startedAt", "")
+            if started:
+                try:
+                    dt = datetime.fromisoformat(started.replace("Z", "+00:00"))
+                    if dt.timestamp() > cutoff:
+                        recent_errors.append(e.get("workflowData", {}).get("name", "unknown"))
+                except Exception:
+                    pass
+        if recent_errors:
+            names = ", ".join(dict.fromkeys(recent_errors))  # deduplicated, order-preserved
+            print(f"  {fail(f'{len(recent_errors)} workflow error(s) in last 24h')}: {names[:80]}")
+        else:
+            print(f"  {ok('0 workflow errors in last 24h')}")
+
 
 def main():
     parser = argparse.ArgumentParser()
