@@ -135,6 +135,11 @@
             "type": "command",
             "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/check-existing-tools.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/project-structure-guard.sh",
+            "timeout": 10
           }
         ]
       },
