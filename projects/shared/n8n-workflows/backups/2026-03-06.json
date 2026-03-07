@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "updatedAt": "2026-03-06T22:31:31.284Z",
+      "updatedAt": "2026-03-06T23:21:23.431Z",
       "createdAt": "2026-02-11T15:26:08.447Z",
       "id": "1wS9VvXIt95BrR9V",
       "name": "Coaching-Payment-Welcome",
@@ -96,7 +96,8 @@
               },
               "timeout": 10000
             }
-          }
+          },
+          "onError": "continueRegularOutput"
         },
         {
           "id": "extract-portal-info",
@@ -187,7 +188,8 @@
               },
               "timeout": 10000
             }
-          }
+          },
+          "onError": "continueRegularOutput"
         },
         {
           "id": "add-to-roster",
@@ -432,8 +434,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
-      "activeVersionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
+      "versionId": "32f14653-352e-4a03-9c73-e67ff8da814a",
+      "activeVersionId": "32f14653-352e-4a03-9c73-e67ff8da814a",
       "triggerCount": 1,
       "shared": [
         {
@@ -445,9 +447,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-06T22:31:31.286Z",
-        "createdAt": "2026-03-06T22:31:31.286Z",
-        "versionId": "b224239c-7a0e-4ccc-879d-2b05ffa6c5e0",
+        "updatedAt": "2026-03-06T23:21:23.434Z",
+        "createdAt": "2026-03-06T23:21:23.434Z",
+        "versionId": "32f14653-352e-4a03-9c73-e67ff8da814a",
         "workflowId": "1wS9VvXIt95BrR9V",
         "nodes": [
           {
@@ -538,7 +540,8 @@
                 },
                 "timeout": 10000
               }
-            }
+            },
+            "onError": "continueRegularOutput"
           },
           {
             "id": "extract-portal-info",
@@ -629,7 +632,8 @@
                 },
                 "timeout": 10000
               }
-            }
+            },
+            "onError": "continueRegularOutput"
           },
           {
             "id": "add-to-roster",
@@ -870,7 +874,7 @@
       "tags": []
     },
     {
-      "updatedAt": "2026-03-05T04:01:40.756Z",
+      "updatedAt": "2026-03-06T23:21:11.083Z",
       "createdAt": "2026-03-05T04:01:40.756Z",
       "id": "2QaQbhIUlL7ctfq4",
       "name": "Monthly-Workflow-Backup",
@@ -918,7 +922,15 @@
                 }
               ]
             },
-            "options": {}
+            "options": {},
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpHeaderAuth"
+          },
+          "credentials": {
+            "httpHeaderAuth": {
+              "id": "3A3taZTvXAzm3ARI",
+              "name": "n8n Internal API Key"
+            }
           }
         },
         {
@@ -1005,8 +1017,8 @@
       },
       "meta": null,
       "pinData": null,
-      "versionId": "939c0026-3d82-4617-9bb8-32ec4637e218",
-      "activeVersionId": "939c0026-3d82-4617-9bb8-32ec4637e218",
+      "versionId": "d9aabaa5-f504-44ef-9999-91b3db3d5519",
+      "activeVersionId": "d9aabaa5-f504-44ef-9999-91b3db3d5519",
       "triggerCount": 1,
       "shared": [
         {
@@ -1018,9 +1030,9 @@
         }
       ],
       "activeVersion": {
-        "updatedAt": "2026-03-05T04:01:40.767Z",
-        "createdAt": "2026-03-05T04:01:40.767Z",
-        "versionId": "939c0026-3d82-4617-9bb8-32ec4637e218",
+        "updatedAt": "2026-03-06T23:21:11.095Z",
+        "createdAt": "2026-03-06T23:21:11.095Z",
+        "versionId": "d9aabaa5-f504-44ef-9999-91b3db3d5519",
         "workflowId": "2QaQbhIUlL7ctfq4",
         "nodes": [
           {
@@ -1037,7 +1049,7 @@
                 "interval": [
                   {
                     "field": "cronExpression",
-                    "expression": "0 3 1 * *"
+                    "expression": "0 0 3 1 * *"
                   }
                 ]
               }
@@ -1064,7 +1076,15 @@
                   }
                 ]
               },
-              "options": {}
+              "options": {},
+              "authentication": "genericCredentialType",
+              "genericAuthType": "httpHeaderAuth"
+            },
+            "credentials": {
+              "httpHeaderAuth": {
+                "id": "3A3taZTvXAzm3ARI",
+                "name": "n8n Internal API Key"
+              }
             }
           },
           {
