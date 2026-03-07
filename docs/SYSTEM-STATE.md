@@ -1,7 +1,30 @@
 # System State — Marceau Solutions
 
 > Live reference for what is running, what is off, and known issues.
-> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 12).
+> Update this file after any infrastructure change. Last updated: 2026-03-06 (session 12 + xAI key renewal).
+
+---
+
+## ⚠️ COMPLETED WORK — DO NOT REDO
+
+Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.md` for full log.
+
+| What | Status | Session |
+|------|--------|---------|
+| All n8n mode:name Google Sheets nodes (19) | ✅ Converted to mode:id | 10 |
+| All n8n mode:list Google Sheets nodes (13) | ✅ Converted to mode:id | 11 |
+| All missing Sheets tabs created | ✅ Done (7 tabs total) | 10-11 |
+| Self-Annealing wired to all wireable workflows | ✅ 36/38 (100%) | 7-12 |
+| All Stripe webhooks registered + verified | ✅ 6/6 active | 8 |
+| health_check.py — full system monitoring | ✅ EC2 + n8n + AI APIs + Telegram + Stripe | 4-12 |
+| n8n task runner crash-loop fix | ✅ Symlink in place on EC2 | 12 |
+| GitHub→Telegram Telegram cred patched | ✅ Auto-monitored in health_check | 12 |
+| xAI API key renewed + X-Batch re-activated | ✅ 38 active workflows | post-12 |
+| Mac launchd: daily 7am health check | ✅ Active | 4 |
+| Mac launchd: Monday 9am revenue report | ✅ Active | 4 |
+| Mac launchd: Sunday 4am n8n backup | ✅ Active | 4 |
+
+**Current state: 38 active workflows, 4 inactive (all intentional), 0 active failures.**
 
 ---
 
@@ -25,7 +48,7 @@
 
 ---
 
-## n8n Workflows (37 active / 5 inactive)
+## n8n Workflows (38 active / 4 inactive)
 
 > Full inventory: `python scripts/backup-n8n.py --list`
 
@@ -84,7 +107,7 @@
 | Workflow | ID | Purpose |
 |----------|-----|---------|
 | X-Social-Post-Scheduler-v2 | `CT5em35LljouaCrU` | X/Twitter post scheduling |
-| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | **DEACTIVATED 2026-03-06** — xAI API key invalid (403). Was erroring daily. Re-activate when xAI key renewed. |
+| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | Batch X post image generation |
 | X-Post-Image-Generator | `Hv8ybyKYNYDFwSgm` | Single post image generation |
 | Add-Posts-Webhook | `bzt3KFpwWmPbrp34` | Add posts via webhook trigger |
 | Weekly-Campaign-Analytics | `M62QBpROE48mEgDC` | Weekly campaign performance report |
@@ -105,18 +128,17 @@
 |----------|-----|--------|
 | Hot-Lead-to-ClickUp | `SzVXrbi1y433799Y` | ClickUp not in stack — deactivated 2026-03-06 |
 | Weather Notification | `Xbj63cGjToMM8Tgp` | Low priority, on-demand |
-| X-Batch-Image-Generator | `EgLcSeovV58t5OJS` | xAI API key invalid — deactivated 2026-03-06 |
 | Automated AI YouTube Shorts (Seedance) | `ZaVyQf0C4Ptj4DAQ` | Content pipeline paused |
 | Grok Imagine B-Roll Generator | `sYvUyTooDcHQQuKN` | On-demand, no need for always-on |
 
 > 9 dead workflows deleted 2026-03-06: Agent-Orchestrator (Debug/Minimal/Ultra), Naples RE, WhatsApp, MyAIagent, Amazon, X-Scheduler (v1), YouTube Shorts (old).
 
 ### Error Workflow Wiring (Self-Annealing)
-35 of 37 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 9.
+36 of 38 active workflows wired to `Self-Annealing-Error-Handler` (`Ob7kiVvCnmDHAfNW`). Updated 2026-03-06 session 12.
 
 **Not wired (2 — intentional):** Self-Annealing-Error-Handler (can't self-reference), n8n-Health-Check (circular).
 
-**All other 35 active workflows wired** — 100% of wireable workflows covered. X-Batch-Image-Generator deactivated 2026-03-06 (xAI key invalid).
+**All other 36 active workflows wired** — 100% of wireable workflows covered.
 
 ---
 
@@ -200,8 +222,9 @@ Voice: all → `https://api.marceausolutions.com/twilio/voice` (POST 200 OK)
 ## Operations Commands
 ```bash
 ./scripts/daily_standup.sh            # Morning routine (health + revenue + digest + links)
-python scripts/health_check.py        # Full check (EC2 + n8n + local) — exits 1 on failure
-python scripts/health_check.py --fast # Local only (no SSH)
+python scripts/health_check.py                  # Full check (EC2 + n8n + local) — exits 1 on failure
+python scripts/health_check.py --fast           # Local only (no SSH)
+python scripts/health_check.py --repatch-telegram  # Fix stale GitHub→Telegram cred + bounce workflow
 python scripts/revenue-report.py      # Revenue snapshot (last 7 days)
 python scripts/backup-n8n.py          # Export all n8n workflows → backups/YYYY-MM-DD.json
 python scripts/backup-n8n.py --list   # List all workflows (no backup)
@@ -246,7 +269,7 @@ python scripts/backup-n8n.py --list   # List all workflows (no backup)
 | boabfit.com not in domain monitoring | FIXED 2026-03-06 (session 8) | Added `www.boabfit.com` to `check_domains()` in health_check.py. Live at 200. |
 | health_check.py key-only AI API checks | FIXED 2026-03-06 (session 9) | Added `check_ai_apis()` — live validation of Anthropic (GET /v1/models, zero token cost) and ElevenLabs (character quota). Fires before Stripe webhooks check. Both keys valid as of session 9. |
 | revenue-report.py missing top-client breakdown | FIXED 2026-03-06 (session 9) | Added "Top Clients by Revenue" section (top 5 by total_charged). Uses existing `by_customer` dict from `get_stripe_metrics()`. |
-| X-Batch-Image-Generator erroring daily | FIXED 2026-03-06 (session 9) | xAI API key invalid (403 on all endpoints from EC2). Was silently firing Self-Annealing handler 3x/day. Deactivated until key renewed at console.x.ai. X-Post-Image-Generator also uses xAI (webhook-triggered, no auto-errors). |
+| X-Batch-Image-Generator erroring daily | FIXED 2026-03-06 (session 9 + xAI renewal) | xAI API key was invalid (403). Deactivated session 9. Key renewed 2026-03-06 → all 3 n8n xAI creds updated (R7R9kSbJia6KqFXS, P1H6Vz9nbdj2q1KU, apaXiy1xUNcOIy1S) → workflow re-activated. Now 38 active. |
 | Webdev-Monthly-Checkin running DAILY instead of monthly | FIXED 2026-03-06 (session 9) | `{triggerAtDayOfMonth: 1, triggerAtHour: 10}` without `field` key defaults to DAILY in n8n. Was potentially SMS-ing web dev clients every day. Fixed to explicit `cronExpression: "0 0 10 1 * *"` (10 AM ET on 1st of month). Bounced. |
 | daily_standup.sh broken morning digest command | FIXED 2026-03-06 (session 9) | `python -m projects.shared.personal-assistant.src.morning_digest` fails (dashes in path). Fixed to subshell `(cd projects/shared/personal-assistant && python -m src.morning_digest --preview)`. |
 | All Google Sheets mode:name nodes (19 total) | FIXED 2026-03-06 (session 10) | mode:name does runtime API lookup that can fail under load. Converted ALL 19 nodes across 13 workflows to mode:id with verified GIDs. PT Tracker GIDs: Client Roster=1584175390, Billing=1695379925, Weekly Check-Ins=1875514153. Challenge GIDs: Leads=0. Also created 4 missing tabs: Form_Submissions, SMS_Responses, Follow_Up_Sequences (ops sheet), Premium Waitlist (challenge sheet). |
