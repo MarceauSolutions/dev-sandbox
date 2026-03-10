@@ -229,7 +229,7 @@ def main():
     print("=" * 60)
 
     # Save the ID for reference
-    config_path = PROJECT_ROOT / "projects/marceau-solutions/web-dev/data/sheet-config.json"
+    config_path = PROJECT_ROOT / "projects/marceau-solutions/digital/web-dev/data/sheet-config.json"
     config_path.parent.mkdir(parents=True, exist_ok=True)
     with open(config_path, 'w') as f:
         json.dump({

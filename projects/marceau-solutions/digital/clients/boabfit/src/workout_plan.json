@@ -1,0 +1,287 @@
+{
+  "program": "BOABFIT 6-Week Workout & Nutrition Program",
+  "equipment": "Dumbbells & Booty Band",
+  "schedule_note": "5 days on (Mon-Fri), 2 rest days (Sat-Sun). Same 5-workout rotation each week.",
+  "weekly_schedule": {
+    "monday": "full_body_sculpt_tone",
+    "tuesday": "lower_body_build",
+    "wednesday": "upper_body_build",
+    "thursday": "lower_body_sculpt",
+    "friday": "upper_body_sculpt",
+    "saturday": "rest",
+    "sunday": "rest"
+  },
+  "workouts": {
+    "full_body_sculpt_tone": {
+      "title": "FULL BODY - SCULPT + TONE",
+      "duration": "25 minutes",
+      "focus_cue": "Feet grounded, core lightly pulled in, chest lifted without tension.",
+      "loops": [
+        {
+          "name": "Loop 1",
+          "exercises": [
+            {
+              "name": "Bulgarian Split Squats",
+              "form_tip": "Sit on the edge of the bench, stick your back leg up on it, stand up on your front leg. When you go down, lift your big toe up in the front so you feel it in your booty — your glutes have to keep you balanced instead of your quad doing all the work."
+            },
+            {
+              "name": "Dumbbell Bench Rows",
+              "form_tip": "One knee and hand on the bench, other foot wide on the floor. Pull the dumbbell up to your hip like you're starting a lawnmower — squeeze your shoulder blade back at the top. Keep your core tight so your back stays flat."
+            },
+            {
+              "name": "Banded Squat Abductions",
+              "form_tip": "Band just above your knees, squat down and HOLD that squat position. Now push your knees OUT against the band — you'll feel your outer glutes fire up like crazy. Stay low the whole time, don't stand up between reps!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 2",
+          "exercises": [
+            {
+              "name": "Dumbbell Single Leg RDL",
+              "form_tip": "Hold a dumbbell in the opposite hand of your standing leg. Hinge at the hips and let your back leg float up behind you — think of your body as a seesaw. Keep a tiny bend in your standing knee and feel the stretch down the back of your hamstring."
+            },
+            {
+              "name": "Lateral Raises",
+              "form_tip": "Light weights here babe! Lift your arms out to the sides until they're shoulder height — lead with your elbows, not your hands. Think about pouring water out of two pitchers. Slow and controlled on the way down!"
+            },
+            {
+              "name": "Dumbbell Tricep Kickbacks",
+              "form_tip": "Hinge forward at the hips, elbows pinned to your sides. Extend your arms straight back and SQUEEZE at the top — feel the back of your arms burn. Don't swing it, control the movement!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 3",
+          "exercises": [
+            {
+              "name": "Ab Routine",
+              "form_tip": "Ribs pulled down, lower back pressed into the floor. Every rep should come from your abs pulling IN, not your neck cranking up. Breathe out on the crunch, breathe in on the release."
+            },
+            {
+              "name": "Donkey Kicks Routine",
+              "form_tip": "On all fours, keep your knee bent at 90 degrees and push your foot up toward the ceiling. Squeeze your glute at the top like you're stamping the ceiling with your foot. Don't arch your back — keep your core locked in!"
+            }
+          ]
+        }
+      ]
+    },
+    "lower_body_build": {
+      "title": "LOWER BODY - BUILD",
+      "duration": "25 minutes",
+      "focus_cue": "Heels grounded, ribs down, squeeze from the bottom of your glutes upward.",
+      "loops": [
+        {
+          "name": "Loop 1",
+          "exercises": [
+            {
+              "name": "Dumbbell Backwards Lunges",
+              "form_tip": "Step BACK (not forward!) and drop that back knee straight down. Push through your front HEEL to stand back up — you should feel your glute and hamstring doing the work. Keep your torso upright, don't lean forward!"
+            },
+            {
+              "name": "Dumbbell Bench Hip Thrusts",
+              "form_tip": "Upper back on the bench, feet flat on the floor hip-width apart. Drive through your heels and squeeze your glutes at the top — hold for a second! Your chin should tuck slightly so you're not overextending your back."
+            },
+            {
+              "name": "Sumo Squats",
+              "form_tip": "Wide stance, toes pointed out at 45 degrees. Hold a dumbbell in front of you and sit straight DOWN — imagine sliding down a wall. Squeeze your inner thighs and glutes to stand back up. Keep your chest proud!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 2",
+          "exercises": [
+            {
+              "name": "Dumbbell Bulgarian Split Squat",
+              "form_tip": "Back foot up on the bench, front foot far enough forward that your knee doesn't pass your toes. Drop your back knee straight down and push through your front heel. Lift that front big toe to activate your glutes more!"
+            },
+            {
+              "name": "Dumbbell Side Lunges",
+              "form_tip": "Big step to the side, push your hips BACK as you bend one knee. Your other leg stays straight. Push through your heel to come back to center. You should feel the inner thigh of the straight leg getting a nice stretch."
+            },
+            {
+              "name": "Dumbbell RDLs",
+              "form_tip": "Feet hip-width apart, dumbbells in front of your thighs. Push your hips BACK like you're closing a car door with your butt. Let the weights slide down your legs — feel that hamstring stretch. Squeeze your glutes to stand back up!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 3",
+          "exercises": [
+            {
+              "name": "Ab Routine",
+              "form_tip": "Ribs down, lower back glued to the floor. Every rep is controlled — no momentum, no neck pulling. Breathe out as you crunch, breathe in as you lower."
+            }
+          ]
+        }
+      ]
+    },
+    "lower_body_sculpt": {
+      "title": "LOWER BODY - SCULPT",
+      "duration": "24 minutes",
+      "focus_cue": "Push through the full foot, inner thighs lightly engaged, movements slow and controlled.",
+      "loops": [
+        {
+          "name": "Loop 1",
+          "exercises": [
+            {
+              "name": "Dumbbell Backwards Lunges",
+              "form_tip": "Step back, drop that knee down, and PUSH through your front heel to stand up. Keep your chest up and core tight — no wobbling! Feel the glute and hamstring of your front leg doing all the work."
+            },
+            {
+              "name": "Dumbbell Step Ups",
+              "form_tip": "Find a sturdy bench or step. Put your whole foot on top, then drive through that heel to step up — DON'T push off your bottom foot. That top leg should do ALL the work. Squeeze your glute at the top!"
+            },
+            {
+              "name": "Goblet Squats",
+              "form_tip": "Hold the dumbbell at your chest like a goblet. Sit your hips back and down, elbows track inside your knees. Go as deep as you can while keeping your chest up. Drive through your heels to stand!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 2",
+          "exercises": [
+            {
+              "name": "Dumbbell Curtsey Lunge",
+              "form_tip": "Step your foot BEHIND and ACROSS your body — like you're doing a curtsey for the queen! Drop that back knee down and push through your front heel. You'll feel this one light up your outer glute like crazy."
+            },
+            {
+              "name": "Dumbbell Side Lunge Toe Touches",
+              "form_tip": "Big step to the side, sit your hips back, and reach your opposite hand down to touch your toe. Push back to standing. This one hits your inner thighs AND gets your heart rate up!"
+            },
+            {
+              "name": "Banded Squat Abduction",
+              "form_tip": "Band above your knees, drop into a squat and HOLD. Push your knees out against the band — feel those outer glutes BURN. Stay in that squat position the whole time, don't come up between reps!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 3",
+          "exercises": [
+            {
+              "name": "Ab Routine",
+              "form_tip": "Lower back pressed into the floor, ribs pulled down. Control every rep — quality over quantity. Breathe out on the effort, breathe in on the reset."
+            }
+          ]
+        }
+      ]
+    },
+    "upper_body_build": {
+      "title": "UPPER BODY - BUILD",
+      "duration": "21 minutes",
+      "focus_cue": "Collarbones wide, shoulders relaxed, neck tension-free.",
+      "loops": [
+        {
+          "name": "Loop 1",
+          "exercises": [
+            {
+              "name": "Dumbbell Bent Over Rows",
+              "form_tip": "Hinge forward at the hips, back flat, arms hanging straight down. Pull the dumbbells up to your hips — lead with your elbows and squeeze your shoulder blades together at the top. Slow on the way down!"
+            },
+            {
+              "name": "Dumbbell Overhead Tricep Extension",
+              "form_tip": "Hold one dumbbell with both hands behind your head, elbows pointing up to the ceiling. Extend your arms straight up without moving your elbows — they stay glued in place! Feel the back of your arms working."
+            },
+            {
+              "name": "Dumbbell Back Arm Pulses",
+              "form_tip": "Stand tall, arms straight behind you holding light dumbbells. Pulse them UP in tiny movements — keep your arms straight and squeeze the backs of your arms. This burns SO good, don't stop!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 2",
+          "exercises": [
+            {
+              "name": "Dumbbell Hammer Curls",
+              "form_tip": "Palms facing each other (like you're holding hammers), curl up without swinging your body. Keep your elbows pinned to your sides — if they drift forward, the weight is too heavy. Squeeze at the top!"
+            },
+            {
+              "name": "Y Raises",
+              "form_tip": "Light weights! Lift your arms up and out into a Y shape — thumbs pointing up to the ceiling. Squeeze your upper back and rear shoulders at the top. Slow and controlled, no momentum!"
+            },
+            {
+              "name": "Dumbbell Bent Over Lateral Raises",
+              "form_tip": "Hinge forward at the hips, let your arms hang down. Lift the dumbbells out to the sides — lead with your elbows, pinky side up slightly. Feel the burn in the back of your shoulders. Tiny pause at the top!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 3",
+          "exercises": [
+            {
+              "name": "Ab Routine",
+              "form_tip": "Core engaged the whole time — think about pulling your belly button to your spine. Every rep controlled, no rushing through it."
+            },
+            {
+              "name": "Donkey Kicks",
+              "form_tip": "On all fours, knee bent at 90 degrees, push your foot straight up. Squeeze your glute hard at the top — don't let your lower back arch. It's all about that glute squeeze!"
+            }
+          ]
+        }
+      ]
+    },
+    "upper_body_sculpt": {
+      "title": "UPPER BODY - SCULPT",
+      "duration": "22 minutes",
+      "focus_cue": "Stable through the core, power through the arms while keeping the neck and shoulders relaxed.",
+      "loops": [
+        {
+          "name": "Loop 1",
+          "exercises": [
+            {
+              "name": "Reverse Grip Dumbbell Rows",
+              "form_tip": "Same row position but flip your palms to face forward. This hits your biceps MORE while still working your back. Pull up to your hips and squeeze those shoulder blades together!"
+            },
+            {
+              "name": "Girl Push Ups",
+              "form_tip": "Knees down, hands wider than shoulder width. Lower your CHEST to the floor (not your hips!) and push back up. Keep your core tight and your body in a straight line from your knees to your head."
+            },
+            {
+              "name": "Dumbbell Hex Press",
+              "form_tip": "Lie on your back, press the dumbbells together so they touch the whole time. Push them straight up and squeeze your chest muscles together. The key is keeping those dumbbells pressed INTO each other!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 2",
+          "exercises": [
+            {
+              "name": "Dumbbell Tricep Kickbacks",
+              "form_tip": "Hinge forward, elbows pinned at your sides. Extend your arms straight back and HOLD at the top — feel that squeeze in the back of your arms. Control the weight back down, don't just drop it!"
+            },
+            {
+              "name": "Dumbbell Back Arm Pulses",
+              "form_tip": "Arms straight behind you, palms facing back. Tiny pulses UP — keep your arms straight and squeeze. The smaller the movement, the more it burns. Embrace it!"
+            },
+            {
+              "name": "Wall Raises",
+              "form_tip": "Stand with your back flat against a wall, arms in a goalpost position (elbows at 90 degrees). Slide your arms UP the wall and back down — keep your back, elbows, and wrists touching the wall the whole time. This is harder than it sounds!"
+            }
+          ]
+        },
+        {
+          "name": "Loop 3",
+          "exercises": [
+            {
+              "name": "Ab Routine",
+              "form_tip": "Core locked in, lower back pressed down. Quality reps only — if your form breaks, take a quick breath and get back at it."
+            },
+            {
+              "name": "Donkey Kicks Routine",
+              "form_tip": "On all fours, drive your foot up to the ceiling with your knee bent. Squeeze that glute at the top, hold for a beat, then lower with control. Keep your hips square — don't twist!"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "hype_blurbs": {
+    "monday": "HAPPY MONDAY BABE!! We're starting the week SO strong with a full body burn that's gonna have you feeling like a total baddie!! Every single muscle is getting attention today and you're gonna feel SO powerful after this one!! Let's goooo!!",
+    "tuesday": "BOOTY DAY BABY!! It's lower body BUILD day and we are here to grow that peach!! Your legs are gonna be shaking by the end and you're gonna LOVE the way you feel!! Glutes, hammies, quads — we're hitting it ALL!! Let's get it!!",
+    "wednesday": "ARMS & BACK DAY!! Time to sculpt those gorgeous arms and build that beautiful back!! You're gonna feel SO strong and toned after this one — tank top season is coming and we are READY!! Let's get after it babe!!",
+    "thursday": "LEG DAY ROUND TWO!! We're sculpting and toning those beautiful legs today!! Every lunge, every squat is bringing you closer to your dream body and you are CRUSHING it this week!! Almost to the weekend — let's finish strong!!",
+    "friday": "IT'S FRIDAYYY AND WE'RE ENDING THE WEEK WITH UPPER BODY SCULPT!! Last workout of the week babe — give it EVERYTHING you've got!! You showed up all week and that is something to be SO proud of!! Let's end on a high note!!",
+    "saturday": "REST DAY QUEEN!! You worked SO hard this week and your body needs time to recover and grow!! Stretch, hydrate, eat your protein, and enjoy your day!! You earned this!! See you Monday ready to go again!!",
+    "sunday": "Happy Sunday babe!! One more rest day to recharge — take care of your body, fuel up with good food, and get mentally ready because tomorrow we GO AGAIN!! You're doing amazing and I'm so proud of you!!"
+  }
+}

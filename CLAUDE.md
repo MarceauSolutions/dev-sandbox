@@ -72,7 +72,7 @@
 | "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
 | "Download photos" / "Export photos" | `/photos` interactive flow |
 | "What tool for X?" / "Should we use Y?" | Tool Selection Framework in `docs/service-standards.md` |
-| "New web dev client" | `projects/marceau-solutions/web-dev/workflows/client-onboarding.md` |
+| "New web dev client" | `projects/marceau-solutions/digital/web-dev/workflows/client-onboarding.md` |
 | "Deploy {client} website" | `./scripts/deploy_website.sh {client}` |
 | "PT client needs a website" | POST to `/webhook/cross-referral` (cross-business handoff) |
 
@@ -93,8 +93,9 @@
 | **Archived docs** | `docs/archive/` |
 | **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
 | **System state (live)** | `docs/SYSTEM-STATE.md` |
-| **PT coaching hub** | `projects/marceau-solutions/pt-business/CLAUDE.md` |
-| **Web dev hub** | `projects/marceau-solutions/web-dev/CLAUDE.md` |
+| **PT coaching hub** | `projects/marceau-solutions/fitness/pt-business/CLAUDE.md` |
+| **Web dev hub** | `projects/marceau-solutions/digital/web-dev/CLAUDE.md` |
+| **Tower structure** | `projects/marceau-solutions/{fitness,digital,media,labs}/` |
 
 ## Project Layout
 
@@ -109,28 +110,32 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 │   ├── sops/                   # Individual SOP files (loaded on-demand)
 │   └── archive/                # Old/superseded docs
 ├── projects/
-│   ├── marceau-solutions/      # Our company (owner)
-│   │   ├── website/            # marceausolutions.com (static HTML)
-│   │   ├── pt-business/        # PT coaching business hub
-│   │   ├── fitness-influencer/ # AI content platform (product code)
-│   │   ├── website-builder/    # AI website generation service
-│   │   └── ...
-│   ├── swflorida-hvac/         # Client: SW Florida Comfort HVAC
-│   │   ├── website/            # Client website (static HTML)
-│   │   └── ...
-│   ├── boabfit/                # Client: BoabFit (shower spray)
-│   │   ├── website/            # Client website
-│   │   └── research/           # Market analysis
-│   ├── flames-of-passion/      # Client: Flames of Passion (candles)
-│   │   └── website/            # Client website
-│   ├── square-foot-shipping/   # Client: Square Foot Shipping
-│   │   └── lead-gen/           # Lead generation
+│   ├── marceau-solutions/      # Our company — organized by tower
+│   │   ├── fitness/            # TOWER: Fitness & Coaching
+│   │   │   ├── pt-business/    #   1:1 PT coaching ($197/mo)
+│   │   │   └── trainerize-mcp/ #   Trainerize integration
+│   │   ├── digital/            # TOWER: Digital Services
+│   │   │   ├── website/        #   marceausolutions.com
+│   │   │   ├── web-dev/        #   Client website business
+│   │   │   ├── website-builder/ #   AI website generator
+│   │   │   └── clients/        #   Client deliverables
+│   │   │       ├── swflorida-hvac/
+│   │   │       ├── boabfit/
+│   │   │       ├── flames-of-passion/
+│   │   │       └── square-foot-shipping/
+│   │   ├── media/              # TOWER: Content & Media
+│   │   │   ├── fitness-influencer/ # AI content platform
+│   │   │   ├── fitness-influencer-mcp/
+│   │   │   ├── instagram-creator/
+│   │   │   ├── youtube-creator/
+│   │   │   └── tiktok-creator/
+│   │   └── labs/               # TOWER: R&D & New Ventures
+│   │       ├── dumbphone-lock/ #   iOS focus app
+│   │       ├── vuori-lead-magnet/
+│   │       ├── amazon-seller/
+│   │       ├── mikos-lab/
+│   │       └── legal-case-manager/
 │   ├── shared/                 # Multi-tenant tools (2+ companies)
-│   │   ├── lead-scraper/       # Lead scraping + SMS campaigns
-│   │   ├── personal-assistant/ # Morning digest, calendar, routines
-│   │   ├── social-media-automation/
-│   │   ├── md-to-pdf/          # Markdown → PDF (MCP published)
-│   │   └── ...
 │   └── product-ideas/          # Exploration/research projects
 └── .claude/
     ├── commands/               # Slash commands (/deploy, /test, etc.)

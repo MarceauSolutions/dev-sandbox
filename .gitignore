@@ -73,7 +73,7 @@ projects/shared/personal-assistant/output/
 ralph/output/
 
 # AI tool testing outputs
-projects/marceau-solutions/fitness-influencer/tools/output/
+projects/marceau-solutions/media/fitness-influencer/tools/output/
 
 # Generated social media content
 projects/*/output/generated_posts_*.json
@@ -92,7 +92,7 @@ projects/lead-scraper/
 *.mkv
 
 # Video work files (Premiere projects, renders, B-roll)
-projects/marceau-solutions/pt-business/content/peptide-video/Final_Product/work/
+projects/marceau-solutions/fitness/pt-business/content/peptide-video/Final_Product/work/
 
 # Photo processor output (generated/resized images)
 projects/shared/photo-processor/output/

@@ -35,19 +35,19 @@ safety_check() {
 get_client_config() {
     case "$1" in
         marceau)
-            LOCAL_PATH="projects/marceau-solutions/website"
+            LOCAL_PATH="projects/marceau-solutions/digital/website"
             DEPLOY_REPO="MarceauSolutions/marceausolutions.com"
             ;;
         hvac)
-            LOCAL_PATH="projects/swflorida-hvac/website"
+            LOCAL_PATH="projects/marceau-solutions/digital/clients/swflorida-hvac/website"
             DEPLOY_REPO="MarceauSolutions/swflorida-comfort-hvac"
             ;;
         boabfit)
-            LOCAL_PATH="projects/boabfit/website"
+            LOCAL_PATH="projects/marceau-solutions/digital/clients/boabfit/website"
             DEPLOY_REPO="MarceauSolutions/boabfit-website"
             ;;
         flames)
-            LOCAL_PATH="projects/flames-of-passion/website"
+            LOCAL_PATH="projects/marceau-solutions/digital/clients/flames-of-passion/website"
             DEPLOY_REPO="MarceauSolutions/flames-of-passion-website"
             ;;
         *)

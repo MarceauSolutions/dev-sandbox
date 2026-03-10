@@ -18,7 +18,7 @@ Q1: Is this SOFTWARE you will build?
 
 Q2: Who is this for?
 ├── CLIENT (someone paying you)
-│   ├── Website build → ~/website-projects/clients/[name]/
+│   ├── Website build → projects/marceau-solutions/digital/clients/[name]/
 │   └── Custom tool   → ~/upwork-projects/clients/[name]/
 │   NEXT: Client workspace procedures
 └── OWN USE or PRODUCT → Q3
@@ -36,9 +36,15 @@ Q4: Will this be sold, packaged, or used by a fresh Claude?
 └── NO (internal/personal use only) → Q5
 
 Q5: Exploration/POC or committed real project?
-├── POC / "Let me try this" → projects/product-ideas/[name]/
+├── POC / "Let me try this" → projects/marceau-solutions/labs/[name]/
 │   NEXT: SOP 17 (if commercial) or just experiment
-└── REAL PROJECT → projects/[company]/[name]/
+└── REAL PROJECT → Q6
+
+Q6: Which tower does this belong to? (by customer/market)
+├── Fitness clients (coaching, training, health) → projects/marceau-solutions/fitness/[name]/
+├── Business clients (websites, digital services) → projects/marceau-solutions/digital/[name]/
+├── Content/audience (social, influencer, media) → projects/marceau-solutions/media/[name]/
+└── R&D/experiments (new ventures, tools) → projects/marceau-solutions/labs/[name]/
     NEXT: SOP 0
 ```
 
@@ -61,14 +67,16 @@ Q5: Exploration/POC or committed real project?
 |-------------|-------|----------|-----------|----------|
 | Method | Documentation | `methods/[name]/` | None (integrate into SOPs) | SOP 20 |
 | Business Ops | Documentation + Code | `projects/[company]/[name]/` | None | Create workflows/ |
-| Client Website | Code (Website) | `~/website-projects/clients/[name]/` | Client hosting | Client procedures |
+| Client Website | Code (Website) | `projects/marceau-solutions/digital/clients/[name]/` | GitHub Pages | Client procedures |
 | Client Freelance | Code (Project) | `~/upwork-projects/clients/[name]/` | Client Deliverable | Client procedures |
 | Utility | Code | `execution/[name].py` | None (used in-place) | Just build it |
 | Shared Tool | Code (Project subtype) | `projects/shared/[name]/` | Skill (`~/production/`) | SOP 0 → SOP 1 |
 | AI Assistant | Code → Deployment | `projects/[co]/[name]/` → `~/ai-assistants/[name]/` | AI Assistant | SOP 0 → SOP 31 |
-| Product Idea | Code (Project subtype) | `projects/product-ideas/[name]/` | None (graduate if viable) | SOP 17 |
-| Company Project | Code (Project subtype) | `projects/[company]/[name]/` | Varies (SOP 0 decides) | SOP 0 → SOP 1 |
-| Website | Code (Website) | `projects/[company]/website/` | Git submodule | Website setup |
+| Product Idea / R&D | Code (Project subtype) | `projects/marceau-solutions/labs/[name]/` | None (graduate if viable) | SOP 17 |
+| Fitness Project | Code (Project subtype) | `projects/marceau-solutions/fitness/[name]/` | Varies (SOP 0 decides) | SOP 0 → SOP 1 |
+| Digital Project | Code (Project subtype) | `projects/marceau-solutions/digital/[name]/` | Varies (SOP 0 decides) | SOP 0 → SOP 1 |
+| Media Project | Code (Project subtype) | `projects/marceau-solutions/media/[name]/` | Varies (SOP 0 decides) | SOP 0 → SOP 1 |
+| Website | Code (Website) | `projects/marceau-solutions/digital/website/` | GitHub Pages | Website setup |
 
 **Success Criteria**:
 - [ ] Routing Result filled out with Type, Location, Deploy To, Next SOP

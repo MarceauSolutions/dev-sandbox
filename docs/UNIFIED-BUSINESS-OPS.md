@@ -1,17 +1,52 @@
 # Unified Business Operations Architecture
 
-> Two businesses, one stack. This document defines tool ownership, shared layers, and operational boundaries.
+> Four towers, one shared stack. Inspired by Marmon Group's sector model — each tower groups related businesses by market/customer, sharing centralized services while operating independently.
 
-## Business Units
+## Tower Structure
 
-| Business | Hub | Revenue Model | Clients |
-|----------|-----|---------------|---------|
-| **PT Coaching** | `projects/marceau-solutions/pt-business/` | $197/mo subscription | Individual fitness clients |
-| **Website Development** | `projects/marceau-solutions/web-dev/` | Per-project + optional hosting | Small businesses (HVAC, candles, etc.) |
+| Tower | Hub | What's Inside | Revenue Model |
+|-------|-----|---------------|---------------|
+| **Marceau Fitness** | `projects/marceau-solutions/fitness/` | 1:1 PT coaching, Trainerize MCP | $197/mo subscription |
+| **Marceau Digital** | `projects/marceau-solutions/digital/` | Client websites, AI website builder, marceausolutions.com | Per-project + hosting |
+| **Marceau Media** | `projects/marceau-solutions/media/` | Fitness influencer platform, social content creators | SaaS / content licensing (future) |
+| **Marceau Labs** | `projects/marceau-solutions/labs/` | DumbPhone Lock, Vuori lead magnet, Amazon, Miko's Lab, Legal | TBD (app sales, R&D) |
 
-## Tool Ownership Map
+## Tower Contents
 
-### Shared Layer (Both Businesses Use)
+### Fitness Tower (`fitness/`)
+| Project | Purpose |
+|---------|---------|
+| `pt-business/` | 1:1 PT coaching hub ($197/mo) |
+| `trainerize-mcp/` | Trainerize platform integration |
+
+### Digital Tower (`digital/`)
+| Project | Purpose |
+|---------|---------|
+| `website/` | marceausolutions.com (static HTML) |
+| `web-dev/` | Client website business (HVAC, BoabFit, Flames) |
+| `website-builder/` | AI website generation service |
+
+### Media Tower (`media/`)
+| Project | Purpose |
+|---------|---------|
+| `fitness-influencer/` | AI fitness content platform (FitAI) |
+| `fitness-influencer-mcp/` | MCP package for fitness influencer |
+| `instagram-creator/` | Instagram content automation |
+| `youtube-creator/` | YouTube content automation |
+| `tiktok-creator/` | TikTok content automation |
+
+### Labs Tower (`labs/`)
+| Project | Purpose |
+|---------|---------|
+| `dumbphone-lock/` | iOS focus/app blocking |
+| `vuori-lead-magnet/` | Vuori partnership lead gen |
+| `amazon-seller/` | Amazon SP-API seller tools |
+| `mikos-lab/` | Miko's Lab project |
+| `legal-case-manager/` | Legal case management |
+
+## Shared Services Layer (All Towers)
+
+> The "holding company" equivalent — centralized infrastructure that every tower uses.
 
 | Tool | Location | What It Does |
 |------|----------|-------------|
@@ -27,8 +62,9 @@
 | Telegram Notifications | n8n → Telegram | Admin alerts |
 | Google Sheets | via n8n credentials | CRM / tracking |
 
-### PT Coaching Only
+## Tool Ownership by Tower
 
+### Fitness Tower Tools
 | Tool | Location | What It Does |
 |------|----------|-------------|
 | Workout Generator | `execution/workout_plan_generator.py` | Custom workout programs |
@@ -36,36 +72,37 @@
 | Coaching Analytics | `execution/coaching_analytics.py` | SMS metrics, funnel stats |
 | Coaching Tracker Sheet | `scripts/create-coaching-tracker-sheet.py` | Per-client Google Sheets |
 | Drive Folder Creator | `scripts/create-coaching-drive-folders.py` | Per-client Drive folders |
-| Fitness Influencer Platform | `projects/marceau-solutions/fitness-influencer/` | SaaS product (future B2B) |
 | n8n: Coaching-Monday-Checkin | `aBxCj48nGQVLRRnq` | Weekly check-in SMS |
 | n8n: Coaching-Payment-Welcome | `1wS9VvXIt95BrR9V` | Payment → onboarding |
 | n8n: Coaching-Cancellation-Exit | `uKjqRexDIheaDJJH` | Cancellation flow |
 | n8n: Fitness-SMS-Outreach | `89XxmBQMEej15nak` | Prospect outreach |
 | n8n: Fitness-SMS-Followup | `VKC5cifm595JNcwG` | Drip sequence |
 
-### Website Development Only
-
+### Digital Tower Tools
 | Tool | Location | What It Does |
 |------|----------|-------------|
-| Website Builder (AI) | `projects/marceau-solutions/website-builder/` | FastAPI site generator |
-| Client websites | `projects/{client}/website/` | Per-client static HTML |
+| Website Builder (AI) | `projects/marceau-solutions/digital/website-builder/` | FastAPI site generator |
+| Client websites | `digital/clients/{client}/website/` | Per-client static HTML |
 | n8n: Flames-Form-Pipeline | `mrfVYqg5H12Z2l5K` | Client form submissions |
+| n8n: Webdev-Payment-Welcome | `5GXwor2hHuij614l` | Onboard new web dev clients |
+| n8n: Webdev-Monthly-Checkin | `N8HIFsZdE5Go7Lky` | 1st of month SMS |
+| n8n: Webdev-Deploy-Notification | `E0DivEtTGgVZm3v6` | Deploy webhook → client SMS |
+| n8n: Webdev-Cross-Referral | `eoQMjVYQSibMALaZ` | PT→WebDev handoff |
 | EC2 /forms/ hosting | `api.marceausolutions.com/forms/` | Fallback static hosting |
 
-### Marketing/Lead Gen (Shared — Website Funnels)
-
+### Marketing/Lead Gen (Cross-Tower — primarily Fitness + Digital)
 | Tool | Location | Used By |
 |------|----------|---------|
 | n8n: Website-Lead-Capture | `WHFIE3Ej7Y3SCtHk` | marceausolutions.com |
 | n8n: Lead-Magnet-Capture | `hgInaJCLffLFBX1G` | marceausolutions.com |
-| n8n: Creator-Lead-Capture | `8pvrmdtI0MfPbdsC` | For-influencers funnel |
-| n8n: Challenge-Signup-7Day | `WTZDxLDQuSkIkcqf` | PT lead gen |
-| n8n: Premium-Waitlist-Capture | `j306crRxCmWW3dMo` | PT premium |
-| n8n: Non-Converter-Followup | `Y2jfeIlTRDlbCHeS` | All leads |
+| n8n: Creator-Lead-Capture | `8pvrmdtI0MfPbdsC` | Media tower |
+| n8n: Challenge-Signup-7Day | `WTZDxLDQuSkIkcqf` | Fitness tower |
+| n8n: Premium-Waitlist-Capture | `j306crRxCmWW3dMo` | Fitness tower |
+| n8n: Non-Converter-Followup | `Y2jfeIlTRDlbCHeS` | All towers |
 
 ---
 
-## Operational Standards (Both Businesses)
+## Operational Standards (All Towers)
 
 ### Communication
 - **Phone**: Toll-free +1 (855) 239-9364 for ALL automated SMS
@@ -73,7 +110,7 @@
 - **Email**: wmarceau@marceausolutions.com
 - **Admin alerts**: Telegram → William
 
-### Client Websites (Web Dev Standard)
+### Client Websites (Digital Tower Standard)
 - **Registrar + DNS**: Client's existing (help them add records) or Namecheap
 - **Hosting**: GitHub Pages (free, reliable)
 - **Forms**: n8n webhook → Google Sheets + Telegram notification
@@ -90,27 +127,28 @@ CNAME www  marceausolutions.github.io
 ```
 
 ### Billing
-- PT Coaching: Stripe subscription ($197/mo)
-- Web Dev: Stripe invoice (per-project, custom amount)
+- Fitness Tower: Stripe subscription ($197/mo)
+- Digital Tower: Stripe invoice (per-project, custom amount)
 
 ---
 
 ## Decision Rules
 
-1. **"Which SMS templates do I use?"** → Check the `business_context` field in template metadata. PT templates are in `twilio_sms.py` with `coaching_*` prefix. Web dev templates use `webdev_*` prefix.
-2. **"Which n8n workflows are mine?"** → PT workflows start with `Coaching-` or `Fitness-`. Web dev workflows start with client name (e.g., `Flames-`).
-3. **"Where do I track this client?"** → PT clients: Google Sheets tracker + Drive folder. Web dev clients: `projects/{client}/` directory + project tracker sheet.
-4. **"Which phone number?"** → Always toll-free for automated. Local only for manual/personal calls.
-5. **"New tool or existing?"** → Run `python scripts/inventory.py search <keyword>` FIRST. Always.
+1. **"Which tower does this belong to?"** → By customer/market: fitness clients → Fitness, business clients → Digital, content/audience → Media, experiments → Labs.
+2. **"Which SMS templates do I use?"** → Check the `business_context` field. PT = `coaching_*` prefix. Web dev = `webdev_*` prefix.
+3. **"Which n8n workflows are mine?"** → PT = `Coaching-`/`Fitness-`. Web dev = `Webdev-`/client name. Content = `X-`/`Creator-`.
+4. **"Where do I track this client?"** → PT: Google Sheets tracker + Drive folder. Web dev: `digital/clients/{client}/` + tracker sheet.
+5. **"Which phone number?"** → Always toll-free for automated. Local only for manual/personal calls.
+6. **"New tool or existing?"** → Run `python scripts/inventory.py search <keyword>` FIRST. Always.
 
 ---
 
 ## Adding a New Web Dev Client
 
-See `projects/marceau-solutions/web-dev/workflows/client-onboarding.md` for the full workflow.
+See `projects/marceau-solutions/digital/web-dev/workflows/client-onboarding.md` for the full workflow.
 
 Quick reference:
-1. Create `projects/{client-name}/` with `CLAUDE.md` and `website/`
+1. Create `projects/marceau-solutions/digital/clients/{client-name}/` with `CLAUDE.md` and `website/`
 2. Create GitHub Pages repo `MarceauSolutions/{client}-website`
 3. Add client to `scripts/deploy_website.sh`
 4. Create n8n form pipeline (clone `Flames-Form-Pipeline` pattern)
@@ -120,4 +158,8 @@ Quick reference:
 
 ## Adding a New PT Client
 
-See `projects/marceau-solutions/pt-business/workflows/client-onboarding.md` — fully automated via n8n.
+See `projects/marceau-solutions/fitness/pt-business/workflows/client-onboarding.md` — fully automated via n8n.
+
+## Backward Compatibility
+
+Symlinks exist at old paths (e.g., `projects/marceau-solutions/pt-business` → `fitness/pt-business`) so legacy references still resolve. These can be removed once all references are verified migrated.

@@ -8,9 +8,9 @@ echo
 
 # Array of website paths
 websites=(
-    "projects/marceau-solutions/website"
-    "projects/swflorida-hvac/website"
-    "projects/square-foot-shipping/website"
+    "projects/marceau-solutions/digital/website"
+    "projects/marceau-solutions/digital/clients/swflorida-hvac/website"
+    "projects/marceau-solutions/digital/clients/square-foot-shipping/website"
 )
 
 for website in "${websites[@]}"; do
