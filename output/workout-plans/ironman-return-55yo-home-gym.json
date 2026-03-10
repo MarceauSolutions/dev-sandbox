@@ -1,0 +1,102 @@
+{
+  "program_name": "Return to Strength Program",
+  "client_name": "Client",
+  "goal": "Rebuild foundational strength, address cycling imbalances, support back health",
+  "experience_level": "Returning Athlete (Endurance Background)",
+  "equipment": "Squat Rack, Barbell, Olympic Rings, Dumbbells (up to 50 lbs)",
+  "days_per_week": "5",
+  "start_date": "March 2026",
+  "coach_note": "This program is designed for a gradual return to strength training after time off. As a former Ironman athlete with a cycling background, you likely have excellent aerobic capacity but may have muscle imbalances typical of endurance cyclists: tight hip flexors, weak glutes, underdeveloped posterior chain, and rounded thoracic spine. We're prioritizing core stability, hip mobility, and posterior chain strength to support your back. Start light — the goal for weeks 1-4 is movement quality and building the habit. The ring work will build tremendous core stability and shoulder health.",
+  "program_notes": {
+    "phase_1_weeks_1_4": "Foundation Phase — Focus on movement quality, mobility, and building consistency. Keep weights light (RPE 5-6). Master form before adding load.",
+    "phase_2_weeks_5_8": "Build Phase — Gradually increase weights (RPE 6-7). Add sets where indicated. Progress ring movements to harder variations.",
+    "back_care": "Start barbell movements with just the bar or light weight. All core work emphasizes stability (anti-movement). If any exercise aggravates your back, stop and notify your coach.",
+    "ring_progressions": "Rings are unstable — start with easier angles. For rows: more upright = easier. For push-ups: rings higher = easier. Progress by lowering angle over time.",
+    "recovery": "Sleep 7-8 hours. Foam roll and stretch daily, especially hip flexors and thoracic spine."
+  },
+  "schedule": [
+    {
+      "day_name": "Monday",
+      "day_number": 1,
+      "focus": "Lower Body (Posterior Chain & Hips)",
+      "warmup": "5 min jump rope or jog in place + Cat-Cow (10), Hip Circles (10 each), Glute Bridges (15), Bird Dogs (10 each), 90/90 Hip Stretch (60s each)",
+      "exercises": [
+        {"name": "Glute Bridge (floor)", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Squeeze glutes 2 sec at top, don't hyperextend back"},
+        {"name": "Goblet Squat (DB)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Hold DB at chest, sit between legs, chest tall"},
+        {"name": "Romanian Deadlift (BB)", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Start with bar only, hinge at hips, soft knees, feel hamstrings"},
+        {"name": "Reverse Lunge (DB)", "sets": 3, "reps": "10 each", "rest_seconds": 60, "notes": "Step back, front knee tracks over toe, drive through front heel"},
+        {"name": "Single-Leg Glute Bridge", "sets": 2, "reps": "12 each", "rest_seconds": 45, "notes": "Keep pelvis level, drive through heel"},
+        {"name": "DB Calf Raise", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Hold DBs, full ROM, pause at top"},
+        {"name": "Side-Lying Clamshell", "sets": 2, "reps": "15 each", "rest_seconds": 30, "notes": "Hip external rotation — keep pelvis stable"}
+      ],
+      "cooldown": "Hip flexor stretch (90s each), Pigeon pose (60s each), Lying spinal twist (60s each)"
+    },
+    {
+      "day_name": "Tuesday",
+      "day_number": 2,
+      "focus": "Upper Body (Push & Posture)",
+      "warmup": "5 min light movement + Arm Circles (20 each), Band Pull-Aparts or Ring Rows x5 (easy), Wall Angels (10), Thoracic Rotations (8 each)",
+      "exercises": [
+        {"name": "Ring Push-Up (elevated)", "sets": 3, "reps": "8-10", "rest_seconds": 60, "notes": "Rings at hip height to start, lower over weeks. Core tight, full ROM"},
+        {"name": "Ring Row", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Body more upright = easier. Squeeze shoulder blades, opens chest"},
+        {"name": "DB Overhead Press (seated on bench/floor)", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Neutral grip option if shoulders feel better, brace core"},
+        {"name": "DB Incline Press (floor or bench)", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Prop on pillow/pad for slight incline if no bench"},
+        {"name": "Ring Face Pull", "sets": 3, "reps": "12", "rest_seconds": 45, "notes": "Lean back, pull rings to face, external rotate — posture corrector"},
+        {"name": "DB Tricep Overhead Extension", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Single DB, both hands, keep elbows in"},
+        {"name": "Ring Support Hold", "sets": 3, "reps": "15-20 sec", "rest_seconds": 45, "notes": "Lock arms, turn rings out slightly, build shoulder stability"}
+      ],
+      "cooldown": "Doorway pec stretch (30s each), Child's pose (60s), Hang from bar or rings (30-60s)"
+    },
+    {
+      "day_name": "Wednesday",
+      "day_number": 3,
+      "focus": "Core Stability & Mobility",
+      "warmup": "5-10 min easy walk or bike + Full body stretch flow (5 min)",
+      "exercises": [
+        {"name": "Dead Bug", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Press low back into floor, move slowly — core stability king"},
+        {"name": "Bird Dog", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Anti-rotation, extend opposite arm/leg, keep hips level"},
+        {"name": "Ring Fallout (kneeling)", "sets": 3, "reps": "6-8", "rest_seconds": 60, "notes": "Like ab wheel — extend arms, maintain hollow body, don't collapse"},
+        {"name": "Side Plank", "sets": 2, "reps": "20-30 sec each", "rest_seconds": 30, "notes": "From knees if needed, stack hips, don't let hips sag"},
+        {"name": "Glute Bridge March", "sets": 2, "reps": "8 each", "rest_seconds": 45, "notes": "Hold bridge, lift one foot at a time — pelvic stability"},
+        {"name": "Cat-Cow", "sets": 2, "reps": "10", "rest_seconds": 30, "notes": "Slow and controlled, feel each vertebra move"},
+        {"name": "World's Greatest Stretch", "sets": 2, "reps": "5 each", "rest_seconds": 30, "notes": "Hip flexor + thoracic rotation — essential for cyclists"},
+        {"name": "90/90 Hip Transitions", "sets": 2, "reps": "8 each", "rest_seconds": 30, "notes": "Improve hip internal/external rotation"},
+        {"name": "Ring Hang (passive)", "sets": 3, "reps": "30 sec", "rest_seconds": 30, "notes": "Decompress spine, relax shoulders, breathe deep"}
+      ],
+      "cooldown": "Supine spinal twist (60s each), Happy baby pose (60s), Deep breathing (2 min)"
+    },
+    {
+      "day_name": "Thursday",
+      "day_number": 4,
+      "focus": "Lower Body (Quad & Balance)",
+      "warmup": "5 min light cardio + Leg Swings (10 each), Bodyweight Squats (10), Single-Leg Balance (30s each), Ankle Circles (10 each)",
+      "exercises": [
+        {"name": "Goblet Squat (DB)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Sit between legs, chest up, controlled tempo"},
+        {"name": "Barbell RDL", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Light weight, hinge pattern, hamstring focus"},
+        {"name": "DB Step-Up (low surface)", "sets": 3, "reps": "10 each", "rest_seconds": 60, "notes": "Use bench/box, drive through front heel only"},
+        {"name": "DB Walking Lunge", "sets": 3, "reps": "8 each", "rest_seconds": 60, "notes": "Control each step, upright torso"},
+        {"name": "Single-Leg RDL (DB)", "sets": 2, "reps": "8 each", "rest_seconds": 60, "notes": "Balance and hamstring strength — hold rack if needed"},
+        {"name": "DB Sumo Squat", "sets": 2, "reps": "12", "rest_seconds": 60, "notes": "Wide stance, toes out, inner thigh and glute focus"},
+        {"name": "Calf Raise (barbell on back)", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Light bar, full ROM, slow eccentric"}
+      ],
+      "cooldown": "Standing quad stretch (30s each), Forward fold (60s), Figure-4 stretch (60s each)"
+    },
+    {
+      "day_name": "Friday",
+      "day_number": 5,
+      "focus": "Upper Body (Pull & Back Health)",
+      "warmup": "5 min light movement + Scapular Rows on Rings (10), Arm Circles (20 each), Prone Y-T-W (8 each), Shoulder CARS (5 each)",
+      "exercises": [
+        {"name": "Ring Row (feet elevated)", "sets": 4, "reps": "10", "rest_seconds": 60, "notes": "Harder angle — pull chest to rings, squeeze at top"},
+        {"name": "Barbell Row (bent over)", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Light weight, chest supported angle if back sensitive, pull to belly"},
+        {"name": "Ring Face Pull", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "High pull, external rotate — can't do too many of these"},
+        {"name": "DB Reverse Fly (bent over)", "sets": 3, "reps": "12", "rest_seconds": 45, "notes": "Rear delts and mid-traps — posture muscles"},
+        {"name": "DB Curl", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Controlled, no swinging, supinate at top"},
+        {"name": "Ring Inverted Hang (tuck)", "sets": 2, "reps": "15-20 sec", "rest_seconds": 45, "notes": "Hang inverted, knees tucked, decompress spine"},
+        {"name": "Ring Support Hold", "sets": 2, "reps": "20-30 sec", "rest_seconds": 45, "notes": "Arms locked, rings turned out, build stability"},
+        {"name": "Passive Hang (bar or rings)", "sets": 3, "reps": "30-45 sec", "rest_seconds": 30, "notes": "Spinal decompression — relax and breathe"}
+      ],
+      "cooldown": "Lat stretch on rack (30s each), Cross-body shoulder stretch (30s each), Thoracic extension over foam roller (2 min)"
+    }
+  ]
+}
