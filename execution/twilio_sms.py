@@ -172,7 +172,8 @@ class TwilioSMS:
         "webdev_welcome": (
             "Hey {name}, this is William from Marceau Solutions. Your website "
             "project is officially underway! I'll have a first draft for you "
-            "within a few days. Questions anytime — just reply here."
+            "within a few days. Questions anytime — just reply here. "
+            "Reply STOP to opt out."
         ),
         "webdev_site_live": (
             "Hey {name}, your website is live! Check it out: {url} — "
@@ -229,7 +230,7 @@ class TwilioSMS:
         self.default_template_vars = {
             "calendly_link": os.getenv(
                 "CALENDLY_STRATEGY_URL",
-                "https://calendly.com/wmarceau/30min"
+                "https://calendly.com/wmarceau/free-fitness-strategy-call"
             ),
             "billing_link": os.getenv(
                 "STRIPE_BILLING_PORTAL_URL",
