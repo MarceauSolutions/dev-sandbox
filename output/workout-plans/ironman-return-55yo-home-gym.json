@@ -3,7 +3,7 @@
   "client_name": "Client",
   "goal": "Rebuild foundational strength, address cycling imbalances, support back health",
   "experience_level": "Returning Athlete (Endurance Background)",
-  "equipment": "Squat Rack, Barbell, Olympic Rings, Dumbbells (up to 50 lbs)",
+  "equipment": "Squat Rack, Barbell, Olympic Rings, Dumbbells (up to 50 lbs), Stationary Bike",
   "days_per_week": "5",
   "start_date": "March 2026",
   "coach_note": "This program is designed for a gradual return to strength training after time off. As a former Ironman athlete with a cycling background, you likely have excellent aerobic capacity but may have muscle imbalances typical of endurance cyclists: tight hip flexors, weak glutes, underdeveloped posterior chain, and rounded thoracic spine. We're prioritizing core stability, hip mobility, and posterior chain strength to support your back. Start light — the goal for weeks 1-4 is movement quality and building the habit. The ring work will build tremendous core stability and shoulder health.",
@@ -12,14 +12,15 @@
     "phase_2_weeks_5_8": "Build Phase — Gradually increase weights (RPE 6-7). Add sets where indicated. Progress ring movements to harder variations.",
     "back_care": "Start barbell movements with just the bar or light weight. All core work emphasizes stability (anti-movement). If any exercise aggravates your back, stop and notify your coach.",
     "ring_progressions": "Rings are unstable — start with easier angles. For rows: more upright = easier. For push-ups: rings higher = easier. Progress by lowering angle over time.",
-    "recovery": "Sleep 7-8 hours. Foam roll and stretch daily, especially hip flexors and thoracic spine."
+    "recovery": "Sleep 7-8 hours. Foam roll and stretch daily, especially hip flexors and thoracic spine.",
+    "cycling_integration": "Use the stationary bike for warm-ups and optional 20-30 min easy spins on rest days. Keep intensity low (Zone 1-2) to support recovery."
   },
   "schedule": [
     {
       "day_name": "Monday",
       "day_number": 1,
       "focus": "Lower Body (Posterior Chain & Hips)",
-      "warmup": "5 min jump rope or jog in place + Cat-Cow (10), Hip Circles (10 each), Glute Bridges (15), Bird Dogs (10 each), 90/90 Hip Stretch (60s each)",
+      "warmup": "5-10 min stationary bike (easy spin, Zone 1) + Cat-Cow (10), Hip Circles (10 each), Glute Bridges (15), Bird Dogs (10 each), 90/90 Hip Stretch (60s each)",
       "exercises": [
         {"name": "Glute Bridge (floor)", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Squeeze glutes 2 sec at top, don't hyperextend back"},
         {"name": "Goblet Squat (DB)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Hold DB at chest, sit between legs, chest tall"},
@@ -35,7 +36,7 @@
       "day_name": "Tuesday",
       "day_number": 2,
       "focus": "Upper Body (Push & Posture)",
-      "warmup": "5 min light movement + Arm Circles (20 each), Band Pull-Aparts or Ring Rows x5 (easy), Wall Angels (10), Thoracic Rotations (8 each)",
+      "warmup": "5 min stationary bike (easy) + Arm Circles (20 each), Ring Rows x5 (easy), Wall Angels (10), Thoracic Rotations (8 each)",
       "exercises": [
         {"name": "Ring Push-Up (elevated)", "sets": 3, "reps": "8-10", "rest_seconds": 60, "notes": "Rings at hip height to start, lower over weeks. Core tight, full ROM"},
         {"name": "Ring Row", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Body more upright = easier. Squeeze shoulder blades, opens chest"},
@@ -51,7 +52,7 @@
       "day_name": "Wednesday",
       "day_number": 3,
       "focus": "Core Stability & Mobility",
-      "warmup": "5-10 min easy walk or bike + Full body stretch flow (5 min)",
+      "warmup": "10 min stationary bike (easy spin, recovery pace) + Full body stretch flow (5 min)",
       "exercises": [
         {"name": "Dead Bug", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Press low back into floor, move slowly — core stability king"},
         {"name": "Bird Dog", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Anti-rotation, extend opposite arm/leg, keep hips level"},
@@ -69,7 +70,7 @@
       "day_name": "Thursday",
       "day_number": 4,
       "focus": "Lower Body (Quad & Balance)",
-      "warmup": "5 min light cardio + Leg Swings (10 each), Bodyweight Squats (10), Single-Leg Balance (30s each), Ankle Circles (10 each)",
+      "warmup": "5-10 min stationary bike (progressive warm-up) + Leg Swings (10 each), Bodyweight Squats (10), Single-Leg Balance (30s each), Ankle Circles (10 each)",
       "exercises": [
         {"name": "Goblet Squat (DB)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Sit between legs, chest up, controlled tempo"},
         {"name": "Barbell RDL", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Light weight, hinge pattern, hamstring focus"},
@@ -85,7 +86,7 @@
       "day_name": "Friday",
       "day_number": 5,
       "focus": "Upper Body (Pull & Back Health)",
-      "warmup": "5 min light movement + Scapular Rows on Rings (10), Arm Circles (20 each), Prone Y-T-W (8 each), Shoulder CARS (5 each)",
+      "warmup": "5 min stationary bike (easy) + Scapular Rows on Rings (10), Arm Circles (20 each), Prone Y-T-W (8 each), Shoulder CARS (5 each)",
       "exercises": [
         {"name": "Ring Row (feet elevated)", "sets": 4, "reps": "10", "rest_seconds": 60, "notes": "Harder angle — pull chest to rings, squeeze at top"},
         {"name": "Barbell Row (bent over)", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Light weight, chest supported angle if back sensitive, pull to belly"},
