@@ -84,7 +84,7 @@ Best regards,
 William Marceau
 Marceau Solutions
 """,
-        calendly_link="https://calendly.com/wmarceau/30min",
+        calendly_link="https://calendly.com/wmarceau/free-fitness-strategy-call",
     ),
 
     # SW Florida Comfort HVAC - FAMILY BUSINESS (William Marceau Sr.)

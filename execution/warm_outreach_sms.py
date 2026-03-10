@@ -41,7 +41,7 @@ TWILIO_FROM = os.environ.get("TWILIO_PHONE_NUMBER", "+18552399364")
 
 QUIZ_URL = "https://marceausolutions.com/quiz"
 COACHING_URL = "https://marceausolutions.com/coaching.html"
-CALENDLY_URL = "https://calendly.com/wmarceau/30min"
+CALENDLY_URL = "https://calendly.com/wmarceau/free-fitness-strategy-call"
 STRIPE_URL = "https://buy.stripe.com/14A14n29hdqU48wf5wg3601"
 
 TEMPLATES = {

@@ -119,7 +119,7 @@ class LeadManager:
         self.smtp_pass = os.getenv('SMTP_PASSWORD')
         self.sender_name = os.getenv('SENDER_NAME', 'Marceau Solutions')
         self.sender_email = os.getenv('SENDER_EMAIL')
-        self.calendly_url = os.getenv('CALENDLY_URL', 'https://calendly.com/wmarceau/30min')
+        self.calendly_url = os.getenv('CALENDLY_URL', 'https://calendly.com/wmarceau/free-fitness-strategy-call')
         
         # ClickUp config  
         self.clickup_token = os.getenv('CLICKUP_API_TOKEN')

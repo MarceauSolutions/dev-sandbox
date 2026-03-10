@@ -204,7 +204,7 @@ def test_onboarding():
         ],
         "important_links": {
             "stripe_billing": "buy.stripe.com (manage your subscription)",
-            "calendly": "calendly.com/wmarceau/30min",
+            "calendly": "calendly.com/wmarceau/free-fitness-strategy-call",
             "skool_community": "skool.com/unbreakable-9502",
             "website": "marceausolutions.com",
         },
