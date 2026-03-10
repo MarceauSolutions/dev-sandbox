@@ -43,7 +43,7 @@ get_client_config() {
             DEPLOY_REPO="MarceauSolutions/swflorida-comfort-hvac"
             ;;
         boabfit)
-            LOCAL_PATH="projects/marceau-solutions/digital/clients/boabfit/website"
+            LOCAL_PATH="projects/marceau-solutions/fitness/clients/boabfit/website"
             DEPLOY_REPO="MarceauSolutions/boabfit-website"
             ;;
         flames)

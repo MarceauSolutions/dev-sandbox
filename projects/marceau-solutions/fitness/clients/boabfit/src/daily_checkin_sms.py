@@ -52,7 +52,7 @@ WILLIAM_PHONE = "+12393985676"
 JULIA_PHONE = "+12393985197"
 
 # TCPA-compliant sender ID — appended to every message
-SENDER_ID = "\n\n— Julia from BOABFIT"
+SENDER_ID = "\n\n— JULZ - BOABFIT🫧🍑"
 
 
 def load_plan():
@@ -74,6 +74,15 @@ def get_today_day(override=None):
     return datetime.now().strftime("%A").lower()
 
 
+def get_nutrition_tip(plan):
+    """Get a rotating nutrition/water tip based on the day of the year."""
+    tips = plan.get("nutrition_tips", [])
+    if not tips:
+        return ""
+    day_of_year = datetime.now().timetuple().tm_yday
+    return tips[day_of_year % len(tips)]
+
+
 def build_workout_message(plan, day):
     """
     Build the daily check-in SMS for a workout day (full form tips).
@@ -88,15 +97,19 @@ def build_workout_message(plan, day):
         return None, f"No schedule entry for {day}"
 
     hype = hype_blurbs.get(day, "")
+    nutrition_tip = get_nutrition_tip(plan)
 
-    # Rest day — just send the hype blurb
+    # Rest day — just send the hype blurb + nutrition tip
     if workout_key == "rest":
         lines = [
             f"Hey girl! {hype}",
-            SENDER_ID,
-            "",
-            "Reply STOP to opt out."
         ]
+        if nutrition_tip:
+            lines.append("")
+            lines.append(f"💧 {nutrition_tip}")
+        lines.append(SENDER_ID)
+        lines.append("")
+        lines.append("Reply STOP to opt out.")
         return "\n".join(lines), None
 
     # Workout day — build the full breakdown
@@ -124,6 +137,9 @@ def build_workout_message(plan, day):
     lines.append(f"FOCUS: {workout['focus_cue']}")
     lines.append("")
     lines.append("You've got this babe!! GO CRUSH IT!!")
+    if nutrition_tip:
+        lines.append("")
+        lines.append(f"💧 {nutrition_tip}")
     lines.append(SENDER_ID)
     lines.append("")
     lines.append("Reply STOP to opt out.")
@@ -163,6 +179,10 @@ def build_short_workout_message(plan, day):
         lines.append("")
 
     lines.append("You've got this babe!! GO CRUSH IT!!")
+    nutrition_tip = get_nutrition_tip(plan)
+    if nutrition_tip:
+        lines.append("")
+        lines.append(f"💧 {nutrition_tip}")
     lines.append(SENDER_ID)
     lines.append("")
     lines.append("Reply STOP to opt out.")

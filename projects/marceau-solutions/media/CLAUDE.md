@@ -1,19 +1,26 @@
 # Media Tower — Marceau Media
 
-> Content creation, AI influencer platform, and social media automation.
+> Social media content creation and automation tools.
 
-## Projects
-| Project | Purpose | Status |
-|---------|---------|--------|
-| `fitness-influencer/` | AI fitness content platform (FitAI) | Active (live on EC2) |
-| `fitness-influencer-mcp/` | MCP package for fitness influencer | Development |
-| `instagram-creator/` | Instagram content automation | Development |
-| `youtube-creator/` | YouTube content automation | Development |
-| `tiktok-creator/` | TikTok content automation | Development |
+## Structure
+```
+media/
+├── tools/
+│   ├── instagram-creator/    # Instagram content automation
+│   ├── youtube-creator/      # YouTube content automation
+│   └── tiktok-creator/       # TikTok content automation
+└── CLAUDE.md
+```
 
-## Live Services
-- **FitAI**: `https://fitai.marceausolutions.com/frontend/index.html`
-- **Julia voice clone**: ElevenLabs ID `Dfq9xw2lqy9dGc5FIpi5`
+**Note**: `fitness-influencer/` has moved to the **Fitness Tower** (`fitness/tools/fitness-influencer/`) since it primarily serves fitness clients.
+
+## Tools
+
+| Tool | Dir | Status |
+|------|-----|--------|
+| Instagram Creator | `tools/instagram-creator/` | Development |
+| YouTube Creator | `tools/youtube-creator/` | Development |
+| TikTok Creator | `tools/tiktok-creator/` | Development |
 
 ## n8n Workflows (this tower)
 - X-Social-Post-Scheduler-v2 (`CT5em35LljouaCrU`)
@@ -24,4 +31,4 @@
 
 ## Revenue
 - **Model**: SaaS / content licensing (future)
-- **Current**: Pre-revenue (platform live, monetization TBD)
+- **Current**: Pre-revenue

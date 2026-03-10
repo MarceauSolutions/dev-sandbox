@@ -20,7 +20,7 @@
 
 ## Status
 
-- **Active clients**: 3 (HVAC, BoabFit, Flames of Passion)
+- **Active clients**: 2 (HVAC, Flames of Passion) — BoabFit moved to Fitness Tower
 - **Hosting**: All on GitHub Pages (free)
 - **Billing**: Per-project invoicing via Stripe
 
@@ -51,9 +51,9 @@
 
 | Client | Path | CLAUDE.md |
 |--------|------|-----------|
-| HVAC | `projects/swflorida-hvac/` | Yes |
-| BoabFit | `projects/boabfit/` | Yes |
-| Flames of Passion | `projects/flames-of-passion/` | Yes |
+| HVAC | `digital/clients/swflorida-hvac/` | Yes |
+| Flames of Passion | `digital/clients/flames-of-passion/` | Yes |
+| BoabFit | `fitness/clients/boabfit/` (Fitness Tower) | Yes |
 
 ### Shared Code (DO NOT MOVE — used by multiple projects)
 
@@ -64,7 +64,7 @@
 | Twilio inbox | `execution/twilio_inbox_monitor.py` | Read inbound SMS |
 | Branded PDF | `execution/branded_pdf_engine.py` | Generate PDF docs |
 | Stripe payments | `execution/stripe_payments.py` | Invoicing |
-| Website Builder | `projects/marceau-solutions/website-builder/` | AI site generator |
+| Website Builder | `digital/tools/website-builder/` | AI site generator |
 
 ### n8n Workflows (EC2)
 

@@ -2,20 +2,36 @@
 
 > Client websites, the company website, and AI-powered web development tools.
 
-## Projects
-| Project | Purpose | Status |
-|---------|---------|--------|
-| `website/` | marceausolutions.com (static HTML, GitHub Pages) | Active |
-| `web-dev/` | Client website business (HVAC, BoabFit, Flames) | Active |
-| `website-builder/` | AI website generation service (FastAPI) | Development |
+## Structure
+```
+digital/
+├── clients/
+│   ├── swflorida-hvac/       # HVAC client website
+│   ├── flames-of-passion/    # Entertainment client website
+│   └── square-foot-shipping/ # Shipping client (lead gen)
+├── tools/
+│   ├── website-builder/      # AI website generation service
+│   └── web-dev/              # Web dev workflows, templates, ops
+├── website/                  # marceausolutions.com
+└── CLAUDE.md
+```
 
-## Active Clients (`clients/`)
-| Client | Project Dir | Deploy Repo |
-|--------|-------------|-------------|
-| SW Florida Comfort (HVAC) | `clients/swflorida-hvac/website/` | `MarceauSolutions/swflorida-comfort-hvac` |
-| BoabFit | `clients/boabfit/website/` | `MarceauSolutions/boabfit-website` |
-| Flames of Passion | `clients/flames-of-passion/website/` | `MarceauSolutions/flames-of-passion-website` |
-| Square Foot Shipping | `clients/square-foot-shipping/` | — |
+## Clients
+
+| Client | Dir | Deploy Repo | Status |
+|--------|-----|-------------|--------|
+| SW Florida Comfort (HVAC) | `clients/swflorida-hvac/website/` | `MarceauSolutions/swflorida-comfort-hvac` | Live |
+| Flames of Passion | `clients/flames-of-passion/website/` | `MarceauSolutions/flames-of-passion-website` | DNS pending |
+| Square Foot Shipping | `clients/square-foot-shipping/` | — | Lead gen |
+
+**Note**: BoabFit has moved to the **Fitness Tower** (`fitness/clients/boabfit/`) since it's a fitness influencer client, not a web dev client. Website deploy still works via `./scripts/deploy_website.sh boabfit`.
+
+## Tools
+
+| Tool | Dir | Purpose |
+|------|-----|---------|
+| Website Builder | `tools/website-builder/` | AI website generation (FastAPI) |
+| Web Dev Hub | `tools/web-dev/` | Workflows, ops runbook, templates |
 
 ## Revenue
 - **Model**: Per-project + optional hosting
@@ -33,6 +49,6 @@
 - Webdev-Cross-Referral (`eoQMjVYQSibMALaZ`)
 - Flames-Form-Pipeline (`mrfVYqg5H12Z2l5K`)
 
-## Key Tools
+## Key Shared Tools (in `execution/`)
 - WebDev Tracker Sheet: `1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q`
-- Client onboarding: `digital/web-dev/workflows/client-onboarding.md`
+- Client onboarding: `tools/web-dev/workflows/client-onboarding.md`

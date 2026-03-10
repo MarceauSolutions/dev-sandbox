@@ -72,7 +72,7 @@
 | "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
 | "Download photos" / "Export photos" | `/photos` interactive flow |
 | "What tool for X?" / "Should we use Y?" | Tool Selection Framework in `docs/service-standards.md` |
-| "New web dev client" | `projects/marceau-solutions/digital/web-dev/workflows/client-onboarding.md` |
+| "New web dev client" | `projects/marceau-solutions/digital/tools/web-dev/workflows/client-onboarding.md` |
 | "Deploy {client} website" | `./scripts/deploy_website.sh {client}` |
 | "PT client needs a website" | POST to `/webhook/cross-referral` (cross-business handoff) |
 
@@ -93,8 +93,9 @@
 | **Archived docs** | `docs/archive/` |
 | **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
 | **System state (live)** | `docs/SYSTEM-STATE.md` |
-| **PT coaching hub** | `projects/marceau-solutions/fitness/pt-business/CLAUDE.md` |
-| **Web dev hub** | `projects/marceau-solutions/digital/web-dev/CLAUDE.md` |
+| **PT coaching hub** | `projects/marceau-solutions/fitness/clients/pt-business/CLAUDE.md` |
+| **Web dev hub** | `projects/marceau-solutions/digital/tools/web-dev/CLAUDE.md` |
+| **Tower index** | `projects/marceau-solutions/CLAUDE.md` |
 | **Tower structure** | `projects/marceau-solutions/{fitness,digital,media,labs}/` |
 
 ## Project Layout
@@ -111,24 +112,29 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 │   └── archive/                # Old/superseded docs
 ├── projects/
 │   ├── marceau-solutions/      # Our company — organized by tower
+│   │   ├── CLAUDE.md           #   Tower index + placement rules
 │   │   ├── fitness/            # TOWER: Fitness & Coaching
-│   │   │   ├── pt-business/    #   1:1 PT coaching ($197/mo)
-│   │   │   └── trainerize-mcp/ #   Trainerize integration
+│   │   │   ├── clients/
+│   │   │   │   ├── boabfit/    #     Julia's fitness influencer brand
+│   │   │   │   └── pt-business/ #    William's 1:1 coaching ($197/mo)
+│   │   │   └── tools/
+│   │   │       ├── fitness-influencer/ # FitAI platform
+│   │   │       ├── fitness-influencer-mcp/
+│   │   │       └── trainerize-mcp/
 │   │   ├── digital/            # TOWER: Digital Services
-│   │   │   ├── website/        #   marceausolutions.com
-│   │   │   ├── web-dev/        #   Client website business
-│   │   │   ├── website-builder/ #   AI website generator
-│   │   │   └── clients/        #   Client deliverables
-│   │   │       ├── swflorida-hvac/
-│   │   │       ├── boabfit/
-│   │   │       ├── flames-of-passion/
-│   │   │       └── square-foot-shipping/
+│   │   │   ├── clients/
+│   │   │   │   ├── swflorida-hvac/
+│   │   │   │   ├── flames-of-passion/
+│   │   │   │   └── square-foot-shipping/
+│   │   │   ├── tools/
+│   │   │   │   ├── website-builder/ # AI website generator
+│   │   │   │   └── web-dev/        # Web dev workflows/ops
+│   │   │   └── website/        #   marceausolutions.com
 │   │   ├── media/              # TOWER: Content & Media
-│   │   │   ├── fitness-influencer/ # AI content platform
-│   │   │   ├── fitness-influencer-mcp/
-│   │   │   ├── instagram-creator/
-│   │   │   ├── youtube-creator/
-│   │   │   └── tiktok-creator/
+│   │   │   └── tools/
+│   │   │       ├── instagram-creator/
+│   │   │       ├── youtube-creator/
+│   │   │       └── tiktok-creator/
 │   │   └── labs/               # TOWER: R&D & New Ventures
 │   │       ├── dumbphone-lock/ #   iOS focus app
 │   │       ├── vuori-lead-magnet/

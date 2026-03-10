@@ -1,14 +1,15 @@
 {
   "program": "BOABFIT 6-Week Workout & Nutrition Program",
   "equipment": "Dumbbells & Booty Band",
-  "schedule_note": "5 days on (Mon-Fri), 2 rest days (Sat-Sun). Same 5-workout rotation each week.",
+  "schedule_note": "6 days on, 1 rest day (Wed + Sun). Per Julia's schedule starting March 9, 2026.",
+  "program_start_date": "2026-03-09",
   "weekly_schedule": {
     "monday": "full_body_sculpt_tone",
     "tuesday": "lower_body_build",
-    "wednesday": "upper_body_build",
-    "thursday": "lower_body_sculpt",
-    "friday": "upper_body_sculpt",
-    "saturday": "rest",
+    "wednesday": "rest",
+    "thursday": "upper_body_sculpt",
+    "friday": "lower_body_sculpt",
+    "saturday": "upper_body_build",
     "sunday": "rest"
   },
   "workouts": {
@@ -278,10 +279,24 @@
   "hype_blurbs": {
     "monday": "HAPPY MONDAY BABE!! We're starting the week SO strong with a full body burn that's gonna have you feeling like a total baddie!! Every single muscle is getting attention today and you're gonna feel SO powerful after this one!! Let's goooo!!",
     "tuesday": "BOOTY DAY BABY!! It's lower body BUILD day and we are here to grow that peach!! Your legs are gonna be shaking by the end and you're gonna LOVE the way you feel!! Glutes, hammies, quads — we're hitting it ALL!! Let's get it!!",
-    "wednesday": "ARMS & BACK DAY!! Time to sculpt those gorgeous arms and build that beautiful back!! You're gonna feel SO strong and toned after this one — tank top season is coming and we are READY!! Let's get after it babe!!",
-    "thursday": "LEG DAY ROUND TWO!! We're sculpting and toning those beautiful legs today!! Every lunge, every squat is bringing you closer to your dream body and you are CRUSHING it this week!! Almost to the weekend — let's finish strong!!",
-    "friday": "IT'S FRIDAYYY AND WE'RE ENDING THE WEEK WITH UPPER BODY SCULPT!! Last workout of the week babe — give it EVERYTHING you've got!! You showed up all week and that is something to be SO proud of!! Let's end on a high note!!",
-    "saturday": "REST DAY QUEEN!! You worked SO hard this week and your body needs time to recover and grow!! Stretch, hydrate, eat your protein, and enjoy your day!! You earned this!! See you Monday ready to go again!!",
-    "sunday": "Happy Sunday babe!! One more rest day to recharge — take care of your body, fuel up with good food, and get mentally ready because tomorrow we GO AGAIN!! You're doing amazing and I'm so proud of you!!"
-  }
+    "wednesday": "REST DAY QUEEN!! You crushed it the last 2 days and your muscles need time to recover and GROW!! Stretch it out, hydrate, eat your protein, and enjoy your day!! You earned this babe!!",
+    "thursday": "UPPER BODY SCULPT DAY!! Time to tone those gorgeous arms and shoulders!! Tank top season is coming and we are getting READY!! You're halfway through the week and absolutely CRUSHING it!! Let's get after it babe!!",
+    "friday": "IT'S FRIDAYYY AND WE'RE SCULPTING THOSE LEGS!! Every lunge, every squat is bringing you closer to your dream body!! You've shown up all week and that is something to be SO proud of!! Let's gooo!!",
+    "saturday": "SATURDAY GAINS BABE!! We're building that beautiful upper body today!! Arms, back, shoulders — we're hitting it ALL!! Most people take Saturdays off but not us — WE'RE BUILT DIFFERENT!! Let's get it!!",
+    "sunday": "Happy Sunday babe!! Rest day to recharge — take care of your body, fuel up with good food, and get mentally ready because tomorrow we GO AGAIN!! You're doing amazing and I'm so proud of you!!"
+  },
+  "nutrition_tips": [
+    "Protein tip: Aim for 25-30g of protein per meal — that's about a palm-sized portion of chicken, fish, or tofu!",
+    "Water check: Try to drink half your body weight in ounces today! Keep that water bottle close babe!!",
+    "Simple tip: Add a veggie to every meal today — even if it's just a handful of spinach in your smoothie!",
+    "Protein tip: Greek yogurt with berries is an easy 15-20g protein snack — keep some in the fridge!",
+    "Water check: Start your morning with a big glass of water before coffee — your body is dehydrated from sleep!",
+    "Simple tip: Prep your protein for the week on Sunday — grilled chicken, hard boiled eggs, protein shakes ready to go!",
+    "Protein tip: Don't skip protein after your workout! A shake or meal within an hour helps your muscles recover and grow!",
+    "Water check: If your pee isn't light yellow, you need more water babe!! Set a reminder to sip every hour!",
+    "Simple tip: Swap out one processed snack today for something whole — fruit, nuts, veggies with hummus!",
+    "Protein tip: Eggs are your best friend — 6g protein each, cheap, fast, and SO versatile! Scrambled, boiled, whatever you love!",
+    "Water check: Add lemon or cucumber to your water if plain water is boring — flavor without the sugar!",
+    "Simple tip: Eating enough protein keeps you full longer AND helps build that muscle we're working so hard for!!"
+  ]
 }
