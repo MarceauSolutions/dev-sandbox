@@ -74,5 +74,16 @@ xcrun devicectl device install app --device 00008140-00045D391AE8801C build/...
 - **iOS 26**: Settings deep links (`App-prefs://`, `prefs:root=`) are all broken
 - **URL schemes**: `mobilephone://`, `sms:`, `facetime://`, `googlegmail://`, `googlecalendar://`, `comgooglemaps://`, `ddgQuickLink://`, `claude://`, `grok://`, `tg://resolve`
 
+## Launch Manager (Automated)
+
+```bash
+# Run from dev-sandbox root
+python projects/marceau-solutions/labs/dumbphone-lock/launch/launch_manager.py preflight  # Verify all systems
+python projects/marceau-solutions/labs/dumbphone-lock/launch/launch_manager.py status     # Signups + go/no-go
+python projects/marceau-solutions/labs/dumbphone-lock/launch/launch_manager.py watch      # Live monitor + SMS alerts
+python projects/marceau-solutions/labs/dumbphone-lock/launch/launch_manager.py report     # Branded PDF report
+python projects/marceau-solutions/labs/dumbphone-lock/launch/launch_manager.py iterate    # New copy variants
+```
+
 ## Current Phase
 Market validation via landing page + waitlist. Decision to buy $99 Apple Developer account depends on hitting 100+ signups in 48 hours from organic posting.

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<!-- Stats Bar -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-charcoal-800 rounded-xl p-5 border border-charcoal-700">
+        <div class="text-3xl font-bold text-gold-400">{{ stats.total }}</div>
+        <div class="text-sm text-gray-400 mt-1">Total Disputes</div>
+    </div>
+    <div class="bg-charcoal-800 rounded-xl p-5 border border-charcoal-700">
+        <div class="text-3xl font-bold text-blue-400">{{ stats.active }}</div>
+        <div class="text-sm text-gray-400 mt-1">Active</div>
+    </div>
+    <div class="bg-charcoal-800 rounded-xl p-5 border border-charcoal-700">
+        <div class="text-3xl font-bold text-green-400">{{ stats.won }}</div>
+        <div class="text-sm text-gray-400 mt-1">Won</div>
+    </div>
+    <div class="bg-charcoal-800 rounded-xl p-5 border border-charcoal-700">
+        <div class="text-3xl font-bold text-gold-400">${{ "{:,.0f}".format(stats.total_disputed) }}</div>
+        <div class="text-sm text-gray-400 mt-1">Total Disputed</div>
+    </div>
+</div>
+
+<!-- Hero / Empty State -->
+{% if disputes|length == 0 %}
+<div class="text-center py-20">
+    <div class="w-20 h-20 gradient-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-charcoal-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+        </svg>
+    </div>
+    <h1 class="text-4xl font-bold mb-4">
+        <span class="text-gold-400">Fight Back</span> Against Unfair Medical Bills
+    </h1>
+    <p class="text-xl text-gray-400 mb-2 max-w-2xl mx-auto">
+        40-60% of insurance denials are overturned when appealed — but less than 1% of people ever try.
+    </p>
+    <p class="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
+        ClaimBack automates the entire dispute process. Upload your bill, let AI find the errors, and get professional appeal letters in minutes.
+    </p>
+    <a href="/new" class="inline-flex items-center gradient-gold text-charcoal-900 px-8 py-4 rounded-xl text-lg font-bold hover:opacity-90 transition">
+        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Start Your First Dispute
+    </a>
+
+    <!-- How It Works -->
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+        {% set steps = [
+            ("Upload", "Upload your medical bill, EOB, denial letter, or insurance card.", "cloud-upload"),
+            ("Analyze", "AI identifies errors, applicable laws, and your strongest grounds.", "cpu"),
+            ("Generate", "Get professional appeal letters, dispute packages, and regulatory complaints.", "file-text"),
+            ("Win", "Track deadlines, escalate if needed, and get your money back.", "check-circle")
+        ] %}
+        {% for title, desc, icon in steps %}
+        <div class="text-center">
+            <div class="w-12 h-12 rounded-full bg-charcoal-700 border-2 border-gold-500/30 flex items-center justify-center mx-auto mb-3">
+                <span class="text-gold-400 font-bold">{{ loop.index }}</span>
+            </div>
+            <h3 class="font-semibold text-gold-400 mb-1">{{ title }}</h3>
+            <p class="text-sm text-gray-500">{{ desc }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% else %}
+<!-- Disputes List -->
+<div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold">Your Disputes</h2>
+    <a href="/new" class="gradient-gold text-charcoal-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition">
+        + New Dispute
+    </a>
+</div>
+
+<div class="space-y-3">
+    {% for dispute in disputes %}
+    {% set dtype = types.get(dispute.dispute_type, {}) %}
+    <a href="/dispute/{{ dispute.id }}/review" class="block bg-charcoal-800 rounded-xl p-5 border border-charcoal-700 card-hover">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: {{ dtype.get('color', '#C9963C') }}20; color: {{ dtype.get('color', '#C9963C') }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-100">{{ dispute.title or 'Untitled Dispute' }}</h3>
+                    <div class="flex items-center space-x-3 text-sm text-gray-400 mt-1">
+                        {% if dispute.provider_name %}
+                        <span>{{ dispute.provider_name }}</span>
+                        <span class="text-charcoal-600">|</span>
+                        {% endif %}
+                        <span>{{ dtype.get('name', dispute.dispute_type) }}</span>
+                        {% if dispute.billed_amount %}
+                        <span class="text-charcoal-600">|</span>
+                        <span class="text-gold-400 font-medium">${{ "{:,.2f}".format(dispute.billed_amount) }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if dispute.deadline_date %}
+                <div class="text-right">
+                    <div class="text-xs text-gray-500">Deadline</div>
+                    <div class="text-sm text-red-400">{{ dispute.deadline_date }}</div>
+                </div>
+                {% endif %}
+                <span class="px-3 py-1 rounded-full text-xs font-medium
+                    {% if dispute.status == 'won' %}bg-green-900/50 text-green-400 border border-green-700
+                    {% elif dispute.status == 'lost' %}bg-red-900/50 text-red-400 border border-red-700
+                    {% elif dispute.status in ('analyzing', 'review', 'letters_ready') %}bg-gold-900/30 text-gold-400 border border-gold-700
+                    {% else %}bg-charcoal-700 text-gray-300 border border-charcoal-600{% endif %}">
+                    {{ statuses.get(dispute.status, dispute.status) }}
+                </span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

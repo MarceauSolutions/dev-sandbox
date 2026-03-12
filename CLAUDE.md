@@ -10,6 +10,19 @@
 
 **Where to put code:** `execution/` if shared (2+ projects), `projects/[name]/src/` if project-specific.
 
+## Interface-First Rules (Non-Negotiable)
+
+> Every tool must be usable by William WITHOUT opening VS Code. If it isn't, it isn't finished.
+
+- **Automations → n8n** by default. No new CLI-only automation scripts. William already knows n8n.
+- **Dashboards/content tools → standalone web app** at a fixed localhost URL with a direct launch script in `scripts/`
+- **Reports/guides → branded PDF**, auto-opened. Never a markdown file.
+- **Alerts → SMS or email** via Twilio/SMTP. Never "run this command to check".
+- **Before writing code**, confirm: *"How will William access this without me?"*
+- **Direct launch scripts** required for every web app: `scripts/[name].sh` — one command, browser opens.
+- **Nothing deleted without explicit approval.** Move assets, never delete them.
+- **Every generated file documented** in that project's CLAUDE.md the moment it's created.
+
 ## Critical Rules (Always Enforced)
 
 1. **Check existing tools BEFORE creating new ones** — `python scripts/inventory.py search <keyword>`. Hook: `check-existing-tools.sh`
@@ -48,6 +61,7 @@
 
 | Quick Command | Run |
 |--------------|-----|
+| **LaunchPad dashboard** | `./scripts/launchpad.sh [product]` |
 | **Daily standup** | `./scripts/daily_standup.sh` |
 | **System health** | `python scripts/health_check.py` |
 | Search tools | `python scripts/inventory.py search <keyword>` |

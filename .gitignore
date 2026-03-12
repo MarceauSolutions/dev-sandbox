@@ -112,3 +112,9 @@ assets/*.png
 # Deploy backups (auto-generated safety snapshots)
 .deploy-backups/
 .claude/hooks/provider-status.json
+
+# Large binary files — stored in Google Drive
+*.mp4
+projects/marceau-solutions/fitness/tools/fitness-influencer/Assets/ISSA/*.pdf
+projects/marceau-solutions/labs/mikos-lab/pdfs/*.pdf
+projects/marceau-solutions/digital/clients/flames-of-passion/website/output/*.zip

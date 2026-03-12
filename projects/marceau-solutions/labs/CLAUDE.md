@@ -10,6 +10,7 @@
 | `amazon-seller/` | Amazon SP-API seller tools | Development |
 | `mikos-lab/` | Miko's Lab project | Exploration |
 | `legal-case-manager/` | Legal case management tool | Exploration |
+| `claim-back/` | AI medical billing dispute platform | MVP Development |
 
 ## Graduation Path
 When a Labs project is validated (SOP 17 passes + revenue model confirmed):

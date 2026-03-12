@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}Review — {{ dispute.title }}{% endblock %}
+{% block content %}
+{% set dtype = types.get(dispute.dispute_type, {}) %}
+<div class="max-w-4xl mx-auto">
+    <!-- Progress -->
+    <div class="flex items-center space-x-2 mb-8 text-sm">
+        <span class="text-gold-400 font-medium">1. Type</span>
+        <span class="text-charcoal-600">→</span>
+        <span class="text-gold-400 font-medium">2. Details</span>
+        <span class="text-charcoal-600">→</span>
+        <span class="text-gold-400 font-medium">3. Documents</span>
+        <span class="text-charcoal-600">→</span>
+        <span class="text-gold-400 font-bold border-b-2 border-gold-400 pb-1">4. Analysis</span>
+        <span class="text-charcoal-600">→</span>
+        <span class="{% if letters %}text-gold-400 font-bold{% else %}text-gray-500{% endif %}">5. Letters</span>
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: {{ dtype.get('color', '#C9963C') }}20; color: {{ dtype.get('color', '#C9963C') }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold">{{ dispute.title }}</h1>
+                <p class="text-sm text-gray-400">{{ dtype.get('name', 'Dispute') }} — {{ statuses.get(dispute.status, dispute.status) }}</p>
+            </div>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold
+            {% if dispute.status == 'won' %}bg-green-900/50 text-green-300 border border-green-700
+            {% elif dispute.status == 'lost' %}bg-red-900/50 text-red-300 border border-red-700
+            {% elif dispute.status in ('analyzing', 'review') %}bg-gold-900/50 text-gold-300 border border-gold-700
+            {% else %}bg-charcoal-700 text-gray-300 border border-charcoal-600{% endif %}">
+            {{ statuses.get(dispute.status, dispute.status) }}
+        </span>
+    </div>
+
+    <!-- Dispute Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-charcoal-800 border border-charcoal-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 mb-1">Total Billed</p>
+            <p class="text-xl font-bold text-red-400">${{ "%.2f"|format(dispute.billed_amount or 0) }}</p>
+        </div>
+        <div class="bg-charcoal-800 border border-charcoal-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 mb-1">Insurance Paid</p>
+            <p class="text-xl font-bold text-green-400">${{ "%.2f"|format(dispute.insurance_paid or 0) }}</p>
+        </div>
+        <div class="bg-charcoal-800 border border-charcoal-700 rounded-lg p-4">
+            <p class="text-xs text-gray-500 mb-1">Your Responsibility</p>
+            <p class="text-xl font-bold text-gold-400">${{ "%.2f"|format(dispute.patient_responsibility or 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Deadline Warning -->
+    {% if dispute.deadline_date %}
+    {% set days_left = (dispute.deadline_date | string) %}
+    <div class="bg-charcoal-800 border border-gold-700 rounded-lg p-4 mb-8 flex items-center space-x-3">
+        <svg class="w-5 h-5 text-gold-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+            <p class="text-sm font-medium text-gold-300">Estimated Deadline: {{ dispute.deadline_date }}</p>
+            <p class="text-xs text-gray-500">Based on your dispute type and date of service. File before this date.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- AI Analysis -->
+    {% if analysis %}
+    <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl p-6 mb-8">
+        <h2 class="text-lg font-bold mb-4 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+            <span>AI Analysis</span>
+        </h2>
+
+        {% if analysis.summary %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Summary</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">{{ analysis.summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if analysis.strength_score is defined %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Case Strength</h3>
+            <div class="flex items-center space-x-3">
+                <div class="flex-1 bg-charcoal-700 rounded-full h-3">
+                    <div class="h-3 rounded-full {% if analysis.strength_score >= 7 %}bg-green-500{% elif analysis.strength_score >= 4 %}bg-gold-500{% else %}bg-red-500{% endif %}"
+                         style="width: {{ analysis.strength_score * 10 }}%"></div>
+                </div>
+                <span class="text-lg font-bold {% if analysis.strength_score >= 7 %}text-green-400{% elif analysis.strength_score >= 4 %}text-gold-400{% else %}text-red-400{% endif %}">
+                    {{ analysis.strength_score }}/10
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if analysis.errors_found %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Billing Errors Found</h3>
+            <div class="space-y-2">
+                {% for error in analysis.errors_found %}
+                <div class="bg-charcoal-700 rounded-lg p-3 flex items-start space-x-2">
+                    <svg class="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <span class="text-sm text-gray-300">{{ error }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if analysis.applicable_laws %}
+        <div class="mb-6">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Applicable Laws & Regulations</h3>
+            <div class="space-y-2">
+                {% for law in analysis.applicable_laws %}
+                <div class="bg-charcoal-700 rounded-lg p-3 flex items-start space-x-2">
+                    <svg class="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                    </svg>
+                    <span class="text-sm text-gray-300">{{ law }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if analysis.recommended_actions %}
+        <div>
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Recommended Actions</h3>
+            <div class="space-y-2">
+                {% for action in analysis.recommended_actions %}
+                <div class="flex items-start space-x-2">
+                    <span class="text-gold-400 font-bold text-sm">{{ loop.index }}.</span>
+                    <span class="text-sm text-gray-300">{{ action }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="bg-charcoal-800 border border-dashed border-charcoal-600 rounded-xl p-8 text-center mb-8">
+        <svg class="w-12 h-12 text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        <p class="text-gray-500 mb-3">No analysis yet</p>
+        <form method="POST" action="{{ url_for('analyze_dispute', dispute_id=dispute.id) }}">
+            <button type="submit" class="gradient-gold text-charcoal-900 px-6 py-2 rounded-lg font-semibold text-sm hover:opacity-90 transition">
+                Run AI Analysis
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Generated Letters -->
+    {% if letters %}
+    <div class="mb-8">
+        <h2 class="text-lg font-bold mb-4">Generated Letters</h2>
+        <div class="space-y-4">
+            {% for letter in letters %}
+            <div class="bg-charcoal-800 border border-charcoal-700 rounded-xl overflow-hidden">
+                <div class="px-5 py-3 border-b border-charcoal-700 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="text-sm font-semibold text-gray-200">{{ letter.letter_type | replace('_', ' ') | title }}</span>
+                    </div>
+                    <span class="text-xs text-gray-500">{{ letter.created_at }}</span>
+                </div>
+                <div class="p-5">
+                    <pre class="text-sm text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">{{ letter.content }}</pre>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between pt-4 border-t border-charcoal-700">
+        <a href="{{ url_for('dispute_documents', dispute_id=dispute.id) }}" class="text-gray-400 hover:text-gray-200 transition">← Back to Documents</a>
+        <div class="flex items-center space-x-3">
+            {% if analysis and not letters %}
+            <form method="POST" action="{{ url_for('generate_letters', dispute_id=dispute.id) }}">
+                <button type="submit" class="gradient-gold text-charcoal-900 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+                    Generate Dispute Letters
+                </button>
+            </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('delete_dispute', dispute_id=dispute.id) }}" onsubmit="return confirm('Delete this dispute? This cannot be undone.')">
+                <button type="submit" class="text-red-400 hover:text-red-300 text-sm transition">Delete Dispute</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
