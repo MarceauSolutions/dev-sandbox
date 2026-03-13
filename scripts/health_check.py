@@ -554,6 +554,83 @@ def check_recent_executions():
         print(f"  {warn(f'{len(stale_failures)} workflow(s) failed last run, not yet re-verified')}: {summary}")
 
 
+def check_repo_sync():
+    """Check that Local, GitHub, and EC2 repos are in sync."""
+    print(header("REPOSITORY SYNC"))
+
+    # Local commit
+    try:
+        local = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True, text=True, timeout=5, cwd=str(ROOT)
+        )
+        local_commit = local.stdout.strip()[:7]
+    except Exception:
+        print(f"  {fail('Cannot read local git repo')}")
+        return
+
+    # Fetch GitHub
+    try:
+        subprocess.run(
+            ["git", "fetch", "origin", "main"],
+            capture_output=True, text=True, timeout=15, cwd=str(ROOT)
+        )
+        gh = subprocess.run(
+            ["git", "rev-parse", "origin/main"],
+            capture_output=True, text=True, timeout=5, cwd=str(ROOT)
+        )
+        github_commit = gh.stdout.strip()[:7]
+    except Exception:
+        print(f"  {warn('Cannot fetch from GitHub')}")
+        github_commit = "unknown"
+
+    # EC2 commit
+    ec2_out, ec2_ok = ssh("sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && git rev-parse HEAD'")
+    ec2_commit = ec2_out.strip()[:7] if ec2_ok else "unknown"
+
+    print(f"  Local:  {local_commit}")
+    print(f"  GitHub: {github_commit}")
+    print(f"  EC2:    {ec2_commit}")
+
+    # Check local vs GitHub
+    if local_commit != github_commit:
+        ahead = subprocess.run(
+            ["git", "rev-list", "--count", "origin/main..HEAD"],
+            capture_output=True, text=True, timeout=5, cwd=str(ROOT)
+        )
+        behind = subprocess.run(
+            ["git", "rev-list", "--count", "HEAD..origin/main"],
+            capture_output=True, text=True, timeout=5, cwd=str(ROOT)
+        )
+        a = ahead.stdout.strip()
+        b = behind.stdout.strip()
+        print(f"  {fail(f'Local ↔ GitHub out of sync ({a} ahead, {b} behind)')}")
+    else:
+        print(f"  {ok('Local ↔ GitHub in sync')}")
+
+    # Check EC2 vs GitHub
+    if ec2_commit == "unknown":
+        print(f"  {warn('Cannot verify EC2 sync (SSH failed)')}")
+    elif ec2_commit != github_commit:
+        print(f"  {fail(f'EC2 ↔ GitHub out of sync (EC2={ec2_commit}, GitHub={github_commit})')}")
+    else:
+        print(f"  {ok('EC2 ↔ GitHub in sync')}")
+
+    # Check sync agent exists on EC2
+    agent_out, agent_ok = ssh("sudo -u clawdbot test -x /home/clawdbot/scripts/sync-agent.sh && echo exists")
+    if agent_ok and "exists" in agent_out:
+        print(f"  {ok('EC2 sync-agent.sh deployed')}")
+    else:
+        print(f"  {fail('EC2 sync-agent.sh missing or not executable')}")
+
+    # Check cron is set
+    cron_out, cron_ok = ssh("sudo -u clawdbot crontab -l 2>/dev/null")
+    if cron_ok and "sync-agent.sh" in cron_out:
+        print(f"  {ok('EC2 auto-sync cron active')}")
+    else:
+        print(f"  {fail('EC2 auto-sync cron not configured')}")
+
+
 def repatch_telegram():
     """Re-patch the Clawdbot Telegram credential in n8n with the token from .env."""
     import ssl
@@ -618,6 +695,7 @@ def main():
         check_domains()
         check_n8n()
         check_clawdbot()
+        check_repo_sync()
         check_ai_apis()
         check_stripe_webhooks()
 

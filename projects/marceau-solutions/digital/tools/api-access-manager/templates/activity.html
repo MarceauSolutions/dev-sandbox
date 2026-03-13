@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Activity Log{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-clock-rotate-left" style="color: var(--gold);"></i> Activity Log</h1>
+        <p class="breadcrumb">Full history of all platform actions</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Platform</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in activity %}
+                <tr>
+                    <td style="white-space:nowrap;color:var(--text-muted);font-size:12px;">{{ a.created_at|timeago }}</td>
+                    <td style="color:var(--gold);font-weight:600;">{{ a.platform_name or 'System' }}</td>
+                    <td><span class="badge badge-secondary">{{ a.action }}</span></td>
+                    <td style="font-size:13px;">{{ a.details }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="empty-state"><p>No activity recorded yet</p></td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

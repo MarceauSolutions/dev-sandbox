@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}{{ guide.name }}{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="page-header">
+    <div>
+        <p class="breadcrumb"><a href="/platforms">Platforms</a> / {{ guide.name }}</p>
+        <h1>
+            <i class="{{ guide.icon }}" style="color:{{ guide.color }};"></i>
+            {{ guide.name }}
+        </h1>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+        <select class="form-control" style="width:auto;" onchange="changeStatus({{ platform.id }}, this.value)">
+            <option value="not_started" {% if platform.status == 'not_started' %}selected{% endif %}>Not Started</option>
+            <option value="in_progress" {% if platform.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="approved" {% if platform.status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if platform.status == 'rejected' %}selected{% endif %}>Rejected</option>
+            <option value="suspended" {% if platform.status == 'suspended' %}selected{% endif %}>Suspended</option>
+        </select>
+    </div>
+</div>
+
+<!-- Links -->
+<div class="links-row">
+    {% if guide.api_portal %}
+    <a href="{{ guide.api_portal }}" target="_blank"><i class="fas fa-external-link-alt"></i> API Portal</a>
+    {% endif %}
+    {% if guide.docs_url %}
+    <a href="{{ guide.docs_url }}" target="_blank"><i class="fas fa-book"></i> Documentation</a>
+    {% endif %}
+</div>
+
+<!-- Info Panel -->
+<div class="info-panel">
+    <h3>Overview</h3>
+    <p>{{ guide.overview }}</p>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-size:13px;font-weight:600;">Progress</span>
+        <span style="font-size:13px;"><span class="progress-pct">{{ progress }}</span>% &middot; <span class="progress-count">{{ completed_steps }}/{{ total_steps }} steps</span></span>
+    </div>
+    <div class="progress-bar-large"><div class="fill" style="width:{{ progress }}%;"></div></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+    <div class="tab active" data-tab="steps" onclick="switchTab('steps')"><i class="fas fa-list-check"></i> Steps</div>
+    <div class="tab" data-tab="keys" onclick="switchTab('keys')"><i class="fas fa-key"></i> Keys</div>
+    <div class="tab" data-tab="nuances" onclick="switchTab('nuances')"><i class="fas fa-lightbulb"></i> Nuances</div>
+    <div class="tab" data-tab="reminders" onclick="switchTab('reminders')"><i class="fas fa-bell"></i> Reminders</div>
+    <div class="tab" data-tab="activity" onclick="switchTab('activity')"><i class="fas fa-clock-rotate-left"></i> Activity</div>
+</div>
+
+<!-- Steps Tab -->
+<div id="tab-steps" class="tab-content">
+    <ul class="step-list">
+        {% for step in steps %}
+        <li class="step-item {% if step.is_completed %}completed{% endif %}">
+            <div class="step-checkbox {% if step.is_completed %}checked{% endif %}" onclick="toggleStep({{ step.id }}, this)"></div>
+            <div style="flex:1;">
+                <div class="step-number">Step {{ step.step_order }}</div>
+                <div class="step-title">
+                    {{ step.title }}
+                    {% if step.step_type %}
+                    <span class="step-type-badge step-type-{{ step.step_type }}">{{ step.step_type }}</span>
+                    {% endif %}
+                </div>
+                <div class="step-desc">{{ step.description }}</div>
+            </div>
+        </li>
+        {% else %}
+        <div class="empty-state"><i class="fas fa-list"></i><p>No steps loaded</p></div>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Keys Tab -->
+<div id="tab-keys" class="tab-content" style="display:none;">
+    <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:14px;">Tracked Keys</h3>
+        <button class="btn btn-sm btn-gold" onclick="openModal('addKeyModal')"><i class="fas fa-plus"></i> Add Key</button>
+    </div>
+    {% for k in keys %}
+    <div class="key-card" data-expires="{{ k.expires_at }}" data-issued="{{ k.last_rotated or k.created_at }}">
+        <div class="key-header">
+            <div>
+                <span class="key-name">{{ k.key_name }}</span>
+                <span class="badge badge-info" style="margin-left:8px;">{{ k.key_type }}</span>
+            </div>
+            <div style="display:flex;gap:4px;">
+                <button class="btn btn-sm btn-outline" onclick="rotateKey({{ k.id }})"><i class="fas fa-sync-alt"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteKeyConfirm({{ k.id }})"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+        {% if k.env_var_name %}
+        <div class="key-env">{{ k.env_var_name }}</div>
+        {% endif %}
+        {% if k.expires_at %}
+        <div class="key-countdown">
+            <div class="countdown-bar"><div class="fill"></div></div>
+            <span class="countdown-text"></span>
+        </div>
+        {% else %}
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">No expiration</div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-key"></i><p>No keys tracked yet</p></div>
+    {% endfor %}
+
+    {% if guide.key_types %}
+    <h3 style="font-size:14px;margin-top:24px;margin-bottom:12px;">Suggested Keys from Guide</h3>
+    {% for kt in guide.key_types %}
+    <div class="key-card" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+            <span class="key-name">{{ kt.name }}</span>
+            <span class="badge badge-secondary" style="margin-left:8px;">{{ kt.type }}</span>
+            {% if kt.env_var %}<div class="key-env">{{ kt.env_var }}</div>{% endif %}
+        </div>
+        <button class="btn btn-sm btn-gold" onclick="addKeyFromGuide({{ platform.id }}, '{{ kt.name }}', '{{ kt.type }}', '{{ kt.env_var }}', {{ kt.rotation_days }})">
+            <i class="fas fa-plus"></i> Track
+        </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!-- Nuances Tab -->
+<div id="tab-nuances" class="tab-content" style="display:none;">
+    {% if guide.prerequisites %}
+    <div class="card">
+        <div class="card-header"><h3>Prerequisites</h3></div>
+        <ul class="tip-list prereq-list">
+            {% for p in guide.prerequisites %}<li>{{ p }}</li>{% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% if guide.nuances is defined and guide.nuances %}
+    <div class="card">
+        <div class="card-header"><h3>Platform Nuances</h3></div>
+        <ul class="tip-list">
+            {% for n in guide.nuances %}<li>{{ n }}</li>{% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    {% if guide.best_practices %}
+    <div class="card">
+        <div class="card-header"><h3>Best Practices</h3></div>
+        <ul class="tip-list practice-list">
+            {% for bp in guide.best_practices %}<li>{{ bp }}</li>{% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Reminders Tab -->
+<div id="tab-reminders" class="tab-content" style="display:none;">
+    <div style="margin-bottom:16px;display:flex;gap:8px;">
+        <button class="btn btn-sm btn-outline" onclick="quickAddReminder({{ platform.id }}, '{{ guide.name }}', 'follow_up')"><i class="fas fa-clock"></i> Follow Up</button>
+        <button class="btn btn-sm btn-outline" onclick="quickAddReminder({{ platform.id }}, '{{ guide.name }}', 'rotation')"><i class="fas fa-sync-alt"></i> Key Rotation</button>
+        <button class="btn btn-sm btn-outline" onclick="quickAddReminder({{ platform.id }}, '{{ guide.name }}', 'review')"><i class="fas fa-clipboard-check"></i> Compliance Review</button>
+    </div>
+    {% for r in reminders %}
+    {% set days = r.due_date|days_until %}
+    <div class="reminder-item">
+        <div class="reminder-info">
+            <div class="reminder-title">{{ r.title }}</div>
+            <div class="reminder-meta">{{ r.reminder_type }} &middot; Due {{ r.due_date }}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <span class="reminder-due {% if days is not none and days < 0 %}overdue{% elif days is not none and days == 0 %}today{% else %}upcoming{% endif %}">
+                {% if days is not none %}{% if days < 0 %}{{ -days }}d overdue{% elif days == 0 %}Today{% else %}{{ days }}d{% endif %}{% else %}--{% endif %}
+            </span>
+            {% if not r.is_completed %}
+            <button class="btn btn-sm btn-gold" onclick="completeReminder({{ r.id }})"><i class="fas fa-check"></i></button>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-bell-slash"></i><p>No reminders for this platform</p></div>
+    {% endfor %}
+</div>
+
+<!-- Activity Tab -->
+<div id="tab-activity" class="tab-content" style="display:none;">
+    {% for a in activity %}
+    <div class="activity-item">
+        <span class="activity-time">{{ a.created_at|timeago }}</span>
+        <span class="activity-platform">{{ a.action }}</span>
+        <span>{{ a.details }}</span>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-clock"></i><p>No activity recorded</p></div>
+    {% endfor %}
+</div>
+
+<!-- Notes -->
+<div class="card" style="margin-top:20px;">
+    <div class="card-header"><h3><i class="fas fa-sticky-note" style="color:var(--gold);"></i> Notes</h3></div>
+    <textarea class="form-control" rows="4" placeholder="Add notes about this platform..."
+        onblur="updatePlatform({{ platform.id }}, 'notes', this.value)">{{ platform.notes or '' }}</textarea>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+    var pid = {{ platform.id }};
+    document.querySelectorAll('#addKeyModal [name=platform_id], #addReminderModal [name=platform_id]').forEach(function(sel){
+        var opt = document.createElement('option');
+        opt.value = pid;
+        opt.textContent = '{{ guide.name }}';
+        opt.selected = true;
+        sel.appendChild(opt);
+    });
+})();
+</script>
+{% endblock %}

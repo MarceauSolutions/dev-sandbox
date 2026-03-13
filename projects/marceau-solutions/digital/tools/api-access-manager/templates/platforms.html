@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Platforms{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-globe" style="color: var(--gold);"></i> Platforms</h1>
+        <p class="breadcrumb">All API platforms and application guides</p>
+    </div>
+    <button class="btn btn-gold" onclick="seedPlatforms()"><i class="fas fa-seedling"></i> Seed All Platforms</button>
+</div>
+
+<div class="platform-grid">
+    {% for slug, guide in platform_guides.items() %}
+    {% set db_platform = None %}
+    {% for p in platforms if p.slug == slug %}
+        {% set db_platform = p %}
+    {% endfor %}
+    <a href="/platform/{{ slug }}" class="platform-card" style="text-decoration:none;color:inherit;">
+        <div class="platform-icon" style="background:{{ guide.color }}20;color:{{ guide.color }};">
+            <i class="{{ guide.icon }}"></i>
+        </div>
+        <h3>{{ guide.name }}</h3>
+        <div class="platform-meta">
+            {% set order_item = None %}
+            {% for o in application_order if o.slug == slug %}
+                {% set order_item = o %}
+                <span class="difficulty-{{ o.difficulty|lower|replace(' ', '-') }}">{{ o.difficulty }}</span>
+                &middot; {{ o.typical_timeline }}
+            {% endfor %}
+        </div>
+        {% for p in platforms if p.slug == slug %}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            {{ p.status|status_badge|safe }}
+            <span style="font-size:11px;color:var(--text-muted);">{{ p.progress or 0 }}% complete</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width:{{ p.progress or 0 }}%;"></div>
+        </div>
+        {% else %}
+        <div style="margin-top:8px;">
+            <span class="badge badge-secondary">Not Started</span>
+        </div>
+        {% endfor %}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

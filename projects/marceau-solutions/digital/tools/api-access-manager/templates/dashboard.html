@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-th-large" style="color: var(--gold);"></i> Dashboard</h1>
+        <p class="breadcrumb">API Access Manager Overview</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline" onclick="openModal('addKeyModal')"><i class="fas fa-plus"></i> Track Key</button>
+        <button class="btn btn-outline" onclick="openModal('addReminderModal')"><i class="fas fa-bell"></i> Reminder</button>
+        <button class="btn btn-gold" onclick="seedPlatforms()"><i class="fas fa-seedling"></i> Seed All</button>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_platforms }}</div>
+        <div class="stat-label">Total Platforms</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-value">{{ stats.approved }}</div>
+        <div class="stat-label">Approved</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-value">{{ stats.in_progress }}</div>
+        <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card alert">
+        <div class="stat-value">{{ stats.expiring_keys }}</div>
+        <div class="stat-label">Expiring Keys</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.pending_reminders }}</div>
+        <div class="stat-label">Pending Reminders</div>
+    </div>
+</div>
+
+<div class="two-col">
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Platform Status</h2>
+                <a href="/platforms" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Platform</th><th>Status</th><th>Progress</th></tr></thead>
+                    <tbody>
+                        {% for p in platforms %}
+                        <tr style="cursor:pointer;" onclick="location.href='/platform/{{ p.slug }}'">
+                            <td>
+                                {% if platform_guides.get(p.slug) %}
+                                <i class="{{ platform_guides[p.slug].icon }}" style="color:{{ platform_guides[p.slug].color }};margin-right:8px;"></i>
+                                {% endif %}
+                                {{ p.name }}
+                            </td>
+                            <td>{{ p.status|status_badge|safe }}</td>
+                            <td>
+                                <div class="progress-bar" style="width:80px;display:inline-block;vertical-align:middle;">
+                                    <div class="progress-fill" style="width:{{ p.progress or 0 }}%;"></div>
+                                </div>
+                                <span style="font-size:11px;color:var(--text-muted);margin-left:4px;">{{ p.progress or 0 }}%</span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="empty-state"><p>No platforms yet. Click "Seed All" to start.</p></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-exclamation-triangle" style="color:var(--warning);"></i> Expiring Keys</h2>
+                <a href="/keys" class="btn btn-sm btn-outline">Key Vault</a>
+            </div>
+            {% for k in expiring_keys %}
+            <div class="key-card" data-expires="{{ k.expires_at }}" data-issued="{{ k.last_rotated or k.created_at }}">
+                <div class="key-header">
+                    <div>
+                        <span class="key-name">{{ k.key_name }}</span>
+                        <span class="badge badge-{% if k.days_remaining <= 7 %}danger{% elif k.days_remaining <= 30 %}warning{% else %}success{% endif %}" style="margin-left:8px;">{{ k.platform_name }}</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="rotateKey({{ k.id }})"><i class="fas fa-sync-alt"></i> Rotate</button>
+                </div>
+                <div class="key-countdown">
+                    <div class="countdown-bar"><div class="fill"></div></div>
+                    <span class="countdown-text"></span>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state"><i class="fas fa-shield-halved"></i><p>No keys expiring soon</p></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-bell" style="color:var(--gold);"></i> Upcoming Reminders</h2>
+                <a href="/reminders" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            {% for r in upcoming_reminders %}
+            {% set days = r.due_date|days_until %}
+            <div class="reminder-item">
+                <div class="reminder-info">
+                    <div class="reminder-title">{{ r.title }}</div>
+                    <div class="reminder-meta">{{ r.platform_name or 'General' }} &middot; {{ r.reminder_type }}</div>
+                </div>
+                <span class="reminder-due {% if days is not none and days < 0 %}overdue{% elif days is not none and days == 0 %}today{% else %}upcoming{% endif %}">
+                    {% if days is not none %}{% if days < 0 %}{{ -days }}d overdue{% elif days == 0 %}Today{% else %}{{ days }}d{% endif %}{% else %}--{% endif %}
+                </span>
+            </div>
+            {% else %}
+            <div class="empty-state"><i class="fas fa-bell-slash"></i><p>No upcoming reminders</p></div>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-list-ol" style="color:var(--gold);"></i> Application Order</h2>
+                <a href="/order" class="btn btn-sm btn-outline">Full Order</a>
+            </div>
+            {% for item in application_order[:5] %}
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+                <span style="width:28px;height:28px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gold);font-size:12px;flex-shrink:0;">{{ item.order }}</span>
+                <div style="flex:1;">
+                    <a href="/platform/{{ item.slug }}" style="font-weight:600;font-size:14px;">{{ item.name }}</a>
+                    <div style="font-size:11px;color:var(--text-secondary);">{{ item.typical_timeline }} &middot; <span class="difficulty-{{ item.difficulty|lower|replace(' ', '-') }}">{{ item.difficulty }}</span></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-clock-rotate-left" style="color:var(--gold);"></i> Recent Activity</h2>
+                <a href="/activity" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            {% for a in recent_activity %}
+            <div class="activity-item">
+                <span class="activity-time">{{ a.created_at|timeago }}</span>
+                <span class="activity-platform">{{ a.platform_name or 'System' }}</span>
+                <span>{{ a.details }}</span>
+            </div>
+            {% else %}
+            <div class="empty-state"><i class="fas fa-clock"></i><p>No activity yet</p></div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+    var platforms = {{ platforms|tojson }};
+    document.querySelectorAll('#addKeyModal [name=platform_id], #addReminderModal [name=platform_id]').forEach(function(sel){
+        platforms.forEach(function(p){
+            var opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            sel.appendChild(opt);
+        });
+    });
+})();
+</script>
+{% endblock %}

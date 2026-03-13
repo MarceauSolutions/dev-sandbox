@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Application Order{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-list-ol" style="color: var(--gold);"></i> Application Order</h1>
+        <p class="breadcrumb">Recommended sequence: easiest/fastest approval first</p>
+    </div>
+</div>
+
+<div class="info-panel">
+    <h3>Strategy</h3>
+    <p>Apply in this order to build momentum. Start with instant-approval platforms, then tackle the harder ones while earlier applications are still fresh. Each approval builds credibility for the next.</p>
+</div>
+
+<div class="order-timeline">
+    {% for item in application_order %}
+    <div class="order-item">
+        <div class="order-number">{{ item.order }}</div>
+        <h3>
+            <a href="/platform/{{ item.slug }}">
+                {% if platform_guides.get(item.slug) %}
+                <i class="{{ platform_guides[item.slug].icon }}" style="color:{{ platform_guides[item.slug].color }};margin-right:8px;"></i>
+                {% endif %}
+                {{ item.name }}
+            </a>
+        </h3>
+        <div class="order-meta">
+            <span><i class="fas fa-clock"></i> {{ item.typical_timeline }}</span>
+            <span class="difficulty-{{ item.difficulty|lower|replace(' ', '-') }}"><i class="fas fa-signal"></i> {{ item.difficulty }}</span>
+        </div>
+        <div class="order-reason">{{ item.reason }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

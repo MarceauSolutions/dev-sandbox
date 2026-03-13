@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}API Access Manager{% endblock %} — Marceau Solutions</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <h1><i class="fas fa-key"></i> API Manager</h1>
+                <p>Marceau Solutions</p>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                    <i class="fas fa-th-large"></i> Dashboard
+                </a></li>
+                <li><a href="/platforms" class="{% if request.path == '/platforms' %}active{% endif %}">
+                    <i class="fas fa-globe"></i> Platforms
+                </a></li>
+                <li><a href="/keys" class="{% if request.path == '/keys' %}active{% endif %}">
+                    <i class="fas fa-shield-halved"></i> Key Vault
+                </a></li>
+                <li><a href="/order" class="{% if request.path == '/order' %}active{% endif %}">
+                    <i class="fas fa-list-ol"></i> Application Order
+                </a></li>
+
+                <li class="nav-section">Tracking</li>
+                <li><a href="/reminders" class="{% if request.path == '/reminders' %}active{% endif %}">
+                    <i class="fas fa-bell"></i> Reminders
+                </a></li>
+                <li><a href="/activity" class="{% if request.path == '/activity' %}active{% endif %}">
+                    <i class="fas fa-clock-rotate-left"></i> Activity Log
+                </a></li>
+
+                <li class="nav-section">Platforms</li>
+                {% for slug, guide in platform_guides.items() if platform_guides is defined %}
+                <li><a href="/platform/{{ slug }}" class="{% if request.path == '/platform/' + slug %}active{% endif %}">
+                    <i class="{{ guide.icon }}"></i> {{ guide.name }}
+                </a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Add Key Modal -->
+    <div id="addKeyModal" class="modal-overlay">
+        <div class="modal">
+            <h2><i class="fas fa-plus"></i> Track API Key</h2>
+            <form onsubmit="addKey(event)">
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select name="platform_id" class="form-control" required>
+                        <option value="">Select platform...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Key Name</label>
+                    <input name="key_name" class="form-control" placeholder="e.g., API Key, Client Secret" required>
+                </div>
+                <div class="form-group">
+                    <label>Key Type</label>
+                    <select name="key_type" class="form-control">
+                        <option value="api_key">API Key</option>
+                        <option value="secret">Secret</option>
+                        <option value="token">Bearer Token</option>
+                        <option value="access_token">Access Token</option>
+                        <option value="refresh_token">Refresh Token</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ENV Variable Name</label>
+                    <input name="env_var_name" class="form-control" placeholder="e.g., META_APP_SECRET">
+                </div>
+                <div class="form-group">
+                    <label>Rotation Period (days)</label>
+                    <input name="rotation_days" type="number" class="form-control" value="90" min="0">
+                    <small style="color: var(--text-muted); font-size: 11px;">Set to 0 for keys that don't expire</small>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addKeyModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fas fa-plus"></i> Add Key</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Reminder Modal -->
+    <div id="addReminderModal" class="modal-overlay">
+        <div class="modal">
+            <h2><i class="fas fa-bell"></i> Add Reminder</h2>
+            <form onsubmit="addReminder(event)">
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select name="platform_id" class="form-control" required>
+                        <option value="">Select platform...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="reminder_type" class="form-control">
+                        <option value="follow_up">Follow Up</option>
+                        <option value="rotation">Key Rotation</option>
+                        <option value="review">Compliance Review</option>
+                        <option value="renewal">Token Renewal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input name="title" class="form-control" placeholder="e.g., Follow up on Meta app review" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input name="due_date" type="date" class="form-control" required>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('addReminderModal')">Cancel</button>
+                    <button type="submit" class="btn btn-gold"><i class="fas fa-bell"></i> Add Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

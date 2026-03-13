@@ -32,6 +32,8 @@
 5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
 6. **Document efforts >30 min** — `docs/sops/sop-25-documentation-decision-framework.md`
 7. **Rule of Three** — Same approach fails 3x? STOP. Research root cause.
+8. **Push after commit** — Every `git commit` MUST be followed by `git push origin main` in the same session. The PostToolUse hook auto-syncs EC2 after push. Unpushed commits = Clawdbot blind spot.
+9. **Verify sync on session start** — Run `git log --oneline origin/main..HEAD` at start of any session. If >0 unpushed commits exist, push before doing anything else.
 
 ## Execution Discipline (Hook-Enforced Where Possible)
 

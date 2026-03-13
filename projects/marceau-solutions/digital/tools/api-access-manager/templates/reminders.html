@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Reminders{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-bell" style="color: var(--gold);"></i> Reminders</h1>
+        <p class="breadcrumb">Follow-ups, rotations, and compliance reviews</p>
+    </div>
+    <button class="btn btn-gold" onclick="openModal('addReminderModal')"><i class="fas fa-plus"></i> Add Reminder</button>
+</div>
+
+<!-- Active Reminders -->
+<div class="card">
+    <div class="card-header">
+        <h2>Active Reminders</h2>
+        <span class="badge badge-warning">{{ active|length }}</span>
+    </div>
+    {% for r in active %}
+    {% set days = r.due_date|days_until %}
+    <div class="reminder-item">
+        <div class="reminder-info">
+            <div class="reminder-title">{{ r.title }}</div>
+            <div class="reminder-meta">
+                {{ r.platform_name or 'General' }} &middot; {{ r.reminder_type }} &middot; Due {{ r.due_date }}
+                {% if r.description %}<br>{{ r.description }}{% endif %}
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <span class="reminder-due {% if days is not none and days < 0 %}overdue{% elif days is not none and days == 0 %}today{% else %}upcoming{% endif %}">
+                {% if days is not none %}{% if days < 0 %}{{ -days }}d overdue{% elif days == 0 %}Today{% else %}{{ days }}d{% endif %}{% else %}--{% endif %}
+            </span>
+            <button class="btn btn-sm btn-gold" onclick="completeReminder({{ r.id }})"><i class="fas fa-check"></i> Done</button>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="fas fa-bell-slash"></i><p>No active reminders. Nice work!</p></div>
+    {% endfor %}
+</div>
+
+<!-- Completed Reminders -->
+{% if completed %}
+<div class="card">
+    <div class="card-header">
+        <h2 style="color:var(--text-muted);">Completed</h2>
+        <span class="badge badge-secondary">{{ completed|length }}</span>
+    </div>
+    {% for r in completed %}
+    <div class="reminder-item" style="opacity:0.6;">
+        <div class="reminder-info">
+            <div class="reminder-title" style="text-decoration:line-through;">{{ r.title }}</div>
+            <div class="reminder-meta">{{ r.platform_name or 'General' }} &middot; {{ r.reminder_type }}</div>
+        </div>
+        <span class="badge badge-success">Done</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

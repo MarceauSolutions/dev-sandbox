@@ -168,6 +168,18 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/post-push-ec2-sync.sh",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

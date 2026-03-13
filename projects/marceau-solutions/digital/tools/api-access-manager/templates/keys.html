@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Key Vault{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-shield-halved" style="color: var(--gold);"></i> Key Vault</h1>
+        <p class="breadcrumb">All tracked API keys and credentials</p>
+    </div>
+    <button class="btn btn-gold" onclick="openModal('addKeyModal')"><i class="fas fa-plus"></i> Track New Key</button>
+</div>
+
+{% set ns = namespace(current_platform='') %}
+{% for k in keys %}
+    {% if k.platform_name != ns.current_platform %}
+        {% if ns.current_platform %}
+            </div>
+        {% endif %}
+        {% set ns.current_platform = k.platform_name %}
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ k.platform_name }}</h2>
+                <a href="/platform/{{ k.platform_slug or '' }}" class="btn btn-sm btn-outline">View Platform</a>
+            </div>
+    {% endif %}
+    <div class="key-card" {% if k.expires_at %}data-expires="{{ k.expires_at }}" data-issued="{{ k.last_rotated or k.created_at }}"{% endif %}>
+        <div class="key-header">
+            <div>
+                <span class="key-name">{{ k.key_name }}</span>
+                <span class="badge badge-info" style="margin-left:8px;">{{ k.key_type }}</span>
+            </div>
+            <div style="display:flex;gap:4px;">
+                <button class="btn btn-sm btn-outline" onclick="rotateKey({{ k.id }})" title="Rotate key"><i class="fas fa-sync-alt"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteKeyConfirm({{ k.id }})" title="Remove from tracking"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+        {% if k.env_var_name %}
+        <div class="key-env">{{ k.env_var_name }}</div>
+        {% endif %}
+        {% if k.expires_at %}
+        <div class="key-countdown">
+            <div class="countdown-bar"><div class="fill {% if k.days_remaining is not none %}{% if k.days_remaining <= 7 %}critical{% elif k.days_remaining <= 30 %}warning{% else %}healthy{% endif %}{% endif %}"></div></div>
+            <span class="countdown-text {% if k.days_remaining is not none %}{% if k.days_remaining <= 7 %}critical{% elif k.days_remaining <= 30 %}warning{% else %}healthy{% endif %}{% endif %}">
+                {% if k.days_remaining is not none %}
+                    {% if k.days_remaining <= 0 %}EXPIRED{% elif k.days_remaining == 1 %}1 day left{% else %}{{ k.days_remaining }} days left{% endif %}
+                {% endif %}
+            </span>
+        </div>
+        {% else %}
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">No expiration set</div>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="empty-state"><i class="fas fa-key"></i><p>No API keys tracked yet. Click "Track New Key" to start.</p></div>
+{% endfor %}
+{% if keys %}
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+    var platforms = {{ platforms|tojson }};
+    document.querySelectorAll('#addKeyModal [name=platform_id], #addReminderModal [name=platform_id]').forEach(function(sel){
+        platforms.forEach(function(p){
+            var opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.name;
+            sel.appendChild(opt);
+        });
+    });
+})();
+</script>
+{% endblock %}
