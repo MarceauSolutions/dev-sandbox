@@ -100,6 +100,7 @@ projects/shared/photo-processor/output/
 # OAuth token files
 token_sheets.json
 token_marceausolutions.json
+token_gmail_compose.json
 
 # Lead capture export data (sensitive — don't commit)
 *-export.json
@@ -108,6 +109,9 @@ token_marceausolutions.json
 # Business assets (PDFs, images — managed outside git)
 assets/*.pdf
 assets/*.png
+
+# SQLite databases (runtime data)
+*.db
 
 # Deploy backups (auto-generated safety snapshots)
 .deploy-backups/
