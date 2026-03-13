@@ -1,0 +1,103 @@
+{
+  "program_name": "5-Day Athletic Performance Program",
+  "client_name": "William Marceau",
+  "goal": "Build athleticism, mobility & functional strength",
+  "experience_level": "Intermediate/Advanced",
+  "equipment": "Barbell, Dumbbells, Kettlebells, Pull-up Bar, Bands",
+  "days_per_week": "5",
+  "start_date": "March 2026",
+  "coach_note": "This program prioritizes athletic performance over aesthetics. Every session starts with mobility work and includes explosive power training before strength work. Kettlebell movements are featured heavily for their unique ability to build strength, power, and conditioning simultaneously. Focus on movement quality — if form breaks, reduce weight.",
+  "program_notes": {
+    "progression": "Weeks 1-2: Establish baseline. Weeks 3-4: Add 5-10 lbs to main lifts or 1-2 reps. Week 5: Deload (40% less volume). Week 6+: New cycle with increased baseline.",
+    "rest_days": "Saturday/Sunday — Active recovery: 20-30 min walk, light stretching, recreational sports.",
+    "nutrition": "Protein target: 0.8-1g per pound bodyweight. Hydrate before training.",
+    "sleep": "7-8 hours minimum for optimal recovery and CNS adaptation."
+  },
+  "schedule": [
+    {
+      "day_name": "Monday",
+      "day_number": 1,
+      "focus": "Legs (Power & Mobility)",
+      "warmup": "5 min bike/row + 90/90 Hip Switches (10 ea), World's Greatest Stretch (5 ea), Cossack Squat Flow (8 ea), Ankle Rocks (15 ea)",
+      "exercises": [
+        {"name": "Kettlebell Swing", "sets": 4, "reps": "12", "rest_seconds": 60, "notes": "Hip hinge explosively, squeeze glutes at top"},
+        {"name": "Box Jump (step down)", "sets": 4, "reps": "5", "rest_seconds": 90, "notes": "Focus on soft landing, full hip extension"},
+        {"name": "Goblet Squat (KB)", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Pause 2 sec at bottom, elbows inside knees"},
+        {"name": "Front Squat", "sets": 4, "reps": "6", "rest_seconds": 150, "notes": "Main lift — controlled descent, drive through heels"},
+        {"name": "KB Romanian Deadlift", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Single or double KB, hinge at hips"},
+        {"name": "Bulgarian Split Squat", "sets": 3, "reps": "8 each", "rest_seconds": 60, "notes": "Hold KB goblet or racked position"},
+        {"name": "Single-Leg Glute Bridge", "sets": 2, "reps": "12 each", "rest_seconds": 45, "notes": "Drive through heel, squeeze at top"},
+        {"name": "Banded Lateral Walk", "sets": 2, "reps": "15 each", "rest_seconds": 30, "notes": "Band above knees, stay low"}
+      ],
+      "cooldown": "Deep Squat Hold (2 min cumulative) + Hip Flexor Stretch (60s each side)"
+    },
+    {
+      "day_name": "Tuesday",
+      "day_number": 2,
+      "focus": "Push",
+      "warmup": "5 min cardio + Shoulder CARS (5 ea direction), Wall Slides (12), Thread the Needle (8 ea), Prone Y-T-W (8 each)",
+      "exercises": [
+        {"name": "KB Halo", "sets": 2, "reps": "8 each direction", "rest_seconds": 30, "notes": "Shoulder activation and mobility"},
+        {"name": "Plyo Push-Up", "sets": 4, "reps": "5", "rest_seconds": 90, "notes": "Explosive — hands leave ground. Scale to clap or regular"},
+        {"name": "Bench Press", "sets": 4, "reps": "6", "rest_seconds": 150, "notes": "Main lift — control descent, drive explosively"},
+        {"name": "KB Push Press", "sets": 4, "reps": "6 each", "rest_seconds": 90, "notes": "Use leg drive, lock out overhead"},
+        {"name": "Dumbbell Incline Press", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "30-45° incline, full ROM"},
+        {"name": "KB Floor Press", "sets": 3, "reps": "10 each", "rest_seconds": 60, "notes": "Pause at bottom, eliminate bounce"},
+        {"name": "Dips", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Control descent, lean forward slightly for chest"},
+        {"name": "Face Pulls", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Slow eccentric, external rotate at top"}
+      ],
+      "cooldown": "Dead Hang (60s cumulative) + Doorway Pec Stretch (30s each side)"
+    },
+    {
+      "day_name": "Wednesday",
+      "day_number": 3,
+      "focus": "Pull",
+      "warmup": "5 min cardio + Cat-Cow (10), Thoracic Rotations (8 ea), Banded Pull-Aparts (15), Prone Swimmers (10)",
+      "exercises": [
+        {"name": "KB High Pull", "sets": 3, "reps": "8 each", "rest_seconds": 60, "notes": "Explosive hip drive, elbow high"},
+        {"name": "Med Ball Slam", "sets": 4, "reps": "6", "rest_seconds": 60, "notes": "Full hip extension, slam with aggression"},
+        {"name": "Weighted Pull-Up", "sets": 4, "reps": "6", "rest_seconds": 150, "notes": "Main lift — full dead hang to chin over bar"},
+        {"name": "KB Gorilla Row", "sets": 4, "reps": "8 each", "rest_seconds": 90, "notes": "Wide stance, alternate rows, anti-rotation"},
+        {"name": "Single-Arm KB Row", "sets": 3, "reps": "10 each", "rest_seconds": 60, "notes": "Pull to hip, squeeze lat at top"},
+        {"name": "KB Upright Row", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Lead with elbows, don't shrug"},
+        {"name": "Face Pulls", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "External rotation at end range"},
+        {"name": "KB Curl (hammer grip)", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Neutral grip on KB horns"}
+      ],
+      "cooldown": "Foam Roll Thoracic Spine (2 min) + Child's Pose with Reach (60s each side)"
+    },
+    {
+      "day_name": "Thursday",
+      "day_number": 4,
+      "focus": "Upper (Athletic)",
+      "warmup": "5 min cardio + Arm Circles (20 ea), Band Dislocates (10), Scapular Push-Ups (12), Wrist Circles (10 ea)",
+      "exercises": [
+        {"name": "KB Snatch", "sets": 3, "reps": "5 each", "rest_seconds": 90, "notes": "Power movement — hip drive, punch through"},
+        {"name": "Med Ball Rotational Throw", "sets": 3, "reps": "5 each", "rest_seconds": 60, "notes": "Generate power from hips, release at chest height"},
+        {"name": "KB Push Press", "sets": 4, "reps": "5 each", "rest_seconds": 90, "notes": "Leg drive into explosive press"},
+        {"name": "Chin-Ups", "sets": 4, "reps": "6-8", "rest_seconds": 120, "notes": "Supinated grip, full ROM"},
+        {"name": "Half-Kneeling KB Press", "sets": 3, "reps": "8 each", "rest_seconds": 60, "notes": "Core engagement, vertical forearm"},
+        {"name": "KB Renegade Row", "sets": 3, "reps": "6 each", "rest_seconds": 90, "notes": "Plank position, minimize hip rotation"},
+        {"name": "Turkish Get-Up", "sets": 2, "reps": "3 each", "rest_seconds": 90, "notes": "Slow and controlled, master each position"},
+        {"name": "Pallof Press", "sets": 3, "reps": "10 each", "rest_seconds": 45, "notes": "Anti-rotation — resist the pull"}
+      ],
+      "cooldown": "Hang from Bar (90s total) + Shoulder CARS (3 each side, slow)"
+    },
+    {
+      "day_name": "Friday",
+      "day_number": 5,
+      "focus": "Lower (Strength)",
+      "warmup": "5 min cardio + Hip Flexor Stretch (60s ea), Pigeon Pose (60s ea), Squat-to-Stand (8), Single-Leg Balance (30s ea, eyes closed)",
+      "exercises": [
+        {"name": "KB Swing (heavy)", "sets": 4, "reps": "10", "rest_seconds": 60, "notes": "Power — max hip drive, heavy bell"},
+        {"name": "Lateral Bounds", "sets": 3, "reps": "5 each", "rest_seconds": 60, "notes": "Explosive lateral power, stick landing"},
+        {"name": "Back Squat", "sets": 5, "reps": "5", "rest_seconds": 180, "notes": "Main lift — heavy, controlled, full depth"},
+        {"name": "Trap Bar Deadlift", "sets": 4, "reps": "6", "rest_seconds": 150, "notes": "Neutral grip, drive through floor"},
+        {"name": "KB Walking Lunge", "sets": 3, "reps": "10 each", "rest_seconds": 90, "notes": "Rack or farmer carry position"},
+        {"name": "KB Single-Leg RDL", "sets": 3, "reps": "8 each", "rest_seconds": 60, "notes": "Balance and posterior chain focus"},
+        {"name": "Nordic Curl (eccentric)", "sets": 3, "reps": "5", "rest_seconds": 90, "notes": "Slow descent only if needed, push up"},
+        {"name": "KB Calf Raise", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Hold KB, slow 3 sec eccentric"}
+      ],
+      "cooldown": "Deep Squat Hold (2 min) + Lying Spinal Twist (60s each side)"
+    }
+  ]
+}

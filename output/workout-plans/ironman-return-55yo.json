@@ -1,0 +1,101 @@
+{
+  "program_name": "Return to Strength Program",
+  "client_name": "Client",
+  "goal": "Rebuild foundational strength, address cycling imbalances, support back health",
+  "experience_level": "Returning Athlete (Endurance Background)",
+  "equipment": "Gym — machines, cables, dumbbells, stability ball, foam roller, bands",
+  "days_per_week": "5",
+  "start_date": "March 2026",
+  "coach_note": "This program is designed for a gradual return to strength training after time off. As a former Ironman athlete with a cycling background, you likely have excellent aerobic capacity but may have muscle imbalances typical of endurance cyclists: tight hip flexors, weak glutes, underdeveloped posterior chain, and rounded thoracic spine. We're prioritizing core stability, hip mobility, and posterior chain strength to support your back. Start light — the goal for weeks 1-4 is movement quality and building the habit. Intensity increases in Phase 2.",
+  "program_notes": {
+    "phase_1_weeks_1_4": "Foundation Phase — Focus on movement quality, mobility, and building consistency. Keep weights light (RPE 5-6). Master form before adding load.",
+    "phase_2_weeks_5_8": "Build Phase — Gradually increase weights (RPE 6-7). Add sets where indicated. Introduce more challenging progressions.",
+    "back_care": "Avoid heavy spinal loading initially. All core work emphasizes stability (anti-movement). If any exercise aggravates your back, stop and notify your coach.",
+    "cycling_integration": "Continue riding 2-3x per week at easy/moderate intensity. This program complements your cycling without overtraining.",
+    "recovery": "Sleep 7-8 hours. Consider magnesium supplementation. Foam roll and stretch daily, especially hip flexors and thoracic spine."
+  },
+  "schedule": [
+    {
+      "day_name": "Monday",
+      "day_number": 1,
+      "focus": "Lower Body (Posterior Chain & Hips)",
+      "warmup": "10 min bike (easy) + Cat-Cow (10 reps), Hip Circles (10 each), Glute Bridges (15), Bird Dogs (10 each), 90/90 Hip Stretch (60s each)",
+      "exercises": [
+        {"name": "Glute Bridge (floor)", "sets": 3, "reps": "12", "rest_seconds": 45, "notes": "Squeeze glutes 2 sec at top, don't hyperextend back"},
+        {"name": "Cable Pull-Through", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Hip hinge pattern — load glutes/hamstrings, not low back"},
+        {"name": "Goblet Squat (light)", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Depth to comfort, keep chest tall, weight in heels"},
+        {"name": "Leg Press (moderate)", "sets": 3, "reps": "12", "rest_seconds": 90, "notes": "Feet high on platform to reduce knee stress, control descent"},
+        {"name": "Seated Leg Curl", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Slow 3-sec eccentric, feel hamstrings work"},
+        {"name": "Standing Calf Raise", "sets": 2, "reps": "15", "rest_seconds": 45, "notes": "Full ROM, pause at top"},
+        {"name": "Side-Lying Clamshell", "sets": 2, "reps": "15 each", "rest_seconds": 30, "notes": "Hip external rotation — keep pelvis stable"}
+      ],
+      "cooldown": "Hip flexor stretch (90s each), Pigeon pose (60s each), Foam roll quads and glutes (2 min each)"
+    },
+    {
+      "day_name": "Tuesday",
+      "day_number": 2,
+      "focus": "Upper Body (Push & Posture)",
+      "warmup": "5 min row machine + Arm Circles (20 each), Band Pull-Aparts (15), Wall Angels (10), Thoracic Rotations (8 each)",
+      "exercises": [
+        {"name": "Incline Dumbbell Press", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "30° incline, shoulder-friendly angle, control descent"},
+        {"name": "Seated Cable Row (wide)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Squeeze shoulder blades, open chest — counteracts cycling posture"},
+        {"name": "Dumbbell Shoulder Press (seated)", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Neutral grip if shoulders feel better, don't arch back"},
+        {"name": "Face Pulls", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "High pull to face, external rotate at end — posture corrector"},
+        {"name": "Cable Chest Fly", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Light weight, feel the stretch, build chest mobility"},
+        {"name": "Tricep Pushdown", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Keep elbows pinned, full extension"},
+        {"name": "Dead Hang", "sets": 2, "reps": "20-30 sec", "rest_seconds": 30, "notes": "Decompress spine, stretch lats and shoulders"}
+      ],
+      "cooldown": "Doorway pec stretch (30s each), Child's pose (60s), Foam roll thoracic spine (2 min)"
+    },
+    {
+      "day_name": "Wednesday",
+      "day_number": 3,
+      "focus": "Core Stability & Mobility",
+      "warmup": "10 min easy walk/bike + Full body stretch flow (5 min)",
+      "exercises": [
+        {"name": "Dead Bug", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Press low back into floor, move slowly — core stability king"},
+        {"name": "Bird Dog", "sets": 3, "reps": "8 each", "rest_seconds": 45, "notes": "Anti-rotation, extend opposite arm/leg, keep hips level"},
+        {"name": "Pallof Press", "sets": 3, "reps": "10 each", "rest_seconds": 45, "notes": "Anti-rotation — resist cable pull, brace core"},
+        {"name": "Side Plank (modified)", "sets": 2, "reps": "20-30 sec each", "rest_seconds": 30, "notes": "From knees if needed, stack hips, don't let hips sag"},
+        {"name": "Glute Bridge March", "sets": 2, "reps": "8 each", "rest_seconds": 45, "notes": "Hold bridge, lift one foot at a time — pelvic stability"},
+        {"name": "Cat-Cow", "sets": 2, "reps": "10", "rest_seconds": 30, "notes": "Slow and controlled, feel each vertebra move"},
+        {"name": "World's Greatest Stretch", "sets": 2, "reps": "5 each", "rest_seconds": 30, "notes": "Hip flexor + thoracic rotation — essential for cyclists"},
+        {"name": "90/90 Hip Transitions", "sets": 2, "reps": "8 each", "rest_seconds": 30, "notes": "Improve hip internal/external rotation"},
+        {"name": "Foam Roll Sequence", "sets": 1, "reps": "5 min", "rest_seconds": 0, "notes": "IT band, quads, glutes, thoracic spine, lats"}
+      ],
+      "cooldown": "Supine spinal twist (60s each), Happy baby pose (60s), Deep breathing (2 min)"
+    },
+    {
+      "day_name": "Thursday",
+      "day_number": 4,
+      "focus": "Lower Body (Quad & Balance)",
+      "warmup": "10 min bike (easy) + Leg Swings (10 each), Bodyweight Squats (10), Single-Leg Balance (30s each), Ankle Circles (10 each)",
+      "exercises": [
+        {"name": "Leg Extension", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Quad isolation — avoid if knees hurt, use light weight"},
+        {"name": "Goblet Squat", "sets": 3, "reps": "10", "rest_seconds": 60, "notes": "Sit between legs, chest up, controlled tempo"},
+        {"name": "Step-Up (low box)", "sets": 3, "reps": "10 each", "rest_seconds": 60, "notes": "8-12 inch box, drive through front heel, don't push off back leg"},
+        {"name": "Romanian Deadlift (DB)", "sets": 3, "reps": "10", "rest_seconds": 90, "notes": "Hinge at hips, soft knee bend, feel hamstrings stretch"},
+        {"name": "Single-Leg Glute Bridge", "sets": 2, "reps": "10 each", "rest_seconds": 45, "notes": "Pelvis stays level, drive through heel"},
+        {"name": "Seated Calf Raise", "sets": 2, "reps": "15", "rest_seconds": 45, "notes": "Soleus focus — important for cycling efficiency"},
+        {"name": "Adductor Machine", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Inner thigh strength — often weak in cyclists"}
+      ],
+      "cooldown": "Standing quad stretch (30s each), Seated forward fold (60s), Figure-4 stretch (60s each)"
+    },
+    {
+      "day_name": "Friday",
+      "day_number": 5,
+      "focus": "Upper Body (Pull & Back Health)",
+      "warmup": "5 min row machine + Scapular Retractions (15), Band Pull-Aparts (15), Prone Y-T-W (8 each), Shoulder CARS (5 each)",
+      "exercises": [
+        {"name": "Lat Pulldown (neutral grip)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Initiate with lats, not biceps — lean back slightly"},
+        {"name": "Seated Cable Row (close grip)", "sets": 3, "reps": "12", "rest_seconds": 60, "notes": "Pull to belly button, squeeze shoulder blades 2 sec"},
+        {"name": "Reverse Fly (machine or DB)", "sets": 3, "reps": "12", "rest_seconds": 45, "notes": "Rear delts and mid-traps — posture muscles"},
+        {"name": "Face Pulls", "sets": 3, "reps": "15", "rest_seconds": 45, "notes": "Pull high, external rotate — can't do too many of these"},
+        {"name": "Bicep Curl (DB)", "sets": 2, "reps": "12", "rest_seconds": 45, "notes": "Controlled, no swinging — supinate at top"},
+        {"name": "Prone Y Raise", "sets": 2, "reps": "10", "rest_seconds": 30, "notes": "Face down on incline bench, arms form Y — lower trap activation"},
+        {"name": "Dead Hang", "sets": 3, "reps": "30 sec", "rest_seconds": 30, "notes": "Spinal decompression — relax and breathe"}
+      ],
+      "cooldown": "Lat stretch (30s each), Cross-body shoulder stretch (30s each), Chest opener on foam roller (2 min)"
+    }
+  ]
+}
