@@ -122,3 +122,12 @@ assets/*.png
 projects/marceau-solutions/fitness/tools/fitness-influencer/Assets/ISSA/*.pdf
 projects/marceau-solutions/labs/mikos-lab/pdfs/*.pdf
 projects/marceau-solutions/digital/clients/flames-of-passion/website/output/*.zip
+
+# MailAssist session data
+projects/marceau-solutions/labs/email-assistant/data/
+
+# AutoIterator experiment data (regenerated, not source)
+data/auto_iterator/experiments/
+data/auto_iterator/reports/*.json
+data/auto_iterator/reports/*.log
+data/auto_iterator/reports/*.pdf

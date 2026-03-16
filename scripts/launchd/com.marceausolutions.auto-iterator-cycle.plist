@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.marceausolutions.auto-iterator-cycle</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>execution/auto_iterator_bridge.py</string>
+        <string>cycle</string>
+        <string>--domain</string>
+        <string>sms_outreach</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/williammarceaujr./dev-sandbox</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin</string>
+    </dict>
+
+    <!-- Run daily at 7:00 AM (after health check, before standup) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>7</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/williammarceaujr./dev-sandbox/data/auto_iterator/reports/cycle.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/williammarceaujr./dev-sandbox/data/auto_iterator/reports/cycle_error.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

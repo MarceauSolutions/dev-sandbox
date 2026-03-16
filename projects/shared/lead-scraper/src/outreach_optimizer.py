@@ -262,16 +262,47 @@ class OutreachOptimizer:
 
         return plans
 
+    def _load_auto_iterator_templates(self) -> List[str]:
+        """Load active templates from AutoIterator staged variants."""
+        staged_file = self.output_dir / "auto_iterator_staged_templates.json"
+        if not staged_file.exists():
+            return []
+        try:
+            with open(staged_file, 'r') as f:
+                staged = json.load(f)
+            return [name for name, data in staged.items() if data.get("active", False)]
+        except (json.JSONDecodeError, KeyError):
+            return []
+
     def select_template_for_lead(self, lead_source: str) -> str:
         """
         Select which template to use for the next lead.
 
         Uses weighted random selection based on current allocations.
+        Also includes active AutoIterator variants in the rotation
+        (10% exploration allocation for AI-proposed templates).
         """
         template_list = APOLLO_TEMPLATES if lead_source == "apollo" else GOOGLE_PLACES_TEMPLATES
 
+        # Check for AutoIterator variants to include
+        auto_templates = self._load_auto_iterator_templates()
+
         # Get current allocations
         plans = self.calculate_allocation(template_list, 100)  # Normalize to 100
+
+        # If AutoIterator has active variants, give them 10% of traffic
+        if auto_templates:
+            auto_allocation = 10
+            scale = (100 - auto_allocation) / 100
+            for plan in plans:
+                plan.allocation = int(plan.allocation * scale)
+            per_auto = auto_allocation // len(auto_templates)
+            for auto_name in auto_templates:
+                plans.append(OutreachPlan(
+                    template_name=auto_name,
+                    allocation=per_auto,
+                    reason=f"AutoIterator variant (exploration)"
+                ))
 
         # Weighted random selection
         total = sum(p.allocation for p in plans)
