@@ -11,6 +11,7 @@
 | `mikos-lab/` | Miko's Lab project | Exploration |
 | `legal-case-manager/` | Legal case management tool | Exploration |
 | `claim-back/` | AI medical billing dispute platform | MVP Development |
+| `email-assistant/` | AI-powered Gmail assistant (search, docs, drafts) | MVP Development |
 
 ## Graduation Path
 When a Labs project is validated (SOP 17 passes + revenue model confirmed):

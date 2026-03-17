@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailAssist — AI Email Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+    <div style="display:flex; align-items:center;">
+        <h1>MailAssist</h1>
+        <span class="subtitle">AI-Powered Email Assistant</span>
+    </div>
+    <div class="header-right" id="headerRight">
+        {% if authenticated %}
+        <span class="user-email" id="userEmail">{{ email }}</span>
+        <a href="/auth/disconnect" class="btn btn-sm btn-danger">Disconnect</a>
+        {% endif %}
+    </div>
+</header>
+
+{% if not authenticated %}
+<!-- Auth Screen -->
+<div class="auth-screen">
+    <h2>Your AI Email Command Center</h2>
+    <p>Search your inbox with natural language, generate documentation from email threads, and draft intelligent responses — all powered by AI.</p>
+
+    <div class="auth-features">
+        <div class="auth-feature">
+            <div class="icon">&#128269;</div>
+            <h3>Smart Search</h3>
+            <p>Find emails using plain English. "Find the email from my insurance company about the claim."</p>
+        </div>
+        <div class="auth-feature">
+            <div class="icon">&#128196;</div>
+            <h3>Thread Docs</h3>
+            <p>Generate summaries, timelines, evidence packages, and action plans from any email thread.</p>
+        </div>
+        <div class="auth-feature">
+            <div class="icon">&#9999;&#65039;</div>
+            <h3>Draft Responses</h3>
+            <p>Tell the AI what you want to say. It reads the thread, drafts the reply, you review and send.</p>
+        </div>
+    </div>
+
+    <a href="/auth/connect" class="btn btn-gold" style="font-size:16px; padding: 14px 40px;">
+        Connect Gmail Account
+    </a>
+    <p style="margin-top: 16px; font-size: 12px; color: var(--text-muted);">
+        Your data stays on your machine. We never store your emails.
+    </p>
+</div>
+
+{% else %}
+<!-- Main App -->
+<div class="container">
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" data-tab="search" onclick="switchTab('search')">Search</button>
+        <button class="tab" data-tab="smart" onclick="switchTab('smart')">Smart Find</button>
+    </div>
+
+    <!-- Search Tab -->
+    <div id="searchTab">
+        <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput"
+                   placeholder="Search your emails... (Gmail syntax: from:, subject:, has:attachment, etc.)"
+                   onkeydown="if(event.key==='Enter')doSearch()">
+            <button class="btn btn-gold" onclick="doSearch()">Search</button>
+        </div>
+
+        <div class="search-toggle">
+            <label class="toggle-switch">
+                <input type="checkbox" id="aiToggle">
+                <span class="toggle-slider"></span>
+            </label>
+            <span>AI-powered search (converts natural language to Gmail query)</span>
+        </div>
+
+        <div id="emailResults">
+            <div class="empty-state">
+                <div class="icon">&#128236;</div>
+                <p>Search your inbox to get started</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Smart Find Tab -->
+    <div id="smartTab" style="display:none">
+        <div class="search-bar">
+            <input type="text" class="search-input" id="smartInput"
+                   placeholder="Describe what you're looking for... e.g. 'Find the email from my insurance company about my claim refund'"
+                   onkeydown="if(event.key==='Enter')doSmartSearch()">
+            <button class="btn btn-gold" onclick="doSmartSearch()">Find It</button>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
+            Describe what you need in plain English. AI will translate it to a precise Gmail search.
+        </p>
+
+        <div id="smartResults">
+            <div class="empty-state">
+                <div class="icon">&#129302;</div>
+                <p>Tell the AI what emails you need. Be specific about the sender, topic, or timeframe.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thread View (shown when clicking an email) -->
+    <div class="thread-view" id="threadView">
+        <div class="thread-header">
+            <div>
+                <button class="btn btn-sm btn-outline" onclick="closeThread()" style="margin-right:12px;">&#8592; Back</button>
+                <span id="threadSubject" style="font-size:18px; color:var(--gold); font-weight:600;"></span>
+            </div>
+            <div class="thread-actions">
+                <button class="btn btn-sm btn-outline" onclick="analyzeThread()">Analyze</button>
+                <div style="position:relative; display:inline-block;">
+                    <button class="btn btn-sm btn-outline" onclick="toggleDocMenu()">Generate Doc &#9662;</button>
+                    <div id="docMenu" style="display:none; position:absolute; top:100%; right:0; background:var(--dark-card); border:1px solid var(--dark-border); border-radius:8px; padding:4px; min-width:160px; z-index:10; margin-top:4px;">
+                        <button class="btn btn-sm" style="width:100%; text-align:left; color:var(--text-primary);" onclick="generateDoc('summary')">Summary</button>
+                        <button class="btn btn-sm" style="width:100%; text-align:left; color:var(--text-primary);" onclick="generateDoc('timeline')">Timeline</button>
+                        <button class="btn btn-sm" style="width:100%; text-align:left; color:var(--text-primary);" onclick="generateDoc('evidence')">Evidence Package</button>
+                        <button class="btn btn-sm" style="width:100%; text-align:left; color:var(--text-primary);" onclick="generateDoc('action_plan')">Action Plan</button>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-gold" onclick="openDraftComposer()">Draft Reply</button>
+            </div>
+        </div>
+
+        <div id="threadMessages"></div>
+
+        <!-- Analysis Panel -->
+        <div class="panel" id="analysisPanel" style="display:none">
+            <h3>Thread Analysis</h3>
+            <div id="analysisContent" class="panel-content"></div>
+        </div>
+
+        <!-- Document Panel -->
+        <div class="panel" id="documentPanel" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 id="docTitle">Generated Document</h3>
+                <button class="btn btn-sm btn-outline" onclick="copyDocument()">Copy</button>
+            </div>
+            <div id="documentContent" class="panel-content"></div>
+        </div>
+
+        <!-- Draft Composer -->
+        <div class="panel" id="draftPanel" style="display:none">
+            <h3>Draft Response</h3>
+
+            <div class="compose-area">
+                <div style="display:flex; gap:12px; margin-bottom:16px;">
+                    <div class="compose-field" style="flex:1">
+                        <label>What do you want to say?</label>
+                        <input type="text" id="draftIntent"
+                               placeholder="e.g. 'Decline their offer and request a full refund instead'">
+                    </div>
+                    <div class="compose-field" style="width:150px;">
+                        <label>Tone</label>
+                        <select id="draftTone">
+                            <option value="professional">Professional</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="firm">Firm</option>
+                            <option value="apologetic">Apologetic</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; align-items:flex-end;">
+                        <button class="btn btn-gold" onclick="generateDraft()">Generate Draft</button>
+                    </div>
+                </div>
+
+                <div id="draftEditor" style="display:none">
+                    <div id="draftNotes" style="font-size:12px; color:var(--text-muted); margin-bottom:12px; padding:10px; background:rgba(0,0,0,0.2); border-radius:6px;"></div>
+
+                    <div class="compose-field">
+                        <label>To</label>
+                        <input type="email" id="draftTo">
+                    </div>
+                    <div class="compose-field">
+                        <label>Subject</label>
+                        <input type="text" id="draftSubject">
+                    </div>
+                    <div class="compose-field">
+                        <label>Body</label>
+                        <textarea id="draftBody"></textarea>
+                    </div>
+
+                    <div class="compose-actions">
+                        <button class="btn btn-sm btn-outline" onclick="saveDraft()">Save as Draft</button>
+                        <button class="btn btn-sm btn-success" onclick="sendDraft()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+// ── State ──
+let currentThreadId = null;
+let currentThreadMessages = [];
+
+// ── Tabs ──
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById('searchTab').style.display = tab === 'search' ? 'block' : 'none';
+    document.getElementById('smartTab').style.display = tab === 'smart' ? 'block' : 'none';
+}
+
+// ── Search ──
+async function doSearch() {
+    const query = document.getElementById('searchInput').value.trim();
+    if (!query) return;
+    const useAI = document.getElementById('aiToggle').checked;
+    showLoading('emailResults');
+    try {
+        const res = await fetch('/api/search', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({query, use_ai: useAI, max_results: 30})
+        });
+        const data = await res.json();
+        if (useAI && data.query_used !== query) {
+            toast(`AI query: ${data.query_used}`, 'success');
+        }
+        renderEmails(data.emails, 'emailResults');
+    } catch (e) {
+        toast('Search failed: ' + e.message, 'error');
+        document.getElementById('emailResults').innerHTML = '<div class="empty-state"><p>Search failed. Please try again.</p></div>';
+    }
+}
+
+async function doSmartSearch() {
+    const query = document.getElementById('smartInput').value.trim();
+    if (!query) return;
+    showLoading('smartResults');
+    try {
+        const res = await fetch('/api/search', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({query, use_ai: true, max_results: 30})
+        });
+        const data = await res.json();
+        toast(`Searched: ${data.query_used}`, 'success');
+        renderEmails(data.emails, 'smartResults');
+    } catch (e) {
+        toast('Smart search failed: ' + e.message, 'error');
+    }
+}
+
+function renderEmails(emails, containerId) {
+    const container = document.getElementById(containerId);
+    if (!emails || emails.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No emails found matching your search.</p></div>';
+        return;
+    }
+    container.innerHTML = '<div class="email-list">' + emails.map(e => `
+        <div class="email-item" onclick="openThread('${e.thread_id}', '${escapeAttr(e.subject)}')">
+            <span class="email-from">${escapeHtml(e.from_name || e.from_email)}</span>
+            <span class="email-subject"><strong>${escapeHtml(e.subject)}</strong> — <span style="color:var(--text-muted)">${escapeHtml(e.snippet)}</span></span>
+            <span class="email-date">${e.date}</span>
+        </div>
+    `).join('') + '</div>';
+}
+
+// ── Thread View ──
+async function openThread(threadId, subject) {
+    currentThreadId = threadId;
+    document.getElementById('threadSubject').textContent = subject;
+
+    // Hide search, show thread
+    document.getElementById('searchTab').style.display = 'none';
+    document.getElementById('smartTab').style.display = 'none';
+    document.querySelector('.tabs').style.display = 'none';
+    document.getElementById('threadView').classList.add('active');
+
+    // Reset panels
+    document.getElementById('analysisPanel').style.display = 'none';
+    document.getElementById('documentPanel').style.display = 'none';
+    document.getElementById('draftPanel').style.display = 'none';
+    document.getElementById('draftEditor').style.display = 'none';
+
+    showLoading('threadMessages');
+
+    try {
+        const res = await fetch('/api/thread', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({thread_id: threadId})
+        });
+        const data = await res.json();
+        currentThreadMessages = data.messages;
+        renderThread(data.messages);
+    } catch (e) {
+        toast('Failed to load thread: ' + e.message, 'error');
+    }
+}
+
+function renderThread(messages) {
+    const container = document.getElementById('threadMessages');
+    container.innerHTML = messages.map(m => `
+        <div class="message-card">
+            <div class="message-header">
+                <span class="message-from">${escapeHtml(m.from_name || m.from_email)} &lt;${escapeHtml(m.from_email)}&gt;</span>
+                <span class="message-date">${m.date}</span>
+            </div>
+            <div class="message-body">${escapeHtml(m.body || '(empty)')}</div>
+        </div>
+    `).join('');
+}
+
+function closeThread() {
+    document.getElementById('threadView').classList.remove('active');
+    document.querySelector('.tabs').style.display = 'flex';
+
+    // Restore whichever tab was active
+    const activeTab = document.querySelector('.tab.active');
+    if (activeTab) {
+        const tabName = activeTab.dataset.tab;
+        document.getElementById(tabName + 'Tab').style.display = 'block';
+    } else {
+        document.getElementById('searchTab').style.display = 'block';
+    }
+    currentThreadId = null;
+}
+
+// ── Analysis ──
+async function analyzeThread() {
+    if (!currentThreadId) return;
+    const panel = document.getElementById('analysisPanel');
+    panel.style.display = 'block';
+    document.getElementById('analysisContent').innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing thread with AI...</div>';
+
+    try {
+        const res = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({thread_id: currentThreadId})
+        });
+        const data = await res.json();
+        renderAnalysis(data.analysis);
+    } catch (e) {
+        document.getElementById('analysisContent').innerHTML = '<p style="color:var(--danger)">Analysis failed: ' + e.message + '</p>';
+    }
+}
+
+function renderAnalysis(a) {
+    const urgencyColor = {low: 'green', medium: 'gold', high: 'red', critical: 'red'};
+    const sentimentColor = {positive: 'green', neutral: 'blue', negative: 'red', escalating: 'red'};
+
+    let html = `
+        <p style="margin-bottom:16px;">${escapeHtml(a.summary || '')}</p>
+        <div style="display:flex; gap:8px; margin-bottom:16px;">
+            <span class="badge badge-${urgencyColor[a.urgency] || 'gold'}">Urgency: ${a.urgency || 'unknown'}</span>
+            <span class="badge badge-${sentimentColor[a.sentiment] || 'blue'}">Sentiment: ${a.sentiment || 'unknown'}</span>
+        </div>
+        <div class="analysis-grid">
+    `;
+
+    if (a.key_points && a.key_points.length) {
+        html += `<div class="analysis-card"><h4>Key Points</h4><ul>${a.key_points.map(p => '<li>' + escapeHtml(p) + '</li>').join('')}</ul></div>`;
+    }
+    if (a.action_items && a.action_items.length) {
+        html += `<div class="analysis-card"><h4>Action Items</h4><ul>${a.action_items.map(p => '<li>' + escapeHtml(p) + '</li>').join('')}</ul></div>`;
+    }
+    if (a.participants && a.participants.length) {
+        html += `<div class="analysis-card"><h4>Participants</h4><ul>${a.participants.map(p => '<li><strong>' + escapeHtml(p.name || p.email) + '</strong> — ' + escapeHtml(p.role || '') + '</li>').join('')}</ul></div>`;
+    }
+    if (a.timeline && a.timeline.length) {
+        html += `<div class="analysis-card"><h4>Timeline</h4><ul>${a.timeline.map(t => '<li><strong>' + escapeHtml(t.date) + '</strong>: ' + escapeHtml(t.event) + '</li>').join('')}</ul></div>`;
+    }
+
+    html += '</div>';
+    document.getElementById('analysisContent').innerHTML = html;
+}
+
+// ── Document Generation ──
+function toggleDocMenu() {
+    const menu = document.getElementById('docMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close doc menu when clicking elsewhere
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('docMenu');
+    if (menu && !e.target.closest('#docMenu') && !e.target.closest('[onclick*="toggleDocMenu"]')) {
+        menu.style.display = 'none';
+    }
+});
+
+async function generateDoc(docType) {
+    document.getElementById('docMenu').style.display = 'none';
+    if (!currentThreadId) return;
+
+    const titles = {summary: 'Summary Document', timeline: 'Timeline', evidence: 'Evidence Package', action_plan: 'Action Plan'};
+    const panel = document.getElementById('documentPanel');
+    panel.style.display = 'block';
+    document.getElementById('docTitle').textContent = titles[docType] || 'Document';
+    document.getElementById('documentContent').innerHTML = '<div class="loading"><div class="spinner"></div>Generating document...</div>';
+
+    try {
+        const res = await fetch('/api/document', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({thread_id: currentThreadId, doc_type: docType})
+        });
+        const data = await res.json();
+        // Render markdown-ish content
+        document.getElementById('documentContent').innerHTML = simpleMarkdown(data.document);
+    } catch (e) {
+        document.getElementById('documentContent').innerHTML = '<p style="color:var(--danger)">Document generation failed: ' + e.message + '</p>';
+    }
+}
+
+function copyDocument() {
+    const content = document.getElementById('documentContent').innerText;
+    navigator.clipboard.writeText(content).then(() => toast('Document copied to clipboard', 'success'));
+}
+
+// ── Draft Composer ──
+function openDraftComposer() {
+    document.getElementById('draftPanel').style.display = 'block';
+    document.getElementById('draftIntent').focus();
+}
+
+async function generateDraft() {
+    const intent = document.getElementById('draftIntent').value.trim();
+    const tone = document.getElementById('draftTone').value;
+    if (!intent || !currentThreadId) {
+        toast('Please describe what you want to say', 'error');
+        return;
+    }
+
+    document.getElementById('draftEditor').style.display = 'none';
+    document.getElementById('draftPanel').querySelector('.compose-area').insertAdjacentHTML(
+        'afterbegin',
+        '<div class="loading" id="draftLoading"><div class="spinner"></div>Drafting response...</div>'
+    );
+
+    try {
+        const res = await fetch('/api/draft', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({thread_id: currentThreadId, intent, tone})
+        });
+        const data = await res.json();
+        const draft = data.draft;
+
+        document.getElementById('draftTo').value = draft.reply_to_email || '';
+        document.getElementById('draftSubject').value = draft.subject || '';
+        document.getElementById('draftBody').value = draft.body || '';
+        document.getElementById('draftNotes').textContent = draft.notes || '';
+        document.getElementById('draftEditor').style.display = 'block';
+    } catch (e) {
+        toast('Draft generation failed: ' + e.message, 'error');
+    } finally {
+        const loadEl = document.getElementById('draftLoading');
+        if (loadEl) loadEl.remove();
+    }
+}
+
+async function sendDraft() {
+    const to = document.getElementById('draftTo').value;
+    const subject = document.getElementById('draftSubject').value;
+    const body = document.getElementById('draftBody').value;
+
+    if (!to || !subject || !body) {
+        toast('Please fill in all fields', 'error');
+        return;
+    }
+
+    if (!confirm(`Send this email to ${to}?`)) return;
+
+    try {
+        const lastMsg = currentThreadMessages[currentThreadMessages.length - 1];
+        const res = await fetch('/api/send', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                to, subject, body,
+                thread_id: currentThreadId,
+                reply_to_message_id: lastMsg ? lastMsg.message_id_header : null
+            })
+        });
+        const data = await res.json();
+        if (data.sent) {
+            toast('Email sent successfully!', 'success');
+            document.getElementById('draftPanel').style.display = 'none';
+            // Refresh thread
+            openThread(currentThreadId, document.getElementById('threadSubject').textContent);
+        }
+    } catch (e) {
+        toast('Send failed: ' + e.message, 'error');
+    }
+}
+
+async function saveDraft() {
+    const to = document.getElementById('draftTo').value;
+    const subject = document.getElementById('draftSubject').value;
+    const body = document.getElementById('draftBody').value;
+
+    if (!to || !subject || !body) {
+        toast('Please fill in all fields', 'error');
+        return;
+    }
+
+    try {
+        const lastMsg = currentThreadMessages[currentThreadMessages.length - 1];
+        const res = await fetch('/api/save-draft', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                to, subject, body,
+                thread_id: currentThreadId,
+                reply_to_message_id: lastMsg ? lastMsg.message_id_header : null
+            })
+        });
+        const data = await res.json();
+        if (data.saved) {
+            toast('Draft saved to Gmail!', 'success');
+        }
+    } catch (e) {
+        toast('Save draft failed: ' + e.message, 'error');
+    }
+}
+
+// ── Utils ──
+function showLoading(containerId) {
+    document.getElementById(containerId).innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+}
+
+function toast(msg, type) {
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 4000);
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function escapeAttr(str) {
+    if (!str) return '';
+    return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+function simpleMarkdown(text) {
+    if (!text) return '';
+    let html = escapeHtml(text);
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+    html = html.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+    // Bold
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Italic
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    // Lists
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+    // Numbered lists
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+    // Line breaks
+    html = html.replace(/\n\n/g, '</p><p>');
+    html = html.replace(/\n/g, '<br>');
+    return '<p>' + html + '</p>';
+}
+</script>
+
+</body>
+</html>
