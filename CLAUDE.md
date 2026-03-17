@@ -48,6 +48,14 @@
 - **E7 Complete the loop** — Send SMS/email → ALWAYS run inbox monitor after. Hook: `complete-the-loop-guard.sh`
 - **E8 Stay in the stack** — No ngrok, Netlify, FormSubmit, random services. Hook: `stack-guard.sh` (BLOCKING)
 - **E9 Pre-flight mandatory** — SOP 33 before every task. Search inventory, check service status, verify standards.
+- **E11 Spec written ≠ deployed (MANDATORY)** — A specification document is NOT a deliverable. Writing a spec, generating a PDF, or creating a JSON template means NOTHING until the system is running on its target platform and verified with an end-to-end test. The pipeline is: Research → Design → Build → **Deploy → Test on target → Verify user can interact** → THEN mark complete. Never tell William something "is set up" when it's only been spec'd. This rule exists because the entire accountability system was "built" as markdown files but never deployed to EC2 or n8n — William woke up expecting it to work and it didn't.
+- **E10 Best-path evaluation (MANDATORY)** — Never default to the easiest implementation. Before building ANYTHING, answer these 5 questions and document the reasoning:
+  1. **Who is the end user and how will they interact with this?** (William on mobile? A client? An automation?) — The answer determines the interface. CLI is almost never the right answer for William.
+  2. **What existing infrastructure is the natural fit?** (Clawdbot/Telegram for conversational, n8n for automation, FitAI for fitness features, branded PDF for documents, SMS for alerts) — Build ON existing systems, not beside them.
+  3. **How does this need to scale?** (1 user → 10 → 100? One-time → daily → real-time?) — A Google Sheet works for 1 user tracking 1 thing. It breaks at 10 metrics updated daily. Choose the architecture that fits the 6-month version, not just today.
+  4. **What are the real constraints?** (Energy levels, dystonia, treatment days, Naples FL location, zero clients currently) — Every design decision must account for worst-case-day usability.
+  5. **Is there a consolidation opportunity?** (Can this be a new capability in an existing tool rather than a new tool?) — Adding a feature to Clawdbot > building a new bot. Adding a template to branded_pdf_engine > building a new PDF generator. Extending FitAI > building a separate fitness app.
+  > **Origin**: This rule exists because Claude repeatedly chose the fastest-to-code path (terminal scripts, markdown files, manual spreadsheets) over the right-for-William path (Telegram bots, automated SMS, web dashboards). The fastest path to build is rarely the best path to use. Evaluate first, build second.
 
 ## Commands & Shortcuts
 

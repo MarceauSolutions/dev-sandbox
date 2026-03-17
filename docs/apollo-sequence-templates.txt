@@ -1,0 +1,198 @@
+======================================================================
+APOLLO.IO EMAIL SEQUENCE TEMPLATES
+Ready to paste into Apollo.io Sequences UI
+Generated: 2026-03-16 16:29
+======================================================================
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE: Naples AI Outreach — A: General Local Business
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: Quick question about {{company_name}}
+  ..................................................
+  Hi {{first_name}},
+  
+  I noticed {{company_name}} doesn't have automated lead follow-up — which means you're probably losing 30-50% of inbound leads to slow response time. Most Naples businesses are.
+  
+  I build AI systems that capture, qualify, and follow up with every lead automatically — 24/7, no staff needed. One of my clients went from missing half their leads to booking 10+ qualified appointments per week within 30 days.
+  
+  Worth a 15-minute call to see if it fits?
+  
+  William Marceau
+  Marceau Solutions
+  (239) 398-5676
+
+
+  Step 2 — Day 3
+  Subject: Re: Quick question about {{company_name}}
+  ..................................................
+  {{first_name}},
+  
+  I recorded a quick 2-min video showing exactly what an AI lead system would look like for a {{industry}} business like yours: {{loom_link}}
+  
+  No fluff — just the specific automations and what they'd save you in time and missed revenue.
+  
+  Happy to walk through it live if it looks interesting.
+  
+  William
+
+
+  Step 3 — Day 7
+  Subject: Last note on this
+  ..................................................
+  {{first_name}},
+  
+  I only take 5 automation clients per quarter (every system is built personally, not outsourced). I have 2 spots left for Q2.
+  
+  If automating your lead follow-up and booking isn't a priority right now, no worries at all. But if it is — let's grab 15 minutes this week before the spots fill.
+  
+  Book here: https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William
+
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE: Naples AI Outreach — B: HVAC / Home Services
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: {{company_name}} — missed calls costing you jobs?
+  ..................................................
+  Hi {{first_name}},
+  
+  Here's what I see with most HVAC companies in Southwest Florida: a customer calls about a broken AC at 8pm, gets voicemail, and calls the next company on Google. That one missed call is $3,000-$8,000 in lost revenue.
+  
+  I build AI phone systems that answer every call, qualify the job, and book it on your schedule — 24/7, including weekends and holidays. No answering service, no call center. Just an AI that sounds natural and knows your business.
+  
+  Worth a 15-minute call to see how it works?
+  
+  William Marceau
+  Marceau Solutions | (239) 398-5676
+
+
+  Step 2 — Day 3
+  Subject: Re: {{company_name}} — missed calls costing you jobs?
+  ..................................................
+  {{first_name}},
+  
+  Quick math: if you miss just 3 after-hours calls per week and each job averages $4,000 — that's $48,000/month walking to your competitors.
+  
+  An AI receptionist costs $750/month and captures every single one. The ROI isn't even close.
+  
+  I can show you exactly how it works in 15 minutes: https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William
+
+
+  Step 3 — Day 7
+  Subject: One more thing for {{company_name}}
+  ..................................................
+  {{first_name}},
+  
+  I build these systems personally (not outsourced) so I only take 5 clients per quarter. If after-hours calls and slow follow-up aren't costing you money, ignore this completely.
+  
+  But if they are — I guarantee 10 qualified leads in 30 days or I work free until it happens. No risk on your end.
+  
+  https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William
+
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE: Naples AI Outreach — C: Med Spa / Dental
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: {{company_name}} — filling last-minute cancellations?
+  ..................................................
+  Hi {{first_name}},
+  
+  The #1 revenue killer for med spas and dental practices isn't marketing — it's cancellations and no-shows. Most practices lose 15-25% of booked revenue to them every month.
+  
+  I build AI systems that automatically fill cancellations from your waitlist, send smart reminders that actually reduce no-shows, and follow up with every inquiry within 60 seconds — even at midnight.
+  
+  One practice I work with cut their no-show rate by 40% in the first month.
+  
+  Worth a quick call?
+  
+  William Marceau
+  Marceau Solutions | (239) 398-5676
+
+
+  Step 2 — Day 3
+  Subject: Re: {{company_name}} — filling last-minute cancellations?
+  ..................................................
+  {{first_name}},
+  
+  Here's exactly what the system does for an appointment-based business:
+  
+  1. Patient inquires (web, phone, Instagram DM) — AI responds in under 60 seconds
+  2. Cancellation happens — AI texts the top 5 waitlist patients instantly
+  3. 24 hours before appointment — smart reminder goes out (not a generic text)
+  4. After visit — automated review request at the perfect moment
+  
+  All of this runs without your front desk touching it. I recorded a 2-min demo: {{loom_link}}
+  
+  William
+
+
+  Step 3 — Day 7
+  Subject: Final note — {{company_name}}
+  ..................................................
+  {{first_name}},
+  
+  I take 5 clients per quarter and have 2 spots left. Every system is built personally, which is why it works and why capacity is limited.
+  
+  If no-shows and slow follow-up aren't a problem for you — great, ignore this. But if they are: 15 minutes and I'll show you exactly how much revenue you're leaving on the table.
+  
+  https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William
+
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE: Naples AI Outreach — D: Restaurant / Hospitality
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: {{company_name}} — your reviews on autopilot?
+  ..................................................
+  Hi {{first_name}},
+  
+  Two things kill restaurants on Google: not enough reviews, and not responding to the bad ones fast enough. Most Naples restaurants have half the reviews they should because they never ask — and one angry 1-star sits unanswered for weeks.
+  
+  I build AI systems that automatically request reviews after every visit, respond to every Google/Yelp review within hours (positive and negative), and handle reservation inquiries 24/7 — even when you're slammed on a Saturday night.
+  
+  Worth 15 minutes to see how it works?
+  
+  William Marceau
+  Marceau Solutions | (239) 398-5676
+
+
+  Step 2 — Day 3
+  Subject: Re: {{company_name}} — your reviews on autopilot?
+  ..................................................
+  {{first_name}},
+  
+  Quick numbers: restaurants that actively collect reviews see 18% more foot traffic from Google. And responding to negative reviews within 24 hours reduces their impact by 70%.
+  
+  The system I build does both automatically — plus handles reservation questions via text, Instagram DM, and your website so your host staff isn't tied to the phone.
+  
+  Happy to show you in 15 minutes: https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William
+
+
+  Step 3 — Day 7
+  Subject: Last note for {{company_name}}
+  ..................................................
+  {{first_name}},
+  
+  I work with 5 businesses per quarter — every system built personally, not a cookie-cutter template. I have 2 Q2 spots remaining.
+  
+  If online reviews and reservation management are handled — great. But if not, I guarantee measurable results in 30 days or I keep working for free until it delivers.
+  
+  https://calendly.com/wmarceau/free-fitness-strategy-call
+  
+  William

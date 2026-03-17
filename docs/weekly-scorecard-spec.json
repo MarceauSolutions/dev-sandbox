@@ -1,0 +1,228 @@
+{
+  "spreadsheet_name": "Marceau Execution System — Weekly Scorecard",
+  "description": "Central accountability tracker for the 12-week execution plan. One sheet to rule them all.",
+  "google_sheets_config": {
+    "share_with": "wmarceau@marceausolutions.com",
+    "env_var": "SCORECARD_SPREADSHEET_ID"
+  },
+  "tabs": [
+    {
+      "name": "Weekly Scorecard",
+      "description": "Sunday evening scorecard — track all KPIs weekly against targets",
+      "frozen_rows": 3,
+      "frozen_cols": 1,
+      "columns": [
+        {"header": "Week Starting", "type": "date", "width": 120, "format": "yyyy-mm-dd"},
+
+        {"header": "--- AI SERVICES ---", "type": "section_divider", "width": 30, "bg_color": "#333333", "font_color": "#C9963C"},
+        {"header": "Outreach Messages Sent", "type": "number", "width": 140},
+        {"header": "Meetings Booked", "type": "number", "width": 120},
+        {"header": "Proposals Sent", "type": "number", "width": 120},
+        {"header": "Clients Closed", "type": "number", "width": 120},
+        {"header": "Setup Revenue ($)", "type": "currency", "width": 130, "format": "$#,##0"},
+        {"header": "Monthly Recurring Revenue ($)", "type": "currency", "width": 170, "format": "$#,##0"},
+
+        {"header": "--- FITNESS CONTENT ---", "type": "section_divider", "width": 30, "bg_color": "#333333", "font_color": "#C9963C"},
+        {"header": "YouTube Videos Published", "type": "number", "width": 150},
+        {"header": "Shorts/Reels Published", "type": "number", "width": 150},
+        {"header": "YouTube Subscribers", "type": "number", "width": 140},
+        {"header": "Email List Size", "type": "number", "width": 120},
+        {"header": "Digital Product Sales", "type": "number", "width": 140},
+
+        {"header": "--- HEALTH ---", "type": "section_divider", "width": 30, "bg_color": "#333333", "font_color": "#C9963C"},
+        {"header": "Training Sessions Completed", "type": "number", "width": 160},
+        {"header": "Treatment Days Honored", "type": "text", "width": 140, "note": "Y/N for each treatment day this week"},
+        {"header": "Average Energy Level (1-10)", "type": "number", "width": 160, "validation": {"min": 1, "max": 10}},
+        {"header": "Sleep Quality Average (1-10)", "type": "number", "width": 160, "validation": {"min": 1, "max": 10}},
+
+        {"header": "--- CALCULATED ---", "type": "section_divider", "width": 30, "bg_color": "#333333", "font_color": "#C9963C"},
+        {"header": "Outreach-to-Meeting Rate (%)", "type": "formula", "width": 160, "formula_template": "=IF({Outreach}>0, {Meetings}/{Outreach}*100, 0)", "format": "0.0%"},
+        {"header": "Meeting-to-Close Rate (%)", "type": "formula", "width": 160, "formula_template": "=IF({Meetings}>0, {Closed}/{Meetings}*100, 0)", "format": "0.0%"},
+        {"header": "Total Revenue This Week ($)", "type": "formula", "width": 160, "formula_template": "={SetupRevenue}+{MRR}", "format": "$#,##0"},
+        {"header": "Cumulative Revenue ($)", "type": "formula", "width": 160, "formula_template": "=SUM($TotalRevenue$4:TotalRevenue)", "format": "$#,##0"},
+        {"header": "Week-over-Week Growth (%)", "type": "formula", "width": 160, "formula_template": "=IF(PREV_TOTAL>0, (THIS_TOTAL-PREV_TOTAL)/PREV_TOTAL*100, 0)", "format": "0.0%"},
+        {"header": "On Track", "type": "formula", "width": 100, "formula_template": "Conditional: GREEN if >= target, YELLOW if >= 60% of target, RED if < 60%", "conditional_formatting": {
+          "green": {"condition": ">=100% of target row"},
+          "yellow": {"condition": ">=60% of target row"},
+          "red": {"condition": "<60% of target row"}
+        }}
+      ],
+      "special_rows": [
+        {
+          "row": 1,
+          "label": "HEADER",
+          "style": {"bg_color": "#333333", "font_color": "#C9963C", "bold": true, "font_size": 11}
+        },
+        {
+          "row": 2,
+          "label": "TARGETS: Weeks 1-2",
+          "style": {"bg_color": "#FDF8EF", "font_color": "#333333", "italic": true},
+          "values": {
+            "Outreach Messages Sent": 500,
+            "Meetings Booked": 4,
+            "Proposals Sent": 2,
+            "Clients Closed": 1,
+            "Setup Revenue ($)": 0,
+            "Monthly Recurring Revenue ($)": 0,
+            "YouTube Videos Published": 2,
+            "Shorts/Reels Published": 4,
+            "YouTube Subscribers": 25,
+            "Email List Size": 50,
+            "Digital Product Sales": 0,
+            "Training Sessions Completed": 4,
+            "Treatment Days Honored": "ALL",
+            "Average Energy Level (1-10)": 6,
+            "Sleep Quality Average (1-10)": 7
+          }
+        },
+        {
+          "row": 3,
+          "label": "TARGETS: Weeks 3-4",
+          "style": {"bg_color": "#FDF8EF", "font_color": "#333333", "italic": true},
+          "values": {
+            "Outreach Messages Sent": 500,
+            "Meetings Booked": 7,
+            "Proposals Sent": 4,
+            "Clients Closed": 1,
+            "Setup Revenue ($)": 1250,
+            "Monthly Recurring Revenue ($)": 750,
+            "YouTube Videos Published": 2,
+            "Shorts/Reels Published": 4,
+            "YouTube Subscribers": 100,
+            "Email List Size": 100,
+            "Digital Product Sales": 0,
+            "Training Sessions Completed": 4,
+            "Treatment Days Honored": "ALL",
+            "Average Energy Level (1-10)": 6,
+            "Sleep Quality Average (1-10)": 7
+          }
+        }
+      ],
+      "notes": "Row 4 onward = actual weekly data. William fills this out Sunday evening. The On Track column auto-compares against the nearest target row."
+    },
+    {
+      "name": "Daily Tracker",
+      "description": "Quick daily input — takes 2 minutes, drives the weekly rollup",
+      "frozen_rows": 1,
+      "frozen_cols": 1,
+      "columns": [
+        {"header": "Date", "type": "date", "width": 110, "format": "ddd yyyy-mm-dd"},
+        {"header": "Day Type", "type": "dropdown", "width": 120, "values": ["HIGH Energy", "MEDIUM Energy", "LOW Energy", "TREATMENT", "REST"]},
+        {"header": "Energy Level (1-10)", "type": "number", "width": 130, "validation": {"min": 1, "max": 10}},
+        {"header": "Sleep Quality (1-10)", "type": "number", "width": 130, "validation": {"min": 1, "max": 10}},
+        {"header": "Outreach Count", "type": "number", "width": 120},
+        {"header": "Meetings Held", "type": "number", "width": 110},
+        {"header": "Content Created", "type": "dropdown", "width": 120, "values": ["Yes", "No", "Partial"]},
+        {"header": "Content Type", "type": "text", "width": 140, "note": "e.g., YouTube long, 2 Shorts, blog"},
+        {"header": "Training Completed", "type": "dropdown", "width": 130, "values": ["Yes", "No", "Light", "Rest Day"]},
+        {"header": "Key Win", "type": "text", "width": 250},
+        {"header": "Biggest Blocker", "type": "text", "width": 250},
+        {"header": "Tomorrow's #1 Priority", "type": "text", "width": 250}
+      ],
+      "header_style": {"bg_color": "#333333", "font_color": "#C9963C", "bold": true},
+      "alternating_row_colors": ["#FFFFFF", "#FDF8EF"],
+      "notes": "Pre-populate dates for the full 12 weeks (84 days). William fills in each morning/evening. The Weekly Scorecard tab can pull SUMIF/AVERAGEIF from this data."
+    },
+    {
+      "name": "90-Day Goals",
+      "description": "The big 5 milestones for the 12-week sprint",
+      "frozen_rows": 1,
+      "columns": [
+        {"header": "Goal", "type": "text", "width": 300},
+        {"header": "Target", "type": "text", "width": 150},
+        {"header": "Current", "type": "text", "width": 150},
+        {"header": "% Complete", "type": "formula", "width": 120, "format": "0%", "formula_note": "=Current/Target numeric extraction"},
+        {"header": "Start Date", "type": "date", "width": 110},
+        {"header": "Target Date", "type": "date", "width": 110},
+        {"header": "Days Remaining", "type": "formula", "width": 120, "formula_note": "=MAX(0, TargetDate - TODAY())"},
+        {"header": "Status", "type": "dropdown", "width": 120, "values": ["Not Started", "In Progress", "At Risk", "On Track", "Achieved"]},
+        {"header": "Next Action", "type": "text", "width": 300},
+        {"header": "Notes", "type": "text", "width": 250}
+      ],
+      "header_style": {"bg_color": "#333333", "font_color": "#C9963C", "bold": true},
+      "initial_data": [
+        {
+          "Goal": "3 paying AI services clients ($1,500-3,000/mo)",
+          "Target": "3 clients",
+          "Current": "0",
+          "Start Date": "2026-03-16",
+          "Target Date": "2026-06-14",
+          "Status": "Not Started",
+          "Next Action": "Send first 50 warm outreach messages"
+        },
+        {
+          "Goal": "500+ YouTube subscribers",
+          "Target": "500 subscribers",
+          "Current": "0",
+          "Start Date": "2026-03-16",
+          "Target Date": "2026-06-14",
+          "Status": "Not Started",
+          "Next Action": "Film first video: cancer + training story"
+        },
+        {
+          "Goal": "1 digital fitness product live ($19.99)",
+          "Target": "1 product",
+          "Current": "0",
+          "Start Date": "2026-03-16",
+          "Target Date": "2026-06-14",
+          "Status": "Not Started",
+          "Next Action": "Outline 30-day program structure"
+        },
+        {
+          "Goal": "First group coaching cohort forming",
+          "Target": "5 waitlist signups",
+          "Current": "0",
+          "Start Date": "2026-03-16",
+          "Target Date": "2026-06-14",
+          "Status": "Not Started",
+          "Next Action": "Build waitlist landing page"
+        },
+        {
+          "Goal": "$3,000/mo total revenue",
+          "Target": "$3,000",
+          "Current": "$0",
+          "Start Date": "2026-03-16",
+          "Target Date": "2026-06-14",
+          "Status": "Not Started",
+          "Next Action": "Close first free AI services client"
+        }
+      ],
+      "conditional_formatting": {
+        "Status column": {
+          "Achieved": {"bg_color": "#22c55e", "font_color": "#FFFFFF"},
+          "On Track": {"bg_color": "#C9963C", "font_color": "#FFFFFF"},
+          "In Progress": {"bg_color": "#3b82f6", "font_color": "#FFFFFF"},
+          "At Risk": {"bg_color": "#f59e0b", "font_color": "#333333"},
+          "Not Started": {"bg_color": "#e5e7eb", "font_color": "#333333"}
+        }
+      }
+    },
+    {
+      "name": "Monthly Revenue",
+      "description": "Monthly revenue breakdown by stream — the number that matters",
+      "frozen_rows": 1,
+      "columns": [
+        {"header": "Month", "type": "text", "width": 120},
+        {"header": "AI Services — Setup", "type": "currency", "width": 150, "format": "$#,##0"},
+        {"header": "AI Services — MRR", "type": "currency", "width": 150, "format": "$#,##0"},
+        {"header": "Coaching Revenue", "type": "currency", "width": 150, "format": "$#,##0"},
+        {"header": "Digital Product Revenue", "type": "currency", "width": 160, "format": "$#,##0"},
+        {"header": "Other Revenue", "type": "currency", "width": 130, "format": "$#,##0"},
+        {"header": "Total Revenue", "type": "formula", "width": 140, "format": "$#,##0", "formula_note": "=SUM(B:F)"},
+        {"header": "MoM Growth (%)", "type": "formula", "width": 130, "format": "0.0%", "formula_note": "=(ThisMonth-LastMonth)/LastMonth"},
+        {"header": "Cumulative Revenue", "type": "formula", "width": 150, "format": "$#,##0", "formula_note": "=SUM($G$2:G)"},
+        {"header": "Runway to $3K/mo (%)", "type": "formula", "width": 150, "format": "0%", "formula_note": "=G/3000"}
+      ],
+      "header_style": {"bg_color": "#333333", "font_color": "#C9963C", "bold": true},
+      "initial_data": [
+        {"Month": "March 2026"},
+        {"Month": "April 2026"},
+        {"Month": "May 2026"},
+        {"Month": "June 2026"},
+        {"Month": "July 2026"},
+        {"Month": "August 2026"}
+      ]
+    }
+  ],
+  "creation_script_note": "To create this sheet, adapt the pattern from scripts/create-coaching-tracker-sheet.py. Use credentials.json + token_sheets.json OAuth flow. After creation, store the new sheet ID in .env as SCORECARD_SPREADSHEET_ID."
+}

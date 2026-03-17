@@ -1,0 +1,585 @@
+{
+  "spreadsheet_name": "Marceau Execution System — Scorecard",
+  "description": "Central accountability tracker optimized for Clawdbot auto-logging via Telegram. William never opens this sheet — Clawdbot reads and writes everything.",
+  "google_sheets_config": {
+    "share_with": "wmarceau@marceausolutions.com",
+    "env_var": "SCORECARD_SPREADSHEET_ID",
+    "note": "After creation, store the sheet ID in .env and add all tab GIDs to memory/sheets-gids.md"
+  },
+  "tabs": [
+    {
+      "name": "Daily Log",
+      "description": "Auto-populated by Clawdbot from Telegram replies. One row per day. Morning energy logged on first reply, EOD numbers update the same row.",
+      "frozen_rows": 1,
+      "frozen_cols": 2,
+      "columns": [
+        {
+          "header": "Date",
+          "field_key": "Date",
+          "type": "date",
+          "format": "YYYY-MM-DD",
+          "width": 110,
+          "populated_by": "clawdbot_auto",
+          "notes": "Set when the first entry for this day is created (morning energy or EOD numbers)"
+        },
+        {
+          "header": "Day_Number",
+          "field_key": "Day_Number",
+          "type": "number",
+          "width": 90,
+          "populated_by": "clawdbot_auto",
+          "notes": "1-90, calculated from plan start date 2026-03-17. Formula: floor((today - start) / msPerDay) + 1"
+        },
+        {
+          "header": "Week_Number",
+          "field_key": "Week_Number",
+          "type": "number",
+          "width": 100,
+          "populated_by": "clawdbot_auto",
+          "notes": "1-12, calculated: ceil(Day_Number / 7)"
+        },
+        {
+          "header": "Day_of_Week",
+          "field_key": "Day_of_Week",
+          "type": "text",
+          "width": 100,
+          "populated_by": "clawdbot_auto",
+          "notes": "Monday through Friday. Weekends not logged (no check-ins)."
+        },
+        {
+          "header": "Morning_Energy",
+          "field_key": "Morning_Energy",
+          "type": "number",
+          "width": 120,
+          "validation": {"min": 1, "max": 10},
+          "populated_by": "clawdbot_reply_rule_1",
+          "notes": "William's self-reported energy level (1-10) from morning check-in reply"
+        },
+        {
+          "header": "Outreach_Count",
+          "field_key": "Outreach_Count",
+          "type": "number",
+          "width": 120,
+          "populated_by": "clawdbot_reply_rule_2",
+          "notes": "Total outreach actions today (emails, calls, DMs, in-person). From EOD reply position 1."
+        },
+        {
+          "header": "Meetings_Booked",
+          "field_key": "Meetings_Booked",
+          "type": "number",
+          "width": 120,
+          "populated_by": "clawdbot_reply_rule_2",
+          "notes": "Discovery calls / meetings booked today. From EOD reply position 2."
+        },
+        {
+          "header": "Videos_Filmed",
+          "field_key": "Videos_Filmed",
+          "type": "number",
+          "width": 110,
+          "populated_by": "clawdbot_reply_rule_2",
+          "notes": "YouTube videos or content pieces filmed. From EOD reply position 3."
+        },
+        {
+          "header": "Content_Posted",
+          "field_key": "Content_Posted",
+          "type": "number",
+          "width": 120,
+          "populated_by": "clawdbot_reply_rule_2",
+          "notes": "Content pieces published (videos, shorts, posts). From EOD reply position 4."
+        },
+        {
+          "header": "Training_Session",
+          "field_key": "Training_Session",
+          "type": "boolean",
+          "width": 120,
+          "populated_by": "clawdbot_reply_rule_6",
+          "notes": "TRUE if William sent 'trained' / 'workout done' / 'gym done'. Default: empty (not FALSE)."
+        },
+        {
+          "header": "Notes",
+          "field_key": "Notes",
+          "type": "text",
+          "width": 300,
+          "populated_by": "clawdbot_reply_rule_5",
+          "notes": "Free-text notes from 'note: ...' messages. Appended if multiple notes in one day."
+        }
+      ],
+      "header_style": {
+        "bg_color": "#333333",
+        "font_color": "#C9963C",
+        "bold": true,
+        "font_size": 11
+      },
+      "row_operations": {
+        "morning_energy_reply": {
+          "operation": "append_or_update",
+          "match_on": "Date",
+          "fields_set": ["Date", "Day_Number", "Week_Number", "Day_of_Week", "Morning_Energy"]
+        },
+        "eod_numbers_reply": {
+          "operation": "update",
+          "match_on": "Date",
+          "fields_set": ["Outreach_Count", "Meetings_Booked", "Videos_Filmed", "Content_Posted"],
+          "fallback_if_no_row": "append full row with zeros for Morning_Energy"
+        },
+        "training_reply": {
+          "operation": "update",
+          "match_on": "Date",
+          "fields_set": ["Training_Session"],
+          "fallback_if_no_row": "append row with Training_Session=TRUE and other fields empty"
+        },
+        "note_reply": {
+          "operation": "update",
+          "match_on": "Date",
+          "fields_set": ["Notes"],
+          "append_mode": true,
+          "notes": "If Notes already has content, append with newline separator"
+        }
+      },
+      "pre_populated": false,
+      "notes": "Rows are created dynamically as William replies to check-ins. No pre-population needed. Week_Number and Day_Number are calculated by Clawdbot, not sheet formulas."
+    },
+    {
+      "name": "Weekly Summary",
+      "description": "Auto-calculated weekly totals. One row per week. Written by the Weekly-Accountability-Report n8n workflow every Sunday at 7pm ET.",
+      "frozen_rows": 1,
+      "frozen_cols": 1,
+      "columns": [
+        {
+          "header": "Week_Number",
+          "type": "number",
+          "width": 100,
+          "notes": "1-12"
+        },
+        {
+          "header": "Week_Starting",
+          "type": "date",
+          "format": "YYYY-MM-DD",
+          "width": 120,
+          "notes": "Monday of this week"
+        },
+        {
+          "header": "Total_Outreach",
+          "type": "number",
+          "width": 120,
+          "target": 500,
+          "notes": "SUM of Daily_Log.Outreach_Count where Week_Number matches"
+        },
+        {
+          "header": "Total_Meetings",
+          "type": "number",
+          "width": 120,
+          "target": "3-5",
+          "notes": "SUM of Daily_Log.Meetings_Booked where Week_Number matches"
+        },
+        {
+          "header": "Total_Proposals",
+          "type": "number",
+          "width": 120,
+          "notes": "Manually updated or set via Clawdbot correction command"
+        },
+        {
+          "header": "Clients_Closed",
+          "type": "number",
+          "width": 120,
+          "notes": "Incremented when a client signs. Manual or Stripe webhook triggered."
+        },
+        {
+          "header": "Videos_Published",
+          "type": "number",
+          "width": 130,
+          "target": 2,
+          "notes": "SUM of Daily_Log.Content_Posted (filtered for videos)"
+        },
+        {
+          "header": "Shorts_Published",
+          "type": "number",
+          "width": 130,
+          "target": 4,
+          "notes": "Subset of content posted that are shorts/reels"
+        },
+        {
+          "header": "Training_Sessions",
+          "type": "number",
+          "width": 130,
+          "target": 5,
+          "notes": "COUNT of Daily_Log.Training_Session == TRUE where Week_Number matches"
+        },
+        {
+          "header": "Avg_Energy",
+          "type": "number",
+          "width": 100,
+          "format": "0.0",
+          "notes": "AVERAGE of Daily_Log.Morning_Energy where Week_Number matches"
+        },
+        {
+          "header": "Revenue_Setup",
+          "type": "currency",
+          "width": 120,
+          "format": "$#,##0",
+          "notes": "One-time setup fees received this week (from Stripe or manual)"
+        },
+        {
+          "header": "Revenue_MRR",
+          "type": "currency",
+          "width": 110,
+          "format": "$#,##0",
+          "notes": "Monthly recurring revenue as of end of this week (from Stripe API)"
+        },
+        {
+          "header": "On_Track_Score",
+          "type": "number",
+          "width": 120,
+          "format": "0",
+          "notes": "Weighted 0-100 score. Formula: (outreach_pct * 0.30) + (meetings_pct * 0.25) + (videos_pct * 0.15) + (training_pct * 0.10) + (revenue_pct * 0.20). Capped at 100."
+        },
+        {
+          "header": "Win_of_Week",
+          "type": "text",
+          "width": 200,
+          "notes": "Auto-detected by Weekly-Accountability-Report: highest metric vs target"
+        },
+        {
+          "header": "Focus_Area",
+          "type": "text",
+          "width": 200,
+          "notes": "Auto-detected: lowest metric vs target"
+        }
+      ],
+      "header_style": {
+        "bg_color": "#333333",
+        "font_color": "#C9963C",
+        "bold": true,
+        "font_size": 11
+      },
+      "conditional_formatting": {
+        "On_Track_Score": {
+          ">=80": {"bg_color": "#C9963C", "font_color": "#FFFFFF"},
+          ">=60": {"bg_color": "#f59e0b", "font_color": "#333333"},
+          "<60": {"bg_color": "#ef4444", "font_color": "#FFFFFF"}
+        }
+      },
+      "on_track_score_formula": {
+        "weights": {
+          "outreach_vs_500": 0.30,
+          "meetings_vs_4": 0.25,
+          "videos_vs_2": 0.15,
+          "training_vs_5": 0.10,
+          "revenue_vs_weekly_target": 0.20
+        },
+        "calculation": "Each metric is (actual / target * 100), capped at 100. Weighted sum gives the On_Track_Score.",
+        "example": "Outreach 400/500=80, Meetings 3/4=75, Videos 2/2=100, Training 4/5=80, Revenue $500/$577=87 → (80*0.30)+(75*0.25)+(100*0.15)+(80*0.10)+(87*0.20) = 24+18.75+15+8+17.4 = 83.15 → 83"
+      },
+      "pre_populated_rows": [
+        {"Week_Number": 1, "Week_Starting": "2026-03-17"},
+        {"Week_Number": 2, "Week_Starting": "2026-03-24"},
+        {"Week_Number": 3, "Week_Starting": "2026-03-31"},
+        {"Week_Number": 4, "Week_Starting": "2026-04-07"},
+        {"Week_Number": 5, "Week_Starting": "2026-04-14"},
+        {"Week_Number": 6, "Week_Starting": "2026-04-21"},
+        {"Week_Number": 7, "Week_Starting": "2026-04-28"},
+        {"Week_Number": 8, "Week_Starting": "2026-05-05"},
+        {"Week_Number": 9, "Week_Starting": "2026-05-12"},
+        {"Week_Number": 10, "Week_Starting": "2026-05-19"},
+        {"Week_Number": 11, "Week_Starting": "2026-05-26"},
+        {"Week_Number": 12, "Week_Starting": "2026-06-02"}
+      ]
+    },
+    {
+      "name": "90-Day Goals",
+      "description": "The 5 primary goals for the 12-week sprint. Manually set initially, auto-updated by weekly report and milestone engine.",
+      "frozen_rows": 1,
+      "columns": [
+        {
+          "header": "Goal",
+          "type": "text",
+          "width": 300
+        },
+        {
+          "header": "Target",
+          "type": "text",
+          "width": 150
+        },
+        {
+          "header": "Current",
+          "type": "text",
+          "width": 150,
+          "notes": "Updated weekly by Weekly-Accountability-Report or on milestone achievement"
+        },
+        {
+          "header": "Pct_Complete",
+          "type": "formula",
+          "width": 120,
+          "format": "0%",
+          "formula_note": "Numeric extraction: =VALUE(REGEXEXTRACT(Current, \"[0-9.]+\")) / VALUE(REGEXEXTRACT(Target, \"[0-9.]+\"))"
+        },
+        {
+          "header": "Days_Remaining",
+          "type": "formula",
+          "width": 120,
+          "formula_note": "=MAX(0, DATE(2026,6,14) - TODAY())"
+        },
+        {
+          "header": "Status",
+          "type": "dropdown",
+          "width": 120,
+          "values": ["Not Started", "In Progress", "At Risk", "On Track", "Achieved"],
+          "notes": "Auto-updated by weekly report based on pace vs target"
+        }
+      ],
+      "header_style": {
+        "bg_color": "#333333",
+        "font_color": "#C9963C",
+        "bold": true
+      },
+      "initial_data": [
+        {
+          "Goal": "3 paying AI services clients ($1,500-3,000/mo each)",
+          "Target": "3 clients",
+          "Current": "0 clients",
+          "Status": "Not Started"
+        },
+        {
+          "Goal": "500+ YouTube subscribers",
+          "Target": "500 subscribers",
+          "Current": "0 subscribers",
+          "Status": "Not Started"
+        },
+        {
+          "Goal": "1 digital fitness product live ($19.99)",
+          "Target": "1 product",
+          "Current": "0 products",
+          "Status": "Not Started"
+        },
+        {
+          "Goal": "First group coaching cohort forming",
+          "Target": "5 waitlist signups",
+          "Current": "0 signups",
+          "Status": "Not Started"
+        },
+        {
+          "Goal": "$3,000/mo total revenue",
+          "Target": "$3,000",
+          "Current": "$0",
+          "Status": "Not Started"
+        }
+      ],
+      "conditional_formatting": {
+        "Status": {
+          "Achieved": {"bg_color": "#C9963C", "font_color": "#FFFFFF"},
+          "On Track": {"bg_color": "#3b82f6", "font_color": "#FFFFFF"},
+          "In Progress": {"bg_color": "#6b7280", "font_color": "#FFFFFF"},
+          "At Risk": {"bg_color": "#f59e0b", "font_color": "#333333"},
+          "Not Started": {"bg_color": "#e5e7eb", "font_color": "#333333"}
+        }
+      },
+      "auto_update_rules": {
+        "weekly_report": "Every Sunday, the Weekly-Accountability-Report workflow updates 'Current' values for goals 1, 2, and 5 from Stripe/YouTube/Sheets data.",
+        "milestone_engine": "When a milestone is achieved, the Milestone-Celebration-Engine updates the corresponding goal's Status to 'Achieved' if applicable.",
+        "pace_check": "If Pct_Complete < (Week_Number / 12), Status auto-downgrades to 'At Risk'. If Pct_Complete >= (Week_Number / 12), Status upgrades to 'On Track'."
+      }
+    },
+    {
+      "name": "Milestones",
+      "description": "Auto-populated by the Milestone-Celebration-Engine n8n workflow. Tracks which milestones have been achieved and when.",
+      "frozen_rows": 1,
+      "columns": [
+        {
+          "header": "Milestone_ID",
+          "type": "number",
+          "width": 100,
+          "notes": "1-10, matching docs/milestone-celebrations.md"
+        },
+        {
+          "header": "Milestone_Name",
+          "type": "text",
+          "width": 250
+        },
+        {
+          "header": "Target_Condition",
+          "type": "text",
+          "width": 300,
+          "notes": "Human-readable trigger condition"
+        },
+        {
+          "header": "Achieved",
+          "type": "boolean",
+          "width": 90,
+          "notes": "FALSE initially. Set to TRUE by Milestone-Celebration-Engine when achieved."
+        },
+        {
+          "header": "Achieved_Date",
+          "type": "date",
+          "format": "YYYY-MM-DD",
+          "width": 120,
+          "notes": "Set by Milestone-Celebration-Engine. Empty until achieved."
+        },
+        {
+          "header": "Celebration_Sent",
+          "type": "boolean",
+          "width": 130,
+          "notes": "TRUE after the Telegram celebration message was sent. Used to prevent duplicates."
+        },
+        {
+          "header": "Data_Snapshot",
+          "type": "text",
+          "width": 300,
+          "notes": "JSON string of the data at time of achievement (e.g., cumulative_outreach, MRR amount)"
+        }
+      ],
+      "header_style": {
+        "bg_color": "#333333",
+        "font_color": "#C9963C",
+        "bold": true
+      },
+      "pre_populated_rows": [
+        {
+          "Milestone_ID": 1,
+          "Milestone_Name": "First Discovery Call Booked",
+          "Target_Condition": "Cumulative Meetings_Booked >= 1",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 2,
+          "Milestone_Name": "First Free Client Signed",
+          "Target_Condition": "Cumulative Clients_Closed >= 1",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 3,
+          "Milestone_Name": "First Paid Client",
+          "Target_Condition": "First non-zero AI services Stripe payment",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 4,
+          "Milestone_Name": "$1,000 MRR",
+          "Target_Condition": "Stripe active subscription sum >= $1,000/mo",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 5,
+          "Milestone_Name": "100 YouTube Subscribers",
+          "Target_Condition": "YouTube subscriber count >= 100",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 6,
+          "Milestone_Name": "500 Outreach Messages Sent",
+          "Target_Condition": "Cumulative SUM(Outreach_Count) >= 500",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 7,
+          "Milestone_Name": "500 YouTube Subscribers",
+          "Target_Condition": "YouTube subscriber count >= 500",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 8,
+          "Milestone_Name": "First Digital Product Sale",
+          "Target_Condition": "Stripe payment for digital product price ID",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 9,
+          "Milestone_Name": "$3,000/mo Revenue",
+          "Target_Condition": "Monthly total revenue >= $3,000",
+          "Achieved": false,
+          "Celebration_Sent": false
+        },
+        {
+          "Milestone_ID": 10,
+          "Milestone_Name": "90-Day Plan Complete",
+          "Target_Condition": "Calendar date: Sunday June 7, 2026",
+          "Achieved": false,
+          "Celebration_Sent": false
+        }
+      ],
+      "duplicate_prevention": "Before sending any celebration, the Milestone-Celebration-Engine reads this tab and checks Achieved == TRUE. If already achieved, skip. After sending, update Achieved=TRUE, Achieved_Date=TODAY(), Celebration_Sent=TRUE."
+    },
+    {
+      "name": "Content Calendar",
+      "description": "Pre-populated video topics for Tuesday morning messages. Clawdbot reads the next unpublished topic.",
+      "frozen_rows": 1,
+      "columns": [
+        {
+          "header": "Week_Number",
+          "type": "number",
+          "width": 100
+        },
+        {
+          "header": "Video_Topic",
+          "type": "text",
+          "width": 350
+        },
+        {
+          "header": "Video_Type",
+          "type": "dropdown",
+          "width": 120,
+          "values": ["Long-form", "Short", "Reel", "Behind-the-scenes"]
+        },
+        {
+          "header": "Published",
+          "type": "boolean",
+          "width": 90,
+          "notes": "Set to TRUE when video is published. Morning check-in reads next row where Published != TRUE."
+        },
+        {
+          "header": "Published_Date",
+          "type": "date",
+          "width": 120
+        },
+        {
+          "header": "Notes",
+          "type": "text",
+          "width": 250
+        }
+      ],
+      "header_style": {
+        "bg_color": "#333333",
+        "font_color": "#C9963C",
+        "bold": true
+      },
+      "pre_populated_rows": [
+        {"Week_Number": 1, "Video_Topic": "Brain cancer, dystonia, and why I still train", "Video_Type": "Long-form", "Published": false},
+        {"Week_Number": 1, "Video_Topic": "My morning routine with a brain tumor", "Video_Type": "Short", "Published": false},
+        {"Week_Number": 2, "Video_Topic": "The peptide protocol that changed everything", "Video_Type": "Long-form", "Published": false},
+        {"Week_Number": 2, "Video_Topic": "3 exercises everyone with dystonia should try", "Video_Type": "Short", "Published": false},
+        {"Week_Number": 3, "Video_Topic": "How I built an AI business from a hospital bed", "Video_Type": "Long-form", "Published": false},
+        {"Week_Number": 3, "Video_Topic": "Tesamorelin explained in 60 seconds", "Video_Type": "Short", "Published": false},
+        {"Week_Number": 4, "Video_Topic": "Evidence-based training with neurological conditions", "Video_Type": "Long-form", "Published": false},
+        {"Week_Number": 4, "Video_Topic": "What I eat in a day (brain cancer edition)", "Video_Type": "Short", "Published": false}
+      ],
+      "notes": "Pre-populate weeks 1-4. William can add more topics manually or via 'note: video idea: ...' to Clawdbot."
+    }
+  ],
+  "sheet_creation_notes": {
+    "script": "Adapt pattern from scripts/create-coaching-tracker-sheet.py using Google Sheets API v4",
+    "auth": "credentials.json + token_sheets.json OAuth flow (same as existing sheet creation scripts)",
+    "post_creation": [
+      "1. Store new sheet ID in .env as SCORECARD_SPREADSHEET_ID",
+      "2. Record all tab GIDs in memory/sheets-gids.md",
+      "3. Pre-populate Weekly Summary rows (12 weeks)",
+      "4. Pre-populate 90-Day Goals initial data (5 rows)",
+      "5. Pre-populate Milestones rows (10 milestones)",
+      "6. Pre-populate Content Calendar (at least weeks 1-4)",
+      "7. Set conditional formatting on Weekly Summary and 90-Day Goals",
+      "8. Share sheet with wmarceau@marceausolutions.com (editor access)"
+    ]
+  },
+  "n8n_node_requirements": {
+    "all_nodes_must_use": "mode:id with numeric GIDs",
+    "never_use": ["mode:name", "mode:list", "mode:url"],
+    "credential": "Use existing Google Sheets credential in n8n (same as PT Tracker, WebDev Tracker)",
+    "gid_documentation": "After sheet creation, add GIDs to memory/sheets-gids.md under 'Scorecard' section"
+  }
+}

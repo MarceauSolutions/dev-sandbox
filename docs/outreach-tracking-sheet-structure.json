@@ -1,0 +1,98 @@
+{
+  "sheet_name": "AI Services — Outreach & Pipeline Tracker",
+  "description": "Google Sheet structure for tracking cold outreach, prospects, and sales pipeline for the AI automation services business.",
+  "tabs": [
+    {
+      "name": "Daily Log",
+      "description": "Track daily outreach activity across all channels.",
+      "columns": [
+        {"name": "Date", "type": "date", "format": "YYYY-MM-DD"},
+        {"name": "Channel", "type": "dropdown", "options": ["Warm Intro", "Cold Email", "Cold Call", "In-Person", "LinkedIn", "Referral", "Inbound"]},
+        {"name": "Count", "type": "number", "description": "Number of outreach touches made"},
+        {"name": "Replies", "type": "number", "description": "Number of replies received"},
+        {"name": "Meetings Booked", "type": "number", "description": "Discovery calls scheduled"},
+        {"name": "Notes", "type": "text"}
+      ],
+      "conditional_formatting": [
+        {"column": "Meetings Booked", "rule": ">= 1", "color": "#C9963C", "description": "Gold highlight when meetings booked"}
+      ]
+    },
+    {
+      "name": "Prospects",
+      "description": "Master list of all prospects with contact info and status.",
+      "columns": [
+        {"name": "Name", "type": "text", "description": "Contact person's full name"},
+        {"name": "Business", "type": "text", "description": "Business name"},
+        {"name": "Industry", "type": "dropdown", "options": ["HVAC", "Plumbing", "Electrical", "Roofing", "Med Spa", "Dental", "Chiropractor", "Restaurant", "Bar/Lounge", "Real Estate", "Law Firm", "Accounting", "Insurance", "Auto Repair", "Gym/Fitness", "Salon/Barber", "Landscaping", "Pool Service", "Cleaning", "Other"]},
+        {"name": "Phone", "type": "phone"},
+        {"name": "Email", "type": "email"},
+        {"name": "Status", "type": "dropdown", "options": ["Not Contacted", "Contacted", "Replied", "Meeting Scheduled", "Meeting Done", "Proposal Sent", "Negotiating", "Closed Won", "Closed Lost", "Not Interested"]},
+        {"name": "Source", "type": "dropdown", "options": ["Google Maps", "Yelp", "LinkedIn", "Referral", "Networking Event", "Cold Email Reply", "Inbound", "Other"]},
+        {"name": "Last Contact Date", "type": "date", "format": "YYYY-MM-DD"},
+        {"name": "Next Action", "type": "text", "description": "What to do next and when"},
+        {"name": "Notes", "type": "text"},
+        {"name": "Estimated Value", "type": "currency", "description": "Setup + 12 months of monthly"}
+      ],
+      "conditional_formatting": [
+        {"column": "Status", "value": "Meeting Scheduled", "color": "#C9963C"},
+        {"column": "Status", "value": "Closed Won", "color": "#22c55e"},
+        {"column": "Status", "value": "Closed Lost", "color": "#ef4444"}
+      ]
+    },
+    {
+      "name": "Pipeline",
+      "description": "Active deals in the sales pipeline with probability weighting.",
+      "columns": [
+        {"name": "Business Name", "type": "text"},
+        {"name": "Contact", "type": "text"},
+        {"name": "Stage", "type": "dropdown", "options": ["Lead", "Discovery", "Proposal", "Negotiation", "Closed Won", "Closed Lost"]},
+        {"name": "Service Tier", "type": "dropdown", "options": ["AI Lead Engine", "Smart Follow-Up", "AI Receptionist", "Operations Autopilot", "Full Stack"]},
+        {"name": "Setup Value", "type": "currency"},
+        {"name": "Monthly Value", "type": "currency"},
+        {"name": "Annual Value", "type": "formula", "formula": "=E{row} + (F{row} * 12)", "description": "Setup + 12 months recurring"},
+        {"name": "Probability", "type": "percentage", "description": "Stage-based: Lead=10%, Discovery=25%, Proposal=50%, Negotiation=75%, Won=100%, Lost=0%"},
+        {"name": "Weighted Value", "type": "formula", "formula": "=G{row} * H{row}", "description": "Annual Value x Probability"},
+        {"name": "Expected Close Date", "type": "date", "format": "YYYY-MM-DD"},
+        {"name": "Days in Stage", "type": "formula", "formula": "=TODAY() - J{row}", "description": "Flag deals stalling > 14 days"},
+        {"name": "Notes", "type": "text"}
+      ],
+      "conditional_formatting": [
+        {"column": "Days in Stage", "rule": "> 14", "color": "#ef4444", "description": "Red flag stalled deals"},
+        {"column": "Stage", "value": "Closed Won", "row_color": "#C9963C"}
+      ]
+    },
+    {
+      "name": "Weekly Scorecard",
+      "description": "Auto-calculated weekly performance metrics. One row per week.",
+      "columns": [
+        {"name": "Week Starting", "type": "date", "format": "YYYY-MM-DD"},
+        {"name": "Total Outreach", "type": "formula", "formula": "=SUMIFS('Daily Log'!C:C, 'Daily Log'!A:A, \">=\"&A{row}, 'Daily Log'!A:A, \"<\"&A{row}+7)"},
+        {"name": "Total Replies", "type": "formula", "formula": "=SUMIFS('Daily Log'!D:D, 'Daily Log'!A:A, \">=\"&A{row}, 'Daily Log'!A:A, \"<\"&A{row}+7)"},
+        {"name": "Reply Rate", "type": "formula", "formula": "=IF(B{row}>0, C{row}/B{row}, 0)", "format": "percentage"},
+        {"name": "Meetings Booked", "type": "formula", "formula": "=SUMIFS('Daily Log'!E:E, 'Daily Log'!A:A, \">=\"&A{row}, 'Daily Log'!A:A, \"<\"&A{row}+7)"},
+        {"name": "Proposals Sent", "type": "number", "description": "Manual entry"},
+        {"name": "Deals Closed", "type": "number", "description": "Manual entry"},
+        {"name": "Revenue Closed", "type": "currency", "description": "Setup fees from closed deals this week"},
+        {"name": "MRR Added", "type": "currency", "description": "Monthly recurring from closed deals this week"},
+        {"name": "Pipeline Value", "type": "formula", "formula": "=SUM(Pipeline!I:I)", "description": "Total weighted pipeline value"},
+        {"name": "Conversion: Outreach to Meeting", "type": "formula", "formula": "=IF(B{row}>0, E{row}/B{row}, 0)", "format": "percentage"},
+        {"name": "Conversion: Meeting to Close", "type": "formula", "formula": "=IF(E{row}>0, G{row}/E{row}, 0)", "format": "percentage"}
+      ],
+      "targets": {
+        "Total Outreach": "50+ per week",
+        "Reply Rate": "5-10% for cold email",
+        "Meetings Booked": "3-5 per week",
+        "Deals Closed": "1-2 per month (5 per quarter max)"
+      }
+    }
+  ],
+  "setup_notes": [
+    "Create as a new Google Sheet named 'AI Services — Outreach & Pipeline Tracker'",
+    "Apply data validation dropdowns for all dropdown-type columns",
+    "Set conditional formatting rules as specified in each tab",
+    "Freeze row 1 (headers) on all tabs",
+    "Set column widths: Name/Business columns = 180px, Notes = 250px, all others = 120px",
+    "Add filter views on Prospects (by Status, by Industry) and Pipeline (by Stage)",
+    "Weekly Scorecard: pre-populate Week Starting dates for the next 12 weeks"
+  ]
+}
