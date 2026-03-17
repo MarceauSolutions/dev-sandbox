@@ -2,105 +2,45 @@
 
 **Purpose**: Single source of truth for work handoffs between EC2 (Clawdbot/Ralph) and MacBook (Claude Code).
 
-**Last Updated**: 2026-02-09
+**Last Updated**: 2026-03-17
 
 ---
 
-## 📥 Pending for Mac (Claude Code)
+## For Ralph (EC2, PRD-driven)
 
-_Tasks that need Mac-specific tools or interactive work_
+### Task: Content Batch Processing Pipeline Test
+**Priority**: Medium | **Complexity**: 7/10 | **Status**: Ready
 
-<!-- When adding tasks, use this format:
-### Task: [Short Title]
-- **From**: clawdbot | ralph
-- **Priority**: high | medium | low
-- **Created**: YYYY-MM-DD HH:MM UTC
-- **Context**: Brief description
-- **Files**: List of relevant files
-- **Action**: What Claude Code should do
--->
-
-_No pending tasks_
+1. Check if FitAI backend video modules run standalone on EC2
+2. Process a test video through: silence removal → output
+3. If FitAI modules need FastAPI context, use `execution/video_jumpcut.py`
+4. Report results below under Completed Tasks
 
 ---
 
-## 📤 Pending for EC2 (Clawdbot/Ralph)
+## For Clawdbot (EC2, Telegram)
 
-_Tasks to be picked up when Mac work is done_
-
-_No pending tasks_
-
----
-
-## 🔄 In Progress
-
-_Currently being worked on_
-
-_None_
+### Standing Orders:
+- Morning accountability: 6:45am ET (n8n)
+- EOD check-in: 7pm ET (n8n)
+- Weekly report: Sunday 7pm ET (n8n)
+- Treatment day detector: daily 5am ET (n8n)
+- Parse replies per Knowledge Base accountability rules
+- Monitor 5 upgrade triggers per Knowledge Base
 
 ---
 
-## ✅ Recently Completed
+## For Claude Code (Mac)
 
-_Last 10 completed handoffs (auto-archived)_
-
-### ✅ Clawdbot Security Fixes + Full Capability Upgrade
-- **Completed**: 2026-02-18 17:16 UTC
-- **By**: Claude Code (Mac)
-- **What was done**:
-  - Fixed config file permissions (`chmod 600 clawdbot.json`)
-  - Fixed credentials dir permissions (`chmod 700 credentials/`)
-  - Secured all .env, backup configs, API key files
-  - Added gateway auth token
-  - Fixed .env parse errors (unquoted values with spaces)
-  - Installed Python 3.11 packages: n8n-mcp-server, mcp-telegram, google-api-python-client, tweepy
-  - Configured 3 MCP servers: n8n (localhost:5678), Context7, Telegram
-  - Deployed 33 API keys to both .clawdbot/.env and dev-sandbox/.env
-  - Copied Google OAuth tokens (calendar, gmail, sheets, marceausolutions)
-  - Updated SOUL.md v1.0 → v2.0 with full capability docs
-  - Updated systemd service PATH + dual .env sourcing
-  - Telegram DM isolation: NOT supported by clawdbot config schema (skipped)
+### Session 2026-03-17 Status:
+- Phases 0-4, 7-8: COMPLETE
+- Phase 5 (content pipeline): Agent building
+- Phase 6 (performance tracking): Agent building
+- 49 n8n workflows active
+- Command Center dashboard at localhost:8780
+- All upgrade trigger plans written + deployed
 
 ---
 
-## Quick Commands
-
-**On Mac (Claude Code)**:
-```bash
-# Pull latest and check for work
-cd ~/dev-sandbox && git pull && cat HANDOFF.md
-
-# After completing Mac work, commit and push
-git add . && git commit -m "feat: [description]" && git push
-```
-
-**On EC2 (Clawdbot)**:
-```bash
-# Check for Mac-completed work
-cd /home/clawdbot/dev-sandbox && git pull
-
-# Add task for Mac
-# (Clawdbot edits HANDOFF.md, commits, pushes)
-```
-
----
-
-## Handoff Protocol
-
-### EC2 → Mac
-1. Clawdbot/Ralph completes work up to Mac-specific step
-2. Updates `HANDOFF.md` with task details
-3. Commits and pushes to GitHub
-4. Sends Telegram notification to William
-
-### Mac → EC2
-1. Claude Code pulls latest, reads `HANDOFF.md`
-2. Completes Mac-specific work
-3. Moves task to "Completed" section
-4. Commits and pushes
-5. (Optional) Adds follow-up task for EC2
-
-### Sync Trigger
-- **Heartbeat**: Clawdbot checks `git pull` periodically
-- **Manual**: William says "sync" or "check handoffs"
-- **Webhook**: (Future) n8n workflow triggers on push
+## Completed Tasks
+(Ralph has not yet executed first task)

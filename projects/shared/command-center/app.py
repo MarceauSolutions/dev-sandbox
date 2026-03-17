@@ -1019,6 +1019,31 @@ DASHBOARD_HTML = """
       </div>
     </div>
 
+    <!-- Content Production Pipeline -->
+    <div class="card" style="margin-top: 16px;">
+      <h2 style="color: var(--gold);">Content Production Pipeline</h2>
+      <div class="action-grid">
+        <div class="action-card" onclick="showModal('modal-process-video')">
+          <h3>Process Video</h3>
+          <p>Remove silence from raw footage via jump-cut editor</p>
+        </div>
+        <div class="action-card" onclick="showModal('modal-extract-shorts')">
+          <h3>Extract Shorts</h3>
+          <p>Split processed video into 15-60s segments for Shorts/Reels</p>
+        </div>
+        <div class="action-card" onclick="showModal('modal-upload-youtube')">
+          <h3>Upload to YouTube</h3>
+          <p>Publish video to YouTube with title, description, and tags</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content pipeline output -->
+    <div class="card" id="content-pipeline-card" style="display:none; margin-top: 16px;">
+      <h2>Pipeline Output</h2>
+      <pre class="health-output" id="content-pipeline-output" style="white-space:pre-wrap;max-height:400px;overflow-y:auto;"></pre>
+    </div>
+
     <!-- Health check output -->
     <div class="card" id="health-card" style="display:none; margin-top: 16px;">
       <h2>System Health</h2>
@@ -1158,6 +1183,88 @@ DASHBOARD_HTML = """
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal('modal-proposal')">Cancel</button>
       <button class="btn btn-gold" onclick="generateProposal()">Generate PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Process Video Modal -->
+<div class="modal-overlay" id="modal-process-video">
+  <div class="modal">
+    <h2>Process Video</h2>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Input Path (file or directory)</label>
+      <input type="text" id="pv-input" placeholder="/Users/williammarceaujr./Desktop/raw-footage">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Silence Threshold (dB)</label>
+      <input type="number" id="pv-thresh" value="-40" step="5">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Min Silence Duration (sec)</label>
+      <input type="number" id="pv-minsil" value="0.3" step="0.1">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-process-video')">Cancel</button>
+      <button class="btn btn-gold" onclick="runProcessVideo()">Process</button>
+    </div>
+  </div>
+</div>
+
+<!-- Extract Shorts Modal -->
+<div class="modal-overlay" id="modal-extract-shorts">
+  <div class="modal">
+    <h2>Extract Shorts</h2>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Input Video File</label>
+      <input type="text" id="es-input" placeholder="/path/to/processed_video.mp4">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Target Duration (sec)</label>
+      <input type="number" id="es-duration" value="45" step="5">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>
+        <input type="checkbox" id="es-silence"> Split at natural pauses
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-extract-shorts')">Cancel</button>
+      <button class="btn btn-gold" onclick="runExtractShorts()">Extract</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload YouTube Modal -->
+<div class="modal-overlay" id="modal-upload-youtube">
+  <div class="modal">
+    <h2>Upload to YouTube</h2>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Video File Path</label>
+      <input type="text" id="yt-file" placeholder="/path/to/video.mp4">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Title</label>
+      <input type="text" id="yt-title" placeholder="5 Training Mistakes Killing Your Gains">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Description</label>
+      <textarea id="yt-desc" placeholder="In this video I break down..."></textarea>
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Tags (comma-separated)</label>
+      <input type="text" id="yt-tags" placeholder="fitness, training, muscle building">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Privacy</label>
+      <select id="yt-privacy">
+        <option value="unlisted">Unlisted</option>
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modal-upload-youtube')">Cancel</button>
+      <button class="btn btn-gold" onclick="runUploadYouTube()">Upload</button>
     </div>
   </div>
 </div>
@@ -1671,6 +1778,118 @@ async function toggleContent(rowIdx, current) {
 }
 
 // ============================================================
+// CONTENT PRODUCTION PIPELINE
+// ============================================================
+
+function showPipelineOutput(text) {
+  const card = document.getElementById('content-pipeline-card');
+  const output = document.getElementById('content-pipeline-output');
+  card.style.display = 'block';
+  output.textContent = text;
+  card.scrollIntoView({behavior: 'smooth'});
+}
+
+async function runProcessVideo() {
+  const input = document.getElementById('pv-input').value;
+  if (!input) { showToast('Input path is required', 'error'); return; }
+
+  closeModal('modal-process-video');
+  showPipelineOutput('Processing video... this may take several minutes.');
+  showToast('Video processing started...');
+
+  try {
+    const r = await fetch('/api/process-video', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input_path: input,
+        silence_thresh: document.getElementById('pv-thresh').value,
+        min_silence: document.getElementById('pv-minsil').value,
+      }),
+    });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      showPipelineOutput(d.output || 'Processing complete.');
+      showToast('Video processing complete');
+    } else {
+      showPipelineOutput('ERROR:\n' + (d.output || '') + '\n' + (d.errors || d.message || ''));
+      showToast('Processing failed', 'error');
+    }
+  } catch(e) {
+    showPipelineOutput('Error: ' + e.message);
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function runExtractShorts() {
+  const input = document.getElementById('es-input').value;
+  if (!input) { showToast('Input file is required', 'error'); return; }
+
+  closeModal('modal-extract-shorts');
+  showPipelineOutput('Extracting shorts... this may take a few minutes.');
+  showToast('Shorts extraction started...');
+
+  try {
+    const r = await fetch('/api/extract-shorts', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input_path: input,
+        duration: document.getElementById('es-duration').value,
+        split_at_silence: document.getElementById('es-silence').checked,
+      }),
+    });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      showPipelineOutput(d.output || 'Extraction complete.');
+      showToast('Shorts extraction complete');
+    } else {
+      showPipelineOutput('ERROR:\n' + (d.output || '') + '\n' + (d.errors || d.message || ''));
+      showToast('Extraction failed', 'error');
+    }
+  } catch(e) {
+    showPipelineOutput('Error: ' + e.message);
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+async function runUploadYouTube() {
+  const file = document.getElementById('yt-file').value;
+  const title = document.getElementById('yt-title').value;
+  if (!file) { showToast('File path is required', 'error'); return; }
+  if (!title) { showToast('Title is required', 'error'); return; }
+
+  closeModal('modal-upload-youtube');
+  showPipelineOutput('Uploading to YouTube... this may take several minutes depending on file size.');
+  showToast('YouTube upload started...');
+
+  try {
+    const r = await fetch('/api/upload-youtube', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        file_path: file,
+        title: title,
+        description: document.getElementById('yt-desc').value,
+        tags: document.getElementById('yt-tags').value,
+        privacy: document.getElementById('yt-privacy').value,
+      }),
+    });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      showPipelineOutput(d.output || 'Upload complete.');
+      showToast('YouTube upload complete');
+    } else {
+      showPipelineOutput('ERROR:\n' + (d.output || '') + '\n' + (d.errors || d.message || ''));
+      showToast('Upload failed', 'error');
+    }
+  } catch(e) {
+    showPipelineOutput('Error: ' + e.message);
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 
@@ -1690,6 +1909,138 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 </body>
 </html>
 """
+
+
+# ============================================================
+# Content Production Pipeline Routes
+# ============================================================
+
+@app.route('/api/process-video', methods=['POST'])
+def api_process_video():
+    """Trigger batch video processing on a directory or single file."""
+    data = request.json or {}
+    input_path = data.get('input_path', '')
+    silence_thresh = data.get('silence_thresh', '-40')
+    min_silence = data.get('min_silence', '0.3')
+
+    if not input_path:
+        return jsonify({"status": "error", "message": "input_path is required"}), 400
+
+    if not os.path.exists(input_path):
+        return jsonify({"status": "error", "message": f"Path not found: {input_path}"}), 400
+
+    script = str(PROJECT_ROOT / "scripts" / "process-batch-content.sh")
+
+    # If it's a single file, process it directly with video_jumpcut.py
+    if os.path.isfile(input_path):
+        jumpcut = str(PROJECT_ROOT / "execution" / "video_jumpcut.py")
+        from datetime import date as dt_date
+        out_dir = str(PROJECT_ROOT / "output" / "processed" / dt_date.today().isoformat())
+        os.makedirs(out_dir, exist_ok=True)
+        stem = Path(input_path).stem
+        output_file = os.path.join(out_dir, f"{stem}_processed.mp4")
+        cmd = [
+            sys.executable, jumpcut,
+            "--input", input_path,
+            "--output", output_file,
+            "--silence-thresh", str(silence_thresh),
+            "--min-silence", str(min_silence),
+        ]
+    else:
+        # Directory — use batch script
+        cmd = [
+            "bash", script, input_path,
+            "--silence-thresh", str(silence_thresh),
+            "--min-silence", str(min_silence),
+        ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        return jsonify({
+            "status": "ok" if result.returncode == 0 else "error",
+            "output": result.stdout[-3000:] if result.stdout else "",
+            "errors": result.stderr[-1000:] if result.returncode != 0 else "",
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({"status": "error", "message": "Processing timed out (10 min limit)"}), 504
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/api/extract-shorts', methods=['POST'])
+def api_extract_shorts():
+    """Extract YouTube Shorts segments from a video."""
+    data = request.json or {}
+    input_path = data.get('input_path', '')
+    duration = data.get('duration', '45')
+    split_at_silence = data.get('split_at_silence', False)
+
+    if not input_path:
+        return jsonify({"status": "error", "message": "input_path is required"}), 400
+
+    if not os.path.exists(input_path):
+        return jsonify({"status": "error", "message": f"File not found: {input_path}"}), 400
+
+    script = str(PROJECT_ROOT / "scripts" / "extract-shorts.py")
+    cmd = [
+        sys.executable, script,
+        "--input", input_path,
+        "--duration", str(duration),
+    ]
+    if split_at_silence:
+        cmd.append("--split-at-silence")
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        return jsonify({
+            "status": "ok" if result.returncode == 0 else "error",
+            "output": result.stdout[-3000:] if result.stdout else "",
+            "errors": result.stderr[-1000:] if result.returncode != 0 else "",
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({"status": "error", "message": "Extraction timed out (5 min limit)"}), 504
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/api/upload-youtube', methods=['POST'])
+def api_upload_youtube():
+    """Upload a video to YouTube."""
+    data = request.json or {}
+    file_path = data.get('file_path', '')
+    title = data.get('title', '')
+    description = data.get('description', '')
+    tags = data.get('tags', '')
+    privacy = data.get('privacy', 'unlisted')
+
+    if not file_path:
+        return jsonify({"status": "error", "message": "file_path is required"}), 400
+    if not title:
+        return jsonify({"status": "error", "message": "title is required"}), 400
+    if not os.path.exists(file_path):
+        return jsonify({"status": "error", "message": f"File not found: {file_path}"}), 400
+
+    script = str(PROJECT_ROOT / "scripts" / "upload-to-youtube.py")
+    cmd = [
+        sys.executable, script,
+        "--file", file_path,
+        "--title", title,
+        "--description", description,
+        "--tags", tags,
+        "--privacy", privacy,
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        return jsonify({
+            "status": "ok" if result.returncode == 0 else "error",
+            "output": result.stdout[-3000:] if result.stdout else "",
+            "errors": result.stderr[-1000:] if result.returncode != 0 else "",
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({"status": "error", "message": "Upload timed out (10 min limit)"}), 504
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route('/')
