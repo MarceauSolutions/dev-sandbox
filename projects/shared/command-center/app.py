@@ -2043,6 +2043,15 @@ def api_upload_youtube():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route('/demo')
+def demo_page():
+    """Serve the AI services demo landing page for Loom recordings."""
+    demo_html_path = Path(__file__).parent / "demo.html"
+    if demo_html_path.exists():
+        return send_file(demo_html_path)
+    return "Demo page not found. Expected at: projects/shared/command-center/demo.html", 404
+
+
 @app.route('/')
 def index():
     return render_template_string(DASHBOARD_HTML, sheet_id=SPREADSHEET_ID)
