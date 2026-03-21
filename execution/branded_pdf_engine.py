@@ -459,6 +459,25 @@ def main():
     engine.generate_to_file(args.template, data, output)
     print(f"Generated: {output}")
 
+    # Auto-route to organized folder if no explicit output path was given
+    if not args.output:
+        try:
+            from execution.pdf_router import route_pdf
+            title = data.get("title", data.get("program_name", ""))
+            description = data.get("description", data.get("subtitle", ""))
+            tags = data.get("tags", [])
+            dest = route_pdf(
+                source_path=output,
+                template=args.template,
+                title=title,
+                description=description,
+                tags=tags,
+                copy=True,  # Keep original + copy to organized location
+            )
+            print(f"Auto-routed copy to: {dest}")
+        except Exception as e:
+            print(f"Auto-routing skipped: {e}")
+
 
 if __name__ == "__main__":
     main()
