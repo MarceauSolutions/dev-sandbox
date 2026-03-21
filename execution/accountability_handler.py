@@ -15,6 +15,7 @@ Usage:
     python3 execution/accountability_handler.py --type outreach_only --outreach 47
     python3 execution/accountability_handler.py --type fix --field outreach --fix-value 95
     python3 execution/accountability_handler.py --type parse --text "87, 1, 2, 3"
+    python3 execution/accountability_handler.py --type morning_briefing
 """
 
 import argparse
@@ -45,12 +46,18 @@ WEEKLY_SUMMARY_GID = 311738664
 GOALS_GID = 1782644948
 MILESTONES_GID = 725518367
 
-# Find token file
+# Find token files
 PROJECT_ROOT = Path(__file__).parent.parent
 TOKEN_CANDIDATES = [
     PROJECT_ROOT / "token_sheets.json",
     Path.home() / "dev-sandbox" / "token_sheets.json",
     Path("/home/clawdbot/dev-sandbox/token_sheets.json"),
+]
+
+CALENDAR_TOKEN_CANDIDATES = [
+    PROJECT_ROOT / "token_marceausolutions.json",
+    Path.home() / "dev-sandbox" / "token_marceausolutions.json",
+    Path("/home/clawdbot/dev-sandbox/token_marceausolutions.json"),
 ]
 
 
@@ -72,6 +79,84 @@ def get_sheets_service():
             f.write(creds.to_json())
 
     return build("sheets", "v4", credentials=creds)
+
+
+def get_calendar_service():
+    """Get Google Calendar API service."""
+    token_file = None
+    for candidate in CALENDAR_TOKEN_CANDIDATES:
+        if candidate.exists():
+            token_file = candidate
+            break
+    if not token_file:
+        return None
+
+    try:
+        creds = Credentials.from_authorized_user_file(
+            str(token_file), ["https://www.googleapis.com/auth/calendar"]
+        )
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            with open(token_file, "w") as f:
+                f.write(creds.to_json())
+        return build("calendar", "v3", credentials=creds)
+    except Exception:
+        return None
+
+
+def get_todays_events():
+    """Fetch today's calendar events. Returns formatted string or empty string."""
+    cal_service = get_calendar_service()
+    if not cal_service:
+        return ""
+
+    try:
+        now = datetime.utcnow()
+        start = now.replace(hour=9, minute=0, second=0).isoformat() + "Z"  # 5am ET = 9 UTC
+        end = (now.replace(hour=9, minute=0, second=0) + timedelta(hours=19)).isoformat() + "Z"  # through midnight ET
+
+        events = cal_service.events().list(
+            calendarId="primary",
+            timeMin=start,
+            timeMax=end,
+            singleEvents=True,
+            orderBy="startTime",
+        ).execute()
+        items = events.get("items", [])
+
+        if not items:
+            return ""
+
+        lines = []
+        for e in items:
+            start_raw = e["start"].get("dateTime", e["start"].get("date", ""))
+            summary = e.get("summary", "(no title)")
+            location = e.get("location", "")
+            description = e.get("description", "")
+
+            # Format time
+            if "T" in start_raw:
+                try:
+                    dt = datetime.fromisoformat(start_raw.replace("Z", "+00:00"))
+                    time_str = dt.strftime("%-I:%M%p").lower()
+                except Exception:
+                    time_str = start_raw.split("T")[1][:5]
+            else:
+                time_str = "all day"
+
+            line = f"  {time_str}: {summary}"
+            if location:
+                line += f" ({location})"
+            lines.append(line)
+
+            # Flag important items
+            lower_summary = summary.lower()
+            if any(w in lower_summary for w in ["meeting", "call", "interview", "doctor", "appointment", "treatment"]):
+                lines.append(f"    ^ IMPORTANT — be prepared for this")
+
+        return "\n".join(lines)
+    except Exception:
+        return ""
 
 
 def get_context():
@@ -441,14 +526,346 @@ def handle_parse(args):
         args.fix_value = int(m.group(3))
         return handle_fix(args)
 
+    # Todo commands
+    m = re.match(r"^\s*todo\s+add\s+(.+)$", text, re.I)
+    if m:
+        args.task = m.group(1).strip()
+        args.priority = 0
+        # Check for priority prefix like "p1:" or "#1"
+        pm = re.match(r"^(?:p|#)(\d)\s*:?\s*(.+)$", args.task, re.I)
+        if pm:
+            args.priority = int(pm.group(1))
+            args.task = pm.group(2).strip()
+        return handle_todo_add(args)
+
+    if re.match(r"^\s*(todo|tasks|my tasks|todo list|task list)\s*$", text, re.I):
+        return handle_todo_list(args)
+
+    m = re.match(r"^\s*(?:todo\s+)?done\s+#?(\d+)\s*$", text, re.I)
+    if m:
+        args.task_id = int(m.group(1))
+        return handle_todo_done(args)
+
+    m = re.match(r"^\s*(?:todo\s+)?remove\s+#?(\d+)\s*$", text, re.I)
+    if m:
+        args.task_id = int(m.group(1))
+        return handle_todo_remove(args)
+
     return None  # Not an accountability message
+
+
+def handle_morning_briefing(args):
+    """Generate a complete morning briefing: calendar + accountability metrics."""
+    ctx = get_context()
+    service = get_sheets_service()
+    rows = read_tab(service, "Daily Log")
+    goals = read_tab(service, "90-Day Goals")
+    content = read_tab(service, "Content Calendar")
+
+    day_of_week = ctx["day_of_week"]
+
+    # Weekly totals
+    this_week = [r for r in rows if r.get("Week_Number") == str(ctx["week_number"])]
+    weekly_outreach = sum(int(r.get("Outreach_Count") or 0) for r in this_week)
+    weekly_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in this_week)
+    weekly_videos = sum(int(r.get("Videos_Filmed") or 0) for r in this_week)
+
+    # Goal data
+    client_goal = next((g for g in goals if "AI services" in g.get("Goal", "")), {})
+    current_clients = client_goal.get("Current", "0 clients")
+
+    # Next video topic
+    next_video = next(
+        (c for c in content if c.get("Published") != "TRUE" and c.get("Video_Type") == "Long-form"),
+        {},
+    )
+    next_video_topic = next_video.get("Video_Topic", "Check content calendar")
+
+    total_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in rows)
+
+    # Build header
+    header = f"Day {ctx['day_number']}/90 · Week {ctx['week_number']}/12"
+    parts = [header]
+
+    # Calendar section
+    calendar_text = get_todays_events()
+    if calendar_text:
+        parts.append(f"\nTODAY'S CALENDAR:\n{calendar_text}")
+    else:
+        parts.append(f"\nNo calendar events today.")
+
+    # Day-specific focus
+    if day_of_week == "Monday":
+        parts.append(
+            f"\nAI Services: {current_clients} (goal: 3)\n"
+            f"TODAY: Outreach blitz + offer assets.\n"
+            f"100 outreach minimum. This is the Rule of 100."
+        )
+    elif day_of_week == "Tuesday":
+        parts.append(
+            f"\nContent day.\n"
+            f"Film topic: {next_video_topic}\n"
+            f"Outreach blitz first — 100 minimum."
+        )
+    elif day_of_week == "Wednesday":
+        parts.append(
+            f"\nNaples day.\n"
+            f"5 businesses in person.\n"
+            f"Pipeline: {total_meetings} total meetings booked."
+        )
+    elif day_of_week == "Thursday":
+        parts.append(
+            f"\nOutreach + Film Day #2.\n"
+            f"{weekly_meetings} meetings booked this week (target: 3-5).\n"
+            f"{ctx['days_remaining']} days left in the plan."
+        )
+    elif day_of_week == "Friday":
+        parts.append(
+            f"\nLighter day — 50 outreach.\n"
+            f"This week:\n"
+            f"  Outreach: {weekly_outreach}\n"
+            f"  Meetings: {weekly_meetings}\n"
+            f"  Videos: {weekly_videos}"
+        )
+    elif day_of_week == "Saturday":
+        parts.append(
+            f"\nSaturday — content catch-up + recovery.\n"
+            f"This week so far:\n"
+            f"  Outreach: {weekly_outreach}/500\n"
+            f"  Meetings: {weekly_meetings}/3-5\n"
+            f"  Videos: {weekly_videos}/2"
+        )
+
+    # Tasks section
+    tasks_summary = get_pending_todos_summary()
+    if tasks_summary:
+        parts.append(f"\nTASKS:\n{tasks_summary}")
+
+    parts.append(f"\nWhat's your energy level? (1-10)")
+
+    return "\n".join(parts)
+
+
+# =============================================================================
+# TODO LIST SYSTEM
+# =============================================================================
+
+# Uses the FitAI task system as single source of truth (no duplicate systems)
+TASKS_FILE_CANDIDATES = [
+    PROJECT_ROOT / "projects" / "marceau-solutions" / "fitness" / "tools" / "fitness-influencer" / "data" / "tenants" / "wmarceau" / "tasks.json",
+    Path.home() / "dev-sandbox" / "projects" / "marceau-solutions" / "fitness" / "tools" / "fitness-influencer" / "data" / "tenants" / "wmarceau" / "tasks.json",
+    Path("/home/clawdbot/dev-sandbox/projects/marceau-solutions/fitness/tools/fitness-influencer/data/tenants/wmarceau/tasks.json"),
+]
+
+
+def get_todo_file():
+    """Find the FitAI tasks.json file."""
+    for candidate in TASKS_FILE_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    # Create with compatible format if none exists
+    for candidate in TASKS_FILE_CANDIDATES:
+        try:
+            candidate.parent.mkdir(parents=True, exist_ok=True)
+            candidate.write_text(json.dumps({"tenant_id": "wmarceau", "tasks": []}))
+            return candidate
+        except OSError:
+            continue
+    raise FileNotFoundError("Cannot find or create tasks.json")
+
+
+def load_todos():
+    todo_file = get_todo_file()
+    with open(todo_file) as f:
+        data = json.load(f)
+    # Normalize: FitAI format uses "tasks" list, ensure next_id exists
+    if "next_id" not in data:
+        # Calculate next ID from existing tasks
+        max_id = 0
+        for t in data.get("tasks", []):
+            tid = t.get("id", "")
+            if isinstance(tid, str) and tid.startswith("task_"):
+                try:
+                    max_id = max(max_id, int(tid.split("_")[-1]))
+                except ValueError:
+                    pass
+            elif isinstance(tid, int):
+                max_id = max(max_id, tid)
+        data["next_id"] = max_id + 1
+    return data
+
+
+def save_todos(data):
+    todo_file = get_todo_file()
+    # Remove next_id before saving (not part of FitAI format)
+    save_data = {k: v for k, v in data.items() if k != "next_id"}
+    with open(todo_file, "w") as f:
+        json.dump(save_data, f, indent=2)
+
+
+def handle_todo_add(args):
+    """Add a task to the todo list (FitAI-compatible format)."""
+    if not args.task:
+        return "No task provided. Usage: todo add Buy groceries"
+
+    data = load_todos()
+    task_id = data["next_id"]
+
+    # Priority mapping: 1-2=critical, 3=high, 4-5=medium, 6+=low
+    priority_str = "high"
+    section = "today"
+    if args.priority > 0:
+        if args.priority <= 2:
+            priority_str = "critical"
+            section = "today"
+        elif args.priority <= 3:
+            priority_str = "high"
+            section = "today"
+        elif args.priority <= 5:
+            priority_str = "medium"
+            section = "this_week"
+        else:
+            priority_str = "low"
+            section = "circle_back"
+
+    task = {
+        "id": f"task_acc_{task_id:03d}",
+        "title": args.task,
+        "description": "",
+        "section": section,
+        "priority": priority_str,
+        "status": "pending",
+        "due_date": None,
+        "trigger_condition": None,
+        "tags": ["accountability"],
+        "project": "accountability",
+        "progress": 0,
+        "created_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "updated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "completed_at": None,
+    }
+    data["tasks"].append(task)
+    data["next_id"] = task_id + 1
+    save_todos(data)
+    return f"Added: {args.task} [{priority_str}, {section}]"
+
+
+def handle_todo_list(args):
+    """List all pending tasks, sorted by priority."""
+    data = load_todos()
+    priority_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "deferred": 4}
+    pending = [t for t in data["tasks"] if t.get("status") not in ("complete", "cancelled")]
+
+    if not pending:
+        return "No tasks on your list. Nice work, or time to add some."
+
+    # Group by section
+    sections = {"today": [], "this_week": [], "circle_back": []}
+    for t in sorted(pending, key=lambda t: priority_order.get(t.get("priority", "medium"), 2)):
+        sec = t.get("section", "this_week")
+        sections.setdefault(sec, []).append(t)
+
+    lines = ["YOUR TASKS:\n"]
+    for sec_name, sec_label in [("today", "TODAY"), ("this_week", "THIS WEEK"), ("circle_back", "CIRCLE BACK")]:
+        tasks = sections.get(sec_name, [])
+        if tasks:
+            lines.append(f"{sec_label}:")
+            for t in tasks:
+                tid = t.get("id", "?")
+                # Show short ID for readability
+                short_id = tid.replace("task_acc_", "#").replace("task_", "#")
+                title = t.get("title", t.get("text", "?"))
+                pri = t.get("priority", "")
+                lines.append(f"  {short_id} [{pri}] {title}")
+            lines.append("")
+
+    completed = [t for t in data["tasks"] if t.get("status") == "complete"]
+    if completed:
+        lines.append(f"Completed total: {len(completed)}")
+
+    return "\n".join(lines)
+
+
+def handle_todo_done(args):
+    """Mark a task as done."""
+    data = load_todos()
+    target_id = args.task_id
+    # Support both numeric and string IDs
+    search_ids = [
+        str(target_id),
+        f"task_acc_{target_id:03d}" if isinstance(target_id, int) else str(target_id),
+    ]
+
+    for t in data["tasks"]:
+        if t.get("id") in search_ids or str(t.get("id", "")).endswith(f"_{target_id:03d}" if isinstance(target_id, int) else str(target_id)):
+            if t.get("status") != "complete":
+                t["status"] = "complete"
+                t["section"] = "recently_done"
+                t["completed_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+                t["progress"] = 100
+                save_todos(data)
+                remaining = len([x for x in data["tasks"] if x.get("status") not in ("complete", "cancelled")])
+                title = t.get("title", t.get("text", "?"))
+                return f"Done: {title}\n{remaining} task(s) remaining."
+    return f"Task #{target_id} not found or already done."
+
+
+def handle_todo_remove(args):
+    """Remove a task entirely."""
+    data = load_todos()
+    target_id = args.task_id
+    original_len = len(data["tasks"])
+
+    data["tasks"] = [
+        t for t in data["tasks"]
+        if not (str(t.get("id", "")).endswith(f"_{target_id:03d}" if isinstance(target_id, int) else str(target_id))
+                or str(t.get("id")) == str(target_id))
+    ]
+
+    if len(data["tasks"]) < original_len:
+        save_todos(data)
+        return f"Removed task #{target_id}."
+    return f"Task #{target_id} not found."
+
+
+def get_pending_todos_summary():
+    """Get a brief summary of pending tasks for the morning briefing."""
+    try:
+        data = load_todos()
+        priority_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "deferred": 4}
+        pending = sorted(
+            [t for t in data["tasks"] if t.get("status") not in ("complete", "cancelled")],
+            key=lambda t: priority_order.get(t.get("priority", "medium"), 2),
+        )
+        if not pending:
+            return ""
+
+        # Show today's tasks first, then this_week
+        today_tasks = [t for t in pending if t.get("section") == "today"]
+        week_tasks = [t for t in pending if t.get("section") == "this_week"]
+
+        lines = []
+        show_tasks = today_tasks[:5] if today_tasks else week_tasks[:5]
+        for t in show_tasks:
+            title = t.get("title", t.get("text", "?"))
+            pri = t.get("priority", "")
+            lines.append(f"  [{pri}] {title}")
+
+        total_pending = len(pending)
+        if total_pending > 5:
+            lines.append(f"  ...and {total_pending - 5} more")
+        return "\n".join(lines)
+    except Exception:
+        return ""
 
 
 def main():
     parser = argparse.ArgumentParser(description="Accountability system handler")
     parser.add_argument("--type", required=True,
                         choices=["energy", "eod", "status", "goals", "training",
-                                 "note", "outreach_only", "fix", "parse"])
+                                 "note", "outreach_only", "fix", "parse",
+                                 "morning_briefing", "todo_add", "todo_list",
+                                 "todo_done", "todo_remove"])
     parser.add_argument("--value", type=int, help="Energy level 1-10")
     parser.add_argument("--outreach", type=int, default=0)
     parser.add_argument("--meetings", type=int, default=0)
@@ -458,6 +875,9 @@ def main():
     parser.add_argument("--field", type=str, default="")
     parser.add_argument("--fix-value", type=int, default=0)
     parser.add_argument("--text", type=str, default="", help="Raw message text for parse mode")
+    parser.add_argument("--task", type=str, default="", help="Task description for todo")
+    parser.add_argument("--task-id", type=int, default=0, help="Task number for done/remove")
+    parser.add_argument("--priority", type=int, default=0, help="Priority (1=highest)")
 
     args = parser.parse_args()
 
@@ -471,6 +891,11 @@ def main():
         "outreach_only": handle_outreach_only,
         "fix": handle_fix,
         "parse": handle_parse,
+        "morning_briefing": handle_morning_briefing,
+        "todo_add": handle_todo_add,
+        "todo_list": handle_todo_list,
+        "todo_done": handle_todo_done,
+        "todo_remove": handle_todo_remove,
     }
 
     try:
