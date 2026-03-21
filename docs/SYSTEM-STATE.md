@@ -48,7 +48,7 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 
 ---
 
-## n8n Workflows (38 active / 4 inactive)
+## n8n Workflows (41 active / 4 inactive)
 
 > Full inventory: `python scripts/backup-n8n.py --list`
 
@@ -117,6 +117,15 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 |----------|-----|---------|
 | Stripe-Payment-Failed | `QMWkhAb8SWMSImc4` | invoice.payment_failed → Telegram alert |
 | Stripe-Invoice-Paid | `unF3M3IfnGPqV0xU` | invoice.paid (renewals) → PT Tracker Sheets + Telegram |
+
+### Accountability System (90-Day Plan)
+| Workflow | ID | Purpose |
+|----------|-----|---------|
+| Morning-Accountability-Checkin | `XNrR99vPCUp89X8L` | 6:45am ET Mon-Fri → context-aware morning message with Sheets data |
+| EOD-Accountability-Checkin | `0Zf8nNv1AphA0W6s` | 7pm ET Mon-Fri → EOD prompt for outreach/meetings/videos/content |
+| Weekly-Accountability-Report | `krxeoSZMMPBZGAPv` | 7pm ET Sunday → full weekly scorecard with totals vs targets |
+
+**Reply handling**: Clawdbot runs `execution/accountability_handler.py --type parse --text "MESSAGE"` for all accountability patterns. Logs to Scorecard Sheet (`1Y5PwloUBbHM8AeiL032_zWy9jjo9vwhyRZkl7qaKw5o`). Milestone checking built into EOD handler.
 
 ### Other Active
 | Workflow | ID | Purpose |
