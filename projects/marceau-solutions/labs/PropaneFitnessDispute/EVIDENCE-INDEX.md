@@ -1,7 +1,7 @@
 # Propane Fitness Dispute — Master Evidence Index
 
-**Generated:** March 16, 2026 at 07:51 AM | **Updated:** March 16, 2026 at 12:30 PM
-**Total emails exported:** 38 (+3 new emails pending export)
+**Generated:** March 20, 2026 at 07:48 AM
+**Total emails exported:** 50
 
 ---
 
@@ -47,9 +47,18 @@
 | 36 | 2026-03-14 10:38 | Propane | People buy with emotion and justify with logic | `emails/36_2026-03-14_1038_from-propane_People-buy-with-emotion-and-justify-with.pdf` |
 | 37 | 2026-03-15 15:35 | Propane | Propane Support Genie 🤖 sent you a message on Prop | `emails/37_2026-03-15_1535_from-propane_Propane-Support-Genie-sent-you-a-message.pdf` |
 | 38 | 2026-03-16 10:00 | Coaching Team | Re: Formal Refund Request — Propane Business Mento | `emails/38_2026-03-16_1000_from-propane_Re-Formal-Refund-Request-Propane-Busines.pdf` |
-| 39 | 2026-03-16 12:08 | William Marceau | Re: Formal Refund Request — Declined withdrawal | `emails/39_2026-03-16_1208_from-william_Re-Formal-Refund-Request-Propane-Busines.pdf` |
-| 40 | 2026-03-16 12:28 | Propane Business (admin@) | Re: Formal Refund Request — Section 7.5 threat, collections threat, refund form link | `emails/40_2026-03-16_1228_from-propane_Re-Formal-Refund-Request-Propane-Busines.pdf` |
-| 41 | 2026-03-16 TBD | William Marceau | Re: Formal Refund Request — Rebuttal to Section 7.5 + collections threat | `emails/41_2026-03-16_TBD_from-william_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 39 | 2026-03-16 08:08 | William Marceau | Re: Formal Refund Request — Propane Business Mento | `emails/39_2026-03-16_0808_from-william_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 40 | 2026-03-16 12:28 | Propane Business | Re: Formal Refund Request — Propane Business Mento | `emails/40_2026-03-16_1228_from-propane_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 41 | 2026-03-16 08:35 | William Marceau | Re: Formal Refund Request — Propane Business Mento | `emails/41_2026-03-16_0835_from-william_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 42 | 2026-03-16 14:50 | Propane | Re: Formal Refund Request — Propane Business Mento | `emails/42_2026-03-16_1450_from-propane_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 43 | 2026-03-16 11:15 | William Marceau | Re: Formal Refund Request — Propane Business Mento | `emails/43_2026-03-16_1115_from-william_Re-Formal-Refund-Request-Propane-Busines.pdf` |
+| 44 | 2026-03-16 10:39 | Propane | Taking notes | `emails/44_2026-03-16_1039_from-propane_Taking-notes.pdf` |
+| 45 | 2026-03-16 16:06 | Jonny Watson | Want to get roasted this month? | `emails/45_2026-03-16_1606_from-propane_Want-to-get-roasted-this-month.pdf` |
+| 46 | 2026-03-17 15:35 | Propane | Propane Support Genie 🤖 sent you a message on Prop | `emails/46_2026-03-17_1535_from-propane_Propane-Support-Genie-sent-you-a-message.pdf` |
+| 47 | 2026-03-19 14:00 | Google Calendar | Notification: PROPANE DISPUTE: Final deadline — ch | `emails/47_2026-03-19_1400_from-other_Notification-PROPANE-DISPUTE-Final-deadl.pdf` |
+| 48 | 2026-03-19 15:35 | Propane | Propane Support Genie 🤖 sent you a message on Prop | `emails/48_2026-03-19_1535_from-propane_Propane-Support-Genie-sent-you-a-message.pdf` |
+| 49 | 2026-03-19 18:46 | Propane | Jonny Simpson sent you a message on Propane | `emails/49_2026-03-19_1846_from-propane_Jonny-Simpson-sent-you-a-message-on-Prop.pdf` |
+| 50 | 2026-03-19 19:22 | Propane | This week on Propane: March 12 - March 19, 2026 | `emails/50_2026-03-19_1922_from-propane_This-week-on-Propane-March-12---March-19.pdf` |
 
 ---
 
@@ -72,17 +81,6 @@
 | `Terms of Use.pdf` | Manually saved | — |
 | `propane-dispute-evidence-package.pdf` | Manually saved | — |
 | `propane-filing-instructions.pdf` | Manually saved | — |
-
-## Website Screenshots & Captures (March 16, 2026)
-
-| File | Description | Critical Finding |
-|------|-------------|-----------------|
-| `evidence/tally-refund-form-screenshot.pdf` | PDF capture of tally.so/r/mOXkyR refund form | Form is a "Proof of Work" requiring 2 weeks modules, 2 hotseat calls, lead gen — impossible on Day 4. **Contains NON-DISPARAGEMENT / GAG CLAUSE.** |
-| `evidence/tally-refund-form.html` | Raw HTML of tally.so form (backup) | Full page source |
-| `evidence/tally-refund-form-extracted.md` | Field-by-field extraction of every form question | Analysis of why form is impossible to complete + gag clause significance |
-| `evidence/propane-terms-screenshot.pdf` | PDF capture of propane-business.com/terms | Full terms as of March 16, 2026 |
-| `evidence/propane-terms.html` | Raw HTML of terms page (backup) | Full page source |
-| `evidence/propane-terms-extracted.md` | Verbatim extraction of Sections 7, 11, 12 with annotations | Key contradictions (7.5 vs 12.5 Exceptions) documented |
 
 ## Circle.so Messages (Screenshots)
 
@@ -112,23 +110,5 @@ PropaneFitnessDispute/
 
 - **DO NOT respond to Phil in Circle** — redirect all communication to email
 - **Screenshot propane-business.com/terms TODAY** before they modify it
-- **Chargebacks FILED March 14** on both Amex cards — do NOT withdraw under any circumstances
+- **File both Amex chargebacks** using docs/propane-chargeback-letters.md narratives
 - Phil's Circle outreach (March 12) is a tactic to get you to re-engage and weaken the dispute
-- **March 16 12:28 — ESCALATION:** Propane sent Section 7.5 breach-of-contract threat + collections agency threat. This is intimidation, not law. Their own Section 12.5 Exceptions acknowledges statutory rights (including chargebacks) cannot be waived.
-- **Refund form finally provided** (tally.so/r/mOXkyR) on March 16 — 10 days after first formal request on March 6, directly violating Section 7.4
-- **tally.so refund form CAPTURED** — HTML, PDF, and field-by-field extraction saved to `evidence/`
-- **propane-business.com/terms CAPTURED** — HTML, PDF, and key sections extracted to `evidence/`
-- **GAG CLAUSE DISCOVERED** — Refund form requires agreement to non-disparagement clause (no reviews, no sharing). This is evidence of suppressing consumer feedback.
-- **March 16 13:50 — ADMISSION:** Propane wrote "because your request was initiated within the 14-day window, there is a clear and valid route for you to obtain a full refund." Written concession of timely request.
-- **March 16 13:50 — BLAME SHIFT:** Propane claims delays were cardholder's fault for emailing Jim instead of Phil. Rebutted by: admin@ CC'd on every email, Phil's voicemail proves admin failed to escalate, Phil assigned only 1 day before refund request.
-- **DO NOT SEND MORE EMAILS** — Go silent. Last sent email (Section 7.5 rebuttal) is the final word. Rebuttals happen in the Amex evidence package, not in email with Propane.
-- **HOLD regulatory complaints** — Do not file Trading Standards/CMA yet. Use as leverage if chargebacks are contested. File only if Amex rules against or needs re-review.
-
-## Generated Documents (in `docs/`)
-
-| Document | Description | Generated |
-|----------|-------------|-----------|
-| `propane-final-evidence-package.pdf` | Original evidence package (Sections 1-10) | March 14, 2026 |
-| `propane-updated-evidence-package.pdf` | Updated with Mar 13-16 correspondence + dispute defense strategy | March 16, 2026 |
-| `propane-chargeback-action-plan.pdf` | Filing instructions, phone script, verbiage strategy | March 13, 2026 |
-| `propane-regulatory-complaints-guide.pdf` | UK Trading Standards / CMA escalation guide | March 14, 2026 |

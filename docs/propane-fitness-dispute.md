@@ -276,4 +276,121 @@ wmarceau@marceausolutions.com
 
 ---
 
-*Document prepared March 6, 2026. All email timestamps verified from wmarceau@marceausolutions.com inbox.*
+## POST-CHARGEBACK DEVELOPMENTS (March 14–20, 2026)
+
+*Chargebacks were filed on March 14, 2026 after Propane failed to respond substantively to 4 formal refund requests over 8 days.*
+
+---
+
+### Phase 1: Propane's Response to Chargebacks (March 16)
+
+#### Email from Phil (coach@propanefitness.com) — March 16, 10:00
+Phil asked William to confirm whether chargebacks had been filed, stating Propane "would be unable to proceed with our standard refund process until the dispute is resolved" and demanding William **withdraw the chargebacks first** before any refund review.
+
+#### William's Response — March 16, 08:08
+Refused to withdraw. Stated: "A full refund of £6,300 to the original payment methods will close this matter immediately, and I will withdraw the disputes upon confirmation that the refund has been processed."
+
+#### Email from Admin (admin@propanefitness.com) — March 16, 12:28
+Propane sent the refund form (https://tally.so/r/mOXkyR) — **10 days and 8 formal emails** after the first request — but immediately:
+- Threatened **Section 7.5 breach of contract** for filing chargebacks
+- Threatened **collections agency** for full £6,300 + legal costs + court fees
+- Presented two options: (1) withdraw chargebacks and fill out form, or (2) face collections
+
+#### William's Response — March 16, 08:35
+Systematically rebutted every point:
+1. **Section 7.5 cannot override statutory rights** — Propane's own Section 12.5 acknowledges the right to seek remedies through external channels
+2. **Propane breached first** — failed to deliver 1-on-1 coaching as written, failed to provide refund form, failed to respond within 7 days (Section 12.5), failed to honour 14-day refund policy (Section 7.1)
+3. **"Assess eligibility" is not a refund commitment** — the form requires withdrawing chargeback protections with no guarantee of refund
+4. **Collections threat is retaliatory** — a party in material breach cannot invoke contract protections
+
+#### Email from Admin — March 16, 14:50
+Propane responded by:
+- **Blaming William** for emailing Jim instead of Phil (despite admin@ being CC'd on all emails)
+- Reiterating the refund form link and the two options
+- Acknowledging William's statutory right to chargeback but claiming it "constitutes an attempt to bypass our policy"
+
+#### William's Final Response — March 16, 11:15
+Demolished the "wrong person" argument:
+- Jim Galvin conducted the sale, quoted pricing, sent payment links, and collected £6,300 — contacting him was reasonable
+- admin@propanefitness.com was CC'd on every formal email (March 6, 7, 12, 13) — this IS the "official admin email" per Section 7.2
+- Phil was assigned ~March 4-5; first refund request was March 6 (one day later)
+- Phil himself admitted in his March 14 voicemail he was "completely unaware" of the dispute
+- Jim deliberately removed admin@propanefitness.com from the CC on his March 14 reply — undermining Propane's own internal routing
+
+---
+
+### Phase 2: Circle.so Engagement Manufacturing (March 15–19)
+
+**CRITICAL: After chargebacks were filed, Propane began manufacturing evidence of ongoing "service delivery" through their Circle.so community platform.**
+
+#### Automated "Support Genie" Bot Messages
+These are automated drip sequences sent via Circle.so notification emails, designed to make it appear William is still receiving the service:
+
+| Date | Subject | Content |
+|------|---------|---------|
+| Mar 15 | Propane Support Genie sent you a message | "Your pipeline: getting your offer in front of the right people, on repeat" |
+| Mar 17 | Propane Support Genie sent you a message | "Hopefully you had a chance to go through the 'start here' section?" |
+| Mar 19 | Propane Support Genie sent you a message | "Quick checklist to help you create videos, ads and landing pages" |
+
+**These are generic bot messages, not personalised coaching.** They are part of an automated onboarding sequence that Propane has not disabled despite the active dispute. Every email says "Please reply to this message in the community" — designed to generate engagement that can be cited as "service usage."
+
+#### NEW Customer Success Manager Assignment — March 19, 18:46
+**Five days after chargebacks were filed**, Propane assigned a new person — **Jonny Simpson** — as William's "CSM" (Customer Success Manager) and started a group chat:
+
+> "Hey William, welcome to your private coaching thread. I'll be working closely with you as your CSM"
+
+This is a transparent attempt to create a paper trail of "service delivery" to present to Amex during the chargeback review. William never requested a CSM, never engaged with this thread, and was already in a formal refund/chargeback dispute at the time of assignment.
+
+#### Marketing Emails Still Flowing
+- **Mar 16** — "Taking notes" (Yusef, onboarding drip)
+- **Mar 16** — "Want to get roasted this month?" (Jonny Watson, workshop invite for Mar 26)
+- **Mar 19** — "This week on Propane" (weekly community digest)
+
+These continue to arrive despite the active dispute, contributing to the manufactured appearance of an active membership.
+
+---
+
+### Phase 3: Analysis of Propane's Post-Chargeback Strategy
+
+Propane is running a coordinated three-part strategy:
+
+1. **Intimidation** — Threatening collections, legal costs, and Section 7.5 breach of contract to pressure William into withdrawing chargebacks and submitting to a "refund review" process with no guaranteed outcome.
+
+2. **Evidence Manufacturing** — Keeping automated Circle.so messages active, assigning a new CSM, and sending marketing/workshop invitations to create a paper trail of "ongoing service delivery" for the chargeback dispute with Amex.
+
+3. **Blame-Shifting** — Claiming William contacted the wrong person (despite admin@ being CC'd on every email) to excuse their own 8-day non-response and undermine the timeline argument.
+
+**Key Counterpoints for Amex:**
+- William has not logged into Circle.so, attended any session, or responded to any Circle message since filing the refund request on March 6
+- The "Support Genie" messages are automated bot drip sequences, not personalised coaching
+- The CSM assignment on March 19 occurred 5 days after chargebacks were filed — a transparent tactic
+- William explicitly stated all communication must be via email (March 14 email), yet Propane continues using Circle.so — an informal platform with no audit trail
+- Propane's refund form requires withdrawing chargeback protections first, with only a promise to "assess eligibility" — not a commitment to refund
+
+---
+
+### Updated Key Facts (as of March 20, 2026)
+
+| # | Fact | Evidence |
+|---|------|----------|
+| 1 | Pricing misrepresented on call | Jim's own email (15:18, Mar 2) contradicts verbal quotes |
+| 2 | Payment rushed in 22 minutes | Email timestamps: 15:18 → 15:40 |
+| 3 | Terms signed 3 days after payment | JotForm invoice dated Mar 5; payment collected Mar 2 |
+| 4 | Immediate access not delivered | Jim's email promised it; took 1 day to resolve |
+| 5 | USD equivalent never disclosed | No email mentions USD amount or FX fees |
+| 6 | Foreign transaction fees: $229.82 | Amex statements confirm |
+| 7 | 8 formal emails over 8 days before chargeback | Mar 6, 7, 12, 13 (to jim@ and admin@) |
+| 8 | Refund form withheld for 10 days | First requested Mar 12; form sent Mar 16 |
+| 9 | Phil "completely unaware" after 8 days | His own voicemail, Mar 14 |
+| 10 | Jim removed admin@ from CC | Mar 14 reply — undermined Propane's own routing |
+| 11 | Circle bot messages still active post-dispute | Mar 15, 17, 19 — automated, not coaching |
+| 12 | New CSM assigned 5 days after chargeback | Jonny Simpson, Mar 19 — evidence manufacturing |
+| 13 | Section 7.5 does not override statutory rights | Propane's own Section 12.5 acknowledges external remedies |
+| 14 | Propane breached contract first | Failed on 1-on-1 coaching, refund form, 7-day response, 14-day policy |
+
+### Total Email Evidence: 50 emails exported
+Full archive: `projects/marceau-solutions/labs/PropaneFitnessDispute/emails/`
+
+---
+
+*Document updated March 20, 2026. All email timestamps verified from wmarceau@marceausolutions.com inbox via Gmail API.*
