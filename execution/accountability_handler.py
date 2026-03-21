@@ -26,6 +26,13 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
+try:
+    import stripe as stripe_lib
+    stripe_lib.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+    HAS_STRIPE = bool(stripe_lib.api_key)
+except ImportError:
+    HAS_STRIPE = False
+
 # Add project root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -182,7 +189,7 @@ def read_tab(service, tab_name):
     result = (
         service.spreadsheets()
         .values()
-        .get(spreadsheetId=SCORECARD_SHEET_ID, range=f"{tab_name}!A:K")
+        .get(spreadsheetId=SCORECARD_SHEET_ID, range=f"{tab_name}!A:O")
         .execute()
     )
     rows = result.get("values", [])
@@ -196,7 +203,7 @@ def append_row(service, tab_name, values):
     """Append a row to a tab."""
     service.spreadsheets().values().append(
         spreadsheetId=SCORECARD_SHEET_ID,
-        range=f"{tab_name}!A:K",
+        range=f"{tab_name}!A:O",
         valueInputOption="USER_ENTERED",
         body={"values": [values]},
     ).execute()
@@ -221,11 +228,41 @@ def find_today_row(rows, today):
 
 
 # Column letter mapping for Daily Log
+# Columns L-O are new integrations added 2026-03-21
 COL_MAP = {
     "Date": "A", "Day_Number": "B", "Week_Number": "C", "Day_of_Week": "D",
     "Morning_Energy": "E", "Outreach_Count": "F", "Meetings_Booked": "G",
     "Videos_Filmed": "H", "Content_Posted": "I", "Training_Session": "J", "Notes": "K",
+    "Pain_Level": "L", "Sleep_Quality": "M", "Training_Details": "N", "MRR_Snapshot": "O",
 }
+
+
+def get_stripe_mrr():
+    """Fetch current MRR from active Stripe subscriptions."""
+    if not HAS_STRIPE:
+        return None
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(Path(__file__).parent.parent / ".env")
+        stripe_lib.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+        if not stripe_lib.api_key:
+            return None
+
+        subs = stripe_lib.Subscription.list(status="active", limit=100)
+        mrr_cents = 0
+        for sub in subs.auto_paging_iter():
+            for item in sub["items"]["data"]:
+                amount = item["price"]["unit_amount"] or 0
+                interval = item["price"]["recurring"]["interval"]
+                if interval == "year":
+                    mrr_cents += amount / 12
+                elif interval == "month":
+                    mrr_cents += amount
+                elif interval == "week":
+                    mrr_cents += amount * 4.33
+        return round(mrr_cents / 100, 2)
+    except Exception:
+        return None
 
 
 def handle_energy(args):
@@ -239,11 +276,30 @@ def handle_energy(args):
     else:
         append_row(service, "Daily Log", [
             ctx["today"], ctx["day_number"], ctx["week_number"],
-            ctx["day_of_week"], args.value, "", "", "", "", "", ""
+            ctx["day_of_week"], args.value, "", "", "", "", "", "",
+            "", "", "", ""
         ])
 
     energy = args.value
-    if energy >= 8:
+    # Check if pain was already logged today — make response health-aware
+    pain_today = None
+    if existing:
+        pain_today = existing.get("Pain_Level", "")
+        if pain_today:
+            try:
+                pain_today = int(pain_today)
+            except (ValueError, TypeError):
+                pain_today = None
+
+    if pain_today and pain_today >= 7:
+        # High pain day — adjust expectations
+        if energy >= 5:
+            return (f"Energy {energy} with pain at {pain_today} — you're pushing through. "
+                    f"Focus on what you can control. Even 30 outreach is a win today.")
+        else:
+            return (f"Energy {energy}, pain {pain_today}. Rough day. "
+                    f"Do what you can without making it worse. Rest is productive too.")
+    elif energy >= 8:
         return "High energy day. Channel it into outreach volume."
     elif energy >= 5:
         return "Solid. Execute the fundamentals today."
@@ -251,6 +307,73 @@ def handle_energy(args):
         return "Low energy. Do the minimum: 50 outreach, 1 video. Rest is legit."
     else:
         return "Rough day. Do what you can. Even 10 outreach messages is forward progress."
+
+
+def handle_pain(args):
+    """Log pain level (1-10) for dystonia tracking."""
+    ctx = get_context()
+    service = get_sheets_service()
+    rows = read_tab(service, "Daily Log")
+    existing, row_idx = find_today_row(rows, ctx["today"])
+
+    pain = args.pain_value
+
+    if existing:
+        update_cell(service, "Daily Log", row_idx, COL_MAP["Pain_Level"], pain)
+    else:
+        append_row(service, "Daily Log", [
+            ctx["today"], ctx["day_number"], ctx["week_number"],
+            ctx["day_of_week"], "", "", "", "", "", "", "",
+            pain, "", "", ""
+        ])
+
+    # Calculate recent pain trend
+    recent = rows[-7:] if len(rows) >= 7 else rows
+    recent_pain = [int(r.get("Pain_Level", 0)) for r in recent if r.get("Pain_Level")]
+    avg_pain = round(sum(recent_pain) / len(recent_pain), 1) if recent_pain else None
+
+    if pain >= 8:
+        response = (f"Pain {pain}/10. Bad day. Prioritize rest and pain management. "
+                    f"Outreach can wait — your health can't.")
+    elif pain >= 6:
+        response = (f"Pain {pain}/10. Moderate-high. Lighter day — "
+                    f"do what you can without pushing through pain that'll compound tomorrow.")
+    elif pain >= 4:
+        response = f"Pain {pain}/10. Manageable. Execute the plan."
+    else:
+        response = f"Pain {pain}/10. Good day — take advantage of it."
+
+    if avg_pain is not None:
+        trend = "↑" if pain > avg_pain else "↓" if pain < avg_pain else "→"
+        response += f"\n7-day avg: {avg_pain} {trend}"
+
+    return response
+
+
+def handle_sleep(args):
+    """Log sleep quality (1-10)."""
+    ctx = get_context()
+    service = get_sheets_service()
+    rows = read_tab(service, "Daily Log")
+    existing, row_idx = find_today_row(rows, ctx["today"])
+
+    sleep = args.sleep_value
+
+    if existing:
+        update_cell(service, "Daily Log", row_idx, COL_MAP["Sleep_Quality"], sleep)
+    else:
+        append_row(service, "Daily Log", [
+            ctx["today"], ctx["day_number"], ctx["week_number"],
+            ctx["day_of_week"], "", "", "", "", "", "", "",
+            "", sleep, "", ""
+        ])
+
+    if sleep >= 8:
+        return f"Sleep {sleep}/10. Well rested — make it count."
+    elif sleep >= 5:
+        return f"Sleep {sleep}/10. Decent. Execute."
+    else:
+        return f"Sleep {sleep}/10. Rough night. Caffeine, light exposure, keep it simple today."
 
 
 def handle_eod(args):
@@ -282,26 +405,50 @@ def handle_eod(args):
     # Check milestones
     milestone_msg = check_milestones(service, rows, outreach, meetings)
 
-    if outreach >= 120:
+    # Calculate conversion rate
+    total_outreach = sum(int(r.get("Outreach_Count") or 0) for r in rows) + outreach
+    total_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in rows) + meetings
+    conversion_pct = round((total_meetings / total_outreach * 100), 2) if total_outreach > 0 else 0
+
+    # Check today's pain level for health-aware response
+    existing_row, _ = find_today_row(rows, ctx["today"])
+    pain_today = None
+    if existing_row:
+        try:
+            pain_today = int(existing_row.get("Pain_Level") or 0)
+        except (ValueError, TypeError):
+            pain_today = None
+
+    if pain_today and pain_today >= 7 and outreach > 0:
+        # High pain day — celebrate whatever they did
+        response = (
+            f"Pain day and you still put in {outreach} outreach. That's discipline.\n"
+            f"{meetings} meeting(s), {videos} video(s), {content} content.\n"
+            f"Weekly total: {weekly_outreach}/500.\n"
+            f"Conversion rate: {conversion_pct}% ({total_meetings} meetings / {total_outreach} outreach)"
+        )
+    elif outreach >= 120:
         response = (
             f"{outreach} outreach — ABOVE TARGET.\n"
             f"This is how you build momentum.\n"
             f'"Simple scales. Fancy fails." — Hormozi\n'
-            f"Weekly total: {weekly_outreach}/500."
+            f"Weekly total: {weekly_outreach}/500.\n"
+            f"Conversion rate: {conversion_pct}% ({total_meetings}/{total_outreach})"
         )
     elif outreach >= 100:
         response = (
             f"Logged. {outreach} outreach (target: 100) — solid.\n"
             f"{meetings} meeting(s) booked. {videos} video(s) filmed.\n"
             f"Running total this week: {weekly_outreach}/500.\n"
-            f"Keep going."
+            f"Conversion rate: {conversion_pct}%"
         )
     elif outreach > 0:
         shortfall = 100 - outreach
         response = (
             f"Logged. {outreach} outreach (target: 100) — {shortfall} short.\n"
             f"Volume solves all problems. Tomorrow: make up the gap.\n"
-            f"Weekly total: {weekly_outreach}/500."
+            f"Weekly total: {weekly_outreach}/500.\n"
+            f"Conversion rate: {conversion_pct}%"
         )
     else:
         response = (
@@ -370,12 +517,36 @@ def handle_status(args):
     wm = sum(int(r.get("Meetings_Booked") or 0) for r in this_week)
     wv = sum(int(r.get("Videos_Filmed") or 0) for r in this_week)
 
+    # New metrics
+    wt = sum(1 for r in this_week if r.get("Training_Session") == "TRUE")
+    total_outreach = sum(int(r.get("Outreach_Count") or 0) for r in rows)
+    total_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in rows)
+    conversion = round((total_meetings / total_outreach * 100), 2) if total_outreach > 0 else 0
+
+    # Pain/sleep averages
+    recent = rows[-7:] if len(rows) >= 7 else rows
+    recent_pain = [int(r.get("Pain_Level", 0)) for r in recent if r.get("Pain_Level")]
+    avg_pain = round(sum(recent_pain) / len(recent_pain), 1) if recent_pain else "—"
+    recent_sleep = [int(r.get("Sleep_Quality", 0)) for r in recent if r.get("Sleep_Quality")]
+    avg_sleep = round(sum(recent_sleep) / len(recent_sleep), 1) if recent_sleep else "—"
+
+    # MRR
+    mrr = get_stripe_mrr()
+    mrr_str = f"${mrr:,.0f}" if mrr else "—"
+
     return (
         f"Day {ctx['day_number']}/90 | Week {ctx['week_number']}/12\n\n"
-        f"This week so far:\n"
+        f"REVENUE: {mrr_str} / $3,000 MRR\n\n"
+        f"This week:\n"
         f"  Outreach: {wo} / 500\n"
         f"  Meetings: {wm} / 3-5\n"
-        f"  Videos: {wv} / 2\n\n"
+        f"  Videos: {wv} / 2\n"
+        f"  Training: {wt} / 5\n\n"
+        f"All-time:\n"
+        f"  Conversion: {conversion}% ({total_meetings} meetings / {total_outreach} outreach)\n\n"
+        f"Health (7-day avg):\n"
+        f"  Pain: {avg_pain}/10\n"
+        f"  Sleep: {avg_sleep}/10\n\n"
         f"90-day progress:\n"
         f"  Clients: {goals[0].get('Current', '0') if goals else '0'} / {goals[0].get('Target', '3') if goals else '3'}\n"
         f"  YouTube: {goals[1].get('Current', '0') if goals else '0'} / {goals[1].get('Target', '500') if goals else '500'}\n\n"
@@ -401,17 +572,33 @@ def handle_training(args):
     rows = read_tab(service, "Daily Log")
     existing, row_idx = find_today_row(rows, ctx["today"])
 
+    # Check for training details (e.g., "trained — push day, bench 225 3x5")
+    details = getattr(args, "training_details", "") or ""
+
     if existing:
         update_cell(service, "Daily Log", row_idx, COL_MAP["Training_Session"], "TRUE")
+        if details:
+            update_cell(service, "Daily Log", row_idx, COL_MAP["Training_Details"], details)
     else:
         append_row(service, "Daily Log", [
             ctx["today"], ctx["day_number"], ctx["week_number"],
-            ctx["day_of_week"], "", "", "", "", "", "TRUE", ""
+            ctx["day_of_week"], "", "", "", "", "", "TRUE", "",
+            "", "", details, ""
         ])
 
     this_week = [r for r in rows if r.get("Week_Number") == str(ctx["week_number"])]
     train_count = sum(1 for r in this_week if r.get("Training_Session") == "TRUE") + 1
-    return f"Training logged. {train_count}/5 this week."
+
+    response = f"Training logged. {train_count}/5 this week."
+    if details:
+        response += f"\nDetails: {details}"
+
+    # Show weekly training summary
+    week_details = [r.get("Training_Details", "") for r in this_week if r.get("Training_Session") == "TRUE" and r.get("Training_Details")]
+    if week_details:
+        response += f"\nThis week's sessions: {', '.join(week_details)}"
+
+    return response
 
 
 def handle_note(args):
@@ -460,11 +647,13 @@ def handle_fix(args):
         "videos": "Videos_Filmed",
         "content": "Content_Posted",
         "energy": "Morning_Energy",
+        "pain": "Pain_Level",
+        "sleep": "Sleep_Quality",
     }
 
     col_name = field_map.get(args.field)
     if not col_name:
-        return f"Unknown field: {args.field}. Use: outreach, meetings, videos, content, energy."
+        return f"Unknown field: {args.field}. Use: outreach, meetings, videos, content, energy, pain, sleep."
 
     if existing:
         update_cell(service, "Daily Log", row_idx, COL_MAP[col_name], args.fix_value)
@@ -514,9 +703,28 @@ def handle_parse(args):
         args.note = m.group(1).strip()
         return handle_note(args)
 
-    # Training
+    # Pain level: "pain 7" or "pain: 7" or "pain level 7"
+    m = re.match(r"^\s*pain\s*:?\s*(?:level\s*:?\s*)?([1-9]|10)\s*$", text, re.I)
+    if m:
+        args.pain_value = int(m.group(1))
+        return handle_pain(args)
+
+    # Sleep quality: "sleep 7" or "sleep: 8" or "slept 6"
+    m = re.match(r"^\s*(?:sleep|slept)\s*:?\s*(?:quality\s*:?\s*)?([1-9]|10)\s*$", text, re.I)
+    if m:
+        args.sleep_value = int(m.group(1))
+        return handle_sleep(args)
+
+    # Training with details: "trained — push day, bench 225 3x5" or "gym done — legs"
+    m = re.match(r"^\s*(trained|trained today|workout done|gym done|session done)\s*[-—:]\s*(.+)$", text, re.I)
+    if m:
+        args.training_details = m.group(2).strip()
+        return handle_training(args)
+
+    # Training (simple)
     m = re.match(r"^\s*(trained|trained today|workout done|gym done|session done)\s*$", text, re.I)
     if m:
+        args.training_details = ""
         return handle_training(args)
 
     # Fix/correct
@@ -583,9 +791,49 @@ def handle_morning_briefing(args):
 
     total_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in rows)
 
+    # Stripe MRR
+    mrr = get_stripe_mrr()
+    mrr_str = f"${mrr:,.0f}" if mrr else "—"
+
+    # Yesterday's pain (for trend awareness)
+    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday_row, _ = find_today_row(rows, yesterday)
+    yesterday_pain = None
+    if yesterday_row:
+        try:
+            yesterday_pain = int(yesterday_row.get("Pain_Level") or 0)
+        except (ValueError, TypeError):
+            yesterday_pain = None
+
+    # Recent pain average (7 days)
+    recent = rows[-7:] if len(rows) >= 7 else rows
+    recent_pain = [int(r.get("Pain_Level", 0)) for r in recent if r.get("Pain_Level")]
+    avg_pain = round(sum(recent_pain) / len(recent_pain), 1) if recent_pain else None
+
+    # Recent sleep average
+    recent_sleep = [int(r.get("Sleep_Quality", 0)) for r in recent if r.get("Sleep_Quality")]
+    avg_sleep = round(sum(recent_sleep) / len(recent_sleep), 1) if recent_sleep else None
+
+    # Training this week
+    training_this_week = sum(1 for r in this_week if r.get("Training_Session") == "TRUE")
+
+    # Cumulative conversion rate
+    all_outreach = sum(int(r.get("Outreach_Count") or 0) for r in rows)
+    all_meetings_total = sum(int(r.get("Meetings_Booked") or 0) for r in rows)
+    conversion = round((all_meetings_total / all_outreach * 100), 2) if all_outreach > 0 else 0
+
     # Build header
-    header = f"Day {ctx['day_number']}/90 · Week {ctx['week_number']}/12"
+    header = f"Day {ctx['day_number']}/90 · Week {ctx['week_number']}/12 · MRR: {mrr_str}/$3,000"
     parts = [header]
+
+    # Log MRR snapshot
+    if mrr is not None:
+        existing_today, today_row_idx = find_today_row(rows, ctx["today"])
+        if existing_today and today_row_idx:
+            try:
+                update_cell(service, "Daily Log", today_row_idx, COL_MAP["MRR_Snapshot"], mrr)
+            except Exception:
+                pass
 
     # Calendar section
     calendar_text = get_todays_events()
@@ -636,12 +884,28 @@ def handle_morning_briefing(args):
             f"  Videos: {weekly_videos}/2"
         )
 
+    # Health metrics section
+    health_parts = []
+    if avg_pain is not None:
+        health_parts.append(f"Pain avg (7d): {avg_pain}/10")
+        if yesterday_pain and yesterday_pain >= 7:
+            health_parts.append(f"Yesterday's pain was {yesterday_pain} — take it easy if needed")
+    if avg_sleep is not None:
+        health_parts.append(f"Sleep avg (7d): {avg_sleep}/10")
+    if training_this_week > 0:
+        health_parts.append(f"Training: {training_this_week}/5 this week")
+    if conversion > 0:
+        health_parts.append(f"Conversion rate: {conversion}% ({all_meetings_total} meetings / {all_outreach} outreach)")
+
+    if health_parts:
+        parts.append(f"\nMETRICS:\n  " + "\n  ".join(health_parts))
+
     # Tasks section
     tasks_summary = get_pending_todos_summary()
     if tasks_summary:
         parts.append(f"\nTASKS:\n{tasks_summary}")
 
-    parts.append(f"\nWhat's your energy level? (1-10)")
+    parts.append(f"\nPain level? (1-10)  ·  Sleep quality? (1-10)  ·  Energy? (1-10)")
 
     return "\n".join(parts)
 
@@ -864,8 +1128,8 @@ def main():
     parser.add_argument("--type", required=True,
                         choices=["energy", "eod", "status", "goals", "training",
                                  "note", "outreach_only", "fix", "parse",
-                                 "morning_briefing", "todo_add", "todo_list",
-                                 "todo_done", "todo_remove"])
+                                 "morning_briefing", "pain", "sleep",
+                                 "todo_add", "todo_list", "todo_done", "todo_remove"])
     parser.add_argument("--value", type=int, help="Energy level 1-10")
     parser.add_argument("--outreach", type=int, default=0)
     parser.add_argument("--meetings", type=int, default=0)
@@ -877,6 +1141,9 @@ def main():
     parser.add_argument("--text", type=str, default="", help="Raw message text for parse mode")
     parser.add_argument("--task", type=str, default="", help="Task description for todo")
     parser.add_argument("--task-id", type=int, default=0, help="Task number for done/remove")
+    parser.add_argument("--pain-value", type=int, default=0, help="Pain level 1-10")
+    parser.add_argument("--sleep-value", type=int, default=0, help="Sleep quality 1-10")
+    parser.add_argument("--training-details", type=str, default="", help="Training session details")
     parser.add_argument("--priority", type=int, default=0, help="Priority (1=highest)")
 
     args = parser.parse_args()
@@ -892,6 +1159,8 @@ def main():
         "fix": handle_fix,
         "parse": handle_parse,
         "morning_briefing": handle_morning_briefing,
+        "pain": handle_pain,
+        "sleep": handle_sleep,
         "todo_add": handle_todo_add,
         "todo_list": handle_todo_list,
         "todo_done": handle_todo_done,
