@@ -4,6 +4,50 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-21: Accountability System Deployment + PDF Organization — Session 13
+
+**Context:** Built out the complete accountability system that had been fully spec'd but never deployed (E11 violation). Also organized all generated PDFs with auto-routing.
+
+**Accountability System — Fully Deployed:**
+- **Morning-Accountability-Checkin** (`XNrR99vPCUp89X8L`): 5:00am ET Mon-Sat. Calls `execution/accountability_handler.py --type morning_briefing` via agent bridge. Includes Google Calendar events, pending tasks (from FitAI tasks.json), weekly metrics, day-specific focus.
+- **EOD-Accountability-Checkin** (`0Zf8nNv1AphA0W6s`): 7pm ET Mon-Fri. Sends EOD prompt.
+- **Weekly-Accountability-Report** (`krxeoSZMMPBZGAPv`): 7pm ET Sunday. Full scorecard with totals vs targets from Sheets, auto-detects win/focus areas, writes to Weekly Summary tab.
+- **Reply Handler**: Clawdbot's SOUL.md updated with accountability parsing instructions. Runs `execution/accountability_handler.py --type parse --text "MESSAGE"` for pattern detection.
+- **Milestone Checking**: Built into EOD handler — auto-checks cumulative outreach (500 threshold) and first meeting, marks Milestones tab.
+- **Calendar Integration**: `token_marceausolutions.json` on EC2, fetches today's events for morning briefing.
+- **Todo System**: Uses existing FitAI `tasks.json` as single source of truth. Telegram commands: "todo add", "tasks", "done #N", "remove #N". Clawdbot can also add tasks proactively.
+
+**Key Architecture Decision:**
+- Reply handling via Clawdbot SOUL.md + Python script (NOT n8n webhook) because Clawdbot owns the Telegram bot connection. n8n Telegram Trigger would conflict with Clawdbot's polling. n8n webhook activation via CLI/DB doesn't register webhooks properly.
+- Agent bridge at localhost:5010 used by n8n to call Python scripts on EC2.
+
+**PDF Organization System:**
+- `execution/pdf_router.py`: Auto-routes PDFs by template type + keyword analysis (12+ categories)
+- Hooked into `branded_pdf_engine.py` — auto-copies to organized folder on generation
+- Folder structure:
+  - `fitness/content/{workout-programs,nutrition-guides,education,lead-magnets,offers}`
+  - `docs/medical/{dystonia,peptides,herbal-medicine,billing-disputes}`
+  - `docs/business/{guides,legal,reports}`
+- Moved all existing PDFs to correct locations (large files symlinked)
+
+**Files Created/Modified:**
+- `execution/accountability_handler.py` (new, 700+ lines)
+- `execution/pdf_router.py` (new, 200 lines)
+- `execution/branded_pdf_engine.py` (modified — auto-route hook)
+- Clawdbot SOUL.md on EC2 (accountability + todo instructions appended)
+- 3 n8n workflows upgraded (Morning, EOD, Weekly)
+- `docs/SYSTEM-STATE.md` updated with accountability workflows
+- 25+ PDFs organized into correct folder structure
+
+**Commits (6):**
+- `26b42668` feat: accountability handler script for Clawdbot Sheets logging
+- `bc1fee99` feat: add milestone checking to accountability handler EOD flow
+- `e1993194` docs: add accountability system workflows to SYSTEM-STATE.md
+- `d72d7501` feat: add calendar, todo list, and morning briefing to accountability system
+- `cf272d48` feat: PDF routing system + organized content folder structure
+
+---
+
 ## 2026-03-06: Company on a Laptop — Session 12 (Diagnostic Hardening + False Positive Elimination)
 
 **Context:** Comprehensive diagnostic + hardening pass after session 11. Root cause analysis on recurring Telegram cred staleness, n8n crash-loop, and health_check.py false positives.
