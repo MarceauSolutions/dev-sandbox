@@ -194,15 +194,18 @@ def handle_eod(args):
     this_week = [r for r in rows if r.get("Week_Number") == str(ctx["week_number"])]
     weekly_outreach = sum(int(r.get("Outreach_Count") or 0) for r in this_week) + outreach
 
+    # Check milestones
+    milestone_msg = check_milestones(service, rows, outreach, meetings)
+
     if outreach >= 120:
-        return (
+        response = (
             f"{outreach} outreach — ABOVE TARGET.\n"
             f"This is how you build momentum.\n"
             f'"Simple scales. Fancy fails." — Hormozi\n'
             f"Weekly total: {weekly_outreach}/500."
         )
     elif outreach >= 100:
-        return (
+        response = (
             f"Logged. {outreach} outreach (target: 100) — solid.\n"
             f"{meetings} meeting(s) booked. {videos} video(s) filmed.\n"
             f"Running total this week: {weekly_outreach}/500.\n"
@@ -210,17 +213,65 @@ def handle_eod(args):
         )
     elif outreach > 0:
         shortfall = 100 - outreach
-        return (
+        response = (
             f"Logged. {outreach} outreach (target: 100) — {shortfall} short.\n"
             f"Volume solves all problems. Tomorrow: make up the gap.\n"
             f"Weekly total: {weekly_outreach}/500."
         )
     else:
-        return (
+        response = (
             f"Logged. 0 outreach today.\n"
             f"{meetings} meeting(s), {videos} video(s), {content} content.\n"
             f"Everyone has off days. Reset tonight, attack tomorrow."
         )
+
+    if milestone_msg:
+        response += f"\n\n{milestone_msg}"
+    return response
+
+
+def check_milestones(service, rows, new_outreach, new_meetings):
+    """Check if any milestones were just crossed. Returns celebration message or empty string."""
+    milestones = read_tab(service, "Milestones")
+    achieved = {m.get("Milestone_ID"): m.get("Achieved") == "TRUE" for m in milestones}
+
+    cumulative_outreach = sum(int(r.get("Outreach_Count") or 0) for r in rows) + new_outreach
+    cumulative_meetings = sum(int(r.get("Meetings_Booked") or 0) for r in rows) + new_meetings
+
+    celebrations = []
+
+    # Milestone 1: First Discovery Call
+    if cumulative_meetings >= 1 and not achieved.get("1"):
+        celebrations.append(
+            "FIRST CALL BOOKED. This is where it starts. "
+            "Every empire began with one conversation. Go crush it."
+        )
+        mark_milestone(service, "1")
+
+    # Milestone 6: 500 Outreach Messages
+    if cumulative_outreach >= 500 and not achieved.get("6"):
+        celebrations.append(
+            "500 MESSAGES SENT. Your pitch is 10x better than message #1. "
+            "Your fear of rejection is gone. That's 500 reps of the most important "
+            "skill in business: ASKING. Next stop: 1,000."
+        )
+        mark_milestone(service, "6")
+
+    if celebrations:
+        return "\n\n".join(celebrations)
+    return ""
+
+
+def mark_milestone(service, milestone_id):
+    """Mark a milestone as achieved in the Milestones tab."""
+    milestones = read_tab(service, "Milestones")
+    for i, m in enumerate(milestones):
+        if m.get("Milestone_ID") == milestone_id:
+            row_idx = i + 2  # +2 for header + 0-index
+            update_cell(service, "Milestones", row_idx, "D", "TRUE")  # Achieved
+            update_cell(service, "Milestones", row_idx, "E", datetime.now().strftime("%Y-%m-%d"))  # Achieved_Date
+            update_cell(service, "Milestones", row_idx, "F", "TRUE")  # Celebration_Sent
+            break
 
 
 def handle_status(args):
