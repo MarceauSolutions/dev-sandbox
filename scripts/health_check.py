@@ -258,6 +258,124 @@ def check_clawdbot():
         print(f"  {warn(f'{crashes} crash(es) in last 24h')}")
 
 
+def check_credential_lifecycle():
+    """Validate live credentials — not just existence, actual API calls."""
+    print(header("CREDENTIAL LIFECYCLE"))
+    import ssl
+
+    def ssl_ctx():
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
+
+    # Google token — live validation via Gmail getProfile
+    token_path = ROOT / "token.json"
+    if token_path.exists():
+        try:
+            import subprocess as sp
+            result = sp.run([
+                sys.executable, "-c",
+                "from google.oauth2.credentials import Credentials; "
+                "from googleapiclient.discovery import build; "
+                "creds = Credentials.from_authorized_user_file('token.json'); "
+                "service = build('gmail', 'v1', credentials=creds); "
+                "profile = service.users().getProfile(userId='me').execute(); "
+                "print(profile.get('emailAddress', 'unknown'))"
+            ], capture_output=True, text=True, timeout=15, cwd=str(ROOT))
+            if result.returncode == 0 and "@" in result.stdout:
+                email = result.stdout.strip()
+                print(f"  {ok(f'Google token: valid ({email})')}")
+            else:
+                err = result.stderr.strip()[:80] if result.stderr else "unknown error"
+                print(f"  {fail(f'Google token: INVALID — {err}')}")
+        except Exception as e:
+            print(f"  {warn(f'Google token: check failed ({str(e)[:40]})')}")
+    else:
+        print(f"  {fail('Google token.json not found')}")
+
+    # Twilio — verify webhook URLs on all owned numbers
+    twilio_sid = os.getenv("TWILIO_ACCOUNT_SID", "")
+    twilio_token = os.getenv("TWILIO_AUTH_TOKEN", "")
+    if twilio_sid and twilio_token:
+        try:
+            import base64
+            creds = base64.b64encode(f"{twilio_sid}:{twilio_token}".encode()).decode()
+            req = urllib.request.Request(
+                f"https://api.twilio.com/2010-04-01/Accounts/{twilio_sid}/IncomingPhoneNumbers.json",
+                headers={"Authorization": f"Basic {creds}"}
+            )
+            resp = urllib.request.urlopen(req, timeout=10, context=ssl_ctx())
+            data = json.loads(resp.read())
+            numbers = data.get("incoming_phone_numbers", [])
+            for num in numbers:
+                phone = num.get("phone_number", "unknown")
+                sms_url = num.get("sms_url", "")
+                friendly = num.get("friendly_name", phone)
+                if sms_url:
+                    print(f"  {ok(f'Twilio {friendly}: SMS webhook set')}")
+                else:
+                    print(f"  {fail(f'Twilio {friendly}: NO SMS webhook — inbound texts silently dropped')}")
+        except Exception as e:
+            print(f"  {warn(f'Twilio number check failed: {str(e)[:40]}')}")
+
+
+def check_ec2_stability():
+    """Check EC2 service stability indicators beyond basic is-active."""
+    print(header("EC2 STABILITY"))
+
+    # Clawdbot restart count (separate from n8n which is already checked)
+    out, _ = ssh("sudo journalctl -u clawdbot --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Started clawdbot'")
+    cb_restarts = int(out.strip()) if out.strip().isdigit() else 0
+    if cb_restarts <= 1:
+        print(f"  {ok(f'Clawdbot stable: {cb_restarts} restart(s) in 24h')}")
+    elif cb_restarts <= 3:
+        print(f"  {warn(f'Clawdbot restarted {cb_restarts}x in 24h')}")
+    else:
+        print(f"  {fail(f'Clawdbot unstable: {cb_restarts} restarts in 24h')}")
+
+    # n8n symlink check (prevents crash-loop on restart)
+    out, success = ssh("sudo test -L /home/ec2-user/.local/bin/n8n && echo exists || echo missing")
+    if "exists" in (out or ""):
+        print(f"  {ok('n8n symlink: ~/.local/bin/n8n exists')}")
+    else:
+        print(f"  {fail('n8n symlink MISSING — will crash-loop on restart. Fix: sudo ln -sf /usr/bin/n8n /home/ec2-user/.local/bin/n8n')}")
+
+    # SOUL.md version check
+    out, _ = ssh("sudo grep 'Version' /home/clawdbot/clawd/SOUL.md 2>/dev/null | head -1")
+    if out:
+        version = out.strip()
+        if "2.1.0" in version:
+            print(f"  {ok(f'SOUL.md: {version}')}")
+        else:
+            print(f"  {warn(f'SOUL.md version drift: {version} (expected 2.1.0)')}")
+    else:
+        print(f"  {fail('SOUL.md not readable')}")
+
+    # Check ARCHITECTURE-DECISIONS.md exists and is recent
+    out, _ = ssh("sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && test -f docs/ARCHITECTURE-DECISIONS.md && echo exists'")
+    if "exists" in (out or ""):
+        print(f"  {ok('ARCHITECTURE-DECISIONS.md: present on EC2')}")
+    else:
+        print(f"  {fail('ARCHITECTURE-DECISIONS.md MISSING on EC2 — Clawdbot has no quality rules')}")
+
+    # journald size
+    out, _ = ssh("sudo journalctl --disk-usage 2>/dev/null | grep -oP '[\\d.]+[MG]'")
+    if out:
+        size_str = out.strip()
+        try:
+            if "G" in size_str:
+                size_mb = float(size_str.replace("G", "")) * 1024
+            else:
+                size_mb = float(size_str.replace("M", ""))
+            if size_mb > 450:
+                print(f"  {warn(f'journald: {size_str} (cap is 500M)')}")
+            else:
+                print(f"  {ok(f'journald: {size_str}')}")
+        except ValueError:
+            print(f"  Journal: {size_str}")
+
+
 def check_local_env():
     print(header("LOCAL ENVIRONMENT"))
     env_path = Path(__file__).parent.parent / ".env"
@@ -554,6 +672,45 @@ def check_recent_executions():
         print(f"  {warn(f'{len(stale_failures)} workflow(s) failed last run, not yet re-verified')}: {summary}")
 
 
+def check_workflow_health():
+    """Run n8n workflow validator to catch silent configuration issues."""
+    print(header("N8N WORKFLOW VALIDATION"))
+    try:
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "n8n_workflow_validator.py"), "--json"],
+            capture_output=True, text=True, timeout=60, cwd=str(ROOT)
+        )
+        if result.returncode != 0 and not result.stdout.strip():
+            print(f"  {warn('Validator failed to run')}")
+            return
+
+        data = json.loads(result.stdout)
+        if "error" in data:
+            print(f"  {warn(data['error'])}")
+            return
+
+        total = len(data.get("issues", []))
+        critical = data.get("critical", 0)
+        high = data.get("high", 0)
+        checked = data.get("workflows_checked", 0)
+
+        if total == 0:
+            print(f"  {ok(f'{checked} workflows scanned — all healthy')}")
+        else:
+            if critical > 0:
+                print(f"  {fail(f'{critical} critical issue(s) in {checked} workflows')}")
+            if high > 0:
+                print(f"  {warn(f'{high} high-severity issue(s)')}")
+            # Show first 3 issues
+            for issue in data["issues"][:3]:
+                sev = "✗" if issue["severity"] == "critical" else "⚠"
+                print(f"    {sev} {issue['workflow']}: {issue['check']} on {issue['node']}")
+            if total > 3:
+                print(f"    ... and {total - 3} more. Run: python scripts/n8n_workflow_validator.py --fix-report")
+    except Exception as e:
+        print(f"  {warn(f'Validator error: {str(e)[:50]}')}")
+
+
 def check_repo_sync():
     """Check that Local, GitHub, and EC2 repos are in sync."""
     print(header("REPOSITORY SYNC"))
@@ -692,17 +849,20 @@ def main():
     if not args.fast:
         check_ec2_services()
         check_disk_memory()
+        check_ec2_stability()
         check_domains()
         check_n8n()
         check_clawdbot()
         check_repo_sync()
         check_ai_apis()
         check_stripe_webhooks()
+        check_credential_lifecycle()
 
     check_local_env()
 
     if not args.fast:
         check_recent_executions()
+        check_workflow_health()
 
     # Summary + exit code (don't call fail() here — it would mutate FAILURES)
     print(f"\n{'━' * 50}")
