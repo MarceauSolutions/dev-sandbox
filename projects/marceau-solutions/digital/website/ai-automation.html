@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Automation | Marceau Solutions</title>
+    <title>AI Automation for Local Businesses | Marceau Solutions</title>
+    <meta name="description" content="AI systems that answer your phones, book appointments, and follow up with leads 24/7. Naples-based AI automation consultant serving local and nationwide businesses.">
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon.svg">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="AI Automation for Local Businesses | Marceau Solutions">
+    <meta property="og:description" content="Stop losing customers to missed calls and slow follow-ups. AI systems that work 24/7 so you don't have to.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/ai-automation.html">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Calendly -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
     <style>
         * {
@@ -33,11 +42,9 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            min-height: 100vh;
+            background: var(--darker);
             color: var(--text);
-            display: flex;
-            flex-direction: column;
+            line-height: 1.6;
         }
 
         /* Navigation */
@@ -82,7 +89,8 @@
             transition: color 0.2s;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--primary);
         }
 
@@ -218,86 +226,415 @@
             visibility: visible;
         }
 
-        @media (max-width: 968px) {
-            .hamburger {
-                display: flex;
-            }
-            .nav-links {
-                display: none;
-            }
+        /* Page Hero */
+        .page-hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 800px;
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center right, rgba(201, 150, 60, 0.1) 0%, transparent 70%);
+        }
+
+        .page-hero-container {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 6rem 2rem 4rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hero {
             text-align: center;
-            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .hero h1 {
+        .page-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
             font-family: 'Montserrat', sans-serif;
             font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
+            font-weight: 900;
             line-height: 1.1;
+            margin-bottom: 1.5rem;
         }
 
-        .hero h1 em {
-            font-style: italic;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero p {
+        .page-hero p {
             font-size: 1.25rem;
-            opacity: 0.8;
+            color: var(--text-muted);
             max-width: 700px;
-            margin: 0 auto 1.5rem auto;
-            line-height: 1.6;
-        }
-
-        .hero .subtext {
-            font-size: 1rem;
-            opacity: 0.7;
-            max-width: 650px;
             margin: 0 auto;
-            line-height: 1.5;
         }
 
-        .coming-soon-badge {
-            display: inline-flex;
+        /* Section Container */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Story Section */
+        .story-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .story-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-text p {
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
+
+        .story-text .emphasis {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .pain-points {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .pain-points h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .pain-list {
+            list-style: none;
+        }
+
+        .pain-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .pain-list li .icon {
+            font-size: 1.25rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+        }
+
+        .service-card .icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(212, 175, 55, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-price {
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: rgba(251, 191, 36, 0.15);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
+            margin-bottom: 0.5rem;
             font-size: 0.9rem;
-            color: var(--accent);
+            color: var(--text-muted);
+        }
+
+        .service-features li .check {
+            color: var(--primary);
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .result-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .result-context {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            opacity: 0.7;
+        }
+
+        /* How It Works */
+        .how-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .how-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .how-step:not(:last-child)::after {
+            content: '\2192';
+            position: absolute;
+            right: -1rem;
+            top: 2rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .how-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 auto 1.25rem;
+        }
+
+        .how-step h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .how-step p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Who It's For */
+        .who-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .who-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .who-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .who-card.yes {
+            border-color: rgba(201, 150, 60, 0.5);
+        }
+
+        .who-card.no {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .who-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .who-card.yes h3 {
+            color: var(--primary);
+        }
+
+        .who-card.no h3 {
+            color: var(--text-muted);
+        }
+
+        .who-card ul {
+            list-style: none;
+        }
+
+        .who-card li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .who-card.yes li .icon {
+            color: var(--primary);
+        }
+
+        .who-card.no li .icon {
+            color: #ef4444;
+        }
+
+        /* CTA / Calendly Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
             margin-bottom: 2rem;
         }
 
-        .coming-soon-badge .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        .calendly-embed {
+            min-width: 320px;
+            height: 700px;
+            margin: 0 auto;
+            max-width: 1000px;
         }
 
         .btn {
@@ -312,7 +649,7 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--secondary);
             color: var(--dark);
         }
 
@@ -322,227 +659,23 @@
             transform: translateY(-2px);
         }
 
-        /* Projects Preview */
-        .projects-preview {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .project-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--secondary);
         }
 
-        .project-card .icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .project-card h3 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .project-card p {
-            font-size: 0.8rem;
-            opacity: 0.6;
-        }
-
-        /* Inquiry Form */
-        .inquiry-section {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .inquiry-section h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .inquiry-section > p {
-            text-align: center;
-            opacity: 0.7;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.9;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #fbbf24;
-        }
-
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .form-group select {
-            cursor: pointer;
-        }
-
-        .form-group select option {
-            background: #1a1a2e;
-            color: #fff;
-        }
-
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        /* Communication Preferences - Auto Opt-In */
-        .comm-prefs {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin: 1.5rem 0;
-        }
-
-        .comm-prefs-header {
+        .cta-buttons {
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: #fbbf24;
-        }
-
-        .comm-prefs p {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            margin-bottom: 0.75rem;
-            line-height: 1.5;
-        }
-
-        .checkbox-row {
-            display: flex;
-            gap: 1.5rem;
+            gap: 1rem;
+            justify-content: center;
             flex-wrap: wrap;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #fbbf24;
-            cursor: pointer;
-        }
-
-        .checkbox-item label {
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 1rem;
-            background: #fbbf24;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-        }
-
-        /* Enhanced Focus Styles for Accessibility */
-        a:focus, button:focus, input:focus, select:focus, textarea:focus {
-            outline: 3px solid #fbbf24;
-            outline-offset: 2px;
-        }
-
-        /* Skip to Content Link */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #fbbf24;
-            color: #000;
-            padding: 8px;
-            text-decoration: none;
-            z-index: 100;
-            font-weight: 600;
-        }
-
-        .skip-link:focus {
-            top: 0;
-        }
-
-        /* Screen Reader Only Text */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
-
-        .form-footer {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            opacity: 0.6;
+            margin-bottom: 2rem;
         }
 
         /* Contact Info */
@@ -568,56 +701,119 @@
         }
 
         .contact-item a:hover {
-            color: #fbbf24;
+            color: var(--accent);
         }
 
-        /* Success Message */
-        .success-message {
-            display: none;
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
+        .disclaimer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
             text-align: center;
-            padding: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        .success-message.show {
-            display: block;
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .success-message h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #4ade80;
-        }
-
-        .success-message p {
-            opacity: 0.8;
-        }
-
-        /* Hide form when success */
-        .inquiry-form.hidden {
-            display: none;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 2rem 1.5rem;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .form-row {
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .story-content,
+            .services-grid,
+            .who-grid {
                 grid-template-columns: 1fr;
             }
 
-            .checkbox-row {
+            .how-grid,
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .how-step:not(:last-child)::after {
+                display: none;
+            }
+
+            .page-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .page-hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .how-grid,
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
                 flex-direction: column;
-                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .calendly-embed {
+                height: 800px;
             }
         }
     </style>
@@ -632,6 +828,7 @@
                 <li><a href="/peptides.html">Peptides</a></li>
                 <li><a href="/about.html">My Story</a></li>
                 <li><a href="/programs.html">Programs</a></li>
+                <li><a href="/ai-automation.html" class="active">AI Services</a></li>
                 <li><a href="/for-influencers.html">For Influencers</a></li>
                 <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
             </ul>
@@ -651,11 +848,11 @@
             <li><a href="/peptides.html">Peptides</a></li>
             <li><a href="/programs.html">Programs</a></li>
             <li><a href="/about.html">My Story</a></li>
-            <li><a href="/for-influencers.html">For Influencers</a></li>
         </ul>
         <div class="mobile-menu-divider"></div>
         <p class="mobile-menu-section">Business Services</p>
         <ul class="mobile-menu-links">
+            <li class="business-link"><a href="/ai-automation.html">AI Services</a></li>
             <li class="business-link"><a href="/for-influencers.html">For Influencers</a></li>
         </ul>
         <div class="mobile-menu-cta">
@@ -663,128 +860,255 @@
         </div>
     </div>
 
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <div class="container">
-        <main id="main-content">
-            <section class="hero" aria-labelledby="hero-heading">
-                <div class="coming-soon-badge" role="status" aria-live="polite">
-                    <span class="dot" aria-hidden="true"></span>
-                    More Coming Soon
-                </div>
-                <h1 id="hero-heading"><em>AI Automation</em> That Runs<br>Your Business 24/7</h1>
-                <p>Tiered AI automation for local service businesses. Capture every lead, automate follow-ups, never miss a call.</p>
-                <p class="subtext">Voice AI • Lead Capture • Follow-Up Sequences • CRM Integration<br><strong>Website included if you need one.</strong></p>
-            </section>
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-container">
+            <div class="page-hero-badge">
+                <span>For Local Service Businesses</span>
+            </div>
+            <h1>AI Systems That <span class="highlight">Answer Your Phone, Book Your Jobs, and Follow Up</span> — While You Sleep</h1>
+            <p>Naples-based AI automation consultant. I build the systems that capture the leads you're currently losing.</p>
+        </div>
+    </section>
 
-        <div class="projects-preview">
-            <div class="project-card">
-                <div class="icon">🚀</div>
-                <h3>Starter Tier</h3>
-                <p>Single automation workflow</p>
-            </div>
-            <div class="project-card">
-                <div class="icon">📈</div>
-                <h3>Growth Tier</h3>
-                <p>Complete automation stack</p>
-            </div>
-            <div class="project-card">
-                <div class="icon">⚡</div>
-                <h3>Enterprise Tier</h3>
-                <p>Custom AI agent + full stack</p>
-            </div>
-            <div class="project-card">
-                <div class="icon">🔧</div>
-                <h3>Maintenance Retainer</h3>
-                <p>Keep systems running smoothly</p>
-            </div>
-            <div class="project-card">
-                <div class="icon">🤝</div>
-                <h3>Partner Retainer</h3>
-                <p>Ongoing optimization</p>
+    <!-- The Problem -->
+    <section class="story-section">
+        <div class="section-container">
+            <div class="story-content">
+                <div class="story-text">
+                    <h2>You're Losing Customers Right Now</h2>
+                    <p>Studies show <span class="emphasis">40-60% of calls to local businesses go unanswered</span>. After hours? That number jumps to nearly 100%.</p>
+                    <p>Every missed call is a customer calling your competitor instead. Every lead that doesn't get a follow-up within 5 minutes is 80% less likely to convert.</p>
+                    <p>You can't hire a 24/7 receptionist. You can't personally follow up with every lead instantly. But <span class="emphasis">an AI system can</span>.</p>
+                    <p>I build custom AI automation for local businesses — the same systems I use to run my own company. Voice AI, lead capture, automated follow-ups, and more.</p>
+                </div>
+                <div class="pain-points">
+                    <h3>Sound Familiar?</h3>
+                    <ul class="pain-list">
+                        <li>
+                            <span class="icon">📞</span>
+                            <span>Missing calls when you're on a job or after hours</span>
+                        </li>
+                        <li>
+                            <span class="icon">⏰</span>
+                            <span>Leads go cold because you can't follow up fast enough</span>
+                        </li>
+                        <li>
+                            <span class="icon">📋</span>
+                            <span>Appointments and scheduling are a manual headache</span>
+                        </li>
+                        <li>
+                            <span class="icon">💸</span>
+                            <span>Paying for a receptionist you can't really afford</span>
+                        </li>
+                        <li>
+                            <span class="icon">📧</span>
+                            <span>Customer follow-ups fall through the cracks</span>
+                        </li>
+                        <li>
+                            <span class="icon">🌙</span>
+                            <span>Zero coverage after 5pm — losing after-hours revenue</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
+    </section>
 
-        <section class="inquiry-section">
-            <h2>Get Early Access</h2>
-            <p>Submit your inquiry and we'll reach out when your solution is ready.</p>
-
-            <form id="inquiryForm" class="inquiry-form" data-form-handler="inquiry">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">Name *</label>
-                        <input type="text" id="name" name="name" placeholder="Your name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Phone (optional)</label>
-                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
-                    </div>
-                    <div class="form-group">
-                        <label for="interest">I'm interested in...</label>
-                        <select id="interest" name="interest">
-                            <option value="">Select an option</option>
-                            <option value="automation-starter">Automation Starter (I have a website)</option>
-                            <option value="automation-growth">Automation Growth (I have a website)</option>
-                            <option value="automation-enterprise">Automation Enterprise (I have a website)</option>
-                            <option value="digital-storefront">Digital Storefront (Need website + automation)</option>
-                            <option value="growth-system">Growth System (Need website + automation)</option>
-                            <option value="enterprise-package">Enterprise Package (Need website + automation)</option>
-                            <option value="retainer">Retainer Plans (Maintenance or Partner)</option>
-                            <option value="custom">Custom Solution / Not Sure Yet</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="message">Tell us about your needs (optional)</label>
-                    <textarea id="message" name="message" placeholder="Describe your business, challenges, or what you'd like to automate..."></textarea>
-                </div>
-
-                <!-- Consolidated Communication Preferences - Auto Opt-In -->
-                <div class="comm-prefs">
-                    <div class="comm-prefs-header">
-                        <span>📬</span> Stay Connected
-                    </div>
-                    <p>By submitting this form, you'll receive updates about your selected solution. You can customize your preferences below:</p>
-                    <div class="checkbox-row">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="emailOptIn" name="emailOptIn" checked>
-                            <label for="emailOptIn">Email updates & tips</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="smsOptIn" name="smsOptIn" checked>
-                            <label for="smsOptIn">SMS notifications</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hidden field for tracking -->
-                <input type="hidden" name="source" value="coming-soon-page">
-                <input type="hidden" name="business_id" value="marceausolutions">
-                <input type="hidden" name="timestamp" id="timestamp">
-
-                <button type="submit" class="btn-submit">Request Early Access</button>
-
-                <p class="form-footer">
-                    We respect your privacy. Unsubscribe anytime.
-                    <a href="terms.html" style="color: #fbbf24;">Terms</a> &
-                    <a href="privacy.html" style="color: #fbbf24;">Privacy</a>
-                </p>
-            </form>
-
-            <div id="successMessage" class="success-message">
-                <div class="success-icon">✓</div>
-                <h3>You're on the list!</h3>
-                <p>We'll reach out when your solution is ready. Check your email for confirmation.</p>
+    <!-- Services -->
+    <section class="services-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>What I Build for You</h2>
+                <p>Pick what you need. Start with one service, add more as you grow.</p>
             </div>
-        </section>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="icon">📞</div>
+                    <h3>Voice AI Receptionist</h3>
+                    <div class="service-price">$199 - $499/mo</div>
+                    <p>An AI that answers every call, 24/7. Books appointments, answers FAQs, routes emergencies to you.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Answers calls in your business's voice</li>
+                        <li><span class="check">&#10003;</span> Books appointments directly to your calendar</li>
+                        <li><span class="check">&#10003;</span> Routes urgent calls to your cell</li>
+                        <li><span class="check">&#10003;</span> Works nights, weekends, holidays</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">🎯</div>
+                    <h3>Lead Capture &amp; Follow-Up</h3>
+                    <div class="service-price">$1,000 - $3,000 setup + $200 - $500/mo</div>
+                    <p>Automated outreach, instant lead response, and multi-touch follow-up sequences that convert.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Instant SMS/email response to new leads</li>
+                        <li><span class="check">&#10003;</span> 7-touch follow-up sequences</li>
+                        <li><span class="check">&#10003;</span> CRM pipeline with lead scoring</li>
+                        <li><span class="check">&#10003;</span> Monthly performance reports</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">⚡</div>
+                    <h3>Business Process Automation</h3>
+                    <div class="service-price">$500 - $5,000 one-time</div>
+                    <p>Custom workflows that eliminate repetitive tasks — invoicing, scheduling, reporting, notifications.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Custom workflow design</li>
+                        <li><span class="check">&#10003;</span> Automated invoicing and reminders</li>
+                        <li><span class="check">&#10003;</span> Review request automation</li>
+                        <li><span class="check">&#10003;</span> Integration with your existing tools</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">🌐</div>
+                    <h3>Website + Automation Package</h3>
+                    <div class="service-price">Custom quote</div>
+                    <p>Need a website too? I build fast, mobile-first sites with automation baked in from day one.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Professional website design</li>
+                        <li><span class="check">&#10003;</span> Lead capture forms wired to automation</li>
+                        <li><span class="check">&#10003;</span> SEO-optimized for local search</li>
+                        <li><span class="check">&#10003;</span> Hosting and maintenance included</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Case Study / Results -->
+    <section class="results-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>What We Built for a Naples HVAC Company</h2>
+                <p>45-day proof of concept — Voice AI receptionist replacing manual call handling.</p>
+            </div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-number">90%+</div>
+                    <div class="result-label">AI call answer rate</div>
+                    <div class="result-context">Up from 40-60% human</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">$2,600</div>
+                    <div class="result-label">Monthly savings</div>
+                    <div class="result-context">Receptionist cost eliminated</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">100%</div>
+                    <div class="result-label">After-hours coverage</div>
+                    <div class="result-context">Up from 0%</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">15+</div>
+                    <div class="result-label">Appointments booked</div>
+                    <div class="result-context">During 45-day POC</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>From first call to live system in as little as one week.</p>
+            </div>
+            <div class="how-grid">
+                <div class="how-step">
+                    <div class="how-number">1</div>
+                    <h3>Discovery Call</h3>
+                    <p>Free 15-minute call. We figure out where you're losing leads and what to fix first.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">2</div>
+                    <h3>Custom Proposal</h3>
+                    <p>Within 48 hours you get a clear plan with pricing — no surprises, no hidden fees.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">3</div>
+                    <h3>Build &amp; Launch</h3>
+                    <p>I build and test everything. You get a live walkthrough before anything goes live.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-number">4</div>
+                    <h3>Ongoing Support</h3>
+                    <p>Monthly check-ins. Performance reports. Continuous optimization as your business grows.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who It's For -->
+    <section class="who-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Is This Right for Your Business?</h2>
+            </div>
+            <div class="who-grid">
+                <div class="who-card yes">
+                    <h3><span class="icon">&#10003;</span> Great Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're a service business (HVAC, plumbing, dental, medical, restaurant, etc.)</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're missing calls or leads are falling through the cracks</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You have 1-20 employees and need to do more with less</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're ready to invest in systems that pay for themselves</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You want to grow without hiring more staff</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="who-card no">
+                    <h3><span class="icon">&#10007;</span> Probably Not a Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You're looking for social media management</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>Your budget is under $500 total</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You're not ready to implement new systems</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You need a full marketing agency</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You want someone to run your entire business</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA + Calendly -->
+    <section id="book" class="cta-section">
+        <div class="cta-container">
+            <h2>Let's Find Your Gaps</h2>
+            <p>15 minutes. No pitch, no pressure. We'll figure out if I can actually help — and if not, I'll tell you straight.</p>
+        </div>
+        <div class="calendly-embed">
+            <div class="calendly-inline-widget" data-url="https://calendly.com/wmarceau/ai-services-discovery?hide_gdpr_banner=1&background_color=0f172a&text_color=f8fafc&primary_color=D4AF37" style="min-width:320px;height:700px;"></div>
+        </div>
         <div class="contact-info">
             <div class="contact-item">
                 <span>📧</span>
@@ -792,18 +1116,36 @@
             </div>
             <div class="contact-item">
                 <span>📞</span>
-                <a href="tel:+18552399364">+1 (855) 239-9364</a>
+                <a href="tel:+18552399364">(855) 239-9364</a>
+            </div>
+            <div class="contact-item">
+                <span>📍</span>
+                <span>Naples, FL — local + nationwide</span>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Unified Form Handler -->
-    <script src="/assets/js/form-handler.js"></script>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">My Story</a>
+                <a href="/coaching.html">Coaching</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+                <span style="margin: 0 0.5rem; color: var(--text-muted);">|</span>
+                <a href="tel:+18552399364">(855) 239-9364</a>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <p>&copy; 2026 Marceau Solutions. All rights reserved. | AI Automation for Local Businesses</p>
+        </div>
+    </footer>
+
     <script>
-        // Set timestamp on form load
-        document.getElementById('timestamp').value = new Date().toISOString();
-
-        // Mobile menu toggle
         function toggleMenu() {
             document.querySelector('.hamburger').classList.toggle('active');
             document.querySelector('.mobile-menu').classList.toggle('active');
