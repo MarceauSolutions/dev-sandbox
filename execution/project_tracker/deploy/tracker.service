@@ -1,0 +1,15 @@
+[Unit]
+Description=Project Tracker - API Usage Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=clawdbot
+WorkingDirectory=/home/clawdbot/dev-sandbox/execution/project_tracker
+ExecStart=/usr/bin/python3.11 app.py
+Restart=always
+RestartSec=10
+Environment=HOME=/home/clawdbot
+
+[Install]
+WantedBy=multi-user.target
