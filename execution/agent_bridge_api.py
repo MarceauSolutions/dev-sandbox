@@ -8147,7 +8147,7 @@ def gmail_create_draft():
 
 @app.route('/gmail/search', methods=['POST'])
 def gmail_search():
-    """Search emails with Gmail query syntax."""
+    """Search emails with Gmail query syntax. Single account (business)."""
     data = request.get_json() or {}
     query = data.get('query', '')
     max_results = data.get('max_results', 20)
@@ -8164,6 +8164,51 @@ def gmail_search():
             emails.append({'id': msg['id'], 'snippet': msg_data.get('snippet', ''), 'from': headers.get('From', ''),
                           'subject': headers.get('Subject', ''), 'date': headers.get('Date', '')})
         return jsonify({"success": True, "query": query, "emails": emails, "count": len(emails)})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route('/gmail/search-all', methods=['POST'])
+def gmail_search_all():
+    """Search emails across ALL registered Gmail accounts (business + personal).
+
+    POST /gmail/search-all
+    Body: {"query": "insurance quote", "accounts": "all", "max_results": 10}
+
+    accounts: "all" (default), "business", "personal", or comma-separated aliases
+    """
+    data = request.get_json() or {}
+    query = data.get('query', '')
+    accounts = data.get('accounts', 'all')
+    max_results = data.get('max_results', 10)
+
+    if not query:
+        return jsonify({"success": False, "error": "query is required"})
+
+    try:
+        import subprocess
+        cmd = [
+            sys.executable, os.path.join(os.path.dirname(__file__), 'multi_gmail_search.py'),
+            '--query', query,
+            '--accounts', accounts,
+            '--max-results', str(max_results),
+            '--json-output'
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30,
+                                cwd=os.path.dirname(os.path.dirname(__file__)))
+        if result.returncode != 0:
+            return jsonify({"success": False, "error": result.stderr.strip()})
+
+        emails = json.loads(result.stdout) if result.stdout.strip() else []
+        return jsonify({
+            "success": True,
+            "query": query,
+            "accounts": accounts,
+            "emails": emails,
+            "count": len(emails),
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({"success": False, "error": "Search timed out after 30s"})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
