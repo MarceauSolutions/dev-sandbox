@@ -479,7 +479,7 @@ class ApolloClient:
     - /people/match: Enrich person data
     - /organizations/enrich: Enrich company data
     - /mixed_people/api_search: Search for people (API endpoint)
-    - /mixed_companies/search: Search for companies
+    - /mixed_companies/api_search: Search for companies
     """
 
     def __init__(self, config: Optional[ApolloConfig] = None):
@@ -710,7 +710,7 @@ class ApolloClient:
         if q_keywords:
             data["q_keywords"] = q_keywords
 
-        return self._make_request("POST", "/mixed_companies/search", data)
+        return self._make_request("POST", "/mixed_companies/api_search", data)
 
     # ==========================================
     # EMAIL FINDING
@@ -892,7 +892,7 @@ class ApolloClient:
         """
         data = filters.to_api_params()
         logger.info(f"Apollo advanced organization search with {len(data)} filters")
-        return self._make_request("POST", "/mixed_companies/search", data)
+        return self._make_request("POST", "/mixed_companies/api_search", data)
 
     def search_with_profile(
         self,

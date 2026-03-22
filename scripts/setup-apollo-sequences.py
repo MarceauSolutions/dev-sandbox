@@ -31,7 +31,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 APOLLO_API_KEY = os.getenv("APOLLO_API_KEY")
 APOLLO_BASE_URL = "https://api.apollo.io/v1"
 
-CALENDLY_LINK = "https://calendly.com/wmarceau/free-fitness-strategy-call"
+CALENDLY_LINK = "https://calendly.com/wmarceau/ai-services-discovery"
 SPOTS_REMAINING = "2"
 
 # ─── Sequence Definitions ──────────────────────────────────────────────────────
@@ -245,7 +245,7 @@ def create_sequence_via_api(sequence):
     # Build the sequence payload
     # Apollo's emailer_campaigns endpoint structure
     payload = {
-        "api_key": APOLLO_API_KEY,
+        # Auth via X-Api-Key header (set in get_headers()), not in body
         "name": sequence["name"],
         "permissions": "team",
         "active": False,  # Create as draft, don't auto-send

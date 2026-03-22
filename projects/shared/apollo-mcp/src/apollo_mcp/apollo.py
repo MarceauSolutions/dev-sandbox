@@ -44,8 +44,8 @@ class ApolloClient:
     Key endpoints:
     - /people/match: Enrich person data
     - /organizations/enrich: Enrich company data
-    - /mixed_people/search: Search for people
-    - /mixed_companies/search: Search for companies
+    - /mixed_people/api_search: Search for people
+    - /mixed_companies/api_search: Search for companies
     """
 
     def __init__(self, config: Optional[ApolloConfig] = None):
@@ -81,18 +81,15 @@ class ApolloClient:
         url = f"{self.config.base_url}{endpoint}"
         headers = {
             "Content-Type": "application/json",
-            "Cache-Control": "no-cache"
+            "Cache-Control": "no-cache",
+            "X-Api-Key": self.config.api_key  # Auth via header, not body
         }
 
-        # Apollo uses api_key in request body for POST, params for GET
-        if method.upper() == "POST":
-            if data is None:
-                data = {}
-            data["api_key"] = self.config.api_key
-        else:
-            if params is None:
-                params = {}
-            params["api_key"] = self.config.api_key
+        # Initialize data/params if None
+        if method.upper() == "POST" and data is None:
+            data = {}
+        if method.upper() == "GET" and params is None:
+            params = {}
 
         try:
             response = self.session.request(
@@ -236,7 +233,7 @@ class ApolloClient:
         if q_keywords:
             data["q_keywords"] = q_keywords
 
-        return self._make_request("POST", "/mixed_people/search", data)
+        return self._make_request("POST", "/mixed_people/api_search", data)
 
     def search_companies(
         self,
@@ -279,7 +276,7 @@ class ApolloClient:
         if q_keywords:
             data["q_keywords"] = q_keywords
 
-        return self._make_request("POST", "/mixed_companies/search", data)
+        return self._make_request("POST", "/mixed_companies/api_search", data)
 
     # ==========================================
     # EMAIL FINDING

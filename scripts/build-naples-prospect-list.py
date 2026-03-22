@@ -88,9 +88,9 @@ def get_headers():
 def check_api_key():
     """Verify the Apollo API key is valid before running searches."""
     # Try a minimal search to test auth
-    url = f"{APOLLO_BASE_URL}/mixed_people/search"
+    url = f"{APOLLO_BASE_URL}/mixed_people/api_search"
     payload = {
-        "api_key": APOLLO_API_KEY,
+        # api_key passed via X-Api-Key header (body param deprecated)
         "page": 1,
         "per_page": 1,
         "person_locations": ["Naples, Florida, United States"],
@@ -119,12 +119,12 @@ def check_api_key():
 def search_people(keywords, page=1, per_page=25):
     """
     Search Apollo for people matching criteria in Naples FL.
-    Uses the mixed_people/search endpoint.
+    Uses the mixed_people/api_search endpoint.
     """
-    url = f"{APOLLO_BASE_URL}/mixed_people/search"
+    url = f"{APOLLO_BASE_URL}/mixed_people/api_search"
 
     payload = {
-        "api_key": APOLLO_API_KEY,
+        # api_key passed via X-Api-Key header (body param deprecated)
         "page": page,
         "per_page": per_page,
         "person_titles": TARGET_TITLES,
@@ -152,10 +152,10 @@ def search_organizations(keywords, page=1, per_page=25):
     Search Apollo for organizations matching criteria in Naples FL.
     Fallback if people search yields limited results.
     """
-    url = f"{APOLLO_BASE_URL}/mixed_companies/search"
+    url = f"{APOLLO_BASE_URL}/mixed_companies/api_search"
 
     payload = {
-        "api_key": APOLLO_API_KEY,
+        # api_key passed via X-Api-Key header (body param deprecated)
         "page": page,
         "per_page": per_page,
         "q_organization_keyword_tags": keywords,
