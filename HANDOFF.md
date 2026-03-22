@@ -2,7 +2,19 @@
 
 **Purpose**: Single source of truth for work handoffs between EC2 (Clawdbot/Ralph) and MacBook (Claude Code).
 
-**Last Updated**: 2026-03-17
+**Last Updated**: 2026-03-22
+
+## ⚠️ CRITICAL: Read ARCHITECTURE-DECISIONS.md
+
+A gap was identified where Clawdbot (EC2) was not following the same conventions as Claude Code (Mac). 
+
+**New file created:** `docs/ARCHITECTURE-DECISIONS.md` — contains all cross-agent conventions including:
+- Output format rules (branded PDFs, never raw markdown)
+- Domain hosting tiers
+- PDF generation standards
+- Session start checklist
+
+**ALL AGENTS MUST READ THIS FILE AT SESSION START.**
 
 ---
 

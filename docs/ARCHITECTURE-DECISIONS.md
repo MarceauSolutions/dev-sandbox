@@ -1,63 +1,104 @@
-# Architecture Decisions Log
+# ARCHITECTURE-DECISIONS.md
+## Cross-Agent Knowledge Sync
 
-> Key decisions that ALL three agents (Claude Code, Clawdbot, Ralph) must know about.
-> Updated after every significant architectural or business decision.
-> This file gets committed and pushed so EC2 agents can access it.
+> This file captures key conventions and decisions that ALL agents (Clawdbot on EC2, Claude Code on Mac, Ralph) must follow. Read this at session start.
 
-## Active Decisions
+---
 
-### Domain Tiers (March 2026)
-- **Tier 1**: GitHub Pages — static sites, free (client websites, marceausolutions.com)
-- **Tier 2**: Subdomain — e.g., n8n.marceausolutions.com, fitai.marceausolutions.com (EC2-hosted services)
-- **Tier 3**: Localhost — dev/special cases only (never client-facing)
+## Output Format Conventions
 
-### Business Model (March 16, 2026)
-- **PRIMARY**: AI Automation Services for Naples SMBs (Nick Saraev productized model)
-- **SECONDARY**: Fitness coaching + content (Ryan Humiston content model + Alex Hormozi offer engineering)
-- **PARKED**: All SaaS/product ideas (DumbPhone, ClaimBack) until primary + secondary generate revenue
-- **Revenue target**: $10K/mo within 12 months
+| Output Type | Format | Tool/Method |
+|-------------|--------|-------------|
+| Reports & Guides | **Branded PDF** | `execution/branded_pdf_engine.py` with appropriate template |
+| Workout Plans | Branded PDF | `workout_program` template |
+| Medical Documents | Branded PDF | `generic_document` template |
+| Dashboards | Standalone web app | Fixed localhost URL + `scripts/[name].sh` |
+| Alerts | SMS or Email | Twilio / SMTP |
+| Automations | n8n workflow | localhost:5678 |
 
-### Pricing (March 16, 2026)
-- **AI Services**: $2,500-7,500 setup + $500-1,500/mo retainer (5-tier productized menu)
-- **Fitness**: Kill $197/mo dead zone. New tiers: $19.99 digital / $97/mo group / $1,500 premium 1:1
-- **First 3 clients FREE** (both businesses) for testimonials/case studies
+**NEVER:** Plain markdown files as final deliverables, CLI-only tools, "run this command to check"
 
-### Accountability System (March 16, 2026)
-- **Platform**: Clawdbot via Telegram (NOT terminal scripts, NOT manual spreadsheets)
-- **Scorecard Sheet**: `1Y5PwloUBbHM8AeiL032_zWy9jjo9vwhyRZkl7qaKw5o`
-- **Interaction**: Morning check-in (6:45am), EOD report (7pm), Sunday weekly summary
-- **Reply parsing**: Energy (1-10), EOD numbers (outreach, meetings, videos, content), status commands
-- **Spec location**: `docs/clawdbot-accountability-spec.md`, `docs/clawdbot-reply-handler-spec.md`
+---
 
-### Outreach Tools (March 16, 2026)
-- **Apollo.io ONLY** — handles both prospecting AND email sequencing. No Instantly.ai.
-- **Prospect list script**: `scripts/build-naples-prospect-list.py`
-- **Sequence script**: `scripts/setup-apollo-sequences.py`
-- **Note**: Apollo API key needs refresh (was expired as of March 16)
+## Domain/Hosting Tiers
 
-### E10 Best-Path Evaluation (March 16, 2026)
-- Before building ANYTHING, answer 5 questions: who uses it, what infrastructure fits, how it scales, what are constraints, can it consolidate with existing tools
-- Litmus test: "Would William use this on a low-energy day from his phone?"
-- Terminal scripts and manual spreadsheets are almost never the right answer for William
+| Tier | Use Case | Example |
+|------|----------|---------|
+| **Tier 1: GitHub Pages** | Static sites, client websites | marceausolutions.com |
+| **Tier 2: Subdomain** | Internal tools, APIs, demos | n8n.marceausolutions.com, demo.marceausolutions.com |
+| **Tier 3: Localhost** | Dev/testing only | localhost:8080 |
 
-### E11 Spec ≠ Deployed (March 17, 2026)
-- Writing a spec document does NOT mean the system is built
-- Pipeline: Research → Design → Build → Deploy → Test on target → Verify user interaction → Mark complete
-- Origin: Accountability system was "built" as specs but never deployed to EC2/n8n
+---
 
-### Three-Agent Sync Protocol (March 17, 2026)
-- **Every significant Claude Code session MUST end with commit + push**
-- **HANDOFF.md** must be updated with decisions AND tasks for other agents
-- **This file** (ARCHITECTURE-DECISIONS.md) captures decisions that affect all agents
-- **Clawdbot/Ralph** should check this file on session start (same as SYSTEM-STATE.md)
+## PDF Generation Rules
 
-## Decision History
+1. **Always use branded_pdf_engine.py** for any document deliverable
+2. Available templates: `workout_program`, `nutrition`, `progress`, `onboarding`, `peptide`, `challenge`, `generic_document`
+3. Generate JSON data file → Run engine → Output branded PDF
+4. Never use raw pandoc/weasyprint for client-facing documents
 
-| Date | Decision | Impact | Made By |
-|------|----------|--------|---------|
-| 2026-03-17 | E11 Spec ≠ Deployed rule | All agents | Claude Code |
-| 2026-03-16 | E10 Best-Path Evaluation | All agents | Claude Code |
-| 2026-03-16 | Apollo.io only (no Instantly) | AI Services outreach | Claude Code |
-| 2026-03-16 | Kill $197/mo coaching | Fitness pricing | Claude Code |
-| 2026-03-16 | AI Services as primary business | Business strategy | Claude Code |
-| 2026-03-16 | Clawdbot for accountability | Accountability system | Claude Code |
+**Command:**
+```bash
+python3.9 execution/branded_pdf_engine.py --template [template] --input data.json --output output.pdf
+```
+
+---
+
+## 3-Agent Protocol
+
+### Sync Points
+- **HANDOFF.md** — Task handoffs between agents
+- **ARCHITECTURE-DECISIONS.md** (this file) — Conventions and standards
+- **CLAUDE.md** — Execution rules (same on Mac and EC2)
+
+### Knowledge Flow
+```
+Mac (Claude Code) ──git push──> GitHub ──auto-sync──> EC2 (Clawdbot)
+                                   │
+                                   └──> Ralph (PRD-driven tasks)
+```
+
+### What Gets Committed
+- ALL decisions about conventions
+- ALL architectural choices  
+- Session summaries (docs/sessions/)
+- Any knowledge that other agents need
+
+---
+
+## Medical Document Standards (William's Condition)
+
+- Dystonia-related guides → `docs/medical/dystonia/` or `docs/medical/cannabis/`
+- Always branded PDF format
+- Include: condition context, evidence-based recommendations, practical protocols
+
+---
+
+## Accountability System
+
+- Morning/EOD check-ins via n8n → Telegram
+- Activity logging via `execution/accountability_handler.py`
+- Gamification state in `/home/clawdbot/clawd/gamification/`
+- Google Sheets for tracking: "Challenge Leads" spreadsheet
+
+---
+
+## API Keys & Tokens
+
+- All keys in `/home/clawdbot/dev-sandbox/.env`
+- Google tokens: `token.json` (gmail), `token_marceausolutions.json` (calendar), `token_sheets.json`
+- Refresh on Mac, push to sync to EC2
+
+---
+
+## Session Start Checklist (ALL AGENTS)
+
+1. [ ] `git pull origin main` — Get latest
+2. [ ] Check `git log --oneline origin/main..HEAD` — Push any unpushed commits
+3. [ ] Read `ARCHITECTURE-DECISIONS.md` — Know the conventions
+4. [ ] Read `HANDOFF.md` — Check for pending tasks
+5. [ ] Check project-specific `CLAUDE.md` if working on a project
+
+---
+
+*Last Updated: 2026-03-22*
