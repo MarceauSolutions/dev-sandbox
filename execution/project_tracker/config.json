@@ -1,0 +1,122 @@
+{
+  "projects": {
+    "marceausolutions-main": {
+      "name": "Marceau Solutions (Main Site)",
+      "url": "https://marceausolutions.com",
+      "type": "website",
+      "apis": ["stripe", "google-analytics"],
+      "status": "live"
+    },
+    "fitai-demo": {
+      "name": "FitAI Influencer Platform",
+      "url": "https://fitai.marceausolutions.com",
+      "type": "webapp",
+      "apis": ["anthropic", "openai", "stripe"],
+      "status": "demo"
+    },
+    "swflorida-hvac": {
+      "name": "SW Florida Comfort (HVAC Client)",
+      "url": null,
+      "type": "client-website",
+      "apis": ["google-places"],
+      "status": "active"
+    },
+    "boabfit": {
+      "name": "BoabFit",
+      "url": null,
+      "type": "client-website",
+      "apis": [],
+      "status": "active"
+    },
+    "flames-of-passion": {
+      "name": "Flames of Passion",
+      "url": null,
+      "type": "client-website",
+      "apis": [],
+      "status": "active"
+    },
+    "square-foot-shipping": {
+      "name": "Square Foot Shipping",
+      "url": null,
+      "type": "lead-gen",
+      "apis": ["google-sheets"],
+      "status": "active"
+    },
+    "pt-coaching": {
+      "name": "PT Coaching Business",
+      "url": null,
+      "type": "service",
+      "apis": ["stripe", "twilio", "google-calendar"],
+      "status": "active"
+    },
+    "clawdbot-ops": {
+      "name": "Clawdbot Operations",
+      "url": null,
+      "type": "internal",
+      "apis": ["anthropic", "twilio", "google-gmail", "google-calendar", "elevenlabs", "apollo"],
+      "status": "active"
+    }
+  },
+  "api_providers": {
+    "anthropic": {
+      "name": "Anthropic (Claude)",
+      "has_usage_api": true,
+      "dashboard": "https://console.anthropic.com/settings/billing",
+      "cost_tracking": true
+    },
+    "openai": {
+      "name": "OpenAI",
+      "has_usage_api": true,
+      "dashboard": "https://platform.openai.com/usage",
+      "cost_tracking": true
+    },
+    "stripe": {
+      "name": "Stripe",
+      "has_usage_api": true,
+      "dashboard": "https://dashboard.stripe.com",
+      "cost_tracking": true
+    },
+    "twilio": {
+      "name": "Twilio (SMS)",
+      "has_usage_api": true,
+      "dashboard": "https://console.twilio.com",
+      "cost_tracking": true
+    },
+    "elevenlabs": {
+      "name": "ElevenLabs (TTS)",
+      "has_usage_api": true,
+      "dashboard": "https://elevenlabs.io/app/usage",
+      "cost_tracking": true
+    },
+    "apollo": {
+      "name": "Apollo (Leads)",
+      "has_usage_api": false,
+      "dashboard": "https://app.apollo.io",
+      "cost_tracking": false
+    },
+    "google-places": {
+      "name": "Google Places API",
+      "has_usage_api": true,
+      "dashboard": "https://console.cloud.google.com/apis/dashboard",
+      "cost_tracking": true
+    },
+    "replicate": {
+      "name": "Replicate (AI Models)",
+      "has_usage_api": true,
+      "dashboard": "https://replicate.com/account/billing",
+      "cost_tracking": true
+    },
+    "xai": {
+      "name": "xAI (Grok)",
+      "has_usage_api": false,
+      "dashboard": null,
+      "cost_tracking": false
+    }
+  },
+  "tracking": {
+    "google_sheet_id": null,
+    "analytics_provider": "plausible",
+    "report_frequency": "weekly",
+    "report_day": "monday"
+  }
+}
