@@ -315,10 +315,13 @@ def main():
     else:
         account_aliases = [a.strip() for a in args.accounts.split(",")]
 
-    print(f"\n{'='*60}")
-    print(f"Multi-Gmail Search: \"{args.query}\"")
-    print(f"Accounts: {', '.join(account_aliases)}")
-    print(f"{'='*60}\n")
+    # When --json-output, send progress to stderr so stdout is clean JSON
+    log = (lambda msg: sys.stderr.write(msg + "\n")) if args.json_output else print
+
+    log(f"\n{'='*60}")
+    log(f"Multi-Gmail Search: \"{args.query}\"")
+    log(f"Accounts: {', '.join(account_aliases)}")
+    log(f"{'='*60}\n")
 
     all_results = []
 
@@ -327,9 +330,9 @@ def main():
         if not service:
             continue
 
-        print(f"  Searching {email}...")
+        log(f"  Searching {email}...")
         results = search_account(service, email, args.query, args.max_results)
-        print(f"    → {len(results)} results")
+        log(f"    → {len(results)} results")
         all_results.extend(results)
 
     # Sort all results by date (newest first)

@@ -8188,7 +8188,7 @@ def gmail_search_all():
     try:
         import subprocess
         cmd = [
-            sys.executable, os.path.join(os.path.dirname(__file__), 'multi_gmail_search.py'),
+            sys.executable, '-W', 'ignore', os.path.join(os.path.dirname(__file__), 'multi_gmail_search.py'),
             '--query', query,
             '--accounts', accounts,
             '--max-results', str(max_results),
