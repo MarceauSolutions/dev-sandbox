@@ -132,3 +132,4 @@ data/auto_iterator/reports/*.json
 data/auto_iterator/reports/*.log
 data/auto_iterator/reports/*.pdf
 propane-terms-screenshot.pdf
+token.json.bak

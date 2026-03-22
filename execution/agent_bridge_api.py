@@ -8105,6 +8105,46 @@ def gmail_send():
         return jsonify({"success": False, "error": f"SMTP error: {e}"})
 
 
+@app.route('/gmail/draft', methods=['POST'])
+def gmail_create_draft():
+    """Create a draft email in Gmail."""
+    data = request.get_json() or {}
+    to = data.get('to')
+    subject = data.get('subject', '')
+    body = data.get('body', '')
+    cc = data.get('cc', '')
+    bcc = data.get('bcc', '')
+    if not to:
+        return make_error_response(ErrorCode.MISSING_PARAMETER, "to is required")
+    service = get_gmail_service()
+    if not service:
+        return jsonify({"success": False, "error": "Gmail service not available. Token may lack gmail.compose scope."})
+    try:
+        import base64
+        from email.mime.text import MIMEText
+        msg = MIMEText(body)
+        msg['To'] = to
+        msg['Subject'] = subject
+        if cc:
+            msg['Cc'] = cc
+        if bcc:
+            msg['Bcc'] = bcc
+        raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+        draft = service.users().drafts().create(
+            userId='me',
+            body={'message': {'raw': raw}}
+        ).execute()
+        return jsonify({
+            "success": True,
+            "draft_id": draft['id'],
+            "message_id": draft['message']['id'],
+            "to": to,
+            "subject": subject
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
 @app.route('/gmail/search', methods=['POST'])
 def gmail_search():
     """Search emails with Gmail query syntax."""
