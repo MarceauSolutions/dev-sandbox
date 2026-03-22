@@ -4,6 +4,37 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-22: Dystonia Research Digest Full Product Build — Session 14
+
+**Context:** The dystonia research digest existed only as a CLI email script (`execution/dystonia_research_digest.py`) running via Mac launchd. No web frontend, no archive, no EC2 deployment, no subdomain. Built the full product.
+
+**What Was Built:**
+- **FastAPI web dashboard** at `projects/marceau-solutions/labs/dystonia-digest/` (port 8792)
+  - Dashboard with stats, recent digests, top categories
+  - Browse/search archived digests and papers
+  - Paper detail views with PubMed/DOI links
+  - Category management (add/enable/disable/delete search queries)
+  - On-demand digest trigger button
+  - Dark+gold branded UI matching Marceau Solutions theme
+- **SQLite archive** — every digest run persisted with papers, categories, dedup tracking
+- **PDF generation** via `branded_pdf_engine.py` (generic_document template)
+- **EC2 deployment** — systemd service `dystonia-digest.service`, nginx proxy to `dystonia.marceausolutions.com`
+- **n8n workflow** `Dystonia-Research-Digest-Daily` (`pUuUxu5s37UPkxyq`) — daily 7am ET, triggers digest, checks status, Telegram notification if papers found
+- **Launch script** `scripts/dystonia-digest.sh` for local development
+- **Email recipient** added: `angelamarceau2@gmail.com` alongside `wmarceau@marceausolutions.com`
+
+**DNS Pending:** `dystonia.marceausolutions.com` A record needs to be added in Namecheap pointing to `34.193.98.97`. Then run certbot for SSL.
+
+**Architecture Decision:**
+- Core search logic stays in `execution/dystonia_research_digest.py` (shared utility, backward compatible)
+- Web app imports from it via `digest_runner.py` wrapper that adds DB persistence + PDF
+- n8n replaces Mac launchd as scheduler — EC2-resident, no dependency on Mac being awake
+
+**Process Learning — New Rule E12:**
+This system was originally left half-built: working email script but no frontend, no deployment, no archive. Created E12 ("Complete the deployment") to prevent this pattern of stopping at "code works locally" instead of finishing through to deployed+verified+documented.
+
+---
+
 ## 2026-03-21: Accountability System Deployment + PDF Organization — Session 13
 
 **Context:** Built out the complete accountability system that had been fully spec'd but never deployed (E11 violation). Also organized all generated PDFs with auto-routing.

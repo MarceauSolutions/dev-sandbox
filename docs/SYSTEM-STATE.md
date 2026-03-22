@@ -38,6 +38,7 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 | `fitai` | ACTIVE | Fitness influencer platform (fitai.marceausolutions.com) |
 | `voice-api` | ACTIVE | Voice AI API |
 | `webhook_server.py` | ACTIVE | Ralph webhook handler (port 5002) |
+| `dystonia-digest` | ACTIVE | Dystonia Research Digest web dashboard (port 8792, dystonia.marceausolutions.com) |
 | `stripe-webhook` | STOPPED | Disabled 2026-03-06 — was crash-looping (port conflict with webhook_server.py on 5002). n8n handles Stripe natively. |
 
 ### EC2 Resources (as of 2026-03-06 session 2)
@@ -61,6 +62,7 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 | GitHub-Push-to-Telegram | `BsoplLFe1brLCBof` | Notify on every git push |
 | Daily-Operations-Digest | `Hz05R5SeJGb4VNCl` | Daily business metrics digest |
 | Monthly-Workflow-Backup | `2QaQbhIUlL7ctfq4` | n8n workflow DR backup (monthly) |
+| Dystonia-Research-Digest-Daily | `pUuUxu5s37UPkxyq` | Daily 7am ET research digest → email + archive + Telegram |
 
 ### PT Coaching — Must Stay Active
 | Workflow | ID | Purpose |

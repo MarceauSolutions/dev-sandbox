@@ -56,6 +56,15 @@
   4. **What are the real constraints?** (Energy levels, dystonia, treatment days, Naples FL location, zero clients currently) — Every design decision must account for worst-case-day usability.
   5. **Is there a consolidation opportunity?** (Can this be a new capability in an existing tool rather than a new tool?) — Adding a feature to Clawdbot > building a new bot. Adding a template to branded_pdf_engine > building a new PDF generator. Extending FitAI > building a separate fitness app.
   > **Origin**: This rule exists because Claude repeatedly chose the fastest-to-code path (terminal scripts, markdown files, manual spreadsheets) over the right-for-William path (Telegram bots, automated SMS, web dashboards). The fastest path to build is rarely the best path to use. Evaluate first, build second.
+- **E12 Complete the deployment (MANDATORY)** — A working local script is NOT a shipped product. Every system that runs on a schedule or serves a UI must complete the FULL deployment pipeline before being marked done:
+  1. **Web frontend** — if users view output, there must be a web dashboard (not a preview HTML file or terminal output)
+  2. **EC2 deployment** — systemd service, nginx reverse proxy, subdomain routing
+  3. **DNS + SSL** — subdomain A record added, certbot SSL configured
+  4. **Scheduling** — n8n workflow (not Mac launchd) so it runs even when Mac is off
+  5. **Archive/persistence** — SQLite or equivalent, not ephemeral files
+  6. **Launch script** — `scripts/[name].sh` for local dev
+  7. **Documentation updated** — SYSTEM-STATE.md, session-history, project CLAUDE.md
+  > **Origin**: The dystonia research digest was "built" as a CLI email script with a Mac launchd cron. No web frontend, no EC2 deployment, no subdomain, no archive. William discovered it was half-finished when he asked to ship it as a product. A script that runs on your laptop is not infrastructure — it's a prototype. The checklist above is the minimum bar for "done."
 
 ## Commands & Shortcuts
 
@@ -79,6 +88,7 @@
 | List scripts | `python scripts/inventory.py scripts` |
 | Check nested repos | `find . -name ".git" \( -type d -o -type f \)` |
 | Deploy | `python deploy_to_skills.py --project <name> --version X.Y.Z` |
+| **Dystonia digest** | `./scripts/dystonia-digest.sh` → http://127.0.0.1:8792 |
 
 ## Communication Patterns
 
