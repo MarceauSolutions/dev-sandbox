@@ -137,3 +137,8 @@ token.json.bak
 # Personal/private files
 outputs/letter-for-mom.pdf
 execution/send_mom_letter.py
+
+# KeyVault secrets
+projects/shared/api-key-manager/data/.encryption_key
+projects/shared/api-key-manager/data/.jwt_secret
+projects/shared/api-key-manager/data/*.db
