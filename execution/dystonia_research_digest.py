@@ -47,7 +47,10 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = os.getenv("SMTP_USERNAME", "wmarceau@marceausolutions.com")
 SMTP_PASS = os.getenv("SMTP_PASSWORD", "")
-TO_EMAIL = "wmarceau@marceausolutions.com"
+TO_EMAILS = [
+    "wmarceau@marceausolutions.com",
+    "angelamarceau2@gmail.com",
+]
 
 PUBMED_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 SEMANTIC_SCHOLAR_BASE = "https://api.semanticscholar.org/graph/v1"
@@ -438,7 +441,7 @@ def send_email(html_body: str, total_papers: int):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"Dystonia Research Digest — {date_str} — {total_papers} new papers"
     msg["From"] = f"Research Digest <{SMTP_USER}>"
-    msg["To"] = TO_EMAIL
+    msg["To"] = ", ".join(TO_EMAILS)
     msg.attach(MIMEText(html_body, "html"))
 
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
@@ -446,7 +449,7 @@ def send_email(html_body: str, total_papers: int):
         server.login(SMTP_USER, SMTP_PASS)
         server.send_message(msg)
 
-    print(f"  Email sent to {TO_EMAIL}")
+    print(f"  Email sent to {', '.join(TO_EMAILS)}")
 
 
 # ── Main ────────────────────────────────────────────────────────────────────
@@ -512,7 +515,7 @@ def run_digest(days_back: int = 7, preview: bool = False):
         print("\n  Sending email...")
         try:
             send_email(html, total_unique)
-            print(f"\n  SUCCESS — {total_unique} papers emailed to {TO_EMAIL}")
+            print(f"\n  SUCCESS — {total_unique} papers emailed to {', '.join(TO_EMAILS)}")
         except Exception as e:
             print(f"\n  ERROR sending email: {e}")
             # Save as fallback

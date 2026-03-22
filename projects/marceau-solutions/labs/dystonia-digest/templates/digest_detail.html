@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% set active_page = "digests" %}
+
+{% block title %}Digest {{ digest.id }} — Dystonia Research Digest{% endblock %}
+
+{% block content %}
+<div class="actions-bar">
+    <div>
+        <h1 class="page-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
+            Digest #{{ digest.id }}
+        </h1>
+        <p style="color:var(--text-secondary); font-size:14px; margin-top:4px;">
+            {{ digest.run_date | format_date }}
+        </p>
+    </div>
+    <div style="display:flex; gap:8px;">
+        {% if digest.pdf_path %}
+        <a href="/digests/{{ digest.id }}/pdf" class="btn btn-outline btn-sm">Download PDF</a>
+        {% endif %}
+        <a href="/digests" class="btn btn-outline btn-sm">Back to List</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-value">{{ total_papers }}</span>
+        <span class="stat-label">Papers Found</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ papers_by_category | length }}</span>
+        <span class="stat-label">Categories</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ digest.days_back }}</span>
+        <span class="stat-label">Day Lookback</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value badge-status-{{ digest.status }}" style="font-size:16px; display:block; padding:4px 8px; border-radius:4px;">
+            {{ digest.status | upper }}
+        </span>
+        <span class="stat-label">Status</span>
+    </div>
+</div>
+
+{% if total_papers == 0 %}
+<div class="empty-state">
+    <h3>No papers found</h3>
+    <p>No new research was published in the {{ digest.days_back }}-day window for this digest run.</p>
+</div>
+{% else %}
+
+{% for category, papers in papers_by_category.items() %}
+<div class="category-header">{{ category }} ({{ papers | length }} papers)</div>
+
+{% for p in papers %}
+<div class="paper-card">
+    <div class="paper-title">
+        {% if p.url %}
+            <a href="{{ p.url }}" target="_blank" rel="noopener">{{ p.title }}</a>
+        {% elif p.doi %}
+            <a href="https://doi.org/{{ p.doi }}" target="_blank" rel="noopener">{{ p.title }}</a>
+        {% elif p.pmid %}
+            <a href="https://pubmed.ncbi.nlm.nih.gov/{{ p.pmid }}/" target="_blank" rel="noopener">{{ p.title }}</a>
+        {% else %}
+            {{ p.title }}
+        {% endif %}
+    </div>
+    <div class="paper-meta">
+        {% if p.source == 'PubMed' %}
+            <span class="badge badge-pubmed">PubMed</span>
+        {% else %}
+            <span class="badge badge-s2">Semantic Scholar</span>
+        {% endif %}
+        {% if p.doi %}
+            <span class="badge badge-doi">DOI: {{ p.doi }}</span>
+        {% endif %}
+    </div>
+    <div class="paper-meta">
+        {% if p.authors is string %}{{ p.authors }}{% else %}{{ p.authors | join(', ') }}{% endif %}
+    </div>
+    <div class="paper-meta">
+        {{ p.journal or '' }} | Published: {{ p.pub_date or 'Unknown' }}
+        {% if p.pmid %} | PMID: {{ p.pmid }}{% endif %}
+    </div>
+    {% if p.abstract %}
+    <div class="paper-abstract">{{ p.abstract }}</div>
+    {% endif %}
+    <div style="margin-top:8px;">
+        <a href="/papers/{{ p.id }}" class="btn btn-outline btn-sm">Full Details</a>
+    </div>
+</div>
+{% endfor %}
+
+{% endfor %}
+
+{% endif %}
+{% endblock %}

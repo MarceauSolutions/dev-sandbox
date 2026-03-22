@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% set active_page = "papers" %}
+
+{% block title %}Search Papers — Dystonia Research Digest{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Search Papers</h1>
+
+<form action="/papers" method="get" class="search-bar">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search by title, abstract, or category...">
+    <button type="submit" class="btn btn-gold">Search</button>
+</form>
+
+{% if query %}
+<p style="color:var(--text-muted); margin-bottom:16px;">
+    {{ results | length }} results for "{{ query }}"
+</p>
+{% endif %}
+
+{% if results %}
+{% for p in results %}
+<div class="paper-card">
+    <div class="paper-title">
+        <a href="/papers/{{ p.id }}">{{ p.title }}</a>
+    </div>
+    <div class="paper-meta">
+        {% if p.source == 'PubMed' %}
+            <span class="badge badge-pubmed">PubMed</span>
+        {% else %}
+            <span class="badge badge-s2">Semantic Scholar</span>
+        {% endif %}
+        <span class="badge badge-gold">{{ p.category }}</span>
+        {% if p.run_date %}
+            <span style="color:var(--text-muted);">Digest: {{ p.run_date | format_date }}</span>
+        {% endif %}
+    </div>
+    <div class="paper-meta">
+        {% if p.authors is string %}{{ p.authors }}{% elif p.authors %}{{ p.authors | join(', ') }}{% endif %}
+    </div>
+    <div class="paper-meta">{{ p.journal or '' }} | {{ p.pub_date or 'Unknown' }}</div>
+    {% if p.abstract %}
+    <div class="paper-abstract">{{ p.abstract[:300] }}{% if p.abstract | length > 300 %}...{% endif %}</div>
+    {% endif %}
+</div>
+{% endfor %}
+{% elif query %}
+<div class="empty-state">
+    <h3>No results found</h3>
+    <p>Try a different search term or browse by <a href="/digests">digest</a>.</p>
+</div>
+{% else %}
+<div class="empty-state">
+    <h3>Search the archive</h3>
+    <p>Enter a term above to search across all papers from every digest run.</p>
+</div>
+{% endif %}
+{% endblock %}

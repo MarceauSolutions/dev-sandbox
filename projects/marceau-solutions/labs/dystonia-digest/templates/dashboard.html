@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% set active_page = "dashboard" %}
+
+{% block title %}Dashboard — Dystonia Research Digest{% endblock %}
+
+{% block content %}
+<div class="actions-bar">
+    <h1 class="page-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">Dashboard</h1>
+    <button class="btn btn-gold" onclick="triggerDigest()">Run Digest Now</button>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.total_digests }}</span>
+        <span class="stat-label">Digests Run</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.total_papers }}</span>
+        <span class="stat-label">Total Papers</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-value">{{ stats.unique_papers }}</span>
+        <span class="stat-label">Unique Papers</span>
+    </div>
+    <div class="stat-card">
+        {% if stats.last_run %}
+            <span class="stat-value badge-status-{{ stats.last_run.status }}" style="font-size:16px; display:block; padding:4px 8px; border-radius:4px;">
+                {{ stats.last_run.status | upper }}
+            </span>
+        {% else %}
+            <span class="stat-value" style="font-size:16px;">—</span>
+        {% endif %}
+        <span class="stat-label">Last Run Status</span>
+    </div>
+</div>
+
+{% if stats.last_run %}
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <h2>Last Run</h2>
+        <a href="/digests/{{ stats.last_run.id }}" class="btn btn-outline btn-sm">View Details</a>
+    </div>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        {{ stats.last_run.run_date | format_date }}
+        &mdash; {{ stats.last_run.total_papers }} papers found
+        &mdash; {{ stats.last_run.days_back }} day lookback
+        {% if stats.last_run.email_sent %}
+            &mdash; <span class="badge badge-status-completed">Email Sent</span>
+        {% endif %}
+        {% if stats.last_run.pdf_path %}
+            &mdash; <a href="/digests/{{ stats.last_run.id }}/pdf" class="btn btn-outline btn-sm">Download PDF</a>
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <h2>Top Categories</h2>
+    </div>
+    {% if stats.top_categories %}
+    <table>
+        <thead><tr><th>Category</th><th>Papers Found</th></tr></thead>
+        <tbody>
+        {% for cat in stats.top_categories %}
+            <tr>
+                <td>{{ cat.category }}</td>
+                <td><span class="badge badge-gold">{{ cat.cnt }}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><h3>No data yet</h3><p>Run your first digest to see category stats.</p></div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Recent Digests</h2>
+        <a href="/digests" class="btn btn-outline btn-sm">View All</a>
+    </div>
+    {% if recent_digests %}
+    {% for d in recent_digests %}
+    <a href="/digests/{{ d.id }}" style="text-decoration:none;">
+        <div class="digest-row">
+            <span class="digest-date">{{ d.run_date | format_date }}</span>
+            <span class="digest-papers">{{ d.total_papers }}</span>
+            <span class="digest-meta">
+                <span class="badge badge-status-{{ d.status }}">{{ d.status }}</span>
+                {% if d.email_sent %}<span class="badge badge-status-completed">emailed</span>{% endif %}
+                <span>{{ d.days_back }}d lookback</span>
+            </span>
+        </div>
+    </a>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <h3>No digests yet</h3>
+        <p>Click "Run Digest Now" to search for recent research papers.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
