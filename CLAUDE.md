@@ -106,17 +106,22 @@
 |------|----------|
 | **SOPs (all 33)** | `docs/sops/INDEX.md` — loaded on-demand |
 | **Architecture guide** | `docs/architecture-guide.md` |
+| **Architecture decisions** | `docs/ARCHITECTURE-DECISIONS.md` — cross-agent conventions, ALL agents read at session start |
+| **Agent handoffs** | `HANDOFF.md` — task queue between Claude Code, Clawdbot, Ralph |
 | **Testing strategy** | `docs/testing-strategy.md` |
 | **Deployment pipeline** | `docs/deployment.md` |
 | **Repository rules** | `docs/repository-management.md` |
 | **App type decision** | `docs/app-type-decision-guide.md` |
 | **Credentials & API keys** | `.env` (root of dev-sandbox) |
+| **Google tokens** | `token.json` (Gmail+Calendar+Sheets, all scopes), `credentials.json` (OAuth client) |
 | **Capability SOPs** | `directives/` |
 | **Task procedures** | `[project]/workflows/` |
 | **Session learnings** | `docs/session-history.md` |
 | **Archived docs** | `docs/archive/` |
 | **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
 | **System state (live)** | `docs/SYSTEM-STATE.md` |
+| **Medical docs** | `docs/medical/dystonia/`, `docs/medical/cannabis/` |
+| **n8n workflow backups** | `projects/shared/n8n-workflows/backups/` (latest: 55 workflows, 2026-03-22) |
 | **PT coaching hub** | `projects/marceau-solutions/fitness/clients/pt-business/CLAUDE.md` |
 | **Web dev hub** | `projects/marceau-solutions/digital/tools/web-dev/CLAUDE.md` |
 | **Tower index** | `projects/marceau-solutions/CLAUDE.md` |
@@ -187,17 +192,21 @@ dev-sandbox/                    # ONE git repo (parent tracks everything)
 | Agent | Where | Best For |
 |-------|-------|----------|
 | **Claude Code** | Mac terminal | Interactive work, publishing, debugging |
-| **Clawdbot** | EC2 24/7 (Telegram) | Quick tasks, research, complexity 0-6 |
+| **Clawdbot** | EC2 24/7 (Telegram) | Quick tasks, research, complexity 0-6, accountability check-ins |
 | **Ralph** | EC2 (PRD-driven) | Complex builds, complexity 7-10 |
 
 See `docs/sops/sop-29-three-agent-collaboration.md` for routing logic.
 
+**Cross-agent sync:** `docs/ARCHITECTURE-DECISIONS.md` (conventions) + `HANDOFF.md` (task queue). Both auto-sync to EC2 on `git push`.
+
 ## Session Start Checklist
 
 1. This file loads automatically (always in context)
-2. Check which project we're working on — read its `CLAUDE.md` if it has one
-3. Check `docs/session-history.md` if continuing previous work
-4. Check `[project]/workflows/` for existing procedures
+2. Read `docs/ARCHITECTURE-DECISIONS.md` — cross-agent conventions
+3. Check `HANDOFF.md` — pending tasks between agents
+4. Check which project we're working on — read its `CLAUDE.md` if it has one
+5. Check `docs/session-history.md` if continuing previous work
+6. Check `[project]/workflows/` for existing procedures
 
 ## Autonomous Agent Triggers
 

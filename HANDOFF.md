@@ -4,17 +4,43 @@
 
 **Last Updated**: 2026-03-22
 
-## ⚠️ CRITICAL: Read ARCHITECTURE-DECISIONS.md
+## CRITICAL: Read These Files At Session Start
 
-A gap was identified where Clawdbot (EC2) was not following the same conventions as Claude Code (Mac). 
+| File | Why |
+|------|-----|
+| `docs/ARCHITECTURE-DECISIONS.md` | Cross-agent conventions, E10 quality rules, interface-first standards |
+| `docs/SYSTEM-STATE.md` | What's built, what's broken, DO NOT REDO list |
+| `docs/session-history.md` | What was done in recent sessions |
 
-**New file created:** `docs/ARCHITECTURE-DECISIONS.md` — contains all cross-agent conventions including:
-- Output format rules (branded PDFs, never raw markdown)
-- Domain hosting tiers
-- PDF generation standards
-- Session start checklist
+---
 
-**ALL AGENTS MUST READ THIS FILE AT SESSION START.**
+## Current Sprint: AI Client Acquisition (March 23 – April 5)
+
+**Goal**: Land 1 AI systems client before William starts new job on April 6.
+**New job**: Electrical technician, Collier County Wastewater, 7am-3pm weekdays.
+**After April 6**: Training at 3pm, side hustle work evenings/weekends. All current goals continue.
+
+---
+
+## For Clawdbot (EC2, Telegram)
+
+### Standing Orders:
+- Morning accountability: 6:45am ET (n8n)
+- EOD check-in: 7pm ET (n8n)
+- Weekly report: Sunday 7pm ET (n8n)
+- Treatment day detector: daily 5am ET (n8n)
+- Parse replies per accountability_handler.py rules
+- Monitor upgrade triggers per Knowledge Base
+
+### Quality Enforcement:
+- **SOUL.md v2.1.0** now includes E10, interface-first, and quality benchmark sections
+- Every recommendation must pass: "Is this the right interface for William's life, not just the easiest to code?"
+- When building anything: n8n > CLI script, branded PDF > markdown, SMS > "check this command"
+
+### Gmail Capability (NEW):
+- `token.json` now has full Gmail scopes: read, send, compose, modify, drafts
+- Can create email drafts via Google API (see SOUL.md for code example)
+- Can send via SMTP (credentials in .env)
 
 ---
 
@@ -30,27 +56,23 @@ A gap was identified where Clawdbot (EC2) was not following the same conventions
 
 ---
 
-## For Clawdbot (EC2, Telegram)
-
-### Standing Orders:
-- Morning accountability: 6:45am ET (n8n)
-- EOD check-in: 7pm ET (n8n)
-- Weekly report: Sunday 7pm ET (n8n)
-- Treatment day detector: daily 5am ET (n8n)
-- Parse replies per Knowledge Base accountability rules
-- Monitor 5 upgrade triggers per Knowledge Base
-
----
-
 ## For Claude Code (Mac)
 
-### Session 2026-03-17 Status:
-- Phases 0-4, 7-8: COMPLETE
-- Phase 5 (content pipeline): Agent building
-- Phase 6 (performance tracking): Agent building
-- 49 n8n workflows active
-- Command Center dashboard at localhost:8780
-- All upgrade trigger plans written + deployed
+### Current Priorities:
+1. AI client acquisition sprint support (outreach assets, case study, website updates)
+2. YouTube video: "I Built a Better Claude Dispatch" (script ready at `projects/marceau-solutions/media/tools/youtube-creator/scripts/`)
+3. Calendar management on **Time Blocks** calendar (not primary)
+4. System maintenance and cross-agent consistency
+
+### Session 2026-03-22 Completed:
+- Claude Dispatch evaluation (not adopting — our system is superior)
+- YouTube video script written + branded PDF generated
+- Gmail token re-authed with full scopes (6 scopes), pushed to EC2
+- Added `/gmail/draft` endpoint to agent_bridge_api.py
+- Updated Clawdbot SOUL.md to v2.1.0 (E10, interface-first, quality benchmark, cross-agent sync)
+- Updated ARCHITECTURE-DECISIONS.md with quality standards, calendar rules, sync architecture
+- Calendar reorganized: training moved to 3pm, added hand therapy/dog walks/Spanish
+- New job orientation event added: April 6, Collier County Wastewater
 
 ---
 
