@@ -56,15 +56,21 @@
   4. **What are the real constraints?** (Energy levels, dystonia, treatment days, Naples FL location, zero clients currently) — Every design decision must account for worst-case-day usability.
   5. **Is there a consolidation opportunity?** (Can this be a new capability in an existing tool rather than a new tool?) — Adding a feature to Clawdbot > building a new bot. Adding a template to branded_pdf_engine > building a new PDF generator. Extending FitAI > building a separate fitness app.
   > **Origin**: This rule exists because Claude repeatedly chose the fastest-to-code path (terminal scripts, markdown files, manual spreadsheets) over the right-for-William path (Telegram bots, automated SMS, web dashboards). The fastest path to build is rarely the best path to use. Evaluate first, build second.
-- **E12 Complete the deployment (MANDATORY)** — A working local script is NOT a shipped product. Every system that runs on a schedule or serves a UI must complete the FULL deployment pipeline before being marked done:
-  1. **Web frontend** — if users view output, there must be a web dashboard (not a preview HTML file or terminal output)
-  2. **EC2 deployment** — systemd service, nginx reverse proxy, subdomain routing
-  3. **DNS + SSL** — subdomain A record added, certbot SSL configured
-  4. **Scheduling** — n8n workflow (not Mac launchd) so it runs even when Mac is off
-  5. **Archive/persistence** — SQLite or equivalent, not ephemeral files
-  6. **Launch script** — `scripts/[name].sh` for local dev
-  7. **Documentation updated** — SYSTEM-STATE.md, session-history, project CLAUDE.md
-  > **Origin**: The dystonia research digest was "built" as a CLI email script with a Mac launchd cron. No web frontend, no EC2 deployment, no subdomain, no archive. William discovered it was half-finished when he asked to ship it as a product. A script that runs on your laptop is not infrastructure — it's a prototype. The checklist above is the minimum bar for "done."
+- **E12 Code to production pipeline (MANDATORY)** — A working local script is NOT a shipped product. **CLI is NEVER the final interface for William-facing tools.** Every tool must go through the FULL pipeline before being marked done:
+  1. **Interface decision FIRST** (before writing code) — "How will William use this?"
+     - Conversational / quick lookups → **Clawdbot (Telegram)**
+     - Automated/scheduled tasks → **n8n workflow**
+     - Dashboards / interactive tools → **Web app at subdomain**
+     - Documents / reports → **Branded PDF, auto-opened**
+     - Alerts → **SMS or email**
+     - **CLI is NEVER the answer** for William-facing tools
+  2. **Build core logic** — Python script, API integration, engine
+  3. **Wire to chosen interface** — Clawdbot command, n8n workflow, web frontend, etc.
+  4. **Deploy to production** — EC2 systemd service, nginx proxy, subdomain + SSL if web
+  5. **Verify access** — "Can William use this from his phone right now, without me?" If no, keep building.
+  6. **Launch script** — `scripts/[name].sh` for web apps
+  7. **Documentation** — SYSTEM-STATE.md, session-history, project CLAUDE.md
+  > **Origin**: Tools keep getting built as CLI scripts and declared "done." The accountability system was spec'd but never deployed. The dystonia digest was a CLI email script on Mac launchd. The multi-Gmail search was built as a Python CLI — powerful, but William has to open a terminal to use it when it should have been a Clawdbot command from the start. **The fastest path to code is rarely the best path to use.** Decide the interface first, then build all the way through to production.
 
 ## Commands & Shortcuts
 
