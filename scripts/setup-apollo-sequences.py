@@ -31,7 +31,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 APOLLO_API_KEY = os.getenv("APOLLO_API_KEY")
 APOLLO_BASE_URL = "https://api.apollo.io/v1"
 
-CALENDLY_LINK = "https://calendly.com/wmarceau/ai-services-discovery"
+CALENDLY_LINK = "https://calendly.com/wmarceau/ai-services-discovery-call"
 SPOTS_REMAINING = "2"
 
 # ─── Sequence Definitions ──────────────────────────────────────────────────────

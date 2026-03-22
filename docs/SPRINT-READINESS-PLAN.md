@@ -129,7 +129,7 @@ Root cause: Audit of 40 historical EC2/Clawdbot failures; 37 were preventable.
 ### Booking & Scheduling
 | Resource | URL | State |
 |----------|-----|-------|
-| AI Services Discovery Call | `calendly.com/wmarceau/ai-services-discovery` | ✅ Live, embedded on website |
+| AI Services Discovery Call | `calendly.com/wmarceau/ai-services-discovery-call` | ✅ Live, embedded on website |
 | Voice AI Demo Call | `calendly.com/wmarceau/voice-ai-demo` | ✅ Live |
 | Fitness Strategy Call | `calendly.com/wmarceau/free-fitness-strategy-call` | ✅ Live |
 

@@ -337,7 +337,7 @@ def main():
 
     # Sort all results by date (newest first)
     all_results.sort(
-        key=lambda r: r["parsed_date"] or datetime.min.replace(tzinfo=None),
+        key=lambda r: r["parsed_date"].replace(tzinfo=None) if r["parsed_date"] else datetime.min,
         reverse=True,
     )
 

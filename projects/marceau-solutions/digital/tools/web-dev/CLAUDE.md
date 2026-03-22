@@ -16,7 +16,7 @@
 | Deploy Script | `./scripts/deploy_website.sh {client}` |
 | Website Builder API | `projects/marceau-solutions/website-builder/` |
 | Client Tracker Sheet | https://docs.google.com/spreadsheets/d/1gWobdkQsa8XCr7xEOXTFJ3t45e2K54bfxQpYLkCqN7Q/edit |
-| Calendly (AI services) | https://calendly.com/wmarceau/ai-services-discovery |
+| Calendly (AI services) | https://calendly.com/wmarceau/ai-services-discovery-call |
 | Calendly (fitness) | https://calendly.com/wmarceau/free-fitness-strategy-call |
 
 ## Status

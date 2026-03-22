@@ -285,7 +285,7 @@ class GmailService:
         )
         return {"draft_id": draft.get("id", ""), "message_id": draft.get("message", {}).get("id", "")}
 
-    def _get_message_details(self, service, message_id: str) -> dict | None:
+    def _get_message_details(self, service, message_id: str) -> Optional[dict]:
         """Fetch and parse a single message by ID."""
         try:
             msg = (
@@ -298,7 +298,7 @@ class GmailService:
         except Exception:
             return None
 
-    def _parse_message(self, msg: dict) -> dict | None:
+    def _parse_message(self, msg: dict) -> Optional[dict]:
         """Parse a Gmail API message object into a clean dict."""
         try:
             headers = {

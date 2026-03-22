@@ -391,7 +391,7 @@ def step_cta(live_mode):
         "",
         f"  Book a free 15-minute discovery call:",
         "",
-        f"  {BOLD}{CYAN}  calendly.com/wmarceau/ai-services-discovery{RESET}",
+        f"  {BOLD}{CYAN}  calendly.com/wmarceau/ai-services-discovery-call{RESET}",
         "",
         f"  {DIM}William Marceau  •  Marceau Solutions{RESET}",
         f"  {DIM}Naples, FL  •  AI Business Automation{RESET}",

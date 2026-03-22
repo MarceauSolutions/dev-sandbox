@@ -123,7 +123,8 @@
       "Bash(awk:*)",
       "Bash(tar:*)",
       "Bash(zip:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "WebSearch"
     ]
   },
   "hooks": {

@@ -1,0 +1,163 @@
+[
+  {"date": "2026-03-23", "day": "Sun", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "AI Offer Assets & Website Work", "start": "09:15", "end": "11:15", "description": "Foundation day: Deploy rebuilt AI services page, generate leave-behind PDF, prepare offer assets."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "AI Client Delivery & System Packaging", "start": "13:00", "end": "14:30", "description": "Package AI automation deliverables. Prepare demo environments."},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-24", "day": "Mon", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Content Batch Film Day", "start": "09:15", "end": "11:15", "description": "1 film day this week (reduced from 2). Minimum viable content for social presence."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Edit & Schedule Content", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-25", "day": "Tue", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "Cold Email & List Building", "start": "07:30", "end": "09:00", "description": "Cold email sequences + Apollo.io list building. Clawdbot assists with lead research."},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Naples In-Person Visits (5 businesses)", "start": "09:15", "end": "11:15", "description": "Carry leave-behind PDFs. Clawdbot on mobile between stops for lead updates and follow-ups."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Lead Nurturing & Follow-ups", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-26", "day": "Wed", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Cold Email & List Building", "start": "09:15", "end": "11:15", "description": "Build pipeline for end-of-week outreach. Scrape leads, enrich data, queue sequences."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "AI Client Delivery & System Work", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-27", "day": "Thu", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "Outreach — 50 Actions (Lighter Day)", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Discovery Calls / Proposal Writing", "start": "09:15", "end": "11:15", "description": "Take discovery calls. Write custom proposals for interested prospects."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Sales Study: Objection Handling", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-28", "day": "Fri", "events": [
+    {"summary": "LOW ENERGY DAY — Systems Run For You", "start": "09:00", "end": "10:00", "description": "Light admin only. Check Clawdbot for automated follow-up results. Rest."}
+  ]},
+  {"date": "2026-03-29", "day": "Sat", "events": [
+    {"summary": "Weekly Scorecard Review", "start": "09:00", "end": "09:45", "description": "Review Week 1 metrics: outreach sent, replies, calls booked, pipeline value."},
+    {"summary": "Week 2 Planning", "start": "10:00", "end": "11:00", "description": "Adjust strategy based on Week 1 results. Plan in-person visit route for Tue."}
+  ]},
+  {"date": "2026-03-30", "day": "Sun", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "AI Offer Assets & Loom Demos", "start": "09:15", "end": "11:15", "description": "Record Loom demo videos for cold email sequences. Refine offer assets."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Sales Principles Study", "start": "13:00", "end": "14:15", "description": "Dr. Herrington at 2:30pm — leave by 2:15. No training today."},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-03-31", "day": "Mon", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Content Batch Film Day", "start": "09:15", "end": "11:15", "description": "Week 2 content session. Minimum viable for social presence."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Edit & Schedule Content", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-04-01", "day": "Tue", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "Cold Email & List Building", "start": "07:30", "end": "09:00", "description": "Second wave outreach. Clawdbot assists with lead research."},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Naples In-Person Visits Round 2", "start": "09:15", "end": "11:15", "description": "Second wave with refined pitch. Carry leave-behind PDFs. Clawdbot on mobile."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Lead Nurturing & Follow-ups", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-04-02", "day": "Wed", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "OUTREACH BLITZ — Rule of 100", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Cold Email & Proposal Blitz", "start": "09:15", "end": "11:15", "description": "Push to close. Send proposals to all warm leads."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "AI Client Delivery & System Work", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-04-03", "day": "Thu", "events": [
+    {"summary": "Dog Walk + Morning Routine", "start": "06:15", "end": "07:00"},
+    {"summary": "Dashboard Review & Metrics", "start": "07:00", "end": "07:30"},
+    {"summary": "Outreach — 50 Actions (Lighter Day)", "start": "07:30", "end": "09:00"},
+    {"summary": "Break / Hand Therapy", "start": "09:00", "end": "09:15"},
+    {"summary": "Discovery Calls / Close Attempts", "start": "09:15", "end": "11:15", "description": "TARGET: Client signed today. Take calls, close deals."},
+    {"summary": "Break", "start": "11:15", "end": "11:30"},
+    {"summary": "Quick Follow-ups / Proposals", "start": "11:30", "end": "12:00"},
+    {"summary": "Lunch", "start": "12:00", "end": "13:00"},
+    {"summary": "Weekly Review & Next Week Planning", "start": "13:00", "end": "14:30"},
+    {"summary": "Break", "start": "14:30", "end": "14:45"},
+    {"summary": "Training — Defy the Odds Athletic Program", "start": "14:45", "end": "15:45"},
+    {"summary": "Spanish Study", "start": "16:00", "end": "16:30"},
+    {"summary": "Dog Walk / Dog Training", "start": "16:30", "end": "17:00"}
+  ]},
+  {"date": "2026-04-04", "day": "Fri", "events": [
+    {"summary": "LOW ENERGY DAY — Systems Run For You", "start": "09:00", "end": "10:00", "description": "Light admin only. Rest and recover before final push weekend."}
+  ]},
+  {"date": "2026-04-05", "day": "Sat", "events": [
+    {"summary": "Final Scorecard & New Job Prep", "start": "09:00", "end": "10:30", "description": "Sprint results review. Prep for April 6 orientation. Ensure all automation is running independently."}
+  ]}
+]

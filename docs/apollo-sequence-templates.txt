@@ -1,7 +1,7 @@
 ======================================================================
 APOLLO.IO EMAIL SEQUENCE TEMPLATES
 Ready to paste into Apollo.io Sequences UI
-Generated: 2026-03-16 16:29
+Generated: 2026-03-22 16:03
 ======================================================================
 
 ──────────────────────────────────────────────────────────────────────
@@ -47,7 +47,7 @@ SEQUENCE: Naples AI Outreach — A: General Local Business
   
   If automating your lead follow-up and booking isn't a priority right now, no worries at all. But if it is — let's grab 15 minutes this week before the spots fill.
   
-  Book here: https://calendly.com/wmarceau/free-fitness-strategy-call
+  Book here: https://calendly.com/wmarceau/ai-services-discovery-call
   
   William
 
@@ -80,7 +80,7 @@ SEQUENCE: Naples AI Outreach — B: HVAC / Home Services
   
   An AI receptionist costs $750/month and captures every single one. The ROI isn't even close.
   
-  I can show you exactly how it works in 15 minutes: https://calendly.com/wmarceau/free-fitness-strategy-call
+  I can show you exactly how it works in 15 minutes: https://calendly.com/wmarceau/ai-services-discovery-call
   
   William
 
@@ -94,7 +94,7 @@ SEQUENCE: Naples AI Outreach — B: HVAC / Home Services
   
   But if they are — I guarantee 10 qualified leads in 30 days or I work free until it happens. No risk on your end.
   
-  https://calendly.com/wmarceau/free-fitness-strategy-call
+  https://calendly.com/wmarceau/ai-services-discovery-call
   
   William
 
@@ -146,7 +146,7 @@ SEQUENCE: Naples AI Outreach — C: Med Spa / Dental
   
   If no-shows and slow follow-up aren't a problem for you — great, ignore this. But if they are: 15 minutes and I'll show you exactly how much revenue you're leaving on the table.
   
-  https://calendly.com/wmarceau/free-fitness-strategy-call
+  https://calendly.com/wmarceau/ai-services-discovery-call
   
   William
 
@@ -179,7 +179,7 @@ SEQUENCE: Naples AI Outreach — D: Restaurant / Hospitality
   
   The system I build does both automatically — plus handles reservation questions via text, Instagram DM, and your website so your host staff isn't tied to the phone.
   
-  Happy to show you in 15 minutes: https://calendly.com/wmarceau/free-fitness-strategy-call
+  Happy to show you in 15 minutes: https://calendly.com/wmarceau/ai-services-discovery-call
   
   William
 
@@ -193,6 +193,6 @@ SEQUENCE: Naples AI Outreach — D: Restaurant / Hospitality
   
   If online reviews and reservation management are handled — great. But if not, I guarantee measurable results in 30 days or I keep working for free until it delivers.
   
-  https://calendly.com/wmarceau/free-fitness-strategy-call
+  https://calendly.com/wmarceau/ai-services-discovery-call
   
   William

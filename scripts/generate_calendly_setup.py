@@ -35,7 +35,7 @@ Copy-paste these exact values:
 | Event name | AI Services Discovery Call |
 | Duration | 15 min |
 | Location | Google Meet (select from dropdown) |
-| Event link | ai-services-discovery (custom URL slug) |
+| Event link | ai-services-discovery-call (custom URL slug) |
 
 **Description / Additional Notes (copy-paste this):**
 
@@ -62,7 +62,7 @@ Under **Booking Form**, add one custom question:
 ## Step 5: Save and Share
 
 - Click **Save and Close**
-- Your link will be: **calendly.com/wmarceau/ai-services-discovery**
+- Your link will be: **calendly.com/wmarceau/ai-services-discovery-call**
 - This link is already added to your .env as `CALENDLY_AI_SERVICES_URL`
 
 ---
