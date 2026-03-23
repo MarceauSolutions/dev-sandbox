@@ -2,11 +2,14 @@
 Accountability Dashboard — Data Layer
 
 Reads from Google Sheets scorecard and Stripe for live metrics.
+Also reads local tasks.json and outreach tracking files.
 """
 
 import os
 import sys
-from datetime import datetime, timedelta
+import json
+import csv
+from datetime import datetime, timedelta, date
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
@@ -34,6 +37,12 @@ except ImportError:
 PLAN_START = datetime(2026, 3, 17)
 PLAN_END = datetime(2026, 6, 7)
 SCORECARD_ID = "1Y5PwloUBbHM8AeiL032_zWy9jjo9vwhyRZkl7qaKw5o"
+TASKS_FILE = PROJECT_ROOT / "projects/marceau-solutions/fitness/tools/fitness-influencer/data/tenants/wmarceau/tasks.json"
+TRACKING_DIR = PROJECT_ROOT / "projects/shared/lead-scraper/output"
+APOLLO_CSV = PROJECT_ROOT / "projects/marceau-solutions/digital/outputs/naples-ai-prospects-apollo-enriched-2026-03-23.csv"
+PIPELINE_DB = PROJECT_ROOT / "projects/shared/sales-pipeline/data/pipeline.db"
+CALENDAR_TOKEN = PROJECT_ROOT / "token.json"
+TIME_BLOCKS_CALENDAR_ID = "c_710cb4eceeac036e44157b8626fe6447b430ce3fd0100020d4b32fc44af1f164@group.calendar.google.com"
 
 TOKEN_PATHS = [
     PROJECT_ROOT / "token_sheets.json",
@@ -256,6 +265,23 @@ def get_dashboard_data():
             "score": _safe_float(w.get("On_Track_Score")),
         })
 
+    # Load local tasks
+    tasks_data = get_local_tasks()
+
+    # Load today's outreach log
+    outreach_log = get_today_outreach_log()
+
+    # Outreach count fallback: use tracking files if Sheets returns 0
+    if week_totals["outreach"] == 0:
+        today_tracking_count = _count_today_outreach()
+        if today_tracking_count > 0:
+            week_totals["outreach"] = today_tracking_count
+            # Recalculate pct
+            week_pcts["outreach"] = min(100, round((today_tracking_count / TARGETS["outreach"]) * 100))
+            on_track = sum(week_pcts.get(k, 0) * w for k, w in weights.items())
+
+    sheets_ok = bool(daily)  # If daily log has data, Sheets is connected
+
     return {
         "context": ctx,
         "today": today_data,
@@ -272,4 +298,199 @@ def get_dashboard_data():
         "mrr": mrr,
         "weekly_chart": weekly_chart,
         "daily_log": daily[-7:],  # Last 7 days
+        "tasks": tasks_data,
+        "outreach_log": outreach_log,
+        "sheets_ok": sheets_ok,
     }
+
+
+def get_local_tasks():
+    """Load tasks from local tasks.json grouped by section."""
+    result = {"today": [], "this_week": [], "circle_back": [], "recently_done": []}
+    try:
+        if not TASKS_FILE.exists():
+            return result
+        data = json.loads(TASKS_FILE.read_text())
+        for t in data.get("tasks", []):
+            section = t.get("section", "this_week")
+            if section in result:
+                result[section].append(t)
+            # Tasks with status=complete always go to recently_done regardless of section
+        # Sort each section: incomplete first by priority, then complete
+        priority_order = {"high": 0, "medium": 1, "low": 2, "deferred": 3}
+        for key in ("today", "this_week", "circle_back"):
+            result[key].sort(key=lambda t: (
+                1 if t.get("status") == "complete" else 0,
+                priority_order.get(t.get("priority", "medium"), 1)
+            ))
+    except Exception:
+        pass
+    return result
+
+
+def _count_today_outreach():
+    """Count outreach emails sent today from tracking files."""
+    today_str = str(date.today())
+    total = 0
+    try:
+        for f in TRACKING_DIR.glob("outreach_tracking_*.json"):
+            data = json.loads(f.read_text())
+            if data.get("date") == today_str:
+                total += data.get("total_sent", 0)
+    except Exception:
+        pass
+    return total
+
+
+def get_today_outreach_log():
+    """Load today's outreach emails with Apollo industry enrichment."""
+    today_str = str(date.today())
+    emails = []
+    try:
+        # Load Apollo CSV for industry lookup
+        apollo_by_email = {}
+        apollo_by_company = {}
+        if APOLLO_CSV.exists():
+            with open(APOLLO_CSV, newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    em = (row.get("email") or "").lower().strip()
+                    co = (row.get("company_name") or "").lower().strip()
+                    if em:
+                        apollo_by_email[em] = row
+                    if co:
+                        apollo_by_company[co] = row
+
+        # Load pipeline DB for stage info
+        pipeline_stages = {}
+        try:
+            import sqlite3
+            if PIPELINE_DB.exists():
+                conn = sqlite3.connect(str(PIPELINE_DB))
+                conn.row_factory = sqlite3.Row
+                cur = conn.cursor()
+                # Try common table structures
+                try:
+                    rows = cur.execute("SELECT email, stage FROM deals").fetchall()
+                    for r in rows:
+                        pipeline_stages[(r["email"] or "").lower()] = r["stage"]
+                except Exception:
+                    pass
+                conn.close()
+        except Exception:
+            pass
+
+        # Read tracking files for today
+        for f in sorted(TRACKING_DIR.glob("outreach_tracking_*.json")):
+            data = json.loads(f.read_text())
+            if data.get("date") != today_str:
+                continue
+            for em in data.get("emails", []):
+                recipient = (em.get("recipient") or "").lower()
+                company_key = (em.get("company") or "").lower()
+
+                # Enrich from Apollo
+                apollo = apollo_by_email.get(recipient) or apollo_by_company.get(company_key) or {}
+                industry = apollo.get("industry") or apollo.get("apollo_industry") or "—"
+
+                # Pipeline stage
+                stage = pipeline_stages.get(recipient, "")
+
+                emails.append({
+                    "first_name": em.get("first_name", ""),
+                    "company": em.get("company", ""),
+                    "email": em.get("recipient", ""),
+                    "subject": em.get("subject", ""),
+                    "industry": industry,
+                    "sent_at": em.get("sent_at", ""),
+                    "status": em.get("status", "sent"),
+                    "pipeline_stage": stage,
+                })
+    except Exception:
+        pass
+    return emails
+
+
+def get_current_time_block():
+    """Fetch current and next time block from Google Calendar."""
+    result = {"current": None, "next": None, "error": None}
+    try:
+        if not CALENDAR_TOKEN.exists():
+            result["error"] = "Calendar token not found"
+            return result
+
+        creds = None
+        try:
+            from google.oauth2.credentials import Credentials
+            from google.auth.transport.requests import Request
+            from googleapiclient.discovery import build
+        except ImportError:
+            result["error"] = "Google API libraries not installed"
+            return result
+
+        creds = Credentials.from_authorized_user_file(str(CALENDAR_TOKEN))
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+
+        service = build("calendar", "v3", credentials=creds)
+        now = datetime.utcnow()
+        time_min = now.strftime("%Y-%m-%dT00:00:00Z")
+        time_max = now.strftime("%Y-%m-%dT23:59:59Z")
+
+        events_result = service.events().list(
+            calendarId=TIME_BLOCKS_CALENDAR_ID,
+            timeMin=time_min,
+            timeMax=time_max,
+            singleEvents=True,
+            orderBy="startTime",
+        ).execute()
+        events = events_result.get("items", [])
+
+        # Find current and next
+        now_aware = datetime.utcnow()
+        for i, ev in enumerate(events):
+            start_str = ev.get("start", {}).get("dateTime") or ev.get("start", {}).get("date")
+            end_str = ev.get("end", {}).get("dateTime") or ev.get("end", {}).get("date")
+            if not start_str or not end_str:
+                continue
+            try:
+                # Parse datetime (strip timezone for simple comparison)
+                start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00")).replace(tzinfo=None)
+                end_dt = datetime.fromisoformat(end_str.replace("Z", "+00:00")).replace(tzinfo=None)
+            except Exception:
+                continue
+
+            if start_dt <= now_aware <= end_dt:
+                mins_left = int((end_dt - now_aware).total_seconds() / 60)
+                result["current"] = {
+                    "title": ev.get("summary", "Untitled"),
+                    "start": start_dt.strftime("%I:%M %p"),
+                    "end": end_dt.strftime("%I:%M %p"),
+                    "mins_left": mins_left,
+                }
+                # Find next
+                if i + 1 < len(events):
+                    nxt = events[i + 1]
+                    nxt_start = nxt.get("start", {}).get("dateTime") or ""
+                    try:
+                        nxt_start_dt = datetime.fromisoformat(nxt_start.replace("Z", "+00:00")).replace(tzinfo=None)
+                        result["next"] = {
+                            "title": nxt.get("summary", "Untitled"),
+                            "start": nxt_start_dt.strftime("%I:%M %p"),
+                        }
+                    except Exception:
+                        pass
+                break
+            elif start_dt > now_aware and result["current"] is None:
+                # No active block — show upcoming
+                mins_until = int((start_dt - now_aware).total_seconds() / 60)
+                result["next"] = {
+                    "title": ev.get("summary", "Untitled"),
+                    "start": start_dt.strftime("%I:%M %p"),
+                    "mins_until": mins_until,
+                }
+                break
+
+    except Exception as e:
+        result["error"] = str(e)
+    return result

@@ -118,6 +118,8 @@ def compute_stats():
     for camp in campaigns:
         templates = camp.get("templates", {})
         for tid, tdata in templates.items():
+            if not isinstance(tdata, dict):
+                continue
             if tid not in template_perf:
                 template_perf[tid] = {
                     "name": tdata.get("template_id", tid),

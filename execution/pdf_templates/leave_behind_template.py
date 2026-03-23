@@ -103,7 +103,7 @@ def render_leave_behind(data: dict, styles: dict):
         {
             "name": "Business Process Automation",
             "features": "Custom workflows, scheduling, invoicing, reporting",
-            "price": "$500-5,000 one-time",
+            "price": "$500-2,000 setup + $500-1,000/mo",
         },
     ])
 

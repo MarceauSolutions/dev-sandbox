@@ -215,7 +215,146 @@ td {{ padding:8px 10px;border-bottom:1px solid {BORDER}22; }}
 """
 
 
-def render_dashboard(data, error=None):
+def _right_now_card(time_block):
+    """RIGHT NOW card — current calendar time block with countdown."""
+    if not time_block:
+        return ""
+
+    err = time_block.get("error")
+    current = time_block.get("current")
+    nxt = time_block.get("next")
+
+    if err and not current and not nxt:
+        return f'''<div class="card" style="border-color:{GOLD}44;margin-bottom:16px">
+            <h2>RIGHT NOW</h2>
+            <span style="color:{MUTED};font-size:13px">Calendar unavailable — {html.escape(str(err))}</span>
+        </div>'''
+
+    current_html = ""
+    next_html = ""
+
+    if current:
+        mins = current["mins_left"]
+        hrs = mins // 60
+        mins_rem = mins % 60
+        time_str = f"{hrs}h {mins_rem}m left" if hrs > 0 else f"{mins_rem}m left"
+        current_html = f'''<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,{GOLD}18,{GOLD}08);border:1px solid {GOLD}44;border-radius:10px">
+            <div style="width:10px;height:10px;border-radius:50%;background:{GOLD};flex-shrink:0;box-shadow:0 0 8px {GOLD}88" class="pulse"></div>
+            <div style="flex:1">
+                <div style="font-size:15px;font-weight:700;color:{GOLD}">{html.escape(current["title"])}</div>
+                <div style="font-size:11px;color:{MUTED};margin-top:2px">{current["start"]} – {current["end"]}</div>
+            </div>
+            <div style="text-align:right">
+                <div style="font-size:18px;font-weight:800;color:{GOLD}">{time_str}</div>
+                <div style="font-size:10px;color:{MUTED}">remaining</div>
+            </div>
+        </div>'''
+    else:
+        current_html = f'<div style="padding:10px 14px;color:{MUTED};font-size:13px">No active time block right now</div>'
+
+    if nxt:
+        mins_until = nxt.get("mins_until")
+        if mins_until is not None:
+            eta = f"in {mins_until}m" if mins_until < 60 else f"in {mins_until//60}h {mins_until%60}m"
+            next_html = f'<div style="margin-top:8px;padding:8px 14px;background:{SURFACE};border-radius:8px;font-size:12px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]} <span style="color:{BLUE}">({eta})</span></div>'
+        else:
+            next_html = f'<div style="margin-top:8px;padding:8px 14px;background:{SURFACE};border-radius:8px;font-size:12px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]}</div>'
+
+    return f'''<div class="card" style="border-color:{GOLD}44;margin-bottom:16px">
+        <h2>RIGHT NOW</h2>
+        {current_html}
+        {next_html}
+    </div>'''
+
+
+def _tasks_section(tasks):
+    """Today + this_week tasks from tasks.json for the main dashboard."""
+    today_tasks = tasks.get("today", [])
+    week_tasks = tasks.get("this_week", [])
+
+    if not today_tasks and not week_tasks:
+        return ""
+
+    def _task_row(t):
+        is_done = t.get("status") == "complete"
+        pri = t.get("priority", "medium")
+        pri_color = RED if pri == "high" else YELLOW if pri == "medium" else MUTED
+        title_style = f"text-decoration:line-through;color:{MUTED}" if is_done else "font-weight:600"
+        due = ""
+        if t.get("due_date"):
+            try:
+                due_dt = datetime.fromisoformat(t["due_date"].replace("Z", "+00:00"))
+                due = f'<span style="font-size:10px;color:{MUTED}">{due_dt.strftime("%-I:%M %p")}</span>'
+            except Exception:
+                pass
+        status_icon = f'<span style="color:{GREEN}">✓</span>' if is_done else f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{pri_color};flex-shrink:0"></span>'
+        return f'''<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-bottom:1px solid {BORDER}22;{'opacity:0.5' if is_done else ''}">
+            <div style="margin-top:2px;flex-shrink:0">{status_icon}</div>
+            <div style="flex:1;min-width:0">
+                <span style="font-size:13px;{title_style}">{html.escape(t.get("title",""))}</span>
+                {due}
+            </div>
+        </div>'''
+
+    today_html = "".join(_task_row(t) for t in today_tasks) or f'<div style="color:{GREEN};text-align:center;padding:12px;font-size:13px">All clear today</div>'
+    week_html = "".join(_task_row(t) for t in week_tasks[:6]) or f'<div style="color:{MUTED};text-align:center;padding:8px;font-size:12px">No upcoming tasks</div>'
+
+    pending_today = sum(1 for t in today_tasks if t.get("status") != "complete")
+    pending_week = sum(1 for t in week_tasks if t.get("status") != "complete")
+
+    return f'''<div class="card" style="border-color:{GOLD}44">
+        <h2>Today's Tasks <span style="color:{GOLD};font-weight:700">{pending_today} pending</span></h2>
+        {today_html}
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid {BORDER}">
+            <div style="font-size:11px;font-weight:600;color:{MUTED};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">This Week ({pending_week} pending)</div>
+            {week_html}
+        </div>
+        <div style="margin-top:8px;text-align:right">
+            <a href="/sprint" style="font-size:11px;color:{GOLD};text-decoration:none">Full Sprint Hub →</a>
+        </div>
+    </div>'''
+
+
+def _outreach_log_section(emails):
+    """Today's cold outreach log for the main dashboard."""
+    if not emails:
+        return f'''<div class="card">
+            <h2>Today's Outreach Log</h2>
+            <div style="color:{MUTED};text-align:center;padding:16px;font-size:13px">No outreach emails sent today yet</div>
+        </div>'''
+
+    rows = ""
+    for e in emails:
+        sent_time = ""
+        try:
+            dt = datetime.fromisoformat(e["sent_at"].replace("Z", "+00:00"))
+            sent_time = dt.strftime("%-I:%M %p")
+        except Exception:
+            pass
+        stage = e.get("pipeline_stage", "")
+        stage_html = f'<span style="background:{BLUE}22;color:{BLUE};padding:1px 6px;border-radius:8px;font-size:10px">{html.escape(stage)}</span>' if stage else ""
+        rows += f'''<tr>
+            <td style="font-weight:600;font-size:12px">{html.escape(e.get("first_name",""))} / {html.escape(e.get("company",""))}</td>
+            <td style="font-size:11px;color:{MUTED}">{html.escape(e.get("industry","—"))}</td>
+            <td style="font-size:11px;color:{MUTED}">{html.escape(e.get("subject",""))}</td>
+            <td style="font-size:11px;color:{MUTED}">{sent_time}</td>
+            <td>{stage_html}</td>
+        </tr>'''
+
+    return f'''<div class="card">
+        <h2>Today's Outreach — {len(emails)} sent</h2>
+        <div style="overflow-x:auto">
+        <table style="margin-top:4px;font-size:12px">
+            <thead><tr>
+                <th>Contact / Company</th><th>Industry</th><th>Subject</th><th>Sent</th><th>Stage</th>
+            </tr></thead>
+            <tbody>{rows}</tbody>
+        </table>
+        </div>
+    </div>'''
+
+
+def render_dashboard(data, error=None, time_block=None):
     if error or not data:
         err_msg = html.escape(str(error)) if error else "Could not load data. Check Google Sheets credentials."
         content = f'''<div class="container">
@@ -327,15 +466,37 @@ def render_dashboard(data, error=None):
         {_daily_log_table(data["daily_log"])}
     </div>'''
 
+    # ── Sheets status notice ──
+    sheets_notice = ""
+    if not data.get("sheets_ok"):
+        sheets_notice = f'''<div style="background:{YELLOW}18;border:1px solid {YELLOW}44;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:{YELLOW}">
+            ⚠ Sheets disconnected — showing local data. Outreach count pulled from tracking files.
+        </div>'''
+
+    # ── Tasks from tasks.json ──
+    tasks_card = _tasks_section(data.get("tasks", {}))
+
+    # ── Today's outreach log ──
+    outreach_log_card = _outreach_log_section(data.get("outreach_log", []))
+
+    # ── RIGHT NOW time block ──
+    right_now = _right_now_card(time_block)
+
     # ── Assemble Layout ──
     content = f'''<div class="container">
         {header}
         {tab_nav}
+        {sheets_notice}
+        {right_now}
         {stats}
         {rings}
         <div class="grid grid-2">
             {bars}
             {goals_section}
+        </div>
+        <div class="grid grid-2">
+            {tasks_card}
+            {outreach_log_card}
         </div>
         <div class="grid grid-3">
             {energy_section}
@@ -434,11 +595,11 @@ def render_sprint(tasks_data, outreach_stats, error=None):
     tools_section = f'''<div class="card">
         <h2>Quick Launch — Sprint Tools</h2>
         <div class="grid grid-5" style="margin-top:4px">
-            {_launch_btn("Sales Pipeline", "https://pipeline.marceausolutions.com", "💼", "Deals, kanban, proposals")}
-            {_launch_btn("Cold Outreach", "/outreach", "📤", "Batch leads + follow-up status", str(follow_ups_due) if follow_ups_due > 0 else "")}
-            {_launch_btn("MailAssist", "https://email.marceausolutions.com", "📧", "Gmail search + AI replies")}
-            {_launch_btn("ClaimBack", "https://claimback.marceausolutions.com", "🏥", "Medical billing disputes")}
-            {_launch_btn("KeyVault", "https://keys.marceausolutions.com", "🔑", "API key health & rotation")}
+            {_launch_btn("Sales Pipeline", "http://127.0.0.1:8785", "💼", "Deals, kanban, proposals")}
+            {_launch_btn("Outreach Analytics", "http://127.0.0.1:8794", "📊", "Sent / reply rate / funnel")}
+            {_launch_btn("Cold Outreach", "http://localhost:8780/sprint", "📤", "Sprint hub outreach view", str(follow_ups_due) if follow_ups_due > 0 else "")}
+            {_launch_btn("ClaimBack", "http://127.0.0.1:8790", "🏥", "Medical billing disputes")}
+            {_launch_btn("API Key Manager", "http://127.0.0.1:8793", "🔑", "API key health & rotation")}
         </div>
     </div>'''
 

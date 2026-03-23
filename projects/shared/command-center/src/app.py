@@ -18,7 +18,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 import uvicorn
 
-from .data import get_dashboard_data, get_context, TARGETS, GOALS
+from .data import get_dashboard_data, get_context, TARGETS, GOALS, get_current_time_block
 from .ui import render_dashboard, render_landing, render_sprint
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
@@ -36,7 +36,8 @@ PORT = int(os.getenv("ACCOUNTABILITY_PORT", "8780"))
 async def dashboard():
     try:
         data = get_dashboard_data()
-        return render_dashboard(data)
+        time_block = get_current_time_block()
+        return render_dashboard(data, time_block=time_block)
     except Exception as e:
         return render_dashboard(None, error=str(e))
 
