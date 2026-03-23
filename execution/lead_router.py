@@ -445,7 +445,8 @@ def route_csv(
     # Write output CSV
     if filtered:
         fieldnames = list(rows_in[0].keys()) + [
-            "lead_score", "routing_tier", "tier_name", "score_breakdown"
+            "lead_score", "routing_tier", "tier_name", "score_breakdown",
+            "disqualified", "disqualify_reason", "phone_dependency"
         ]
         with open(output_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
@@ -454,11 +455,23 @@ def route_csv(
 
     # Build summary
     tier_counts = {0: 0, 1: 0, 2: 0, 3: 0}
+    disqualified_count = 0
+    high_phone_dep = 0
     for r in scored:
         tier_counts[r["routing_tier"]] = tier_counts.get(r["routing_tier"], 0) + 1
+        if r.get("disqualified") == "YES":
+            disqualified_count += 1
+        if r.get("phone_dependency") == "high":
+            high_phone_dep += 1
 
     tier1_leads = [r for r in scored if r["routing_tier"] == 1]
     tier1_leads.sort(key=lambda x: x["lead_score"], reverse=True)
+
+    # Show disqualified leads for transparency
+    disqualified_leads = [
+        {"company": r.get("company_name", ""), "reason": r.get("disqualify_reason", "")}
+        for r in scored if r.get("disqualified") == "YES"
+    ]
 
     return {
         "total_input": len(rows_in),
@@ -466,6 +479,9 @@ def route_csv(
         "tier_counts": tier_counts,
         "tier1_top10": tier1_leads[:10],
         "output_path": str(output_file.absolute()),
+        "disqualified_count": disqualified_count,
+        "high_phone_dependency_count": high_phone_dep,
+        "disqualified_leads": disqualified_leads[:20],
     }
 
 
@@ -487,9 +503,27 @@ def print_summary(summary: Dict[str, Any]):
     print(f"  Tier 1 — deep_personalized  (80-100):  {tier_counts.get(1, 0):>4}")
     print(f"  Tier 2 — industry_batch     (50-79):   {tier_counts.get(2, 0):>4}")
     print(f"  Tier 3 — generic_batch      (20-49):   {tier_counts.get(3, 0):>4}")
-    print(f"  Skip   — wrong fit          (<20):     {tier_counts.get(0, 0):>4}")
+    print(f"  Skip   — wrong fit/B2B      (<20):     {tier_counts.get(0, 0):>4}")
+    print()
+    disq = summary.get("disqualified_count", 0)
+    hi_phone = summary.get("high_phone_dependency_count", 0)
+    if disq:
+        print(f"  Auto-disqualified (B2B/low phone): {disq}")
+    if hi_phone:
+        print(f"  High phone-dependency (best fit):  {hi_phone}")
     print()
     print(f"Output written to: {summary['output_path']}")
+
+    # Show disqualified leads so William can audit
+    disq_leads = summary.get("disqualified_leads", [])
+    if disq_leads:
+        print()
+        print("=" * 60)
+        print("AUTO-DISQUALIFIED LEADS (B2B / Low Phone Dependency)")
+        print("Review these — if any are wrong, adjust CONTEXTUAL_B2B_SIGNALS")
+        print("=" * 60)
+        for d in disq_leads:
+            print(f"  {d['company'][:40]:<40}  {d['reason']}")
 
     top10 = summary.get("tier1_top10", [])
     if top10:

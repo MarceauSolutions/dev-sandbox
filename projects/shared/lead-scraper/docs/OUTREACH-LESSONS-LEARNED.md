@@ -55,6 +55,40 @@
 
 ---
 
+### Session 2026-03-23: B2B Disqualification Failure
+
+**What happened:**
+- Apollo pipeline gave 8 of 9 hand-selected leads a score of 100/100
+- The scoring rewarded: Naples FL + owner title + personal email + <10 employees + "HVAC / Home Services" industry
+- These 5 signals are structurally identical for a fire suppression contractor (B2B) and an HVAC repair tech (residential) — the scoring can't distinguish them
+- Leads sent for validation included Fire Stop Systems (commercial fire code compliance), Eco Green Drone (agricultural/commercial drone), All In One Technology (IT managed services for businesses), Knauf-Koenig Group (large commercial GC), Imperial Homes (custom home builder, project-bid driven)
+- All 5 are effectively B2B — the "AI that answers missed calls from homeowners" has zero hook for any of them
+
+**Root cause:**
+- `execution/lead_router.py` had NO B2B disqualification logic
+- `segment_prospects.py` had NO check for businesses where clients don't call in
+- Email templates were generic discovery questions — didn't reference the actual offer at all
+
+**Fix applied (2026-03-23):**
+- Added `check_disqualification()` and `classify_phone_dependency()` to `lead_router.py`
+- Added `CONTEXTUAL_B2B_SIGNALS` dict with specific company overrides (fireproofers.com, ecogreendrone.com, kkgbuild.com, allinonetechnology.com, ihnaples.com)
+- Added `is_b2b_skip()` to `segment_prospects.py` — B2B companies excluded from TOP 20
+- Added `get_recommended_template()` — maps each segment to the right email hook
+- Added 5 new email templates to `cold_outreach.py` that reference the actual offer (missed calls, AI answering, booking): `hvac_missed_call`, `electrical_missed_call`, `roofing_missed_call`, `pool_missed_call`, `contractor_missed_call`
+- New output CSV includes `disqualified`, `disqualify_reason`, `phone_dependency` columns
+
+**Validated result:**
+- Fire Stop, Eco Green Drone, All In One Technology, Knauf-Koenig, Imperial Homes all correctly moved to tier=skip
+- Bill Jones (roofing), Advanced Power (electrical), Horizon Pool, Dan House Electric all correctly remain tier=1 with phone_dep=high
+- New TOP 20 output shows recommended template per lead
+
+**Offer fit rule (permanent):**
+- STRONG YES: HVAC, residential electrical, roofing, pool service, plumbing — emergency calls, scheduling calls
+- MODERATE: pest control, lawn/landscaping, cleaning services, handymen
+- WEAK / SKIP: commercial fire suppression, drone services, IT managed services, large commercial GCs, custom home builders, staffing/recruiting
+
+---
+
 ## Core Principles (Updated)
 
 ### 1. Lead with Discovery, Not Pitch
