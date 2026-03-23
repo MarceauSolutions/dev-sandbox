@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Automation for Local Businesses | Marceau Solutions</title>
-    <meta name="description" content="AI systems that answer your phones, book appointments, and follow up with leads 24/7. Naples-based AI automation consultant serving local and nationwide businesses.">
+    <title>AI Systems for Your Business | Marceau Solutions</title>
+    <meta name="description" content="Custom AI systems built for your business — free 2-week onboarding, no hidden fees. Voice AI, lead capture, automation, and more. Naples, FL — serving local and nationwide.">
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="AI Automation for Local Businesses | Marceau Solutions">
-    <meta property="og:description" content="Stop losing customers to missed calls and slow follow-ups. AI systems that work 24/7 so you don't have to.">
+    <meta property="og:title" content="AI Systems for Your Business | Marceau Solutions">
+    <meta property="og:description" content="Free 2-week onboarding. Custom AI systems. No hidden fees. See exactly what you're getting before you pay a dime.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://marceausolutions.com/ai-automation.html">
 
@@ -21,6 +21,9 @@
     <!-- Calendly -->
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+    <!-- GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
 
     <style>
         * {
@@ -284,7 +287,28 @@
             font-size: 1.25rem;
             color: var(--text-muted);
             max-width: 700px;
-            margin: 0 auto;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-trust-points {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .hero-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .hero-trust-item .icon {
+            color: var(--primary);
+            font-size: 1.1rem;
         }
 
         /* Section Container */
@@ -309,74 +333,175 @@
         .section-header p {
             color: var(--text-muted);
             font-size: 1.1rem;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
         }
 
-        /* Story Section */
-        .story-section {
-            padding: 5rem 2rem;
+        /* Transparency Promise */
+        .promise-section {
+            padding: 4rem 2rem;
             background: var(--dark);
         }
 
-        .story-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
+        .promise-banner {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.08), rgba(212, 175, 55, 0.04));
+            border: 1px solid rgba(201, 150, 60, 0.25);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
         }
 
-        .story-text h2 {
+        .promise-banner h2 {
             font-family: 'Montserrat', sans-serif;
             font-size: 2rem;
             font-weight: 800;
-            margin-bottom: 1.5rem;
-        }
-
-        .story-text p {
-            color: var(--text-muted);
-            margin-bottom: 1.25rem;
-            font-size: 1.05rem;
-        }
-
-        .story-text .emphasis {
+            margin-bottom: 1rem;
             color: var(--primary);
-            font-weight: 600;
         }
 
-        .pain-points {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 2rem;
+        .promise-banner > p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
         }
 
-        .pain-points h3 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            color: var(--accent);
-        }
-
-        .pain-list {
+        .promise-list {
             list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        .pain-list li {
+        .promise-list li {
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
-            margin-bottom: 1rem;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .promise-list li .icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .process-timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            left: 32px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), rgba(201, 150, 60, 0.2));
+        }
+
+        .process-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-marker {
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            z-index: 1;
+        }
+
+        .step-content {
+            padding-top: 0.5rem;
+        }
+
+        .step-phase {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .step-details {
+            list-style: none;
+            margin-top: 0.75rem;
+        }
+
+        .step-details li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
         }
 
-        .pain-list li .icon {
-            font-size: 1.25rem;
+        .step-details li .check {
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .step-free-badge {
+            display: inline-block;
+            background: rgba(201, 150, 60, 0.15);
+            border: 1px solid rgba(201, 150, 60, 0.3);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 0.75rem;
         }
 
         /* Services Section */
         .services-section {
             padding: 5rem 2rem;
-            background: var(--darker);
+            background: var(--dark);
         }
 
         .services-grid {
@@ -413,13 +538,6 @@
         .service-card h3 {
             font-size: 1.25rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .service-price {
-            font-size: 0.95rem;
-            color: var(--accent);
-            font-weight: 600;
             margin-bottom: 0.75rem;
         }
 
@@ -445,10 +563,141 @@
             color: var(--primary);
         }
 
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(201, 150, 60, 0.1);
+        }
+
+        .pricing-card .card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-card .price-note {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card .card-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 1.5rem 0;
+        }
+
+        .pricing-card .features-list {
+            list-style: none;
+        }
+
+        .pricing-card .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-card .features-list li .check {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .pricing-footer {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .pricing-footer p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* No Hidden Fees */
+        .transparency-section {
+            padding: 4rem 2rem;
+            background: var(--dark);
+        }
+
+        .transparency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .transparency-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .transparency-item .icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .transparency-item h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .transparency-item p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
         /* Results Section */
         .results-section {
             padding: 5rem 2rem;
-            background: var(--dark);
+            background: var(--darker);
         }
 
         .results-grid {
@@ -486,57 +735,6 @@
             font-size: 0.75rem;
             margin-top: 0.25rem;
             opacity: 0.7;
-        }
-
-        /* How It Works */
-        .how-section {
-            padding: 5rem 2rem;
-            background: var(--darker);
-        }
-
-        .how-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-        }
-
-        .how-step {
-            text-align: center;
-            position: relative;
-        }
-
-        .how-step:not(:last-child)::after {
-            content: '\2192';
-            position: absolute;
-            right: -1rem;
-            top: 2rem;
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
-
-        .how-number {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--secondary), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            margin: 0 auto 1.25rem;
-        }
-
-        .how-step h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .how-step p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
         }
 
         /* Who It's For */
@@ -603,6 +801,49 @@
 
         .who-card.no li .icon {
             color: #ef4444;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem 0;
+        }
+
+        .faq-item:first-child {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question .toggle {
+            color: var(--primary);
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
 
         /* CTA / Calendly Section */
@@ -762,19 +1003,19 @@
 
         /* Mobile Responsive */
         @media (max-width: 968px) {
-            .story-content,
             .services-grid,
-            .who-grid {
+            .who-grid,
+            .pricing-cards {
                 grid-template-columns: 1fr;
             }
 
-            .how-grid,
             .results-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .how-step:not(:last-child)::after {
-                display: none;
+            .transparency-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .page-hero h1 {
@@ -784,8 +1025,30 @@
             .hamburger {
                 display: flex;
             }
+
             .nav-links {
                 display: none;
+            }
+
+            .promise-list {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-trust-points {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .process-timeline::before {
+                left: 24px;
+            }
+
+            .step-marker {
+                width: 48px;
+                height: 48px;
+                min-width: 48px;
+                font-size: 1.2rem;
             }
         }
 
@@ -798,7 +1061,6 @@
                 font-size: 1.75rem;
             }
 
-            .how-grid,
             .results-grid {
                 grid-template-columns: 1fr;
             }
@@ -814,6 +1076,14 @@
 
             .calendly-embed {
                 height: 800px;
+            }
+
+            .promise-banner {
+                padding: 2rem 1.5rem;
+            }
+
+            .process-step {
+                gap: 1rem;
             }
         }
     </style>
@@ -864,108 +1134,259 @@
     <section class="page-hero">
         <div class="page-hero-container">
             <div class="page-hero-badge">
-                <span>For Local Service Businesses</span>
+                <span>AI Systems for Small &amp; Local Businesses</span>
             </div>
-            <h1>AI Systems That <span class="highlight">Answer Your Phone, Book Your Jobs, and Follow Up</span> — While You Sleep</h1>
-            <p>Naples-based AI automation consultant. I build the systems that capture the leads you're currently losing.</p>
+            <h1>Custom AI Systems Built for Your Business — <span class="highlight">Free to Start</span></h1>
+            <p>I build the automations that save you time and capture the leads you're currently losing. You see it working before you ever pay a dime.</p>
+            <div class="hero-trust-points">
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>Free 2-week onboarding</span>
+                </div>
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>No hidden fees — ever</span>
+                </div>
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>Cancel anytime, no contracts</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- The Problem -->
-    <section class="story-section">
+    <!-- Transparency Promise -->
+    <section class="promise-section">
         <div class="section-container">
-            <div class="story-content">
-                <div class="story-text">
-                    <h2>You're Losing Customers Right Now</h2>
-                    <p>Studies show <span class="emphasis">40-60% of calls to local businesses go unanswered</span>. After hours? That number jumps to nearly 100%.</p>
-                    <p>Every missed call is a customer calling your competitor instead. Every lead that doesn't get a follow-up within 5 minutes is 80% less likely to convert.</p>
-                    <p>You can't hire a 24/7 receptionist. You can't personally follow up with every lead instantly. But <span class="emphasis">an AI system can</span>.</p>
-                    <p>I build custom AI automation for local businesses — the same systems I use to run my own company. Voice AI, lead capture, automated follow-ups, and more.</p>
+            <div class="promise-banner">
+                <h2>My Promise to You</h2>
+                <p>I believe you should know exactly what you're getting, what it costs, and what happens at every step — before you commit to anything.</p>
+                <ul class="promise-list">
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No setup fees.</strong> Your first two weeks are completely free — systems built, tested, and running.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No surprise charges.</strong> Every cost is outlined upfront. What you see on this page is what you pay.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No long-term contracts.</strong> The optional retainer is month-to-month. Cancel any time with zero penalties.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No pressure to continue.</strong> After onboarding, if you don't want the retainer, you keep the systems I built — free.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No black-box pricing.</strong> I'll walk you through exactly what each system does and why it costs what it costs.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No jargon or runaround.</strong> Plain English. If you ask a question, you get a straight answer — always.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works (Process) -->
+    <section class="process-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Here's Exactly What Working With Me Looks Like</h2>
+                <p>Transparent from start to finish. No guesswork, no surprises.</p>
+            </div>
+            <div class="process-timeline">
+                <!-- Step 1 -->
+                <div class="process-step">
+                    <div class="step-marker">1</div>
+                    <div class="step-content">
+                        <div class="step-phase">Before We Start</div>
+                        <h3>Free Discovery Call (15 min)</h3>
+                        <span class="step-free-badge">No cost, no obligation</span>
+                        <p>A quick conversation to understand your business, where you're losing time or leads, and whether AI systems are actually the right fit. If they're not, I'll tell you straight — I'd rather be honest than waste your time.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> We identify your biggest bottlenecks</li>
+                            <li><span class="check">&#10003;</span> I explain what systems could help and why</li>
+                            <li><span class="check">&#10003;</span> You get a clear idea of what to expect — no commitments</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="pain-points">
-                    <h3>Sound Familiar?</h3>
-                    <ul class="pain-list">
-                        <li>
-                            <span class="icon">📞</span>
-                            <span>Missing calls when you're on a job or after hours</span>
-                        </li>
-                        <li>
-                            <span class="icon">⏰</span>
-                            <span>Leads go cold because you can't follow up fast enough</span>
-                        </li>
-                        <li>
-                            <span class="icon">📋</span>
-                            <span>Appointments and scheduling are a manual headache</span>
-                        </li>
-                        <li>
-                            <span class="icon">💸</span>
-                            <span>Paying for a receptionist you can't really afford</span>
-                        </li>
-                        <li>
-                            <span class="icon">📧</span>
-                            <span>Customer follow-ups fall through the cracks</span>
-                        </li>
-                        <li>
-                            <span class="icon">🌙</span>
-                            <span>Zero coverage after 5pm — losing after-hours revenue</span>
-                        </li>
+
+                <!-- Step 2 -->
+                <div class="process-step">
+                    <div class="step-marker">2</div>
+                    <div class="step-content">
+                        <div class="step-phase">Week 1-2: Free Onboarding</div>
+                        <h3>I Build Your Systems — At No Cost</h3>
+                        <span class="step-free-badge">100% free — you pay nothing</span>
+                        <p>This is where the work happens. Over two weeks I design, build, test, and launch custom AI systems tailored to your business. You'll have live access the entire time and get a full walkthrough before anything goes public.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> Custom system design based on your specific needs</li>
+                            <li><span class="check">&#10003;</span> Full build-out (voice AI, lead capture, automations, etc.)</li>
+                            <li><span class="check">&#10003;</span> Testing with real scenarios from your business</li>
+                            <li><span class="check">&#10003;</span> Live walkthrough so you understand everything</li>
+                            <li><span class="check">&#10003;</span> Training on how to use and monitor your systems</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="process-step">
+                    <div class="step-marker">3</div>
+                    <div class="step-content">
+                        <div class="step-phase">End of Week 2</div>
+                        <h3>You Decide What Happens Next</h3>
+                        <p>After onboarding you have fully functional AI systems running in your business. At this point you choose one of two paths:</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> <strong>Option A:</strong> Keep the systems as-is and manage them yourself — at no charge</li>
+                            <li><span class="check">&#10003;</span> <strong>Option B:</strong> Continue with the $295/mo retainer for ongoing optimization, support, and new system builds</li>
+                        </ul>
+                        <p>There is no wrong choice. The systems are yours either way.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="process-step">
+                    <div class="step-marker">4</div>
+                    <div class="step-content">
+                        <div class="step-phase">Ongoing (Optional)</div>
+                        <h3>Monthly Retainer — $295/mo</h3>
+                        <p>If you want ongoing support, this is where it happens. I monitor your systems, optimize performance, build new automations as your business grows, and handle anything that breaks.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> System monitoring and performance optimization</li>
+                            <li><span class="check">&#10003;</span> Priority support — issues resolved same-day</li>
+                            <li><span class="check">&#10003;</span> New automation builds as your needs evolve</li>
+                            <li><span class="check">&#10003;</span> Monthly performance report with actionable insights</li>
+                            <li><span class="check">&#10003;</span> Cancel any month — no penalties, no questions asked</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Transparency -->
+    <section class="pricing-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Complete Pricing — No Fine Print</h2>
+                <p>Two options. That's it. No tiers, no upsells, no "call for pricing."</p>
+            </div>
+            <div class="pricing-cards">
+                <div class="pricing-card featured">
+                    <div class="card-label">Everyone Starts Here</div>
+                    <h3>Free Onboarding</h3>
+                    <div class="price">$0</div>
+                    <div class="price-note">For the first 2 weeks — fully built AI systems</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Discovery call to map your needs</li>
+                        <li><span class="check">&#10003;</span> Custom AI system design and build</li>
+                        <li><span class="check">&#10003;</span> Voice AI, lead capture, or automation — whatever fits</li>
+                        <li><span class="check">&#10003;</span> Full testing with your real business scenarios</li>
+                        <li><span class="check">&#10003;</span> Live walkthrough and hands-on training</li>
+                        <li><span class="check">&#10003;</span> You keep the systems regardless of what you decide</li>
+                    </ul>
+                </div>
+                <div class="pricing-card">
+                    <div class="card-label">Optional After Onboarding</div>
+                    <h3>Monthly Retainer</h3>
+                    <div class="price">$295</div>
+                    <div class="price-note">Per month — cancel anytime, no contracts</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Everything from onboarding, plus:</li>
+                        <li><span class="check">&#10003;</span> Ongoing system monitoring and optimization</li>
+                        <li><span class="check">&#10003;</span> Same-day priority support</li>
+                        <li><span class="check">&#10003;</span> New system builds as your business grows</li>
+                        <li><span class="check">&#10003;</span> Monthly performance reports</li>
+                        <li><span class="check">&#10003;</span> Direct access to me — no ticket systems</li>
                     </ul>
                 </div>
             </div>
+            <div class="pricing-footer">
+                <p>That's the full picture. No setup fees, no per-system charges, no "premium" tiers. If costs change as AI tools evolve, you'll always hear about it in advance.</p>
+            </div>
         </div>
     </section>
 
-    <!-- Services -->
+    <!-- What Costs What (Transparency) -->
+    <section class="transparency-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Where Your Money Goes</h2>
+                <p>Full transparency on every dollar.</p>
+            </div>
+            <div class="transparency-grid">
+                <div class="transparency-item">
+                    <div class="icon">&#128176;</div>
+                    <h3>My Time</h3>
+                    <p>Design, build, testing, training, ongoing support — all included in the retainer or free during onboarding.</p>
+                </div>
+                <div class="transparency-item">
+                    <div class="icon">&#9889;</div>
+                    <h3>Third-Party Tools</h3>
+                    <p>Some AI services (voice AI, SMS, etc.) have usage-based costs. I'll break these down for you before we start — there are no markups.</p>
+                </div>
+                <div class="transparency-item">
+                    <div class="icon">&#128274;</div>
+                    <h3>You Own It</h3>
+                    <p>Every system I build belongs to you. If we part ways, you keep everything — accounts, automations, all of it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What I Build -->
     <section class="services-section">
         <div class="section-container">
             <div class="section-header">
-                <h2>What I Build for You</h2>
-                <p>Pick what you need. Start with one service, add more as you grow.</p>
+                <h2>Types of Systems I Build</h2>
+                <p>During onboarding we'll figure out which of these fits your business best. Most clients start with one or two and add more over time.</p>
             </div>
             <div class="services-grid">
                 <div class="service-card">
-                    <div class="icon">📞</div>
+                    <div class="icon">&#128222;</div>
                     <h3>Voice AI Receptionist</h3>
-                    <div class="service-price">$199 - $499/mo</div>
-                    <p>An AI that answers every call, 24/7. Books appointments, answers FAQs, routes emergencies to you.</p>
+                    <p>An AI that answers every call 24/7 — books appointments, answers FAQs, routes emergencies to you. Never miss a lead again.</p>
                     <ul class="service-features">
-                        <li><span class="check">&#10003;</span> Answers calls in your business's voice</li>
-                        <li><span class="check">&#10003;</span> Books appointments directly to your calendar</li>
+                        <li><span class="check">&#10003;</span> Answers in your business's voice and tone</li>
+                        <li><span class="check">&#10003;</span> Books directly to your calendar</li>
                         <li><span class="check">&#10003;</span> Routes urgent calls to your cell</li>
-                        <li><span class="check">&#10003;</span> Works nights, weekends, holidays</li>
+                        <li><span class="check">&#10003;</span> Works nights, weekends, and holidays</li>
                     </ul>
                 </div>
                 <div class="service-card">
-                    <div class="icon">🎯</div>
+                    <div class="icon">&#127919;</div>
                     <h3>Lead Capture &amp; Follow-Up</h3>
-                    <div class="service-price">$1,000 - $3,000 setup + $200 - $500/mo</div>
-                    <p>Automated outreach, instant lead response, and multi-touch follow-up sequences that convert.</p>
+                    <p>Instant response to every new lead via SMS and email. Automated follow-up sequences that keep you top-of-mind until they're ready to buy.</p>
                     <ul class="service-features">
-                        <li><span class="check">&#10003;</span> Instant SMS/email response to new leads</li>
-                        <li><span class="check">&#10003;</span> 7-touch follow-up sequences</li>
+                        <li><span class="check">&#10003;</span> Instant response to new leads (under 60 seconds)</li>
+                        <li><span class="check">&#10003;</span> Multi-touch follow-up sequences</li>
                         <li><span class="check">&#10003;</span> CRM pipeline with lead scoring</li>
-                        <li><span class="check">&#10003;</span> Monthly performance reports</li>
+                        <li><span class="check">&#10003;</span> Performance tracking and reporting</li>
                     </ul>
                 </div>
                 <div class="service-card">
-                    <div class="icon">⚡</div>
+                    <div class="icon">&#9889;</div>
                     <h3>Business Process Automation</h3>
-                    <div class="service-price">$500 - $5,000 one-time</div>
-                    <p>Custom workflows that eliminate repetitive tasks — invoicing, scheduling, reporting, notifications.</p>
+                    <p>Custom workflows that eliminate the repetitive tasks eating your day — invoicing, scheduling, reporting, customer notifications.</p>
                     <ul class="service-features">
-                        <li><span class="check">&#10003;</span> Custom workflow design</li>
-                        <li><span class="check">&#10003;</span> Automated invoicing and reminders</li>
+                        <li><span class="check">&#10003;</span> Custom workflow design for your operations</li>
+                        <li><span class="check">&#10003;</span> Automated invoicing and payment reminders</li>
                         <li><span class="check">&#10003;</span> Review request automation</li>
-                        <li><span class="check">&#10003;</span> Integration with your existing tools</li>
+                        <li><span class="check">&#10003;</span> Integrates with your existing tools</li>
                     </ul>
                 </div>
                 <div class="service-card">
-                    <div class="icon">🌐</div>
+                    <div class="icon">&#127760;</div>
                     <h3>Website + Automation Package</h3>
-                    <div class="service-price">Custom quote</div>
-                    <p>Need a website too? I build fast, mobile-first sites with automation baked in from day one.</p>
+                    <p>Need a website too? I build fast, mobile-first sites with AI automation baked in from day one — lead capture, chat, the works.</p>
                     <ul class="service-features">
-                        <li><span class="check">&#10003;</span> Professional website design</li>
+                        <li><span class="check">&#10003;</span> Professional, mobile-optimized design</li>
                         <li><span class="check">&#10003;</span> Lead capture forms wired to automation</li>
                         <li><span class="check">&#10003;</span> SEO-optimized for local search</li>
                         <li><span class="check">&#10003;</span> Hosting and maintenance included</li>
@@ -975,11 +1396,11 @@
         </div>
     </section>
 
-    <!-- Case Study / Results -->
+    <!-- Real Results -->
     <section class="results-section">
         <div class="section-container">
             <div class="section-header">
-                <h2>What We Built for a Naples HVAC Company</h2>
+                <h2>Real Results From a Naples HVAC Company</h2>
                 <p>45-day proof of concept — Voice AI receptionist replacing manual call handling.</p>
             </div>
             <div class="results-grid">
@@ -1007,38 +1428,6 @@
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="how-section">
-        <div class="section-container">
-            <div class="section-header">
-                <h2>How It Works</h2>
-                <p>From first call to live system in as little as one week.</p>
-            </div>
-            <div class="how-grid">
-                <div class="how-step">
-                    <div class="how-number">1</div>
-                    <h3>Discovery Call</h3>
-                    <p>Free 15-minute call. We figure out where you're losing leads and what to fix first.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-number">2</div>
-                    <h3>Custom Proposal</h3>
-                    <p>Within 48 hours you get a clear plan with pricing — no surprises, no hidden fees.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-number">3</div>
-                    <h3>Build &amp; Launch</h3>
-                    <p>I build and test everything. You get a live walkthrough before anything goes live.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-number">4</div>
-                    <h3>Ongoing Support</h3>
-                    <p>Monthly check-ins. Performance reports. Continuous optimization as your business grows.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Who It's For -->
     <section class="who-section">
         <div class="section-container">
@@ -1051,23 +1440,23 @@
                     <ul>
                         <li>
                             <span class="icon">&#10003;</span>
-                            <span>You're a service business (HVAC, plumbing, dental, medical, restaurant, etc.)</span>
+                            <span>You're a service business (HVAC, plumbing, dental, medical, restaurant, legal, etc.)</span>
                         </li>
                         <li>
                             <span class="icon">&#10003;</span>
-                            <span>You're missing calls or leads are falling through the cracks</span>
+                            <span>You're missing calls or leads are slipping through the cracks</span>
                         </li>
                         <li>
                             <span class="icon">&#10003;</span>
-                            <span>You have 1-20 employees and need to do more with less</span>
+                            <span>You have 1-50 employees and need to do more with less</span>
                         </li>
                         <li>
                             <span class="icon">&#10003;</span>
-                            <span>You're ready to invest in systems that pay for themselves</span>
+                            <span>You want systems that work while you don't</span>
                         </li>
                         <li>
                             <span class="icon">&#10003;</span>
-                            <span>You want to grow without hiring more staff</span>
+                            <span>You're open to trying something new — with zero risk</span>
                         </li>
                     </ul>
                 </div>
@@ -1076,25 +1465,96 @@
                     <ul>
                         <li>
                             <span class="icon">&#10007;</span>
-                            <span>You're looking for social media management</span>
+                            <span>You're looking for social media management or ad campaigns</span>
                         </li>
                         <li>
                             <span class="icon">&#10007;</span>
-                            <span>Your budget is under $500 total</span>
+                            <span>You need a full-service marketing agency</span>
                         </li>
                         <li>
                             <span class="icon">&#10007;</span>
-                            <span>You're not ready to implement new systems</span>
+                            <span>You're not ready to implement any new systems right now</span>
                         </li>
                         <li>
                             <span class="icon">&#10007;</span>
-                            <span>You need a full marketing agency</span>
-                        </li>
-                        <li>
-                            <span class="icon">&#10007;</span>
-                            <span>You want someone to run your entire business</span>
+                            <span>You want someone to run your entire business for you</span>
                         </li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Common Questions</h2>
+                <p>Straight answers. No runaround.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What's the catch with the free onboarding?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        There isn't one. I build your systems for free because I'm confident you'll see the value and want to continue. If you don't, you walk away with fully functional systems at no cost. I'd rather earn your business by proving value than by locking you into a contract.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What happens if I don't want the retainer after onboarding?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        You keep everything I built. The systems are yours. You can manage them yourself, and I'll make sure you're trained to do so. No hard feelings, no dismantling anything, no "gotcha" fees.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Are there any costs beyond the $295/mo retainer?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Some AI tools have their own usage fees (for example, voice AI services charge per minute of phone time). I'll break down any third-party costs before we build anything, so there are never surprises. I don't mark up these costs — you pay exactly what the service charges.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How long does onboarding actually take?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Two weeks from our first working session. Most systems are live and testable within the first week. The second week is for fine-tuning, testing with real scenarios, and making sure you're comfortable with everything.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What if I want to cancel the retainer later?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Send me a message and it's done. No cancellation fees, no 30-day notice requirements, no exit interviews. Your systems keep running — you just manage them yourself going forward.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Do I need to be technical to use these systems?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Not at all. Everything is designed to work without technical knowledge. During onboarding I'll train you on how to use and monitor your systems, and the retainer includes support for anything you can't figure out on your own.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        I'm not sure if AI is right for my business. Should I still book a call?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely. The discovery call is free and there's zero pressure. If AI isn't the right fit, I'll tell you directly and point you toward what might work better. I'd rather give you honest advice than sell you something you don't need.
+                    </div>
                 </div>
             </div>
         </div>
@@ -1103,24 +1563,24 @@
     <!-- CTA + Calendly -->
     <section id="book" class="cta-section">
         <div class="cta-container">
-            <h2>Let's Find Your Gaps</h2>
-            <p>15 minutes. No pitch, no pressure. We'll figure out if I can actually help — and if not, I'll tell you straight.</p>
+            <h2>Ready to See What AI Can Do for Your Business?</h2>
+            <p>Book a free 15-minute discovery call. No pitch, no pressure. We'll figure out if I can actually help — and if not, I'll tell you straight.</p>
         </div>
         <div class="calendly-embed">
             <div class="calendly-inline-widget" data-url="https://calendly.com/wmarceau/ai-services-discovery-call?hide_gdpr_banner=1&background_color=0f172a&text_color=f8fafc&primary_color=D4AF37" style="min-width:320px;height:700px;"></div>
         </div>
         <div class="contact-info">
             <div class="contact-item">
-                <span>📧</span>
+                <span>&#128231;</span>
                 <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
             </div>
             <div class="contact-item">
-                <span>📞</span>
+                <span>&#128222;</span>
                 <a href="tel:+18552399364">(855) 239-9364</a>
             </div>
             <div class="contact-item">
-                <span>📍</span>
-                <span>Naples, FL — local + nationwide</span>
+                <span>&#128205;</span>
+                <span>Naples, FL — serving local + nationwide</span>
             </div>
         </div>
     </section>
@@ -1141,7 +1601,7 @@
             </div>
         </div>
         <div class="disclaimer">
-            <p>&copy; 2026 Marceau Solutions. All rights reserved. | AI Automation for Local Businesses</p>
+            <p>&copy; 2026 Marceau Solutions. All rights reserved. | AI Systems for Small &amp; Local Businesses</p>
         </div>
     </footer>
 
@@ -1152,6 +1612,42 @@
             document.querySelector('.menu-overlay').classList.toggle('active');
             document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
         }
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(function(question) {
+            question.addEventListener('click', function() {
+                var answer = this.nextElementSibling;
+                var toggle = this.querySelector('.toggle');
+                var isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+                // Close all
+                document.querySelectorAll('.faq-answer').forEach(function(a) {
+                    a.style.maxHeight = '0px';
+                    a.style.opacity = '0';
+                    a.style.paddingBottom = '0';
+                });
+                document.querySelectorAll('.faq-question .toggle').forEach(function(t) {
+                    t.textContent = '+';
+                });
+
+                // Open clicked (if it was closed)
+                if (!isOpen) {
+                    answer.style.maxHeight = answer.scrollHeight + 16 + 'px';
+                    answer.style.opacity = '1';
+                    answer.style.paddingBottom = '0.5rem';
+                    toggle.textContent = '\u2212';
+                }
+            });
+        });
+
+        // Initialize FAQ answers as closed
+        document.querySelectorAll('.faq-answer').forEach(function(answer) {
+            answer.style.maxHeight = '0px';
+            answer.style.opacity = '0';
+            answer.style.overflow = 'hidden';
+            answer.style.transition = 'max-height 0.3s ease, opacity 0.2s ease, padding-bottom 0.3s ease';
+            answer.style.paddingBottom = '0';
+        });
     </script>
 </body>
 </html>
