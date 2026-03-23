@@ -1,0 +1,168 @@
+{
+  "name": "Cold Email Follow-Up Sequence",
+  "nodes": [
+    {
+      "id": "schedule-trigger",
+      "name": "Daily 8AM ET",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 12 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "run-followup-script",
+      "name": "Run Follow-Up Script",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [490, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://34.193.98.97:5010/command/execute",
+        "sendBody": true,
+        "contentType": "json",
+        "body": {
+          "command": "cd /home/ec2-user/dev-sandbox && python3 -m projects.shared.lead-scraper.src.process_followups 2>&1",
+          "cwd": "/home/ec2-user/dev-sandbox",
+          "timeout": 120
+        },
+        "options": {
+          "timeout": 130000
+        }
+      }
+    },
+    {
+      "id": "check-success",
+      "name": "Check Result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [730, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-success-flag",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "telegram-success",
+      "name": "Telegram — Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [970, 200],
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=<b>Follow-Up Sequence — Done</b>\n\nRan at {{ $now.toISO() }}\n\n<pre>{{ $('Run Follow-Up Script').item.json.output ? $('Run Follow-Up Script').item.json.output.slice(-800) : 'No output' }}</pre>",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "RlAwU3xzcX4hifgj",
+          "name": "Clawdbot Telegram"
+        }
+      }
+    },
+    {
+      "id": "telegram-error",
+      "name": "Telegram — Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [970, 420],
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=<b>Follow-Up Sequence FAILED</b>\n\nRan at {{ $now.toISO() }}\n\nError:\n<pre>{{ $('Run Follow-Up Script').item.json.error || $('Run Follow-Up Script').item.json.output || 'Unknown error' }}</pre>",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "RlAwU3xzcX4hifgj",
+          "name": "Clawdbot Telegram"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 8AM ET": {
+      "main": [
+        [
+          {
+            "node": "Run Follow-Up Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Follow-Up Script": {
+      "main": [
+        [
+          {
+            "node": "Check Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Result": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram — Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "America/New_York",
+    "errorWorkflow": "Ob7kiVvCnmDHAfNW",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Daily 8AM ET": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "tags": ["outreach", "email", "follow-up", "cold-email"]
+}

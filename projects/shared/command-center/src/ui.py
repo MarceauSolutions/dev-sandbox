@@ -232,6 +232,12 @@ def render_dashboard(data, error=None):
     wp = data["week_pcts"]
     targets = data["targets"]
 
+    # ── Tab Nav ──
+    tab_nav = f'''<div style="display:flex;gap:0;border-bottom:2px solid {GOLD};margin-bottom:20px">
+        <a href="/" style="padding:10px 20px;font-size:13px;font-weight:700;color:{GOLD};text-decoration:none;border-bottom:2px solid {GOLD};margin-bottom:-2px">90-Day Tracker</a>
+        <a href="/sprint" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">Sprint Hub</a>
+    </div>'''
+
     # ── Header ──
     header = f'''<div class="header">
         <div>
@@ -323,6 +329,7 @@ def render_dashboard(data, error=None):
     # ── Assemble Layout ──
     content = f'''<div class="container">
         {header}
+        {tab_nav}
         {stats}
         {rings}
         <div class="grid grid-2">
@@ -341,6 +348,171 @@ def render_dashboard(data, error=None):
     </div>'''
 
     return _shell("Accountability Engine", content)
+
+
+def render_sprint(tasks_data, outreach_stats, error=None):
+    """Sprint Command Center — unified hub for AI client sprint tools."""
+    SPRINT_END = "April 5, 2026"
+    from datetime import date
+    days_left = (date(2026, 4, 5) - date.today()).days
+
+    all_tasks = tasks_data.get("tasks", [])
+    today_pending = [t for t in all_tasks if t.get("section") == "today" and t.get("status") == "pending"]
+    this_week = [t for t in all_tasks if t.get("section") == "this_week" and t.get("status") == "pending"]
+    recently_done = [t for t in all_tasks if t.get("status") == "complete"][-8:]  # last 8
+    stats = tasks_data.get("stats", {})
+
+    # ── Tab Nav ──
+    nav = f'''<div style="display:flex;gap:0;border-bottom:2px solid {GOLD};margin-bottom:20px">
+        <a href="/" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">90-Day Tracker</a>
+        <a href="/sprint" style="padding:10px 20px;font-size:13px;font-weight:700;color:{GOLD};text-decoration:none;border-bottom:2px solid {GOLD};margin-bottom:-2px">Sprint Hub</a>
+    </div>'''
+
+    # ── Header ──
+    header = f'''<div class="header">
+        <div>
+            <h1>Sprint <span>Command Center</span></h1>
+            <div style="font-size:12px;color:{MUTED};margin-top:2px">AI Client Sprint — March 23 to {SPRINT_END}</div>
+        </div>
+        <div class="header-right">
+            <span class="header-badge" style="background:{RED if days_left <= 3 else YELLOW if days_left <= 7 else GOLD};color:{CHARCOAL}">{days_left} days left</span>
+            <span class="header-badge" style="background:{SURFACE};color:{GOLD};border:1px solid {GOLD}44">{stats.get("total_completed", 0)}/{stats.get("total_created", 0)} tasks done</span>
+            <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
+        </div>
+    </div>'''
+
+    # ── Quick Stats ──
+    follow_ups = outreach_stats.get("follow_ups_due", 0)
+    top_stats = f'''<div class="stat-grid">
+        {_stat_card(outreach_stats.get("total_sent", 0), "Emails Sent", "📤", PURPLE)}
+        {_stat_card(follow_ups, "Follow-ups Due", "⚡", RED if follow_ups > 0 else MUTED)}
+        {_stat_card(len(today_pending), "Today's Tasks", "📋", GOLD)}
+        {_stat_card(stats.get("total_completed", 0), "Completed", "✓", GREEN)}
+        {_stat_card(days_left, "Days to April 6", "⏳", BLUE)}
+        {_stat_card("(239) 457-0662", "Demo Line", "📞", GOLD)}
+    </div>'''
+
+    # ── Today's Tasks ──
+    def _task_row(t):
+        pri_color = RED if t.get("priority") == "high" else YELLOW if t.get("priority") == "medium" else MUTED
+        pri_dot = f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{pri_color};margin-right:6px;flex-shrink:0"></span>'
+        tags = " ".join(f'<span style="background:{SURFACE};border:1px solid {BORDER};padding:2px 6px;border-radius:4px;font-size:10px;color:{MUTED}">{html.escape(tag)}</span>' for tag in t.get("tags", [])[:3])
+        return f'''<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:{SURFACE};border-radius:8px;border:1px solid {BORDER};margin-bottom:6px">
+            {pri_dot}
+            <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600">{html.escape(t.get("title",""))}</div>
+                <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">{tags}</div>
+            </div>
+            <span style="font-size:11px;color:{MUTED};white-space:nowrap">{t.get("project","")}</span>
+        </div>'''
+
+    today_html = "".join(_task_row(t) for t in today_pending) or f'<div style="color:{GREEN};text-align:center;padding:16px;font-weight:600">All clear — nothing pending today</div>'
+    week_html = "".join(_task_row(t) for t in this_week[:6]) or f'<div style="color:{MUTED};text-align:center;padding:12px">No upcoming tasks</div>'
+
+    tasks_section = f'''<div class="card card-glow">
+        <h2>Today — Priority Queue</h2>
+        {today_html}
+    </div>
+    <div class="card">
+        <h2>This Week</h2>
+        {week_html}
+    </div>'''
+
+    # ── Quick Launch ──
+    def _launch_btn(label, url, icon, desc=""):
+        return f'''<a href="{url}" target="_blank" style="display:block;background:{SURFACE};border:1px solid {BORDER};border-radius:10px;padding:14px;text-decoration:none;color:{TEXT};transition:all .15s" onmouseover="this.style.borderColor='{GOLD}';this.style.boxShadow='0 0 12px {GOLD_GLOW}'" onmouseout="this.style.borderColor='{BORDER}';this.style.boxShadow='none'">
+            <div style="font-size:22px;margin-bottom:4px">{icon}</div>
+            <div style="font-size:13px;font-weight:700">{html.escape(label)}</div>
+            <div style="font-size:10px;color:{MUTED};margin-top:2px">{html.escape(desc)}</div>
+        </a>'''
+
+    tools_section = f'''<div class="card">
+        <h2>Quick Launch — Sprint Tools</h2>
+        <div class="grid grid-5" style="margin-top:4px">
+            {_launch_btn("Outreach Analytics", "http://127.0.0.1:8794", "📊", "Volume, response rate, CAC")}
+            {_launch_btn("Client Tracker", "http://127.0.0.1:8795", "📈", "Trial client performance")}
+            {_launch_btn("Sales Coach", "http://127.0.0.1:8796", "🎯", "Mock call practice")}
+            {_launch_btn("Sales Pipeline", "http://127.0.0.1:8788", "💼", "Deals & proposals")}
+            {_launch_btn("API Key Manager", "http://127.0.0.1:8793", "🔑", "Key health & rotation")}
+        </div>
+    </div>'''
+
+    # ── Recently Done ──
+    done_html = ""
+    for t in reversed(recently_done):
+        done_html += f'<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid {BORDER}22"><span style="color:{GREEN}">✓</span><span style="font-size:12px;flex:1">{html.escape(t.get("title",""))}</span><span style="font-size:10px;color:{MUTED}">{t.get("project","")}</span></div>'
+
+    done_section = f'''<div class="card">
+        <h2>Recently Completed</h2>
+        {done_html or f'<div style="color:{MUTED};text-align:center;padding:16px">No completed tasks yet</div>'}
+    </div>'''
+
+    # ── Session Close ──
+    close_section = f'''<div class="card" style="border-color:{GOLD}44">
+        <h2>Close Session</h2>
+        <p style="font-size:12px;color:{MUTED};margin-bottom:12px">Any prompts raised during the session that weren't addressed? Add them here — they'll be saved to the task list and sent to Clawdbot.</p>
+        <textarea id="missed-items" placeholder="- Unaddressed item 1&#10;- Unaddressed item 2" style="width:100%;background:{SURFACE};border:1px solid {BORDER};border-radius:8px;padding:10px;color:{TEXT};font-size:12px;resize:vertical;min-height:80px;font-family:inherit"></textarea>
+        <button onclick="closeSession()" style="margin-top:10px;background:{GOLD};color:{CHARCOAL};border:none;padding:10px 24px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;width:100%">
+            Send EOD Summary to Clawdbot
+        </button>
+        <div id="close-result" style="margin-top:8px;font-size:12px;display:none"></div>
+    </div>'''
+
+    close_script = f'''<script>
+async function closeSession() {{
+    const missed = document.getElementById('missed-items').value;
+    const btn = document.querySelector('[onclick="closeSession()"]');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    try {{
+        const r = await fetch('/api/sprint-close', {{
+            method: 'POST',
+            headers: {{'Content-Type': 'application/json'}},
+            body: JSON.stringify({{missed_items: missed}})
+        }});
+        const d = await r.json();
+        const res = document.getElementById('close-result');
+        res.style.display = 'block';
+        if (d.ok) {{
+            res.style.color = '{GREEN}';
+            res.textContent = 'EOD summary sent to Clawdbot. Missed items saved to task list.';
+            btn.textContent = 'Session Closed ✓';
+        }} else {{
+            res.style.color = '{RED}';
+            res.textContent = 'Error: ' + (d.error || 'Unknown');
+            btn.disabled = false;
+            btn.textContent = 'Send EOD Summary to Clawdbot';
+        }}
+    }} catch(e) {{
+        document.getElementById('close-result').style.display = 'block';
+        document.getElementById('close-result').style.color = '{RED}';
+        document.getElementById('close-result').textContent = 'Network error: ' + e.message;
+        btn.disabled = false;
+        btn.textContent = 'Send EOD Summary to Clawdbot';
+    }}
+}}
+</script>'''
+
+    content = f'''<div class="container">
+        {header}
+        {nav}
+        {top_stats}
+        <div class="grid grid-2">
+            {tasks_section}
+            <div>
+                {tools_section}
+                {done_section}
+                {close_section}
+            </div>
+        </div>
+        {close_script}
+        <footer style="text-align:center;padding:24px;color:{MUTED};font-size:11px;border-top:1px solid {BORDER};margin-top:20px">
+            Sprint Hub — <a href="/" style="color:{GOLD};text-decoration:none">Back to 90-Day Tracker</a>
+            &nbsp;|&nbsp; Demo Line: (239) 457-0662 &nbsp;|&nbsp; Call it → voicemail → text in 10 sec
+        </footer>
+    </div>'''
+
+    return _shell("Sprint Command Center", content)
 
 
 def render_landing():

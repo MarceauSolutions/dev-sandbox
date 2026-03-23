@@ -49,6 +49,17 @@ python -m src.scraper stats
 - **`workflows/`** - 19 workflow SOPs covering scraping, SMS, follow-ups, monitoring
 
 ## Project-Specific Rules
+
+### ⛔ TCPA HARD RULE — NO COLD SMS (NON-NEGOTIABLE)
+**Never send a first-contact SMS to any prospect who has not explicitly opted in.**
+- Opt-out handling (STOP) is NOT sufficient — prior express consent is required before the first text.
+- TCPA fines: $500 (unintentional) to $1,500 (willful) **per message**. 100 cold texts = up to $150,000 liability.
+- `sms_outreach.py` now hard-blocks any lead without `sms_consent: true`. This cannot be bypassed.
+- **How a lead earns SMS consent:** They reply to an email, fill out a contact form, or verbally agree during a call — then set `sms_consent: true` manually on their record.
+- Cold outreach to prospects = **email + phone calls only**. SMS is for opted-in contacts only.
+- This same rule is what we sell to clients. We cannot violate it ourselves.
+
+### Other Rules
 - TCPA compliance required: "This is William" in every SMS, "Reply STOP" required, no messages before 8am/after 9pm
 - Always dry-run SMS campaigns before real sends
 - Twilio phone: +1 855 239 9364 (configured via `TWILIO_*` env vars in root `.env`)

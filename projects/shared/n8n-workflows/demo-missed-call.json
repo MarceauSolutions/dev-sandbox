@@ -1,0 +1,120 @@
+{
+  "name": "Missed Call Text-Back DEMO",
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Incoming Call",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "demo-missed-call",
+      "parameters": {
+        "path": "demo-missed-call",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "send-sms",
+      "name": "Text Back Caller",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        500,
+        200
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "twilio-main",
+          "name": "Twilio"
+        }
+      },
+      "parameters": {
+        "operation": "send",
+        "from": "+12394570662",
+        "to": "={{ $json.body.From }}",
+        "message": "Hey! Sorry we missed your call \u2014 how can we help?\n\n(This is the Marceau Solutions AI text-back demo. In a real setup, this message comes from YOUR business number within 10 seconds of every missed call.)\n\nSee how it works: marceausolutions.com/ai-automation.html"
+      }
+    },
+    {
+      "id": "twiml-response",
+      "name": "Return TwiML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        500,
+        400
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say voice=\"alice\">Thanks for calling the Marceau Solutions demo line. You'll receive a text message in just a moment showing you exactly how the AI text-back system works.</Say><Hangup/></Response>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "telegram-notify",
+      "name": "Notify William",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        750,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "RlAwU3xzcX4hifgj",
+          "name": "Telegram"
+        }
+      },
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=\ud83c\udfaf Demo line just got a call from {{ $('Incoming Call').item.json.body.From }}! Text-back fired. Follow up!"
+      }
+    }
+  ],
+  "connections": {
+    "Incoming Call": {
+      "main": [
+        [
+          {
+            "node": "Text Back Caller",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Return TwiML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Back Caller": {
+      "main": [
+        [
+          {
+            "node": "Notify William",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

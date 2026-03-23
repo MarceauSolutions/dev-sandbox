@@ -18,7 +18,9 @@ Key Changes from Original:
 - NO fake social proof ("Just helped 3 Naples gyms...")
 - Use question hooks instead ("How many customers do you lose...")
 - Use scarcity/breakup for final touch
-- All templates TCPA compliant
+- SMS channel requires prior express consent (sms_consent: true on lead record).
+  Email-only sequences do NOT require consent. Never cold-text a prospect.
+  TCPA violation = $500-$1,500 per unsolicited automated message.
 
 Usage:
     python -m src.follow_up_sequence status

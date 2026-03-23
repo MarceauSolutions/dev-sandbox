@@ -851,7 +851,21 @@ class SMSOutreachManager:
                 stats["skipped_no_phone"] += 1
                 continue
 
-            # Skip if opted out (COMPLIANCE CHECK - highest priority)
+            # TCPA HARD BLOCK — opt-in required before ANY SMS (highest priority)
+            # Sending unsolicited automated texts to a cell phone = $500-$1,500 per message in FCC fines.
+            # An opt-out check alone is NOT TCPA compliant — prior express consent is required.
+            # A lead must have sms_consent: true (set only when they explicitly reply to an email,
+            # fill out a form, or verbally agree during a call) before we can text them.
+            if not getattr(lead, "sms_consent", False):
+                stats.setdefault("blocked_no_consent", 0)
+                stats["blocked_no_consent"] += 1
+                logger.warning(
+                    f"  BLOCKED (no SMS consent — TCPA): {lead.business_name}. "
+                    f"Get opt-in via email reply or form before texting."
+                )
+                continue
+
+            # Skip if opted out
             if self._is_opted_out(lead.phone):
                 stats["skipped_opted_out"] += 1
                 logger.info(f"  Skipped (opted out): {lead.business_name}")
