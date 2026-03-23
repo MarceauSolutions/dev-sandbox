@@ -900,6 +900,93 @@ class ColdOutreachManager:
 
         return follow_ups
 
+    def send_followups(self, dry_run: bool = True, daily_limit: int = 100, delay_seconds: float = 3.0) -> Dict[str, Any]:
+        """
+        Process due follow-up emails for non-responding leads.
+        Touch sequence (Hormozi):
+          count 0->1: Day 3  — followup_checkin (soft check-in)
+          count 1->2: Day 7  — social_proof (case study angle)
+          count 2->3: Day 14 — direct_question (wrong inbox?)
+          count 3->4: Day 21 — breakup (close the file)
+        """
+        from datetime import datetime, timedelta
+
+        TOUCH_MAP = {
+            0: ("followup_checkin",        3),
+            1: ("social_proof_followup",   7),
+            2: ("direct_question_followup", 14),
+            3: ("breakup",                 21),
+        }
+        INLINE_TEMPLATES = {
+            "social_proof_followup": {
+                "subject": "Re: $business_name",
+                "body": (
+                    "Hi $first_name,\n\n"
+                    "Wanted to follow up in case my last message got buried.\n\n"
+                    "I've been helping local Naples businesses automate the repetitive stuff — one HVAC "
+                    "company cut their missed-call follow-up time from 2 days to under 5 minutes. A med "
+                    "spa owner saved 8 hours a week in her first month.\n\n"
+                    "If there's something like that hiding at $business_name, I'd love to find it.\n\n"
+                    "Worth a quick 15-minute call?\n\nWilliam\nMarceau Solutions\n(239) 398-5676"
+                ),
+            },
+            "direct_question_followup": {
+                "subject": "Did this land in the wrong inbox? — $business_name",
+                "body": (
+                    "Hi $first_name,\n\n"
+                    "I've reached out a couple of times — just want to make sure this isn't lost in a "
+                    "spam folder or going to the wrong person at $business_name.\n\n"
+                    "If you're not the right contact, just let me know who handles operations and I'll "
+                    "reach out to them instead. If the timing isn't right, say the word and I'll stop.\n\n"
+                    "William\nMarceau Solutions\n(239) 398-5676"
+                ),
+            },
+        }
+
+        stats = {"total_due": 0, "sent": 0, "skipped": 0, "errors": [], "dry_run": dry_run}
+
+        for record in list(self.campaigns.values()):
+            touch = record.follow_up_count
+            if touch not in TOUCH_MAP or record.status != "sent":
+                continue
+            template_name, min_days = TOUCH_MAP[touch]
+            if not record.sent_at:
+                continue
+            last_dt = datetime.fromisoformat(record.sent_at)
+            if datetime.now() - last_dt < timedelta(days=min_days):
+                continue
+
+            stats["total_due"] += 1
+            if stats["sent"] >= daily_limit:
+                stats["skipped"] += 1
+                continue
+
+            tmpl = INLINE_TEMPLATES.get(template_name) or TEMPLATES.get(template_name)
+            if not tmpl:
+                logger.warning(f"Unknown follow-up template: {template_name}")
+                stats["skipped"] += 1
+                continue
+
+            first_name = (record.owner_name.split()[0] if record.owner_name else "there")
+            subject = Template(tmpl["subject"]).safe_substitute(
+                business_name=record.business_name, first_name=first_name)
+            body = Template(tmpl["body"]).safe_substitute(
+                business_name=record.business_name, first_name=first_name)
+
+            logger.info(f"[Touch {touch+1}] {record.business_name} → {record.email} | {template_name}")
+            success = self.send_email(record.email, subject, body, dry_run=dry_run)
+            if success:
+                stats["sent"] += 1
+                if not dry_run:
+                    record.follow_up_count += 1
+                    record.sent_at = datetime.now().isoformat()
+                    self._save_campaigns()
+                time.sleep(delay_seconds)
+            else:
+                stats["errors"].append(record.email)
+
+        return stats
+
 
 # =============================================================================
 # CLI INTERFACE
@@ -932,6 +1019,13 @@ def main():
     send_parser.add_argument("--template", "-t", choices=list(TEMPLATES.keys()), help="Force specific template")
     send_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
 
+    # Follow-up command
+    followup_parser = subparsers.add_parser("followup", help="Send follow-up emails to non-responding leads")
+    followup_parser.add_argument("--dry-run", action="store_true", default=True, help="Preview without sending")
+    followup_parser.add_argument("--for-real", action="store_true", help="Actually send follow-ups")
+    followup_parser.add_argument("--limit", "-l", type=int, default=100, help="Daily limit")
+    followup_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
+
     # Stats command
     stats_parser = subparsers.add_parser("stats", help="Show campaign statistics")
     stats_parser.add_argument("--output-dir", "-o", default="output", help="Output directory")
@@ -962,6 +1056,20 @@ def main():
         print("\nBy Template:")
         for template, count in stats["by_template"].items():
             print(f"  {template}: {count}")
+        return
+
+    if args.command == "followup":
+        manager = ColdOutreachManager(output_dir=args.output_dir)
+        dry_run = not getattr(args, 'for_real', False)
+        result = manager.send_followups(dry_run=dry_run, daily_limit=args.limit)
+        print("\n=== Follow-Up Results ===")
+        print(f"Total due:  {result['total_due']}")
+        print(f"Sent:       {result['sent']}")
+        print(f"Skipped:    {result['skipped']}")
+        print(f"Errors:     {len(result['errors'])}")
+        print(f"Mode:       {'DRY RUN' if dry_run else 'LIVE'}")
+        if result['errors']:
+            print(f"Failed addresses: {result['errors']}")
         return
 
     if args.command in ["generate", "send"]:

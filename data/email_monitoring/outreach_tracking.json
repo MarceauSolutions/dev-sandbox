@@ -35,7 +35,2100 @@
       "last_follow_up": null,
       "inquiry_type": "bulk_pricing",
       "metadata": {}
+    },
+    {
+      "id": "54a9060174686930ad77330a",
+      "project": "lead-scraper",
+      "recipient_email": "jason.fischl@emfo.us",
+      "recipient_name": "Jason",
+      "subject": "Automation question for Expressions Model Furniture Outlet",
+      "sent_at": "2026-03-23T11:48:45.447146",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Expressions Model Furniture Outlet",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6804e7e88136860001e2920c",
+      "project": "lead-scraper",
+      "recipient_email": "michael@fireproofers.com",
+      "recipient_name": "Michael",
+      "subject": "Automation question for Fire Stop Systems, LLC",
+      "sent_at": "2026-03-23T11:48:51.962277",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Fire Stop Systems, LLC",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66ffea95cc3ad600015f617f",
+      "project": "lead-scraper",
+      "recipient_email": "jeremy.meyers@horizonpoolsupply.com",
+      "recipient_name": "Jeremy",
+      "subject": "Automation question for HORIZON POOL SERVICE LLC",
+      "sent_at": "2026-03-23T11:48:59.265764",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "HORIZON POOL SERVICE LLC",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a5057b7468692abf436476",
+      "project": "lead-scraper",
+      "recipient_email": "cgunther@ihnaples.com",
+      "recipient_name": "Curtis",
+      "subject": "Automation question for Imperial Homes of Southwest Florida",
+      "sent_at": "2026-03-23T11:49:05.493002",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Imperial Homes of Southwest Florida",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fdf5eb5e0d170001e7dde3",
+      "project": "lead-scraper",
+      "recipient_email": "tdefilipps@nrsire.com",
+      "recipient_name": "Todd",
+      "subject": "Automation question for Naples Realty Services, Inc.",
+      "sent_at": "2026-03-23T11:49:11.788845",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Naples Realty Services, Inc.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "615301cca211fd00013959d7",
+      "project": "lead-scraper",
+      "recipient_email": "michelle@ecogreendrone.com",
+      "recipient_name": "Michelle",
+      "subject": "Automation question for Eco Green Drone",
+      "sent_at": "2026-03-23T11:49:18.076317",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Eco Green Drone",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "5f90fa26e105270001a9f479",
+      "project": "lead-scraper",
+      "recipient_email": "dmhouse@danhouseelectric.com",
+      "recipient_name": "Dan",
+      "subject": "Automation question for Dan House Electric",
+      "sent_at": "2026-03-23T11:49:24.441477",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Dan House Electric",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "640f23a3b0f3770001be5f05",
+      "project": "lead-scraper",
+      "recipient_email": "stacyj@greenhuntersrc.com",
+      "recipient_name": "Stacy",
+      "subject": "Automation question for Green Hunters Recruiting and Consulting LLC",
+      "sent_at": "2026-03-23T11:49:30.771950",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Green Hunters Recruiting and Consulting LLC",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "60a8c29f45316300016a6510",
+      "project": "lead-scraper",
+      "recipient_email": "matt@kkgbuild.com",
+      "recipient_name": "Matt",
+      "subject": "Automation question for Knauf-Koenig Group, LLC.",
+      "sent_at": "2026-03-23T11:49:37.096894",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Knauf-Koenig Group, LLC.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f6f35bd5e8f900015a0e2a",
+      "project": "lead-scraper",
+      "recipient_email": "nathan@allinonetechnology.com",
+      "recipient_name": "Nathan",
+      "subject": "Automation question for All In One Technology, Inc.",
+      "sent_at": "2026-03-23T11:49:43.544430",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "All In One Technology, Inc.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fbec11115d27000106b5c6",
+      "project": "lead-scraper",
+      "recipient_email": "cade@lifestrengthhealthcenter.com",
+      "recipient_name": "Cade",
+      "subject": "Quick question for LIFEstrength Health Center",
+      "sent_at": "2026-03-23T11:49:49.956994",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "LIFEstrength Health Center",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "612dbc237f2b85000140ea79",
+      "project": "lead-scraper",
+      "recipient_email": "evgeny.titov@marshcovedental.com",
+      "recipient_name": "Evgeny",
+      "subject": "Quick question for Marsh Cove Dental and Implant Center",
+      "sent_at": "2026-03-23T11:49:56.319898",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Marsh Cove Dental and Implant Center",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fe99b45e305500011bc7b7",
+      "project": "lead-scraper",
+      "recipient_email": "drberman@bermanpt.com",
+      "recipient_name": "Jake",
+      "subject": "Quick question for Berman Physical Therapy",
+      "sent_at": "2026-03-23T11:50:02.653864",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Berman Physical Therapy",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f50d799138d100014f3ffc",
+      "project": "lead-scraper",
+      "recipient_email": "dr.phan@fantasticdentalarts.com",
+      "recipient_name": "Queanh",
+      "subject": "Quick question for Fantastic Dental Arts",
+      "sent_at": "2026-03-23T11:50:08.942132",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Fantastic Dental Arts",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "68f6094661679e0001283f69",
+      "project": "lead-scraper",
+      "recipient_email": "drsteve@fitdocs.com",
+      "recipient_name": "Stephen",
+      "subject": "Quick question for Fundamental Health Solutions",
+      "sent_at": "2026-03-23T11:50:15.222692",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Fundamental Health Solutions",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f75cd109b1ef000106be4d",
+      "project": "lead-scraper",
+      "recipient_email": "kelly.kinsland@betterchoicehh.com",
+      "recipient_name": "Kelly",
+      "subject": "Quick question for Better Choice Home Health",
+      "sent_at": "2026-03-23T11:50:21.492523",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Better Choice Home Health",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fab40f01d297000171a0d2",
+      "project": "lead-scraper",
+      "recipient_email": "marci@pfs.health",
+      "recipient_name": "Marci",
+      "subject": "Quick question for Physician Facilitator Services",
+      "sent_at": "2026-03-23T11:50:27.772487",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Physician Facilitator Services",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "675dff4e81f5af0001f55fa9",
+      "project": "lead-scraper",
+      "recipient_email": "davidr@bigcypressanimalclinic.com",
+      "recipient_name": "David",
+      "subject": "Quick question for Big Cypress Animal Clinic",
+      "sent_at": "2026-03-23T11:50:34.090944",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Big Cypress Animal Clinic",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6103cdeb83f4f90001ee9e19",
+      "project": "lead-scraper",
+      "recipient_email": "rjzehr@zehrcenter.com",
+      "recipient_name": "Robert",
+      "subject": "Quick question for Zehr Center for Orthopaedics",
+      "sent_at": "2026-03-23T11:50:40.391731",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Zehr Center for Orthopaedics",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "60f1811c95044b00011e0fac",
+      "project": "lead-scraper",
+      "recipient_email": "paul@gardnerplasticsurgery.com",
+      "recipient_name": "Paul",
+      "subject": "Quick question for GARDNER PLASTIC SURGERY INC",
+      "sent_at": "2026-03-23T11:50:46.733207",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "GARDNER PLASTIC SURGERY INC",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a49ada7468693209ff9f54",
+      "project": "lead-scraper",
+      "recipient_email": "rteitelbaum@naplespodiatry.com",
+      "recipient_name": "Robert",
+      "subject": "Quick question for Naples Podiatry Center",
+      "sent_at": "2026-03-23T11:50:53.031444",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Naples Podiatry Center",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a1cd947468694012882912",
+      "project": "lead-scraper",
+      "recipient_email": "amy@go2beyondmotion.com",
+      "recipient_name": "Amy",
+      "subject": "Quick question for Beyond Motion\u00ae",
+      "sent_at": "2026-03-23T11:50:59.263734",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Beyond Motion\u00ae",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6101363d8f5a070001b652a6",
+      "project": "lead-scraper",
+      "recipient_email": "inga@luxenaplesre.com",
+      "recipient_name": "Inga",
+      "subject": "Quick question for Luxe Naples Real Estate inc.",
+      "sent_at": "2026-03-23T11:51:05.621884",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Luxe Naples Real Estate inc.",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a77e48746869730a196a3a",
+      "project": "lead-scraper",
+      "recipient_email": "adaane@daaneproperties.com",
+      "recipient_name": "Alexander",
+      "subject": "Quick question for Daane Properties | Real Estate Advisors",
+      "sent_at": "2026-03-23T11:51:11.967301",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Daane Properties | Real Estate Advisors",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fb41218aba0a00013d389d",
+      "project": "lead-scraper",
+      "recipient_email": "patricia@luxecorporatesuites.com",
+      "recipient_name": "Patricia",
+      "subject": "Quick question for Luxe Corporate Suites",
+      "sent_at": "2026-03-23T11:51:18.310133",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Luxe Corporate Suites",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6700574b84c86e0001ceaec5",
+      "project": "lead-scraper",
+      "recipient_email": "bryan@pinnaclenaples.com",
+      "recipient_name": "Bryan",
+      "subject": "Quick question for Pinnacle Real Estate",
+      "sent_at": "2026-03-23T11:51:24.646569",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Pinnacle Real Estate",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f74e25ad1cfb000140327c",
+      "project": "lead-scraper",
+      "recipient_email": "vicki@naplestrustpm.com",
+      "recipient_name": "Vicki",
+      "subject": "Quick question for Naples Trust Property Management",
+      "sent_at": "2026-03-23T11:51:30.955576",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Naples Trust Property Management",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a3f16674686936763aa01f",
+      "project": "lead-scraper",
+      "recipient_email": "debra.gallant@gallantrealestate.com",
+      "recipient_name": "Debbie",
+      "subject": "Quick question for Gallant Real Estate llc",
+      "sent_at": "2026-03-23T11:51:37.309685",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Gallant Real Estate llc",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66efdfc6bf92140001287158",
+      "project": "lead-scraper",
+      "recipient_email": "john@carneyproperties.com",
+      "recipient_name": "John",
+      "subject": "Quick question for Carney Quality Construction",
+      "sent_at": "2026-03-23T11:51:43.637893",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Carney Quality Construction",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66bcea23917403000147400a",
+      "project": "lead-scraper",
+      "recipient_email": "linda@rpmqualified.com",
+      "recipient_name": "Linda",
+      "subject": "Quick question for Real Property Management Qualified",
+      "sent_at": "2026-03-23T11:51:49.989701",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Real Property Management Qualified",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a803db74686965d9de2e5c",
+      "project": "lead-scraper",
+      "recipient_email": "marisa@flmortgagesolutions.com",
+      "recipient_name": "Marisa",
+      "subject": "Quick question for SW Florida Mortgage Solutions, Inc.",
+      "sent_at": "2026-03-23T11:51:56.432480",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "SW Florida Mortgage Solutions, Inc.",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "65c33ede8cbded00015e55a9",
+      "project": "lead-scraper",
+      "recipient_email": "elodie@keyrenternaples.com",
+      "recipient_name": "Elodie",
+      "subject": "Quick question for Keyrenter Naples Property Management",
+      "sent_at": "2026-03-23T11:52:02.797819",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Keyrenter Naples Property Management",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "57da0749a6da98767ce572c5",
+      "project": "lead-scraper",
+      "recipient_email": "john@moshinremedia.com",
+      "recipient_name": "John",
+      "subject": "Quick question for Moshin Real Estate Media",
+      "sent_at": "2026-03-23T11:52:09.082926",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Moshin Real Estate Media",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fdec5a5e0d170001e476a0",
+      "project": "lead-scraper",
+      "recipient_email": "mark@whitesandsnaples.com",
+      "recipient_name": "Mark",
+      "subject": "Quick question for White Sands Realty",
+      "sent_at": "2026-03-23T11:52:15.435795",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "White Sands Realty",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "5908e1d9f65125236fa0275b",
+      "project": "lead-scraper",
+      "recipient_email": "abringardner@avabuilder.com",
+      "recipient_name": "Andy",
+      "subject": "Quick question for A. Vernon Allen Builder",
+      "sent_at": "2026-03-23T11:52:21.856984",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "A. Vernon Allen Builder",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f8212df3aaa20001199677",
+      "project": "lead-scraper",
+      "recipient_email": "chad@monarchbuildersinc.com",
+      "recipient_name": "Chad",
+      "subject": "Quick question for Monarch Builders & Remodelers",
+      "sent_at": "2026-03-23T11:52:28.171562",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Monarch Builders & Remodelers",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fdd6f35e0d170001dca726",
+      "project": "lead-scraper",
+      "recipient_email": "kelsey@closings4you.com",
+      "recipient_name": "Kelsey",
+      "subject": "Quick question for Closings 4 You, LLC.",
+      "sent_at": "2026-03-23T11:52:34.508569",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Closings 4 You, LLC.",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fae18bfb49920001d1039a",
+      "project": "lead-scraper",
+      "recipient_email": "leslie@calusabaynaples.com",
+      "recipient_name": "Leslie",
+      "subject": "Quick question for Calusa Bay Design",
+      "sent_at": "2026-03-23T11:52:40.903669",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Calusa Bay Design",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a627ff7468692abf9ae1c6",
+      "project": "lead-scraper",
+      "recipient_email": "taryn@paradisehospitalitygroup.com",
+      "recipient_name": "Taryn",
+      "subject": "Quick question for Paradise Hospitality Group",
+      "sent_at": "2026-03-23T11:52:47.140260",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Paradise Hospitality Group",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "65e1af214fa02d0001a1c14b",
+      "project": "lead-scraper",
+      "recipient_email": "topley.edenton@chdhospitality.com",
+      "recipient_name": "Topley",
+      "subject": "Quick question for Caribbean Hotel Developers",
+      "sent_at": "2026-03-23T11:52:53.501536",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Caribbean Hotel Developers",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f439d1934dc20001dcd0fc",
+      "project": "lead-scraper",
+      "recipient_email": "danielle@rerouteamericas.com",
+      "recipient_name": "Danielle",
+      "subject": "Quick question for ReRoute Americas",
+      "sent_at": "2026-03-23T11:52:59.804265",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "ReRoute Americas",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "55e2f549f3e5bb7f4d00447c",
+      "project": "lead-scraper",
+      "recipient_email": "jpepper@jimmypsbutchershop.com",
+      "recipient_name": "Jimmy",
+      "subject": "Quick question for Jimmy P's Butcher Shop & Deli",
+      "sent_at": "2026-03-23T11:53:06.038760",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Jimmy P's Butcher Shop & Deli",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fa776d19e3e600010ce4c7",
+      "project": "lead-scraper",
+      "recipient_email": "preeti@journeys360travel.com",
+      "recipient_name": "Preeti",
+      "subject": "Quick question for Journeys 360 Travel",
+      "sent_at": "2026-03-23T11:53:12.277217",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Journeys 360 Travel",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a76e977468696de7dd0a34",
+      "project": "lead-scraper",
+      "recipient_email": "timj@myairbar.com",
+      "recipient_name": "Tim",
+      "subject": "Quick question for AIR BAR BLOWOUTS & EXTENSIONS, LLC",
+      "sent_at": "2026-03-23T11:53:18.719121",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "AIR BAR BLOWOUTS & EXTENSIONS, LLC",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a4672c7468693442a1b544",
+      "project": "lead-scraper",
+      "recipient_email": "wendell@ecoquestnaturetours.com",
+      "recipient_name": "Wendell",
+      "subject": "Quick question for Eco-Quest Nature Tours",
+      "sent_at": "2026-03-23T11:53:25.169914",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Eco-Quest Nature Tours",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a7f5ad746869730a07e159",
+      "project": "lead-scraper",
+      "recipient_email": "wynne@ridgwaybarandgrill.com",
+      "recipient_name": "Wynne",
+      "subject": "Quick question for Ridgway Bar And Grill",
+      "sent_at": "2026-03-23T11:53:31.461962",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Ridgway Bar And Grill",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "61a1b65736ca510001cb08fa",
+      "project": "lead-scraper",
+      "recipient_email": "la@hudsonparkdesign.com",
+      "recipient_name": "Deriggi",
+      "subject": "Quick question for Hudson Park Interior Design",
+      "sent_at": "2026-03-23T11:53:37.798569",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Hudson Park Interior Design",
+        "template": "discovery_question",
+        "category": "Restaurants / Hospitality",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fc84570cbf900001610dc4",
+      "project": "lead-scraper",
+      "recipient_email": "kiley.burd@simplebeautystudio.com",
+      "recipient_name": "Kiley",
+      "subject": "Automation question for Simple Beauty Studio",
+      "sent_at": "2026-03-23T11:53:44.262028",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Simple Beauty Studio",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f69ba844f6860001fd0f38",
+      "project": "lead-scraper",
+      "recipient_email": "robert@ropsalons.com",
+      "recipient_name": "Robert",
+      "subject": "Automation question for Robert of Philadelphia Salons",
+      "sent_at": "2026-03-23T11:53:50.521221",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Robert of Philadelphia Salons",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "635d2ae1da80510001f04546",
+      "project": "lead-scraper",
+      "recipient_email": "jeannette@poeticbeautyllc.com",
+      "recipient_name": "Jeannette",
+      "subject": "Automation question for Poetic Beauty Salon Suites",
+      "sent_at": "2026-03-23T11:53:56.888596",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Poetic Beauty Salon Suites",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66ffe9e6cc3ad600015f3318",
+      "project": "lead-scraper",
+      "recipient_email": "dranne@oldenaplesvet.com",
+      "recipient_name": "Anne",
+      "subject": "Automation question for Olde Naples Animal Wellness Center",
+      "sent_at": "2026-03-23T11:54:03.393000",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Olde Naples Animal Wellness Center",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6059d85352d99800014790d9",
+      "project": "lead-scraper",
+      "recipient_email": "jenn@purelyyouspa.com",
+      "recipient_name": "Jennifer",
+      "subject": "Automation question for Purely You Spa, Naples FL",
+      "sent_at": "2026-03-23T11:54:09.684576",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Purely You Spa, Naples FL",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "684a378d479bfe00015fab75",
+      "project": "lead-scraper",
+      "recipient_email": "mark@spavianaples.com",
+      "recipient_name": "Mark",
+      "subject": "Automation question for Spavia Day Spa - Naples",
+      "sent_at": "2026-03-23T11:54:15.920037",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Spavia Day Spa - Naples",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "64f9c08d67a53e0001088860",
+      "project": "lead-scraper",
+      "recipient_email": "maria@bluepoolsnaples.com",
+      "recipient_name": "Maria",
+      "subject": "Automation question for Always Blue Pool & Spa",
+      "sent_at": "2026-03-23T11:54:22.193961",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Always Blue Pool & Spa",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54aa8e6174686906304b2e0b",
+      "project": "lead-scraper",
+      "recipient_email": "rhonda@eurospaofnaples.com",
+      "recipient_name": "Rhonda",
+      "subject": "Automation question for Euro Spa Of Naples",
+      "sent_at": "2026-03-23T11:54:28.605727",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Euro Spa Of Naples",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "67b1c242efc6a40001c1d297",
+      "project": "lead-scraper",
+      "recipient_email": "f.eckenrode@profloors.biz",
+      "recipient_name": "Frank",
+      "subject": "Automation question for ProFloors and Cabinets",
+      "sent_at": "2026-03-23T11:54:34.977013",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "ProFloors and Cabinets",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f6f4dca3aaf100015f4226",
+      "project": "lead-scraper",
+      "recipient_email": "tina.swflalady@beforenafter.us",
+      "recipient_name": "Tina",
+      "subject": "Automation question for Before & After Salon & Spa",
+      "sent_at": "2026-03-23T11:54:41.329264",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Before & After Salon & Spa",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a43df07468693b8c489537",
+      "project": "lead-scraper",
+      "recipient_email": "sorrenti@naplesorganichairstudio.com",
+      "recipient_name": "Sorrenti",
+      "subject": "Automation question for Andrea's  Organic Hair Studio and Health Spa",
+      "sent_at": "2026-03-23T11:54:47.634313",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Andrea's  Organic Hair Studio and Health Spa",
+        "template": "wellness_automation",
+        "category": "Med Spa / Beauty",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f8246beee1360001b983ad",
+      "project": "lead-scraper",
+      "recipient_email": "paul@jacksontotal.com",
+      "recipient_name": "Paul",
+      "subject": "Automation question for Jackson Total Service",
+      "sent_at": "2026-03-23T11:54:53.928041",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Jackson Total Service",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a7e1c27468696de79db755",
+      "project": "lead-scraper",
+      "recipient_email": "kmahan@yellowstonelandscape.com",
+      "recipient_name": "Keith",
+      "subject": "Automation question for Crawford Landscaping",
+      "sent_at": "2026-03-23T11:55:00.156936",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Crawford Landscaping",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f54c4f628c950001c2d9bc",
+      "project": "lead-scraper",
+      "recipient_email": "brandon@ptpflorida.com",
+      "recipient_name": "Brandon",
+      "subject": "Automation question for Pro-Tec Plumbing and Air",
+      "sent_at": "2026-03-23T11:55:06.548078",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Pro-Tec Plumbing and Air",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "5d59059680f93eb68ccf0696",
+      "project": "lead-scraper",
+      "recipient_email": "cstephens@bearsplumbing.com",
+      "recipient_name": "Chris",
+      "subject": "Automation question for Bears Plumbing",
+      "sent_at": "2026-03-23T11:55:12.857527",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Bears Plumbing",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "612bd37f57ecb20001840f09",
+      "project": "lead-scraper",
+      "recipient_email": "dena@homepatible.com",
+      "recipient_name": "Dena",
+      "subject": "Automation question for Homepatible",
+      "sent_at": "2026-03-23T11:55:19.206614",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Homepatible",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6843bfde8205ce0001e90886",
+      "project": "lead-scraper",
+      "recipient_email": "chris@blackflagroofing.co",
+      "recipient_name": "Chris",
+      "subject": "Automation question for Black Flag Roofing",
+      "sent_at": "2026-03-23T11:55:25.494898",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Black Flag Roofing",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "60b16381128e3b00014795af",
+      "project": "lead-scraper",
+      "recipient_email": "zfarrell@castillaroofing.us",
+      "recipient_name": "Zachary",
+      "subject": "Automation question for CASTILLA ROOFING INC.",
+      "sent_at": "2026-03-23T11:55:32.180319",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "CASTILLA ROOFING INC.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f7db3ca8551a000124750c",
+      "project": "lead-scraper",
+      "recipient_email": "lisa@naplesplumbingstudio.com",
+      "recipient_name": "Lisa",
+      "subject": "Automation question for Naples Plumbing Studio",
+      "sent_at": "2026-03-23T11:55:38.622129",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Naples Plumbing Studio",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "6564ff8eeeb37200013606fd",
+      "project": "lead-scraper",
+      "recipient_email": "chris@kovath.com",
+      "recipient_name": "Chris",
+      "subject": "Automation question for EJ Kovath & Associates, Inc. (est. 1984)",
+      "sent_at": "2026-03-23T11:55:45.151193",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "EJ Kovath & Associates, Inc. (est. 1984)",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "5b97b49b324d445ff8c55ce9",
+      "project": "lead-scraper",
+      "recipient_email": "jim@vitalcommand.com",
+      "recipient_name": "Jim",
+      "subject": "Automation question for Vital Command",
+      "sent_at": "2026-03-23T11:55:51.602286",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Vital Command",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "61f92e642e06f30001c69088",
+      "project": "lead-scraper",
+      "recipient_email": "rick@geminipg.com",
+      "recipient_name": "Rick",
+      "subject": "Automation question for Gemini Properties Group, Inc.",
+      "sent_at": "2026-03-23T11:55:57.851598",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Gemini Properties Group, Inc.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f816f3eee1360001b599ac",
+      "project": "lead-scraper",
+      "recipient_email": "julie@romeoair.com",
+      "recipient_name": "Julie",
+      "subject": "Automation question for Romeo Air Conditioning",
+      "sent_at": "2026-03-23T11:56:04.219929",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Romeo Air Conditioning",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "658d5c348b124500017b90be",
+      "project": "lead-scraper",
+      "recipient_email": "rickie@johnsonsairconditioning.com",
+      "recipient_name": "Rickie",
+      "subject": "Automation question for JOHNSON'S AIR CONDITIONING, INC.",
+      "sent_at": "2026-03-23T11:56:10.642668",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "JOHNSON'S AIR CONDITIONING, INC.",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a5ff947468693b8ccd44ba",
+      "project": "lead-scraper",
+      "recipient_email": "holger@herbeau.com",
+      "recipient_name": "Holger",
+      "subject": "Automation question for Herbeau Kitchen, Bathroom and Powder Room Couture\u00ae",
+      "sent_at": "2026-03-23T11:56:16.994785",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Herbeau Kitchen, Bathroom and Powder Room Couture\u00ae",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "62ddade2cd17fd0001ed53f8",
+      "project": "lead-scraper",
+      "recipient_email": "brian@trufloswfl.com",
+      "recipient_name": "Brian",
+      "subject": "Automation question for Tru-Flo Plumbing",
+      "sent_at": "2026-03-23T11:56:23.508273",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Tru-Flo Plumbing",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a41c2774686938acb1732d",
+      "project": "lead-scraper",
+      "recipient_email": "randy@acresplumbing.com",
+      "recipient_name": "Randy",
+      "subject": "Automation question for Acres & Son Plumbing Inc",
+      "sent_at": "2026-03-23T11:56:29.724911",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Acres & Son Plumbing Inc",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a483ab7468692abf48504d",
+      "project": "lead-scraper",
+      "recipient_email": "diegoa@strikingelectric.com",
+      "recipient_name": "Diego",
+      "subject": "Automation question for STRIKING ELECTRIC LLC",
+      "sent_at": "2026-03-23T11:56:35.971354",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "STRIKING ELECTRIC LLC",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "647a5555114bba00016f97ef",
+      "project": "lead-scraper",
+      "recipient_email": "tony@yhmagazine.com",
+      "recipient_name": "Anthony",
+      "subject": "Automation question for Your Home Mailers",
+      "sent_at": "2026-03-23T11:56:42.197032",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Your Home Mailers",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "628e20700bc4e60001d45d2d",
+      "project": "lead-scraper",
+      "recipient_email": "daniel@monroyec.com",
+      "recipient_name": "Daniel",
+      "subject": "Automation question for Monroy Electric",
+      "sent_at": "2026-03-23T11:56:48.432607",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Monroy Electric",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a589ab7468693b8c67a69a",
+      "project": "lead-scraper",
+      "recipient_email": "don.cirillo@natelecsales.com",
+      "recipient_name": "Donald",
+      "subject": "Automation question for National Electric Sales, LLC",
+      "sent_at": "2026-03-23T11:56:54.739839",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "National Electric Sales, LLC",
+        "template": "service_automation",
+        "category": "HVAC / Home Services",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fb0f47d1617900012dbbc8",
+      "project": "lead-scraper",
+      "recipient_email": "sgomez@stabilizedsteps.com",
+      "recipient_name": "Stephanie",
+      "subject": "Quick question for Stabilized Steps",
+      "sent_at": "2026-03-23T11:57:01.076988",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Stabilized Steps",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f457d0577ba30001aa700c",
+      "project": "lead-scraper",
+      "recipient_email": "craig@craiglindell.com",
+      "recipient_name": "Craig",
+      "subject": "Quick question for Craig Lindell & Associates LLC",
+      "sent_at": "2026-03-23T11:57:07.348301",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Craig Lindell & Associates LLC",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fe7b305898520001d9a867",
+      "project": "lead-scraper",
+      "recipient_email": "jared@holescpas.com",
+      "recipient_name": "Jared",
+      "subject": "Quick question for Holes & Company CPAs",
+      "sent_at": "2026-03-23T11:57:13.604532",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Holes & Company CPAs",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "645cd7b147a268000164f24c",
+      "project": "lead-scraper",
+      "recipient_email": "bwittdo@naplesorthopedics.com",
+      "recipient_name": "Bryan",
+      "subject": "Quick question for Naples Orthopedics",
+      "sent_at": "2026-03-23T11:57:19.898635",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Naples Orthopedics",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f151fb79b638000155c3bc",
+      "project": "lead-scraper",
+      "recipient_email": "kwheeler@qolpublishing.com",
+      "recipient_name": "Karla",
+      "subject": "Quick question for Quality of Life Publishing Co.",
+      "sent_at": "2026-03-23T11:57:26.331943",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Quality of Life Publishing Co.",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a4a7f87468692abfa99758",
+      "project": "lead-scraper",
+      "recipient_email": "jan@fortheloveofcatsfl.com",
+      "recipient_name": "Jan",
+      "subject": "Quick question for For the Love of Cats",
+      "sent_at": "2026-03-23T11:57:32.596028",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "For the Love of Cats",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f50a1e9138d100014deac5",
+      "project": "lead-scraper",
+      "recipient_email": "smile@naplesfamilydentist.com",
+      "recipient_name": "Paul",
+      "subject": "Quick question for NAPLES FAMILY DENTISTRY INC",
+      "sent_at": "2026-03-23T11:57:39.371984",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "NAPLES FAMILY DENTISTRY INC",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "60c210102373680001bf809e",
+      "project": "lead-scraper",
+      "recipient_email": "raul@riainsurancegroup.com",
+      "recipient_name": "Raul",
+      "subject": "Quick question for RIA INSURANCE GROUP",
+      "sent_at": "2026-03-23T11:57:45.780649",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "RIA INSURANCE GROUP",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "55df3d53f3e5bb1f2b0044ed",
+      "project": "lead-scraper",
+      "recipient_email": "tami@helpadiabeticchild.org",
+      "recipient_name": "Tami",
+      "subject": "Quick question for Help A Diabetic Child (HADC)",
+      "sent_at": "2026-03-23T11:57:52.084542",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Help A Diabetic Child (HADC)",
+        "template": "discovery_question",
+        "category": "Medical / Dental",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66fb3106518a660001e79b35",
+      "project": "lead-scraper",
+      "recipient_email": "eric@fltitlegroup.com",
+      "recipient_name": "Eric",
+      "subject": "Quick question for Cottrell Title",
+      "sent_at": "2026-03-23T11:57:58.271338",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Cottrell Title",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f4bf6534175d0001295b41",
+      "project": "lead-scraper",
+      "recipient_email": "tdupre@pbscontractors.com",
+      "recipient_name": "Timothy",
+      "subject": "Quick question for PBS Contractors",
+      "sent_at": "2026-03-23T11:58:04.567561",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "PBS Contractors",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "66f17a781084890001552c93",
+      "project": "lead-scraper",
+      "recipient_email": "steve@credevolv.com",
+      "recipient_name": "Stephen",
+      "subject": "Quick question for CredEvolv",
+      "sent_at": "2026-03-23T11:58:10.815898",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "CredEvolv",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
+    },
+    {
+      "id": "54a63ae27468693676e04ecc",
+      "project": "lead-scraper",
+      "recipient_email": "lrosa@matrixhomedesign.com",
+      "recipient_name": "Laura",
+      "subject": "Quick question for Matrix Design & Property Management",
+      "sent_at": "2026-03-23T11:58:17.398528",
+      "status": "sent",
+      "response_received": false,
+      "response_at": null,
+      "response_type": "",
+      "follow_up_count": 0,
+      "last_follow_up": null,
+      "inquiry_type": "cold_outreach",
+      "metadata": {
+        "business_name": "Matrix Design & Property Management",
+        "template": "discovery_question",
+        "category": "Real Estate",
+        "pain_points": [
+          "ai_automation"
+        ]
+      }
     }
   ],
-  "updated_at": "2026-01-16T14:46:56.868460"
+  "updated_at": "2026-03-23T11:58:17.399187"
 }
