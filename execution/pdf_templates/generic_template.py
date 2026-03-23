@@ -152,8 +152,8 @@ def render_generic(data: dict, styles: dict):
         story.append(Paragraph(meta, styles["small"]))
     story.append(Spacer(1, 12))
 
-    # Content
-    content = data.get("content_markdown", "")
+    # Content — accept either key (content_markdown is canonical, content is legacy)
+    content = data.get("content_markdown") or data.get("content", "")
     if content:
         story.extend(_markdown_to_flowables(content, styles))
 
