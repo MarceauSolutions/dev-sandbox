@@ -236,6 +236,7 @@ def render_dashboard(data, error=None):
     tab_nav = f'''<div style="display:flex;gap:0;border-bottom:2px solid {GOLD};margin-bottom:20px">
         <a href="/" style="padding:10px 20px;font-size:13px;font-weight:700;color:{GOLD};text-decoration:none;border-bottom:2px solid {GOLD};margin-bottom:-2px">90-Day Tracker</a>
         <a href="/sprint" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">Sprint Hub</a>
+        <a href="/outreach" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">Cold Outreach</a>
     </div>'''
 
     # ── Header ──
@@ -366,6 +367,7 @@ def render_sprint(tasks_data, outreach_stats, error=None):
     nav = f'''<div style="display:flex;gap:0;border-bottom:2px solid {GOLD};margin-bottom:20px">
         <a href="/" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">90-Day Tracker</a>
         <a href="/sprint" style="padding:10px 20px;font-size:13px;font-weight:700;color:{GOLD};text-decoration:none;border-bottom:2px solid {GOLD};margin-bottom:-2px">Sprint Hub</a>
+        <a href="/outreach" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">Cold Outreach</a>
     </div>'''
 
     # ── Header ──
@@ -419,21 +421,24 @@ def render_sprint(tasks_data, outreach_stats, error=None):
     </div>'''
 
     # ── Quick Launch ──
-    def _launch_btn(label, url, icon, desc=""):
-        return f'''<a href="{url}" target="_blank" style="display:block;background:{SURFACE};border:1px solid {BORDER};border-radius:10px;padding:14px;text-decoration:none;color:{TEXT};transition:all .15s" onmouseover="this.style.borderColor='{GOLD}';this.style.boxShadow='0 0 12px {GOLD_GLOW}'" onmouseout="this.style.borderColor='{BORDER}';this.style.boxShadow='none'">
+    def _launch_btn(label, url, icon, desc="", badge=""):
+        badge_html = f'<span style="position:absolute;top:8px;right:8px;background:{RED};color:white;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px">{badge}</span>' if badge else ""
+        return f'''<a href="{url}" target="_blank" style="display:block;position:relative;background:{SURFACE};border:1px solid {BORDER};border-radius:10px;padding:14px;text-decoration:none;color:{TEXT};transition:all .15s" onmouseover="this.style.borderColor='{GOLD}';this.style.boxShadow='0 0 12px {GOLD_GLOW}'" onmouseout="this.style.borderColor='{BORDER}';this.style.boxShadow='none'">
+            {badge_html}
             <div style="font-size:22px;margin-bottom:4px">{icon}</div>
             <div style="font-size:13px;font-weight:700">{html.escape(label)}</div>
             <div style="font-size:10px;color:{MUTED};margin-top:2px">{html.escape(desc)}</div>
         </a>'''
 
+    follow_ups_due = outreach_stats.get("follow_ups_due", 0)
     tools_section = f'''<div class="card">
         <h2>Quick Launch — Sprint Tools</h2>
         <div class="grid grid-5" style="margin-top:4px">
-            {_launch_btn("Outreach Analytics", "http://127.0.0.1:8794", "📊", "Volume, response rate, CAC")}
-            {_launch_btn("Client Tracker", "http://127.0.0.1:8795", "📈", "Trial client performance")}
-            {_launch_btn("Sales Coach", "http://127.0.0.1:8796", "🎯", "Mock call practice")}
-            {_launch_btn("Sales Pipeline", "http://127.0.0.1:8788", "💼", "Deals & proposals")}
-            {_launch_btn("API Key Manager", "http://127.0.0.1:8793", "🔑", "Key health & rotation")}
+            {_launch_btn("Sales Pipeline", "https://pipeline.marceausolutions.com", "💼", "Deals, kanban, proposals")}
+            {_launch_btn("Cold Outreach", "/outreach", "📤", "Batch leads + follow-up status", str(follow_ups_due) if follow_ups_due > 0 else "")}
+            {_launch_btn("MailAssist", "https://email.marceausolutions.com", "📧", "Gmail search + AI replies")}
+            {_launch_btn("ClaimBack", "https://claimback.marceausolutions.com", "🏥", "Medical billing disputes")}
+            {_launch_btn("KeyVault", "https://keys.marceausolutions.com", "🔑", "API key health & rotation")}
         </div>
     </div>'''
 
@@ -513,6 +518,166 @@ async function closeSession() {{
     </div>'''
 
     return _shell("Sprint Command Center", content)
+
+
+def render_outreach(records, error=None):
+    """Cold outreach pipeline feed — 91 batch leads + follow-up sequence status."""
+    from datetime import datetime, date
+
+    TOUCH_NAMES = {
+        0: ("Day 3", "Check-in", YELLOW),
+        1: ("Day 7", "Social Proof", BLUE),
+        2: ("Day 14", "Direct Question", PURPLE),
+        3: ("Day 21", "Breakup", RED),
+    }
+    TOUCH_DAYS = {0: 3, 1: 7, 2: 14, 3: 21}
+
+    today = date.today()
+
+    # Nav
+    nav = f'''<div style="display:flex;gap:0;border-bottom:2px solid {GOLD};margin-bottom:20px">
+        <a href="/" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">90-Day Tracker</a>
+        <a href="/sprint" style="padding:10px 20px;font-size:13px;font-weight:600;color:{MUTED};text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-2px" onmouseover="this.style.color='{GOLD}'" onmouseout="this.style.color='{MUTED}'">Sprint Hub</a>
+        <a href="/outreach" style="padding:10px 20px;font-size:13px;font-weight:700;color:{GOLD};text-decoration:none;border-bottom:2px solid {GOLD};margin-bottom:-2px">Cold Outreach</a>
+    </div>'''
+
+    # Header
+    header = f'''<div class="header">
+        <div>
+            <h1>Cold Outreach <span>Pipeline</span></h1>
+            <div style="font-size:12px;color:{MUTED};margin-top:2px">Batch send March 23 — 4-touch Hormozi sequence (Day 3 / 7 / 14 / 21)</div>
+        </div>
+        <div class="header-right">
+            <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
+        </div>
+    </div>'''
+
+    if error:
+        content = f'''<div class="container">{header}{nav}
+            <div class="card" style="text-align:center;padding:40px">
+                <h3 style="color:{RED}">Error loading outreach data</h3>
+                <p style="color:{MUTED};margin-top:8px">{html.escape(str(error))}</p>
+            </div></div>'''
+        return _shell("Cold Outreach Pipeline", content)
+
+    # Build enriched records
+    sent_records = [r for r in records if r.get("status") == "sent"]
+    pending_records = [r for r in records if r.get("status") == "pending"]
+
+    due_count = 0
+    rows_html = ""
+    stage_counts = {"Day 3": 0, "Day 7": 0, "Day 14": 0, "Day 21": 0, "Done": 0, "Replied": 0}
+
+    for r in sent_records:
+        sent_str = r.get("sent_at", "")
+        fc = r.get("follow_up_count", 0)
+        biz = html.escape(r.get("business_name", "—")[:40])
+        email = html.escape(r.get("email", "—"))
+        template = html.escape(r.get("template_used", "—"))
+        status = r.get("status", "sent")
+
+        if status == "replied":
+            stage_label = "Replied"
+            stage_color = GREEN
+            next_due_html = f'<span style="color:{GREEN};font-weight:700">Replied ✓</span>'
+            stage_counts["Replied"] += 1
+        elif fc >= 4:
+            stage_label = "Complete"
+            stage_color = MUTED
+            next_due_html = f'<span style="color:{MUTED}">Sequence done</span>'
+            stage_counts["Done"] += 1
+        else:
+            touch_name, touch_type, touch_color = TOUCH_NAMES[fc]
+            stage_label = touch_name
+            stage_color = touch_color
+
+            if sent_str:
+                try:
+                    sent_dt = datetime.fromisoformat(sent_str).date()
+                    days_since = (today - sent_dt).days
+                    days_needed = TOUCH_DAYS[fc]
+                    days_left = days_needed - days_since
+                    if days_left <= 0:
+                        due_count += 1
+                        next_due_html = f'<span style="color:{RED};font-weight:700">DUE NOW — {touch_type}</span>'
+                    elif days_left == 1:
+                        next_due_html = f'<span style="color:{YELLOW}">Tomorrow — {touch_type}</span>'
+                    else:
+                        next_due_html = f'<span style="color:{MUTED}">in {days_left}d — {touch_type}</span>'
+                except Exception:
+                    next_due_html = f'<span style="color:{MUTED}">—</span>'
+            else:
+                next_due_html = f'<span style="color:{MUTED}">—</span>'
+
+            if touch_name in stage_counts:
+                stage_counts[touch_name] += 1
+
+        rows_html += f'''<tr>
+            <td style="font-weight:600">{biz}</td>
+            <td style="color:{MUTED};font-size:12px">{email}</td>
+            <td><span style="background:{stage_color}22;color:{stage_color};padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600">{stage_label}</span></td>
+            <td style="font-size:11px">{fc}/4</td>
+            <td>{next_due_html}</td>
+            <td style="color:{MUTED};font-size:11px">{html.escape(template)}</td>
+        </tr>'''
+
+    # Stats bar
+    total_sent = len(sent_records)
+    replied = stage_counts["Replied"]
+    reply_rate = round(replied / total_sent * 100, 1) if total_sent else 0
+    stats = f'''<div class="stat-grid">
+        {_stat_card(total_sent, "Emails Sent", "📤", PURPLE)}
+        {_stat_card(due_count, "Follow-ups Due", "⚡", RED if due_count > 0 else MUTED)}
+        {_stat_card(replied, "Replies", "💬", GREEN)}
+        {_stat_card(f'{reply_rate}%', "Reply Rate", "📊", GOLD)}
+        {_stat_card(stage_counts["Day 3"], "At Day 3", "1️⃣", YELLOW)}
+        {_stat_card(stage_counts["Day 7"], "At Day 7", "2️⃣", BLUE)}
+        {_stat_card(stage_counts["Day 14"], "At Day 14", "3️⃣", PURPLE)}
+        {_stat_card(stage_counts["Day 21"], "At Day 21", "4️⃣", RED)}
+    </div>'''
+
+    # Table
+    table = f'''<div class="card" style="overflow-x:auto">
+        <h2>All Sent Leads — Follow-up Status</h2>
+        <table style="margin-top:8px">
+            <thead><tr>
+                <th>Business</th><th>Email</th><th>Stage</th><th>Touches</th><th>Next Due</th><th>Template</th>
+            </tr></thead>
+            <tbody>
+                {rows_html if rows_html else f'<tr><td colspan="6" style="text-align:center;color:{MUTED};padding:20px">No sent records found.</td></tr>'}
+            </tbody>
+        </table>
+    </div>'''
+
+    # Pending note
+    pending_note = ""
+    if pending_records:
+        pending_note = f'<div class="card" style="border-color:{YELLOW}44"><p style="font-size:12px;color:{MUTED}"><strong style="color:{YELLOW}">Note:</strong> {len(pending_records)} records in "pending" state (generated but not sent — likely filtered leads). They are excluded from this view.</p></div>'
+
+    # Automation status note
+    auto_note = f'''<div class="card" style="border-color:{GOLD}44">
+        <h2>Automation Status</h2>
+        <p style="font-size:12px;color:{MUTED}">Follow-up emails fire automatically every day at <strong style="color:{GOLD}">9:00am</strong> via Mac launchd (<code style="background:{SURFACE};padding:2px 6px;border-radius:4px">com.marceausolutions.cold-email-followup</code>).
+        No action needed — the system checks for due touches and sends them.
+        Logs: <code style="background:{SURFACE};padding:2px 6px;border-radius:4px">projects/shared/lead-scraper/output/followup.log</code></p>
+        <div style="margin-top:8px;font-size:12px;color:{MUTED}">
+            Touch sequence: Day 3 (soft check-in) → Day 7 (social proof / HVAC case study) → Day 14 (wrong inbox?) → Day 21 (breakup / close the file)
+        </div>
+    </div>'''
+
+    content = f'''<div class="container">
+        {header}
+        {nav}
+        {stats}
+        {pending_note}
+        {auto_note}
+        {table}
+        <footer style="text-align:center;padding:24px;color:{MUTED};font-size:11px;border-top:1px solid {BORDER};margin-top:20px">
+            Cold Outreach Pipeline — <a href="/sprint" style="color:{GOLD};text-decoration:none">Back to Sprint Hub</a>
+        </footer>
+    </div>'''
+
+    return _shell("Cold Outreach Pipeline", content)
 
 
 def render_landing():

@@ -173,6 +173,22 @@ def _get_outreach_stats():
     return stats
 
 
+@app.get("/outreach", response_class=HTMLResponse)
+async def outreach_feed():
+    """Cold outreach pipeline feed — batch leads + follow-up sequence status."""
+    try:
+        from .ui import render_outreach
+        campaigns_file = TRACKING_DIR / "outreach_campaigns.json"
+        records = []
+        if campaigns_file.exists():
+            data = json.loads(campaigns_file.read_text())
+            records = data.get("records", [])
+        return render_outreach(records)
+    except Exception as e:
+        from .ui import render_outreach
+        return render_outreach([], error=str(e))
+
+
 @app.get("/api/data")
 async def api_data():
     try:
