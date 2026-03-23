@@ -463,9 +463,9 @@ class LeadManager:
         # Email subject based on project type
         subjects = {
             "fitness-ai": "Welcome to Fitness Influencer AI! 🎯",
-            "custom-ai": "Your Custom AI Project Inquiry - Marceau Solutions",
+            "custom-ai": "Your Custom AI Project Inquiry - Marceau Solutions™",
             "amazon-seller": "Amazon Seller AI - Let's Get Started!",
-            "general": "Thanks for Reaching Out - Marceau Solutions"
+            "general": "Thanks for Reaching Out - Marceau Solutions™"
         }
         
         subject = subjects.get(project_type, subjects["general"])
@@ -495,7 +495,7 @@ class LeadManager:
         <div class="content">
             <p>Hi {first_name},</p>
             
-            <p>Thank you for your interest in <strong>Marceau Solutions</strong>! We've received your information and our team is reviewing it now.</p>
+            <p>Thank you for your interest in <strong>Marceau Solutions™</strong>! We've received your information and our team is reviewing it now.</p>
             
             <h3>What Happens Next?</h3>
             
@@ -519,10 +519,10 @@ class LeadManager:
             
             <p>Best regards,<br>
             <strong>William Marceau</strong><br>
-            Founder, Marceau Solutions</p>
+            Founder, Marceau Solutions™</p>
         </div>
         <div class="footer">
-            <p>Marceau Solutions LLC | AI-Powered Business Growth</p>
+            <p>Marceau Solutions™ LLC | AI-Powered Business Growth</p>
             <p><a href="https://marceausolutions.com">marceausolutions.com</a></p>
         </div>
     </div>
@@ -540,7 +540,7 @@ class LeadManager:
             text_body = f"""
 Hi {first_name},
 
-Thank you for your interest in Marceau Solutions! We've received your information and our team is reviewing it now.
+Thank you for your interest in Marceau Solutions™! We've received your information and our team is reviewing it now.
 
 What Happens Next?
 
@@ -554,10 +554,10 @@ Feel free to reply to this email with any questions!
 
 Best regards,
 William Marceau
-Founder, Marceau Solutions
+Founder, Marceau Solutions™
 
 ---
-Marceau Solutions LLC | AI-Powered Business Growth
+Marceau Solutions™ LLC | AI-Powered Business Growth
 https://marceausolutions.com
 """
             

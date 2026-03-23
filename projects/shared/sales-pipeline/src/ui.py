@@ -102,7 +102,7 @@ def _nav(active=""):
     tabs = [("dashboard", "Pipeline", "/"), ("deals", "Deals", "/deals"), ("outreach", "Outreach", "/outreach")]
     links = "".join(f'<a href="{h}" class="{"active" if t==active else ""}">{l}</a>' for t, l, h in tabs)
     return f'''<nav class="topnav"><div class="topnav-inner">
-        <a href="/" class="logo">Sales<span>Pipeline</span></a>
+        <a href="/" class="logo">Sales<span>Pipeline™</span></a>
         <div class="nav-links">{links}<a href="/deals/add" class="btn btn-primary btn-sm" style="margin-left:8px">+ New Deal</a></div>
     </div></nav>'''
 
@@ -110,7 +110,7 @@ def _nav(active=""):
 def _shell(title, content, active=""):
     return f'''<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>{_esc(title)} — Sales Pipeline</title>
+    <title>{_esc(title)} — Sales Pipeline™</title>
     <style>{CSS}</style></head><body>{_nav(active)}<div class="container">{content}</div>
     </body></html>'''
 

@@ -165,7 +165,7 @@ def _shell(title: str, content: str, nav: str = "", active_tab: str = "") -> str
     return f"""<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>{title} — KeyVault</title>
+<title>{title} — KeyVault™</title>
 <style>{CSS}</style>
 </head><body>
 {nav}
@@ -235,7 +235,7 @@ def render_landing() -> str:
             Stop losing access.<br><span style="color:{GOLD}">Manage every API key.</span>
         </h1>
         <p style="font-size:18px;color:{TEXT_MUTED};max-width:600px;margin:0 auto 32px">
-            KeyVault tracks every credential across every environment. Get alerts before keys expire,
+            KeyVault™ tracks every credential across every environment. Get alerts before keys expire,
             catch drift between servers, and never debug a "key expired" error at 2am again.
         </p>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
@@ -285,7 +285,7 @@ def render_landing() -> str:
             </div>
             <div class="card">
                 <h3 style="color:{GOLD}">🔑 API Access</h3>
-                <p class="muted">RESTful API with bearer token auth. Integrate KeyVault into your CI/CD, monitoring, and automation pipelines.</p>
+                <p class="muted">RESTful API with bearer token auth. Integrate KeyVault™ into your CI/CD, monitoring, and automation pipelines.</p>
             </div>
             <div class="card">
                 <h3 style="color:{GOLD}">📱 Mobile First</h3>
@@ -354,21 +354,21 @@ def render_landing() -> str:
     <!-- CTA -->
     <div style="text-align:center;padding:60px 20px;border-top:1px solid {BORDER}">
         <h2 style="font-size:28px;margin-bottom:12px">Ready to stop fighting expired keys?</h2>
-        <p style="color:{TEXT_MUTED};margin-bottom:24px">Join teams who trust KeyVault to manage their credentials.</p>
+        <p style="color:{TEXT_MUTED};margin-bottom:24px">Join teams who trust KeyVault™ to manage their credentials.</p>
         <a href="/signup" class="btn btn-primary" style="padding:14px 40px;font-size:16px">Start Free Today</a>
     </div>
 
     <!-- Footer -->
     <footer style="text-align:center;padding:30px;border-top:1px solid {BORDER};color:{TEXT_MUTED};font-size:12px">
         <p>KeyVault™ by <a href="https://marceausolutions.com" style="color:{GOLD}">Marceau Solutions™</a> — Embrace the Pain &amp; Defy the Odds</p>
-        <p style="margin-top:4px">© {datetime.now().year} Marceau Solutions LLC. All rights reserved.</p>
+        <p style="margin-top:4px">© {datetime.now().year} Marceau Solutions™ LLC. All rights reserved.</p>
     </footer>
     </div>"""
 
     return f"""<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>KeyVault — API Key Management Platform</title>
-    <meta name="description" content="Stop losing API access. KeyVault tracks every credential across every environment with encrypted storage, expiration alerts, and health monitoring.">
+    <title>KeyVault™ — API Key Management Platform</title>
+    <meta name="description" content="Stop losing API access. KeyVault™ tracks every credential across every environment with encrypted storage, expiration alerts, and health monitoring.">
     <style>{CSS}</style>
     </head><body>{content}</body></html>"""
 
