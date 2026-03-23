@@ -4,6 +4,43 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+## 2026-03-23: AI Client Sprint — Infrastructure Overhaul & Outreach Pipeline — Session 16
+
+**Context:** AI client acquisition sprint, Day 1. Goal: land 1 paying AI systems client before new Collier County job starts April 6. Session focused on building the full commercial infrastructure — data layer, payments, lead enrichment, outreach assets, and website conversion.
+
+**What Was Built:**
+
+**Data & Infrastructure:**
+- **EC2 canonical `pipeline.db`** — multi-tower SQLite schema with deals, outreach_log, intake_submissions tables. Single source of truth replacing scattered CSVs and separate per-tool databases
+- **8 new pipeline API endpoints** on `agent_bridge_api.py` — Clawdbot can now query pipeline status, log deal updates, pull follow-up lists without Claude Code being present
+- **`pipeline.marceausolutions.com` overhauled** — replaced 3 separate dashboards (outreach-analytics 8794, client-tracker 8795, sales-pipeline 8785) with one unified multi-tower kanban
+
+**Lead Enrichment:**
+- **Hunter.io + Snov.io waterfall** — replaces Apollo enrichment (Apollo enrichment API broken/insufficient). Hunter finds emails from domain → Snov.io as fallback. 18 new valid emails found from existing prospect list
+- **Segment analysis complete** — 56 Apollo leads validated and segmented by industry (HVAC, plumbing, dental, med spa, restaurant). 74 total actionable prospects with verified emails
+- **Phone blitz list**: 40 HVAC leads with phone numbers at `projects/shared/lead-scraper/output/phone_blitz_2026-03-24.csv`
+- **Tuesday in-person route**: 12 stops mapped at `projects/shared/lead-scraper/output/inperson_route_2026-03-25.csv`
+
+**Payments & Conversion:**
+- **Stripe $297/mo product live** — price ID `price_1TECrADeeD1eRvzzyYKnO7z5`, payment link `https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f`
+- **`marceausolutions.com/start`** — client intake form deployed, submits directly to `pipeline.marceausolutions.com/api/intake`, auto-creates deal in pipeline.db
+
+**Demo Infrastructure:**
+- **Demo line (239) 457-0662** — fully operational. TwiML voicemail greeting, text-back fires within 10 seconds, William receives Telegram alert on every call. n8n workflow "Missed Call Text-Back DEMO" (ID: `5uIyvR23VGVzX4IO`) active
+
+**Website & Outreach Assets:**
+- **`ai-automation.html` updated** — "Start Your Free 2-Week Trial →" CTA added as primary action above Calendly, links to `/start`
+- **Pricing corrected** — monthly retainer updated to $500-$1,000/mo + $500-$2,000 setup (was showing $295 flat)
+- **Leave-behind PDF** — pricing updated to match retainer model, reprinted for Tuesday visits
+
+**Key Learning — Build for the System, Not the Sprint:**
+Every tool built today was designed to work across all towers with minimal customization. The pipeline.db schema, the API endpoints, the intake form — all are tower-agnostic and can serve fitness, digital, and labs clients equally. Compare to Session 14 approach (dystonia digest was built just for that use case). The multi-tower architecture means adding a new business line costs hours, not days.
+
+**Commits:**
+- `session 16: website CTA, handoff update, session history, task status updates`
+
+---
+
 ## 2026-03-22: Dystonia Research Digest Full Product Build — Session 14
 
 **Context:** The dystonia research digest existed only as a CLI email script (`execution/dystonia_research_digest.py`) running via Mac launchd. No web frontend, no archive, no EC2 deployment, no subdomain. Built the full product.

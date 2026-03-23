@@ -226,10 +226,10 @@
     {
       "id": "task_stripe_product_001",
       "title": "Set up Stripe recurring product ($297/mo Missed Call Recovery)",
-      "description": "Create Stripe product + price for AI automation missed call text-back service. $297/mo recurring. Needed for trial-to-paid conversion.",
-      "section": "today",
+      "description": "DONE. Stripe $297/mo product live. Price ID: price_1TECrADeeD1eRvzzyYKnO7z5. Payment link: https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
+      "section": "recently_done",
       "priority": "medium",
-      "status": "pending",
+      "status": "complete",
       "due_date": "2026-03-23T21:00:00Z",
       "trigger_condition": null,
       "tags": [
@@ -238,10 +238,10 @@
         "billing"
       ],
       "project": "ai-client-sprint",
-      "progress": 0,
+      "progress": 100,
       "created_at": "2026-03-23T13:30:00Z",
-      "updated_at": "2026-03-23T13:30:00Z",
-      "completed_at": null
+      "updated_at": "2026-03-23T18:00:00Z",
+      "completed_at": "2026-03-23T18:00:00Z"
     },
     {
       "id": "task_trial_conversion_001",
@@ -266,10 +266,10 @@
     {
       "id": "task_segment_apollo_001",
       "title": "Segment 426 Apollo prospects by industry + validate before next batch",
-      "description": "Apply new validation rules: check if business is active, how they acquire clients, whether pain point is real. Segment by HVAC, plumbing, dental, legal, etc. for targeted batch emails.",
-      "section": "this_week",
+      "description": "DONE. 11 industries segmented. 56 Apollo leads validated and ready to email. 18 new emails found via Hunter.io enrichment = 74 total actionable prospects. Phone blitz list (40 HVAC) and in-person route (12 stops Tue) also generated.",
+      "section": "recently_done",
       "priority": "high",
-      "status": "pending",
+      "status": "complete",
       "due_date": "2026-03-24T17:00:00Z",
       "trigger_condition": null,
       "tags": [
@@ -278,10 +278,10 @@
         "outreach"
       ],
       "project": "ai-client-sprint",
-      "progress": 0,
+      "progress": 100,
       "created_at": "2026-03-23T13:30:00Z",
-      "updated_at": "2026-03-23T13:30:00Z",
-      "completed_at": null
+      "updated_at": "2026-03-23T18:00:00Z",
+      "completed_at": "2026-03-23T18:00:00Z"
     },
     {
       "id": "task_instagram_bio_001",
@@ -306,7 +306,7 @@
     {
       "id": "task_apollo_enrich_001",
       "title": "Run fresh Apollo MCP pipeline to find NEW prospects + enrich missing emails",
-      "description": "Many of the 426 existing prospects have no email address. Run run_full_outreach_pipeline via Apollo MCP to: (1) find new Naples prospects we don't have, (2) enrich existing prospects missing emails/phones. Also evaluate if new integrations are needed to enhance the list beyond Apollo.",
+      "description": "In progress. Apollo enrichment replaced by Hunter.io + Snov.io waterfall. Hunter enrichment running — 18 new emails found so far. Awaiting Hunter/Snov API keys for full run across all 426 prospects. Apollo MCP still useful for finding net-new prospects.",
       "section": "this_week",
       "priority": "high",
       "status": "pending",
@@ -319,9 +319,9 @@
         "enrichment"
       ],
       "project": "ai-client-sprint",
-      "progress": 0,
+      "progress": 50,
       "created_at": "2026-03-23T14:00:00Z",
-      "updated_at": "2026-03-23T14:00:00Z",
+      "updated_at": "2026-03-23T18:00:00Z",
       "completed_at": null
     },
     {
@@ -736,7 +736,7 @@
   ],
   "stats": {
     "total_created": 37,
-    "total_completed": 15,
-    "last_updated": "2026-03-23T15:30:00Z"
+    "total_completed": 17,
+    "last_updated": "2026-03-23T18:00:00Z"
   }
 }

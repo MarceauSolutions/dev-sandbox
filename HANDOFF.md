@@ -14,6 +14,47 @@
 
 ---
 
+## Session 16 Summary — March 23, 2026
+
+### What Was Built (for Clawdbot and Ralph awareness):
+
+**Infrastructure & Data:**
+- Demo line (239) 457-0662 fully operational — TwiML voicemail, text-back fires within 10s, William gets Telegram alert on every demo call
+- Hunter.io + Snov.io enrichment waterfall replacing Apollo enrichment (Apollo enrichment broken — pivot to Hunter/Snov)
+- EC2 canonical `pipeline.db` with multi-tower schema — single source of truth for all deals, outreach, and intake
+- 8 new pipeline endpoints added to `agent_bridge_api` — Clawdbot can now query pipeline directly
+- `pipeline.marceausolutions.com` multi-tower kanban dashboard replaced: outreach-analytics (8794), client-tracker (8795), sales-pipeline (8785)
+
+**Payments & Conversion:**
+- Stripe $297/mo product live — price ID: `price_1TECrADeeD1eRvzzyYKnO7z5`, payment link: `https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f`
+- `marceausolutions.com/start` — client intake form (submits to `pipeline.marceausolutions.com/api/intake`)
+
+**Outreach Assets:**
+- Leave-behind PDF updated — pricing corrected to monthly retainer ($500-2,000 setup + $500-1,000/mo)
+- Phone blitz list: 40 HVAC leads with phones at `projects/shared/lead-scraper/output/phone_blitz_2026-03-24.csv`
+- Tuesday in-person route: 12 stops at `projects/shared/lead-scraper/output/inperson_route_2026-03-25.csv`
+- Segment analysis: 56 Apollo leads ready to email + 18 new from Hunter enrichment = 74 total
+
+**Website:**
+- `ai-automation.html` updated: "Start Your Free 2-Week Trial →" primary CTA added above Calendly, links to `marceausolutions.com/start`
+- Pricing corrected to monthly retainer range ($500-$1,000/mo + $500-$2,000 setup)
+
+### What Clawdbot Needs to Know:
+
+**Pipeline API endpoints now available on EC2 (agent_bridge_api):**
+- `GET /pipeline/stats` — overall pipeline summary (deals by stage, total value, conversion rate)
+- `GET /pipeline/deals` — list all active deals
+- `POST /pipeline/deal/add` — add or update a deal (body: `{business_name, email, stage, source, notes}`)
+- `POST /pipeline/outreach/log` — log an outreach touch (body: `{deal_id, channel, notes}`)
+- `GET /pipeline/followups` — list deals needing follow-up today
+
+**Trigger rules for Clawdbot:**
+- When a prospect replies to an email → log via `POST /pipeline/deal/add` with `stage: "Replied"`
+- When William asks "pipeline status" or "how's the pipeline?" → call `GET /pipeline/stats` and report
+- When William asks "who do I follow up with?" → call `GET /pipeline/followups`
+
+---
+
 ## Current Sprint: AI Client Acquisition (March 23 – April 5)
 
 **Goal**: Land 1 AI systems client before William starts new job on April 6.
