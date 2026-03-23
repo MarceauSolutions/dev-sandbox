@@ -287,51 +287,97 @@ class ApolloPipeline:
 
         return str(Path(scored_json).with_name(Path(scored_json).stem + "_top.json"))
 
-    def enrich_via_apollo_mcp(
+    def enrich_via_hunter(
         self,
         top_leads_json: str,
         limit: int = None
     ) -> str:
         """
-        Enrich top leads via Apollo MCP (reveal contacts - PAID).
+        Enrich top leads via Hunter.io + Snov.io waterfall (replaces Apollo enrichment).
+
+        Waterfall: crawl contact page → Hunter domain search → Snov fallback → phone-only.
+        Cost: ~$0.10/search (Hunter) or ~$0.04/credit (Snov) — only charged when email found.
+        Apollo credits are NO LONGER spent on enrichment.
 
         Args:
             top_leads_json: Path to filtered top leads JSON
             limit: Max leads to enrich (safety limit)
 
         Returns:
-            Path to enriched CSV
+            Path to enriched JSON with email_source and email_confidence fields
         """
+        import sys
+        sys.path.insert(0, str(Path(__file__).parents[3]))
+        from projects.shared.lead_scraper.src import hunter as hunter_module
+        from projects.shared.lead_scraper.src import snov as snov_module
+        from urllib.parse import urlparse
+
         limit = limit or self.config.max_enrich_batch
 
         with open(top_leads_json, 'r') as f:
             top_leads = json.load(f)
 
-        leads_to_enrich = top_leads[:limit]
+        leads_to_enrich = [l for l in top_leads[:limit] if not l.get("email")]
+        logger.info(f"Enriching {len(leads_to_enrich)} leads via Hunter.io waterfall")
 
-        logger.info(f"🔗 Enriching {len(leads_to_enrich)} leads via Apollo MCP")
+        stats = {"crawl": 0, "hunter": 0, "snov": 0, "phone_only": 0}
+        from .enrichment import LeadEnricher, _split_owner_name
+        from .models import Lead
+        enricher = LeadEnricher()
 
-        # TODO: Implement Apollo MCP enrichment
-        # This would use the Apollo MCP server to reveal contacts
-        # For now, we'll return a placeholder for manual enrichment
+        for lead_dict in leads_to_enrich:
+            website = lead_dict.get("website", "")
+            domain = urlparse(website).netloc.lstrip("www.") if website else ""
+            first, last = _split_owner_name(lead_dict.get("owner_name", ""))
 
-        print("\n" + "="*80)
-        print("APOLLO MCP ENRICHMENT")
-        print("="*80)
-        print(f"\nLeads to Enrich: {len(leads_to_enrich)}")
-        print(f"Credit Cost: {len(leads_to_enrich) * self.config.apollo_credits_per_lead} credits")
-        print("\nTop Leads:")
-        for i, lead in enumerate(leads_to_enrich[:10], 1):
-            print(f"  {i}. {lead['business_name']} ({lead['city']}, {lead['state']}) - Score: {lead['score']}")
-        if len(leads_to_enrich) > 10:
-            print(f"  ... and {len(leads_to_enrich) - 10} more")
+            # Step 1: Crawl contact page
+            if website:
+                try:
+                    analysis = enricher._analyze_website(website)
+                    if analysis.get("emails"):
+                        lead_dict["email"] = analysis["emails"][0]
+                        lead_dict["email_source"] = "crawl"
+                        stats["crawl"] += 1
+                        continue
+                except Exception:
+                    pass
 
-        print("\nNEXT STEPS:")
-        print("1. Go to Apollo.io")
-        print("2. Find these businesses by name/location")
-        print("3. Click 'Reveal' for each contact (spends 2 credits per lead)")
-        print("4. Export enriched CSV")
-        print("5. Save to: output/apollo_enriched_TIMESTAMP.csv")
+            # Step 2: Hunter.io
+            if domain:
+                result = hunter_module.enrich_lead(domain, first, last, min_confidence=50)
+                if result:
+                    lead_dict["email"] = result["email"]
+                    lead_dict["email_source"] = result["source"]
+                    lead_dict["email_confidence"] = result.get("confidence", 0)
+                    stats["hunter"] += 1
+                    continue
+
+            # Step 3: Snov.io fallback
+            if domain:
+                result = snov_module.enrich_lead(domain, first, last)
+                if result:
+                    lead_dict["email"] = result["email"]
+                    lead_dict["email_source"] = result["source"]
+                    lead_dict["email_confidence"] = result.get("confidence", 0)
+                    stats["snov"] += 1
+                    continue
+
+            # Step 4: Phone-only
+            lead_dict["email_source"] = "phone-only"
+            stats["phone_only"] += 1
+
+        from datetime import datetime
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_path = str(Path(top_leads_json).parent / f"enriched_{ts}.json")
+        with open(out_path, "w") as f:
+            json.dump(top_leads, f, indent=2)
+
+        total = len(leads_to_enrich)
+        found = total - stats["phone_only"]
+        print(f"\n✅ Enrichment complete: {found}/{total} emails found")
+        print(f"   Crawl: {stats['crawl']} | Hunter: {stats['hunter']} | Snov: {stats['snov']} | Phone-only: {stats['phone_only']}")
+        print(f"   Apollo credits used: 0 (enrichment now via Hunter/Snov)\n")
+        return out_path
         print("6. Run: python -m src.apollo_pipeline merge <enriched_csv> <top_leads_json>")
         print("="*80 + "\n")
 
@@ -710,14 +756,11 @@ Examples:
         print(f"  python -m src.apollo_pipeline enrich {output_file}")
 
     elif args.command == "enrich":
-        enriched_csv = pipeline.enrich_via_apollo_mcp(
+        enriched_json = pipeline.enrich_via_hunter(
             top_leads_json=args.input_file,
             limit=args.limit
         )
-        if enriched_csv:
-            print(f"\n✅ Enrichment complete: {enriched_csv}")
-        else:
-            print("\n⚠️  Manual enrichment required (see instructions above)")
+        print(f"\n✅ Enriched leads saved: {enriched_json}")
 
     elif args.command == "merge":
         output_file = pipeline.merge_enriched(

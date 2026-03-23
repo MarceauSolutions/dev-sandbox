@@ -13,8 +13,18 @@ from bs4 import BeautifulSoup
 
 from .models import Lead
 from .config import ScraperConfig
+from . import hunter as hunter_module
+from . import snov as snov_module
 
 logger = logging.getLogger(__name__)
+
+
+def _split_owner_name(full_name: str) -> tuple[str, str]:
+    """Split 'John Doe' → ('John', 'Doe'). Returns ('', '') if blank."""
+    parts = full_name.strip().split()
+    if len(parts) >= 2:
+        return parts[0], " ".join(parts[1:])
+    return (parts[0] if parts else ""), ""
 
 
 class LeadEnricher:
@@ -284,14 +294,6 @@ class LeadEnricher:
         try:
             analysis = self._analyze_website(lead.website)
 
-            # Add email if found and lead doesn't have one
-            if analysis["emails"] and not lead.email:
-                # Prefer emails that match business name
-                business_words = lead.business_name.lower().split()
-                matching = [e for e in analysis["emails"]
-                           if any(w in e for w in business_words if len(w) > 3)]
-                lead.email = matching[0] if matching else analysis["emails"][0]
-
             # Add phone if found and lead doesn't have one
             if analysis["phone"] and not lead.phone:
                 lead.phone = analysis["phone"]
@@ -311,6 +313,44 @@ class LeadEnricher:
             for pp in analysis["pain_points"]:
                 if pp not in lead.pain_points:
                     lead.pain_points.append(pp)
+
+            # ── EMAIL DISCOVERY WATERFALL ─────────────────────────────────────
+            # Step 1: Contact page crawl (free, already done above)
+            if analysis["emails"] and not lead.email:
+                business_words = lead.business_name.lower().split()
+                matching = [e for e in analysis["emails"]
+                            if any(w in e for w in business_words if len(w) > 3)]
+                lead.email = matching[0] if matching else analysis["emails"][0]
+                lead.email_source = "crawl"
+                logger.debug(f"  Email found via crawl: {lead.email}")
+
+            # Step 2: Hunter.io domain search (paid, ~$0.10/search)
+            if not lead.email and lead.website:
+                domain = urlparse(lead.website).netloc.lstrip("www.")
+                first, last = _split_owner_name(getattr(lead, "owner_name", ""))
+                result = hunter_module.enrich_lead(domain, first, last, min_confidence=50)
+                if result:
+                    lead.email = result["email"]
+                    lead.email_source = result["source"]
+                    lead.email_confidence = result.get("confidence", 0)
+                    logger.debug(f"  Email found via Hunter: {lead.email} ({result.get('confidence')}%)")
+
+            # Step 3: Snov.io fallback (paid, ~$0.04/credit)
+            if not lead.email and lead.website:
+                domain = urlparse(lead.website).netloc.lstrip("www.")
+                first, last = _split_owner_name(getattr(lead, "owner_name", ""))
+                result = snov_module.enrich_lead(domain, first, last)
+                if result:
+                    lead.email = result["email"]
+                    lead.email_source = result["source"]
+                    lead.email_confidence = result.get("confidence", 0)
+                    logger.debug(f"  Email found via Snov: {lead.email}")
+
+            # Step 4: Phone-only track
+            if not lead.email:
+                lead.email_source = "phone-only"
+                logger.debug(f"  No email found — marking as phone-only: {lead.business_name}")
+            # ─────────────────────────────────────────────────────────────────
 
         except Exception as e:
             logger.error(f"Error enriching {lead.business_name}: {e}")

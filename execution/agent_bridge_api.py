@@ -13033,6 +13033,225 @@ def v51_info():
 # MAIN
 # =============================================================================
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# PIPELINE ENDPOINTS — Multi-tower sales pipeline (EC2 canonical pipeline.db)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def _pipeline_db():
+    """Import and return pipeline_db module, EC2-aware."""
+    import importlib.util, sys
+    root = Path(__file__).parent
+    spec = importlib.util.spec_from_file_location("pipeline_db", root / "pipeline_db.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@app.route('/pipeline/stats', methods=['GET'])
+def pipeline_stats():
+    """
+    GET /pipeline/stats?tower=digital-ai-services
+    Returns pipeline stats for the specified tower (or all towers if omitted).
+    Clawdbot uses this for daily briefing and sprint check-ins.
+    """
+    try:
+        tower = request.args.get('tower')
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        if tower:
+            stats = pdb.get_pipeline_stats(conn, tower=tower)
+        else:
+            stats = pdb.get_tower_summary(conn)
+        conn.close()
+        return jsonify({"ok": True, "data": stats})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/deals', methods=['GET'])
+def pipeline_deals():
+    """
+    GET /pipeline/deals?tower=digital-ai-services&stage=Trial Active
+    Returns deals filtered by tower and/or stage.
+    """
+    try:
+        tower = request.args.get('tower')
+        stage = request.args.get('stage')
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        q = "SELECT * FROM deals WHERE 1=1"
+        params = []
+        if tower:
+            q += " AND tower = ?"
+            params.append(tower)
+        if stage:
+            q += " AND stage = ?"
+            params.append(stage)
+        q += " ORDER BY updated_at DESC LIMIT 50"
+        rows = conn.execute(q, params).fetchall()
+        conn.close()
+        return jsonify({"ok": True, "deals": [dict(r) for r in rows], "count": len(rows)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/deal/add', methods=['POST'])
+def pipeline_add_deal():
+    """
+    POST /pipeline/deal/add
+    Body: {company, tower, contact_name, contact_email, contact_phone, industry, stage, lead_source, notes}
+    Creates a new deal in the pipeline. Used by Clawdbot to capture leads from conversation.
+    """
+    try:
+        body = request.json or {}
+        company = body.pop("company", "").strip()
+        if not company:
+            return jsonify({"ok": False, "error": "company required"}), 400
+        tower = body.pop("tower", "digital-ai-services")
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        deal_id = pdb.create_deal(conn, company, tower=tower, **body)
+        conn.close()
+        return jsonify({"ok": True, "deal_id": deal_id, "company": company, "tower": tower})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/deal/update', methods=['POST'])
+def pipeline_update_deal():
+    """
+    POST /pipeline/deal/update
+    Body: {deal_id, stage, next_action, notes, ...any deal fields}
+    Update a deal's stage or fields. Moving to 'Trial Active' starts the trial clock.
+    """
+    try:
+        body = request.json or {}
+        deal_id = body.pop("deal_id", None)
+        if not deal_id:
+            return jsonify({"ok": False, "error": "deal_id required"}), 400
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        pdb.update_deal(conn, int(deal_id), **body)
+        conn.close()
+        return jsonify({"ok": True, "deal_id": deal_id, "updated": list(body.keys())})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/outreach/log', methods=['POST'])
+def pipeline_log_outreach():
+    """
+    POST /pipeline/outreach/log
+    Body: {company, channel, message, tower, deal_id (optional), follow_up_date (optional)}
+    Log an outreach attempt. Auto-moves deal to 'Outreached' if deal_id provided.
+    """
+    try:
+        body = request.json or {}
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        log_id = pdb.log_outreach(
+            conn,
+            company=body.get("company", ""),
+            channel=body.get("channel", "Email"),
+            message=body.get("message", ""),
+            response=body.get("response", ""),
+            follow_up_date=body.get("follow_up_date"),
+            deal_id=body.get("deal_id"),
+            tower=body.get("tower", "digital-ai-services"),
+            lead_source=body.get("lead_source", ""),
+        )
+        # Auto-advance stage if deal_id provided and still at Prospect
+        if body.get("deal_id"):
+            deal = pdb.get_deal(conn, body["deal_id"])
+            if deal and deal["stage"] == "Prospect":
+                pdb.update_deal(conn, body["deal_id"], stage="Outreached")
+        conn.close()
+        return jsonify({"ok": True, "log_id": log_id})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/trial/log', methods=['POST'])
+def pipeline_log_trial():
+    """
+    POST /pipeline/trial/log
+    Body: {deal_id, missed_calls, texts_sent, replies, calls_recovered, revenue_recovered, notes}
+    Log one day of trial client performance. Used by Clawdbot daily check-in.
+    """
+    try:
+        body = request.json or {}
+        deal_id = body.get("deal_id")
+        if not deal_id:
+            return jsonify({"ok": False, "error": "deal_id required"}), 400
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        metric_id = pdb.log_trial_day(
+            conn, int(deal_id),
+            missed_calls=body.get("missed_calls", 0),
+            texts_sent=body.get("texts_sent", 0),
+            replies=body.get("replies", 0),
+            calls_recovered=body.get("calls_recovered", 0),
+            revenue_recovered=float(body.get("revenue_recovered", 0)),
+            notes=body.get("notes", ""),
+        )
+        conn.close()
+        return jsonify({"ok": True, "metric_id": metric_id})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/trial/summary', methods=['GET'])
+def pipeline_trial_summary():
+    """
+    GET /pipeline/trial/summary?deal_id=42
+    Returns aggregated trial metrics — used for Day 10/14 check-in reports.
+    """
+    try:
+        deal_id = request.args.get("deal_id")
+        if not deal_id:
+            return jsonify({"ok": False, "error": "deal_id required"}), 400
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        summary = pdb.get_trial_summary(conn, int(deal_id))
+        conn.close()
+        return jsonify({"ok": True, "summary": summary})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/pipeline/followups', methods=['GET'])
+def pipeline_followups_due():
+    """
+    GET /pipeline/followups?tower=digital-ai-services
+    Returns outreach records that have passed their follow_up_date with no response.
+    Clawdbot checks this each morning.
+    """
+    try:
+        tower = request.args.get("tower")
+        pdb = _pipeline_db()
+        conn = pdb.get_db()
+        q = """
+            SELECT o.*, d.company as deal_company, d.stage, d.contact_name
+            FROM outreach_log o LEFT JOIN deals d ON o.deal_id = d.id
+            WHERE o.follow_up_date <= date('now')
+              AND (o.response IS NULL OR o.response = '')
+        """
+        params = []
+        if tower:
+            q += " AND o.tower = ?"
+            params.append(tower)
+        q += " ORDER BY o.follow_up_date ASC LIMIT 30"
+        rows = conn.execute(q, params).fetchall()
+        conn.close()
+        return jsonify({"ok": True, "followups": [dict(r) for r in rows], "count": len(rows)})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# End of pipeline endpoints
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
 def main():
     """Run the Flask server."""
     parser = argparse.ArgumentParser(description="Agent Bridge API Server")
