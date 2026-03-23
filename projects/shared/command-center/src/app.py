@@ -11,7 +11,7 @@ http://127.0.0.1:8780 (local) | https://accountability.marceausolutions.com (pro
 import os
 import json
 import httpx
-from datetime import datetime
+from datetime import datetime, date
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -24,6 +24,7 @@ from .ui import render_dashboard, render_landing, render_sprint
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 TASKS_FILE = PROJECT_ROOT / "projects/marceau-solutions/fitness/tools/fitness-influencer/data/tenants/wmarceau/tasks.json"
 TRACKING_DIR = PROJECT_ROOT / "projects/shared/lead-scraper/output"
+SESSION_CLOSE_LOG = PROJECT_ROOT / "output" / "session_close_log.json"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = "5692454753"
 
@@ -132,13 +133,31 @@ async def sprint_close(request: Request):
                     t_data["stats"]["last_updated"] = now_str
                     TASKS_FILE.write_text(json.dumps(t_data, indent=2))
         # Send to Telegram
+        source = body.get("source", "manual")
         if TELEGRAM_BOT_TOKEN:
+            label = "🤖 AUTO EOD" if source == "auto_eod" else "🔒 SESSION CLOSED"
+            msg = msg.replace("🔒 SESSION CLOSED", label, 1)
             async with httpx.AsyncClient() as client:
                 await client.post(
                     f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
                     json={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": ""},
                     timeout=5
                 )
+        # Log close so auto-send knows not to double-fire
+        try:
+            SESSION_CLOSE_LOG.parent.mkdir(parents=True, exist_ok=True)
+            log = {"entries": []}
+            if SESSION_CLOSE_LOG.exists():
+                log = json.loads(SESSION_CLOSE_LOG.read_text())
+            log["entries"].append({
+                "date": str(date.today()),
+                "time": datetime.now().strftime("%H:%M"),
+                "source": body.get("source", "manual")
+            })
+            log["entries"] = log["entries"][-90:]
+            SESSION_CLOSE_LOG.write_text(json.dumps(log, indent=2))
+        except Exception:
+            pass
         return {"ok": True, "message": msg}
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
