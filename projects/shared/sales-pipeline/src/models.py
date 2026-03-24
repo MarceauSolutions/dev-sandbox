@@ -31,6 +31,21 @@ def get_db() -> sqlite3.Connection:
     return conn
 
 
+def _migrate(conn):
+    """Safely add new columns to deals table if they don't already exist."""
+    existing = {row[1] for row in conn.execute("PRAGMA table_info(deals)").fetchall()}
+    migrations = [
+        ("tier",             "INTEGER DEFAULT 0"),
+        ("research_verdict", "TEXT"),
+        ("email_template",   "TEXT"),
+        ("website",          "TEXT"),
+    ]
+    for col, col_def in migrations:
+        if col not in existing:
+            conn.execute(f"ALTER TABLE deals ADD COLUMN {col} {col_def}")
+    conn.commit()
+
+
 def _create_tables(conn):
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS deals (
@@ -104,6 +119,7 @@ def _create_tables(conn):
         );
     """)
     conn.commit()
+    _migrate(conn)
 
 
 # ─── Deal CRUD ───────────────────────────────────────────────
@@ -266,3 +282,19 @@ def get_pipeline_stats(conn):
         "stage_counts": stage_counts,
         "win_rate": round(won / max(won + lost, 1) * 100) if won + lost > 0 else 0,
     }
+
+
+def get_tier1_queue(conn):
+    """Return up to 10 Tier 1 deals not Closed, sorted by stage priority."""
+    return conn.execute("""
+        SELECT * FROM deals
+        WHERE tier = 1 AND stage NOT IN ('Closed Won', 'Closed Lost')
+        ORDER BY CASE stage
+            WHEN 'Qualified'      THEN 1
+            WHEN 'Meeting Booked' THEN 2
+            WHEN 'Proposal Sent'  THEN 3
+            WHEN 'Negotiation'    THEN 4
+            ELSE 5
+        END
+        LIMIT 10
+    """).fetchall()

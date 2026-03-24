@@ -25,7 +25,7 @@ from .models import (
     get_db, create_deal, update_deal, get_deal, get_all_deals, get_deals_by_stage,
     delete_deal, log_outreach, get_outreach_log, get_todays_followups,
     create_proposal, get_proposals, save_call_brief, get_call_briefs,
-    get_activities, get_pipeline_stats, log_activity,
+    get_activities, get_pipeline_stats, log_activity, get_tier1_queue,
     STAGES, STAGE_COLORS, CHANNELS, INDUSTRIES
 )
 from .ui import render_page
@@ -47,11 +47,12 @@ async def dashboard():
     recent_activity = get_activities(conn, limit=15)
     followups = get_todays_followups(conn)
     all_deals = [dict(d) for d in get_all_deals(conn)]
+    tier1_queue = [dict(d) for d in get_tier1_queue(conn)]
     conn.close()
     return render_page("dashboard", "Pipeline", {
         "stats": stats, "deals_by_stage": deals_by_stage,
         "activity": recent_activity, "followups": followups,
-        "all_deals": all_deals,
+        "all_deals": all_deals, "tier1_queue": tier1_queue,
     })
 
 
@@ -139,6 +140,60 @@ async def delete_deal_route(deal_id: int):
     delete_deal(conn, deal_id)
     conn.close()
     return RedirectResponse("/deals", status_code=303)
+
+
+@app.post("/deals/{deal_id}/log-call")
+async def log_call_route(
+    deal_id: int,
+    outcome: str = Form(...),
+    notes: str = Form(""),
+):
+    """Log a phone call interaction for a deal."""
+    conn = get_db()
+    deal = get_deal(conn, deal_id)
+    if not deal:
+        conn.close()
+        raise HTTPException(404, "Deal not found")
+
+    log_outreach(conn, deal_id, deal["company"], deal["contact_name"] or "",
+                 channel="Call", message=outcome, response=notes)
+    log_activity(conn, deal_id, "call_logged", f"{outcome}" + (f" — {notes[:80]}" if notes else ""))
+
+    if outcome == "Answered - Interested":
+        update_deal(conn, deal_id, stage="Qualified")
+    elif outcome == "Answered - Callback":
+        update_deal(conn, deal_id, next_action="Call back — callback requested")
+
+    conn.close()
+    return JSONResponse({"ok": True})
+
+
+@app.post("/deals/{deal_id}/log-visit")
+async def log_visit_route(
+    deal_id: int,
+    spoke_to: str = Form(""),
+    reaction: str = Form(""),
+    notes: str = Form(""),
+    visit_date: str = Form(""),
+):
+    """Log an in-person visit interaction for a deal."""
+    conn = get_db()
+    deal = get_deal(conn, deal_id)
+    if not deal:
+        conn.close()
+        raise HTTPException(404, "Deal not found")
+
+    summary = f"{spoke_to} — {reaction}" if spoke_to else reaction
+    log_outreach(conn, deal_id, deal["company"], spoke_to or deal["contact_name"] or "",
+                 channel="In-Person", message=summary, response=notes)
+    log_activity(conn, deal_id, "visit_logged",
+                 f"In-person: {summary}" + (f" on {visit_date}" if visit_date else ""))
+
+    if reaction in ("Positive", "Requested Follow-up"):
+        update_deal(conn, deal_id, stage="Qualified")
+
+    conn.close()
+    return JSONResponse({"ok": True})
 
 
 # ─── Bulk Import / Sync ───────────────────────────────────────
@@ -241,12 +296,20 @@ async def sync_outreach():
 
                 first_name = (em.get("first_name") or "").strip()
                 subject = (em.get("subject") or "").strip()
+                em_tier = em.get("tier", 0)
+                try:
+                    em_tier = int(em_tier)
+                except (ValueError, TypeError):
+                    em_tier = 0
+                em_template = (em.get("pain_point_angle") or "").strip()
 
                 create_deal(conn, company or email,
                             contact_name=first_name,
                             contact_email=email,
                             stage="Intake",
                             lead_source="Outreach Sync",
+                            tier=em_tier,
+                            email_template=em_template or None,
                             notes=f"Auto-synced from outreach. Subject: {subject}")
 
                 if email:

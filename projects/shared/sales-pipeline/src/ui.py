@@ -6,6 +6,7 @@ pre-call intelligence briefs, outreach tracking.
 """
 
 import html as html_mod
+import urllib.parse
 from datetime import datetime
 
 GOLD = "#C9963C"
@@ -63,6 +64,95 @@ def _money(v):
         return f"${float(v):,.0f}"
     except (ValueError, TypeError):
         return "$0"
+
+
+def _tier_badge(tier):
+    """Render a tier badge or empty string."""
+    if tier == 1:
+        return f'<span style="background:#C9963C22;color:#C9963C;border:1px solid #C9963C44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 6px;margin-left:5px">T1</span>'
+    elif tier == 2:
+        return f'<span style="background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 6px;margin-left:5px">T2</span>'
+    return ""
+
+
+def _sprint_header(stats, tier1_queue):
+    """Sprint war-room header — first thing William sees every morning."""
+    from datetime import date as _date
+    sprint_end = _date(2026, 4, 6)
+    days_left = max(0, (sprint_end - _date.today()).days)
+
+    outreach_week = stats.get("outreach_week", 0)
+    target = 700  # 100/day x 7 days
+    pct = min(1.0, outreach_week / target)
+    arc_deg = pct * 360
+
+    # SVG arc progress ring (100px)
+    r = 38
+    circ = 2 * 3.14159 * r
+    offset = circ * (1 - pct)
+    ring_svg = f'''<svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+        <circle cx="45" cy="45" r="{r}" fill="none" stroke="#30363d" stroke-width="8"/>
+        <circle cx="45" cy="45" r="{r}" fill="none" stroke="{GOLD}" stroke-width="8"
+                stroke-dasharray="{circ:.1f}" stroke-dashoffset="{offset:.1f}"
+                stroke-linecap="round"/>
+    </svg>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1.1">
+        <div style="font-size:18px;font-weight:800;color:{GOLD}">{outreach_week}</div>
+        <div style="font-size:9px;color:{MUTED};text-transform:uppercase">/{target}</div>
+    </div>'''
+
+    # Today's call queue (top 5 T1 deals)
+    queue_rows = ""
+    for d in tier1_queue[:5]:
+        next_a = _esc(d.get("next_action") or "")
+        queue_rows += f'''<a href="/deals/{d["id"]}" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:#0d111722;border:1px solid #30363d44;text-decoration:none;color:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='#C9963C44'" onmouseout="this.style.borderColor='#30363d44'">
+            <span style="font-weight:700;font-size:13px;color:{TEXT}">{_esc(d["company"])}</span>
+            <span style="background:#C9963C22;color:#C9963C;border:1px solid #C9963C44;border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;flex-shrink:0">T1</span>
+            <span style="font-size:11px;color:{MUTED};flex-shrink:0">{_esc(d.get("stage",""))}</span>
+            {f'<span style="font-size:11px;color:{MUTED};margin-left:auto">{_esc(next_a)}</span>' if next_a else ""}
+        </a>'''
+
+    if not queue_rows:
+        queue_rows = f'<div style="font-size:12px;color:{MUTED};padding:8px 0">No Tier 1 deals yet — sync outreach or add manually.</div>'
+
+    in_pipeline = len(tier1_queue)
+
+    return f'''<div style="background:{CARD};border:1px solid {GOLD}44;border-radius:14px;padding:20px 24px;margin-bottom:18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,{GOLD},{GOLD}66,transparent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+
+            <!-- Left: Sprint label + days left -->
+            <div style="flex:1;min-width:160px">
+                <div style="font-size:11px;color:{GOLD};font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">SPRINT</div>
+                <div style="font-size:20px;font-weight:800;color:{TEXT};line-height:1.2">Sign 1 AI Client<br>by April 6</div>
+                <div style="margin-top:12px;display:flex;align-items:baseline;gap:6px">
+                    <span style="font-size:36px;font-weight:800;color:{GOLD}">{days_left}</span>
+                    <span style="font-size:13px;color:{MUTED}">days left</span>
+                </div>
+            </div>
+
+            <!-- Center: Outreach ring -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:100px">
+                <div style="position:relative;width:90px;height:90px">{ring_svg}</div>
+                <div style="font-size:10px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;text-align:center">Outreach<br>This Week</div>
+            </div>
+
+            <!-- Right: Pipeline count -->
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:80px">
+                <div style="font-size:38px;font-weight:800;color:{BLUE}">{in_pipeline}</div>
+                <div style="font-size:10px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;text-align:center">T1 Deals<br>in Pipeline</div>
+            </div>
+
+        </div>
+
+        <!-- Call queue -->
+        <div style="margin-top:18px;border-top:1px solid #30363d55;padding-top:14px">
+            <div style="font-size:11px;font-weight:700;color:{GOLD};text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">
+                TODAY'S CALL QUEUE — Tier 1 First
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px">{queue_rows}</div>
+        </div>
+    </div>'''
 
 CSS = f"""
 *{{margin:0;padding:0;box-sizing:border-box}}
@@ -164,6 +254,9 @@ def _dashboard(data):
     deals_by_stage = data["deals_by_stage"]
     activity = data.get("activity", [])
     followups = data.get("followups", [])
+    tier1_queue = data.get("tier1_queue", [])
+
+    sprint = _sprint_header(s, tier1_queue)
 
     stats = f'''<div class="stat-grid">
         <div class="stat"><div class="val">{s["total_active"]}</div><div class="lbl">Active Deals</div></div>
@@ -184,13 +277,15 @@ def _dashboard(data):
         stage_deals = deals_by_stage.get(stage, [])
         count = len(stage_deals)
         for d in stage_deals:
-            total = (d["setup_fee"] or 0) + (d["monthly_fee"] or 0) * 12
+            d = dict(d)
+            total = (d.get("setup_fee") or 0) + (d.get("monthly_fee") or 0) * 12
+            tier_val = d.get("tier") or 0
             cards += f'''<a href="/deals/{d["id"]}" style="text-decoration:none;color:inherit"><div class="kanban-card">
-                <div class="company">{_esc(d["company"])}</div>
-                <div class="contact">{_esc(d["contact_name"] or "")}</div>
+                <div class="company" style="display:flex;align-items:center;gap:4px">{_esc(d["company"])}{_tier_badge(tier_val)}</div>
+                <div class="contact">{_esc(d.get("contact_name") or "")}</div>
                 {_stage_dots(d["stage"])}
                 {f'<div class="amount">{_money(total)}/yr</div>' if total > 0 else ""}
-                {f'<div class="tag">{_esc(d["industry"])}</div>' if d["industry"] else ""}
+                {f'<div class="tag">{_esc(d["industry"])}</div>' if d.get("industry") else ""}
             </div></a>'''
         if not cards:
             cards = f'<div style="color:{MUTED};font-size:11px;text-align:center;padding:20px">No deals</div>'
@@ -257,7 +352,7 @@ def _dashboard(data):
             </div>
         </div>'''
 
-    return stats + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>' + prospects_table
+    return sprint + stats + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>' + prospects_table
 
 
 def _deals_list(data):
@@ -356,13 +451,14 @@ def _add_deal(data):
 
 
 def _deal_detail(data):
-    d = data["deal"]
+    _raw_deal = data["deal"]
+    d = dict(_raw_deal) if not isinstance(_raw_deal, dict) else _raw_deal
     outreach = data.get("outreach", [])
     proposals = data.get("proposals", [])
     briefs = data.get("briefs", [])
     activities = data.get("activities", [])
     color = STAGE_COLORS.get(d["stage"], MUTED)
-    total_value = (d["setup_fee"] or 0) + (d["monthly_fee"] or 0) * 12
+    total_value = (d.get("setup_fee") or 0) + (d.get("monthly_fee") or 0) * 12
 
     # Stage selector
     stage_btns = ""
@@ -435,13 +531,33 @@ def _deal_detail(data):
             rows += f'<tr><td>{_esc(p["title"])}</td><td>{_money(p["setup_fee"])}</td><td>{_money(p["monthly_fee"])}/mo</td><td>{_esc(p["status"])}</td><td style="color:{MUTED}">{_esc((p["created_at"] or "")[:10])}</td></tr>'
         prop_html = f'<div class="card"><h2>Proposals</h2><table><tr><th>Title</th><th>Setup</th><th>Monthly</th><th>Status</th><th>Date</th></tr>{rows}</table></div>'
 
-    # Outreach history
+    # Interaction Timeline (all channels)
+    CHANNEL_ICONS = {
+        "Email": "📧", "Call": "📞", "In-Person": "🤝",
+        "SMS": "💬", "LinkedIn": "💼", "DM": "💬", "Referral": "🔗",
+    }
     out_html = ""
     if outreach:
-        rows = ""
+        timeline_items = ""
         for o in outreach:
-            rows += f'<tr><td style="color:{MUTED}">{_esc((o["created_at"] or "")[:10])}</td><td>{_esc(o["channel"])}</td><td>{_esc(o["message_summary"] or "")}</td><td>{_esc(o["response"] or "—")}</td></tr>'
-        out_html = f'<div class="card"><h2>Outreach History</h2><table><tr><th>Date</th><th>Channel</th><th>Message</th><th>Response</th></tr>{rows}</table></div>'
+            o = dict(o) if not isinstance(o, dict) else o
+            ch = o.get("channel") or "Email"
+            icon = CHANNEL_ICONS.get(ch, "📋")
+            summary = _esc(o.get("message_summary") or "")
+            response = _esc(o.get("response") or "")
+            date_str = _esc((o.get("created_at") or "")[:10])
+            timeline_items += f'''<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid {BORDER}22">
+                <div style="font-size:20px;flex-shrink:0;padding-top:2px">{icon}</div>
+                <div style="flex:1">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+                        <span style="font-size:12px;font-weight:600;color:{TEXT}">{_esc(ch)}</span>
+                        <span style="font-size:11px;color:{MUTED}">{date_str}</span>
+                    </div>
+                    <div style="font-size:13px;color:{TEXT}">{summary}</div>
+                    {f'<div style="font-size:12px;color:{MUTED};margin-top:3px">{response}</div>' if response else ""}
+                </div>
+            </div>'''
+        out_html = f'<div class="card"><h2>Interaction Timeline</h2><div style="max-height:400px;overflow-y:auto">{timeline_items}</div></div>'
 
     # Activity
     act_items = ""
@@ -450,8 +566,177 @@ def _deal_detail(data):
     act_html = f'<div class="card"><h2>Activity</h2>{act_items}</div>' if act_items else ""
 
     send_proposal = _send_proposal_section(d)
+    precall = _precall_intel(d)
+    call_log = _call_logger(d)
+    visit_log = _visit_logger(d)
 
-    return f'<a href="/deals" class="btn btn-ghost" style="margin-bottom:12px">← All Deals</a>' + info + actions + send_proposal + f'<div class="grid-2">{details}{briefs_html or ""}</div>' + prop_html + out_html + act_html
+    return (
+        f'<a href="/deals" class="btn btn-ghost" style="margin-bottom:12px">← All Deals</a>'
+        + info + actions + precall + call_log + visit_log + send_proposal
+        + f'<div class="grid-2">{details}{briefs_html or ""}</div>'
+        + prop_html + out_html + act_html
+    )
+
+
+def _precall_intel(d: dict) -> str:
+    """One-click research launchers + email context before a call."""
+    tier_val = d.get("tier") or 0
+    if tier_val == 1:
+        tier_label = "Tier 1 — Deep Research"
+        tier_style = f"background:#C9963C22;color:#C9963C;border:1px solid #C9963C44"
+        tier_text = "T1"
+    elif tier_val == 2:
+        tier_label = "Tier 2 — Industry Template"
+        tier_style = f"background:#58a6ff22;color:#58a6ff;border:1px solid #58a6ff44"
+        tier_text = "T2"
+    else:
+        tier_label = "Tier Unknown"
+        tier_style = f"background:#8b949e22;color:#8b949e;border:1px solid #8b949e44"
+        tier_text = "—"
+
+    verdict = _esc(d.get("research_verdict") or "No research recorded — add notes below")
+    template = _esc(d.get("email_template") or "Not recorded")
+    company_q = urllib.parse.quote_plus((d.get("company") or "") + " Naples FL")
+    company_raw = urllib.parse.quote_plus(d.get("company") or "")
+    website = d.get("website") or ""
+
+    website_btn = (
+        f'<a href="{_esc(website)}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid #C9963C44;color:{TEXT};font-size:13px;font-weight:600;text-decoration:none;min-height:44px">🌐 Website</a>'
+        if website else
+        f'<span style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid {BORDER};color:{MUTED};font-size:13px;font-weight:600;min-height:44px;opacity:0.5">🌐 Website</span>'
+    )
+
+    launchers = f'''<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px">
+        <a href="https://www.google.com/search?q={company_q}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid {BORDER};color:{TEXT};font-size:13px;font-weight:600;text-decoration:none;min-height:44px">🔍 Google</a>
+        <a href="https://www.facebook.com/search/top?q={company_raw}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid {BORDER};color:{TEXT};font-size:13px;font-weight:600;text-decoration:none;min-height:44px">📘 Facebook</a>
+        <a href="https://www.linkedin.com/search/results/companies/?keywords={company_raw}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid {BORDER};color:{TEXT};font-size:13px;font-weight:600;text-decoration:none;min-height:44px">💼 LinkedIn</a>
+        {website_btn}
+        <a href="https://www.google.com/maps/search/{company_q}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 14px;border-radius:8px;background:{SURFACE};border:1px solid {BORDER};color:{TEXT};font-size:13px;font-weight:600;text-decoration:none;min-height:44px">🗺️ Maps</a>
+    </div>'''
+
+    return f'''<div class="card">
+        <h2>Pre-Call Intel</h2>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <span style="{tier_style};border-radius:6px;font-size:13px;font-weight:800;padding:4px 12px">{tier_text}</span>
+            <span style="font-size:13px;color:{MUTED}">{tier_label}</span>
+        </div>
+        <div class="brief-section">
+            <h4>Research Verdict</h4>
+            <p>{verdict}</p>
+        </div>
+        <div style="font-size:12px;color:{MUTED};margin-bottom:4px">Email template used: <span style="color:{TEXT}">{template}</span></div>
+        <div style="font-size:11px;font-weight:700;color:{GOLD};text-transform:uppercase;letter-spacing:.5px;margin-top:12px;margin-bottom:2px">Quick Research</div>
+        {launchers}
+    </div>'''
+
+
+def _call_logger(d: dict) -> str:
+    """Compact inline call logger — no page reload."""
+    deal_id = d["id"]
+    outcomes = ["Answered - Interested", "Answered - Not Interested", "Answered - Callback", "Voicemail", "No Answer"]
+    opts = "".join(f'<option value="{o}">{o}</option>' for o in outcomes)
+    return f'''<div class="card" id="call-logger-{deal_id}">
+        <h2>Log a Call</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:0 0 220px">
+                <label style="font-size:11px;color:{MUTED};margin-bottom:4px;display:block">Outcome</label>
+                <select id="call-outcome-{deal_id}" style="padding:10px 12px;min-height:44px">{opts}</select>
+            </div>
+            <div style="flex:1;min-width:160px">
+                <label style="font-size:11px;color:{MUTED};margin-bottom:4px;display:block">Notes</label>
+                <input type="text" id="call-notes-{deal_id}" placeholder="e.g. Spoke to owner, call back Thursday 2pm" style="padding:10px 12px;min-height:44px">
+            </div>
+            <button onclick="logCall({deal_id})" style="padding:10px 18px;border-radius:8px;background:{GOLD};color:#333;font-weight:700;font-size:13px;border:none;cursor:pointer;min-height:44px;flex-shrink:0">Log Call</button>
+        </div>
+        <div id="call-result-{deal_id}" style="margin-top:8px;font-size:12px;display:none"></div>
+    </div>
+    <script>
+    async function logCall(id) {{
+        const outcome = document.getElementById('call-outcome-' + id).value;
+        const notes = document.getElementById('call-notes-' + id).value;
+        const res = document.getElementById('call-result-' + id);
+        const fd = new FormData();
+        fd.append('outcome', outcome);
+        fd.append('notes', notes);
+        res.style.display = 'block';
+        res.style.color = '{MUTED}';
+        res.textContent = 'Logging...';
+        try {{
+            const r = await fetch('/deals/' + id + '/log-call', {{method:'POST', body:fd}});
+            const j = await r.json();
+            if (j.ok) {{
+                res.style.color = '{GREEN}';
+                res.textContent = '✓ Call logged';
+                document.getElementById('call-notes-' + id).value = '';
+                setTimeout(() => location.reload(), 1200);
+            }} else {{
+                res.style.color = '{RED}';
+                res.textContent = 'Error: ' + (j.error || 'Unknown');
+            }}
+        }} catch(e) {{
+            res.style.color = '{RED}';
+            res.textContent = 'Network error: ' + e.message;
+        }}
+    }}
+    </script>'''
+
+
+def _visit_logger(d: dict) -> str:
+    """Compact inline in-person visit logger — no page reload."""
+    deal_id = d["id"]
+    reactions = ["Positive", "Neutral", "Not Interested", "Requested Follow-up"]
+    opts = "".join(f'<option value="{r}">{r}</option>' for r in reactions)
+    return f'''<div class="card" id="visit-logger-{deal_id}">
+        <h2>Log an In-Person Visit</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:0 0 160px">
+                <label style="font-size:11px;color:{MUTED};margin-bottom:4px;display:block">Spoke To</label>
+                <input type="text" id="visit-spoke-{deal_id}" placeholder="Owner, manager..." style="padding:10px 12px;min-height:44px">
+            </div>
+            <div style="flex:0 0 180px">
+                <label style="font-size:11px;color:{MUTED};margin-bottom:4px;display:block">Reaction</label>
+                <select id="visit-reaction-{deal_id}" style="padding:10px 12px;min-height:44px">{opts}</select>
+            </div>
+            <div style="flex:1;min-width:140px">
+                <label style="font-size:11px;color:{MUTED};margin-bottom:4px;display:block">Notes</label>
+                <input type="text" id="visit-notes-{deal_id}" placeholder="What happened?" style="padding:10px 12px;min-height:44px">
+            </div>
+            <button onclick="logVisit({deal_id})" style="padding:10px 18px;border-radius:8px;background:{GOLD};color:#333;font-weight:700;font-size:13px;border:none;cursor:pointer;min-height:44px;flex-shrink:0">Log Visit</button>
+        </div>
+        <div id="visit-result-{deal_id}" style="margin-top:8px;font-size:12px;display:none"></div>
+    </div>
+    <script>
+    async function logVisit(id) {{
+        const spoke = document.getElementById('visit-spoke-' + id).value;
+        const reaction = document.getElementById('visit-reaction-' + id).value;
+        const notes = document.getElementById('visit-notes-' + id).value;
+        const res = document.getElementById('visit-result-' + id);
+        const fd = new FormData();
+        fd.append('spoke_to', spoke);
+        fd.append('reaction', reaction);
+        fd.append('notes', notes);
+        res.style.display = 'block';
+        res.style.color = '{MUTED}';
+        res.textContent = 'Logging...';
+        try {{
+            const r = await fetch('/deals/' + id + '/log-visit', {{method:'POST', body:fd}});
+            const j = await r.json();
+            if (j.ok) {{
+                res.style.color = '{GREEN}';
+                res.textContent = '✓ Visit logged';
+                document.getElementById('visit-spoke-' + id).value = '';
+                document.getElementById('visit-notes-' + id).value = '';
+                setTimeout(() => location.reload(), 1200);
+            }} else {{
+                res.style.color = '{RED}';
+                res.textContent = 'Error: ' + (j.error || 'Unknown');
+            }}
+        }} catch(e) {{
+            res.style.color = '{RED}';
+            res.textContent = 'Network error: ' + e.message;
+        }}
+    }}
+    </script>'''
 
 
 def _send_proposal_section(d: dict) -> str:
