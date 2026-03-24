@@ -39,6 +39,11 @@ def _migrate(conn):
         ("research_verdict", "TEXT"),
         ("email_template",   "TEXT"),
         ("website",          "TEXT"),
+        ("outreach_method",  "TEXT DEFAULT 'email'"),
+        ("phone_dependency", "TEXT"),
+        ("email_confidence", "TEXT"),
+        ("lead_score",       "INTEGER DEFAULT 0"),
+        ("outreach_day",     "TEXT"),
     ]
     for col, col_def in migrations:
         if col not in existing:
@@ -302,6 +307,131 @@ def get_pipeline_stats(conn):
         "stage_counts": stage_counts,
         "win_rate": round(won / max(won + lost, 1) * 100) if won + lost > 0 else 0,
     }
+
+
+def assign_outreach_method(conn):
+    """
+    Intelligently assign outreach_method to all deals based on their profile.
+
+    Routing logic:
+    - PHONE (call day): phone_dependency=high OR (no email AND has phone) OR tier=1 with no email
+    - IN-PERSON: tier=1 AND phone_dependency=high AND has website AND no email AND in Naples
+    - EMAIL: has valid email (personal or generic) AND phone_dependency != high
+    - Default: phone if has phone, email if has email, in-person if neither
+
+    Day allocation:
+    - Monday: Email batch (T2 industry templates)
+    - Tuesday: In-person visits (T1 local Naples)
+    - Wednesday: Phone calls (T1 high-priority)
+    - Thursday: Email follow-ups + new T2 batch
+    - Friday: Phone calls (T2 + callback follow-ups)
+    - Saturday: Email nurture + social
+    """
+    deals = conn.execute(
+        "SELECT id, tier, contact_email, contact_phone, phone_dependency, "
+        "email_confidence, website, city FROM deals "
+        "WHERE stage NOT IN ('Closed Won', 'Closed Lost')"
+    ).fetchall()
+
+    for deal in deals:
+        d = dict(deal)
+        has_email = bool(d.get('contact_email') and '@' in str(d.get('contact_email', '')))
+        has_phone = bool(d.get('contact_phone'))
+        phone_dep = d.get('phone_dependency') or 'medium'
+        email_conf = d.get('email_confidence') or ''
+        tier = d.get('tier') or 2
+        is_naples = 'naples' in str(d.get('city') or '').lower()
+
+        # Determine method
+        if phone_dep == 'high' and not has_email:
+            if tier == 1 and is_naples:
+                method = 'in-person'
+                day = 'tue'
+            else:
+                method = 'phone'
+                day = 'wed' if tier == 1 else 'fri'
+        elif phone_dep == 'high' and has_email:
+            method = 'phone'
+            day = 'wed' if tier == 1 else 'fri'
+        elif has_email and email_conf == 'personal_owner':
+            method = 'email'
+            day = 'mon' if tier == 2 else 'thu'
+        elif has_email:
+            method = 'email'
+            day = 'mon' if tier == 2 else 'thu'
+        elif has_phone:
+            method = 'phone'
+            day = 'wed' if tier == 1 else 'fri'
+        else:
+            if tier == 1 and is_naples:
+                method = 'in-person'
+                day = 'tue'
+            else:
+                method = 'phone'
+                day = 'fri'
+
+        conn.execute("UPDATE deals SET outreach_method=?, outreach_day=? WHERE id=?",
+                     (method, day, d['id']))
+
+    conn.commit()
+
+
+def get_email_queue(conn):
+    """Deals assigned to email outreach, T1 first."""
+    return conn.execute("""
+        SELECT d.*,
+               COUNT(DISTINCT CASE WHEN o.channel='Email' THEN o.id END) AS email_count,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END) AS last_emailed
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.outreach_method = 'email' AND d.stage NOT IN ('Closed Won','Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+    """).fetchall()
+
+
+def get_phone_queue(conn):
+    """Deals assigned to phone outreach, T1 first."""
+    return conn.execute("""
+        SELECT d.*,
+               COUNT(DISTINCT CASE WHEN o.channel='Call' THEN o.id END) AS call_count,
+               MAX(CASE WHEN o.channel='Call' THEN o.created_at END) AS last_called,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END) AS last_emailed
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.outreach_method = 'phone' AND d.stage NOT IN ('Closed Won','Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+    """).fetchall()
+
+
+def get_inperson_queue(conn):
+    """Deals assigned to in-person visits, T1 first."""
+    return conn.execute("""
+        SELECT d.*,
+               COUNT(DISTINCT CASE WHEN o.channel='In-Person' THEN o.id END) AS visit_count,
+               MAX(CASE WHEN o.channel='In-Person' THEN o.created_at END) AS last_visited
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.outreach_method = 'in-person' AND d.stage NOT IN ('Closed Won','Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+    """).fetchall()
+
+
+def get_outreach_stats(conn):
+    """Stats broken down by outreach method."""
+    stats = {}
+    for method in ['email', 'phone', 'in-person']:
+        row = conn.execute("""
+            SELECT COUNT(*) as total,
+                   SUM(CASE WHEN tier=1 THEN 1 ELSE 0 END) as t1,
+                   SUM(CASE WHEN tier=2 THEN 1 ELSE 0 END) as t2
+            FROM deals
+            WHERE outreach_method=? AND stage NOT IN ('Closed Won','Closed Lost')
+        """, (method,)).fetchone()
+        stats[method] = dict(row)
+    return stats
 
 
 def get_tier1_queue(conn):

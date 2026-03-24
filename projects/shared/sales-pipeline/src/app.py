@@ -26,7 +26,8 @@ from .models import (
     delete_deal, log_outreach, get_outreach_log, get_todays_followups,
     create_proposal, get_proposals, save_call_brief, get_call_briefs,
     get_activities, get_pipeline_stats, log_activity, get_tier1_queue,
-    get_call_queue,
+    get_call_queue, get_email_queue, get_phone_queue, get_inperson_queue,
+    get_outreach_stats, assign_outreach_method,
     STAGES, STAGE_COLORS, CHANNELS, INDUSTRIES
 )
 from .ui import render_page
@@ -49,11 +50,13 @@ async def dashboard():
     followups = get_todays_followups(conn)
     all_deals = [dict(d) for d in get_all_deals(conn)]
     tier1_queue = [dict(d) for d in get_tier1_queue(conn)]
+    outreach_stats = get_outreach_stats(conn)
     conn.close()
     return render_page("dashboard", "Pipeline", {
         "stats": stats, "deals_by_stage": deals_by_stage,
         "activity": recent_activity, "followups": followups,
         "all_deals": all_deals, "tier1_queue": tier1_queue,
+        "outreach_stats": outreach_stats,
     })
 
 
@@ -356,28 +359,31 @@ async def sync_outreach():
 @app.get("/outreach", response_class=HTMLResponse)
 async def outreach_page():
     conn = get_db()
-    queue = get_call_queue(conn)
+    queue = get_phone_queue(conn)
     log = get_outreach_log(conn, limit=200)
+    ostats = get_outreach_stats(conn)
     conn.close()
-    return render_page("outreach", "Call Day", {"queue": queue, "log": log})
+    return render_page("outreach", "Call Day", {"queue": queue, "log": log, "outreach_stats": ostats})
 
 
 @app.get("/email-day", response_class=HTMLResponse)
 async def email_day_page():
     conn = get_db()
-    queue = get_call_queue(conn)
+    queue = get_email_queue(conn)
     log = get_outreach_log(conn, limit=30)
+    ostats = get_outreach_stats(conn)
     conn.close()
-    return render_page("email-day", "Email Day", {"queue": queue, "log": log})
+    return render_page("email-day", "Email Day", {"queue": queue, "log": log, "outreach_stats": ostats})
 
 
 @app.get("/inperson-day", response_class=HTMLResponse)
 async def inperson_day_page():
     conn = get_db()
-    queue = get_call_queue(conn)
+    queue = get_inperson_queue(conn)
     log = get_outreach_log(conn, limit=30)
+    ostats = get_outreach_stats(conn)
     conn.close()
-    return render_page("inperson-day", "In-Person Day", {"queue": queue, "log": log})
+    return render_page("inperson-day", "In-Person Day", {"queue": queue, "log": log, "outreach_stats": ostats})
 
 
 @app.post("/deals/{deal_id}/log-call")
@@ -616,6 +622,92 @@ def _generate_call_brief(deal):
 
 
 # ─── API ─────────────────────────────────────────────────────
+
+@app.post("/deals/enrich-from-csv")
+async def enrich_from_csv():
+    """One-time enrichment: pull phone_dependency, email_confidence, lead_score from original CSV."""
+    csv_path = Path(__file__).resolve().parents[4] / "projects/marceau-solutions/digital/outputs/naples-ai-prospects-routed-v2-2026-03-23.csv"
+    if not csv_path.exists():
+        return JSONResponse({"ok": False, "error": "CSV not found"})
+
+    conn = get_db()
+    updated = 0
+    with open(csv_path, 'r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            company = (row.get('company_name') or '').strip()
+            if not company:
+                continue
+
+            deal = conn.execute("SELECT id, contact_phone FROM deals WHERE LOWER(company) = LOWER(?)", (company,)).fetchone()
+            if not deal:
+                continue
+
+            phone_dep = row.get('phone_dependency', 'medium')
+            lead_score = int(row.get('lead_score', 0) or 0)
+            phone = row.get('phone', '')
+
+            # Parse email confidence from score_breakdown JSON
+            email_conf = 'unknown'
+            try:
+                breakdown = json.loads(row.get('score_breakdown', '{}'))
+                email_conf = breakdown.get('email', {}).get('label', 'unknown')
+            except Exception:
+                pass
+
+            kwargs = {'phone_dependency': phone_dep, 'email_confidence': email_conf, 'lead_score': lead_score}
+            if phone and not deal['contact_phone']:
+                kwargs['contact_phone'] = phone
+
+            update_deal(conn, deal['id'], **kwargs)
+            updated += 1
+
+    # Now run the routing assignment
+    assign_outreach_method(conn)
+    conn.close()
+    return JSONResponse({"ok": True, "updated": updated})
+
+
+@app.on_event("startup")
+async def startup_enrich():
+    """On first startup, enrich deals from CSV and assign outreach methods if not yet done."""
+    conn = get_db()
+    # Check if any deals have been routed (non-default outreach_method)
+    has_routing = conn.execute(
+        "SELECT COUNT(*) FROM deals WHERE outreach_method IS NOT NULL AND outreach_method != 'email'"
+    ).fetchone()[0]
+    if has_routing == 0:
+        csv_path = Path(__file__).resolve().parents[4] / "projects/marceau-solutions/digital/outputs/naples-ai-prospects-routed-v2-2026-03-23.csv"
+        if csv_path.exists():
+            updated = 0
+            with open(csv_path, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    company = (row.get('company_name') or '').strip()
+                    if not company:
+                        continue
+                    deal = conn.execute(
+                        "SELECT id, contact_phone FROM deals WHERE LOWER(company) = LOWER(?)", (company,)
+                    ).fetchone()
+                    if not deal:
+                        continue
+                    phone_dep = row.get('phone_dependency', 'medium')
+                    lead_score = int(row.get('lead_score', 0) or 0)
+                    phone = row.get('phone', '')
+                    email_conf = 'unknown'
+                    try:
+                        breakdown = json.loads(row.get('score_breakdown', '{}'))
+                        email_conf = breakdown.get('email', {}).get('label', 'unknown')
+                    except Exception:
+                        pass
+                    kwargs = {'phone_dependency': phone_dep, 'email_confidence': email_conf, 'lead_score': lead_score}
+                    if phone and not deal['contact_phone']:
+                        kwargs['contact_phone'] = phone
+                    update_deal(conn, deal['id'], **kwargs)
+                    updated += 1
+            assign_outreach_method(conn)
+    conn.close()
+
 
 @app.get("/api/health")
 async def health():
