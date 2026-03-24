@@ -171,6 +171,24 @@ def generate_agreement_pdf(client_name: str, business_name: str, tier: int,
 # Email
 # ---------------------------------------------------------------------------
 
+def _signing_block(signing_url: str) -> str:
+    """Return HTML block for the signing button — extracted to avoid nested f-string (Python 3.9 compat)."""
+    if not signing_url:
+        return ""
+    return (
+        '<div style="background: #0d1117; border: 1px solid #30363d; border-radius: 10px;'
+        ' padding: 16px 20px; margin: 0 0 24px; text-align: center;">'
+        '<p style="font-size: 13px; color: #8b949e; margin-bottom: 10px;">Sign your agreement online — no printing required:</p>'
+        '<a href="' + signing_url + '"'
+        ' style="background: #C9963C; color: #1a1000; padding: 11px 24px; text-decoration: none;'
+        ' border-radius: 7px; font-weight: 700; font-size: 14px; display: inline-block;">'
+        'Review &amp; Sign Agreement &rarr;'
+        '</a>'
+        '<p style="font-size: 11px; color: #8b949e; margin-top: 8px; word-break: break-all;">' + signing_url + '</p>'
+        '</div>'
+    )
+
+
 def build_email(client_name: str, business_name: str, tier: int,
                 recipient_email: str, proposal_path: str, agreement_path: str,
                 signing_url: str = "") -> MIMEMultipart:
@@ -279,18 +297,7 @@ marceausolutions.com
       </p>
     </div>
 
-    {"" if not signing_url else f"""
-    <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 10px;
-                padding: 16px 20px; margin: 0 0 24px; text-align: center;">
-      <p style="font-size: 13px; color: #8b949e; margin-bottom: 10px;">Sign your agreement online — no printing required:</p>
-      <a href="{signing_url}"
-         style="background: #C9963C; color: #1a1000; padding: 11px 24px; text-decoration: none;
-                border-radius: 7px; font-weight: 700; font-size: 14px; display: inline-block;">
-        Review &amp; Sign Agreement &rarr;
-      </a>
-      <p style="font-size: 11px; color: #8b949e; margin-top: 8px; word-break: break-all;">{signing_url}</p>
-    </div>
-    """}
+    {_signing_block(signing_url)}
 
     <p style="font-size: 14px; color: #475569;">
       <strong>Attached to this email:</strong><br>

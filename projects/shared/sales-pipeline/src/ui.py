@@ -513,8 +513,9 @@ def _deal_detail(data):
     # Briefs
     briefs_html = ""
     if briefs:
-        for b in briefs[:3]:
-            briefs_html += f'''<div class="card"><h2>Pre-Call Brief ({_esc((b["created_at"] or "")[:10])})</h2>
+        for _b in briefs[:3]:
+            b = dict(_b)
+            briefs_html += f'''<div class="card"><h2>Pre-Call Brief ({_esc((b.get("created_at") or "")[:10])})</h2>
                 <div class="brief-section"><h4>Company Research</h4><pre>{_esc(b.get("company_research",""))}</pre></div>
                 <div class="brief-section"><h4>Common Pain Points</h4><pre>{_esc(b.get("pain_points",""))}</pre></div>
                 <div class="brief-section"><h4>Talking Points</h4><pre>{_esc(b.get("talking_points",""))}</pre></div>
