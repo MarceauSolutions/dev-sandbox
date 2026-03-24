@@ -55,6 +55,25 @@
 
 ---
 
+## Next Session Priority: Sales Intelligence Layer
+
+**What William described (Mar 24):** Build a data accumulation + analytics system on top of the pipeline that gets smarter over time. Full spec:
+
+1. **Conversion analytics by segment** — close rate by industry, company size, city, lead source, outreach channel. Roll-up view in the pipeline dashboard.
+2. **Script-to-outcome correlation** — track which email template + call script + objection handling approach led to which outcome. Over time surfaces "T1 HVAC + no website → template_A converts at 18%".
+3. **Cost per acquisition** — track API costs (Apollo, email enrichment, Anthropic scoring) + estimated time per deal to compute true CAC.
+4. **Heat map clustering** — visual density map: which company profiles (industry × size × systems background) are highest-convert. Input to prioritization.
+5. **Call scheduling intelligence** — surface highest-likelihood-to-convert deals first based on accumulated segment data.
+6. **Full pipeline funnel metrics** — scrape → enrich → email → call → in-person → proposal → close. Drop-off rate at each stage.
+
+**Architecture decision needed:** Does this live as a new tab in `pipeline.marceausolutions.com` or a separate `analytics.marceausolutions.com`? Lean toward pipeline tab — less URL sprawl.
+
+**Data foundation already exists:** `deals` (industry, tier, size), `outreach_log` (channel), `activities` (stage progression), `email_template` column, call outcomes in activities. Just needs aggregation layer + schema additions for script tracking.
+
+**DO NOT build until:** At least 10-20 logged call outcomes exist. Analytics on 0 data is useless. Let the call blitz generate data first.
+
+---
+
 ## Current Sprint: AI Client Acquisition (March 23 – April 5)
 
 **Goal**: Land 1 AI systems client before William starts new job on April 6.
