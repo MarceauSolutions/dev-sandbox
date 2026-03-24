@@ -83,6 +83,9 @@
 | `/market-check` | Market viability analysis (4 agents) |
 | `/inventory` | Search existing tools |
 | `/photos` | Interactive photo export + resize from Photos.app |
+| `/session-summary` | Capture session work to session-history.md |
+| `/context` | Pre-load relevant files for a project |
+| `/memory-check` | Audit and consolidate memory files |
 
 | Quick Command | Run |
 |--------------|-----|
@@ -111,10 +114,12 @@
 | "Publish to registry" | `/publish-mcp` |
 | "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
 | "Download photos" / "Export photos" | `/photos` interactive flow |
+| "Working on [project]" | Run `/context [project]` then load suggested files |
 | "What tool for X?" / "Should we use Y?" | Tool Selection Framework in `docs/service-standards.md` |
 | "New web dev client" | `projects/marceau-solutions/digital/tools/web-dev/workflows/client-onboarding.md` |
 | "Deploy {client} website" | `./scripts/deploy_website.sh {client}` |
 | "PT client needs a website" | POST to `/webhook/cross-referral` (cross-business handoff) |
+| "End of session" / "Wrapping up" | Run `/session-summary` |
 
 ## Where Things Live
 

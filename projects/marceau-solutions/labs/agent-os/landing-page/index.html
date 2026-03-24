@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentOS — The Operating System Claude Code Should Have Shipped With</title>
+<meta name="description" content="AgentOS is a self-configuring operating system for Claude Code. Drop it in, open VS Code, your AI configures itself in 5 minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #C9963C;
+  --gold-light: #e0b96e;
+  --gold-dark: #a67a2e;
+  --bg-primary: #0d0d1a;
+  --bg-secondary: #131328;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #1f1f3a;
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b82;
+  --border: #2a2a45;
+  --red-dim: #ff4d4d;
+  --green-dim: #4dff88;
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13, 13, 26, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+.nav.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 2rem;
+}
+.nav-logo {
+  font-weight: 800; font-size: 1.25rem; color: var(--gold);
+  text-decoration: none; letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--text-primary); font-weight: 400; }
+.nav-links { display: flex; gap: 2rem; align-items: center; }
+.nav-links a {
+  color: var(--text-secondary); text-decoration: none; font-size: 0.875rem;
+  font-weight: 500; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  background: var(--gold) !important; color: var(--bg-primary) !important;
+  padding: 0.5rem 1.25rem !important; border-radius: 6px;
+  font-weight: 600 !important; transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--gold-light) !important; }
+.nav-hamburger {
+  display: none; background: none; border: none; cursor: pointer;
+  flex-direction: column; gap: 5px; padding: 4px;
+}
+.nav-hamburger span {
+  display: block; width: 24px; height: 2px; background: var(--text-primary);
+  transition: 0.3s;
+}
+
+/* ─── SECTIONS ─── */
+section { padding: 6rem 2rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  text-transform: uppercase; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 3px; color: var(--gold); margin-bottom: 1rem;
+}
+.section-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+  line-height: 1.2; margin-bottom: 1.5rem; letter-spacing: -0.5px;
+}
+.section-subtitle {
+  font-size: 1.125rem; color: var(--text-secondary); max-width: 640px;
+  line-height: 1.7;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding-top: 5rem; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(201,150,60,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-content { text-align: center; position: relative; z-index: 2; }
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900;
+  line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1.5px;
+}
+.hero h1 .gold { color: var(--gold); }
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem); color: var(--text-secondary);
+  max-width: 680px; margin: 0 auto 2.5rem; line-height: 1.7;
+}
+.hero-sub strong { color: var(--text-primary); font-weight: 600; }
+.hero-cta {
+  display: inline-block; background: var(--gold); color: var(--bg-primary);
+  padding: 1rem 2.5rem; border-radius: 8px; font-weight: 700; font-size: 1.125rem;
+  text-decoration: none; transition: all 0.25s; border: 2px solid var(--gold);
+}
+.hero-cta:hover {
+  background: transparent; color: var(--gold); transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201,150,60,0.25);
+}
+.hero-proof {
+  margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted);
+}
+.hero-proof span { color: var(--gold); font-weight: 600; }
+
+/* Terminal Animation */
+.terminal-wrap {
+  max-width: 700px; margin: 3.5rem auto 0; perspective: 1000px;
+}
+.terminal {
+  background: #0c0c18; border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  transform: rotateX(2deg);
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; background: #161630; border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+.terminal-dot.r { background: #ff5f57; }
+.terminal-dot.y { background: #febc2e; }
+.terminal-dot.g { background: #28c840; }
+.terminal-title {
+  flex: 1; text-align: center; font-size: 0.75rem; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.terminal-body {
+  padding: 1.25rem 1.5rem; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem; line-height: 1.8; min-height: 200px;
+}
+.terminal-line { opacity: 0; transform: translateY(8px); }
+.terminal-line.visible { opacity: 1; transform: translateY(0); transition: all 0.4s ease; }
+.t-prompt { color: var(--gold); }
+.t-cmd { color: var(--text-primary); }
+.t-comment { color: var(--text-muted); }
+.t-success { color: var(--green-dim); }
+.t-file { color: #7aa2f7; }
+.t-cursor {
+  display: inline-block; width: 8px; height: 16px; background: var(--gold);
+  animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 2px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ─── PROBLEM ─── */
+.problem { background: var(--bg-secondary); }
+.pain-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem; margin-top: 2.5rem;
+}
+.pain-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1.75rem; transition: border-color 0.3s, transform 0.3s;
+}
+.pain-card:hover { border-color: rgba(255,77,77,0.3); transform: translateY(-3px); }
+.pain-icon {
+  width: 40px; height: 40px; border-radius: 8px; display: flex;
+  align-items: center; justify-content: center; font-size: 1.25rem;
+  margin-bottom: 1rem; background: rgba(255,77,77,0.1); color: var(--red-dim);
+}
+.pain-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.pain-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ─── SOLUTION ─── */
+.comparison-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2.5rem;
+}
+.comparison-col { display: flex; flex-direction: column; gap: 1rem; }
+.comparison-col h3 {
+  font-size: 0.875rem; text-transform: uppercase; letter-spacing: 2px;
+  font-weight: 700; padding-bottom: 0.75rem; border-bottom: 2px solid;
+  margin-bottom: 0.5rem;
+}
+.col-before h3 { color: var(--red-dim); border-color: rgba(255,77,77,0.3); }
+.col-after h3 { color: var(--green-dim); border-color: rgba(77,255,136,0.3); }
+.comp-item {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1.25rem; font-size: 0.9rem; line-height: 1.6;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+}
+.col-before .comp-item { border-left: 3px solid rgba(255,77,77,0.4); color: var(--text-secondary); }
+.col-after .comp-item {
+  border-left: 3px solid rgba(77,255,136,0.4); color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ─── WHAT'S INSIDE ─── */
+.inside { background: var(--bg-secondary); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem; margin-top: 2.5rem;
+}
+.feature-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 2rem; transition: all 0.3s;
+}
+.feature-card:hover { border-color: var(--gold); transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(201,150,60,0.08); }
+.feature-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  color: var(--gold); font-weight: 700; margin-bottom: 0.75rem;
+  display: inline-block; background: rgba(201,150,60,0.1);
+  padding: 2px 10px; border-radius: 4px;
+}
+.feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+.feature-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ─── EXECUTION DISCIPLINE ─── */
+.rules-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem; margin-top: 2.5rem;
+}
+.rule-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 2rem; position: relative; overflow: hidden;
+}
+.rule-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+}
+.rule-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  color: var(--gold); font-weight: 700; margin-bottom: 0.5rem;
+}
+.rule-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
+.rule-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+.rule-origin {
+  margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border);
+  font-size: 0.8rem; color: var(--text-muted); font-style: italic;
+}
+
+/* ─── CREDIBILITY ─── */
+.credibility { background: var(--bg-secondary); }
+.cred-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem; margin-top: 2.5rem;
+}
+.cred-card {
+  text-align: center; padding: 2.5rem 2rem;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+}
+.cred-stat {
+  font-size: 2.5rem; font-weight: 900; color: var(--gold); margin-bottom: 0.5rem;
+}
+.cred-card p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6; }
+.testimonial {
+  margin-top: 3rem; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 2.5rem; max-width: 750px; margin-left: auto;
+  margin-right: auto; position: relative;
+}
+.testimonial::before {
+  content: '\201C'; position: absolute; top: -10px; left: 20px;
+  font-size: 5rem; color: var(--gold); opacity: 0.3; line-height: 1;
+}
+.testimonial p {
+  font-size: 1.05rem; line-height: 1.8; color: var(--text-primary); font-style: italic;
+}
+.testimonial-author {
+  margin-top: 1.25rem; font-size: 0.875rem; color: var(--gold); font-weight: 600;
+  font-style: normal;
+}
+
+/* ─── PRICING ─── */
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem; margin-top: 3rem; align-items: start;
+}
+.price-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 2.5rem 2rem; position: relative; transition: all 0.3s;
+}
+.price-card:hover { transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.price-card.popular {
+  border-color: var(--gold);
+  box-shadow: 0 0 40px rgba(201,150,60,0.12);
+}
+.popular-badge {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--gold); color: var(--bg-primary); font-size: 0.7rem;
+  font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+  padding: 4px 20px; border-radius: 20px;
+}
+.price-card h3 {
+  font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;
+}
+.price-amount {
+  font-size: 3rem; font-weight: 900; color: var(--gold); line-height: 1;
+  margin-bottom: 1.5rem;
+}
+.price-amount span { font-size: 1.25rem; font-weight: 400; color: var(--text-muted); }
+.price-features { list-style: none; margin-bottom: 2rem; }
+.price-features li {
+  padding: 0.5rem 0; font-size: 0.9rem; color: var(--text-secondary);
+  display: flex; align-items: flex-start; gap: 0.75rem; line-height: 1.5;
+}
+.price-features li::before {
+  content: '\2713'; color: var(--gold); font-weight: 700; flex-shrink: 0;
+  margin-top: 2px;
+}
+.price-btn {
+  display: block; text-align: center; padding: 0.9rem 1.5rem;
+  border-radius: 8px; font-weight: 700; font-size: 1rem;
+  text-decoration: none; transition: all 0.25s; border: 2px solid;
+}
+.price-btn-outline {
+  border-color: var(--gold); color: var(--gold); background: transparent;
+}
+.price-btn-outline:hover {
+  background: var(--gold); color: var(--bg-primary);
+}
+.price-btn-solid {
+  border-color: var(--gold); background: var(--gold); color: var(--bg-primary);
+}
+.price-btn-solid:hover {
+  background: var(--gold-light); border-color: var(--gold-light);
+  transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201,150,60,0.3);
+}
+.price-guarantee {
+  text-align: center; margin-top: 2.5rem; color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* ─── FAQ ─── */
+.faq { background: var(--bg-secondary); }
+.faq-list { max-width: 750px; margin: 2.5rem auto 0; }
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+.faq-question {
+  width: 100%; background: none; border: none; color: var(--text-primary);
+  font-size: 1rem; font-weight: 600; padding: 1.25rem 0;
+  cursor: pointer; display: flex; justify-content: space-between;
+  align-items: center; text-align: left; font-family: inherit;
+}
+.faq-question:hover { color: var(--gold); }
+.faq-icon {
+  font-size: 1.25rem; color: var(--gold); transition: transform 0.3s;
+  flex-shrink: 0; margin-left: 1rem;
+}
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-answer {
+  max-height: 0; overflow: hidden; transition: max-height 0.35s ease,
+  padding 0.35s ease;
+}
+.faq-item.open .faq-answer { max-height: 300px; }
+.faq-answer p {
+  padding-bottom: 1.25rem; color: var(--text-secondary); font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* ─── FINAL CTA ─── */
+.final-cta {
+  text-align: center; padding: 6rem 2rem;
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  position: relative;
+}
+.final-cta::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,150,60,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.final-cta h2 {
+  font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; margin-bottom: 1rem;
+  letter-spacing: -1px; position: relative;
+}
+.final-cta p {
+  font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 2.5rem;
+  max-width: 500px; margin-left: auto; margin-right: auto; position: relative;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 3rem 2rem; border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 1.25rem;
+}
+.footer-brand { font-weight: 700; color: var(--gold); font-size: 1rem; }
+.footer-links { display: flex; gap: 2rem; }
+.footer-links a {
+  color: var(--text-muted); text-decoration: none; font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--gold); }
+.footer-meta { font-size: 0.8rem; color: var(--text-muted); }
+
+/* ─── SCROLL ANIMATIONS ─── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.fade-up:nth-child(2) { transition-delay: 0.1s; }
+.fade-up:nth-child(3) { transition-delay: 0.2s; }
+.fade-up:nth-child(4) { transition-delay: 0.3s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  section { padding: 4rem 1.25rem; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: absolute;
+    top: 100%; left: 0; right: 0; background: rgba(13,13,26,0.98);
+    padding: 1.5rem 2rem; gap: 1rem; border-bottom: 1px solid var(--border);
+  }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .hero h1 { font-size: 2.25rem; }
+  .terminal-wrap { margin-top: 2.5rem; }
+  .terminal-body { padding: 1rem; font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">AgentOS <span>by Marceau Solutions</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#problem">Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#inside">What's Inside</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#pricing" class="nav-cta">Get AgentOS</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="hero">
+  <div class="container hero-content">
+    <h1>Your AI Forgot<br>Everything <span class="gold">Again.</span></h1>
+    <p class="hero-sub">
+      <strong>AgentOS</strong> is the operating system Claude Code should have shipped with.
+      Drop it in. Open VS Code. Your AI configures itself in <strong>5 minutes</strong>.
+    </p>
+    <a href="#pricing" class="hero-cta">Get AgentOS &mdash; $497</a>
+    <p class="hero-proof">Join <span>0+</span> developers who stopped fighting their AI</p>
+
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dot r"></div>
+          <div class="terminal-dot y"></div>
+          <div class="terminal-dot g"></div>
+          <div class="terminal-title">zsh &mdash; AgentOS Setup</div>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <div class="terminal-line" data-delay="300">
+            <span class="t-prompt">$</span> <span class="t-cmd">npx create-agent-os@latest</span>
+          </div>
+          <div class="terminal-line" data-delay="900">
+            <span class="t-comment"># Scanning project structure...</span>
+          </div>
+          <div class="terminal-line" data-delay="1500">
+            <span class="t-success">&#10003;</span> <span class="t-file">CLAUDE.md</span> configured &mdash; 214 lines of execution discipline
+          </div>
+          <div class="terminal-line" data-delay="2100">
+            <span class="t-success">&#10003;</span> <span class="t-file">10 guard hooks</span> installed &mdash; cost, stack, duplication, safety
+          </div>
+          <div class="terminal-line" data-delay="2700">
+            <span class="t-success">&#10003;</span> <span class="t-file">8 slash commands</span> ready &mdash; /deploy, /test, /inventory...
+          </div>
+          <div class="terminal-line" data-delay="3300">
+            <span class="t-success">&#10003;</span> <span class="t-file">Memory system</span> initialized &mdash; your AI will never forget again
+          </div>
+          <div class="terminal-line" data-delay="3900">
+            <span class="t-comment">&nbsp;</span>
+          </div>
+          <div class="terminal-line" data-delay="4200">
+            <span class="t-success" style="font-weight:700;">AgentOS is live.</span> Open VS Code. Your AI is ready.<span class="t-cursor"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROBLEM ─── -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="section-label fade-up">The Problem</div>
+    <h2 class="section-title fade-up">Without AgentOS, every conversation<br>starts from zero.</h2>
+    <p class="section-subtitle fade-up">You bought Claude Code Pro expecting an autonomous coding partner. Instead, you got a brilliant amnesiac that needs re-training every session.</p>
+
+    <div class="pain-grid">
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#128683;</div>
+        <h3>Total session amnesia</h3>
+        <p>Your AI forgets every decision, every preference, every piece of context the moment you close VS Code. Tomorrow, you start over.</p>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#128260;</div>
+        <h3>Endless repetition</h3>
+        <p>You repeat the same instructions conversation after conversation. "Don't use Vercel." "Always use TypeScript." "Deploy to EC2, not Lambda." Again and again.</p>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#128556;</div>
+        <h3>Permission paralysis</h3>
+        <p>"Would you like me to create a file for that?" "Should I proceed with the implementation?" It asks when it should act.</p>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#128196;</div>
+        <h3>Specs disguised as shipping</h3>
+        <p>It writes a beautiful markdown plan and calls the job done. No deployment. No verification. No working product. Just a document.</p>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#9000;</div>
+        <h3>CLI-first thinking</h3>
+        <p>Need a dashboard? It builds a terminal script. Need an alert system? "Run this command to check." Every solution is developer-only.</p>
+      </div>
+      <div class="pain-card fade-up">
+        <div class="pain-icon">&#128683;</div>
+        <h3>Stack drift</h3>
+        <p>You said no to ngrok last week. Today it suggests ngrok again. It introduces random dependencies, services, and tools you've explicitly rejected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SOLUTION ─── -->
+<section class="solution" id="solution">
+  <div class="container">
+    <div class="section-label fade-up">The Transformation</div>
+    <h2 class="section-title fade-up">What Changes With AgentOS</h2>
+    <p class="section-subtitle fade-up">Same Claude Code subscription. Completely different AI.</p>
+
+    <div class="comparison-grid">
+      <div class="comparison-col col-before">
+        <h3>Without AgentOS</h3>
+        <div class="comp-item fade-up">"Should I create a new file for this?"</div>
+        <div class="comp-item fade-up">"Would you like me to use Vercel for deployment?"</div>
+        <div class="comp-item fade-up">"Here's a markdown document with the implementation plan."</div>
+        <div class="comp-item fade-up">"I don't have access to send emails. You'll need to do that manually."</div>
+      </div>
+      <div class="comparison-col col-after">
+        <h3>With AgentOS</h3>
+        <div class="comp-item fade-up">Silently creates the file, tests it, commits it.</div>
+        <div class="comp-item fade-up">Checks your approved stack, deploys to your preferred platform.</div>
+        <div class="comp-item fade-up">Builds it, deploys it, verifies you can access it from your phone.</div>
+        <div class="comp-item fade-up">Checks .env for SMTP credentials, sends the email, monitors for replies.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── WHAT'S INSIDE ─── -->
+<section class="inside" id="inside">
+  <div class="container">
+    <div class="section-label fade-up">The Package</div>
+    <h2 class="section-title fade-up">What's Inside AgentOS</h2>
+    <p class="section-subtitle fade-up">Everything you need to transform Claude Code from a stateless chatbot into a disciplined engineering partner.</p>
+
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-num">01</div>
+        <h3>Battle-Tested CLAUDE.md</h3>
+        <p>200+ lines of agent configuration refined over 3 months of daily use. Execution discipline, interface-first rules, communication patterns, and autonomous triggers.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">02</div>
+        <h3>10 Guard Hooks</h3>
+        <p>Automatic protection that fires before every tool call. Blocks cost blowouts, stack drift, duplicate code, destructive git commands, and AI laziness. Your agent polices itself.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">03</div>
+        <h3>Self-Configuration Engine</h3>
+        <p>Drop in the files, open VS Code, answer 5 minutes of questions. AgentOS scans your project, fills in your stack, and configures itself. No manual setup.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">04</div>
+        <h3>37 Standard Operating Procedures</h3>
+        <p>Deployment, testing, rollback, project kickoff, documentation, market analysis, architecture exploration. All genericized from production SOPs, ready to customize.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">05</div>
+        <h3>Memory System</h3>
+        <p>Persistent context across sessions. Your AI remembers your preferences, past decisions, rejected approaches, and business context. Sessions build on each other.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">06</div>
+        <h3>Multi-Agent Architecture</h3>
+        <p>Blueprint for running 2-3 AI agents in sync across Mac and cloud server. Shared conventions, task handoffs, and automatic sync. Available in Tier 2+.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">07</div>
+        <h3>Utility Scripts</h3>
+        <p>Health checks, tool inventory search, deployment pipeline, session management, daily standup generators. The operational infrastructure your agent runs on.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-num">08</div>
+        <h3>Slash Commands</h3>
+        <p>/deploy, /test, /inventory, /new-project, /market-check. One command triggers complex multi-step workflows. Your agent executes; you supervise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EXECUTION DISCIPLINE ─── -->
+<section class="discipline" id="discipline">
+  <div class="container">
+    <div class="section-label fade-up">Execution Discipline</div>
+    <h2 class="section-title fade-up">12 Rules Forged By Failure</h2>
+    <p class="section-subtitle fade-up">Every rule in AgentOS exists because something broke in production. These aren't opinions. They're battle scars turned into guard rails.</p>
+
+    <div class="rules-grid">
+      <div class="rule-card fade-up">
+        <div class="rule-tag">E1</div>
+        <h3>Just Do It</h3>
+        <p>Your AI stops asking permission for obvious next steps. If the file needs creating, it creates it. If the test needs running, it runs it. No "would you like me to?" for self-evident actions.</p>
+        <div class="rule-origin">Origin: Counted 47 unnecessary permission requests in a single session. Every one broke flow state.</div>
+      </div>
+      <div class="rule-card fade-up">
+        <div class="rule-tag">E10</div>
+        <h3>Best-Path Evaluation</h3>
+        <p>Before building anything, your AI answers 5 mandatory questions: Who's the user? What infrastructure fits? How does it scale? What are the real constraints? Is there a consolidation opportunity?</p>
+        <div class="rule-origin">Origin: Claude repeatedly built CLI scripts when the user needed web dashboards. The fastest path to code is rarely the best path to use.</div>
+      </div>
+      <div class="rule-card fade-up">
+        <div class="rule-tag">E11</div>
+        <h3>Spec Written &#8800; Shipped</h3>
+        <p>A specification document is not a deliverable. A markdown plan is not a product. The pipeline is: Build, Deploy, Test on target, Verify user access. Only then mark complete.</p>
+        <div class="rule-origin">Origin: An entire accountability system was "built" as markdown files but never deployed. The user woke up expecting it to work. It didn't.</div>
+      </div>
+      <div class="rule-card fade-up">
+        <div class="rule-tag">E12</div>
+        <h3>Code to Production Pipeline</h3>
+        <p>CLI is never the final interface. Every tool goes through: interface decision, core logic, wire to interface, deploy to production, verify access, launch script, documentation.</p>
+        <div class="rule-origin">Origin: Tools kept getting built as terminal scripts and declared "done." The user has to open VS Code to use a tool that should have been a Telegram command.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CREDIBILITY ─── -->
+<section class="credibility" id="credibility">
+  <div class="container">
+    <div class="section-label fade-up">Built in Production</div>
+    <h2 class="section-title fade-up">This Isn't Theory. It's a System<br>Running 8+ Hours a Day.</h2>
+
+    <div class="cred-grid">
+      <div class="cred-card fade-up">
+        <div class="cred-stat">90+</div>
+        <p>Days of continuous iteration on a single Claude Code environment</p>
+      </div>
+      <div class="cred-card fade-up">
+        <div class="cred-stat">37</div>
+        <p>Standard operating procedures, each refined through multiple failures</p>
+      </div>
+      <div class="cred-card fade-up">
+        <div class="cred-stat">3</div>
+        <p>AI agents coordinated in sync across Mac and EC2 cloud infrastructure</p>
+      </div>
+    </div>
+
+    <div class="testimonial fade-up">
+      <p>Before AgentOS, I spent the first 15 minutes of every session re-explaining my project, my stack, my preferences. Now I open VS Code and say "continue from last session." My AI reads the session history, checks the system state, and picks up exactly where we left off. It's like having a senior developer who actually remembers yesterday's standup.</p>
+      <div class="testimonial-author">William Marceau, Founder &mdash; Marceau Solutions</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-label fade-up" style="text-align:center;">Pricing</div>
+    <h2 class="section-title fade-up" style="text-align:center;">Stop Re-Training Your AI</h2>
+    <p class="section-subtitle fade-up" style="text-align:center; margin-left:auto; margin-right:auto;">
+      Choose the tier that matches your ambition. Every tier includes a self-configuration engine &mdash; you'll be running in 5 minutes.
+    </p>
+
+    <div class="pricing-grid">
+      <!-- Tier 1 -->
+      <div class="price-card fade-up">
+        <h3>The Framework</h3>
+        <div class="price-amount">$497 <span>one-time</span></div>
+        <ul class="price-features">
+          <li>Battle-tested CLAUDE.md template</li>
+          <li>10 guard hooks (cost, stack, safety)</li>
+          <li>Self-configuration onboarding engine</li>
+          <li>8 slash commands (/deploy, /test, etc.)</li>
+          <li>Memory system templates</li>
+          <li>Execution discipline rules (E1-E12)</li>
+          <li>Setup guide + video walkthrough</li>
+        </ul>
+        <a href="#" class="price-btn price-btn-outline">Get The Framework</a>
+      </div>
+
+      <!-- Tier 2 -->
+      <div class="price-card popular fade-up">
+        <div class="popular-badge">Most Popular</div>
+        <h3>The Full System</h3>
+        <div class="price-amount">$1,497 <span>one-time</span></div>
+        <ul class="price-features">
+          <li>Everything in The Framework</li>
+          <li>37 genericized SOPs (deploy, test, rollback...)</li>
+          <li>Utility script library</li>
+          <li>Multi-agent architecture blueprint</li>
+          <li>n8n workflow templates</li>
+          <li>Session management system</li>
+          <li>Health check + inventory tools</li>
+          <li>Major version updates included</li>
+        </ul>
+        <a href="#" class="price-btn price-btn-solid">Get The Full System</a>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="price-card fade-up">
+        <h3>Done-With-You</h3>
+        <div class="price-amount">$2,997 <span>one-time</span></div>
+        <ul class="price-features">
+          <li>Everything in The Full System</li>
+          <li>3x 60-min consulting calls</li>
+          <li>Custom CLAUDE.md for your business</li>
+          <li>Server setup assistance (EC2/VPS)</li>
+          <li>30 days async support via Telegram</li>
+          <li>Multi-agent deployment help</li>
+        </ul>
+        <a href="#" class="price-btn price-btn-outline">Apply Now</a>
+      </div>
+    </div>
+
+    <p class="price-guarantee fade-up">All tiers include lifetime access and major version updates. No subscriptions. No recurring fees.</p>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-label fade-up" style="text-align:center;">FAQ</div>
+    <h2 class="section-title fade-up" style="text-align:center;">Common Questions</h2>
+
+    <div class="faq-list">
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          Do I need Claude Code Pro?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>Yes. AgentOS is built specifically for Claude Code running in VS Code (or the Claude Code CLI). You need an active Anthropic subscription that includes Claude Code access.</p></div>
+      </div>
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          Will this work with Cursor or other AI editors?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>AgentOS is currently optimized for Claude Code. The CLAUDE.md configuration, hooks, and slash commands are native to Claude Code's architecture. Cursor adaptation guides are planned for a future release.</p></div>
+      </div>
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          How long does setup take?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>About 5 minutes. The self-configuration engine scans your project, asks you a handful of questions about your stack and preferences, then generates everything. Your AI is ready in your next VS Code session.</p></div>
+      </div>
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          Can I customize the rules and SOPs?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>Absolutely. Everything is editable. The CLAUDE.md, hooks, SOPs, and memory templates are your starting point. Customize them to match your workflow, your stack, and your preferences. The system is designed to evolve with you.</p></div>
+      </div>
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          What if I don't have a cloud server?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>AgentOS works perfectly in single-agent mode on your Mac or PC. The multi-agent architecture (coordinating agents across local + cloud) is an optional capability available in Tier 2 and above. Most users start single-agent and expand later.</p></div>
+      </div>
+      <div class="faq-item fade-up">
+        <button class="faq-question">
+          Do I get updates?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer"><p>Yes. All buyers get major version updates at no additional cost. AgentOS is actively maintained and improved as Claude Code's capabilities evolve. You'll receive update notifications and migration guides.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─── -->
+<section class="final-cta">
+  <div class="container">
+    <h2 class="fade-up">Stop Re-Training.<br>Start <span style="color:var(--gold)">Shipping.</span></h2>
+    <p class="fade-up">Your AI will never forget again.</p>
+    <a href="#pricing" class="hero-cta fade-up">Get AgentOS</a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">AgentOS by Marceau Solutions</div>
+    <div class="footer-links">
+      <a href="#">Documentation</a>
+      <a href="#">Discord</a>
+      <a href="mailto:wmarceau@marceausolutions.com">Contact</a>
+    </div>
+    <div class="footer-meta">Built with Claude Code, powered by AgentOS.</div>
+  </div>
+</footer>
+
+<script>
+// ─── NAV SCROLL ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── HAMBURGER ───
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => navLinks.classList.remove('open'));
+});
+
+// ─── TERMINAL ANIMATION ───
+const termLines = document.querySelectorAll('.terminal-line');
+const observer0 = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      termLines.forEach(line => {
+        const delay = parseInt(line.dataset.delay) || 0;
+        setTimeout(() => line.classList.add('visible'), delay);
+      });
+      observer0.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+observer0.observe(document.getElementById('terminalBody'));
+
+// ─── SCROLL ANIMATIONS ───
+const fadeEls = document.querySelectorAll('.fade-up');
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(el => fadeObserver.observe(el));
+
+// ─── FAQ ACCORDION ───
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>

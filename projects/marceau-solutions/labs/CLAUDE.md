@@ -12,6 +12,7 @@
 | `legal-case-manager/` | Legal case management tool | Exploration |
 | `claim-back/` | AI medical billing dispute platform | MVP Development |
 | `email-assistant/` | AI-powered Gmail assistant (search, docs, drafts) | MVP Development |
+| `agent-os/` | Productized Claude Code operating system (digital download) | Scoping |
 
 ## Graduation Path
 When a Labs project is validated (SOP 17 passes + revenue model confirmed):
