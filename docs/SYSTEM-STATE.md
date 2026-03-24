@@ -36,7 +36,8 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 | `clawdbot` | ACTIVE | AI assistant via Telegram (@w_marceaubot) |
 | `mem0-api` | ACTIVE | Shared agent memory (port 5020) |
 | `fitai` | ACTIVE | Fitness influencer platform (fitai.marceausolutions.com) |
-| `voice-api` | ACTIVE | Voice AI API |
+| `voice-api` | ACTIVE | Voice AI API (legacy — api.marceausolutions.com) |
+| `ai-phone-agent` | ACTIVE | AI receptionist with ElevenLabs Conversational AI (port 8795, ai-phone.marceausolutions.com) |
 | `webhook_server.py` | ACTIVE | Ralph webhook handler (port 5002) |
 | `dystonia-digest` | ACTIVE | Dystonia Research Digest web dashboard (port 8792, dystonia.marceausolutions.com) |
 | `stripe-webhook` | STOPPED | Disabled 2026-03-06 — was crash-looping (port conflict with webhook_server.py on 5002). n8n handles Stripe natively. |
@@ -193,7 +194,9 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 - **Opt-out keywords handled**: STOP, STOPALL, UNSUBSCRIBE, CANCEL, QUIT, END
 - **TCPA hours enforced**: 8am–9pm local time (in `execution/twilio_sms.py`)
 - **Opt-out flow**: auto-reply confirmation → mark opted_out in Sheets → Telegram alert
-- **Voice webhooks**: all numbers → POST `https://api.marceausolutions.com/twilio/voice` (200 OK)
+- **Voice webhooks**:
+  - +1 855-239-9364 → `https://ai-phone.marceausolutions.com/incoming-call` (ElevenLabs Conversational AI + William's voice clone)
+  - All other numbers → POST `https://api.marceausolutions.com/twilio/voice` (200 OK)
 
 ---
 
@@ -215,7 +218,8 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 | +1 855-239-9364 | Toll-free A2P (primary) | n8n sms-response |
 | +1 239-880-3365 | PT local (inactive outbound) | n8n sms-response |
 | +1 239-766-6129 | HVAC client | n8n sms-response |
-Voice: all → `https://api.marceausolutions.com/twilio/voice` (POST 200 OK)
+Voice: +1 855-239-9364 → `https://ai-phone.marceausolutions.com/incoming-call` (AI receptionist)
+Voice: others → `https://api.marceausolutions.com/twilio/voice`
 
 ### Client Websites (Domain Monitoring)
 | Domain | Status | Client |

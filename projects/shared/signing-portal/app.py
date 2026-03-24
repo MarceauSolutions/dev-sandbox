@@ -44,10 +44,10 @@ PORT = int(os.getenv("SIGNING_PORTAL_PORT", "8797"))
 
 # ── Tier config (mirrors close_deal.py) ──────────────────────────────────────
 TIER_CONFIG = {
-    1: {"name": "Tier 1 — Starter",  "monthly": "$497/month"},
-    2: {"name": "Tier 2 — Growth",   "monthly": "$997/month"},
-    3: {"name": "Tier 3 — Pro",      "monthly": "$1,497/month"},
-    4: {"name": "Tier 4 — Elite",    "monthly": "$2,497/month"},
+    1: {"name": "Tier 1 — Starter",  "monthly": "$297/month",   "setup": "$500 one-time setup"},
+    2: {"name": "Tier 2 — Growth",   "monthly": "$497/month",   "setup": "$750 one-time setup"},
+    3: {"name": "Tier 3 — Pro",      "monthly": "$997/month",   "setup": "$1,000 one-time setup"},
+    4: {"name": "Tier 4 — Elite",    "monthly": "$1,497/month", "setup": "$1,500 one-time setup"},
 }
 
 # ── Brand colours ─────────────────────────────────────────────────────────────

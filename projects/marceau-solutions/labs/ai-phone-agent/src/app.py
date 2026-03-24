@@ -29,6 +29,23 @@ TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
 WEBHOOK_URL = os.getenv('LEAD_WEBHOOK_URL', 'http://localhost:5678/webhook/ai-phone-lead')
 EMAIL_TO = 'wmarceau@marceausolutions.com'
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = '5692454753'
+
+
+def send_telegram_alert(message):
+    """Send instant Telegram alert to William."""
+    if not TELEGRAM_BOT_TOKEN:
+        print("No TELEGRAM_BOT_TOKEN configured, skipping alert")
+        return
+    try:
+        requests.post(
+            f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage',
+            json={'chat_id': TELEGRAM_CHAT_ID, 'text': message, 'parse_mode': 'HTML'},
+            timeout=5
+        )
+    except Exception as e:
+        print(f"Telegram alert failed: {e}")
 
 # Load agent config
 CONFIG_PATH = Path(__file__).parent.parent / 'config' / 'agent_config.json'
@@ -59,7 +76,10 @@ def incoming_call():
     call_sid = request.values.get('CallSid')
     
     print(f"[{datetime.now()}] Incoming call from {caller} (SID: {call_sid})")
-    
+
+    # Instant Telegram alert
+    send_telegram_alert(f"📞 <b>Incoming Call</b>\nFrom: {caller}\nTime: {datetime.now().strftime('%I:%M %p')}\nAI receptionist is handling it.")
+
     # Store call data
     active_calls[call_sid] = {
         'caller': caller,
@@ -75,13 +95,14 @@ def incoming_call():
     # For now, use Twilio's built-in capabilities with fallback
     try:
         # Try to get ElevenLabs signed URL for streaming
-        el_response = requests.post(
-            'https://api.elevenlabs.io/v1/convai/conversation/get_signed_url',
+        agent_id = os.getenv('ELEVENLABS_AGENT_ID', '')
+        if not agent_id:
+            raise Exception("No ELEVENLABS_AGENT_ID configured")
+        el_response = requests.get(
+            f'https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id={agent_id}',
             headers={
-                'xi-api-key': ELEVENLABS_API_KEY,
-                'Content-Type': 'application/json'
+                'xi-api-key': ELEVENLABS_API_KEY
             },
-            json={'agent_id': os.getenv('ELEVENLABS_AGENT_ID', '')},
             timeout=5
         )
         
@@ -204,7 +225,19 @@ def call_complete():
         print(f"Lead data sent to webhook: {lead_data}")
     except Exception as e:
         print(f"Failed to send lead data: {e}")
-    
+
+    # Telegram alert with collected data
+    collected = call_data.get('collected_data', {})
+    alert = f"✅ <b>Call Complete — Warm Lead</b>\nPhone: {caller}\n"
+    if collected.get('business_type'):
+        alert += f"Business: {collected['business_type']}\n"
+    if collected.get('pain_points'):
+        alert += f"Pain Point: {collected['pain_points']}\n"
+    if collected.get('timeline'):
+        alert += f"Timeline: {collected['timeline']}\n"
+    alert += f"Time: {datetime.now().strftime('%I:%M %p')}"
+    send_telegram_alert(alert)
+
     # Clean up
     if call_sid in active_calls:
         del active_calls[call_sid]
@@ -249,7 +282,10 @@ def voicemail_complete():
         requests.post(WEBHOOK_URL, json=lead_data, timeout=10)
     except Exception as e:
         print(f"Failed to send voicemail notification: {e}")
-    
+
+    # Telegram alert for voicemail
+    send_telegram_alert(f"🎙 <b>New Voicemail</b>\nFrom: {caller}\nRecording: {recording_url}\nTime: {datetime.now().strftime('%I:%M %p')}")
+
     response = VoiceResponse()
     response.say("Thanks! We'll get back to you soon.", voice='Polly.Joanna')
     response.hangup()

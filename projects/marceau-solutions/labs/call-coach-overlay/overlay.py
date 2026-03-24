@@ -108,7 +108,7 @@ def get_suggestion(transcript_lines: list[str]) -> tuple[str, str, str]:
 
         recent = "\n".join(transcript_lines[-20:]) if transcript_lines else "(no transcript yet)"
 
-        prompt = f"""You are a real-time sales call coach for William, who sells AI automation services ($497/mo) to small businesses in Naples FL.
+        prompt = f"""You are a real-time sales call coach for William, who sells AI automation services (starting at $297/mo + one-time setup fee) to small businesses in Naples FL. Tiers: Starter $297/mo, Growth $497/mo, Pro $997/mo, Elite $1,497/mo.
 
 Transcript so far (most recent at bottom):
 ---

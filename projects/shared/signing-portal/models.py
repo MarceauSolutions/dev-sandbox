@@ -7,7 +7,7 @@ Table: agreements
   client_name    TEXT              — Client's full name
   client_email   TEXT              — Client's email address
   tier           INTEGER           — 1-4
-  monthly_rate   TEXT              — e.g. "$497/month"
+  monthly_rate   TEXT              — e.g. "$297/month"
   effective_date TEXT              — ISO date string
   status         TEXT              — pending / signed / expired
   signer_name    TEXT              — Typed name on submit
@@ -38,7 +38,7 @@ def _ensure_schema(conn: sqlite3.Connection):
             client_name    TEXT NOT NULL,
             client_email   TEXT NOT NULL,
             tier           INTEGER NOT NULL DEFAULT 1,
-            monthly_rate   TEXT NOT NULL DEFAULT '$497/month',
+            monthly_rate   TEXT NOT NULL DEFAULT '$297/month',
             effective_date TEXT NOT NULL,
             status         TEXT NOT NULL DEFAULT 'pending',
             signer_name    TEXT,
@@ -57,7 +57,7 @@ def create_agreement(
     client_name: str,
     client_email: str,
     tier: int = 1,
-    monthly_rate: str = "$497/month",
+    monthly_rate: str = "$297/month",
     effective_date: str = "",
 ) -> str:
     """Insert a new pending agreement. Returns the token."""

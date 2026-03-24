@@ -113,9 +113,26 @@ curl -X POST https://leads.marceausolutions.com/api/leads \
 # Have someone call (855) 239-9364 and verify the flow
 ```
 
+## Integration Mode
+
+**ElevenLabs Native Twilio Integration (ACTIVE)**
+ElevenLabs has taken over the Twilio webhook directly:
+- Voice URL: `https://api.us.elevenlabs.io/twilio/inbound_call`
+- Status Callback: `https://api.us.elevenlabs.io/twilio/status-callback`
+- Agent ID: `agent_9801kmgjg670fb7bdv5z9r96y66d`
+- Voice: William (Instant Clone) - `qvqvkAWr0MfHOxziqHam`
+- LLM: gemini-2.5-flash (ElevenLabs-managed)
+- Phone Number ID: `phnum_6301kmgk021tfqzr4zxnrrdkaqsr`
+
+This is the preferred path -- no middleman app.py needed for call handling.
+The EC2 app.py still runs as a health check endpoint and fallback.
+
 ## Fallback Mode
 
-If ElevenLabs Conversational AI is not available (free tier), the system uses:
+If ElevenLabs native integration is unavailable, re-point Twilio webhook to:
+`https://ai-phone.marceausolutions.com/incoming-call`
+
+The app.py fallback uses:
 - Twilio's built-in TTS (Amazon Polly voices)
 - Simple speech-to-text gathering
 - Same lead collection workflow

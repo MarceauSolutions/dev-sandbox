@@ -189,7 +189,7 @@ def render_page(page, title, data, error=""):
     elif page == "deal_detail":
         return _shell(title, _deal_detail(data), "deals")
     elif page == "outreach":
-        return _shell(title, _outreach(data), "outreach")
+        return _shell(title, _outreach_v2(data), "outreach")
     elif page == "email-day":
         return _shell(title, _email_day(data), "email-day")
     elif page == "inperson-day":
@@ -202,56 +202,215 @@ def render_page(page, title, data, error=""):
 
 
 def _dashboard(data):
+    from datetime import date as _date
     s = data["stats"]
     deals_by_stage = data["deals_by_stage"]
     activity = data.get("activity", [])
     followups = data.get("followups", [])
     tier1_queue = data.get("tier1_queue", [])
+    daily = data.get("daily_counts", {"calls": 0, "emails": 0, "visits": 0})
+    leads_grouped = data.get("leads_grouped", {})
+    all_leads = data.get("all_leads", [])
+    outreach_stats = data.get("outreach_stats", {})
 
-    sprint = _sprint_header(s, tier1_queue)
+    # Sprint countdown
+    sprint_end = _date(2026, 4, 6)
+    days_left = max(0, (sprint_end - _date.today()).days)
 
-    _pipeline_val = _money(s["pipeline_value"]) if s["pipeline_value"] > 0 else f'{s["total_active"]} Prospects'
-    _pipeline_lbl = "Pipeline Value" if s["pipeline_value"] > 0 else "In Pipeline"
-    _pipeline_color = GREEN if s["pipeline_value"] > 0 else GOLD
-    stats = f'''<div class="stat-grid">
-        <div class="stat"><div class="val">{s["total_active"]}</div><div class="lbl">Active Deals</div></div>
-        <div class="stat"><div class="val" style="color:{_pipeline_color}">{_pipeline_val}</div><div class="lbl">{_pipeline_lbl}</div></div>
-        <div class="stat"><div class="val" style="color:{GREEN if s.get('calls_today',0)>0 else TEXT}">{s.get("calls_today", 0)}</div><div class="lbl">Calls Today</div></div>
-        <div class="stat"><div class="val">{s["outreach_today"]}</div><div class="lbl">Outreach Today</div></div>
-        <div class="stat"><div class="val" style="color:{YELLOW}">{s["meetings_this_week"]}</div><div class="lbl">Meetings</div></div>
-        <div class="stat"><div class="val" style="color:{PURPLE}">{s["proposals_out"]}</div><div class="lbl">Proposals Out</div></div>
-        <div class="stat"><div class="val" style="color:{GREEN}">{s["deals_won"]}</div><div class="lbl">Deals Won</div></div>
-        <div class="stat"><div class="val" style="color:{RED if s['followups_due']>0 else MUTED}">{s["followups_due"]}</div><div class="lbl">Follow-ups Due</div></div>
+    # Today's focus based on day of week
+    DOW_FOCUS = {0: "email", 1: "in-person", 2: "phone", 3: "email", 4: "phone", 5: "email", 6: None}
+    DOW_LABELS = {0: "Email Day", 1: "In-Person Day", 2: "Call Day", 3: "Email Day", 4: "Call Day", 5: "Email Day", 6: "Rest Day"}
+    dow = _date.today().weekday()
+    today_focus = DOW_FOCUS.get(dow)
+    today_label = DOW_LABELS.get(dow, "")
+
+    CALL_GOAL, EMAIL_GOAL, VISIT_GOAL = 30, 50, 5
+
+    # Focus link
+    focus_href = {"phone": "/outreach", "email": "/email-day", "in-person": "/inperson-day"}.get(today_focus, "/")
+    focus_btn = f'<a href="{focus_href}" class="btn btn-primary" style="margin-top:10px;font-size:14px;padding:10px 24px">Start {today_label} →</a>' if today_focus else ""
+
+    rings = (
+        _progress_ring(daily["calls"], CALL_GOAL, "Calls", GREEN, 90, today_focus == "phone")
+        + _progress_ring(daily["emails"], EMAIL_GOAL, "Emails", BLUE, 90, today_focus == "email")
+        + _progress_ring(daily["visits"], VISIT_GOAL, "Visits", GOLD, 90, today_focus == "in-person")
+    )
+
+    # ── SPRINT HEADER ──
+    sprint_header = f'''<div style="background:{CARD};border:1px solid {GOLD}44;border-radius:14px;padding:24px;margin-bottom:18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,{GOLD},{GOLD}66,transparent)"></div>
+        <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap">
+            <div style="flex:0 0 auto;min-width:160px">
+                <div style="font-size:11px;color:{GOLD};font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">AI CLIENT SPRINT</div>
+                <div style="font-size:18px;font-weight:800;color:{TEXT};line-height:1.3">Sign 1 Client by April 6</div>
+                <div style="margin-top:12px;display:flex;align-items:baseline;gap:6px">
+                    <span style="font-size:40px;font-weight:800;color:{GOLD}">{days_left}</span>
+                    <span style="font-size:13px;color:{MUTED}">days left</span>
+                </div>
+                {focus_btn}
+            </div>
+            <div style="flex:1;display:flex;justify-content:center;align-items:flex-start;gap:24px;flex-wrap:wrap">{rings}</div>
+            <div style="flex:0 0 auto;min-width:120px;text-align:center">
+                <div style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Pipeline</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                    <div><span style="font-size:28px;font-weight:800;color:{GOLD}">{len(tier1_queue)}</span><div style="font-size:9px;color:{MUTED}">T1 DEALS</div></div>
+                    <div><span style="font-size:18px;font-weight:700;color:{GREEN}">{_money(s["pipeline_value"])}</span><div style="font-size:9px;color:{MUTED}">VALUE</div></div>
+                    <div><span style="font-size:16px;font-weight:700;color:{RED if s['followups_due']>0 else MUTED}">{s["followups_due"]}</span><div style="font-size:9px;color:{MUTED}">FOLLOW-UPS</div></div>
+                </div>
+            </div>
+        </div>
     </div>'''
 
-    # Kanban
+    # ── RECORD-STYLE PROSPECT LIST (line-by-line, all info, editable blanks) ──
+    def _prospect_row(d):
+        """Render one prospect as a compact record row with all key fields."""
+        did = d["id"]
+        company = _esc(d.get("company") or "")
+        contact = _esc(d.get("contact_name") or "")
+        phone = _esc(d.get("contact_phone") or "")
+        email_addr = _esc(d.get("contact_email") or "")
+        industry = _esc(d.get("industry") or "")
+        stage = d.get("stage", "Intake")
+        sc = STAGE_COLORS.get(stage, MUTED)
+        tier = d.get("tier") or 0
+        method = d.get("outreach_method") or "email"
+        template = _esc(d.get("email_template") or "")
+        last_called = (d.get("last_called") or "")[:10]
+        last_emailed = (d.get("last_emailed") or "")[:10]
+
+        # Visual indicators
+        tbadge = _tier_badge(tier)
+        method_icon = {"phone": "📞", "email": "✉️", "in-person": "🚶"}.get(method, "")
+        missing = []
+        if not contact:
+            missing.append(f'<span style="color:{RED};font-size:10px;font-weight:600">NO OWNER</span>')
+        if not phone:
+            missing.append(f'<span style="color:{YELLOW};font-size:10px">no phone</span>')
+        if not email_addr:
+            missing.append(f'<span style="color:{YELLOW};font-size:10px">no email</span>')
+        missing_html = " · ".join(missing) if missing else ""
+
+        phone_html = f'<a href="tel:{phone}" style="color:{GREEN};text-decoration:none;font-size:12px">{phone}</a>' if phone else ""
+        email_html = f'<a href="mailto:{email_addr}" style="color:{BLUE};text-decoration:none;font-size:12px">{email_addr}</a>' if email_addr else ""
+        template_html = f'<span style="background:{PURPLE}18;color:{PURPLE};font-size:9px;padding:1px 5px;border-radius:3px">{template}</span>' if template else ""
+
+        touch_parts = []
+        if last_emailed:
+            touch_parts.append(f'✉️ {last_emailed}')
+        if last_called:
+            touch_parts.append(f'📞 {last_called}')
+        touch_html = f'<span style="font-size:10px;color:{MUTED}">{" · ".join(touch_parts)}</span>' if touch_parts else ""
+
+        return f'''<tr style="border-bottom:1px solid {BORDER}22" onmouseover="this.style.background='{SURFACE}'" onmouseout="this.style.background='transparent'">
+            <td style="padding:8px 10px;width:30px">{method_icon}{tbadge}</td>
+            <td style="padding:8px 6px"><a href="/deals/{did}" style="font-weight:700;font-size:13px;color:{TEXT}">{company}</a></td>
+            <td style="padding:8px 6px;font-size:12px">{contact or f'<span style="color:{MUTED};font-style:italic">unknown</span>'}</td>
+            <td style="padding:8px 6px">{phone_html}</td>
+            <td style="padding:8px 6px">{email_html}</td>
+            <td style="padding:8px 6px;font-size:11px;color:{MUTED}">{industry}</td>
+            <td style="padding:8px 6px"><span class="badge" style="background:{sc}22;color:{sc};font-size:10px">{stage}</span></td>
+            <td style="padding:8px 6px">{template_html}</td>
+            <td style="padding:8px 6px">{touch_html}</td>
+            <td style="padding:8px 6px">{missing_html}</td>
+        </tr>'''
+
+    # Build tabbed sections: Phone / Email / In-Person
+    def _method_table(method, method_label, deals_list):
+        """Record-style table for one method, grouped by tier."""
+        rows = ""
+        for tier_val, tier_label in [(1, "Tier 1"), (2, "Tier 2"), (0, "Unscored")]:
+            key = f"{tier_val}_{method}"
+            tier_deals = leads_grouped.get(key, [])
+            if not tier_deals:
+                continue
+            tier_color = {1: GOLD, 2: BLUE, 0: MUTED}.get(tier_val, MUTED)
+            rows += f'<tr><td colspan="10" style="padding:10px;background:{tier_color}08;border-left:3px solid {tier_color};font-size:11px;font-weight:700;color:{tier_color}">{tier_label} — {len(tier_deals)} contacts</td></tr>'
+            for d in tier_deals:
+                rows += _prospect_row(d)
+        return rows
+
+    phone_rows = _method_table("phone", "Phone", all_leads)
+    email_rows = _method_table("email", "Email", all_leads)
+    inperson_rows = _method_table("in-person", "In-Person", all_leads)
+
+    phone_ct = outreach_stats.get("phone", {}).get("total", 0)
+    email_ct = outreach_stats.get("email", {}).get("total", 0)
+    inperson_ct = outreach_stats.get("in-person", {}).get("total", 0)
+
+    tab_style = f"padding:10px 20px;border:none;font-size:13px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;background:transparent;color:{MUTED};font-family:inherit"
+    active_tab_css = f"color:{GOLD};border-bottom-color:{GOLD}"
+
+    lists_section = f'''<div class="card" style="padding:0;overflow:hidden;margin-bottom:18px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid {BORDER}">
+            <h2 style="margin:0;font-size:16px;color:{TEXT}">Outreach Lists</h2>
+            <div style="display:flex;gap:8px">
+                <a href="/import" class="btn btn-secondary btn-sm">⬆ Import</a>
+                <button onclick="syncOutreach()" id="sync-btn" class="btn btn-secondary btn-sm">⟳ Sync</button>
+            </div>
+        </div>
+        <div style="border-bottom:1px solid {BORDER};display:flex" id="method-tabs">
+            <button onclick="showTab('phone')" id="tab-phone" style="{tab_style}" class="mtab">📞 Phone ({phone_ct})</button>
+            <button onclick="showTab('email')" id="tab-email" style="{tab_style}" class="mtab">✉️ Email ({email_ct})</button>
+            <button onclick="showTab('inperson')" id="tab-inperson" style="{tab_style}" class="mtab">🚶 In-Person ({inperson_ct})</button>
+        </div>
+        <div id="panel-phone" style="display:none;overflow-x:auto;max-height:500px;overflow-y:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:900px">
+                <thead><tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:8px 10px;font-size:10px;color:{MUTED};text-transform:uppercase">Type</th><th>Company</th><th>Owner</th><th>Phone</th><th>Email</th><th>Industry</th><th>Stage</th><th>Template</th><th>Last Touch</th><th>Gaps</th></tr></thead>
+                <tbody>{phone_rows if phone_rows else f'<tr><td colspan="10" style="padding:20px;text-align:center;color:{MUTED}">No phone contacts</td></tr>'}</tbody>
+            </table>
+        </div>
+        <div id="panel-email" style="display:none;overflow-x:auto;max-height:500px;overflow-y:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:900px">
+                <thead><tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:8px 10px;font-size:10px;color:{MUTED};text-transform:uppercase">Type</th><th>Company</th><th>Owner</th><th>Phone</th><th>Email</th><th>Industry</th><th>Stage</th><th>Template</th><th>Last Touch</th><th>Gaps</th></tr></thead>
+                <tbody>{email_rows if email_rows else f'<tr><td colspan="10" style="padding:20px;text-align:center;color:{MUTED}">No email contacts</td></tr>'}</tbody>
+            </table>
+        </div>
+        <div id="panel-inperson" style="display:none;overflow-x:auto;max-height:500px;overflow-y:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:900px">
+                <thead><tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:8px 10px;font-size:10px;color:{MUTED};text-transform:uppercase">Type</th><th>Company</th><th>Owner</th><th>Phone</th><th>Email</th><th>Industry</th><th>Stage</th><th>Template</th><th>Last Touch</th><th>Gaps</th></tr></thead>
+                <tbody>{inperson_rows if inperson_rows else f'<tr><td colspan="10" style="padding:20px;text-align:center;color:{MUTED}">No in-person contacts</td></tr>'}</tbody>
+            </table>
+        </div>
+    </div>'''
+
+    # ── QUICK ACCESS TOOLS ──
+    tools = [
+        ("📞 Call Day", "/outreach", GREEN, "Phone queue + scripts"),
+        ("✉️ Email Day", "/email-day", BLUE, "Email batch queue"),
+        ("🚶 In-Person", "/inperson-day", GOLD, "Walk-in route"),
+        ("📊 All Deals", "/deals", MUTED, f"{s['total_active']} active"),
+        ("⬆ Import CSV", "/import", MUTED, "Bulk import"),
+        ("+ New Deal", "/deals/add", GOLD, "Add manually"),
+        ("🎯 Call Coach", "https://calls.marceausolutions.com", PURPLE, "Score transcripts"),
+        ("✍️ Signing Portal", "http://127.0.0.1:8797", YELLOW, "E-sign"),
+    ]
+    tool_cards = ""
+    for label, href, color, desc in tools:
+        target = ' target="_blank"' if href.startswith("http") else ""
+        tool_cards += f'<a href="{href}"{target} style="display:flex;flex-direction:column;gap:3px;padding:12px;background:{SURFACE};border:1px solid {BORDER};border-radius:8px;text-decoration:none;color:inherit;transition:border-color .15s" onmouseover="this.style.borderColor=\'{color}44\'" onmouseout="this.style.borderColor=\'{BORDER}\'"><span style="font-size:12px;font-weight:700;color:{color}">{label}</span><span style="font-size:10px;color:{MUTED}">{desc}</span></a>'
+
+    tools_panel = f'''<div class="card" style="margin-bottom:14px">
+        <h2>Quick Access</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">{tool_cards}</div>
+    </div>'''
+
+    # ── COMPACT KANBAN ──
     cols = ""
-    for stage in STAGES[:-1]:  # Exclude Closed Lost from kanban
+    for stage in STAGES[:-1]:
         color = STAGE_COLORS.get(stage, MUTED)
-        cards = ""
         stage_deals = deals_by_stage.get(stage, [])
         count = len(stage_deals)
-        for d in stage_deals:
+        cards = ""
+        for d in stage_deals[:6]:
             d = dict(d)
-            total = (d.get("setup_fee") or 0) + (d.get("monthly_fee") or 0) * 12
-            tier_val = d.get("tier") or 0
-            cards += f'''<a href="/deals/{d["id"]}" style="text-decoration:none;color:inherit"><div class="kanban-card">
-                <div class="company" style="display:flex;align-items:center;gap:4px">{_esc(d["company"])}{_tier_badge(tier_val)}</div>
-                <div class="contact">{_esc(d.get("contact_name") or "")}</div>
-                {_stage_dots(d["stage"])}
-                {f'<div class="amount">{_money(total)}/yr</div>' if total > 0 else ""}
-                {f'<div class="tag">{_esc(d["industry"])}</div>' if d.get("industry") else ""}
-            </div></a>'''
+            cards += f'<a href="/deals/{d["id"]}" style="text-decoration:none;color:inherit"><div class="kanban-card"><div class="company" style="display:flex;align-items:center;gap:4px">{_esc(d["company"])}{_tier_badge(d.get("tier") or 0)}</div><div class="contact">{_esc(d.get("contact_name") or "")}</div></div></a>'
+        overflow = f'<div style="color:{MUTED};font-size:10px;text-align:center;padding:4px">+{count - 6} more</div>' if count > 6 else ""
         if not cards:
-            cards = f'<div style="color:{MUTED};font-size:11px;text-align:center;padding:20px">No deals</div>'
-        cols += f'''<div class="kanban-col">
-            <h3 style="color:{color}">{stage} <span class="badge" style="background:{color}22;color:{color}">{count}</span></h3>
-            {cards}
-        </div>'''
-
+            cards = f'<div style="color:{MUTED};font-size:11px;text-align:center;padding:14px">Empty</div>'
+        cols += f'<div class="kanban-col"><h3 style="color:{color}">{stage} <span class="badge" style="background:{color}22;color:{color}">{count}</span></h3>{cards}{overflow}</div>'
     kanban = f'<div class="card" style="overflow-x:auto"><h2>Pipeline Board</h2><div class="kanban">{cols}</div></div>'
 
-    # Follow-ups due
+    # ── FOLLOW-UPS + ACTIVITY ──
     fu_html = ""
     if followups:
         rows = ""
@@ -259,55 +418,45 @@ def _dashboard(data):
             rows += f'<tr><td>{_esc(f.get("deal_company") or f.get("company",""))}</td><td>{_esc(f["contact"])}</td><td>{_esc(f["channel"])}</td><td style="color:{MUTED}">{_esc(f.get("follow_up_date",""))}</td></tr>'
         fu_html = f'<div class="card"><h2 style="color:{RED}">Follow-ups Due ({len(followups)})</h2><table><tr><th>Company</th><th>Contact</th><th>Channel</th><th>Due</th></tr>{rows}</table></div>'
 
-    # Recent activity
     act_html = ""
     if activity:
         items = ""
-        for a in activity[:12]:
+        for a in activity[:10]:
             items += f'<div class="activity-item"><span class="time">{_esc((a["created_at"] or "")[:16])}</span> <strong>{_esc(a["activity_type"])}</strong> — {_esc(a["description"] or "")}</div>'
         act_html = f'<div class="card"><h2>Recent Activity</h2>{items}</div>'
 
-    # All prospects scrollable table
-    all_deals = data.get("all_deals", [])
-    prospects_rows = ""
-    if all_deals:
-        for d in all_deals:
-            color = STAGE_COLORS.get(d["stage"], MUTED)
-            total = (d["setup_fee"] or 0) + (d["monthly_fee"] or 0) * 12
-            prospects_rows += f'''<tr>
-                <td><a href="/deals/{d["id"]}" style="font-weight:700">{_esc(d["company"])}</a></td>
-                <td style="font-size:12px">{_esc(d["contact_name"] or "")}</td>
-                <td style="font-size:11px;color:{MUTED}">{_esc(d["industry"] or "")}</td>
-                <td>
-                    <span class="badge" style="background:{color}22;color:{color}">{_esc(d["stage"])}</span>
-                    {_stage_dots(d["stage"])}
-                </td>
-                <td style="color:{GOLD};font-weight:600;font-size:12px">{_money(total) if total > 0 else "—"}</td>
-            </tr>'''
-        prospects_table = f'''<div class="card" style="margin-top:14px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                <h2 style="margin:0">All Prospects <span style="color:{MUTED};font-weight:400;font-size:12px">({len(all_deals)})</span></h2>
-                <div style="display:flex;gap:8px">
-                    <a href="/import" class="btn btn-secondary btn-sm">⬆ Import CSV</a>
-                    <a href="/deals" class="btn btn-secondary btn-sm">View All →</a>
-                </div>
-            </div>
-            <div style="overflow-y:auto;max-height:340px">
-                <table><thead><tr><th>Company</th><th>Contact</th><th>Industry</th><th>Stage</th><th>Value</th></tr></thead>
-                <tbody>{prospects_rows}</tbody></table>
-            </div>
-        </div>'''
-    else:
-        prospects_table = f'''<div class="card" style="margin-top:14px">
-            <h2>All Prospects</h2>
-            <div class="empty" style="padding:30px">
-                <p>No prospects yet.</p>
-                <a href="/import" class="btn btn-primary" style="margin-top:10px">⬆ Import CSV</a>
-                <a href="/deals/add" class="btn btn-secondary" style="margin-top:10px;margin-left:8px">+ Add Manually</a>
-            </div>
-        </div>'''
+    # ── TAB + SYNC SCRIPTS ──
+    # Determine default tab based on today's focus
+    default_tab = {"phone": "phone", "email": "email", "in-person": "inperson"}.get(today_focus, "email")
+    scripts = f'''<script>
+function showTab(tab) {{
+    ['phone','email','inperson'].forEach(function(t) {{
+        document.getElementById('panel-'+t).style.display = t===tab ? 'block' : 'none';
+        var btn = document.getElementById('tab-'+t);
+        btn.style.color = t===tab ? '{GOLD}' : '{MUTED}';
+        btn.style.borderBottomColor = t===tab ? '{GOLD}' : 'transparent';
+    }});
+}}
+showTab('{default_tab}');
 
-    return sprint + stats + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>' + prospects_table
+async function syncOutreach() {{
+    var btn = document.getElementById('sync-btn');
+    btn.textContent = 'Syncing...'; btn.disabled = true;
+    try {{
+        var r = await fetch('/deals/sync-outreach', {{method:'POST'}});
+        var d = await r.json();
+        if (d.ok) {{
+            btn.textContent = '✓ ' + (d.added||0) + ' added';
+            btn.style.color = '{GREEN}';
+            setTimeout(function(){{ location.reload(); }}, 1200);
+        }} else {{
+            btn.textContent = 'Error'; btn.style.color = '{RED}'; btn.disabled = false;
+        }}
+    }} catch(e) {{ btn.textContent = 'Error'; btn.style.color = '{RED}'; btn.disabled = false; }}
+}}
+</script>'''
+
+    return sprint_header + lists_section + tools_panel + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>' + scripts
 
 
 def _deals_list(data):
@@ -798,7 +947,7 @@ async function sendProposal(e, dealId) {{
 
 
 def _outreach(data):
-    """Call Day — split panel. Left: grouped list. Right: contact detail + transcript log."""
+    """Call Day — list selector + inline outcome logging + detail expand."""
     from datetime import date as _date, timedelta
     import json as _json
     import collections
@@ -1843,3 +1992,273 @@ def _new_proposal(data):
             <button type="submit" class="btn btn-primary">Create Proposal & Move to "Proposal Sent"</button>
         </form>
     </div></div>'''
+
+
+def _outreach_v2(data):
+    """Call Day v2 — 3-column layout: Not Contacted → Contacted → Interested/Advanced.
+    List selector tabs at top. Preserves import order (deal ID). Inline outcome buttons."""
+    from datetime import date as _date, timedelta
+
+    log = data.get("log", [])
+    lists_by_source = data.get("lists_by_source", {})
+
+    today_str = _date.today().strftime("%Y-%m-%d")
+
+    # Build per-deal call stats from log
+    call_info = {}  # deal_id -> {count, last_outcome, called_today}
+    for o in log:
+        o = dict(o)
+        did = o.get("deal_id")
+        if not did or o.get("channel") != "Call":
+            continue
+        if did not in call_info:
+            call_info[did] = {"count": 0, "called_today": False, "last_outcome": ""}
+        call_info[did]["count"] += 1
+        if (o.get("created_at") or "")[:10] == today_str:
+            call_info[did]["called_today"] = True
+        msg = o.get("message_summary") or ""
+        if msg:
+            call_info[did]["last_outcome"] = msg.replace("Call: ", "")
+
+    # If lists_by_source empty, fall back to queue
+    if not lists_by_source:
+        for row in data.get("queue", []):
+            d = dict(row)
+            src = d.get("lead_source") or "Other"
+            if src not in lists_by_source:
+                lists_by_source[src] = []
+            lists_by_source[src].append(d)
+
+    total_contacts = sum(len(v) for v in lists_by_source.values())
+    called_today_count = sum(1 for v in call_info.values() if v["called_today"])
+
+    # ── Contact row renderer ──
+    def _row(d, idx, show_outcomes=True):
+        did = d["id"]
+        company = _esc(d.get("company") or "")
+        contact = _esc(d.get("contact_name") or "")
+        phone = _esc(d.get("contact_phone") or "")
+        industry = _esc(d.get("industry") or "")
+        tier = d.get("tier") or 0
+        stage = d.get("stage", "Intake")
+        sc = STAGE_COLORS.get(stage, MUTED)
+        ci = call_info.get(did, {})
+        n_calls = ci.get("count", 0)
+        last_out = ci.get("last_outcome", "")
+        next_action = _esc(d.get("next_action") or "")
+        next_date = (d.get("next_action_date") or "")[:10]
+
+        tbadge = _tier_badge(tier)
+        phone_html = f'<a href="tel:{phone}" style="color:{GREEN};font-size:15px;font-weight:700;text-decoration:none">{phone}</a>' if phone else f'<span style="color:{MUTED};font-size:11px">no phone</span>'
+        owner_html = f'<span style="font-size:12px;color:{TEXT}">{contact}</span>' if contact else f'<span style="font-size:11px;color:{RED};font-style:italic">No owner name</span>'
+
+        # Last outcome badge
+        outcome_badge = ""
+        if last_out:
+            oc = {
+                "Answered - Interested": (GREEN, "Interested"),
+                "Voicemail Left": (MUTED, "VM Left"),
+                "No Answer": (MUTED, "No Answer"),
+                "Answered - Callback": (YELLOW, "Callback"),
+                "Not Interested": (MUTED, "Not Interested"),
+                "Wrong Number": (RED, "Wrong #"),
+            }
+            for key, (color, label) in oc.items():
+                if key in last_out:
+                    outcome_badge = f'<span style="background:{color}22;color:{color};border:1px solid {color}44;border-radius:4px;font-size:9px;font-weight:700;padding:2px 6px">{label}</span>'
+                    break
+            if not outcome_badge and last_out:
+                outcome_badge = f'<span style="background:{MUTED}22;color:{MUTED};border-radius:4px;font-size:9px;padding:2px 6px">{_esc(last_out[:20])}</span>'
+
+        # Follow-up info for advanced deals
+        followup_html = ""
+        if next_action or next_date:
+            followup_html = f'<div style="margin-top:4px;font-size:11px;color:{GOLD};font-weight:600">→ {_esc(next_action)}{" · " + next_date if next_date else ""}</div>'
+
+        # Outcome buttons (only for Not Contacted column)
+        btns = ""
+        if show_outcomes:
+            btns = f'''<div id="outcomes-{did}" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">
+                <button onclick="logOutcome({did},'Answered - Interested')" style="background:{GREEN}22;color:{GREEN};border:1px solid {GREEN}44;border-radius:5px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer">✅ Interested</button>
+                <button onclick="logOutcome({did},'Voicemail Left')" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:5px;padding:4px 8px;font-size:10px;cursor:pointer">📵 VM</button>
+                <button onclick="logOutcome({did},'No Answer')" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:5px;padding:4px 8px;font-size:10px;cursor:pointer">🔕 No Ans</button>
+                <button onclick="logOutcome({did},'Answered - Callback')" style="background:{YELLOW}22;color:{YELLOW};border:1px solid {YELLOW}44;border-radius:5px;padding:4px 8px;font-size:10px;cursor:pointer">📅 Callback</button>
+                <button onclick="logOutcome({did},'Not Interested')" style="background:{SURFACE};color:{MUTED};border:1px solid {BORDER};border-radius:5px;padding:4px 8px;font-size:10px;cursor:pointer">👎 No</button>
+                <button onclick="logOutcome({did},'Wrong Number')" style="background:{SURFACE};color:{RED};border:1px solid {BORDER};border-radius:5px;padding:4px 8px;font-size:10px;cursor:pointer">❌ Wrong#</button>
+            </div>
+            <div id="result-{did}" style="display:none;margin-top:4px;font-size:11px"></div>'''
+
+        return f'''<div id="row-{did}" style="padding:10px 12px;border-bottom:1px solid {BORDER}22;transition:opacity .3s">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-size:11px;color:{MUTED};min-width:20px;text-align:right">{idx}</span>
+                {tbadge}
+                <div style="flex:1;min-width:140px">
+                    <a href="/deals/{did}" style="font-weight:700;font-size:13px;color:{TEXT};text-decoration:none">{company}</a>
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap">
+                        {owner_html}
+                        <span style="font-size:10px;color:{MUTED}">{industry}</span>
+                        {outcome_badge}
+                    </div>
+                </div>
+                <div style="flex-shrink:0;text-align:right">
+                    {phone_html}
+                    {f'<div style="font-size:10px;color:{MUTED}">{n_calls}x called</div>' if n_calls > 0 else ""}
+                </div>
+            </div>
+            {followup_html}
+            {btns}
+        </div>'''
+
+    # ── Column renderer ──
+    def _column(title, color, icon, deals, show_outcomes=True, empty_msg="None"):
+        rows = ""
+        for idx, d in enumerate(deals, 1):
+            rows += _row(d, idx, show_outcomes)
+        if not rows:
+            rows = f'<div style="padding:24px;color:{MUTED};text-align:center;font-size:12px">{empty_msg}</div>'
+        return f'''<div style="flex:1;min-width:300px;border:1px solid {BORDER};border-radius:10px;overflow:hidden;background:{CARD}">
+            <div style="padding:12px 16px;background:{color}10;border-bottom:1px solid {color}33;display:flex;align-items:center;gap:8px">
+                <span style="font-size:16px">{icon}</span>
+                <span style="font-size:14px;font-weight:700;color:{color}">{title}</span>
+                <span style="font-size:12px;color:{MUTED};margin-left:auto">{len(deals)}</span>
+            </div>
+            <div style="max-height:calc(100vh - 220px);overflow-y:auto">{rows}</div>
+        </div>'''
+
+    # ── Build list tabs and 3-column panels ──
+    source_keys = sorted(lists_by_source.keys(), key=lambda s: (
+        0 if "Phone Blitz" in s else 1 if "Outreach Sync" in s else 2, s
+    ))
+
+    tab_buttons = ""
+    panels = ""
+    for i, src in enumerate(source_keys):
+        all_deals = lists_by_source[src]
+        n = len(all_deals)
+        safe_id = f"list-{i}"
+
+        tab_buttons += f'''<button onclick="showList('{safe_id}')" id="tab-{safe_id}"
+            style="padding:10px 18px;border:none;font-size:13px;font-weight:700;cursor:pointer;
+            border-bottom:3px solid transparent;background:transparent;color:{MUTED};font-family:inherit"
+            class="ltab">{_esc(src)} ({n})</button>'''
+
+        # Split into 3 buckets — preserve import order (sort by deal ID)
+        not_contacted = []
+        contacted_waiting = []
+        interested_advanced = []
+
+        for d in sorted(all_deals, key=lambda x: x["id"]):
+            did = d["id"]
+            stage = d.get("stage", "Intake")
+            has_calls = did in call_info
+
+            if stage in ("Qualified", "Meeting Booked", "Proposal Sent", "Negotiation", "Closed Won"):
+                interested_advanced.append(d)
+            elif has_calls:
+                contacted_waiting.append(d)
+            else:
+                not_contacted.append(d)
+
+        col1 = _column("Not Yet Contacted", MUTED, "📋", not_contacted, show_outcomes=True, empty_msg="All contacts reached!")
+        col2 = _column("Contacted — Waiting", YELLOW, "📞", contacted_waiting, show_outcomes=True, empty_msg="No pending responses")
+        col3 = _column("Interested — Follow Up", GREEN, "🔥", interested_advanced, show_outcomes=False, empty_msg="No interested leads yet")
+
+        panels += f'''<div id="panel-{safe_id}" style="display:none;padding:16px;gap:14px" class="three-col">
+            {col1}{col2}{col3}
+        </div>'''
+
+    default_list = "list-0" if source_keys else ""
+
+    return f'''
+        <style>
+            .three-col {{ display: flex; gap: 14px; }}
+            @media(max-width: 1000px) {{ .three-col {{ flex-direction: column; }} }}
+        </style>
+
+        <div style="border-bottom:1px solid {BORDER};padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <div>
+                <span style="font-size:20px;font-weight:800;color:{TEXT}">Call Day</span>
+                <span style="font-size:12px;color:{MUTED};margin-left:10px">{total_contacts} total · {called_today_count} called today</span>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="/" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;text-decoration:none;font-weight:600">← Dashboard</a>
+                <button onclick="syncAndReload()" id="sync-btn" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:600">⟳ Sync</button>
+            </div>
+        </div>
+
+        <div style="border-bottom:1px solid {BORDER};display:flex;overflow-x:auto;padding:0 12px">
+            {tab_buttons}
+        </div>
+
+        {panels}
+
+        <script>
+        function showList(id) {{
+            document.querySelectorAll('[id^="panel-list-"]').forEach(function(p) {{ p.style.display = 'none'; }});
+            document.querySelectorAll('.ltab').forEach(function(t) {{
+                t.style.color = '{MUTED}';
+                t.style.borderBottomColor = 'transparent';
+            }});
+            var panel = document.getElementById('panel-' + id);
+            if (panel) panel.style.display = 'flex';
+            var tab = document.getElementById('tab-' + id);
+            if (tab) {{
+                tab.style.color = '{GOLD}';
+                tab.style.borderBottomColor = '{GOLD}';
+            }}
+        }}
+        if ('{default_list}') showList('{default_list}');
+
+        async function logOutcome(dealId, outcome) {{
+            var row = document.getElementById('row-' + dealId);
+            var resEl = document.getElementById('result-' + dealId);
+            var btns = document.getElementById('outcomes-' + dealId);
+
+            btns.querySelectorAll('button').forEach(function(b) {{ b.disabled = true; b.style.opacity = '0.5'; }});
+            resEl.style.display = 'block';
+            resEl.style.color = '{MUTED}';
+            resEl.textContent = 'Logging...';
+
+            var fd = new FormData();
+            fd.append('outcome', outcome);
+            fd.append('notes', '');
+
+            try {{
+                var r = await fetch('/deals/' + dealId + '/log-call', {{method: 'POST', body: fd}});
+                var d = await r.json();
+                if (d.ok) {{
+                    resEl.style.color = '{GREEN}';
+                    var fuTxt = d.follow_up_date ? ' · follow-up ' + d.follow_up_date : '';
+                    var actionTxt = d.follow_up_action ? ' · ' + d.follow_up_action : '';
+                    resEl.textContent = '✓ ' + outcome + fuTxt + actionTxt;
+                    btns.style.display = 'none';
+                    // After 1.5s, reload to move the row to the correct column
+                    setTimeout(function() {{ window.location.reload(); }}, 1500);
+                }} else {{
+                    resEl.style.color = '{RED}';
+                    resEl.textContent = 'Error: ' + (d.error || 'Unknown');
+                    btns.querySelectorAll('button').forEach(function(b) {{ b.disabled = false; b.style.opacity = '1'; }});
+                }}
+            }} catch(e) {{
+                resEl.style.color = '{RED}';
+                resEl.textContent = 'Network error';
+                btns.querySelectorAll('button').forEach(function(b) {{ b.disabled = false; b.style.opacity = '1'; }});
+            }}
+        }}
+
+        async function syncAndReload() {{
+            var btn = document.getElementById('sync-btn');
+            btn.textContent = 'Syncing...'; btn.disabled = true;
+            try {{
+                var r = await fetch('/deals/sync-outreach', {{method:'POST'}});
+                var d = await r.json();
+                if (d.ok) {{
+                    btn.textContent = (d.added||0) + ' new';
+                    setTimeout(function() {{ window.location.reload(); }}, 1000);
+                }} else {{
+                    btn.textContent = 'Error'; btn.disabled = false;
+                }}
+            }} catch(e) {{ btn.textContent = 'Error'; btn.disabled = false; }}
+        }}
+        </script>
+    '''

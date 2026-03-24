@@ -29,12 +29,19 @@ def load_tracking_files():
     pattern = "outreach_tracking_*.json"
     for f in sorted(LEAD_SCRAPER_OUTPUT.glob(pattern)):
         try:
-            data = json.loads(f.read_text())
-            for em in data.get("emails", []):
-                em["_source_file"] = f.name
-                em["_campaign"] = data.get("campaign", "unknown")
-                em["_date"] = data.get("date", f.stem.replace("outreach_tracking_", ""))
-                emails.append(em)
+            raw = json.loads(f.read_text())
+            # Handle both formats: single dict or list of batch dicts
+            batches = raw if isinstance(raw, list) else [raw]
+            for data in batches:
+                if not isinstance(data, dict):
+                    continue
+                campaign = data.get("campaign", "unknown")
+                file_date = data.get("date", f.stem.replace("outreach_tracking_", ""))
+                for em in data.get("emails", []):
+                    em["_source_file"] = f.name
+                    em["_campaign"] = campaign
+                    em["_date"] = file_date
+                    emails.append(em)
         except Exception:
             pass
     return emails
@@ -170,16 +177,17 @@ def compute_stats():
             day_buckets["Day 10"] += item.get("count", 1)
 
     # ── Pipeline funnel from DB
+    # Intake = raw imported leads (NOT replies). Only Qualified+ counts as engagement.
     db_stages = pipeline.get("stage_counts", {})
     funnel = {
         "Sent": total_sent,
-        "Replied": db_stages.get("Intake", 0) + db_stages.get("Qualified", 0),
+        "Replied": db_stages.get("Qualified", 0),
         "Call Booked": db_stages.get("Meeting Booked", 0),
         "Proposal": db_stages.get("Proposal Sent", 0) + db_stages.get("Negotiation", 0),
         "Closed": db_stages.get("Closed Won", 0),
     }
 
-    # ── Response rate
+    # ── Response rate (only count actual engagement, not raw lead imports)
     total_replies = funnel["Replied"] + funnel["Call Booked"] + funnel["Proposal"] + funnel["Closed"]
     response_rate = round(total_replies / max(total_sent, 1) * 100, 1)
 

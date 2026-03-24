@@ -8,11 +8,13 @@
 | `dumbphone-lock/` | iOS app blocking during Focus sessions | Market validation |
 | `vuori-lead-magnet/` | Vuori partnership lead generation | Exploration |
 | `amazon-seller/` | Amazon SP-API seller tools | Development |
-| `mikos-lab/` | Miko's Lab project | Exploration |
+| `hub/` | Master app launcher — one URL for all tools (port 8760) | **Active** (always-on) |
+| `mikos-lab/` | AI avatar workshop — projects, methods, prompts (port 8766) | **Active** |
 | `legal-case-manager/` | Legal case management tool | Exploration |
 | `claim-back/` | AI medical billing dispute platform | MVP Development |
 | `email-assistant/` | AI-powered Gmail assistant (search, docs, drafts) | MVP Development |
 | `agent-os/` | Productized Claude Code operating system (digital download) | Scoping |
+| `ai-phone-agent/` | AI voice receptionist — ElevenLabs ConvAI + Twilio (port 8795) | **Active** |
 
 ## Graduation Path
 When a Labs project is validated (SOP 17 passes + revenue model confirmed):

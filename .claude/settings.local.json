@@ -141,6 +141,11 @@
             "type": "command",
             "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/project-structure-guard.sh",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "/Users/williammarceaujr./dev-sandbox/.claude/hooks/interface-first-guard.sh",
+            "timeout": 10
           }
         ]
       },

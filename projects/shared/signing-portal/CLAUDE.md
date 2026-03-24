@@ -39,7 +39,7 @@
 | `client_name` | TEXT | Contact name |
 | `client_email` | TEXT | Contact email |
 | `tier` | INTEGER | 1–4 |
-| `monthly_rate` | TEXT | e.g. `$497/month` |
+| `monthly_rate` | TEXT | e.g. `$297/month` |
 | `effective_date` | TEXT | ISO date |
 | `status` | TEXT | `pending` / `signed` / `expired` |
 | `signer_name` | TEXT | Typed at signing |

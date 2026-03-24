@@ -28,6 +28,7 @@ from .models import (
     get_activities, get_pipeline_stats, log_activity, get_tier1_queue,
     get_call_queue, get_email_queue, get_phone_queue, get_inperson_queue,
     get_outreach_stats, assign_outreach_method,
+    get_daily_outreach_counts, get_leads_by_tier_and_method,
     STAGES, STAGE_COLORS, CHANNELS, INDUSTRIES
 )
 from .ui import render_page
@@ -51,12 +52,17 @@ async def dashboard():
     all_deals = [dict(d) for d in get_all_deals(conn)]
     tier1_queue = [dict(d) for d in get_tier1_queue(conn)]
     outreach_stats = get_outreach_stats(conn)
+    daily_counts = get_daily_outreach_counts(conn)
+    leads_grouped, all_leads = get_leads_by_tier_and_method(conn)
     conn.close()
     return render_page("dashboard", "Pipeline", {
         "stats": stats, "deals_by_stage": deals_by_stage,
         "activity": recent_activity, "followups": followups,
         "all_deals": all_deals, "tier1_queue": tier1_queue,
         "outreach_stats": outreach_stats,
+        "daily_counts": daily_counts,
+        "leads_grouped": leads_grouped,
+        "all_leads": all_leads,
     })
 
 
@@ -336,8 +342,31 @@ async def outreach_page():
     queue = get_phone_queue(conn)
     log = get_outreach_log(conn, limit=200)
     ostats = get_outreach_stats(conn)
+    # Get all deals grouped by lead_source for list switching
+    all_deals_for_lists = conn.execute("""
+        SELECT d.*,
+               COUNT(DISTINCT CASE WHEN o.channel='Call' THEN o.id END) AS call_count,
+               MAX(CASE WHEN o.channel='Call' THEN o.created_at END) AS last_called,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END) AS last_emailed,
+               MAX(CASE WHEN o.channel='Email' THEN o.message_summary END) AS last_email_subject
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.stage NOT IN ('Closed Won','Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+    """).fetchall()
+    # Group by lead_source
+    lists_by_source = {}
+    for d in all_deals_for_lists:
+        src = d["lead_source"] or "Other"
+        if src not in lists_by_source:
+            lists_by_source[src] = []
+        lists_by_source[src].append(dict(d))
     conn.close()
-    return render_page("outreach", "Call Day", {"queue": queue, "log": log, "outreach_stats": ostats})
+    return render_page("outreach", "Call Day", {
+        "queue": queue, "log": log, "outreach_stats": ostats,
+        "lists_by_source": lists_by_source,
+    })
 
 
 @app.get("/email-day", response_class=HTMLResponse)

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Miko's Lab — AI Influencer Workshop</title>
+<title>Miko's Lab — AI Avatar Workshop</title>
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,6 +22,7 @@
   --success: #4ade80;
   --warning: #fbbf24;
   --danger: #f87171;
+  --info: #60a5fa;
   --radius: 8px;
   --radius-lg: 12px;
   --sidebar-w: 260px;
@@ -67,9 +68,7 @@ button { cursor: pointer; font-family: inherit; }
   color: var(--text-dim);
   margin-top: 4px;
 }
-.nav-section {
-  padding: 14px 0 6px;
-}
+.nav-section { padding: 14px 0 6px; }
 .nav-section-label {
   font-size: 0.65rem;
   text-transform: uppercase;
@@ -102,25 +101,12 @@ button { cursor: pointer; font-family: inherit; }
   font-size: 0.75rem;
   color: var(--text-dim);
 }
-.sync-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.sync-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--success);
-}
+.sync-status { display: flex; align-items: center; gap: 6px; }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
 .sync-dot.stale { background: var(--warning); }
 
 /* ===== MAIN CONTENT ===== */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .topbar {
   display: flex;
   align-items: center;
@@ -132,11 +118,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .topbar h2 { font-size: 1.05rem; color: var(--text-bright); }
 .topbar-actions { display: flex; gap: 8px; }
-.content-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-}
+.content-area { flex: 1; overflow-y: auto; padding: 24px; }
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -152,13 +134,12 @@ button { cursor: pointer; font-family: inherit; }
   transition: all 0.15s;
 }
 .btn:hover { border-color: var(--gold); color: var(--gold); }
-.btn-gold {
-  background: var(--gold);
-  color: #1a1a1e;
-  border-color: var(--gold);
-  font-weight: 600;
-}
+.btn-gold { background: var(--gold); color: #1a1a1e; border-color: var(--gold); font-weight: 600; }
 .btn-gold:hover { background: var(--gold-light); }
+.btn-danger { border-color: var(--danger); color: var(--danger); }
+.btn-danger:hover { background: rgba(248,113,113,0.15); }
+.btn-success { border-color: var(--success); color: var(--success); }
+.btn-success:hover { background: rgba(74,222,128,0.15); }
 .btn-sm { padding: 5px 10px; font-size: 0.78rem; }
 
 /* ===== CARDS ===== */
@@ -169,12 +150,7 @@ button { cursor: pointer; font-family: inherit; }
   padding: 20px;
   margin-bottom: 16px;
 }
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .card-title { font-size: 1rem; font-weight: 600; color: var(--text-bright); }
 .card-subtitle { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
 
@@ -197,7 +173,7 @@ button { cursor: pointer; font-family: inherit; }
 .stat-value { font-size: 2rem; font-weight: 700; color: var(--gold); }
 .stat-label { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
 
-/* ===== KNOWLEDGE LIBRARY ===== */
+/* ===== CATEGORY CARDS ===== */
 .category-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -246,12 +222,8 @@ button { cursor: pointer; font-family: inherit; }
 .guide-item:hover { background: var(--bg-hover); border-left-color: var(--gold); }
 .guide-item .guide-title { font-size: 0.85rem; color: var(--text); }
 
-/* ===== GUIDE READER ===== */
-.reader-panel {
-  display: none;
-  flex-direction: column;
-  height: 100%;
-}
+/* ===== READER ===== */
+.reader-panel { display: none; flex-direction: column; height: 100%; }
 .reader-panel.active { display: flex; }
 .reader-header {
   padding: 16px 20px;
@@ -284,29 +256,13 @@ button { cursor: pointer; font-family: inherit; }
 .reader-body ul, .reader-body ol { margin: 8px 0 12px 24px; }
 .reader-body li { margin-bottom: 4px; }
 .reader-body code { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
-.reader-body pre {
-  background: var(--bg);
-  padding: 14px;
-  border-radius: var(--radius);
-  overflow-x: auto;
-  margin: 12px 0;
-}
-.reader-body blockquote {
-  border-left: 3px solid var(--gold);
-  padding-left: 14px;
-  color: var(--text-dim);
-  margin: 12px 0;
-}
+.reader-body pre { background: var(--bg); padding: 14px; border-radius: var(--radius); overflow-x: auto; margin: 12px 0; }
+.reader-body blockquote { border-left: 3px solid var(--gold); padding-left: 14px; color: var(--text-dim); margin: 12px 0; }
 .reader-body table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-.reader-body th, .reader-body td {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  text-align: left;
-  font-size: 0.85rem;
-}
+.reader-body th, .reader-body td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; font-size: 0.85rem; }
 .reader-body th { background: var(--bg); color: var(--gold); }
 
-/* ===== TELEGRAM FEED ===== */
+/* ===== POSTS ===== */
 .post-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -314,23 +270,9 @@ button { cursor: pointer; font-family: inherit; }
   padding: 16px 18px;
   margin-bottom: 12px;
 }
-.post-date {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  margin-bottom: 6px;
-}
-.post-text {
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--text);
-  white-space: pre-wrap;
-}
-.post-links {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.post-date { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 6px; }
+.post-text { font-size: 0.88rem; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+.post-links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
 .post-link {
   display: inline-flex;
   align-items: center;
@@ -341,80 +283,71 @@ button { cursor: pointer; font-family: inherit; }
   font-size: 0.75rem;
   color: var(--gold);
 }
-.post-photos {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
 }
-.post-photos img {
-  max-width: 200px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 3px;
+  transition: width 0.3s;
 }
 
-/* ===== WORKSHOP ===== */
-.workshop-steps {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 24px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-.workshop-step {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.workshop-step:hover { border-color: var(--gold); color: var(--text); }
-.workshop-step.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
-.workshop-step.completed { color: var(--success); border-color: var(--success); }
-.step-num {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-.workshop-step.active .step-num { background: var(--gold); color: #1a1a1e; }
-.workshop-step.completed .step-num { background: var(--success); color: #1a1a1e; }
-.step-content { display: none; }
-.step-content.active { display: block; }
-
-/* ===== TOOL CARDS ===== */
-.tool-card {
+/* ===== PROJECT CARDS ===== */
+.project-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
-  transition: border-color 0.2s;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.tool-card:hover { border-color: var(--gold); }
-.tool-name { font-size: 0.9rem; font-weight: 600; color: var(--text-bright); }
-.tool-desc { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
-.tool-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 8px;
-  font-size: 0.72rem;
+.project-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.project-status {
+  display: inline-block;
   padding: 2px 8px;
   border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
-.tool-status.available { background: rgba(74,222,128,0.15); color: var(--success); }
-.tool-status.unavailable { background: rgba(248,113,113,0.15); color: var(--danger); }
+.status-planning { background: rgba(96,165,250,0.15); color: var(--info); }
+.status-character_design { background: rgba(168,85,247,0.15); color: #a855f7; }
+.status-content_creation { background: var(--gold-dim); color: var(--gold); }
+.status-launched { background: rgba(74,222,128,0.15); color: var(--success); }
+.status-paused { background: rgba(248,113,113,0.15); color: var(--danger); }
+
+/* ===== METHOD TRACKER ===== */
+.method-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 100px 100px 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.method-row:hover { background: var(--bg-hover); }
+.method-header { color: var(--text-dim); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.method-header:hover { background: transparent; }
+
+/* ===== STATUS SELECTS ===== */
+select.status-select {
+  padding: 4px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+select.status-select:focus { outline: none; border-color: var(--gold); }
 
 /* ===== FORMS ===== */
 .form-group { margin-bottom: 16px; }
@@ -429,27 +362,10 @@ button { cursor: pointer; font-family: inherit; }
   font-size: 0.88rem;
   font-family: inherit;
 }
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-  outline: none;
-  border-color: var(--gold);
-}
+.form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--gold); }
 .form-textarea { min-height: 100px; resize: vertical; }
 
-/* ===== CHECKLIST ===== */
-.checklist-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border-radius: var(--radius);
-  margin-bottom: 8px;
-}
-.checklist-item input[type="checkbox"] { margin-top: 3px; accent-color: var(--gold); }
-.checklist-item label { font-size: 0.88rem; line-height: 1.5; cursor: pointer; }
-.checklist-item .tip { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
-
-/* ===== PROMPT BUILDER ===== */
+/* ===== PROMPT OUTPUT ===== */
 .prompt-output {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -487,28 +403,19 @@ button { cursor: pointer; font-family: inherit; }
   cursor: pointer;
   transition: all 0.15s;
   background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border-top: none; border-left: none; border-right: none;
 }
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-/* ===== LOADING ===== */
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* ===== STARS ===== */
+.stars { display: inline-flex; gap: 2px; cursor: pointer; }
+.star { color: var(--border); font-size: 1rem; transition: color 0.1s; }
+.star.active { color: var(--gold); }
+.star:hover { color: var(--gold-light); }
 
 /* ===== SEARCH ===== */
-.search-box {
-  position: relative;
-  margin-bottom: 16px;
-}
+.search-box { position: relative; margin-bottom: 16px; }
 .search-box input {
   width: 100%;
   padding: 10px 12px 10px 36px;
@@ -519,28 +426,59 @@ button { cursor: pointer; font-family: inherit; }
   font-size: 0.88rem;
 }
 .search-box input:focus { outline: none; border-color: var(--gold); }
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-dim);
-  font-size: 0.85rem;
-}
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 0.85rem; }
 
-/* ===== HIDDEN ===== */
-.hidden { display: none !important; }
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-title { font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 16px; }
+
+/* ===== SPINNER ===== */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ===== BADGE ===== */
-.badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
 .badge-gold { background: var(--gold-dim); color: var(--gold); }
 .badge-green { background: rgba(74,222,128,0.15); color: var(--success); }
+.badge-blue { background: rgba(96,165,250,0.15); color: var(--info); }
+.badge-red { background: rgba(248,113,113,0.15); color: var(--danger); }
+.badge-yellow { background: rgba(251,191,36,0.15); color: var(--warning); }
+
+.hidden { display: none !important; }
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state h3 { font-size: 1.1rem; color: var(--text); margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -549,14 +487,31 @@ button { cursor: pointer; font-family: inherit; }
 <nav class="sidebar">
   <div class="sidebar-header">
     <h1>MIKO'S LAB</h1>
-    <div class="subtitle">AI Influencer Workshop</div>
+    <div class="subtitle">AI Avatar Workshop</div>
   </div>
 
   <div class="nav-section">
-    <div class="nav-section-label">Navigate</div>
+    <div class="nav-section-label">Overview</div>
     <a class="nav-item active" data-page="dashboard" href="#">
       <span class="nav-icon">&#9632;</span> Dashboard
     </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Build</div>
+    <a class="nav-item" data-page="projects" href="#">
+      <span class="nav-icon">&#128640;</span> My Projects
+    </a>
+    <a class="nav-item" data-page="tracker" href="#">
+      <span class="nav-icon">&#9745;</span> Method Tracker
+    </a>
+    <a class="nav-item" data-page="prompt-lib" href="#">
+      <span class="nav-icon">&#10002;</span> Prompt Library
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Learn</div>
     <a class="nav-item" data-page="knowledge" href="#">
       <span class="nav-icon">&#9733;</span> Knowledge Library
     </a>
@@ -566,18 +521,15 @@ button { cursor: pointer; font-family: inherit; }
     <a class="nav-item" data-page="feed" href="#">
       <span class="nav-icon">&#9993;</span> Telegram Feed
     </a>
+    <a class="nav-item" data-page="pdfs" href="#">
+      <span class="nav-icon">&#128196;</span> PDF Library
+    </a>
   </div>
 
   <div class="nav-section">
-    <div class="nav-section-label">Create</div>
-    <a class="nav-item" data-page="workshop" href="#">
-      <span class="nav-icon">&#10024;</span> AI Influencer Workshop
-    </a>
+    <div class="nav-section-label">Tools</div>
     <a class="nav-item" data-page="tools" href="#">
-      <span class="nav-icon">&#9874;</span> Your Tools
-    </a>
-    <a class="nav-item" data-page="prompts" href="#">
-      <span class="nav-icon">&#10002;</span> Prompt Builder
+      <span class="nav-icon">&#9874;</span> Available Tools
     </a>
   </div>
 
@@ -595,9 +547,12 @@ button { cursor: pointer; font-family: inherit; }
     <h2 id="pageTitle">Dashboard</h2>
     <div class="topbar-actions" id="topbarActions"></div>
   </div>
-  <div class="content-area" id="contentArea">
-    <!-- Pages rendered by JS -->
-  </div>
+  <div class="content-area" id="contentArea"></div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
 </div>
 
 <script>
@@ -609,13 +564,12 @@ const state = {
   methods: null,
   posts: null,
   tools: null,
-  workshopStep: 0,
+  projects: null,
+  currentProject: null,
+  methodTracker: null,
+  promptLib: null,
   readerGuide: null,
   searchQuery: '',
-  workshopData: {
-    niche: '', persona: '', character_desc: '', platform: 'instagram',
-    content_type: 'ugc', voice_style: '', posting_schedule: '',
-  },
 };
 
 // ===== API =====
@@ -631,20 +585,29 @@ async function api(path, opts = {}) {
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', e => {
     e.preventDefault();
-    const page = item.dataset.page;
-    navigate(page);
+    navigate(item.dataset.page);
   });
 });
 
 function navigate(page) {
   state.page = page;
   state.readerGuide = null;
+  state.currentProject = null;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
   renderPage();
 }
 
-// ===== MARKDOWN RENDERER (basic) =====
+// ===== MODAL =====
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+// ===== MARKDOWN RENDERER =====
 function md(text) {
   if (!text) return '';
   let html = text
@@ -659,8 +622,6 @@ function md(text) {
     .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
     .replace(/\n{2,}/g, '</p><p>')
     .replace(/\n/g, '<br>');
-
-  // Tables
   html = html.replace(/\|(.+)\|\n\|[-| ]+\|\n((?:\|.+\|\n?)+)/g, (match, header, rows) => {
     const ths = header.split('|').filter(c=>c.trim()).map(c=>`<th>${c.trim()}</th>`).join('');
     const trs = rows.trim().split('\n').map(row => {
@@ -669,11 +630,35 @@ function md(text) {
     }).join('');
     return `<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
   });
-
   return `<p>${html}</p>`;
 }
 
-// ===== RENDER PAGES =====
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function statusLabel(s) {
+  const map = {
+    planning: 'Planning', character_design: 'Character Design', content_creation: 'Creating Content',
+    launched: 'Launched', paused: 'Paused', archived: 'Archived',
+    not_started: 'Not Started', learning: 'Learning', tried: 'Tried',
+    works: 'Works!', doesnt_work: "Doesn't Work", needs_revisit: 'Revisit',
+    pending: 'Pending', in_progress: 'In Progress', completed: 'Done', skipped: 'Skipped',
+  };
+  return map[s] || s;
+}
+
+function starsHtml(rating, onClick) {
+  let h = '<span class="stars">';
+  for (let i = 1; i <= 5; i++) {
+    h += `<span class="star ${i <= (rating||0) ? 'active' : ''}" onclick="${onClick}(${i})">&#9733;</span>`;
+  }
+  return h + '</span>';
+}
+
+// ===== PAGE ROUTER =====
 function renderPage() {
   const area = document.getElementById('contentArea');
   const title = document.getElementById('pageTitle');
@@ -682,137 +667,799 @@ function renderPage() {
 
   switch (state.page) {
     case 'dashboard': renderDashboard(area, title, actions); break;
+    case 'projects': renderProjects(area, title, actions); break;
+    case 'project-detail': renderProjectDetail(area, title, actions); break;
+    case 'tracker': renderTracker(area, title, actions); break;
+    case 'prompt-lib': renderPromptLib(area, title, actions); break;
     case 'knowledge': renderKnowledge(area, title, actions); break;
     case 'methods': renderMethods(area, title, actions); break;
     case 'feed': renderFeed(area, title, actions); break;
-    case 'workshop': renderWorkshop(area, title, actions); break;
+    case 'pdfs': renderPdfs(area, title, actions); break;
     case 'tools': renderTools(area, title, actions); break;
-    case 'prompts': renderPrompts(area, title, actions); break;
   }
 }
 
-// ===== DASHBOARD =====
+// ===================================================================
+// DASHBOARD
+// ===================================================================
 async function renderDashboard(area, title, actions) {
   title.textContent = 'Dashboard';
-  area.innerHTML = '<div class="spinner"></div>';
+  actions.innerHTML = '<button class="btn btn-gold btn-sm" onclick="syncPosts()">&#8635; Sync Telegram</button>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
 
-  if (!state.overview) state.overview = await api('/overview');
+  state.overview = await api('/overview');
   const d = state.overview;
 
   area.innerHTML = `
     <div class="grid grid-4" style="margin-bottom:24px;">
-      <div class="stat-card"><div class="stat-value">${d.total_guides}</div><div class="stat-label">Knowledge Guides</div></div>
-      <div class="stat-card"><div class="stat-value">${d.total_pdfs}</div><div class="stat-label">PDF Resources</div></div>
-      <div class="stat-card"><div class="stat-value">${d.total_posts}</div><div class="stat-label">Telegram Posts</div></div>
-      <div class="stat-card"><div class="stat-value">${d.categories}</div><div class="stat-label">Topic Categories</div></div>
+      <div class="stat-card">
+        <div class="stat-value">${d.project_count}</div>
+        <div class="stat-label">Active Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${d.active_methods}/${d.total_methods}</div>
+        <div class="stat-label">Methods Explored</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${d.total_prompts}</div>
+        <div class="stat-label">Saved Prompts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${d.total_assets}</div>
+        <div class="stat-label">Generated Assets</div>
+      </div>
     </div>
 
     <div class="grid grid-2">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">Quick Start</div><div class="card-subtitle">Start creating AI influencers</div></div>
+          <div><div class="card-title">Quick Actions</div><div class="card-subtitle">Jump into building</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <a href="#" onclick="navigate('workshop');return false" class="btn btn-gold" style="justify-content:center;">Launch AI Influencer Workshop</a>
-          <a href="#" onclick="navigate('knowledge');return false" class="btn" style="justify-content:center;">Browse Knowledge Library</a>
-          <a href="#" onclick="navigate('prompts');return false" class="btn" style="justify-content:center;">Open Prompt Builder</a>
+          <button onclick="navigate('projects')" class="btn btn-gold" style="justify-content:center;">My Avatar Projects</button>
+          <button onclick="navigate('tracker')" class="btn" style="justify-content:center;">Method Tracker — What Have I Tried?</button>
+          <button onclick="navigate('prompt-lib')" class="btn" style="justify-content:center;">Prompt Library</button>
+          <button onclick="navigate('knowledge')" class="btn" style="justify-content:center;">Browse Knowledge Base (${d.total_guides} guides)</button>
         </div>
       </div>
 
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title">Your Toolkit</div><div class="card-subtitle">Connected generation tools</div></div>
+          <div><div class="card-title">Resources</div><div class="card-subtitle">From Miko's Lab channel</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:0.85rem;">
-          <div style="display:flex;justify-content:space-between;"><span>Grok Image Gen</span><span class="badge badge-green">Ready</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>Multi-Provider Video</span><span class="badge badge-green">Ready</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>Instagram Creator MCP</span><span class="badge badge-green">Ready</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>YouTube Creator MCP</span><span class="badge badge-green">Ready</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>TikTok Creator MCP</span><span class="badge badge-green">Ready</span></div>
-          <div style="display:flex;justify-content:space-between;"><span>X/Twitter Automation</span><span class="badge badge-green">Ready</span></div>
-        </div>
-      </div>
-
-      <div class="card" style="grid-column:span 2;">
-        <div class="card-header">
-          <div><div class="card-title">The Core Workflow (from Miko)</div><div class="card-subtitle">The proven process for creating AI influencers</div></div>
-        </div>
-        <div class="grid grid-3" style="gap:12px;">
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">1. Character Creation</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">NanoBanana Pro, Sora 2 Character Cameos, or Ideogram Character Fill. Consistency is KEY.</div>
-          </div>
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">2. Starting Frames</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">Generate all starting frames in NanoBanana (16:9 or 9:16). Use I2V, not T2V — 10x better consistency.</div>
-          </div>
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">3. Video Generation</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">UGC (25s): Sora 2 Pro. Reels: VEO 3 / Seedance 2. Longform: HeyGen / Veed Fabric.</div>
-          </div>
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">4. Voice & Audio</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">MiniMax for new voiceovers (most realistic). Resemble AI to fix AI video audio.</div>
-          </div>
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">5. Post & Grow</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">Post consistently across platforms. Use your MCP tools for Instagram, YouTube, TikTok, X.</div>
-          </div>
-          <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-            <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">6. Monetize</div>
-            <div style="font-size:0.8rem;color:var(--text-dim);">Brand deals, merch, affiliate marketing, digital products, AI content agency ($2K-10K/client).</div>
-          </div>
+          <div style="display:flex;justify-content:space-between;"><span>Knowledge Guides</span><span class="badge badge-gold">${d.total_guides}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>PDF Resources</span><span class="badge badge-gold">${d.total_pdfs}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Telegram Posts</span><span class="badge badge-gold">${d.total_posts}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Topic Categories</span><span class="badge badge-gold">${d.categories}</span></div>
+          <div style="margin-top:8px;font-size:0.75rem;color:var(--text-dim);">Last synced: ${d.last_sync ? new Date(d.last_sync).toLocaleString() : 'Never'}</div>
         </div>
       </div>
     </div>
 
-    <div style="margin-top:8px;text-align:center;font-size:0.75rem;color:var(--text-dim);">
-      Last synced: ${d.last_sync ? new Date(d.last_sync).toLocaleString() : 'Never'}
+    <div class="card" style="margin-top:0;">
+      <div class="card-header">
+        <div><div class="card-title">Miko's Core Workflow</div><div class="card-subtitle">The proven pipeline for AI avatar creation</div></div>
+      </div>
+      <div class="grid grid-3" style="gap:12px;">
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">1. Character Creation</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">NanoBanana Pro, Sora 2 Character Cameos, or Ideogram Character Fill. Consistency is KEY.</div>
+        </div>
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">2. Starting Frames</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">Generate all starting frames in NanoBanana (16:9 or 9:16). Use I2V, not T2V.</div>
+        </div>
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">3. Video Generation</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">UGC (25s): Sora 2 Pro. Reels: VEO 3 / Seedance 2. Longform: HeyGen.</div>
+        </div>
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">4. Voice & Audio</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">MiniMax for new voiceovers. Resemble AI to fix AI video audio.</div>
+        </div>
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">5. Post & Grow</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">Post consistently. Use MCP tools for Instagram, YouTube, TikTok, X.</div>
+        </div>
+        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
+          <div style="color:var(--gold);font-weight:700;font-size:0.82rem;margin-bottom:6px;">6. Monetize</div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">Brand deals, affiliate marketing, digital products, AI agency ($2K-10K/client).</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Update sync indicator
+  updateSyncStatus(d.last_sync);
+}
+
+function updateSyncStatus(lastSync) {
+  const dot = document.getElementById('syncDot');
+  const text = document.getElementById('syncText');
+  if (!lastSync) {
+    dot.className = 'sync-dot stale';
+    text.textContent = 'Never synced';
+    return;
+  }
+  const hrs = (Date.now() - new Date(lastSync).getTime()) / 3600000;
+  if (hrs > 24) {
+    dot.className = 'sync-dot stale';
+    text.textContent = `${Math.floor(hrs / 24)}d ago`;
+  } else {
+    dot.className = 'sync-dot';
+    text.textContent = `${Math.floor(hrs)}h ago`;
+  }
+}
+
+async function syncPosts() {
+  const btn = event.target;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '&#8987; Syncing...';
+  btn.disabled = true;
+  try {
+    const result = await api('/sync', { method: 'POST' });
+    if (result.success) {
+      state.posts = null;
+      state.overview = null;
+      renderPage();
+    } else {
+      alert('Sync failed: ' + (result.error || 'Unknown'));
+    }
+  } catch(e) { alert('Sync error: ' + e.message); }
+  btn.innerHTML = orig;
+  btn.disabled = false;
+}
+
+// ===================================================================
+// PROJECTS
+// ===================================================================
+async function renderProjects(area, title, actions) {
+  title.textContent = 'My Avatar Projects';
+  actions.innerHTML = '<button class="btn btn-gold btn-sm" onclick="showNewProjectModal()">+ New Project</button>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
+
+  state.projects = await api('/projects');
+
+  if (!state.projects.length) {
+    area.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">&#128640;</div>
+        <h3>No projects yet</h3>
+        <p style="margin-bottom:16px;">Create your first AI avatar project to start building.</p>
+        <button class="btn btn-gold" onclick="showNewProjectModal()">+ Create First Project</button>
+      </div>`;
+    return;
+  }
+
+  let html = '<div class="grid grid-2">';
+  for (const p of state.projects) {
+    html += `
+      <div class="project-card" onclick="viewProject(${p.id})">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-size:1.05rem;font-weight:700;color:var(--text-bright);">${escapeHtml(p.name)}</div>
+          <span class="project-status status-${p.status}">${statusLabel(p.status)}</span>
+        </div>
+        ${p.niche ? `<div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:4px;">Niche: ${escapeHtml(p.niche)} &middot; ${escapeHtml(p.platform)}</div>` : ''}
+        ${p.description ? `<div style="font-size:0.82rem;margin-bottom:8px;">${escapeHtml(p.description).slice(0,120)}</div>` : ''}
+        <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.72rem;color:var(--text-dim);">
+          <span>${p.progress}% complete</span>
+          <span>${p.asset_count} assets</span>
+        </div>
+      </div>`;
+  }
+  html += '</div>';
+  area.innerHTML = html;
+}
+
+function showNewProjectModal() {
+  openModal(`
+    <div class="modal-title">New Avatar Project</div>
+    <div class="form-group">
+      <label class="form-label">Project Name *</label>
+      <input class="form-input" id="np-name" placeholder="e.g., Fitness AI Influencer">
+    </div>
+    <div class="grid grid-2">
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <select class="form-select" id="np-niche">
+          <option value="">Select...</option>
+          <option value="fitness">Fitness & Health</option>
+          <option value="luxury">Luxury Lifestyle</option>
+          <option value="tech">Tech & AI</option>
+          <option value="beauty">Beauty & Skincare</option>
+          <option value="finance">Finance & Crypto</option>
+          <option value="travel">Travel</option>
+          <option value="food">Food & Cooking</option>
+          <option value="motivation">Motivation</option>
+          <option value="comedy">Comedy</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Primary Platform</label>
+        <select class="form-select" id="np-platform">
+          <option value="instagram">Instagram</option>
+          <option value="tiktok">TikTok</option>
+          <option value="youtube">YouTube</option>
+          <option value="x">X / Twitter</option>
+          <option value="multi">Multi-platform</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="np-desc" rows="3" placeholder="What's the concept? Who is this avatar?"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="createProject()">Create Project</button>
+    </div>
+  `);
+}
+
+async function createProject() {
+  const name = document.getElementById('np-name').value.trim();
+  if (!name) { alert('Name required'); return; }
+  await api('/projects', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      niche: document.getElementById('np-niche').value,
+      platform: document.getElementById('np-platform').value,
+      description: document.getElementById('np-desc').value,
+    }),
+  });
+  closeModal();
+  state.projects = null;
+  renderPage();
+}
+
+async function viewProject(id) {
+  state.currentProject = await api(`/projects/${id}`);
+  state.page = 'project-detail';
+  renderPage();
+}
+
+// ===================================================================
+// PROJECT DETAIL
+// ===================================================================
+function renderProjectDetail(area, title, actions) {
+  const p = state.currentProject;
+  if (!p) { navigate('projects'); return; }
+
+  title.textContent = p.name;
+  actions.innerHTML = `
+    <button class="btn btn-sm" onclick="navigate('projects')">&#8592; All Projects</button>
+    <button class="btn btn-sm" onclick="editProjectModal()">Edit</button>
+  `;
+
+  const steps = p.steps || [];
+  const total = steps.length;
+  const done = steps.filter(s => s.status === 'completed').length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  let stepsHtml = steps.map(s => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:var(--radius);margin-bottom:6px;">
+      <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;
+        background:${s.status==='completed'?'var(--success)':s.status==='in_progress'?'var(--gold)':'var(--border)'};
+        color:${s.status==='completed'||s.status==='in_progress'?'#1a1a1e':'var(--text-dim)'};">${s.status==='completed'?'&#10003;':s.step_order}</div>
+      <div style="flex:1;">
+        <div style="font-size:0.88rem;color:${s.status==='completed'?'var(--success)':'var(--text-bright)'};">${s.step_name}</div>
+        ${s.notes ? `<div style="font-size:0.75rem;color:var(--text-dim);margin-top:2px;">${escapeHtml(s.notes)}</div>` : ''}
+      </div>
+      <select class="status-select" onchange="updateStep(${p.id},${s.id},this.value)">
+        <option value="pending" ${s.status==='pending'?'selected':''}>Pending</option>
+        <option value="in_progress" ${s.status==='in_progress'?'selected':''}>In Progress</option>
+        <option value="completed" ${s.status==='completed'?'selected':''}>Done</option>
+        <option value="skipped" ${s.status==='skipped'?'selected':''}>Skip</option>
+      </select>
+      <button class="btn btn-sm" onclick="addStepNotes(${p.id},${s.id},'${escapeHtml(s.notes||'')}')">Notes</button>
+    </div>
+  `).join('');
+
+  let assetsHtml = '';
+  if (p.assets && p.assets.length) {
+    assetsHtml = p.assets.map(a => `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border-radius:var(--radius);margin-bottom:4px;">
+        <span class="badge badge-${a.asset_type==='image'?'blue':a.asset_type==='video'?'gold':'green'}">${a.asset_type}</span>
+        <span style="flex:1;font-size:0.85rem;">${escapeHtml(a.name)}</span>
+        <span style="font-size:0.75rem;color:var(--text-dim);">${a.tool_used || ''}</span>
+        ${starsHtml(a.rating, `rateAsset.bind(null,${a.id})`)}
+      </div>
+    `).join('');
+  } else {
+    assetsHtml = '<div style="color:var(--text-dim);font-size:0.85rem;padding:12px;">No assets yet. Generate images and videos to track them here.</div>';
+  }
+
+  area.innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <span class="project-status status-${p.status}">${statusLabel(p.status)}</span>
+          ${p.niche ? `<span style="margin-left:8px;font-size:0.78rem;color:var(--text-dim);">${p.niche} &middot; ${p.platform}</span>` : ''}
+        </div>
+        <div style="font-size:0.85rem;color:var(--gold);font-weight:600;">${pct}% Complete</div>
+      </div>
+      ${p.description ? `<div style="font-size:0.88rem;margin-bottom:12px;">${escapeHtml(p.description)}</div>` : ''}
+      <div class="progress-bar" style="height:8px;margin-bottom:4px;"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+
+    <div class="grid grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Workflow Pipeline</div>
+            <span style="font-size:0.78rem;color:var(--text-dim);">${done}/${total} steps</span>
+          </div>
+          ${stepsHtml}
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Project Details</div>
+          </div>
+          <div style="font-size:0.85rem;">
+            ${p.persona_name ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Persona:</strong> ${escapeHtml(p.persona_name)}</div>` : ''}
+            ${p.persona_bio ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Bio:</strong> ${escapeHtml(p.persona_bio)}</div>` : ''}
+            ${p.character_prompt ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Character Prompt:</strong><div class="prompt-output" style="margin-top:4px;min-height:auto;">${escapeHtml(p.character_prompt)}</div></div>` : ''}
+            ${p.voice_style ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Voice:</strong> ${escapeHtml(p.voice_style)}</div>` : ''}
+            ${p.monetization_plan ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Monetization:</strong> ${escapeHtml(p.monetization_plan)}</div>` : ''}
+            ${p.notes ? `<div style="margin-bottom:8px;"><strong style="color:var(--gold);">Notes:</strong> ${escapeHtml(p.notes)}</div>` : ''}
+            ${!p.persona_name && !p.character_prompt ? '<div style="color:var(--text-dim);">Click Edit to add persona, character prompt, voice details, and more.</div>' : ''}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Assets</div>
+            <button class="btn btn-sm" onclick="addAssetModal(${p.id})">+ Add Asset</button>
+          </div>
+          ${assetsHtml}
+        </div>
+      </div>
     </div>
   `;
 }
 
-// ===== KNOWLEDGE LIBRARY =====
+async function updateStep(pid, sid, status) {
+  await api(`/projects/${pid}/steps/${sid}`, { method: 'PUT', body: JSON.stringify({ status }) });
+  state.currentProject = await api(`/projects/${pid}`);
+  renderPage();
+}
+
+function addStepNotes(pid, sid, existing) {
+  const notes = prompt('Step notes:', existing);
+  if (notes !== null) {
+    api(`/projects/${pid}/steps/${sid}`, { method: 'PUT', body: JSON.stringify({ notes }) })
+      .then(() => viewProject(pid));
+  }
+}
+
+function editProjectModal() {
+  const p = state.currentProject;
+  openModal(`
+    <div class="modal-title">Edit Project: ${escapeHtml(p.name)}</div>
+    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="ep-name" value="${escapeHtml(p.name)}"></div>
+    <div class="grid grid-2">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-select" id="ep-status">
+          <option value="planning" ${p.status==='planning'?'selected':''}>Planning</option>
+          <option value="character_design" ${p.status==='character_design'?'selected':''}>Character Design</option>
+          <option value="content_creation" ${p.status==='content_creation'?'selected':''}>Content Creation</option>
+          <option value="launched" ${p.status==='launched'?'selected':''}>Launched</option>
+          <option value="paused" ${p.status==='paused'?'selected':''}>Paused</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Platform</label>
+        <select class="form-select" id="ep-platform">
+          <option value="instagram" ${p.platform==='instagram'?'selected':''}>Instagram</option>
+          <option value="tiktok" ${p.platform==='tiktok'?'selected':''}>TikTok</option>
+          <option value="youtube" ${p.platform==='youtube'?'selected':''}>YouTube</option>
+          <option value="x" ${p.platform==='x'?'selected':''}>X / Twitter</option>
+          <option value="multi" ${p.platform==='multi'?'selected':''}>Multi-platform</option>
+        </select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Persona Name</label><input class="form-input" id="ep-persona" value="${escapeHtml(p.persona_name||'')}"></div>
+    <div class="form-group"><label class="form-label">Persona Bio</label><textarea class="form-textarea" id="ep-bio" rows="2">${escapeHtml(p.persona_bio||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Character Prompt (for image generation)</label><textarea class="form-textarea" id="ep-char" rows="3">${escapeHtml(p.character_prompt||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Voice Style</label><input class="form-input" id="ep-voice" value="${escapeHtml(p.voice_style||'')}"></div>
+    <div class="form-group"><label class="form-label">Monetization Plan</label><input class="form-input" id="ep-money" value="${escapeHtml(p.monetization_plan||'')}"></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="ep-notes" rows="2">${escapeHtml(p.notes||'')}</textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn btn-danger" onclick="deleteProject(${p.id})">Archive</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveProject(${p.id})">Save</button>
+    </div>
+  `);
+}
+
+async function saveProject(id) {
+  await api(`/projects/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      name: document.getElementById('ep-name').value,
+      status: document.getElementById('ep-status').value,
+      platform: document.getElementById('ep-platform').value,
+      persona_name: document.getElementById('ep-persona').value,
+      persona_bio: document.getElementById('ep-bio').value,
+      character_prompt: document.getElementById('ep-char').value,
+      voice_style: document.getElementById('ep-voice').value,
+      monetization_plan: document.getElementById('ep-money').value,
+      notes: document.getElementById('ep-notes').value,
+    }),
+  });
+  closeModal();
+  viewProject(id);
+}
+
+async function deleteProject(id) {
+  if (!confirm('Archive this project?')) return;
+  await api(`/projects/${id}`, { method: 'DELETE' });
+  closeModal();
+  navigate('projects');
+}
+
+function addAssetModal(pid) {
+  openModal(`
+    <div class="modal-title">Log Asset</div>
+    <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="aa-name" placeholder="e.g., Character base image v1"></div>
+    <div class="grid grid-2">
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="form-select" id="aa-type">
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+          <option value="audio">Audio</option>
+          <option value="document">Document</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Tool Used</label><input class="form-input" id="aa-tool" placeholder="e.g., Grok Image Gen"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Prompt Used</label><textarea class="form-textarea" id="aa-prompt" rows="3"></textarea></div>
+    <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="aa-notes"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveAsset(${pid})">Save</button>
+    </div>
+  `);
+}
+
+async function saveAsset(pid) {
+  await api(`/projects/${pid}/assets`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name: document.getElementById('aa-name').value,
+      asset_type: document.getElementById('aa-type').value,
+      tool_used: document.getElementById('aa-tool').value,
+      prompt_used: document.getElementById('aa-prompt').value,
+      notes: document.getElementById('aa-notes').value,
+    }),
+  });
+  closeModal();
+  viewProject(pid);
+}
+
+// ===================================================================
+// METHOD TRACKER
+// ===================================================================
+async function renderTracker(area, title, actions) {
+  title.textContent = 'Method Tracker';
+  actions.innerHTML = '<button class="btn btn-sm" onclick="showAddMethodModal()">+ Add Method</button>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
+
+  state.methodTracker = await api('/methods/tracker');
+
+  // Group by category
+  const grouped = {};
+  for (const m of state.methodTracker) {
+    const cat = m.category || 'uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(m);
+  }
+
+  // Stats
+  const total = state.methodTracker.length;
+  const tried = state.methodTracker.filter(m => ['tried','works','doesnt_work'].includes(m.status)).length;
+  const working = state.methodTracker.filter(m => m.status === 'works').length;
+
+  let html = `
+    <div class="grid grid-3" style="margin-bottom:20px;">
+      <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total Methods</div></div>
+      <div class="stat-card"><div class="stat-value">${tried}</div><div class="stat-label">Tried</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--success)">${working}</div><div class="stat-label">Working</div></div>
+    </div>
+  `;
+
+  const catNames = {
+    'getting-started': 'Getting Started', 'character-creation': 'Character Creation',
+    'video-generation': 'Video Generation', 'voice-audio': 'Voice & Audio',
+    'monetization': 'Monetization', 'optimization': 'Optimization',
+    'advanced': 'Advanced', 'uncategorized': 'Other',
+  };
+
+  for (const [cat, methods] of Object.entries(grouped)) {
+    html += `
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-title">${catNames[cat] || cat}</div>
+          <span class="badge badge-gold">${methods.length}</span>
+        </div>
+        <div class="method-row method-header">
+          <span>Method</span><span>Status</span><span>Difficulty</span><span>Tools</span><span>Rating</span>
+        </div>
+        ${methods.map(m => `
+          <div class="method-row">
+            <div>
+              <div style="font-weight:600;color:var(--text-bright);">${escapeHtml(m.method_name)}</div>
+              <div style="font-size:0.72rem;color:var(--text-dim);">${escapeHtml(m.source)}</div>
+              ${m.my_notes ? `<div style="font-size:0.75rem;color:var(--text-dim);margin-top:2px;">&#128221; ${escapeHtml(m.my_notes).slice(0,80)}</div>` : ''}
+            </div>
+            <select class="status-select" onchange="updateMethod(${m.id},'status',this.value)">
+              <option value="not_started" ${m.status==='not_started'?'selected':''}>Not Started</option>
+              <option value="learning" ${m.status==='learning'?'selected':''}>Learning</option>
+              <option value="tried" ${m.status==='tried'?'selected':''}>Tried</option>
+              <option value="works" ${m.status==='works'?'selected':''}>Works!</option>
+              <option value="doesnt_work" ${m.status==='doesnt_work'?'selected':''}>Doesn't Work</option>
+              <option value="needs_revisit" ${m.status==='needs_revisit'?'selected':''}>Revisit</option>
+            </select>
+            <span class="badge badge-${m.difficulty==='easy'?'green':m.difficulty==='hard'?'red':'yellow'}">${m.difficulty}</span>
+            <span style="font-size:0.78rem;color:var(--text-dim);">${escapeHtml(m.tools_needed).slice(0,30)}</span>
+            <span style="cursor:pointer;" onclick="showMethodDetail(${m.id})">
+              ${m.rating ? '&#9733;'.repeat(m.rating) : '<span style="color:var(--text-dim);font-size:0.75rem;">Rate</span>'}
+            </span>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+
+  area.innerHTML = html;
+}
+
+async function updateMethod(id, field, value) {
+  await api(`/methods/tracker/${id}`, { method: 'PUT', body: JSON.stringify({ [field]: value }) });
+}
+
+function showMethodDetail(id) {
+  const m = state.methodTracker.find(x => x.id === id);
+  if (!m) return;
+  openModal(`
+    <div class="modal-title">${escapeHtml(m.method_name)}</div>
+    <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:16px;">
+      ${m.source ? `Source: ${escapeHtml(m.source)}` : ''} &middot; Cost: ${escapeHtml(m.cost_estimate||'Unknown')} &middot; Tools: ${escapeHtml(m.tools_needed||'N/A')}
+    </div>
+    <div class="form-group"><label class="form-label">My Notes</label><textarea class="form-textarea" id="md-notes" rows="3">${escapeHtml(m.my_notes||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Results / What Happened</label><textarea class="form-textarea" id="md-results" rows="3">${escapeHtml(m.results||'')}</textarea></div>
+    <div class="form-group"><label class="form-label">Rating (1-5)</label>
+      <select class="form-select" id="md-rating">
+        <option value="">Not rated</option>
+        ${[1,2,3,4,5].map(i => `<option value="${i}" ${m.rating===i?'selected':''}>${i} star${i>1?'s':''}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveMethodDetail(${id})">Save</button>
+    </div>
+  `);
+}
+
+async function saveMethodDetail(id) {
+  const rating = document.getElementById('md-rating').value;
+  await api(`/methods/tracker/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      my_notes: document.getElementById('md-notes').value,
+      results: document.getElementById('md-results').value,
+      rating: rating ? parseInt(rating) : null,
+    }),
+  });
+  closeModal();
+  state.methodTracker = null;
+  renderPage();
+}
+
+function showAddMethodModal() {
+  openModal(`
+    <div class="modal-title">Add Custom Method</div>
+    <div class="form-group"><label class="form-label">Method Name *</label><input class="form-input" id="am-name"></div>
+    <div class="grid grid-2">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-select" id="am-cat">
+          <option value="character-creation">Character Creation</option>
+          <option value="video-generation">Video Generation</option>
+          <option value="voice-audio">Voice & Audio</option>
+          <option value="monetization">Monetization</option>
+          <option value="optimization">Optimization</option>
+          <option value="advanced">Advanced</option>
+          <option value="getting-started">Getting Started</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Difficulty</label>
+        <select class="form-select" id="am-diff"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Source</label><input class="form-input" id="am-source" placeholder="e.g., Telegram post, PDF name"></div>
+    <div class="form-group"><label class="form-label">Tools Needed</label><input class="form-input" id="am-tools"></div>
+    <div class="form-group"><label class="form-label">Estimated Cost</label><input class="form-input" id="am-cost"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="addMethod()">Add</button>
+    </div>
+  `);
+}
+
+async function addMethod() {
+  const name = document.getElementById('am-name').value.trim();
+  if (!name) { alert('Name required'); return; }
+  await api('/methods/tracker', {
+    method: 'POST',
+    body: JSON.stringify({
+      method_name: name,
+      category: document.getElementById('am-cat').value,
+      difficulty: document.getElementById('am-diff').value,
+      source: document.getElementById('am-source').value,
+      tools_needed: document.getElementById('am-tools').value,
+      cost_estimate: document.getElementById('am-cost').value,
+    }),
+  });
+  closeModal();
+  state.methodTracker = null;
+  renderPage();
+}
+
+// ===================================================================
+// PROMPT LIBRARY
+// ===================================================================
+async function renderPromptLib(area, title, actions) {
+  title.textContent = 'Prompt Library';
+  actions.innerHTML = '<button class="btn btn-gold btn-sm" onclick="showNewPromptModal()">+ Save Prompt</button>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
+
+  state.promptLib = await api('/prompts');
+
+  if (!state.promptLib.length) {
+    area.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">&#10002;</div>
+        <h3>No saved prompts yet</h3>
+        <p style="margin-bottom:16px;">Save prompts that work so you can reuse them. Track what produces the best results.</p>
+        <button class="btn btn-gold" onclick="showNewPromptModal()">+ Save First Prompt</button>
+      </div>`;
+    return;
+  }
+
+  // Group by category
+  const cats = {};
+  for (const p of state.promptLib) {
+    const c = p.category || 'general';
+    if (!cats[c]) cats[c] = [];
+    cats[c].push(p);
+  }
+
+  let html = '';
+  const catNames = { character: 'Character', video: 'Video', voice: 'Voice', image: 'Image', social: 'Social', general: 'General' };
+
+  for (const [cat, prompts] of Object.entries(cats)) {
+    html += `<div style="margin-bottom:8px;font-size:0.82rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;">${catNames[cat]||cat}</div>`;
+    for (const p of prompts) {
+      html += `
+        <div class="card" style="padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+            <div>
+              <span style="font-weight:600;color:var(--text-bright);">${escapeHtml(p.name)}</span>
+              ${p.is_favorite ? '<span style="color:var(--gold);margin-left:6px;">&#9733;</span>' : ''}
+              ${p.tool ? `<span class="badge badge-blue" style="margin-left:6px;">${escapeHtml(p.tool)}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-sm" onclick="copyPrompt(${p.id})">Copy</button>
+              <button class="btn btn-sm" onclick="toggleFav(${p.id},${p.is_favorite?0:1})">${p.is_favorite?'&#9733;':'&#9734;'}</button>
+              <button class="btn btn-sm btn-danger" onclick="deletePrompt(${p.id})">&#10005;</button>
+            </div>
+          </div>
+          <div class="prompt-output" id="prompt-${p.id}" style="min-height:auto;max-height:120px;overflow:hidden;">${escapeHtml(p.prompt_text)}</div>
+          ${p.notes ? `<div style="font-size:0.75rem;color:var(--text-dim);margin-top:6px;">${escapeHtml(p.notes)}</div>` : ''}
+          ${p.result_quality ? `<div style="margin-top:4px;">${'&#9733;'.repeat(p.result_quality)}<span style="font-size:0.72rem;color:var(--text-dim);margin-left:4px;">quality</span></div>` : ''}
+        </div>`;
+    }
+  }
+  area.innerHTML = html;
+}
+
+function showNewPromptModal() {
+  openModal(`
+    <div class="modal-title">Save Prompt</div>
+    <div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="sp-name" placeholder="e.g., Fitness character base prompt"></div>
+    <div class="grid grid-2">
+      <div class="form-group"><label class="form-label">Category</label>
+        <select class="form-select" id="sp-cat">
+          <option value="character">Character</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+          <option value="voice">Voice</option>
+          <option value="social">Social</option>
+          <option value="general">General</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Tool</label><input class="form-input" id="sp-tool" placeholder="e.g., NanoBanana, Sora 2"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Prompt Text *</label><textarea class="form-textarea" id="sp-text" rows="6"></textarea></div>
+    <div class="form-group"><label class="form-label">Notes / Results</label><input class="form-input" id="sp-notes"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveNewPrompt()">Save</button>
+    </div>
+  `);
+}
+
+async function saveNewPrompt() {
+  const name = document.getElementById('sp-name').value.trim();
+  const text = document.getElementById('sp-text').value.trim();
+  if (!name || !text) { alert('Name and prompt text required'); return; }
+  await api('/prompts', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      category: document.getElementById('sp-cat').value,
+      tool: document.getElementById('sp-tool').value,
+      prompt_text: text,
+      notes: document.getElementById('sp-notes').value,
+    }),
+  });
+  closeModal();
+  state.promptLib = null;
+  renderPage();
+}
+
+function copyPrompt(id) {
+  const el = document.getElementById(`prompt-${id}`);
+  navigator.clipboard.writeText(el.textContent);
+  const btn = event.target;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 1500);
+}
+
+async function toggleFav(id, val) {
+  await api(`/prompts/${id}`, { method: 'PUT', body: JSON.stringify({ is_favorite: val }) });
+  state.promptLib = null;
+  renderPage();
+}
+
+async function deletePrompt(id) {
+  if (!confirm('Delete this prompt?')) return;
+  await api(`/prompts/${id}`, { method: 'DELETE' });
+  state.promptLib = null;
+  renderPage();
+}
+
+// ===================================================================
+// KNOWLEDGE LIBRARY
+// ===================================================================
 async function renderKnowledge(area, title, actions) {
   title.textContent = 'Knowledge Library';
   actions.innerHTML = '<button class="btn btn-sm" onclick="navigate(\'methods\')">Methods Summary</button>';
 
-  if (state.readerGuide) {
-    renderGuideReader(area);
-    return;
-  }
+  if (state.readerGuide) { renderGuideReader(area); return; }
 
-  area.innerHTML = '<div class="spinner"></div>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
   if (!state.knowledge) state.knowledge = await api('/knowledge');
-
   const cats = state.knowledge;
 
-  let searchHtml = `<div class="search-box"><span class="search-icon">&#128269;</span><input type="text" placeholder="Search guides..." id="guideSearch" value="${state.searchQuery}" oninput="filterGuides(this.value)"></div>`;
+  let html = `<div class="search-box"><span class="search-icon">&#128269;</span><input type="text" placeholder="Search guides..." id="guideSearch" value="${state.searchQuery}" oninput="filterGuides(this.value)"></div>`;
+  const iconMap = {rocket:'&#128640;',user:'&#128100;',video:'&#127909;',microphone:'&#127908;','dollar-sign':'&#128176;',settings:'&#9881;',zap:'&#9889;'};
 
-  let html = searchHtml;
   for (const [key, cat] of Object.entries(cats)) {
     if (!cat.guides || cat.guides.length === 0) continue;
-    const iconMap = {rocket:'&#128640;',user:'&#128100;',video:'&#127909;',microphone:'&#127908;','dollar-sign':'&#128176;',settings:'&#9881;',zap:'&#9889;'};
     html += `
       <div class="category-card" data-category="${key}">
         <div class="category-header" onclick="toggleCategory('${key}')">
           <div class="cat-icon">${iconMap[cat.icon]||'&#9733;'}</div>
-          <div>
-            <h3>${cat.name}</h3>
-            <div style="font-size:0.75rem;color:var(--text-dim);">${cat.description}</div>
-          </div>
+          <div><h3>${cat.name}</h3><div style="font-size:0.75rem;color:var(--text-dim);">${cat.description}</div></div>
           <span class="count">${cat.guides.length}</span>
         </div>
         <div class="category-guides" id="cat-${key}" style="display:none;">
-          ${cat.guides.map((g, i) => `
-            <div class="guide-item" onclick="openGuide('${key}', ${i})">
+          ${cat.guides.map((g,i) => `
+            <div class="guide-item" onclick="openGuide('${key}',${i})">
               <span style="color:var(--text-dim);font-size:0.8rem;">&#9654;</span>
               <span class="guide-title">${g.title}</span>
-            </div>
-          `).join('')}
+            </div>`).join('')}
         </div>
-      </div>
-    `;
+      </div>`;
   }
   area.innerHTML = html;
 }
@@ -821,16 +1468,11 @@ function toggleCategory(key) {
   const el = document.getElementById(`cat-${key}`);
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
-
-function openGuide(catKey, idx) {
-  state.readerGuide = { catKey, idx };
-  renderPage();
-}
+function openGuide(catKey, idx) { state.readerGuide = { catKey, idx }; renderPage(); }
 
 function renderGuideReader(area) {
   const { catKey, idx } = state.readerGuide;
   const guide = state.knowledge[catKey].guides[idx];
-
   area.innerHTML = `
     <div class="reader-panel active">
       <div class="reader-header">
@@ -841,8 +1483,7 @@ function renderGuideReader(area) {
         </div>
       </div>
       <div class="reader-body">${md(guide.content)}</div>
-    </div>
-  `;
+    </div>`;
 }
 
 function filterGuides(query) {
@@ -851,743 +1492,117 @@ function filterGuides(query) {
   document.querySelectorAll('.category-card').forEach(card => {
     let hasMatch = false;
     card.querySelectorAll('.guide-item').forEach(item => {
-      const title = item.querySelector('.guide-title').textContent.toLowerCase();
-      const match = !q || title.includes(q);
+      const match = !q || item.querySelector('.guide-title').textContent.toLowerCase().includes(q);
       item.style.display = match ? '' : 'none';
       if (match) hasMatch = true;
     });
     card.style.display = hasMatch ? '' : 'none';
-    if (q && hasMatch) {
-      card.querySelector('.category-guides').style.display = 'block';
-    }
+    if (q && hasMatch) card.querySelector('.category-guides').style.display = 'block';
   });
 }
 
-// ===== METHODS SUMMARY =====
+// ===================================================================
+// METHODS SUMMARY
+// ===================================================================
 async function renderMethods(area, title, actions) {
   title.textContent = 'Methods Summary';
-  area.innerHTML = '<div class="spinner"></div>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
   if (!state.methods) state.methods = await api('/methods');
   area.innerHTML = `<div class="reader-body">${md(state.methods.content)}</div>`;
 }
 
-// ===== TELEGRAM FEED =====
+// ===================================================================
+// TELEGRAM FEED
+// ===================================================================
 async function renderFeed(area, title, actions) {
   title.textContent = 'Telegram Feed';
-  actions.innerHTML = '<button class="btn btn-gold btn-sm" id="syncBtn" onclick="syncPosts()">&#8635; Sync Now</button>';
-  area.innerHTML = '<div class="spinner"></div>';
+  actions.innerHTML = '<button class="btn btn-gold btn-sm" onclick="syncPosts()">&#8635; Sync Now</button>';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
 
   if (!state.posts) state.posts = await api('/posts');
-
   const posts = state.posts.posts || [];
+
   let html = `<div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:16px;">
     ${posts.length} posts captured | Last sync: ${state.posts.last_sync ? new Date(state.posts.last_sync).toLocaleString() : 'Never'}
   </div>`;
 
-  if (posts.length === 0) {
-    html += '<div class="card" style="text-align:center;padding:40px;"><div style="font-size:1.2rem;margin-bottom:8px;">No posts yet</div><div style="color:var(--text-dim);">Click "Sync Now" to fetch latest posts from Miko\'s Lab</div></div>';
+  if (!posts.length) {
+    html += '<div class="empty-state"><div class="empty-icon">&#9993;</div><h3>No posts yet</h3><p>Click "Sync Now" to fetch latest posts from Miko\'s Lab</p></div>';
   } else {
     for (const post of posts.slice().reverse()) {
       html += `
         <div class="post-card">
-          <div class="post-date">${post.date ? new Date(post.date).toLocaleString() : 'Unknown date'} &middot; Post #${post.id || '?'}</div>
+          <div class="post-date">${post.date ? new Date(post.date).toLocaleString() : 'Unknown'} &middot; Post #${post.id || '?'}</div>
           <div class="post-text">${escapeHtml(post.text || '').slice(0, 800)}</div>
-          ${post.links && post.links.length ? `<div class="post-links">${post.links.map(l => `<a class="post-link" href="${l.url}" target="_blank">&#128279; ${l.text || l.url}</a>`).join('')}</div>` : ''}
-          ${post.photos && post.photos.length ? `<div class="post-photos">${post.photos.map(p => `<img src="${p}" alt="photo" loading="lazy">`).join('')}</div>` : ''}
-        </div>
-      `;
+          ${post.links?.length ? `<div class="post-links">${post.links.map(l => `<a class="post-link" href="${l.url}" target="_blank">&#128279; ${l.text || l.url}</a>`).join('')}</div>` : ''}
+        </div>`;
     }
   }
   area.innerHTML = html;
 }
 
-async function syncPosts() {
-  const btn = document.getElementById('syncBtn');
-  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Syncing...';
-  btn.disabled = true;
+// ===================================================================
+// PDF LIBRARY
+// ===================================================================
+async function renderPdfs(area, title, actions) {
+  title.textContent = 'PDF Library';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
+  const pdfs = await api('/pdfs');
 
-  try {
-    const result = await api('/sync', { method: 'POST' });
-    if (result.success) {
-      state.posts = null;
-      state.overview = null;
-      renderPage();
-    } else {
-      alert('Sync failed: ' + (result.error || 'Unknown error'));
-    }
-  } catch (e) {
-    alert('Sync error: ' + e.message);
-  }
-  btn.innerHTML = '&#8635; Sync Now';
-  btn.disabled = false;
-}
-
-// ===== WORKSHOP =====
-const workshopSteps = [
-  { name: 'Niche Selection', icon: '&#127919;' },
-  { name: 'Persona Design', icon: '&#128100;' },
-  { name: 'Character Creation', icon: '&#127912;' },
-  { name: 'Starting Frames', icon: '&#128248;' },
-  { name: 'Video Generation', icon: '&#127909;' },
-  { name: 'Voice & Audio', icon: '&#127908;' },
-  { name: 'Post & Launch', icon: '&#128640;' },
-];
-
-function renderWorkshop(area, title, actions) {
-  title.textContent = 'AI Influencer Workshop';
-  const step = state.workshopStep;
-
-  let stepsHtml = workshopSteps.map((s, i) => `
-    <div class="workshop-step ${i === step ? 'active' : ''} ${i < step ? 'completed' : ''}" onclick="state.workshopStep=${i};renderPage();">
-      <span class="step-num">${i < step ? '&#10003;' : i + 1}</span>
-      ${s.name}
-    </div>
-  `).join('');
-
-  let contentHtml = '';
-  switch (step) {
-    case 0: contentHtml = workshopNiche(); break;
-    case 1: contentHtml = workshopPersona(); break;
-    case 2: contentHtml = workshopCharacter(); break;
-    case 3: contentHtml = workshopFrames(); break;
-    case 4: contentHtml = workshopVideo(); break;
-    case 5: contentHtml = workshopVoice(); break;
-    case 6: contentHtml = workshopLaunch(); break;
+  if (!pdfs.length) {
+    area.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128196;</div><h3>No PDFs</h3></div>';
+    return;
   }
 
-  area.innerHTML = `
-    <div class="workshop-steps">${stepsHtml}</div>
-    <div class="step-content active">${contentHtml}</div>
-    <div style="display:flex;justify-content:space-between;margin-top:24px;">
-      <button class="btn" onclick="prevStep()" ${step === 0 ? 'disabled style="opacity:0.4"' : ''}>&#8592; Previous</button>
-      <button class="btn btn-gold" onclick="nextStep()" ${step === workshopSteps.length - 1 ? 'disabled style="opacity:0.4"' : ''}>Next &#8594;</button>
-    </div>
-  `;
-}
-
-function prevStep() { if (state.workshopStep > 0) { state.workshopStep--; renderPage(); } }
-function nextStep() { if (state.workshopStep < workshopSteps.length - 1) { state.workshopStep++; renderPage(); } }
-
-function workshopNiche() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 1: Choose Your Niche</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Your niche determines everything. Research what's working, find viral formats, and pick a niche where AI content can thrive.
-        <strong style="color:var(--gold);">Miko's advice:</strong> Look through subreddits, TikTok, and Instagram for personas people are obsessed with.
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Target Niche</label>
-        <select class="form-select" onchange="state.workshopData.niche=this.value">
-          <option value="">Select a niche...</option>
-          <option value="fitness">Fitness & Health</option>
-          <option value="luxury">Luxury Lifestyle</option>
-          <option value="tech">Tech & AI</option>
-          <option value="beauty">Beauty & Skincare</option>
-          <option value="finance">Finance & Crypto</option>
-          <option value="travel">Travel</option>
-          <option value="food">Food & Cooking</option>
-          <option value="motivation">Motivation & Self-Improvement</option>
-          <option value="comedy">Comedy & Entertainment</option>
-          <option value="custom">Custom Niche</option>
-        </select>
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Research Checklist</div>
-      <div class="checklist-item"><input type="checkbox" id="c1"><label for="c1">Research niche subreddits for viral personas</label></div>
-      <div class="checklist-item"><input type="checkbox" id="c2"><label for="c2">Create burner TikTok — search "[niche] slideshows"</label></div>
-      <div class="checklist-item"><input type="checkbox" id="c3"><label for="c3">Study viral formats on Instagram Reels</label></div>
-      <div class="checklist-item"><input type="checkbox" id="c4"><label for="c4">Check what content gets engagement in comments</label></div>
-      <div class="checklist-item"><input type="checkbox" id="c5"><label for="c5">Identify 3-5 winning formats to replicate</label></div>
-
-      <div style="margin-top:16px;padding:14px;background:var(--bg);border-radius:var(--radius);border-left:3px solid var(--gold);">
-        <div style="font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:4px;">Pro Tip from Miko</div>
-        <div style="font-size:0.82rem;color:var(--text-dim);">Play to the extremes of AI — things that aren't normal or are pattern interrupts. A supermodel dating a really old man. A cool granny with unexpected personality. The unusual draws attention.</div>
-      </div>
-    </div>
-  `;
-}
-
-function workshopPersona() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 2: Design Your Persona</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Your persona is the personality behind your AI influencer. Find a celebrity/influencer persona that goes viral, analyze it, and create your own AI version with a unique twist.
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Persona Type</label>
-        <select class="form-select" onchange="state.workshopData.persona=this.value">
-          <option value="">Select a persona type...</option>
-          <option value="celebrity-remake">Celebrity Persona Remake</option>
-          <option value="gold-digger">Gold Digger / Luxury Flex</option>
-          <option value="alpha">Alpha Mindset / Business</option>
-          <option value="cool-granny">Cool Granny / Unexpected</option>
-          <option value="fitness-guru">Fitness Guru / Transformation</option>
-          <option value="tech-visionary">Tech Visionary / AI Expert</option>
-          <option value="lifestyle">Lifestyle / Day-in-the-Life</option>
-          <option value="custom">Custom Persona</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Persona Description (detailed = better results)</label>
-        <textarea class="form-textarea" placeholder="Describe your AI influencer's personality, style, content focus, what makes them unique..." oninput="state.workshopData.character_desc=this.value">${state.workshopData.character_desc}</textarea>
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin:16px 0 10px;">Winning Persona Examples</div>
-      <div class="grid grid-2" style="gap:10px;">
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Kim K Remake</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Luxury lifestyle, drama, fashion — similar persona but AI-unique</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Gold Digger</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Rich boyfriend, expensive gifts, luxury flex content</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Alpha Mindset</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Controversial takes, business success, motivational</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Cool Granny</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Wisdom + humor, unexpected personality, draws attention</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function workshopCharacter() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 3: Create Your Character</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Character consistency is the difference between amateur and pro. Use one of these three methods to create your AI character.
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" onclick="showCharTab(0,this)">NanoBanana Pro</button>
-        <button class="tab" onclick="showCharTab(1,this)">Sora 2 Cameos</button>
-        <button class="tab" onclick="showCharTab(2,this)">Ideogram Fill</button>
-      </div>
-
-      <div id="charTab0" class="step-content active">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <h3 style="color:var(--gold);font-size:0.95rem;margin-bottom:8px;">Option A: NanoBanana Pro (Recommended)</h3>
-          <ol style="font-size:0.85rem;line-height:1.7;margin-left:20px;">
-            <li>Create a detailed prompt describing your character</li>
-            <li>Generate the base image in NanoBanana</li>
-            <li>Use the <strong>same prompt + style</strong> for ALL future images</li>
-            <li>Character stays consistent across all content</li>
-            <li>Use JSON method — let Gemini/ChatGPT turn ideas into JSON prompts</li>
-          </ol>
-          <div style="margin-top:12px;padding:10px;background:var(--bg-card);border-radius:var(--radius);border-left:3px solid var(--gold);">
-            <div style="font-size:0.78rem;color:var(--gold);font-weight:600;">Tip: More detail = better output</div>
-            <div style="font-size:0.78rem;color:var(--text-dim);">Specify lighting, composition, colors. Lock in character features explicitly.</div>
+  let html = `<div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:16px;">${pdfs.length} PDFs from Miko's Lab (${pdfs.reduce((a,p)=>a+p.size_mb,0).toFixed(1)} MB total)</div>`;
+  html += '<div class="grid grid-2">';
+  for (const p of pdfs) {
+    html += `
+      <div class="card" style="padding:14px;cursor:pointer;" onclick="window.open('/api/pdfs/${encodeURIComponent(p.filename)}','_blank')">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:1.5rem;">&#128196;</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;color:var(--text-bright);font-size:0.88rem;">${escapeHtml(p.name)}</div>
+            <div style="font-size:0.72rem;color:var(--text-dim);">${p.size_mb} MB</div>
           </div>
+          <span style="color:var(--gold);font-size:0.82rem;">Open &#8599;</span>
         </div>
-      </div>
-
-      <div id="charTab1" class="step-content">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <h3 style="color:var(--gold);font-size:0.95rem;margin-bottom:8px;">Option B: Sora 2 Character Cameos</h3>
-          <ol style="font-size:0.85rem;line-height:1.7;margin-left:20px;">
-            <li>Create your character once in Sora 2</li>
-            <li>Save as a Character Cameo</li>
-            <li>Reuse in hundreds of videos</li>
-            <li>Automatically maintains consistency</li>
-          </ol>
-          <div style="margin-top:8px;font-size:0.82rem;color:var(--text-dim);">Requires ChatGPT Pro ($200/mo) for Sora 2 Pro access</div>
-        </div>
-      </div>
-
-      <div id="charTab2" class="step-content">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <h3 style="color:var(--gold);font-size:0.95rem;margin-bottom:8px;">Option C: Ideogram Character Fill</h3>
-          <ol style="font-size:0.85rem;line-height:1.7;margin-left:20px;">
-            <li>Generate a base image of a person with desired features</li>
-            <li>Use Ideogram's character fill feature</li>
-            <li>Swap the face to your character</li>
-            <li>Works for different poses and situations</li>
-          </ol>
-          <div style="margin-top:8px;font-size:0.82rem;color:var(--text-dim);">Most flexible for different poses. Free tier available.</div>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-top:16px;">
-        <label class="form-label">Character Prompt (save this — you'll reuse it)</label>
-        <textarea class="form-textarea" placeholder="Detailed description of your AI character: age, ethnicity, hair, style, clothing, setting, mood, lighting..." style="min-height:120px;" id="charPrompt"></textarea>
-      </div>
-      <button class="btn btn-gold" onclick="copyText(document.getElementById('charPrompt').value)">Copy Prompt</button>
-    </div>
-  `;
-}
-
-function showCharTab(idx, btn) {
-  [0,1,2].forEach(i => {
-    document.getElementById(`charTab${i}`).classList.toggle('active', i === idx);
-  });
-  btn.closest('.tabs').querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i === idx));
-}
-
-function workshopFrames() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 4: Generate Starting Frames</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        <strong style="color:var(--gold);">Critical insight from Miko:</strong> 90% of projects should use Image-to-Video (I2V), not Text-to-Video. I2V gives 10x better consistency.
-      </div>
-
-      <div class="grid grid-2" style="gap:16px;margin-bottom:16px;">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);">
-          <h3 style="color:var(--gold);font-size:0.9rem;margin-bottom:8px;">Approach 1: NanoBanana Frames</h3>
-          <ul style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Generate all starting frames in NanoBanana (16:9 or 9:16)</li>
-            <li>Full control over composition</li>
-            <li>Character consistency locked in</li>
-            <li>Colors stay consistent</li>
-          </ul>
-        </div>
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);">
-          <h3 style="color:var(--gold);font-size:0.9rem;margin-bottom:8px;">Approach 2: Base + Ideogram Fill</h3>
-          <ul style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Generate base image of someone with same features</li>
-            <li>Use Ideogram character fill to swap face</li>
-            <li>More flexibility for different poses</li>
-            <li>Good for varied content styles</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Shot Types for Full Body Video</div>
-      <div class="grid grid-4" style="gap:10px;margin-bottom:16px;">
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);text-align:center;">
-          <div style="font-weight:600;font-size:0.82rem;color:var(--gold);">Wide Shot (WS)</div>
-          <div style="font-size:0.75rem;color:var(--text-dim);">Full body visible</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);text-align:center;">
-          <div style="font-weight:600;font-size:0.82rem;color:var(--gold);">Extreme Wide (EWS)</div>
-          <div style="font-size:0.75rem;color:var(--text-dim);">Subject in environment</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);text-align:center;">
-          <div style="font-weight:600;font-size:0.82rem;color:var(--gold);">Medium Shot (MS)</div>
-          <div style="font-size:0.75rem;color:var(--text-dim);">Waist up</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);text-align:center;">
-          <div style="font-weight:600;font-size:0.82rem;color:var(--gold);">Close-Up (CU)</div>
-          <div style="font-size:0.75rem;color:var(--text-dim);">Face/shoulders</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Generate a starting frame with your tools</label>
-        <textarea class="form-textarea" id="framePrompt" placeholder="Describe your starting frame: character in specific pose, environment, lighting, camera angle..."></textarea>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-gold" onclick="generateImage()">Generate with Grok</button>
-        <button class="btn" onclick="copyText(document.getElementById('framePrompt').value)">Copy Prompt</button>
-      </div>
-      <div id="genResult" style="margin-top:12px;"></div>
-    </div>
-  `;
-}
-
-async function generateImage() {
-  const prompt = document.getElementById('framePrompt').value;
-  if (!prompt) { alert('Enter a prompt first'); return; }
-  const el = document.getElementById('genResult');
-  el.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><div class="spinner"></div> Generating image...</div>';
-  try {
-    const result = await api('/generate/image', { method: 'POST', body: JSON.stringify({ prompt }) });
-    if (result.success) {
-      el.innerHTML = `<div style="color:var(--success);font-size:0.85rem;">Image generated successfully!</div><pre style="background:var(--bg);padding:10px;border-radius:var(--radius);font-size:0.78rem;margin-top:8px;max-height:200px;overflow:auto;">${escapeHtml(result.output)}</pre>`;
-    } else {
-      el.innerHTML = `<div style="color:var(--danger);font-size:0.85rem;">Error: ${escapeHtml(result.error || 'Unknown')}</div>`;
-    }
-  } catch (e) {
-    el.innerHTML = `<div style="color:var(--danger);font-size:0.85rem;">Request failed: ${e.message}</div>`;
+      </div>`;
   }
+  html += '</div>';
+  area.innerHTML = html;
 }
 
-function workshopVideo() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 5: Generate Video</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Choose your video generation tool based on content type. Use your starting frames from Step 4 as the input.
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Tool Selection Guide</div>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-        <thead><tr>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Content Type</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Best Tool</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Cost</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Duration</th>
-        </tr></thead>
-        <tbody>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">UGC / Talking Head</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Sora 2 Pro (Storyboard)</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">$200/mo (ChatGPT Pro)</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Up to 25s</td></tr>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Reels / Shorts</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">VEO 3 / Seedance 2</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Google AI / Free</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">5-15s</td></tr>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Longform Story</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">HeyGen / Veed Fabric</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Subscription</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Unlimited</td></tr>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Budget Testing</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Your Grok/MoviePy</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">$0-$0.30/video</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">6-15s</td></tr>
-        </tbody>
-      </table>
-
-      <div style="background:var(--bg);padding:14px;border-radius:var(--radius);margin-bottom:16px;">
-        <div style="font-size:0.88rem;font-weight:600;color:var(--gold);margin-bottom:8px;">VEO 3 Prompt Structure</div>
-        <div class="prompt-output" style="position:relative;">
-[Technical specs] [Subject] [Action] in [Context].
-[Camera movement] captures [Composition].
-[Lighting/ambiance]. [Audio elements]. (no subtitles!)
-
-Spoken lines:
-Character: "Your dialogue here"
-          <button class="copy-btn" onclick="copyText(this.parentElement.textContent.replace('Copy','').trim())">Copy</button>
-        </div>
-      </div>
-
-      <div style="background:var(--bg);padding:14px;border-radius:var(--radius);margin-bottom:16px;">
-        <div style="font-size:0.88rem;font-weight:600;color:var(--gold);margin-bottom:8px;">Seedance 2 Access</div>
-        <div style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;">
-          Primary: <a href="https://jimeng.jianying.com/ai-tool/home/" target="_blank">jimeng.jianying.com</a><br>
-          Alternative: Open <a href="http://doubao.com/chat/" target="_blank">doubao.com/chat</a> in incognito, prefix prompt with "Video Generation (Seedance 2.0):"<br>
-          <strong>Bypass for realistic faces:</strong> "Make this character as a realistic 3D character in T-pose" in image gen first, then feed to Seedance.
-        </div>
-      </div>
-
-      <div style="padding:12px;background:var(--gold-dim);border-radius:var(--radius);border-left:3px solid var(--gold);">
-        <div style="font-size:0.82rem;font-weight:600;color:var(--gold);">Miko's Key Insight</div>
-        <div style="font-size:0.82rem;color:var(--text);">Sora 2 Pro is currently king for UGC (25s videos). VEO 3 videos are becoming "obviously AI" as Sora 2 sets the new standard. Always use I2V, not T2V.</div>
-      </div>
-    </div>
-  `;
-}
-
-function workshopVoice() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 6: Voice & Audio</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Voice is what makes AI content feel real. MiniMax sounds more natural than ElevenLabs according to Miko.
-      </div>
-
-      <div class="grid grid-2" style="gap:16px;margin-bottom:16px;">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);">
-          <h3 style="color:var(--gold);font-size:0.9rem;margin-bottom:8px;">New Voiceover</h3>
-          <ol style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Write your script</li>
-            <li>Generate in <strong>MiniMax</strong> ($5/mo for 120 min)</li>
-            <li>Add to video</li>
-          </ol>
-        </div>
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);">
-          <h3 style="color:var(--gold);font-size:0.9rem;margin-bottom:8px;">Fix AI Video Audio</h3>
-          <ol style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Extract audio from AI video</li>
-            <li>Upload to <strong>Resemble AI</strong></li>
-            <li>Pick realistic target voice</li>
-            <li>Replace audio in video</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Voice Tool Comparison</div>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-        <thead><tr>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Tool</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Best For</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Cost</th>
-          <th style="padding:10px;background:var(--bg);color:var(--gold);border:1px solid var(--border);font-size:0.82rem;">Quality</th>
-        </tr></thead>
-        <tbody>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">MiniMax</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Realistic TTS</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">$5/mo (120 min)</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;color:var(--success);">Most Natural</td></tr>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Resemble AI</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Voice cloning, fixing</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Per-use</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;color:var(--success);">Excellent</td></tr>
-          <tr><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">ElevenLabs</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Voice cloning</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;">Various tiers</td><td style="padding:8px;border:1px solid var(--border);font-size:0.82rem;color:var(--warning);">Good (less natural)</td></tr>
-        </tbody>
-      </table>
-
-      <div class="form-group">
-        <label class="form-label">Write Your Script</label>
-        <textarea class="form-textarea" id="scriptArea" placeholder="Write your video script here. Keep it natural, conversational. Think about hooks — the first 3 seconds determine if people keep watching." style="min-height:140px;"></textarea>
-      </div>
-      <button class="btn" onclick="copyText(document.getElementById('scriptArea').value)">Copy Script</button>
-
-      <div style="margin-top:16px;">
-        <div style="font-size:0.82rem;color:var(--text-dim);">
-          <strong style="color:var(--gold);">Your existing tools:</strong> Julia's ElevenLabs voice clone is at ID <code>Dfq9xw2lqy9dGc5FIpi5</code>. Video jump cut tool at <code>execution/video_jumpcut.py</code> for removing silence.
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function workshopLaunch() {
-  return `
-    <div class="card">
-      <div class="card-header"><div class="card-title">Step 7: Post & Launch</div></div>
-      <div style="margin-bottom:16px;font-size:0.88rem;color:var(--text-dim);line-height:1.6;">
-        Time to go live. Post consistently across platforms using your automation tools. Your MCP tools handle Instagram, YouTube, TikTok, and X.
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Platform Strategy</div>
-      <div class="grid grid-2" style="gap:12px;margin-bottom:16px;">
-        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;color:var(--gold);">Instagram</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);margin-top:4px;">Reels + slideshows. Instagram Creator MCP for posting. Filter "AI" and "spam" from comments.</div>
-          <div class="badge badge-green" style="margin-top:6px;">MCP Ready</div>
-        </div>
-        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;color:var(--gold);">TikTok</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);margin-top:4px;">Vertical videos (9:16). TikTok Creator MCP for posting. Study analytics religiously.</div>
-          <div class="badge badge-green" style="margin-top:6px;">MCP Ready</div>
-        </div>
-        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;color:var(--gold);">YouTube Shorts</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);margin-top:4px;">Repurpose TikTok content. YouTube Creator MCP for uploads.</div>
-          <div class="badge badge-green" style="margin-top:6px;">MCP Ready</div>
-        </div>
-        <div style="background:var(--bg);padding:14px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;color:var(--gold);">X / Twitter</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);margin-top:4px;">n8n scheduler for automated posting. 25K posts/month on Premium.</div>
-          <div class="badge badge-green" style="margin-top:6px;">n8n Automated</div>
-        </div>
-      </div>
-
-      <div class="card-title" style="font-size:0.88rem;margin-bottom:10px;">Launch Checklist</div>
-      <div class="checklist-item"><input type="checkbox" id="l1"><label for="l1">Create accounts for your AI persona on all platforms</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l2"><label for="l2">Set up profile with consistent character images</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l3"><label for="l3">Generate first batch of 5-10 content pieces</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l4"><label for="l4">Post first content — start with proven viral formats</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l5"><label for="l5">Set up comment filtering (block "AI", "spam", bot terms)</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l6"><label for="l6">Monitor analytics — which content gets retention?</label></div>
-      <div class="checklist-item"><input type="checkbox" id="l7"><label for="l7">Iterate: more tests = more data = better outputs</label></div>
-
-      <div class="card-title" style="font-size:0.88rem;margin:16px 0 10px;">Monetization Paths</div>
-      <div class="grid grid-2" style="gap:10px;">
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">AI Influencer Accounts</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Grow following → brand deals, merch, info products</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">AI Content Agency</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Offer AI UGC to brands — $2K-10K/client</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Affiliate Marketing</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">AI influencer promotes products with trackable links</div>
-        </div>
-        <div style="background:var(--bg);padding:12px;border-radius:var(--radius);">
-          <div style="font-weight:600;font-size:0.85rem;">Digital Products</div>
-          <div style="font-size:0.78rem;color:var(--text-dim);">Courses, templates, workflows — sell what you learn</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// ===== TOOLS PAGE =====
+// ===================================================================
+// TOOLS
+// ===================================================================
 async function renderTools(area, title, actions) {
-  title.textContent = 'Your Tools';
-  area.innerHTML = '<div class="spinner"></div>';
+  title.textContent = 'Available Tools';
+  area.innerHTML = '<div style="display:flex;justify-content:center;padding:40px;"><div class="spinner"></div></div>';
   if (!state.tools) state.tools = await api('/workshop/tools');
 
-  const t = state.tools;
-  const sections = [
-    { key: 'image_generation', name: 'Image Generation', icon: '&#128248;' },
-    { key: 'video_generation', name: 'Video Generation', icon: '&#127909;' },
-    { key: 'social_posting', name: 'Social Media Posting', icon: '&#128225;' },
-    { key: 'content_creation', name: 'Content Creation', icon: '&#9999;' },
-  ];
-
+  const catNames = { image_generation: 'Image Generation', video_generation: 'Video Generation', social_posting: 'Social Posting', content_creation: 'Content Creation' };
+  const catIcons = { image_generation: '&#127912;', video_generation: '&#127909;', social_posting: '&#128225;', content_creation: '&#9999;' };
   let html = '';
-  for (const sec of sections) {
-    const tools = t[sec.key] || [];
-    html += `<div style="margin-bottom:24px;"><h3 style="font-size:0.95rem;color:var(--text-bright);margin-bottom:12px;">${sec.icon} ${sec.name}</h3><div class="grid grid-2" style="gap:12px;">`;
-    for (const tool of tools) {
+  for (const [cat, tools] of Object.entries(state.tools)) {
+    html += `<div style="margin-bottom:8px;font-size:0.82rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.5px;">${catIcons[cat] || ''} ${catNames[cat] || cat}</div>`;
+    html += '<div class="grid grid-2" style="margin-bottom:20px;">';
+    for (const t of tools) {
       html += `
-        <div class="tool-card">
-          <div class="tool-name">${tool.name}</div>
-          <div class="tool-desc">${tool.description}</div>
-          <span class="tool-status ${tool.available ? 'available' : 'unavailable'}">
-            ${tool.available ? '&#10003; Available' : '&#10007; Not Found'}
-          </span>
-          ${tool.script ? `<div style="font-size:0.72rem;color:var(--text-dim);margin-top:4px;font-family:monospace;">${tool.script.split('/').slice(-1)}</div>` : ''}
-        </div>
-      `;
+        <div class="card" style="padding:14px;">
+          <div style="font-weight:600;color:var(--text-bright);font-size:0.9rem;">${t.name}</div>
+          <div style="font-size:0.78rem;color:var(--text-dim);margin-top:4px;">${t.description}</div>
+          <span class="badge ${t.available ? 'badge-green' : 'badge-red'}" style="margin-top:8px;">${t.available ? 'Available' : 'Not Found'}</span>
+        </div>`;
     }
-    html += '</div></div>';
+    html += '</div>';
   }
   area.innerHTML = html;
-}
-
-// ===== PROMPT BUILDER =====
-function renderPrompts(area, title, actions) {
-  title.textContent = 'Prompt Builder';
-
-  area.innerHTML = `
-    <div class="card">
-      <div class="card-header"><div class="card-title">AI Video Prompt Generator</div></div>
-      <div style="margin-bottom:16px;font-size:0.85rem;color:var(--text-dim);">Build prompts optimized for VEO 3, Sora 2, and Seedance 2 using Miko's frameworks.</div>
-
-      <div class="tabs">
-        <button class="tab active" onclick="showPromptTab(0,this)">VEO 3</button>
-        <button class="tab" onclick="showPromptTab(1,this)">Sora 2</button>
-        <button class="tab" onclick="showPromptTab(2,this)">Seedance 2</button>
-        <button class="tab" onclick="showPromptTab(3,this)">NanoBanana</button>
-      </div>
-
-      <div id="promptTab0" class="step-content active">
-        <div class="form-group"><label class="form-label">Subject Description</label><input class="form-input" id="veo_subject" placeholder="e.g., A young woman with brown hair in a white t-shirt"></div>
-        <div class="form-group"><label class="form-label">Action / What Happens</label><input class="form-input" id="veo_action" placeholder="e.g., picks up a product and examines it closely"></div>
-        <div class="form-group"><label class="form-label">Setting / Context</label><input class="form-input" id="veo_context" placeholder="e.g., a modern minimalist kitchen with soft morning light"></div>
-        <div class="form-group"><label class="form-label">Camera Movement</label>
-          <select class="form-select" id="veo_camera">
-            <option>Handheld camera slowly pushes in</option>
-            <option>Static shot</option>
-            <option>Slow tracking shot from left to right</option>
-            <option>Close-up with shallow depth of field</option>
-            <option>Over-the-shoulder angle</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Dialogue (optional)</label><input class="form-input" id="veo_dialogue" placeholder="e.g., This literally changed my skin in two weeks"></div>
-        <button class="btn btn-gold" onclick="buildVeoPrompt()">Generate Prompt</button>
-        <div id="veoOutput" class="prompt-output" style="margin-top:12px;display:none;"></div>
-      </div>
-
-      <div id="promptTab1" class="step-content">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <div style="font-size:0.88rem;color:var(--gold);font-weight:600;margin-bottom:8px;">Sora 2 Pro Storyboard Mode</div>
-          <ol style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Copy the <a href="https://github.com/snubroot/Veo-3-Meta-Framework" target="_blank">VEO 3 Meta Framework</a> into a Claude project</li>
-            <li>Upload your starting frame</li>
-            <li>Describe what you want to happen from that starting frame</li>
-            <li>Claude generates the optimized Sora prompt</li>
-            <li>Paste into Sora 2 Pro Storyboard</li>
-          </ol>
-          <div style="margin-top:12px;font-size:0.82rem;color:var(--text-dim);"><strong>Note:</strong> Avoid ChatGPT for scriptwriting — Claude produces much better results for this workflow.</div>
-        </div>
-        <div class="form-group"><label class="form-label">Scene Description</label><textarea class="form-textarea" id="sora_scene" placeholder="Describe your scene in detail — starting position, what happens, desired mood, camera angle..."></textarea></div>
-        <button class="btn" onclick="copyText(document.getElementById('sora_scene').value)">Copy to use in Claude Project</button>
-      </div>
-
-      <div id="promptTab2" class="step-content">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <div style="font-size:0.88rem;color:var(--gold);font-weight:600;margin-bottom:8px;">Seedance 2 Tips</div>
-          <ul style="font-size:0.82rem;line-height:1.7;margin-left:16px;">
-            <li>Access via <a href="https://jimeng.jianying.com/ai-tool/home/" target="_blank">jimeng.jianying.com</a></li>
-            <li>Or doubao.com/chat in incognito — prefix with "Video Generation (Seedance 2.0):"</li>
-            <li>Image reference uploads supported</li>
-            <li>10s 720P = 2 credits (10 total = 50s video)</li>
-            <li><strong>Face bypass:</strong> "Make this character as a realistic 3D character in T-pose"</li>
-          </ul>
-        </div>
-        <div class="form-group"><label class="form-label">Motion Description</label><textarea class="form-textarea" id="sd_motion" placeholder="Describe the motion you want from your starting frame..."></textarea></div>
-        <button class="btn" onclick="copyText('Video Generation (Seedance 2.0): ' + document.getElementById('sd_motion').value)">Copy with Seedance Prefix</button>
-      </div>
-
-      <div id="promptTab3" class="step-content">
-        <div style="background:var(--bg);padding:16px;border-radius:var(--radius);margin-bottom:16px;">
-          <div style="font-size:0.88rem;color:var(--gold);font-weight:600;margin-bottom:8px;">NanoBanana Pro — JSON Method</div>
-          <div style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;">
-            Use Gemini or ChatGPT to turn your ideas into JSON prompts for NanoBanana Pro. More detail = better output. Specify lighting, composition, colors. Lock in character features explicitly.
-          </div>
-        </div>
-        <div class="form-group"><label class="form-label">Character Description</label><textarea class="form-textarea" id="nb_char" placeholder="Describe your character in detail: age, ethnicity, hair color/style, eye color, body type, clothing, accessories..."></textarea></div>
-        <div class="form-group"><label class="form-label">Scene / Composition</label><input class="form-input" id="nb_scene" placeholder="e.g., standing in a luxury apartment, golden hour lighting"></div>
-        <div class="form-group"><label class="form-label">Aspect Ratio</label>
-          <select class="form-select" id="nb_ratio">
-            <option value="16:9">16:9 (Landscape)</option>
-            <option value="9:16">9:16 (Portrait / Mobile)</option>
-            <option value="1:1">1:1 (Square)</option>
-          </select>
-        </div>
-        <button class="btn btn-gold" onclick="buildNbPrompt()">Generate NanoBanana Prompt</button>
-        <div id="nbOutput" class="prompt-output" style="margin-top:12px;display:none;"></div>
-      </div>
-    </div>
-  `;
-}
-
-function showPromptTab(idx, btn) {
-  [0,1,2,3].forEach(i => {
-    const el = document.getElementById(`promptTab${i}`);
-    if (el) el.classList.toggle('active', i === idx);
-  });
-  btn.closest('.tabs').querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i === idx));
-}
-
-function buildVeoPrompt() {
-  const subject = document.getElementById('veo_subject').value || '[Subject]';
-  const action = document.getElementById('veo_action').value || '[Action]';
-  const context = document.getElementById('veo_context').value || '[Context]';
-  const camera = document.getElementById('veo_camera').value;
-  const dialogue = document.getElementById('veo_dialogue').value;
-
-  let prompt = `${subject} ${action} in ${context}. ${camera} captures the scene with cinematic depth. Warm natural lighting, ambient room sounds. (no subtitles!)`;
-  if (dialogue) {
-    prompt += `\n\nSpoken lines:\nCharacter: "${dialogue}"`;
-  }
-
-  const el = document.getElementById('veoOutput');
-  el.style.display = 'block';
-  el.innerHTML = `${escapeHtml(prompt)}<button class="copy-btn" onclick="copyText(\`${prompt.replace(/`/g,"'")}\`)">Copy</button>`;
-}
-
-function buildNbPrompt() {
-  const char = document.getElementById('nb_char').value || '[Character description]';
-  const scene = document.getElementById('nb_scene').value || '[Scene]';
-  const ratio = document.getElementById('nb_ratio').value;
-
-  const prompt = `Create a photorealistic image of ${char}. Scene: ${scene}. Aspect ratio: ${ratio}. Style: Ultra-realistic photography, shot on Sony A7III, 85mm lens, f/1.8, natural lighting. Maintain exact character consistency for future generations.`;
-
-  const el = document.getElementById('nbOutput');
-  el.style.display = 'block';
-  el.innerHTML = `${escapeHtml(prompt)}<button class="copy-btn" onclick="copyText(\`${prompt.replace(/`/g,"'")}\`)">Copy</button>`;
-}
-
-// ===== UTILITIES =====
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--gold);color:#1a1a1e;padding:8px 16px;border-radius:6px;font-size:0.82rem;font-weight:600;z-index:9999;';
-    toast.textContent = 'Copied to clipboard!';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2000);
-  });
 }
 
 // ===== INIT =====
-async function init() {
-  try {
-    const overview = await api('/overview');
-    state.overview = overview;
-    const syncDot = document.getElementById('syncDot');
-    const syncText = document.getElementById('syncText');
-    if (overview.last_sync) {
-      const lastSync = new Date(overview.last_sync);
-      const hoursAgo = (Date.now() - lastSync.getTime()) / (1000 * 60 * 60);
-      syncDot.className = hoursAgo > 24 ? 'sync-dot stale' : 'sync-dot';
-      syncText.textContent = `Synced ${hoursAgo < 1 ? 'just now' : hoursAgo < 24 ? Math.round(hoursAgo) + 'h ago' : Math.round(hoursAgo/24) + 'd ago'}`;
-    } else {
-      syncDot.className = 'sync-dot stale';
-      syncText.textContent = 'Never synced';
-    }
-  } catch (e) {
-    console.error('Init error:', e);
-  }
-  renderPage();
-}
-
-init();
+renderPage();
+api('/overview').then(d => { if (d) updateSyncStatus(d.last_sync); });
 </script>
 </body>
 </html>

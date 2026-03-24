@@ -4,6 +4,37 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+### Session 2026-03-24 17:22
+**Focus**: scalable rules enforcement system; Clean up dashboard stats tiles; Add 'Ask for' owner name prompt on Call Day; and 2 more changes
+**Completed**:
+- [feat] scalable rules enforcement system
+- [fix] Clean up dashboard stats tiles
+- [feat] Add 'Ask for' owner name prompt on Call Day
+- [feat] Call Day quick-tap outcomes + smart follow-up routing
+- [feat] intelligent outreach routing for pipeline dashboard
+**Files Changed**: 30 files
+**Key Changes**:
+- `.claude/` — .claude/hooks/api-cost-guard.sh, .claude/hooks/check-existing-tools.sh, .claude/hooks/interface-first-guard.sh
+- `projects/shared/` — projects/shared/sales-pipeline/src/app.py, projects/shared/sales-pipeline/src/models.py, projects/shared/sales-pipeline/src/ui.py
+- `root` — 24 files (CLAUDE.md, rules/INDEX.md, ...)
+**Open Threads**:
+- Modified: .claude/settings.local.json
+- Modified: docs/SYSTEM-STATE.md
+- Modified: projects/marceau-solutions/digital/tools/web-dev/close_deal.py
+- Modified: projects/marceau-solutions/digital/website/ai-automation.html
+- Modified: projects/marceau-solutions/labs/CLAUDE.md
+- Modified: projects/marceau-solutions/labs/ai-phone-agent/DEPLOY.md
+- Modified: projects/marceau-solutions/labs/ai-phone-agent/config/agent_config.json
+- Modified: projects/marceau-solutions/labs/ai-phone-agent/src/app.py
+- Modified: projects/marceau-solutions/labs/call-coach-overlay/overlay.py
+- Modified: projects/marceau-solutions/labs/mikos-lab/CLAUDE.md
+- ...and 32 more uncommitted changes
+**Next Session**:
+- Review and commit/discard 42 uncommitted changes
+- Continue from latest work
+
+---
+
 ## 2026-03-23: AI Client Sprint — Infrastructure Overhaul & Outreach Pipeline — Session 16
 
 **Context:** AI client acquisition sprint, Day 1. Goal: land 1 paying AI systems client before new Collier County job starts April 6. Session focused on building the full commercial infrastructure — data layer, payments, lead enrichment, outreach assets, and website conversion.

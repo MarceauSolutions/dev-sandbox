@@ -1,9 +1,12 @@
 {
   "name": "Marceau Solutions AI Services Assistant",
   "description": "Inbound call handler for AI automation services inquiries",
-  "voice_id": "Dfq9xw2lqy9dGc5FIpi5",
-  "voice_name": "Julia (Custom Clone)",
-  "model": "eleven_turbo_v2",
+  "elevenlabs_agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+  "voice_id": "qvqvkAWr0MfHOxziqHam",
+  "voice_name": "William (Instant Clone)",
+  "model": "eleven_flash_v2",
+  "llm": "gemini-2.5-flash",
+  "elevenlabs_native_twilio": true,
   "first_message": "Hi, thanks for calling Marceau Solutions! I'm the AI assistant. I help connect local business owners with William to discuss how AI automation can help your business. Can I ask you a few quick questions to see if we'd be a good fit?",
   
   "conversation_flow": {

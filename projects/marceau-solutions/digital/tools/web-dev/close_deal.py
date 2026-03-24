@@ -11,10 +11,10 @@ USAGE EXAMPLE:
         --pain-point "Missing calls after hours, no follow-up system"
 
 TIERS:
-    1 — Starter  (~$497/mo)   STRIPE_AI_PAYMENT_LINK (live in .env)
-    2 — Growth   (~$997/mo)   STRIPE_TIER2_PAYMENT_LINK
-    3 — Pro      (~$1,497/mo) STRIPE_TIER3_PAYMENT_LINK
-    4 — Elite    (~$2,497/mo) STRIPE_TIER4_PAYMENT_LINK
+    1 — Starter  ($297/mo + $500 setup)    STRIPE_AI_PAYMENT_LINK (live in .env)
+    2 — Growth   ($497/mo + $750 setup)    STRIPE_TIER2_PAYMENT_LINK
+    3 — Pro      ($997/mo + $1,000 setup)  STRIPE_TIER3_PAYMENT_LINK
+    4 — Elite    ($1,497/mo + $1,500 setup) STRIPE_TIER4_PAYMENT_LINK
 
 OUTPUTS:
     - Proposal PDF (temp, attached to email)
@@ -55,29 +55,29 @@ from execution.branded_pdf_engine import BrandedPDFEngine  # noqa: E402
 TIER_CONFIG = {
     1: {
         "name": "Tier 1 — Starter",
-        "setup": "$0",
-        "monthly": "$497/month",
+        "setup": "$500",
+        "monthly": "$297/month",
         "env_key": "STRIPE_AI_PAYMENT_LINK",
         "fallback": "https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
     },
     2: {
         "name": "Tier 2 — Growth",
-        "setup": "$0",
-        "monthly": "$997/month",
+        "setup": "$750",
+        "monthly": "$497/month",
         "env_key": "STRIPE_TIER2_PAYMENT_LINK",
         "fallback": None,
     },
     3: {
         "name": "Tier 3 — Pro",
-        "setup": "$0",
-        "monthly": "$1,497/month",
+        "setup": "$1,000",
+        "monthly": "$997/month",
         "env_key": "STRIPE_TIER3_PAYMENT_LINK",
         "fallback": None,
     },
     4: {
         "name": "Tier 4 — Elite",
-        "setup": "$0",
-        "monthly": "$2,497/month",
+        "setup": "$1,500",
+        "monthly": "$1,497/month",
         "env_key": "STRIPE_TIER4_PAYMENT_LINK",
         "fallback": None,
     },
