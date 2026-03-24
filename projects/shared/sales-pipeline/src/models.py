@@ -284,9 +284,12 @@ def get_pipeline_stats(conn):
     won_revenue = conn.execute("SELECT COALESCE(SUM(setup_fee + monthly_fee * 12), 0) FROM deals WHERE stage = 'Closed Won'").fetchone()[0]
     meetings_this_week = _count("SELECT COUNT(*) FROM deals WHERE stage = 'Meeting Booked' AND updated_at > datetime('now', '-7 days')")
     proposals_out = _count("SELECT COUNT(*) FROM deals WHERE stage = 'Proposal Sent'")
-    outreach_today = _count("SELECT COUNT(*) FROM outreach_log WHERE date(created_at) = date('now')")
-    outreach_week = _count("SELECT COUNT(*) FROM outreach_log WHERE created_at > datetime('now', '-7 days')")
-    followups_due = _count("SELECT COUNT(*) FROM outreach_log WHERE follow_up_date <= date('now') AND (response IS NULL OR response = '')")
+    # Only count real outreach interactions (exclude bulk imports like 'Phone Blitz' channel)
+    _real_channels = "channel IN ('Call','Email','In-Person','SMS','LinkedIn','DM','Referral')"
+    outreach_today = _count(f"SELECT COUNT(*) FROM outreach_log WHERE date(created_at) = date('now') AND {_real_channels}")
+    calls_today = _count(f"SELECT COUNT(*) FROM outreach_log WHERE date(created_at) = date('now') AND channel = 'Call'")
+    outreach_week = _count(f"SELECT COUNT(*) FROM outreach_log WHERE created_at > datetime('now', '-7 days') AND {_real_channels}")
+    followups_due = _count("SELECT COUNT(*) FROM outreach_log WHERE follow_up_date <= date('now') AND (response IS NULL OR response = '') AND follow_up_date IS NOT NULL")
 
     # Stage counts
     stage_counts = {}
@@ -302,6 +305,7 @@ def get_pipeline_stats(conn):
         "meetings_this_week": meetings_this_week,
         "proposals_out": proposals_out,
         "outreach_today": outreach_today,
+        "calls_today": calls_today,
         "outreach_week": outreach_week,
         "followups_due": followups_due,
         "stage_counts": stage_counts,
@@ -437,6 +441,47 @@ def get_outreach_stats(conn):
         """, (method,)).fetchone()
         stats[method] = dict(row)
     return stats
+
+
+def get_daily_outreach_counts(conn):
+    """Get today's outreach counts by channel for progress rings."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    row = conn.execute("""
+        SELECT
+            COALESCE(SUM(CASE WHEN channel='Call' THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN channel='Email' THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN channel='In-Person' THEN 1 ELSE 0 END), 0)
+        FROM outreach_log WHERE date(created_at) = ?
+    """, (today,)).fetchone()
+    return {"calls": row[0], "emails": row[1], "visits": row[2]}
+
+
+def get_leads_by_tier_and_method(conn):
+    """Get active leads grouped by (tier, outreach_method) for the dashboard matrix."""
+    deals = conn.execute("""
+        SELECT d.*,
+               MAX(CASE WHEN o.channel='Call' THEN o.created_at END) AS last_called,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END) AS last_emailed,
+               MAX(CASE WHEN o.channel='In-Person' THEN o.created_at END) AS last_visited,
+               COUNT(DISTINCT CASE WHEN o.channel='Call' THEN o.id END) AS call_count,
+               COUNT(DISTINCT CASE WHEN o.channel='Email' THEN o.id END) AS email_count
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.stage NOT IN ('Closed Won', 'Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+    """).fetchall()
+
+    grouped = {}
+    for d in deals:
+        d_dict = dict(d)
+        tier = d_dict.get("tier") or 0
+        method = d_dict.get("outreach_method") or "email"
+        key = f"{tier}_{method}"
+        if key not in grouped:
+            grouped[key] = []
+        grouped[key].append(d_dict)
+    return grouped, [dict(d) for d in deals]
 
 
 def get_tier1_queue(conn):

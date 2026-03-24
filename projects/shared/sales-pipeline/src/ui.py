@@ -75,83 +75,31 @@ def _tier_badge(tier):
     return ""
 
 
-def _sprint_header(stats, tier1_queue):
-    """Sprint war-room header — first thing William sees every morning."""
-    from datetime import date as _date
-    sprint_end = _date(2026, 4, 6)
-    days_left = max(0, (sprint_end - _date.today()).days)
-
-    outreach_week = stats.get("outreach_week", 0)
-    target = 700  # 100/day x 7 days
-    pct = min(1.0, outreach_week / target)
-    arc_deg = pct * 360
-
-    # SVG arc progress ring (100px)
-    r = 38
+def _progress_ring(value, goal, label, color, size=90, is_focus=False):
+    """SVG progress ring with value/goal display."""
+    pct = min(1.0, value / max(goal, 1))
+    r = int(size * 0.42)
     circ = 2 * 3.14159 * r
     offset = circ * (1 - pct)
-    ring_svg = f'''<svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
-        <circle cx="45" cy="45" r="{r}" fill="none" stroke="#30363d" stroke-width="8"/>
-        <circle cx="45" cy="45" r="{r}" fill="none" stroke="{GOLD}" stroke-width="8"
-                stroke-dasharray="{circ:.1f}" stroke-dashoffset="{offset:.1f}"
-                stroke-linecap="round"/>
-    </svg>
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1.1">
-        <div style="font-size:18px;font-weight:800;color:{GOLD}">{outreach_week}</div>
-        <div style="font-size:9px;color:{MUTED};text-transform:uppercase">/{target}</div>
-    </div>'''
-
-    # Today's call queue (top 5 T1 deals)
-    queue_rows = ""
-    for d in tier1_queue[:5]:
-        next_a = _esc(d.get("next_action") or "")
-        queue_rows += f'''<a href="/deals/{d["id"]}" style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;background:#0d111722;border:1px solid #30363d44;text-decoration:none;color:inherit;transition:border-color .15s" onmouseover="this.style.borderColor='#C9963C44'" onmouseout="this.style.borderColor='#30363d44'">
-            <span style="font-weight:700;font-size:13px;color:{TEXT}">{_esc(d["company"])}</span>
-            <span style="background:#C9963C22;color:#C9963C;border:1px solid #C9963C44;border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;flex-shrink:0">T1</span>
-            <span style="font-size:11px;color:{MUTED};flex-shrink:0">{_esc(d.get("stage",""))}</span>
-            {f'<span style="font-size:11px;color:{MUTED};margin-left:auto">{_esc(next_a)}</span>' if next_a else ""}
-        </a>'''
-
-    if not queue_rows:
-        queue_rows = f'<div style="font-size:12px;color:{MUTED};padding:8px 0">No Tier 1 deals yet — sync outreach or add manually.</div>'
-
-    in_pipeline = len(tier1_queue)
-
-    return f'''<div style="background:{CARD};border:1px solid {GOLD}44;border-radius:14px;padding:20px 24px;margin-bottom:18px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,{GOLD},{GOLD}66,transparent)"></div>
-        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
-
-            <!-- Left: Sprint label + days left -->
-            <div style="flex:1;min-width:160px">
-                <div style="font-size:11px;color:{GOLD};font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">SPRINT</div>
-                <div style="font-size:20px;font-weight:800;color:{TEXT};line-height:1.2">Sign 1 AI Client<br>by April 6</div>
-                <div style="margin-top:12px;display:flex;align-items:baseline;gap:6px">
-                    <span style="font-size:36px;font-weight:800;color:{GOLD}">{days_left}</span>
-                    <span style="font-size:13px;color:{MUTED}">days left</span>
-                </div>
+    border = f"border:2px solid {color}66;border-radius:16px;padding:6px;" if is_focus else ""
+    scale = "transform:scale(1.15);" if is_focus else ""
+    glow = f"filter:drop-shadow(0 0 8px {color}44);" if is_focus else ""
+    focus_label = f'<div style="font-size:8px;color:{color};font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:2px">TODAY</div>' if is_focus else ""
+    return f'''<div style="display:flex;flex-direction:column;align-items:center;gap:4px;{border}{scale}">
+        <div style="position:relative;width:{size}px;height:{size}px;{glow}">
+            <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}" style="transform:rotate(-90deg)">
+                <circle cx="{size//2}" cy="{size//2}" r="{r}" fill="none" stroke="#30363d" stroke-width="7"/>
+                <circle cx="{size//2}" cy="{size//2}" r="{r}" fill="none" stroke="{color}" stroke-width="7"
+                        stroke-dasharray="{circ:.1f}" stroke-dashoffset="{offset:.1f}"
+                        stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;line-height:1.1">
+                <div style="font-size:20px;font-weight:800;color:{color}">{value}</div>
+                <div style="font-size:9px;color:{MUTED}">/{goal}</div>
             </div>
-
-            <!-- Center: Outreach ring -->
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:100px">
-                <div style="position:relative;width:90px;height:90px">{ring_svg}</div>
-                <div style="font-size:10px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;text-align:center">Outreach<br>This Week</div>
-            </div>
-
-            <!-- Right: Pipeline count -->
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:80px">
-                <div style="font-size:38px;font-weight:800;color:{BLUE}">{in_pipeline}</div>
-                <div style="font-size:10px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;text-align:center">T1 Deals<br>in Pipeline</div>
-            </div>
-
         </div>
-
-        <!-- Call queue -->
-        <div style="margin-top:18px;border-top:1px solid #30363d55;padding-top:14px">
-            <div style="font-size:11px;font-weight:700;color:{GOLD};text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">
-                TODAY'S CALL QUEUE — Tier 1 First
-            </div>
-            <div style="display:flex;flex-direction:column;gap:6px">{queue_rows}</div>
-        </div>
+        <div style="font-size:10px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;text-align:center">{label}</div>
+        {focus_label}
     </div>'''
 
 CSS = f"""
@@ -262,11 +210,14 @@ def _dashboard(data):
 
     sprint = _sprint_header(s, tier1_queue)
 
+    _pipeline_val = _money(s["pipeline_value"]) if s["pipeline_value"] > 0 else f'{s["total_active"]} Prospects'
+    _pipeline_lbl = "Pipeline Value" if s["pipeline_value"] > 0 else "In Pipeline"
+    _pipeline_color = GREEN if s["pipeline_value"] > 0 else GOLD
     stats = f'''<div class="stat-grid">
         <div class="stat"><div class="val">{s["total_active"]}</div><div class="lbl">Active Deals</div></div>
-        <div class="stat"><div class="val" style="color:{GREEN}">{_money(s["pipeline_value"])}</div><div class="lbl">Pipeline Value</div></div>
+        <div class="stat"><div class="val" style="color:{_pipeline_color}">{_pipeline_val}</div><div class="lbl">{_pipeline_lbl}</div></div>
+        <div class="stat"><div class="val" style="color:{GREEN if s.get('calls_today',0)>0 else TEXT}">{s.get("calls_today", 0)}</div><div class="lbl">Calls Today</div></div>
         <div class="stat"><div class="val">{s["outreach_today"]}</div><div class="lbl">Outreach Today</div></div>
-        <div class="stat"><div class="val">{s["outreach_week"]}</div><div class="lbl">Outreach (7d)</div></div>
         <div class="stat"><div class="val" style="color:{YELLOW}">{s["meetings_this_week"]}</div><div class="lbl">Meetings</div></div>
         <div class="stat"><div class="val" style="color:{PURPLE}">{s["proposals_out"]}</div><div class="lbl">Proposals Out</div></div>
         <div class="stat"><div class="val" style="color:{GREEN}">{s["deals_won"]}</div><div class="lbl">Deals Won</div></div>
