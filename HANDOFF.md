@@ -55,6 +55,28 @@
 
 ---
 
+## Next Session Priority: Live Call Coach (Real-Time Sales Coaching Overlay)
+
+**What William described (Mar 24):** A live coaching overlay that listens to sales calls and suggests the next best response in real time — like the AI interview coaching apps (Final Round AI, Cluely, etc.) but for sales calls.
+
+**Architecture:**
+- macOS floating window app (Swift or Electron) — always-on-top, semi-transparent overlay
+- Captures mic audio (speakerphone → MacBook mic) in 3-second rolling chunks
+- Streams to Whisper (OpenAI) for real-time transcription
+- Sends transcript + conversation stage to Claude for next-best-response suggestion
+- Displays suggestion in overlay with color-coded stage indicator (Rapport / Pain / Objection / Close)
+- **NOT iOS during active call** — iOS blocks all app access to active call audio. Mac speakerphone is the only viable path.
+
+**Stage detection logic:**
+- Rapport → suggest warmth/mirroring questions
+- Pain discovery → suggest deeper dig questions
+- Objection → surface relevant objection handler from playbook
+- Close → suggest specific closing language
+
+**Build alongside** the sales intelligence layer — both need accumulated call data.
+
+---
+
 ## Next Session Priority: Sales Intelligence Layer
 
 **What William described (Mar 24):** Build a data accumulation + analytics system on top of the pipeline that gets smarter over time. Full spec:
