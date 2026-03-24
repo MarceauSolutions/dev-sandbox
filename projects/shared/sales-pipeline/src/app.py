@@ -276,10 +276,16 @@ async def sync_outreach():
                 data = json.loads(f.read_text())
             except Exception:
                 continue
-            if data.get("date") != today_str:
-                continue
 
-            for em in data.get("emails", []):
+            # File may be a single batch dict OR a list of batch dicts
+            batches = data if isinstance(data, list) else [data]
+
+            for batch in batches:
+                if not isinstance(batch, dict):
+                    continue
+                if batch.get("date") != today_str:
+                    continue
+                for em in batch.get("emails", []):
                 email = (em.get("recipient") or "").lower().strip()
                 company = (em.get("company") or "").strip()
                 company_key = company.lower()
