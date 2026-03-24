@@ -1,242 +1,112 @@
 # Agent Instructions
 
-> This entire file fits in context. Detailed SOPs are in `docs/sops/`. Project-specific guidance is in each project's `CLAUDE.md`.
+> Rules live in `rules/`. SOPs in `docs/sops/`. Project context in each project's `CLAUDE.md`.
 
-## Architecture
+## SESSION START — 6 Steps (no exceptions)
 
-**Two-tier DOE system:**
-- **Shared utilities** (`execution/*.py`): Used by 2+ projects. Strict Directive → Orchestration → Execution.
-- **Project code** (`projects/[name]/src/`): Single-project logic. Flexible architecture.
+1. Read `docs/SYSTEM-STATE.md` — live infra state, DO NOT REDO list
+2. Read `docs/ARCHITECTURE-DECISIONS.md` — cross-agent conventions
+3. Check `HANDOFF.md` — pending tasks between agents
+4. Check which project — read its `CLAUDE.md` if it has one
+5. Check `docs/session-history.md` if continuing previous work
+6. Run `git log --oneline origin/main..HEAD` — push any unpushed commits before starting
 
-**Where to put code:** `execution/` if shared (2+ projects), `projects/[name]/src/` if project-specific.
+## STOP — Read Before Acting
 
-## Interface-First Rules (Non-Negotiable)
+| Situation | Command — no exceptions |
+|-----------|------------------------|
+| Need a PDF | `python execution/branded_pdf_engine.py --list-templates` then `--template generic_document` with key `content_markdown` |
+| Need to send email | Use `execution/send_onboarding_email.py` SMTP pattern — credentials in `.env` |
+| Need to send SMS | Use `execution/twilio_sms.py` — Twilio +1 (855) 239-9364 |
+| Need API credit info | `./scripts/api-key-manager.sh` → http://127.0.0.1:8793 |
+| About to write a .py file | `python scripts/inventory.py search <keyword>` first |
+| About to call a paid API | Check `.env` for key + check api-key-manager for balance |
+| Any routing / interface / agent / output decision | Load `rules/routing/ROUTING.md` |
 
-> Every tool must be usable by William WITHOUT opening VS Code. If it isn't, it isn't finished.
+## RULES SYSTEM
 
-- **Automations → n8n** by default. No new CLI-only automation scripts. William already knows n8n.
-- **Dashboards/content tools → standalone web app** at a fixed localhost URL with a direct launch script in `scripts/`
-- **Reports/guides → branded PDF**, auto-opened. Never a markdown file.
-- **Alerts → SMS or email** via Twilio/SMTP. Never "run this command to check".
-- **Before writing code**, confirm: *"How will William access this without me?"*
-- **Direct launch scripts** required for every web app: `scripts/[name].sh` — one command, browser opens.
-- **Nothing deleted without explicit approval.** Move assets, never delete them.
-- **Every generated file documented** in that project's CLAUDE.md the moment it's created.
+All rules live in `rules/`. Load on demand — don't pre-load everything.
 
-## Critical Rules (Always Enforced)
+| Need | Load |
+|------|------|
+| Any routing, interface, agent, or output decision | `rules/routing/ROUTING.md` |
+| Registry of all rules + hooks | `rules/INDEX.md` |
+| E-rule reasoning (E01–E12) | `rules/behavioral/E[N]-[name].md` |
+| Exact tool commands | `rules/tools/[tool-name].md` |
+| Interface selection detail | `rules/routing/interface-selection.md` |
+| PDF template selection | `rules/routing/pdf-template-selection.md` |
+| Agent routing detail | `rules/routing/agent-routing.md` |
+| Code placement detail | `rules/routing/code-placement.md` |
 
-1. **Check existing tools BEFORE creating new ones** — `python scripts/inventory.py search <keyword>`. Hook: `check-existing-tools.sh`
-2. **Never nest git repos** — `find . -name ".git" \( -type d -o -type f \)` should only show `./.git`
-3. **Test before committing** — New `.py` files must pass syntax check. Pre-commit hook enforces.
-4. **DOE discipline** — Directive must exist before deploying. Never deploy untested code.
-5. **Never contradict user statements** about prior work. Trust and proceed. (SOP 26)
-6. **Document efforts >30 min** — `docs/sops/sop-25-documentation-decision-framework.md`
-7. **Rule of Three** — Same approach fails 3x? STOP. Research root cause.
-8. **Push after commit** — Every `git commit` MUST be followed by `git push origin main` in the same session. The PostToolUse hook auto-syncs EC2 after push. Unpushed commits = Clawdbot blind spot.
-9. **Verify sync on session start** — Run `git log --oneline origin/main..HEAD` at start of any session. If >0 unpushed commits exist, push before doing anything else.
+## SLASH COMMANDS
 
-## Execution Discipline (Hook-Enforced Where Possible)
-
-> These exist because they were violated repeatedly. Hooks BLOCK where they can. The rest is self-discipline.
-
-- **E1 Just do it** — Never ask "want me to?" for obvious next steps. DO IT.
-- **E2 Stay on track** — Never pursue a direction William said no to.
-- **E3 Failures compound** — Incomplete deliverables, skipped steps = zero tolerance.
-- **E4 Verify before spending** — Check existing capabilities before paid services. Hook: `api-cost-guard.sh`
-- **E5 Use APIs, never delegate** — Check `.env`, `execution/`, MCP tools BEFORE telling William to do anything manually.
-- **E6 Build foundations** — "Will this need redoing later?" If yes, do it right now.
-- **E7 Complete the loop** — Send SMS/email → ALWAYS run inbox monitor after. Hook: `complete-the-loop-guard.sh`
-- **E8 Stay in the stack** — No ngrok, Netlify, FormSubmit, random services. Hook: `stack-guard.sh` (BLOCKING)
-- **E9 Pre-flight mandatory** — SOP 33 before every task. Search inventory, check service status, verify standards.
-- **E11 Spec written ≠ deployed (MANDATORY)** — A specification document is NOT a deliverable. Writing a spec, generating a PDF, or creating a JSON template means NOTHING until the system is running on its target platform and verified with an end-to-end test. The pipeline is: Research → Design → Build → **Deploy → Test on target → Verify user can interact** → THEN mark complete. Never tell William something "is set up" when it's only been spec'd. This rule exists because the entire accountability system was "built" as markdown files but never deployed to EC2 or n8n — William woke up expecting it to work and it didn't.
-- **E10 Best-path evaluation (MANDATORY)** — Never default to the easiest implementation. Before building ANYTHING, answer these 5 questions and document the reasoning:
-  1. **Who is the end user and how will they interact with this?** (William on mobile? A client? An automation?) — The answer determines the interface. CLI is almost never the right answer for William.
-  2. **What existing infrastructure is the natural fit?** (Clawdbot/Telegram for conversational, n8n for automation, FitAI for fitness features, branded PDF for documents, SMS for alerts) — Build ON existing systems, not beside them.
-  3. **How does this need to scale?** (1 user → 10 → 100? One-time → daily → real-time?) — A Google Sheet works for 1 user tracking 1 thing. It breaks at 10 metrics updated daily. Choose the architecture that fits the 6-month version, not just today.
-  4. **What are the real constraints?** (Energy levels, dystonia, treatment days, Naples FL location, zero clients currently) — Every design decision must account for worst-case-day usability.
-  5. **Is there a consolidation opportunity?** (Can this be a new capability in an existing tool rather than a new tool?) — Adding a feature to Clawdbot > building a new bot. Adding a template to branded_pdf_engine > building a new PDF generator. Extending FitAI > building a separate fitness app.
-  > **Origin**: This rule exists because Claude repeatedly chose the fastest-to-code path (terminal scripts, markdown files, manual spreadsheets) over the right-for-William path (Telegram bots, automated SMS, web dashboards). The fastest path to build is rarely the best path to use. Evaluate first, build second.
-- **E12 Code to production pipeline (MANDATORY)** — A working local script is NOT a shipped product. **CLI is NEVER the final interface for William-facing tools.** Every tool must go through the FULL pipeline before being marked done:
-  1. **Interface decision FIRST** (before writing code) — "How will William use this?"
-     - Conversational / quick lookups → **Clawdbot (Telegram)**
-     - Automated/scheduled tasks → **n8n workflow**
-     - Dashboards / interactive tools → **Web app at subdomain**
-     - Documents / reports → **Branded PDF, auto-opened**
-     - Alerts → **SMS or email**
-     - **CLI is NEVER the answer** for William-facing tools
-  2. **Build core logic** — Python script, API integration, engine
-  3. **Wire to chosen interface** — Clawdbot command, n8n workflow, web frontend, etc.
-  4. **Deploy to production** — EC2 systemd service, nginx proxy, subdomain + SSL if web
-  5. **Verify access** — "Can William use this from his phone right now, without me?" If no, keep building.
-  6. **Launch script** — `scripts/[name].sh` for web apps
-  7. **Documentation** — SYSTEM-STATE.md, session-history, project CLAUDE.md
-  > **Origin**: Tools keep getting built as CLI scripts and declared "done." The accountability system was spec'd but never deployed. The dystonia digest was a CLI email script on Mac launchd. The multi-Gmail search was built as a Python CLI — powerful, but William has to open a terminal to use it when it should have been a Clawdbot command from the start. **The fastest path to code is rarely the best path to use.** Decide the interface first, then build all the way through to production.
-
-## Commands & Shortcuts
-
-| Slash Command | What It Does |
-|---------------|-------------|
+| Command | What It Does |
+|---------|-------------|
 | `/deploy` | Load deployment SOP |
 | `/new-project` | Project kickoff + init SOPs |
 | `/publish-mcp` | MCP packaging + publishing SOPs |
 | `/test` | Testing strategy |
-| `/market-check` | Market viability analysis (4 agents) |
+| `/market-check` | Market viability (4 agents) |
 | `/inventory` | Search existing tools |
-| `/photos` | Interactive photo export + resize from Photos.app |
+| `/photos` | Interactive photo export from Photos.app |
 | `/session-summary` | Capture session work to session-history.md |
 | `/context` | Pre-load relevant files for a project |
 | `/memory-check` | Audit and consolidate memory files |
 
-| Quick Command | Run |
-|--------------|-----|
-| **LaunchPad dashboard** | `./scripts/launchpad.sh [product]` |
-| **Daily standup** | `./scripts/daily_standup.sh` |
-| **System health** | `python scripts/health_check.py` |
+## QUICK COMMANDS
+
+| Command | Run |
+|---------|-----|
+| Marceau Hub | http://127.0.0.1:8760 (auto-starts on login) |
+| LaunchPad | `./scripts/launchpad.sh [product]` |
+| Daily standup | `./scripts/daily_standup.sh` |
+| System health | `python scripts/health_check.py` |
 | Search tools | `python scripts/inventory.py search <keyword>` |
-| List projects | `python scripts/inventory.py list` |
-| List scripts | `python scripts/inventory.py scripts` |
-| Check nested repos | `find . -name ".git" \( -type d -o -type f \)` |
+| Dystonia digest | `./scripts/dystonia-digest.sh` → http://127.0.0.1:8792 |
 | Deploy | `python deploy_to_skills.py --project <name> --version X.Y.Z` |
-| **Dystonia digest** | `./scripts/dystonia-digest.sh` → http://127.0.0.1:8792 |
 
-## Communication Patterns
-
-| William Says | Claude Does |
-|-------------|------------|
-| "Deploy" / "Ship it" | `/deploy` SOP |
-| "New project" | `/new-project` SOP |
-| "Should we build X?" | Auto-launch SOP 17 (market viability, 4 agents) |
-| "How should we implement X?" | Auto-launch SOP 9 (architecture exploration, 3-4 agents) |
-| "Run morning digest" | `python -m projects.shared.personal-assistant.src.morning_digest --preview` |
-| "Check leads" | `python -m projects.shared.lead-scraper.src.campaign_analytics report` |
-| "Continue from last session" | Check `docs/session-history.md` |
-| "Roll back" | `docs/sops/sop-07-rollback.md` |
-| "Publish to registry" | `/publish-mcp` |
-| "Run SMS campaign" | `docs/sops/sop-18-sms-campaign.md` |
-| "Download photos" / "Export photos" | `/photos` interactive flow |
-| "Working on [project]" | Run `/context [project]` then load suggested files |
-| "What tool for X?" / "Should we use Y?" | Tool Selection Framework in `docs/service-standards.md` |
-| "New web dev client" | `projects/marceau-solutions/digital/tools/web-dev/workflows/client-onboarding.md` |
-| "Deploy {client} website" | `./scripts/deploy_website.sh {client}` |
-| "PT client needs a website" | POST to `/webhook/cross-referral` (cross-business handoff) |
-| "End of session" / "Wrapping up" | Run `/session-summary` |
-
-## Where Things Live
+## WHERE THINGS LIVE
 
 | What | Location |
 |------|----------|
-| **SOPs (all 33)** | `docs/sops/INDEX.md` — loaded on-demand |
-| **Architecture guide** | `docs/architecture-guide.md` |
-| **Architecture decisions** | `docs/ARCHITECTURE-DECISIONS.md` — cross-agent conventions, ALL agents read at session start |
-| **Agent handoffs** | `HANDOFF.md` — task queue between Claude Code, Clawdbot, Ralph |
-| **Testing strategy** | `docs/testing-strategy.md` |
-| **Deployment pipeline** | `docs/deployment.md` |
-| **Repository rules** | `docs/repository-management.md` |
-| **App type decision** | `docs/app-type-decision-guide.md` |
-| **Credentials & API keys** | `.env` (root of dev-sandbox) |
-| **Google tokens** | `token.json` (Gmail+Calendar+Sheets, all scopes), `credentials.json` (OAuth client) |
-| **Capability SOPs** | `directives/` |
-| **Task procedures** | `[project]/workflows/` |
-| **Session learnings** | `docs/session-history.md` |
-| **Archived docs** | `docs/archive/` |
-| **Unified business ops** | `docs/UNIFIED-BUSINESS-OPS.md` |
-| **System state (live)** | `docs/SYSTEM-STATE.md` |
-| **Medical docs** | `docs/medical/dystonia/`, `docs/medical/cannabis/` |
-| **n8n workflow backups** | `projects/shared/n8n-workflows/backups/` (latest: 55 workflows, 2026-03-22) |
+| **Live system state** | `docs/SYSTEM-STATE.md` |
+| **Architecture decisions** | `docs/ARCHITECTURE-DECISIONS.md` |
+| **Agent handoffs** | `HANDOFF.md` |
+| **Session history** | `docs/session-history.md` |
+| **All SOPs (33)** | `docs/sops/INDEX.md` |
+| **API keys** | `.env` (root) |
+| **Shared scripts** | `execution/` (106 scripts) |
+| **Tower index** | `projects/marceau-solutions/CLAUDE.md` |
 | **PT coaching hub** | `projects/marceau-solutions/fitness/clients/pt-business/CLAUDE.md` |
 | **Web dev hub** | `projects/marceau-solutions/digital/tools/web-dev/CLAUDE.md` |
-| **Tower index** | `projects/marceau-solutions/CLAUDE.md` |
-| **Tower structure** | `projects/marceau-solutions/{fitness,digital,media,labs}/` |
+| **n8n workflows** | `projects/shared/n8n-workflows/backups/` |
+| **Service standards** | `docs/service-standards.md` |
 
-## Project Layout
+## PROJECT LAYOUT
 
 ```
-dev-sandbox/                    # ONE git repo (parent tracks everything)
-├── CLAUDE.md                   # This file (always in context)
+dev-sandbox/                    # ONE git repo
+├── CLAUDE.md                   # This file
+├── rules/                      # All rules (behavioral/, routing/, tools/)
 ├── .env                        # All API keys and secrets
-├── scripts/                    # Inventory, company setup, maintenance
+├── scripts/                    # Inventory, maintenance scripts
 ├── execution/                  # Shared utilities (106 scripts, 2+ project use)
-├── directives/                 # Capability SOPs for projects
-├── docs/                       # Reference documentation
-│   ├── sops/                   # Individual SOP files (loaded on-demand)
-│   └── archive/                # Old/superseded docs
+├── directives/                 # Capability SOPs
+├── docs/                       # Reference docs, SOPs, session history
 ├── projects/
-│   ├── marceau-solutions/      # Our company — organized by tower
-│   │   ├── CLAUDE.md           #   Tower index + placement rules
-│   │   ├── fitness/            # TOWER: Fitness & Coaching
-│   │   │   ├── clients/
-│   │   │   │   ├── boabfit/    #     Julia's fitness influencer brand
-│   │   │   │   └── pt-business/ #    William's 1:1 coaching ($197/mo)
-│   │   │   └── tools/
-│   │   │       ├── fitness-influencer/ # FitAI platform
-│   │   │       ├── fitness-influencer-mcp/
-│   │   │       └── trainerize-mcp/
-│   │   ├── digital/            # TOWER: Digital Services
-│   │   │   ├── clients/
-│   │   │   │   ├── swflorida-hvac/
-│   │   │   │   ├── flames-of-passion/
-│   │   │   │   └── square-foot-shipping/
-│   │   │   ├── tools/
-│   │   │   │   ├── website-builder/ # AI website generator
-│   │   │   │   └── web-dev/        # Web dev workflows/ops
-│   │   │   └── website/        #   marceausolutions.com
-│   │   ├── media/              # TOWER: Content & Media
-│   │   │   └── tools/
-│   │   │       ├── instagram-creator/
-│   │   │       ├── youtube-creator/
-│   │   │       └── tiktok-creator/
-│   │   └── labs/               # TOWER: R&D & New Ventures
-│   │       ├── dumbphone-lock/ #   iOS focus app
-│   │       ├── vuori-lead-magnet/
-│   │       ├── amazon-seller/
-│   │       ├── mikos-lab/
-│   │       └── legal-case-manager/
-│   ├── shared/                 # Multi-tenant tools (2+ companies)
-│   └── product-ideas/          # Exploration/research projects
+│   ├── marceau-solutions/      # Company — organized by tower
+│   │   ├── fitness/            # Fitness & Coaching (FitAI, PT clients)
+│   │   ├── digital/            # Digital Services (web clients, website)
+│   │   ├── media/              # Content & Media (IG, YouTube, TikTok)
+│   │   └── labs/               # R&D & New Ventures
+│   ├── shared/                 # Multi-tenant tools
+│   └── product-ideas/          # Exploration
 └── .claude/
-    ├── commands/               # Slash commands (/deploy, /test, etc.)
-    ├── hooks/                  # PreToolUse hooks (tool reuse checker)
-    └── settings.local.json     # Permissions + hooks config
+    ├── commands/               # Slash commands
+    ├── hooks/                  # PreToolUse hooks
+    └── settings.local.json
 ```
 
-## Deployment Targets
+## PRINCIPLE
 
-| What | Deploy To | SOP |
-|------|-----------|-----|
-| Skills (dev-sandbox Claude) | `~/production/[name]-prod/` | `docs/sops/sop-03-deployment.md` |
-| AI Assistants (standalone) | `~/ai-assistants/[name]/` | `docs/sops/sop-31-ai-assistant.md` |
-| MCP Packages | PyPI + MCP Registry | `docs/sops/sop-11-mcp-structure.md` through `sop-14` |
-| Client Websites | GitHub Pages | `./scripts/deploy_website.sh <client>` |
-
-## Three-Agent Model
-
-| Agent | Where | Best For |
-|-------|-------|----------|
-| **Claude Code** | Mac terminal | Interactive work, publishing, debugging |
-| **Clawdbot** | EC2 24/7 (Telegram) | Quick tasks, research, complexity 0-6, accountability check-ins |
-| **Ralph** | EC2 (PRD-driven) | Complex builds, complexity 7-10 |
-
-See `docs/sops/sop-29-three-agent-collaboration.md` for routing logic.
-
-**Cross-agent sync:** `docs/ARCHITECTURE-DECISIONS.md` (conventions) + `HANDOFF.md` (task queue). Both auto-sync to EC2 on `git push`.
-
-## Session Start Checklist
-
-1. This file loads automatically (always in context)
-2. Read `docs/ARCHITECTURE-DECISIONS.md` — cross-agent conventions
-3. Check `HANDOFF.md` — pending tasks between agents
-4. Check which project we're working on — read its `CLAUDE.md` if it has one
-5. Check `docs/session-history.md` if continuing previous work
-6. Check `[project]/workflows/` for existing procedures
-
-## Autonomous Agent Triggers
-
-Launch agents WITHOUT explicit user request when:
-- **New product idea mentioned** → SOP 17 (4 market viability agents)
-- **Multiple implementation approaches** → SOP 9 (architecture exploration)
-- **Complex feature done + manual test passed** → SOP 2 (multi-agent testing)
-- **4+ independent components** → SOP 10 (parallel development)
-
-## Principle
-
-Be pragmatic. Be reliable. Self-anneal. Use Opus 4.6 for all work.
+Be pragmatic. Be reliable. Self-anneal. Use Opus 4.6 for all work. Every tool must be usable by William without opening VS Code — if it isn't, it isn't finished.

@@ -37,6 +37,10 @@ PROVIDER_MAP=(
     ["ideogram"]="ideogram"
     ["kie.ai"]="kie.ai"
     ["kie_ai"]="kie.ai"
+    ["api.apollo.io"]="apollo"
+    ["apollo_api_key"]="apollo"
+    ["api.hunter.io"]="hunter"
+    ["hunter_api_key"]="hunter"
 )
 
 STATUS_FILE="$(dirname "$0")/provider-status.json"
@@ -74,6 +78,32 @@ if [[ -z "$MATCHED_PROVIDER" ]]; then
     elif [[ "$COMMAND_LOWER" == *"kie_api_key"* ]]; then
         MATCHED_PROVIDER="kie.ai"
     fi
+fi
+
+# Special case: Apollo — skip auth/health checks (those are free)
+if [[ "$MATCHED_PROVIDER" == "apollo" ]]; then
+    if [[ "$COMMAND_LOWER" == *"auth/health"* || "$COMMAND_LOWER" == *"auth_health"* ]]; then
+        exit 0
+    fi
+    echo "" >&2
+    echo "--- API Cost Guard: apollo (credit warning) ---" >&2
+    echo "  Apollo credits are limited. Check balance first:" >&2
+    echo "  ./scripts/api-key-manager.sh → http://127.0.0.1:8793" >&2
+    echo "  Use auth/health endpoint to test connectivity without spending credits." >&2
+    echo "" >&2
+    exit 0
+fi
+
+# Special case: Hunter.io — warn about low value for Naples FL leads
+if [[ "$MATCHED_PROVIDER" == "hunter" ]]; then
+    echo "" >&2
+    echo "--- API Cost Guard: hunter.io (effectiveness warning) ---" >&2
+    echo "  Hunter.io found 0 Naples FL leads in prior run — low value for local B2B." >&2
+    echo "  Consider: Apollo (better B2B data) or manual LinkedIn outreach." >&2
+    echo "  Check balance first: ./scripts/api-key-manager.sh" >&2
+    echo "  Proceeding, but confirm this is the right tool for this use case." >&2
+    echo "" >&2
+    exit 0
 fi
 
 if [[ -z "$MATCHED_PROVIDER" ]]; then
