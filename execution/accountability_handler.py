@@ -387,11 +387,16 @@ def handle_eod(args):
     videos = args.videos
     content = args.content
 
+    # Handle trained field if provided
+    trained = getattr(args, 'trained', None)
+    
     if existing:
         update_cell(service, "Daily Log", row_idx, COL_MAP["Outreach_Count"], outreach)
         update_cell(service, "Daily Log", row_idx, COL_MAP["Meetings_Booked"], meetings)
         update_cell(service, "Daily Log", row_idx, COL_MAP["Videos_Filmed"], videos)
         update_cell(service, "Daily Log", row_idx, COL_MAP["Content_Posted"], content)
+        if trained is not None:
+            update_cell(service, "Daily Log", row_idx, COL_MAP["Training_Session"], "TRUE" if trained else "FALSE")
     else:
         append_row(service, "Daily Log", [
             ctx["today"], ctx["day_number"], ctx["week_number"],
@@ -419,6 +424,11 @@ def handle_eod(args):
         except (ValueError, TypeError):
             pain_today = None
 
+    # Training status line
+    train_line = ""
+    if trained is not None:
+        train_line = "\n💪 Trained today." if trained else "\n⏸️ Rest day (no training)."
+    
     if pain_today and pain_today >= 7 and outreach > 0:
         # High pain day — celebrate whatever they did
         response = (
@@ -426,6 +436,7 @@ def handle_eod(args):
             f"{meetings} meeting(s), {videos} video(s), {content} content.\n"
             f"Weekly total: {weekly_outreach}/500.\n"
             f"Conversion rate: {conversion_pct}% ({total_meetings} meetings / {total_outreach} outreach)"
+            f"{train_line}"
         )
     elif outreach >= 120:
         response = (
@@ -434,6 +445,7 @@ def handle_eod(args):
             f'"Simple scales. Fancy fails." — Hormozi\n'
             f"Weekly total: {weekly_outreach}/500.\n"
             f"Conversion rate: {conversion_pct}% ({total_meetings}/{total_outreach})"
+            f"{train_line}"
         )
     elif outreach >= 100:
         response = (
@@ -441,6 +453,7 @@ def handle_eod(args):
             f"{meetings} meeting(s) booked. {videos} video(s) filmed.\n"
             f"Running total this week: {weekly_outreach}/500.\n"
             f"Conversion rate: {conversion_pct}%"
+            f"{train_line}"
         )
     elif outreach > 0:
         shortfall = 100 - outreach
@@ -449,12 +462,14 @@ def handle_eod(args):
             f"Volume solves all problems. Tomorrow: make up the gap.\n"
             f"Weekly total: {weekly_outreach}/500.\n"
             f"Conversion rate: {conversion_pct}%"
+            f"{train_line}"
         )
     else:
         response = (
             f"Logged. 0 outreach today.\n"
             f"{meetings} meeting(s), {videos} video(s), {content} content.\n"
             f"Everyone has off days. Reset tonight, attack tomorrow."
+            f"{train_line}"
         )
 
     if milestone_msg:
@@ -673,14 +688,15 @@ def handle_parse(args):
         args.value = int(m.group(1))
         return handle_energy(args)
 
-    # EOD (4 comma-separated numbers)
-    m = re.match(r"^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*$", text)
+    # EOD (4 or 5 comma-separated numbers - 5th is trained 0/1)
+    m = re.match(r"^\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*(\d+))?\s*$", text)
     if m:
         args.type = "eod"
         args.outreach = int(m.group(1))
         args.meetings = int(m.group(2))
         args.videos = int(m.group(3))
         args.content = int(m.group(4))
+        args.trained = int(m.group(5)) if m.group(5) else None
         return handle_eod(args)
 
     # Status commands
