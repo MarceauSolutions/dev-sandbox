@@ -28,9 +28,35 @@ STAGE_COLORS = {
 }
 
 STAGES = ["Intake", "Qualified", "Meeting Booked", "Proposal Sent", "Negotiation", "Closed Won", "Closed Lost"]
+STAGE_DOTS_ORDER = ["Intake", "Qualified", "Meeting Booked", "Proposal Sent", "Closed Won"]
 
 def _esc(s):
     return html_mod.escape(str(s)) if s else ""
+
+
+def _stage_dots(current_stage):
+    """5-dot stage progress indicator showing pipeline position."""
+    pipeline_stages = ["Intake", "Qualified", "Meeting Booked", "Proposal Sent", "Closed Won"]
+    try:
+        current_idx = pipeline_stages.index(current_stage)
+    except ValueError:
+        # Closed Lost or Negotiation — map appropriately
+        current_idx = -1 if current_stage == "Closed Lost" else 3  # Negotiation ≈ Proposal Sent level
+
+    dots = ""
+    for i, stage in enumerate(pipeline_stages):
+        color = STAGE_COLORS.get(stage, MUTED)
+        if current_stage == "Closed Lost":
+            # All dots red for lost
+            filled = f'<span title="{stage}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{RED};margin:0 2px"></span>'
+            dots += filled
+        elif i <= current_idx:
+            filled = f'<span title="{stage}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{color};margin:0 2px"></span>'
+            dots += filled
+        else:
+            empty = f'<span title="{stage}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{SURFACE};border:1px solid {BORDER};margin:0 2px"></span>'
+            dots += empty
+    return f'<div style="display:flex;align-items:center;margin-top:4px">{dots}</div>'
 
 def _money(v):
     try:
@@ -99,7 +125,7 @@ label{{font-size:12px;color:{MUTED};margin-bottom:4px;display:block;font-weight:
 
 
 def _nav(active=""):
-    tabs = [("dashboard", "Pipeline", "/"), ("deals", "Deals", "/deals"), ("outreach", "Outreach", "/outreach")]
+    tabs = [("dashboard", "Pipeline", "/"), ("deals", "All Prospects", "/deals"), ("outreach", "Outreach", "/outreach"), ("import", "Import CSV", "/import")]
     links = "".join(f'<a href="{h}" class="{"active" if t==active else ""}">{l}</a>' for t, l, h in tabs)
     return f'''<nav class="topnav"><div class="topnav-inner">
         <a href="/" class="logo">Sales<span>Pipeline™</span></a>
@@ -128,6 +154,8 @@ def render_page(page, title, data, error=""):
         return _shell(title, _outreach(data), "outreach")
     elif page == "new_proposal":
         return _shell(title, _new_proposal(data), "deals")
+    elif page == "import":
+        return _shell(title, _import_page(data), "import")
     return _shell(title, "<p>Not found</p>")
 
 
@@ -160,8 +188,9 @@ def _dashboard(data):
             cards += f'''<a href="/deals/{d["id"]}" style="text-decoration:none;color:inherit"><div class="kanban-card">
                 <div class="company">{_esc(d["company"])}</div>
                 <div class="contact">{_esc(d["contact_name"] or "")}</div>
+                {_stage_dots(d["stage"])}
                 {f'<div class="amount">{_money(total)}/yr</div>' if total > 0 else ""}
-                {f'<div class="tag">{_esc(d["industry"])}</div>' if d.get("industry") else ""}
+                {f'<div class="tag">{_esc(d["industry"])}</div>' if d["industry"] else ""}
             </div></a>'''
         if not cards:
             cards = f'<div style="color:{MUTED};font-size:11px;text-align:center;padding:20px">No deals</div>'
@@ -188,33 +217,121 @@ def _dashboard(data):
             items += f'<div class="activity-item"><span class="time">{_esc((a["created_at"] or "")[:16])}</span> <strong>{_esc(a["activity_type"])}</strong> — {_esc(a["description"] or "")}</div>'
         act_html = f'<div class="card"><h2>Recent Activity</h2>{items}</div>'
 
-    return stats + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>'
+    # All prospects scrollable table
+    all_deals = data.get("all_deals", [])
+    prospects_rows = ""
+    if all_deals:
+        for d in all_deals:
+            color = STAGE_COLORS.get(d["stage"], MUTED)
+            total = (d["setup_fee"] or 0) + (d["monthly_fee"] or 0) * 12
+            prospects_rows += f'''<tr>
+                <td><a href="/deals/{d["id"]}" style="font-weight:700">{_esc(d["company"])}</a></td>
+                <td style="font-size:12px">{_esc(d["contact_name"] or "")}</td>
+                <td style="font-size:11px;color:{MUTED}">{_esc(d["industry"] or "")}</td>
+                <td>
+                    <span class="badge" style="background:{color}22;color:{color}">{_esc(d["stage"])}</span>
+                    {_stage_dots(d["stage"])}
+                </td>
+                <td style="color:{GOLD};font-weight:600;font-size:12px">{_money(total) if total > 0 else "—"}</td>
+            </tr>'''
+        prospects_table = f'''<div class="card" style="margin-top:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <h2 style="margin:0">All Prospects <span style="color:{MUTED};font-weight:400;font-size:12px">({len(all_deals)})</span></h2>
+                <div style="display:flex;gap:8px">
+                    <a href="/import" class="btn btn-secondary btn-sm">⬆ Import CSV</a>
+                    <a href="/deals" class="btn btn-secondary btn-sm">View All →</a>
+                </div>
+            </div>
+            <div style="overflow-y:auto;max-height:340px">
+                <table><thead><tr><th>Company</th><th>Contact</th><th>Industry</th><th>Stage</th><th>Value</th></tr></thead>
+                <tbody>{prospects_rows}</tbody></table>
+            </div>
+        </div>'''
+    else:
+        prospects_table = f'''<div class="card" style="margin-top:14px">
+            <h2>All Prospects</h2>
+            <div class="empty" style="padding:30px">
+                <p>No prospects yet.</p>
+                <a href="/import" class="btn btn-primary" style="margin-top:10px">⬆ Import CSV</a>
+                <a href="/deals/add" class="btn btn-secondary" style="margin-top:10px;margin-left:8px">+ Add Manually</a>
+            </div>
+        </div>'''
+
+    return stats + kanban + f'<div class="grid-2">{fu_html}{act_html}</div>' + prospects_table
 
 
 def _deals_list(data):
     deals = data.get("deals", [])
+
+    action_buttons = f'''<div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="/deals/add" class="btn btn-primary btn-sm">+ New Deal</a>
+        <a href="/import" class="btn btn-secondary btn-sm">⬆ Import CSV</a>
+        <button onclick="syncOutreach()" id="sync-btn" class="btn btn-secondary btn-sm">⟳ Sync Today's Outreach</button>
+    </div>'''
+
+    sync_script = f'''<script>
+async function syncOutreach() {{
+    const btn = document.getElementById('sync-btn');
+    btn.textContent = 'Syncing...';
+    btn.disabled = true;
+    try {{
+        const r = await fetch('/deals/sync-outreach', {{method:'POST'}});
+        const d = await r.json();
+        if (d.ok) {{
+            btn.textContent = '✓ Synced (' + d.added + ' added)';
+            btn.style.color = '{GREEN}';
+            setTimeout(() => location.reload(), 1200);
+        }} else {{
+            btn.textContent = 'Error: ' + (d.error || 'Unknown');
+            btn.style.color = '{RED}';
+            btn.disabled = false;
+        }}
+    }} catch(e) {{
+        btn.textContent = 'Network error';
+        btn.style.color = '{RED}';
+        btn.disabled = false;
+    }}
+}}
+</script>'''
+
     if not deals:
-        return '<div class="empty"><h3>No deals yet</h3><p>Add your first prospect to start tracking.</p><a href="/deals/add" class="btn btn-primary" style="margin-top:12px">+ Add Deal</a></div>'
+        return f'''<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 style="margin:0">All Prospects</h2>
+            {action_buttons}
+        </div>
+        <div class="empty"><h3>No prospects yet</h3><p>Import a CSV or add your first prospect manually.</p></div>
+        {sync_script}</div>'''
 
     rows = ""
     for d in deals:
         color = STAGE_COLORS.get(d["stage"], MUTED)
         total = (d["setup_fee"] or 0) + (d["monthly_fee"] or 0) * 12
+        dots = _stage_dots(d["stage"])
         rows += f'''<tr>
             <td><a href="/deals/{d["id"]}"><strong>{_esc(d["company"])}</strong></a></td>
-            <td>{_esc(d["contact_name"] or "")}</td>
-            <td>{_esc(d["industry"] or "")}</td>
-            <td><span class="badge" style="background:{color}22;color:{color}">{_esc(d["stage"])}</span></td>
+            <td style="font-size:12px">{_esc(d["contact_name"] or "")}<br><span style="color:{MUTED};font-size:11px">{_esc(d["contact_email"] or "")}</span></td>
+            <td style="font-size:12px">{_esc(d["industry"] or "")}</td>
+            <td>
+                <span class="badge" style="background:{color}22;color:{color}">{_esc(d["stage"])}</span>
+                {dots}
+            </td>
             <td style="color:{GOLD};font-weight:600">{_money(total) if total > 0 else "—"}</td>
-            <td style="color:{MUTED}">{_esc(d["next_action"] or "")}</td>
+            <td style="color:{MUTED};font-size:12px">{_esc(d["next_action"] or "")}</td>
             <td style="color:{MUTED};font-size:11px">{_esc((d["updated_at"] or "")[:10])}</td>
         </tr>'''
 
-    return f'''<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2 style="margin:0">All Deals ({len(deals)})</h2>
-        <a href="/deals/add" class="btn btn-primary btn-sm">+ Add Deal</a>
-    </div>
-    <table><tr><th>Company</th><th>Contact</th><th>Industry</th><th>Stage</th><th>Value</th><th>Next Action</th><th>Updated</th></tr>{rows}</table></div>'''
+    return f'''<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+            <div>
+                <h2 style="margin:0;font-size:16px;color:{TEXT}">All Prospects <span style="color:{MUTED};font-weight:400">({len(deals)})</span></h2>
+                <div style="font-size:11px;color:{MUTED};margin-top:2px">Stage dots: Intake → Qualified → Meeting → Proposal → Won</div>
+            </div>
+            {action_buttons}
+        </div>
+        <div style="overflow-x:auto">
+        <table><tr><th>Company</th><th>Contact</th><th>Industry</th><th>Stage</th><th>Value</th><th>Next Action</th><th>Updated</th></tr>{rows}</table>
+        </div>
+    </div>{sync_script}'''
 
 
 def _add_deal(data):
@@ -332,7 +449,111 @@ def _deal_detail(data):
         act_items += f'<div class="activity-item"><span class="time">{_esc((a["created_at"] or "")[:16])}</span> <strong>{_esc(a["activity_type"])}</strong> — {_esc(a["description"] or "")}</div>'
     act_html = f'<div class="card"><h2>Activity</h2>{act_items}</div>' if act_items else ""
 
-    return f'<a href="/deals" class="btn btn-ghost" style="margin-bottom:12px">← All Deals</a>' + info + actions + f'<div class="grid-2">{details}{briefs_html or ""}</div>' + prop_html + out_html + act_html
+    send_proposal = _send_proposal_section(d)
+
+    return f'<a href="/deals" class="btn btn-ghost" style="margin-bottom:12px">← All Deals</a>' + info + actions + send_proposal + f'<div class="grid-2">{details}{briefs_html or ""}</div>' + prop_html + out_html + act_html
+
+
+def _send_proposal_section(d: dict) -> str:
+    """Render the 'Send Proposal & Agreement' card for the deal detail page."""
+    deal_id = d["id"]
+    contact_name  = _esc(d.get("contact_name") or "")
+    contact_email = _esc(d.get("contact_email") or "")
+    pain_points   = _esc(d.get("pain_points") or "")
+
+    tier_opts = "".join(
+        f'<option value="{n}">{label}</option>'
+        for n, label in [
+            (1, "Tier 1 — Starter  ($497/mo)"),
+            (2, "Tier 2 — Growth   ($997/mo)"),
+            (3, "Tier 3 — Pro      ($1,497/mo)"),
+            (4, "Tier 4 — Elite    ($2,497/mo)"),
+        ]
+    )
+
+    return f'''
+<div class="card" id="send-proposal-card">
+  <h2>Send Proposal &amp; Agreement</h2>
+  <p style="font-size:12px;color:{MUTED};margin-bottom:14px">
+    Generates PDFs, emails the client, creates a branded signing link, and advances stage to Proposal Sent.
+  </p>
+  <form id="proposal-form" onsubmit="sendProposal(event, {deal_id})">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Client Name</label>
+        <input type="text" name="client_name" value="{contact_name}" required placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Client Email</label>
+        <input type="email" name="client_email" value="{contact_email}" required placeholder="email@company.com">
+      </div>
+      <div class="form-group">
+        <label>Tier</label>
+        <select name="tier">{tier_opts}</select>
+      </div>
+      <div class="form-group">
+        <label>Pain Point</label>
+        <input type="text" name="pain_point" value="{pain_points}" placeholder="Their main problem AI can solve" required>
+      </div>
+    </div>
+    <button type="submit" id="proposal-btn" class="btn btn-primary">
+      Generate &amp; Send &rarr;
+    </button>
+  </form>
+  <div id="proposal-result" style="display:none;margin-top:14px"></div>
+</div>
+
+<script>
+async function sendProposal(e, dealId) {{
+  e.preventDefault();
+  const btn = document.getElementById('proposal-btn');
+  const result = document.getElementById('proposal-result');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  result.style.display = 'none';
+
+  const form = document.getElementById('proposal-form');
+  const data = new FormData(form);
+
+  try {{
+    const r = await fetch(`/deals/${{dealId}}/send-proposal`, {{
+      method: 'POST',
+      body: data,
+    }});
+    const j = await r.json();
+    if (j.ok) {{
+      result.style.display = 'block';
+      result.innerHTML = `
+        <div style="background:#0d2a00;border:1px solid #3fb95044;border-radius:8px;padding:14px 18px;font-size:13px">
+          <div style="color:#3fb950;font-weight:700;margin-bottom:8px">Proposal sent!</div>
+          <div style="margin-bottom:6px">
+            <span style="color:{MUTED}">Signing URL: </span>
+            <a href="${{j.signing_url}}" target="_blank" style="color:{GOLD};word-break:break-all">${{j.signing_url}}</a>
+          </div>
+          <div style="margin-bottom:6px">
+            <span style="color:{MUTED}">Deal stage: </span>
+            <span style="color:#bc8cff;font-weight:600">Proposal Sent</span>
+          </div>
+          ${{j.email_sent ? '<div style="color:{MUTED}">Email sent to client.</div>' : ''}}
+        </div>`;
+      btn.textContent = 'Sent!';
+      btn.style.opacity = '0.6';
+      // Refresh the stage badge after 2s
+      setTimeout(() => location.reload(), 3000);
+    }} else {{
+      result.style.display = 'block';
+      result.innerHTML = `<div style="background:#2d0a0a;border:1px solid #f8514944;border-radius:8px;padding:12px 16px;color:#f85149;font-size:13px">Error: ${{j.error || 'Unknown error'}}</div>`;
+      btn.disabled = false;
+      btn.textContent = 'Generate & Send →';
+    }}
+  }} catch(err) {{
+    result.style.display = 'block';
+    result.innerHTML = `<div style="background:#2d0a0a;border:1px solid #f8514944;border-radius:8px;padding:12px 16px;color:#f85149;font-size:13px">Network error: ${{err}}</div>`;
+    btn.disabled = false;
+    btn.textContent = 'Generate & Send →';
+  }}
+}}
+</script>'''
 
 
 def _outreach(data):
@@ -370,6 +591,81 @@ def _outreach(data):
     log_html = f'<div class="card"><h2>Outreach Log</h2><table><tr><th>Date</th><th>Company</th><th>Contact</th><th>Ch</th><th>Message</th><th>Response</th></tr>{rows}</table></div>' if rows else ""
 
     return form + fu_html + log_html
+
+
+def _import_page(data):
+    result = data.get("result", "")
+    error = data.get("error", "")
+    result_html = ""
+    if result:
+        result_html = f'<div style="background:{GREEN}18;border:1px solid {GREEN}44;border-radius:8px;padding:12px 16px;margin-bottom:14px;color:{GREEN};font-size:13px">{_esc(result)}</div>'
+    if error:
+        result_html = f'<div style="background:{RED}18;border:1px solid {RED}44;border-radius:8px;padding:12px 16px;margin-bottom:14px;color:{RED};font-size:13px">{_esc(error)}</div>'
+
+    return f'''<div style="max-width:700px;margin:0 auto">
+    <div class="card">
+        <h2>Import Prospects from CSV</h2>
+        <p style="font-size:13px;color:{MUTED};margin-bottom:16px">
+            Upload a CSV file with prospect data. Expected columns: <code style="background:{SURFACE};padding:1px 5px;border-radius:4px">company</code>,
+            <code style="background:{SURFACE};padding:1px 5px;border-radius:4px">contact_name</code>,
+            <code style="background:{SURFACE};padding:1px 5px;border-radius:4px">contact_email</code>,
+            <code style="background:{SURFACE};padding:1px 5px;border-radius:4px">industry</code>.
+            Duplicates (same company name) are skipped automatically.
+        </p>
+        {result_html}
+        <form method="POST" action="/import" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>CSV File</label>
+                <input type="file" name="file" accept=".csv" required style="padding:8px">
+            </div>
+            <div class="form-group">
+                <label>Default Stage</label>
+                <select name="stage">
+                    <option value="Intake" selected>Intake</option>
+                    <option value="Qualified">Qualified</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Lead Source</label>
+                <input type="text" name="lead_source" placeholder="Apollo, Manual, etc." value="CSV Import">
+            </div>
+            <button type="submit" class="btn btn-primary">Upload & Import</button>
+            <a href="/deals" class="btn btn-secondary" style="margin-left:8px">Cancel</a>
+        </form>
+    </div>
+    <div class="card" style="margin-top:14px">
+        <h2>Sync from Today's Outreach</h2>
+        <p style="font-size:13px;color:{MUTED};margin-bottom:14px">
+            Pull all emails sent today from the outreach tracking file and create deals for any that aren't already in the pipeline.
+        </p>
+        <button onclick="syncOutreach()" id="sync-btn2" class="btn btn-secondary">⟳ Sync Today's Outreach Now</button>
+        <div id="sync-result" style="margin-top:10px;font-size:13px;display:none"></div>
+    </div>
+    <script>
+    async function syncOutreach() {{
+        const btn = document.getElementById('sync-btn2');
+        const res = document.getElementById('sync-result');
+        btn.textContent = 'Syncing...'; btn.disabled = true; res.style.display = 'none';
+        try {{
+            const r = await fetch('/deals/sync-outreach', {{method:'POST'}});
+            const d = await r.json();
+            res.style.display = 'block';
+            if (d.ok) {{
+                res.style.color = '{GREEN}';
+                res.textContent = '✓ Done — ' + d.added + ' new deal(s) created, ' + d.skipped + ' already existed.';
+                btn.textContent = 'Synced ✓';
+            }} else {{
+                res.style.color = '{RED}';
+                res.textContent = 'Error: ' + (d.error || 'Unknown');
+                btn.disabled = false; btn.textContent = '⟳ Sync Today\'s Outreach Now';
+            }}
+        }} catch(e) {{
+            res.style.display = 'block'; res.style.color = '{RED}';
+            res.textContent = 'Network error: ' + e.message;
+            btn.disabled = false; btn.textContent = '⟳ Sync Today\'s Outreach Now';
+        }}
+    }}
+    </script></div>'''
 
 
 def _new_proposal(data):

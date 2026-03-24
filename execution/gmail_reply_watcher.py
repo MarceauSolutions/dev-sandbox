@@ -160,6 +160,47 @@ def save_processed_replies(processed_ids: set) -> None:
     PROCESSED_REPLIES_FILE.write_text(json.dumps(data, indent=2))
 
 
+def update_tracking_json_reply(email: str, reply_at: str, dry_run: bool = False) -> bool:
+    """
+    Mark a recipient as replied in all outreach_tracking_*.json files.
+    Sets reply_received=True, reply_at=<timestamp>, pipeline_stage="Qualified".
+    Returns True if at least one record was updated.
+    """
+    email_lower = email.lower().strip()
+    updated = False
+
+    for tracking_file in sorted(OUTREACH_DIR.glob("outreach_tracking_*.json")):
+        try:
+            data = json.loads(tracking_file.read_text())
+        except Exception as e:
+            print(f"  [tracking-json] Could not read {tracking_file.name}: {e}")
+            continue
+
+        changed = False
+        for entry in data.get("emails", []):
+            if entry.get("recipient", "").lower().strip() == email_lower:
+                if dry_run:
+                    print(f"  [dry-run] Would update {tracking_file.name}: {email} -> reply_received=True")
+                else:
+                    entry["reply_received"] = True
+                    entry["reply_at"] = reply_at
+                    entry["pipeline_stage"] = "Qualified"
+                    changed = True
+                updated = True
+
+        if changed and not dry_run:
+            try:
+                tracking_file.write_text(json.dumps(data, indent=2))
+                print(f"  [tracking-json] Updated {tracking_file.name}: {email} marked replied.")
+            except Exception as e:
+                print(f"  [tracking-json] Could not write {tracking_file.name}: {e}")
+
+    if not updated:
+        print(f"  [tracking-json] No tracking record found for {email} — skipping JSON update.")
+
+    return updated
+
+
 # ─── Gmail Search ─────────────────────────────────────────────────────────────
 
 def extract_email_address(header_value: str) -> str:
@@ -529,6 +570,10 @@ def main():
             mark_replied(conn, deal_id, msg, dry_run=dry_run)
             if not dry_run:
                 print(f"  [pipeline] Deal {deal_id} updated -> Qualified")
+
+        # Step 6b2: Update outreach tracking JSON
+        reply_timestamp = datetime.now(timezone.utc).isoformat()
+        update_tracking_json_reply(from_email, reply_timestamp, dry_run=dry_run)
 
         # Step 6c: Send Telegram notification
         notification = format_reply_notification(

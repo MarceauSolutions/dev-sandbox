@@ -54,6 +54,64 @@ def _progress_ring(pct, size=120, stroke=8, label="", sublabel="", color=None):
     </div>'''
 
 
+def _activity_rings(outreach_count, outreach_target, tasks_today, tasks_done, streak, streak_target=14):
+    """Apple Watch-style three concentric activity rings — outreach (gold), tasks (blue), streak (purple)."""
+    SIZE = 200
+    CX = SIZE / 2
+    CY = SIZE / 2
+
+    # Ring specs: (radius, stroke_width, color, pct)
+    outreach_pct = min(100, round((outreach_count / outreach_target) * 100)) if outreach_target else 0
+    tasks_total = len(tasks_today) if tasks_today else 0
+    tasks_pct = min(100, round((tasks_done / tasks_total) * 100)) if tasks_total > 0 else 0
+    streak_pct = min(100, round((streak / streak_target) * 100))
+
+    rings = [
+        # (radius, stroke, color, pct, label, value_str)
+        (88,  10, GOLD,   outreach_pct, "Outreach", f"{outreach_count}/{outreach_target}"),
+        (68,  10, BLUE,   tasks_pct,    "Tasks",    f"{tasks_done}/{tasks_total}"),
+        (48,  10, PURPLE, streak_pct,   "Streak",   f"{streak}d"),
+    ]
+
+    PI = 3.14159
+    svg_rings = ""
+    for radius, stroke, color, pct, _label, _val in rings:
+        circ = 2 * PI * radius
+        offset = circ - (pct / 100) * circ
+        # Track circle (dim)
+        svg_rings += f'<circle cx="{CX}" cy="{CY}" r="{radius}" fill="none" stroke="{color}22" stroke-width="{stroke}"/>'
+        # Progress arc
+        svg_rings += f'''<circle cx="{CX}" cy="{CY}" r="{radius}" fill="none" stroke="{color}" stroke-width="{stroke}"
+            stroke-dasharray="{circ:.2f}" stroke-dashoffset="{offset:.2f}" stroke-linecap="round"
+            style="transition:stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1)"/>'''
+
+    # Labels below rings: three columns
+    label_html = ""
+    for _radius, _stroke, color, pct, label, val in rings:
+        label_html += f'''<div style="text-align:center;flex:1">
+            <div style="font-size:18px;font-weight:800;color:{color};line-height:1">{val}</div>
+            <div style="font-size:10px;color:{MUTED};margin-top:2px;text-transform:uppercase;letter-spacing:.3px">{label}</div>
+            <div style="font-size:9px;color:{color};margin-top:1px">{pct}%</div>
+        </div>'''
+
+    return f'''<div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+        <div style="position:relative">
+            <svg width="{SIZE}" height="{SIZE}" style="transform:rotate(-90deg)">
+                {svg_rings}
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+                <div style="text-align:center">
+                    <div style="font-size:11px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px">Activity</div>
+                    <div style="font-size:28px;font-weight:900;color:{GOLD};line-height:1">{outreach_pct}%</div>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;width:{SIZE}px">
+            {label_html}
+        </div>
+    </div>'''
+
+
 def _metric_bar(label, current, target, color=GOLD, icon=""):
     """Horizontal progress bar with label."""
     pct = min(100, round((current / target) * 100)) if target else 0
@@ -202,6 +260,19 @@ td {{ padding:8px 10px;border-bottom:1px solid {BORDER}22; }}
 .pulse {{ animation:pulse 2s ease-in-out infinite; }}
 @keyframes pulse {{ 0%,100% {{ opacity:1; }} 50% {{ opacity:0.5; }} }}
 
+.right-now-pulse {{ animation:right-now-border-pulse 2.5s ease-in-out infinite; }}
+@keyframes right-now-border-pulse {{
+    0%,100% {{ border-color:{GOLD}44;box-shadow:0 0 8px {GOLD}22; }}
+    50% {{ border-color:{GOLD}cc;box-shadow:0 0 24px {GOLD}66; }}
+}}
+
+.task-done-check {{ animation:check-pop .4s cubic-bezier(.17,.67,.83,.67); }}
+@keyframes check-pop {{
+    0% {{ transform:scale(0.5);opacity:0; }}
+    60% {{ transform:scale(1.3);opacity:1; }}
+    100% {{ transform:scale(1);opacity:1; }}
+}}
+
 @media(max-width:900px) {{
     .grid-2,.grid-3,.grid-4,.grid-5 {{ grid-template-columns:1fr; }}
     .rings {{ justify-content:center; }}
@@ -225,8 +296,8 @@ def _right_now_card(time_block):
     nxt = time_block.get("next")
 
     if err and not current and not nxt:
-        return f'''<div class="card" style="border-color:{GOLD}44;margin-bottom:16px">
-            <h2>RIGHT NOW</h2>
+        return f'''<div class="card right-now-pulse" style="margin-bottom:16px">
+            <h2 style="font-size:16px;font-weight:800;color:{GOLD};letter-spacing:.5px">RIGHT NOW</h2>
             <span style="color:{MUTED};font-size:13px">Calendar unavailable — {html.escape(str(err))}</span>
         </div>'''
 
@@ -238,30 +309,31 @@ def _right_now_card(time_block):
         hrs = mins // 60
         mins_rem = mins % 60
         time_str = f"{hrs}h {mins_rem}m left" if hrs > 0 else f"{mins_rem}m left"
-        current_html = f'''<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,{GOLD}18,{GOLD}08);border:1px solid {GOLD}44;border-radius:10px">
-            <div style="width:10px;height:10px;border-radius:50%;background:{GOLD};flex-shrink:0;box-shadow:0 0 8px {GOLD}88" class="pulse"></div>
+        urgency_color = RED if mins <= 10 else YELLOW if mins <= 20 else GOLD
+        current_html = f'''<div style="display:flex;align-items:center;gap:14px;padding:16px 18px;background:linear-gradient(135deg,{GOLD}22,{GOLD}08);border:1px solid {GOLD}55;border-radius:12px">
+            <div style="width:12px;height:12px;border-radius:50%;background:{urgency_color};flex-shrink:0;box-shadow:0 0 12px {urgency_color}aa" class="pulse"></div>
             <div style="flex:1">
-                <div style="font-size:15px;font-weight:700;color:{GOLD}">{html.escape(current["title"])}</div>
-                <div style="font-size:11px;color:{MUTED};margin-top:2px">{current["start"]} – {current["end"]}</div>
+                <div style="font-size:19px;font-weight:800;color:{GOLD}">{html.escape(current["title"])}</div>
+                <div style="font-size:12px;color:{MUTED};margin-top:3px">{current["start"]} – {current["end"]}</div>
             </div>
-            <div style="text-align:right">
-                <div style="font-size:18px;font-weight:800;color:{GOLD}">{time_str}</div>
-                <div style="font-size:10px;color:{MUTED}">remaining</div>
+            <div style="text-align:right;flex-shrink:0">
+                <div style="font-size:26px;font-weight:900;color:{urgency_color};line-height:1">{time_str}</div>
+                <div style="font-size:10px;color:{MUTED};margin-top:2px;text-transform:uppercase;letter-spacing:.3px">remaining</div>
             </div>
         </div>'''
     else:
-        current_html = f'<div style="padding:10px 14px;color:{MUTED};font-size:13px">No active time block right now</div>'
+        current_html = f'<div style="padding:12px 16px;color:{MUTED};font-size:14px;font-style:italic">No active time block right now</div>'
 
     if nxt:
         mins_until = nxt.get("mins_until")
         if mins_until is not None:
             eta = f"in {mins_until}m" if mins_until < 60 else f"in {mins_until//60}h {mins_until%60}m"
-            next_html = f'<div style="margin-top:8px;padding:8px 14px;background:{SURFACE};border-radius:8px;font-size:12px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]} <span style="color:{BLUE}">({eta})</span></div>'
+            next_html = f'<div style="margin-top:10px;padding:10px 14px;background:{SURFACE};border-radius:8px;font-size:13px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]} <span style="color:{BLUE}">({eta})</span></div>'
         else:
-            next_html = f'<div style="margin-top:8px;padding:8px 14px;background:{SURFACE};border-radius:8px;font-size:12px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]}</div>'
+            next_html = f'<div style="margin-top:10px;padding:10px 14px;background:{SURFACE};border-radius:8px;font-size:13px;color:{MUTED}">Up next: <strong style="color:{TEXT}">{html.escape(nxt["title"])}</strong> at {nxt["start"]}</div>'
 
-    return f'''<div class="card" style="border-color:{GOLD}44;margin-bottom:16px">
-        <h2>RIGHT NOW</h2>
+    return f'''<div class="card right-now-pulse" style="margin-bottom:16px">
+        <h2 style="font-size:16px;font-weight:800;color:{GOLD};letter-spacing:.5px;margin-bottom:10px">RIGHT NOW</h2>
         {current_html}
         {next_html}
     </div>'''
@@ -287,7 +359,7 @@ def _tasks_section(tasks):
                 due = f'<span style="font-size:10px;color:{MUTED}">{due_dt.strftime("%-I:%M %p")}</span>'
             except Exception:
                 pass
-        status_icon = f'<span style="color:{GREEN}">✓</span>' if is_done else f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{pri_color};flex-shrink:0"></span>'
+        status_icon = f'<span class="task-done-check" style="color:{GOLD};font-size:16px;font-weight:900;line-height:1">✓</span>' if is_done else f'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{pri_color};flex-shrink:0"></span>'
         return f'''<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-bottom:1px solid {BORDER}22;{'opacity:0.5' if is_done else ''}">
             <div style="margin-top:2px;flex-shrink:0">{status_icon}</div>
             <div style="flex:1;min-width:0">
@@ -403,6 +475,57 @@ def render_dashboard(data, error=None, time_block=None):
         {_stat_card(data["streak"], "Day Streak", "🔥", GOLD if data["streak"]>=3 else MUTED)}
     </div>'''
 
+    # ── Sprint countdown ──
+    from datetime import date as _date
+    _sprint_end = _date(2026, 4, 5)
+    _sprint_days_left = max(0, (_sprint_end - _date.today()).days)
+    _sprint_color = RED if _sprint_days_left <= 3 else YELLOW if _sprint_days_left <= 7 else GOLD
+    sprint_countdown = f'''<div style="background:linear-gradient(135deg,{_sprint_color}18,{_sprint_color}08);border:1px solid {_sprint_color}44;border-radius:12px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+            <div style="font-size:11px;color:{MUTED};text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">AI Client Sprint</div>
+            <div style="font-size:15px;font-weight:700;color:{TEXT}">Ends April 5, 2026</div>
+        </div>
+        <div style="text-align:right">
+            <div style="font-size:42px;font-weight:900;color:{_sprint_color};line-height:1">{_sprint_days_left}</div>
+            <div style="font-size:11px;color:{MUTED};text-transform:uppercase;letter-spacing:.3px">days left</div>
+        </div>
+    </div>'''
+
+    # ── Activity Rings (Apple Watch style — concentric) ──
+    tasks_obj = data.get("tasks", {})
+    _today_tasks = tasks_obj.get("today", [])
+    _tasks_done = sum(1 for t in _today_tasks if t.get("status") == "complete")
+    _today_outreach = wt.get("outreach", 0)
+    activity_rings_html = _activity_rings(
+        outreach_count=_today_outreach,
+        outreach_target=100,  # Daily target
+        tasks_today=_today_tasks,
+        tasks_done=_tasks_done,
+        streak=data["streak"],
+        streak_target=14,
+    )
+    rings_top = f'''<div class="card card-glow" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+                <h2 style="margin-bottom:4px">Today's Activity</h2>
+                <div style="font-size:11px;color:{MUTED}">Outreach · Tasks · Streak — close all three rings</div>
+            </div>
+            <div style="font-size:10px;color:{MUTED};text-align:right">
+                <div><span style="color:{GOLD}">■</span> Outreach (100/day)</div>
+                <div style="margin-top:2px"><span style="color:{BLUE}">■</span> Tasks done today</div>
+                <div style="margin-top:2px"><span style="color:{PURPLE}">■</span> Sprint streak (14-day)</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap">
+            {activity_rings_html}
+            <div style="flex:1;min-width:200px;max-width:320px">
+                {_metric_bar("Daily Outreach", _today_outreach, 100, GOLD, "📤")}
+                {_metric_bar("Tasks Done Today", _tasks_done, max(len(_today_tasks),1), BLUE, "✓")}
+                {_metric_bar("Sprint Streak", data["streak"], 14, PURPLE, "🔥")}
+            </div>
+        </div>
+    </div>'''
+
     # ── Weekly Progress Rings ──
     rings = f'''<div class="card card-glow">
         <h2>Week {ctx["week_number"]} Progress</h2>
@@ -487,7 +610,9 @@ def render_dashboard(data, error=None, time_block=None):
         {header}
         {tab_nav}
         {sheets_notice}
+        {sprint_countdown}
         {right_now}
+        {rings_top}
         {stats}
         {rings}
         <div class="grid grid-2">

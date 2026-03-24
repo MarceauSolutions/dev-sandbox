@@ -9,12 +9,15 @@ http://127.0.0.1:8785 (local) | https://pipeline.marceausolutions.com (productio
 """
 
 import os
+import sys
+import csv
 import json
 import html
-from datetime import datetime, timedelta
+import io
+from datetime import datetime, timedelta, date
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi import FastAPI, Request, Form, File, UploadFile, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 import uvicorn
 
@@ -30,6 +33,11 @@ from .ui import render_page
 app = FastAPI(title="Marceau Sales Pipeline", version="1.0.0")
 PORT = int(os.getenv("PIPELINE_PORT", "8785"))
 
+# Paths
+_SRC_DIR = Path(__file__).resolve().parent
+_PROJECT_ROOT = _SRC_DIR.parents[3]
+TRACKING_DIR = _PROJECT_ROOT / "projects/shared/lead-scraper/output"
+
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard():
@@ -38,10 +46,12 @@ async def dashboard():
     deals_by_stage = get_deals_by_stage(conn)
     recent_activity = get_activities(conn, limit=15)
     followups = get_todays_followups(conn)
+    all_deals = [dict(d) for d in get_all_deals(conn)]
     conn.close()
     return render_page("dashboard", "Pipeline", {
         "stats": stats, "deals_by_stage": deals_by_stage,
         "activity": recent_activity, "followups": followups,
+        "all_deals": all_deals,
     })
 
 
@@ -131,6 +141,126 @@ async def delete_deal_route(deal_id: int):
     return RedirectResponse("/deals", status_code=303)
 
 
+# ─── Bulk Import / Sync ───────────────────────────────────────
+
+@app.get("/import", response_class=HTMLResponse)
+async def import_page():
+    return render_page("import", "Import CSV", {})
+
+
+@app.post("/import", response_class=HTMLResponse)
+async def import_csv(file: UploadFile = File(...), stage: str = Form("Intake"), lead_source: str = Form("CSV Import")):
+    """Parse uploaded CSV and bulk-create deals, skipping duplicates."""
+    try:
+        contents = await file.read()
+        text = contents.decode("utf-8-sig")  # handle BOM
+        reader = csv.DictReader(io.StringIO(text))
+
+        conn = get_db()
+        # Build set of existing company names (lowercased) to detect duplicates
+        existing = set(
+            r[0].lower() for r in conn.execute("SELECT LOWER(company) FROM deals").fetchall()
+        )
+
+        added = 0
+        skipped = 0
+        for row in reader:
+            company = (row.get("company") or row.get("Company") or "").strip()
+            if not company:
+                continue
+            if company.lower() in existing:
+                skipped += 1
+                continue
+            contact_name = (row.get("contact_name") or row.get("Contact Name") or row.get("first_name") or "").strip()
+            contact_email = (row.get("contact_email") or row.get("Email") or row.get("email") or "").strip()
+            industry = (row.get("industry") or row.get("Industry") or "Other").strip()
+            contact_phone = (row.get("contact_phone") or row.get("Phone") or "").strip()
+            notes = (row.get("notes") or row.get("Notes") or "").strip()
+
+            create_deal(conn, company,
+                        contact_name=contact_name,
+                        contact_email=contact_email,
+                        contact_phone=contact_phone,
+                        industry=industry,
+                        lead_source=lead_source,
+                        stage=stage,
+                        notes=notes)
+            existing.add(company.lower())
+            added += 1
+
+        conn.close()
+        return render_page("import", "Import CSV", {
+            "result": f"Import complete — {added} deal(s) added, {skipped} duplicate(s) skipped."
+        })
+    except Exception as e:
+        return render_page("import", "Import CSV", {"error": f"Import failed: {e}"})
+
+
+@app.post("/deals/sync-outreach")
+async def sync_outreach():
+    """Create pipeline deals from today's outreach tracking JSON, skipping duplicates."""
+    try:
+        today_str = str(date.today())
+        conn = get_db()
+
+        # Existing emails and companies
+        existing_emails = set(
+            (r[0] or "").lower()
+            for r in conn.execute("SELECT contact_email FROM deals WHERE contact_email IS NOT NULL AND contact_email != ''").fetchall()
+        )
+        existing_companies = set(
+            (r[0] or "").lower()
+            for r in conn.execute("SELECT LOWER(company) FROM deals").fetchall()
+        )
+
+        added = 0
+        skipped = 0
+
+        for f in sorted(TRACKING_DIR.glob("outreach_tracking_*.json")):
+            try:
+                data = json.loads(f.read_text())
+            except Exception:
+                continue
+            if data.get("date") != today_str:
+                continue
+
+            for em in data.get("emails", []):
+                email = (em.get("recipient") or "").lower().strip()
+                company = (em.get("company") or "").strip()
+                company_key = company.lower()
+
+                # Skip if already exists by email or company name
+                if email and email in existing_emails:
+                    skipped += 1
+                    continue
+                if company_key and company_key in existing_companies:
+                    skipped += 1
+                    continue
+                if not company and not email:
+                    continue
+
+                first_name = (em.get("first_name") or "").strip()
+                subject = (em.get("subject") or "").strip()
+
+                create_deal(conn, company or email,
+                            contact_name=first_name,
+                            contact_email=email,
+                            stage="Intake",
+                            lead_source="Outreach Sync",
+                            notes=f"Auto-synced from outreach. Subject: {subject}")
+
+                if email:
+                    existing_emails.add(email)
+                if company_key:
+                    existing_companies.add(company_key)
+                added += 1
+
+        conn.close()
+        return JSONResponse({"ok": True, "added": added, "skipped": skipped})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
 # ─── Outreach ────────────────────────────────────────────────
 
 @app.get("/outreach", response_class=HTMLResponse)
@@ -154,6 +284,105 @@ async def log_outreach_route(
     log_outreach(conn, did, company, contact, channel, message, response, follow_up_date or None, lead_source)
     conn.close()
     return RedirectResponse("/outreach", status_code=303)
+
+
+# ─── Send Proposal + Signing Agreement ──────────────────────
+
+@app.post("/deals/{deal_id}/send-proposal")
+async def send_proposal_route(
+    deal_id: int,
+    client_name: str = Form(""),
+    client_email: str = Form(""),
+    tier: int = Form(1),
+    pain_point: str = Form(""),
+):
+    """
+    Run close_deal.py for the given deal, return JSON with signing_url + pdf_path + email_sent.
+    Form fields (all optional overrides — falls back to deal data if empty):
+      client_name, client_email, tier, pain_point
+    """
+    import re
+    import subprocess
+
+    conn = get_db()
+    deal = get_deal(conn, deal_id)
+    if not deal:
+        conn.close()
+        raise HTTPException(404, "Deal not found")
+
+    # Use form values; fall back to deal data
+    resolved_name  = client_name.strip()  or deal["contact_name"] or deal["company"]
+    resolved_email = client_email.strip() or deal["contact_email"] or ""
+    resolved_pain  = pain_point.strip()   or deal["pain_points"]  or "Improve lead capture and follow-up"
+    business_name  = deal["company"]
+
+    if not resolved_email:
+        conn.close()
+        return JSONResponse(
+            {"ok": False, "error": "No email address provided. Add one to the deal or fill in the form."},
+            status_code=400,
+        )
+
+    close_deal_py = str(_PROJECT_ROOT / "projects/marceau-solutions/digital/tools/web-dev/close_deal.py")
+    cmd = [
+        sys.executable, close_deal_py,
+        "--client-name",   resolved_name,
+        "--business-name", business_name,
+        "--email",         resolved_email,
+        "--tier",          str(tier),
+        "--pain-point",    resolved_pain,
+    ]
+
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=90,
+            cwd=str(_PROJECT_ROOT),
+        )
+        output = result.stdout + result.stderr
+
+        # Extract signing URL from output
+        signing_url = ""
+        for line in output.splitlines():
+            m = re.search(r'https?://\S+', line)
+            if m:
+                candidate = m.group(0).rstrip("│").strip()
+                if "sign.marceausolutions.com" in candidate or "localhost:8797" in candidate:
+                    signing_url = candidate
+                    break
+
+        # Extract PDF path from output
+        agreement_path = ""
+        for line in output.splitlines():
+            if "agreement.pdf" in line and "Saved:" in line:
+                agreement_path = line.split("Saved:")[-1].strip()
+                break
+
+        email_sent = result.returncode == 0 and "Sent to" in output
+
+        if result.returncode != 0:
+            conn.close()
+            return JSONResponse({"ok": False, "error": output[-800:] or "close_deal.py exited non-zero"}, status_code=500)
+
+        # Advance deal stage to Proposal Sent, update contact info
+        update_deal(conn, deal_id, stage="Proposal Sent",
+                    contact_name=resolved_name, contact_email=resolved_email)
+        log_activity(conn, deal_id, "proposal_sent",
+                     f"Proposal & agreement sent to {resolved_email} (Tier {tier}). Signing: {signing_url}")
+        conn.close()
+
+        return JSONResponse({
+            "ok": True,
+            "signing_url": signing_url,
+            "pdf_path": agreement_path,
+            "email_sent": email_sent,
+        })
+
+    except subprocess.TimeoutExpired:
+        conn.close()
+        return JSONResponse({"ok": False, "error": "close_deal.py timed out (>90s)"}, status_code=500)
+    except Exception as exc:
+        conn.close()
+        return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
 
 
 # ─── Proposals ───────────────────────────────────────────────
