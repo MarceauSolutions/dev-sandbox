@@ -851,143 +851,257 @@ def _outreach(data):
     from datetime import date as _date, timedelta
     import json as _json
     import collections
+    import re as _re
 
     queue = data.get("queue", [])
     log   = data.get("log", [])
 
-    # Build per-deal email metadata from outreach_log
-    emailed_on      = {}
-    emailed_subj    = {}
-    emailed_verdict = {}
-    called_count_by_id = {}
-    called_today = set()
     today_str = _date.today().strftime("%Y-%m-%d")
 
-    # deal_id -> batch label (e.g. "📞 Phone Blitz 2026-03-24" or "✉ Emailed 2026-03-23")
-    batch_label = {}
+    # ── Parse outreach_log ────────────────────────────────────────────────────
+    # Build per-deal call stats and called-today set from log entries
+    called_count_by_id = {}
+    called_today = set()
 
     for o in log:
-        did = o["deal_id"]
+        o = dict(o)
+        did = o.get("deal_id")
         if not did:
             continue
-        ch = o["channel"] or ""
-        dt = (o["created_at"] or "")[:10]
-        if ch == "Email":
-            if did not in emailed_on or dt > emailed_on[did]:
-                emailed_on[did] = dt
-                raw = o["message_summary"] or ""
-                subj = raw.split(" | Research:")[0].replace("Subject: ", "").strip()
-                emailed_subj[did] = subj
-                if " | Research: " in raw:
-                    emailed_verdict[did] = raw.split(" | Research: ", 1)[1][:200]
-            batch_label[did] = "✉  Emailed " + dt
-        elif ch == "Phone Blitz":
-            # Use lead_source date if available
-            src = o["lead_source"] or ""
-            blitz_date = dt
-            batch_label[did] = "📞  Phone Blitz " + blitz_date
-        elif ch == "Call":
+        ch = o.get("channel") or ""
+        dt = (o.get("created_at") or "")[:10]
+        if ch == "Call":
             called_count_by_id[did] = called_count_by_id.get(did, 0) + 1
             if dt == today_str:
                 called_today.add(did)
 
-    # Group deals by batch label, newest first
-    groups = collections.defaultdict(list)
-    no_email = []
-    for d in queue:
-        d = dict(d)
-        date_key = batch_label.get(d["id"], "")
-        if date_key:
-            groups[date_key].append(d)
-        else:
-            no_email.append(d)
+    # ── Build per-deal enriched data dict from queue rows ─────────────────────
+    # Each queue row already has: last_emailed, last_called, last_email_subject,
+    # call_count, lead_source, notes, research_verdict, email_template, website
+    #
+    # Grouping logic:
+    #   "📞 Phone Blitz — Mar 24"  → lead_source starts with "Phone Blitz"
+    #   "✉ Emailed — Mar 23"      → last_emailed is set (regardless of lead_source)
+    #   "(other)"                  → everything else
 
-    # Sort within each group: T1 first, then T2, then others; alpha within tier
-    def _sort_key(d):
-        t = d.get("tier", 0)
-        return (0 if t==1 else 1 if t==2 else 2, (d.get("company") or "").lower())
+    def _parse_emailed_date(dt_str):
+        """Parse YYYY-MM-DD into display like 'Mar 23'."""
+        if not dt_str:
+            return ""
+        try:
+            d = _date.fromisoformat(dt_str[:10])
+            return d.strftime("%b %-d")
+        except Exception:
+            return dt_str[:10]
 
-    # Build JS contact data map: id -> {company, contact, phone, email, subject, verdict, called}
+    def _parse_blitz_date(lead_source):
+        """Extract date from 'Phone Blitz 2026-03-24' → 'Mar 24'."""
+        m = _re.search(r"(\d{4}-\d{2}-\d{2})", lead_source or "")
+        if m:
+            try:
+                d = _date.fromisoformat(m.group(1))
+                return d.strftime("%b %-d")
+            except Exception:
+                return m.group(1)
+        return ""
+
+    def _extract_subject(raw):
+        """Strip 'Subject: ' prefix and everything after ' | Research:' from last_email_subject."""
+        if not raw:
+            return ""
+        raw = raw.split(" | Research:")[0]
+        raw = raw.replace("Subject: ", "").strip()
+        return raw
+
+    def _extract_verdict(raw):
+        """Pull the research note from the notes field (after [Research] prefix)."""
+        if not raw:
+            return ""
+        # Check notes field for [Research] tag
+        m = _re.search(r"\[Research\]\s*(.+)", raw, _re.DOTALL)
+        if m:
+            return m.group(1).strip()[:300]
+        return ""
+
+    def _extract_verdict_from_subject(raw):
+        """Pull research note embedded in last_email_subject field after ' | Research: '."""
+        if not raw:
+            return ""
+        if " | Research: " in raw:
+            return raw.split(" | Research: ", 1)[1][:300]
+        return ""
+
+    def _what_to_say(subject, notes, industry):
+        """Derive a short opening line from email subject + industry context."""
+        combined = ((subject or "") + " " + (notes or "")).lower()
+        if "response time" in combined or "missed call" in combined or "going to whoever" in combined:
+            return "Missed calls are going to whoever answers first — not necessarily the best fit for the job."
+        if "no website" in combined or "web visitor" in combined or "chat" in combined:
+            return "Without live chat, web visitors after hours have no way to reach you."
+        if "follow-up" in combined or "follow up" in combined:
+            return "Wanted to follow up on the email I sent — quick question about your availability."
+        if "ai" in combined or "automation" in combined:
+            return "I help local businesses automate their follow-up so no lead slips through the cracks."
+        if industry:
+            return "Quick question about how your " + industry.lower() + " business handles after-hours leads."
+        return "Quick question — do you have a system in place to follow up with leads automatically?"
+
+    # ── Assemble contact_data for JS and group into buckets ───────────────────
     contact_data = {}
-    for d in queue:
-        d = dict(d)
+    # groups: dict of group_key -> list of deal dicts
+    # group_key: tuple (sort_priority, display_label, raw_date_for_sort)
+    blitz_groups = {}    # blitz_date_str -> list
+    email_groups = {}    # email_date_str -> list
+    other_list   = []
+
+    for row in queue:
+        d = dict(row)
         did = d["id"]
+        lead_src   = d.get("lead_source") or ""
+        last_email = (d.get("last_emailed") or "")[:10]
+        notes_raw  = d.get("notes") or ""
+        last_subj  = d.get("last_email_subject") or ""
+
+        # Parse subject and verdict
+        subject = _extract_subject(last_subj)
+        verdict = _extract_verdict(notes_raw) or _extract_verdict_from_subject(last_subj)
+        website = d.get("website") or ""
+
+        # Extract website from notes if not in its own field
+        if not website:
+            wm = _re.search(r"Website:\s*(https?://\S+)", notes_raw)
+            if wm:
+                website = wm.group(1).rstrip("/|")
+
+        what_to_say = _what_to_say(subject, notes_raw, d.get("industry") or "")
+
         contact_data[did] = {
-            "company":  (d.get("company") or ""),
-            "contact":  (d.get("contact_name") or ""),
-            "phone":    (d.get("contact_phone") or ""),
-            "email":    (d.get("contact_email") or ""),
-            "industry": (d.get("industry") or ""),
-            "tier":     (d.get("tier") or 0),
-            "stage":    (d.get("stage") or "Intake"),
-            "subject":  emailed_subj.get(did, ""),
-            "verdict":  emailed_verdict.get(did, ""),
-            "called":   called_count_by_id.get(did, 0),
+            "company":    (d.get("company") or ""),
+            "contact":    (d.get("contact_name") or ""),
+            "phone":      (d.get("contact_phone") or ""),
+            "email":      (d.get("contact_email") or ""),
+            "industry":   (d.get("industry") or ""),
+            "tier":       int(d.get("tier") or 0),
+            "stage":      (d.get("stage") or "Intake"),
+            "subject":    subject,
+            "verdict":    verdict,
+            "website":    website,
+            "what_to_say": what_to_say,
+            "called":     called_count_by_id.get(did, 0),
         }
+
+        # Assign to group
+        if lead_src.startswith("Phone Blitz"):
+            blitz_date = _re.search(r"(\d{4}-\d{2}-\d{2})", lead_src)
+            bkey = blitz_date.group(1) if blitz_date else "0000-00-00"
+            if bkey not in blitz_groups:
+                blitz_groups[bkey] = []
+            blitz_groups[bkey].append(d)
+        elif last_email:
+            ekey = last_email[:10]
+            if ekey not in email_groups:
+                email_groups[ekey] = []
+            email_groups[ekey].append(d)
+        else:
+            other_list.append(d)
 
     contact_data_json = _json.dumps(contact_data)
 
+    # ── Sort within groups: T1 first, then T2, alpha within tier ─────────────
+    def _sort_key(d):
+        t = d.get("tier", 0) or 0
+        return (0 if t == 1 else 1 if t == 2 else 2, (d.get("company") or "").lower())
+
+    # ── List item renderer ────────────────────────────────────────────────────
     def _list_item(d):
-        did     = d["id"]
-        company = _esc(d.get("company") or "")
-        tier    = d.get("tier", 0)
-        stage   = d.get("stage", "Intake")
-        sc      = STAGE_COLORS.get(stage, MUTED)
-        called  = called_count_by_id.get(did, 0)
+        did  = d["id"]
+        tier = d.get("tier") or 0
         was_called_today = did in called_today
+        n_calls = called_count_by_id.get(did, 0)
+        company_esc = _esc(d.get("company") or "")
+        industry_esc = _esc(d.get("industry") or "")
 
         if tier == 1:
-            tbadge = f'''<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T1</span>'''
+            tbg = GOLD + "22"
+            tco = GOLD
+            tbo = GOLD + "44"
+            tlb = "T1"
         elif tier == 2:
-            tbadge = f'''<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T2</span>'''
+            tbg = BLUE + "22"
+            tco = BLUE
+            tbo = BLUE + "44"
+            tlb = "T2"
         else:
-            tbadge = f'''<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T0</span>'''
+            tbg = MUTED + "22"
+            tco = MUTED
+            tbo = MUTED + "44"
+            tlb = "T0"
 
-        called_mark = f'''<span style="color:{GREEN};font-size:10px;margin-left:4px">✓</span>''' if was_called_today else ""
-        call_ct = f'''<span style="font-size:9px;color:{MUTED};margin-left:4px">{called}x</span>''' if called > 0 else ""
-        industry = _esc(d.get("industry") or "")
+        called_mark = ""
+        if was_called_today:
+            called_mark = '<span style="color:' + GREEN + ';font-size:10px;margin-left:4px">✓</span>'
+        call_ct = ""
+        if n_calls > 0:
+            call_ct = '<span style="font-size:9px;color:' + MUTED + ';margin-left:4px">' + str(n_calls) + 'x</span>'
 
-        return f'''<div id="li-{did}" onclick="selectContact({did})"
-  style="padding:10px 14px;border-bottom:1px solid {BORDER}22;cursor:pointer;transition:background .1s"
-  onmouseover="this.style.background='{SURFACE}'"
-  onmouseout="this.style.background=(window._selectedId=={did}?'{SURFACE}99':'transparent')">
-  <div style="display:flex;align-items:center;gap:6px">
-    {tbadge}
-    <span style="font-size:13px;font-weight:600;color:{TEXT};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{company}</span>
-    {called_mark}{call_ct}
-  </div>
-  <div style="font-size:10px;color:{MUTED};margin-top:2px">{industry}</div>
-</div>'''
+        return (
+            '<div id="li-' + str(did) + '" onclick="selectContact(' + str(did) + ')"'
+            + ' style="padding:10px 14px;border-bottom:1px solid ' + BORDER + '22;cursor:pointer;transition:background .1s"'
+            + ' onmouseover="this.style.background=\'' + SURFACE + '\'"'
+            + ' onmouseout="this.style.background=(window._selectedId==' + str(did) + '?\'' + SURFACE + '99\':\'transparent\')">'
+            + '<div style="display:flex;align-items:center;gap:6px">'
+            + '<span style="background:' + tbg + ';color:' + tco + ';border:1px solid ' + tbo + ';border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">' + tlb + '</span>'
+            + '<span style="font-size:13px;font-weight:600;color:' + TEXT + ';flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + company_esc + '</span>'
+            + called_mark + call_ct
+            + '</div>'
+            + '<div style="font-size:10px;color:' + MUTED + ';margin-top:2px">' + industry_esc + '</div>'
+            + '</div>'
+        )
 
-    def _group_html(date_label, deals):
+    # ── Group section renderer ────────────────────────────────────────────────
+    def _group_section(header_label, deals):
         sorted_deals = sorted(deals, key=_sort_key)
-        t1c = sum(1 for d in sorted_deals if d.get("tier")==1)
-        items = "".join(_list_item(d) for d in sorted_deals)
-        badges = ""
+        t1c = sum(1 for d in sorted_deals if (d.get("tier") or 0) == 1)
+        items_html = "".join(_list_item(d) for d in sorted_deals)
+        badge = ""
         if t1c:
-            badges += f'''<span style="background:{GOLD}22;color:{GOLD};font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid {GOLD}44">{t1c} T1</span>'''
-        return f'''<div style="border-bottom:1px solid {BORDER}33">
-<div style="padding:8px 14px;background:{SURFACE};border-bottom:1px solid {BORDER}22;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1">
-  <span style="font-size:11px;font-weight:700;color:{GOLD}">{date_label}</span>
-  <span style="font-size:10px;color:{MUTED}">{len(sorted_deals)}</span>
-  {badges}
-</div>
-{items}
-</div>'''
+            badge = ('<span style="background:' + GOLD + '22;color:' + GOLD
+                     + ';font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid '
+                     + GOLD + '44">' + str(t1c) + ' T1</span>')
+        return (
+            '<div style="border-bottom:1px solid ' + BORDER + '33">'
+            + '<div style="padding:8px 14px;background:' + SURFACE
+            + ';border-bottom:1px solid ' + BORDER + '22;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1">'
+            + '<span style="font-size:11px;font-weight:700;color:' + GOLD + '">' + _esc(header_label) + '</span>'
+            + '<span style="font-size:10px;color:' + MUTED + '">' + str(len(sorted_deals)) + '</span>'
+            + badge
+            + '</div>'
+            + items_html
+            + '</div>'
+        )
 
-    # Build left panel HTML
+    # ── Build left panel — Phone Blitz newest first, Emailed newest first, other ──
     left_html = ""
-    for date_key in sorted(groups.keys(), reverse=True):
-        left_html += _group_html(date_key, groups[date_key])
-    if no_email:
-        left_html += _group_html("(not emailed)", no_email)
+    for bkey in sorted(blitz_groups.keys(), reverse=True):
+        blitz_disp = _parse_blitz_date("Phone Blitz " + bkey)
+        label = "📞 Phone Blitz — " + blitz_disp
+        left_html += _group_section(label, blitz_groups[bkey])
+    for ekey in sorted(email_groups.keys(), reverse=True):
+        email_disp = _parse_emailed_date(ekey)
+        label = "✉ Emailed — " + email_disp
+        left_html += _group_section(label, email_groups[ekey])
+    if other_list:
+        left_html += _group_section("(not contacted)", other_list)
+
+    if not left_html:
+        left_html = '<div style="padding:24px;color:' + MUTED + ';font-size:13px">No contacts in queue.</div>'
 
     total = len(queue)
     t1_total = sum(1 for d in queue if (dict(d).get("tier") or 0) == 1)
     called_count = len(called_today)
 
     outcomes = ["Answered - Interested", "Answered - Callback", "Voicemail Left", "No Answer", "Not Interested"]
-    outcome_opts = "".join(f'<option value="{o}">{o}</option>' for o in outcomes)
+    outcome_opts = "".join('<option value="' + o + '">' + o + '</option>' for o in outcomes)
 
     def _fu_date(outcome):
         if "Voicemail" in outcome or "No Answer" in outcome:
@@ -999,192 +1113,208 @@ def _outreach(data):
     fu_map = {o: _fu_date(o) for o in outcomes}
     fu_json = _json.dumps(fu_map)
 
-    return f'''
-<style>
-.callday-wrap {{display:flex;height:calc(100vh - 70px);gap:0;overflow:hidden}}
-.callday-list {{width:320px;min-width:260px;overflow-y:auto;border-right:1px solid {BORDER};flex-shrink:0}}
-.callday-detail {{flex:1;overflow-y:auto;padding:24px}}
-@media(max-width:700px) {{
-  .callday-wrap {{flex-direction:column;height:auto}}
-  .callday-list {{width:100%;max-height:40vh;border-right:none;border-bottom:1px solid {BORDER}}}
-  .callday-detail {{padding:16px}}
-}}
-</style>
+    return (
+        '<style>'
+        + '.callday-wrap{display:flex;height:calc(100vh - 70px);gap:0;overflow:hidden}'
+        + '.callday-list{width:320px;min-width:260px;overflow-y:auto;border-right:1px solid ' + BORDER + ';flex-shrink:0}'
+        + '.callday-detail{flex:1;overflow-y:auto;padding:24px}'
+        + '@media(max-width:700px){'
+        + '.callday-wrap{flex-direction:column;height:auto}'
+        + '.callday-list{width:100%;max-height:40vh;border-right:none;border-bottom:1px solid ' + BORDER + '}'
+        + '.callday-detail{padding:16px}'
+        + '}'
+        + '</style>'
 
-<div style="padding:14px 18px;border-bottom:1px solid {BORDER};display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-  <div>
-    <span style="font-size:18px;font-weight:800;color:{TEXT}">Call Day</span>
-    <span style="font-size:12px;color:{MUTED};margin-left:10px">{total} contacts · <span style="color:{GOLD}">{t1_total} T1</span> · {called_count} called today</span>
-  </div>
-  <button id="sync-btn" onclick="syncAndReload()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:600">⟳ Sync New Emails</button>
-</div>
+        + '<div style="padding:14px 18px;border-bottom:1px solid ' + BORDER + ';display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+        + '<div>'
+        + '<span style="font-size:18px;font-weight:800;color:' + TEXT + '">Call Day</span>'
+        + '<span style="font-size:12px;color:' + MUTED + ';margin-left:10px">'
+        + str(total) + ' contacts · <span style="color:' + GOLD + '">' + str(t1_total) + ' T1</span>'
+        + ' · ' + str(called_count) + ' called today</span>'
+        + '</div>'
+        + '<button id="sync-btn" onclick="syncAndReload()" style="background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:600">⟳ Sync</button>'
+        + '</div>'
 
-<div class="callday-wrap">
-  <!-- LEFT: scrollable contact list -->
-  <div class="callday-list">
-    {left_html}
-  </div>
+        + '<div class="callday-wrap">'
+        + '<div class="callday-list">'
+        + left_html
+        + '</div>'
 
-  <!-- RIGHT: detail pane -->
-  <div class="callday-detail" id="detail-pane">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:{MUTED};text-align:center;gap:8px;padding:40px">
-      <div style="font-size:32px">👈</div>
-      <div style="font-size:14px;font-weight:600;color:{TEXT}">Select a contact</div>
-      <div style="font-size:12px">T1 contacts are at the top of each batch group</div>
-    </div>
-  </div>
-</div>
+        + '<div class="callday-detail" id="detail-pane">'
+        + '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:' + MUTED + ';text-align:center;gap:8px;padding:40px">'
+        + '<div style="font-size:32px">👈</div>'
+        + '<div style="font-size:14px;font-weight:600;color:' + TEXT + '">Select a contact</div>'
+        + '<div style="font-size:12px">T1 contacts are at the top of each batch group</div>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
 
-<script>
-var _contacts = {contact_data_json};
-var _fuMap = {fu_json};
-var _selectedId = null;
+        + '<script>'
+        + 'var _contacts = ' + contact_data_json + ';'
+        + 'var _fuMap = ' + fu_json + ';'
+        + 'var _selectedId = null;'
+        + 'var _outcomeOpts = "' + outcome_opts.replace('"', '\\"') + '";'
 
-function selectContact(did) {{
-  _selectedId = did;
-  // Update highlight
-  document.querySelectorAll('[id^="li-"]').forEach(function(el) {{
-    el.style.background = 'transparent';
-  }});
-  var li = document.getElementById('li-' + did);
-  if (li) li.style.background = '{SURFACE}99';
+        + 'function selectContact(did) {'
+        + '  _selectedId = did;'
+        + '  document.querySelectorAll("[id^=\'li-\']").forEach(function(el) { el.style.background = "transparent"; });'
+        + '  var li = document.getElementById("li-" + did);'
+        + '  if (li) li.style.background = "' + SURFACE + '99";'
+        + '  var c = _contacts[did];'
+        + '  if (!c) return;'
 
-  var c = _contacts[did];
-  if (!c) return;
+        + '  var phoneHtml = c.phone'
+        + '    ? "<a href=\'tel:" + c.phone + "\' style=\'color:' + GREEN + ';font-size:22px;font-weight:800;text-decoration:none;display:block;margin-bottom:4px\'>" + c.phone + "</a>"'
+        + '    : "<a href=\'https://www.google.com/search?q=" + encodeURIComponent(c.company + " Naples FL phone number") + "\' target=\'_blank\' style=\'color:' + MUTED + ';font-size:13px\'>&#128269; Find phone number &#x2192;</a>";'
 
-  var phoneHtml = c.phone
-    ? '<a href="tel:' + c.phone + '" style="color:{GREEN};font-size:20px;font-weight:700;text-decoration:none">' + c.phone + '</a>'
-    : '<a href="https://www.google.com/search?q=' + encodeURIComponent(c.company + ' Naples FL phone') + '" target="_blank" style="color:{MUTED};font-size:13px">🔍 Find phone number →</a>';
+        + '  var tierColor = c.tier===1 ? "' + GOLD + '" : c.tier===2 ? "' + BLUE + '" : "' + MUTED + '";'
+        + '  var tierLabel = c.tier===1 ? "T1 — Priority" : c.tier===2 ? "T2 — Secondary" : "T0 — Unscored";'
+        + '  var stageCo = {"Intake":"' + MUTED + '","Qualified":"' + BLUE + '","Meeting Booked":"' + YELLOW + '","Proposal Sent":"' + PURPLE + '","Negotiation":"' + GOLD + '","Closed Won":"' + GREEN + '","Closed Lost":"' + RED + '"};'
+        + '  var scColor = stageCo[c.stage] || "' + MUTED + '";'
 
-  var tierColor = c.tier===1 ? '{GOLD}' : c.tier===2 ? '{BLUE}' : '{MUTED}';
-  var tierLabel = c.tier===1 ? 'T1 — Priority' : c.tier===2 ? 'T2 — Secondary' : 'T0 — Unscored';
+        + '  var verdictHtml = c.verdict'
+        + '    ? "<div style=\'background:' + SURFACE + ';border:1px solid ' + BORDER + ';border-radius:8px;padding:10px 14px;margin-bottom:12px\'>"'
+        + '      + "<div style=\'font-size:10px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;margin-bottom:4px\'>Research Note</div>"'
+        + '      + "<div style=\'font-size:12px;color:' + TEXT + '\'>" + c.verdict + "</div></div>"'
+        + '    : "";'
 
-  var verdictHtml = c.verdict ? '<div style="background:{SURFACE};border:1px solid {BORDER};border-radius:8px;padding:10px 14px;margin-bottom:14px"><div style="font-size:10px;color:{MUTED};font-weight:600;text-transform:uppercase;margin-bottom:4px">Research Note</div><div style="font-size:12px;color:{TEXT}">' + c.verdict + '</div></div>' : '';
+        + '  var websiteHtml = c.website'
+        + '    ? "<a href=\'" + c.website + "\' target=\'_blank\' style=\'color:' + BLUE + ';font-size:11px;display:block;margin-bottom:8px\'>" + c.website + "</a>"'
+        + '    : "";'
 
-  var subjHtml = c.subject ? '<div style="font-size:11px;color:{MUTED};margin-top:4px">Email sent: <em>' + c.subject + '</em></div>' : '';
+        + '  var subjHtml = c.subject'
+        + '    ? "<div style=\'font-size:11px;color:' + MUTED + ';margin-top:4px\'>Email sent: <em>" + c.subject + "</em></div>"'
+        + '    : "";'
 
-  var calledHtml = c.called > 0 ? '<span style="color:{GREEN};font-size:11px;font-weight:600">Called ' + c.called + 'x previously</span>' : '';
+        + '  var calledHtml = c.called > 0'
+        + '    ? "<div style=\'color:' + MUTED + ';font-size:11px;margin-top:4px\'>Called " + c.called + "x previously</div>"'
+        + '    : "";'
 
-  document.getElementById('detail-pane').innerHTML = ''
-    + '<div style="max-width:600px">'
-    + '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:18px">'
-    + '<div style="flex:1">'
-    + '<div style="font-size:22px;font-weight:800;color:{TEXT};">' + c.company + '</div>'
-    + '<div style="font-size:13px;color:{MUTED};margin-top:4px">' + (c.contact || '—') + ' · ' + (c.industry || '') + '</div>'
-    + subjHtml
-    + '<div style="margin-top:6px">' + calledHtml + '</div>'
-    + '</div>'
-    + '<span style="background:' + tierColor + '22;color:' + tierColor + ';border:1px solid ' + tierColor + '44;border-radius:6px;font-size:11px;font-weight:700;padding:4px 10px">' + tierLabel + '</span>'
-    + '</div>'
+        + '  var intelHtml = (c.verdict || c.what_to_say || c.subject || c.website)'
+        + '    ? "<div style=\'border:1px solid ' + GOLD + '44;border-radius:10px;padding:14px 16px;margin-bottom:16px;background:' + CARD + '\'>"'
+        + '      + "<div style=\'font-size:11px;font-weight:700;color:' + GOLD + ';text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px\'>Pre-Call Intel</div>"'
+        + '      + (c.what_to_say ? "<div style=\'margin-bottom:8px\'><div style=\'font-size:10px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;margin-bottom:3px\'>Opening line</div><div style=\'font-size:13px;color:' + TEXT + ';font-style:italic\'>&ldquo;" + c.what_to_say + "&rdquo;</div></div>" : "")'
+        + '      + verdictHtml'
+        + '      + (c.subject ? "<div style=\'font-size:11px;color:' + MUTED + ';margin-top:4px\'>Email sent: <em>" + c.subject + "</em></div>" : "")'
+        + '      + (c.website ? "<div style=\'margin-top:8px\'><a href=\'" + c.website + "\' target=\'_blank\' style=\'color:' + BLUE + ';font-size:11px\'>" + c.website + "</a></div>" : "")'
+        + '      + "</div>"'
+        + '    : "";'
 
-    + '<div style="margin-bottom:16px">' + phoneHtml + '</div>'
-    + '<div style="font-size:12px;color:{MUTED};margin-bottom:16px">' + (c.email || '') + '</div>'
+        + '  document.getElementById("detail-pane").innerHTML = ""'
+        + '    + "<div style=\'max-width:620px\'>"'
 
-    + verdictHtml
+        + '    + "<div style=\'display:flex;align-items:flex-start;gap:12px;margin-bottom:16px\'>"'
+        + '      + "<div style=\'flex:1\'>"'
+        + '        + "<div style=\'font-size:22px;font-weight:800;color:' + TEXT + '\'>" + c.company + "</div>"'
+        + '        + "<div style=\'font-size:12px;color:' + MUTED + ';margin-top:3px\'>" + (c.contact || "—") + " · " + (c.industry || "") + "</div>"'
+        + '        + calledHtml'
+        + '      + "</div>"'
+        + '      + "<div style=\'display:flex;flex-direction:column;gap:5px;align-items:flex-end\'>"'
+        + '        + "<span style=\'background:" + tierColor + "22;color:" + tierColor + ";border:1px solid " + tierColor + "44;border-radius:6px;font-size:11px;font-weight:700;padding:3px 9px\'>" + tierLabel + "</span>"'
+        + '        + "<span style=\'background:" + scColor + "22;color:" + scColor + ";border:1px solid " + scColor + "44;border-radius:6px;font-size:10px;padding:2px 7px\'>" + c.stage + "</span>"'
+        + '      + "</div>"'
+        + '    + "</div>"'
 
-    + '<div style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:18px;margin-top:4px">'
-    + '<div style="font-size:14px;font-weight:700;color:{TEXT};margin-bottom:14px">Log This Call</div>'
+        + '    + "<div style=\'margin-bottom:18px\'>" + phoneHtml + "</div>"'
 
-    + '<div style="margin-bottom:12px">'
-    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Outcome</label>'
-    + '<select id="d-outcome" onchange="updateFU()" style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:14px">' + '{outcome_opts}' + '</select>'
-    + '</div>'
+        + '    + intelHtml'
 
-    + '<div style="margin-bottom:12px">'
-    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Paste Transcript or Notes</label>'
-    + '<textarea id="d-transcript" rows="5" placeholder="Paste iOS Notes call transcript here, or type what was said..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:12px;resize:vertical;box-sizing:border-box;font-family:monospace"></textarea>'
-    + '</div>'
+        + '    + "<div style=\'background:' + CARD + ';border:1px solid ' + BORDER + ';border-radius:10px;padding:18px;margin-top:4px\'>"'
+        + '      + "<div style=\'font-size:14px;font-weight:700;color:' + TEXT + ';margin-bottom:14px\'>Log This Call</div>"'
 
-    + '<div style="margin-bottom:16px">'
-    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>'
-    + '<input type="date" id="d-fudate" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">'
-    + '</div>'
+        + '      + "<div style=\'margin-bottom:12px\'>"'
+        + '        + "<label style=\'font-size:11px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px\'>Outcome</label>"'
+        + '        + "<select id=\'d-outcome\' onchange=\'updateFU()\' style=\'width:100%;background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:6px;padding:10px;font-size:14px\'>" + _outcomeOpts + "</select>"'
+        + '      + "</div>"'
 
-    + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
-    + '<button onclick="saveCall(' + did + ')" style="flex:1;min-width:140px;background:{GOLD};color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Save Call</button>'
-    + '<button onclick="scoreTranscript(' + did + ',\'' + c.company.replace("'","\\'") + '\')" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:13px;cursor:pointer">🎯 Score</button>'
-    + '<a href="/deals/' + did + '" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:13px;text-decoration:none">Brief →</a>'
-    + '</div>'
-    + '<div id="d-result" style="margin-top:10px;font-size:12px;display:none"></div>'
-    + '</div>'
-    + '</div>';
+        + '      + "<div style=\'margin-bottom:12px\'>"'
+        + '        + "<label style=\'font-size:11px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px\'>Paste Transcript or Notes</label>"'
+        + '        + "<textarea id=\'d-transcript\' rows=\'5\' placeholder=\'Paste iOS Notes call transcript here, or type what was said...\' style=\'width:100%;background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:6px;padding:10px;font-size:12px;resize:vertical;box-sizing:border-box;font-family:monospace\'></textarea>"'
+        + '      + "</div>"'
 
-  updateFU();
-}}
+        + '      + "<div style=\'margin-bottom:16px\'>"'
+        + '        + "<label style=\'font-size:11px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px\'>Follow-up Date</label>"'
+        + '        + "<input type=\'date\' id=\'d-fudate\' style=\'background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box\'>"'
+        + '      + "</div>"'
 
-function updateFU() {{
-  var el = document.getElementById('d-outcome');
-  var fEl = document.getElementById('d-fudate');
-  if (!el || !fEl) return;
-  fEl.value = _fuMap[el.value] || '';
-}}
+        + '      + "<div style=\'display:flex;gap:10px;flex-wrap:wrap\'>"'
+        + '        + "<button onclick=\'saveCall(" + did + ")\' style=\'flex:1;min-width:140px;background:' + GOLD + ';color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer\'>Save Call</button>"'
+        + '        + "<button onclick=\'scoreTranscript(" + did + ")\' style=\'background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:8px;padding:12px 16px;font-size:13px;cursor:pointer\'>&#127919; Score</button>"'
+        + '        + "<a href=\'/deals/" + did + "\' style=\'background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:8px;padding:12px 16px;font-size:13px;text-decoration:none\'>Brief &#x2192;</a>"'
+        + '      + "</div>"'
+        + '      + "<div id=\'d-result\' style=\'margin-top:10px;font-size:12px;display:none\'></div>"'
+        + '    + "</div>"'
+        + '    + "</div>";'
 
-async function saveCall(did) {{
-  var outcome    = (document.getElementById('d-outcome') || {{}}).value || '';
-  var transcript = (document.getElementById('d-transcript') || {{}}).value || '';
-  var fudate     = (document.getElementById('d-fudate') || {{}}).value || '';
-  var resEl      = document.getElementById('d-result');
+        + '  updateFU();'
+        + '}'
 
-  var fd = new FormData();
-  fd.append('outcome', outcome);
-  fd.append('notes', transcript);
-  fd.append('follow_up_date', fudate);
+        + 'function updateFU() {'
+        + '  var el = document.getElementById("d-outcome");'
+        + '  var fEl = document.getElementById("d-fudate");'
+        + '  if (!el || !fEl) return;'
+        + '  fEl.value = _fuMap[el.value] || "";'
+        + '}'
 
-  try {{
-    var r = await fetch('/deals/' + did + '/log-call', {{method:'POST', body:fd}});
-    var d = await r.json();
-    if (d.ok) {{
-      resEl.style.color = '{GREEN}';
-      resEl.textContent = '✓ Saved — ' + outcome;
-      resEl.style.display = 'block';
-      // dim the list item
-      var li = document.getElementById('li-' + did);
-      if (li) li.style.opacity = '0.45';
-    }} else {{
-      resEl.style.color = '{RED}'; resEl.textContent = d.error || 'Error'; resEl.style.display = 'block';
-    }}
-  }} catch(e) {{
-    resEl.style.color='{RED}'; resEl.textContent='Network error'; resEl.style.display='block';
-  }}
-}}
+        + 'async function saveCall(did) {'
+        + '  var outcome    = (document.getElementById("d-outcome") || {}).value || "";'
+        + '  var transcript = (document.getElementById("d-transcript") || {}).value || "";'
+        + '  var fudate     = (document.getElementById("d-fudate") || {}).value || "";'
+        + '  var resEl      = document.getElementById("d-result");'
+        + '  var fd = new FormData();'
+        + '  fd.append("outcome", outcome);'
+        + '  fd.append("notes", transcript);'
+        + '  fd.append("follow_up_date", fudate);'
+        + '  try {'
+        + '    var r = await fetch("/deals/" + did + "/log-call", {method:"POST", body:fd});'
+        + '    var d = await r.json();'
+        + '    if (d.ok) {'
+        + '      resEl.style.color = "' + GREEN + '"; resEl.textContent = "✓ Saved — " + outcome; resEl.style.display = "block";'
+        + '      var li = document.getElementById("li-" + did);'
+        + '      if (li) li.style.opacity = "0.45";'
+        + '    } else {'
+        + '      resEl.style.color = "' + RED + '"; resEl.textContent = d.error || "Error"; resEl.style.display = "block";'
+        + '    }'
+        + '  } catch(e) { resEl.style.color="' + RED + '"; resEl.textContent="Network error"; resEl.style.display="block"; }'
+        + '}'
 
-async function scoreTranscript(did, company) {{
-  var transcript = (document.getElementById('d-transcript') || {{}}).value || '';
-  if (!transcript.trim()) {{ alert('Paste the call transcript first'); return; }}
-  var resEl = document.getElementById('d-result');
-  resEl.style.color = '{MUTED}'; resEl.textContent = 'Scoring...'; resEl.style.display = 'block';
-  try {{
-    var fd = new FormData();
-    fd.append('transcript_text', transcript);
-    fd.append('business_name', company);
-    var r = await fetch('https://calls.marceausolutions.com/calls/submit', {{method:'POST', body:fd}});
-    var d = await r.json();
-    if (d.overall_score !== undefined) {{
-      resEl.style.color = '{GREEN}';
-      resEl.innerHTML = '✓ Scored: <strong>' + d.overall_score + '/10</strong> · <a href="https://calls.marceausolutions.com" target="_blank" style="color:{BLUE}">View full breakdown →</a>';
-    }} else {{
-      resEl.textContent = 'Submitted to calls.marceausolutions.com'; resEl.style.color = '{MUTED}';
-    }}
-  }} catch(e) {{
-    resEl.style.color='{MUTED}'; resEl.textContent='Score at calls.marceausolutions.com'; resEl.style.display='block';
-  }}
-}}
+        + 'async function scoreTranscript(did) {'
+        + '  var c = _contacts[did];'
+        + '  var transcript = (document.getElementById("d-transcript") || {}).value || "";'
+        + '  if (!transcript.trim()) { alert("Paste the call transcript first"); return; }'
+        + '  var resEl = document.getElementById("d-result");'
+        + '  resEl.style.color = "' + MUTED + '"; resEl.textContent = "Scoring..."; resEl.style.display = "block";'
+        + '  try {'
+        + '    var fd = new FormData();'
+        + '    fd.append("transcript_text", transcript);'
+        + '    fd.append("business_name", c ? c.company : "");'
+        + '    var r = await fetch("https://calls.marceausolutions.com/calls/submit", {method:"POST", body:fd});'
+        + '    var d = await r.json();'
+        + '    if (d.overall_score !== undefined) {'
+        + '      resEl.style.color = "' + GREEN + '";'
+        + '      resEl.innerHTML = "✓ Scored: <strong>" + d.overall_score + "/10</strong> · <a href=\'https://calls.marceausolutions.com\' target=\'_blank\' style=\'color:' + BLUE + '\'>View full breakdown &#x2192;</a>";'
+        + '    } else {'
+        + '      resEl.textContent = "Submitted to calls.marceausolutions.com"; resEl.style.color = "' + MUTED + '";'
+        + '    }'
+        + '  } catch(e) { resEl.style.color="' + MUTED + '"; resEl.textContent="Score at calls.marceausolutions.com"; resEl.style.display="block"; }'
+        + '}'
 
-async function syncAndReload() {{
-  var btn = document.getElementById('sync-btn');
-  btn.textContent = 'Syncing...'; btn.disabled = true;
-  try {{
-    var r = await fetch('/deals/sync-outreach', {{method:'POST'}});
-    var d = await r.json();
-    if (d.ok) {{
-      btn.textContent = (d.added||0) + ' new · ' + (d.logged||0) + ' emails logged';
-      setTimeout(function() {{ window.location.reload(); }}, 1200);
-    }} else {{
-      btn.textContent = 'Error: ' + (d.error || '?'); btn.disabled = false;
-    }}
-  }} catch(e) {{ btn.textContent='Error'; btn.disabled=false; }}
-}}
-</script>'''
+        + 'async function syncAndReload() {'
+        + '  var btn = document.getElementById("sync-btn");'
+        + '  btn.textContent = "Syncing..."; btn.disabled = true;'
+        + '  try {'
+        + '    var r = await fetch("/deals/sync-outreach", {method:"POST"});'
+        + '    var d = await r.json();'
+        + '    if (d.ok) {'
+        + '      btn.textContent = (d.added||0) + " new · " + (d.logged||0) + " logged";'
+        + '      setTimeout(function() { window.location.reload(); }, 1200);'
+        + '    } else {'
+        + '      btn.textContent = "Error: " + (d.error || "?"); btn.disabled = false;'
+        + '    }'
+        + '  } catch(e) { btn.textContent="Error"; btn.disabled=false; }'
+        + '}'
+        + '</script>'
+    )
 
 
 def _email_day(data):
