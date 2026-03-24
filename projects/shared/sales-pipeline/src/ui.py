@@ -863,6 +863,9 @@ def _outreach(data):
     called_today = set()
     today_str = _date.today().strftime("%Y-%m-%d")
 
+    # deal_id -> batch label (e.g. "📞 Phone Blitz 2026-03-24" or "✉ Emailed 2026-03-23")
+    batch_label = {}
+
     for o in log:
         did = o["deal_id"]
         if not did:
@@ -877,17 +880,23 @@ def _outreach(data):
                 emailed_subj[did] = subj
                 if " | Research: " in raw:
                     emailed_verdict[did] = raw.split(" | Research: ", 1)[1][:200]
+            batch_label[did] = "✉  Emailed " + dt
+        elif ch == "Phone Blitz":
+            # Use lead_source date if available
+            src = o["lead_source"] or ""
+            blitz_date = dt
+            batch_label[did] = "📞  Phone Blitz " + blitz_date
         elif ch == "Call":
             called_count_by_id[did] = called_count_by_id.get(did, 0) + 1
             if dt == today_str:
                 called_today.add(did)
 
-    # Group deals by emailed date, newest batch first
+    # Group deals by batch label, newest first
     groups = collections.defaultdict(list)
     no_email = []
     for d in queue:
         d = dict(d)
-        date_key = emailed_on.get(d["id"], "")
+        date_key = batch_label.get(d["id"], "")
         if date_key:
             groups[date_key].append(d)
         else:
@@ -959,7 +968,7 @@ def _outreach(data):
             badges += f'''<span style="background:{GOLD}22;color:{GOLD};font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid {GOLD}44">{t1c} T1</span>'''
         return f'''<div style="border-bottom:1px solid {BORDER}33">
 <div style="padding:8px 14px;background:{SURFACE};border-bottom:1px solid {BORDER}22;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1">
-  <span style="font-size:11px;font-weight:700;color:{GOLD}">Emailed {date_label}</span>
+  <span style="font-size:11px;font-weight:700;color:{GOLD}">{date_label}</span>
   <span style="font-size:10px;color:{MUTED}">{len(sorted_deals)}</span>
   {badges}
 </div>
