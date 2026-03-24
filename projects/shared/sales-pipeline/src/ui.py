@@ -877,6 +877,8 @@ def _outreach(data):
         call_count = d.get("call_count", 0) or 0
         last_called = (d.get("last_called") or "")[:10]
         last_emailed = (d.get("last_emailed") or "")[:10]
+        company_js = company.replace("'", "\\'")
+        contact_js = contact.replace("'", "\\'")
         last_email_subj = _esc((d.get("last_email_subject") or "")[:60])
         sc = STAGE_COLORS.get(stage, MUTED)
 
@@ -926,7 +928,7 @@ def _outreach(data):
   {subj_html}
   <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px">{call_indicator}</div>
   <div style="display:flex;gap:8px;margin-top:4px">
-    <button onclick="openModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}','{phone}')"
+    <button onclick="openModal({did},'{company_js}','{contact_js}','{phone}')"
             style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
       📞 Log Call
     </button>
@@ -1139,6 +1141,9 @@ def _email_day(data):
         stage   = d.get("stage", "Intake")
         last_emailed = (d.get("last_emailed") or "")[:10]
         last_email_subj = _esc((d.get("last_email_subject") or "")[:60])
+        company_js = company.replace("'", "\\'")
+        contact_js = contact.replace("'", "\\'")
+        email_js   = email.replace("'", "\\'")
 
         if tier == 1:
             tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
@@ -1162,7 +1167,7 @@ def _email_day(data):
   {emailed_badge}
   {subj_html}
   <div style="display:flex;gap:8px;margin-top:6px">
-    <button onclick="openEmailModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}','{email.replace("'","\\'")}')"
+    <button onclick="openEmailModal({did},'{company_js}','{contact_js}','{email_js}')"
             style="flex:1;background:{BLUE};color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
       ✉ Log Email
     </button>
@@ -1292,6 +1297,8 @@ def _inperson_day(data):
         stage   = d.get("stage", "Intake")
         last_called  = (d.get("last_called") or "")[:10]
         last_emailed = (d.get("last_emailed") or "")[:10]
+        company_js = company.replace("'", "\\'")
+        contact_js = contact.replace("'", "\\'")
 
         if tier == 1:
             tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
@@ -1314,11 +1321,11 @@ def _inperson_day(data):
   <div style="font-size:11px;color:{MUTED}">{industry} · {contact}</div>
   <div style="font-size:11px;color:{MUTED}">{touch_str}</div>
   <div style="display:flex;gap:8px;margin-top:6px">
-    <button onclick="openVisitModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}')"
+    <button onclick="openVisitModal({did},'{company_js}','{contact_js}')"
             style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
       🚶 Log Visit
     </button>
-    <button onclick="openTranscriptModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}')"
+    <button onclick="openTranscriptModal({did},'{company_js}','{contact_js}')"
             style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer">
       🎙 Score
     </button>
