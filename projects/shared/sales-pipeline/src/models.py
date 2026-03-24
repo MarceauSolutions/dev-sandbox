@@ -406,16 +406,21 @@ def get_phone_queue(conn):
 
 
 def get_inperson_queue(conn):
-    """Deals assigned to in-person visits, T1 first."""
+    """Deals flagged for in-person visits — outreach_method='in-person' OR next_action contains 'in-person'."""
     return conn.execute("""
         SELECT d.*,
                COUNT(DISTINCT CASE WHEN o.channel='In-Person' THEN o.id END) AS visit_count,
-               MAX(CASE WHEN o.channel='In-Person' THEN o.created_at END) AS last_visited
+               MAX(CASE WHEN o.channel='In-Person' THEN o.created_at END) AS last_visited,
+               COUNT(DISTINCT CASE WHEN o.channel='Call' THEN o.id END) AS call_count,
+               MAX(CASE WHEN o.channel='Call' THEN o.created_at END) AS last_called,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END) AS last_emailed
         FROM deals d
         LEFT JOIN outreach_log o ON o.deal_id = d.id
-        WHERE d.outreach_method = 'in-person' AND d.stage NOT IN ('Closed Won','Closed Lost')
+        WHERE (d.outreach_method = 'in-person' OR LOWER(d.next_action) LIKE '%in-person%')
+          AND d.stage NOT IN ('Closed Won','Closed Lost')
         GROUP BY d.id
-        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
+        ORDER BY d.next_action_date ASC,
+                 CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END, d.company ASC
     """).fetchall()
 
 

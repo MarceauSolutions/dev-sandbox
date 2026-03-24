@@ -754,10 +754,10 @@ def _send_proposal_section(d: dict) -> str:
     tier_opts = "".join(
         f'<option value="{n}">{label}</option>'
         for n, label in [
-            (1, "Tier 1 — Starter  ($497/mo)"),
-            (2, "Tier 2 — Growth   ($997/mo)"),
-            (3, "Tier 3 — Pro      ($1,497/mo)"),
-            (4, "Tier 4 — Elite    ($2,497/mo)"),
+            (1, "Tier 1 — Starter  ($297/mo + $500 setup)"),
+            (2, "Tier 2 — Growth   ($497/mo + $750 setup)"),
+            (3, "Tier 3 — Pro      ($997/mo + $1,000 setup)"),
+            (4, "Tier 4 — Elite    ($1,497/mo + $1,500 setup)"),
         ]
     )
 
@@ -935,16 +935,16 @@ def _outreach(data):
         """Derive a short opening line from email subject + industry context."""
         combined = ((subject or "") + " " + (notes or "")).lower()
         if "response time" in combined or "missed call" in combined or "going to whoever" in combined:
-            return "Missed calls are going to whoever answers first — not necessarily the best fit for the job."
+            return "I noticed your team might be losing leads to slow follow-up — that's exactly what I help fix."
         if "no website" in combined or "web visitor" in combined or "chat" in combined:
-            return "Without live chat, web visitors after hours have no way to reach you."
+            return "Noticed you don't have a way to capture leads outside business hours — wanted to ask about that."
         if "follow-up" in combined or "follow up" in combined:
-            return "Wanted to follow up on the email I sent — quick question about your availability."
+            return "Following up on my email — had a quick question about how you handle your busywork."
         if "ai" in combined or "automation" in combined:
-            return "I help local businesses automate their follow-up so no lead slips through the cracks."
+            return "I help local businesses get back 5-10 hours a week by automating the stuff that doesn't need a human."
         if industry:
-            return "Quick question about how your " + industry.lower() + " business handles after-hours leads."
-        return "Quick question — do you have a system in place to follow up with leads automatically?"
+            return "Quick question about how " + industry.lower() + " businesses around Naples handle the admin side of things."
+        return "Quick question — what's the most repetitive task your team does every day that you wish just handled itself?"
 
     # ── Assemble contact_data for JS and group into buckets ───────────────────
     contact_data = {}
@@ -1100,18 +1100,44 @@ def _outreach(data):
     t1_total = sum(1 for d in queue if (dict(d).get("tier") or 0) == 1)
     called_count = len(called_today)
 
-    outcomes = ["Answered - Interested", "Answered - Callback", "Voicemail Left", "No Answer", "Not Interested"]
-    outcome_opts = "".join('<option value="' + o + '">' + o + '</option>' for o in outcomes)
+    outcomes = [
+        ("Voicemail Left",        "📵", "Voicemail",     MUTED,  TEXT),
+        ("No Answer",             "🔕", "No Answer",     MUTED,  TEXT),
+        ("Answered - Interested", "✅", "Interested",    GREEN,  "#111"),
+        ("Answered - Callback",   "📅", "Callback",      YELLOW, "#111"),
+        ("Language Barrier",      "🌐", "Lang. Barrier", BLUE,   TEXT),
+        ("Already Has System",    "🚫", "Has System",    MUTED,  TEXT),
+        ("Wrong Number",          "❌", "Wrong #",       RED,    TEXT),
+        ("Not Interested",        "👎", "Not Interested",MUTED,  TEXT),
+    ]
 
-    def _fu_date(outcome):
-        if "Voicemail" in outcome or "No Answer" in outcome:
+    def _fu_date(val):
+        if "Voicemail" in val or "No Answer" in val:
             return (_date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
-        if "Callback" in outcome:
+        if "Callback" in val or "Language Barrier" in val or "Interested" in val:
             return (_date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+        if "Already Has System" in val:
+            return (_date.today() + timedelta(days=90)).strftime("%Y-%m-%d")
+        if "Not Interested" in val:
+            return (_date.today() + timedelta(days=30)).strftime("%Y-%m-%d")
         return ""
 
-    fu_map = {o: _fu_date(o) for o in outcomes}
+    fu_map = {o[0]: _fu_date(o[0]) for o in outcomes}
     fu_json = _json.dumps(fu_map)
+
+    # Build outcome buttons HTML — JSON-encoded for safe JS embedding
+    _ob_html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px">'
+    for val, emoji, label, btn_color, txt_color in outcomes:
+        safe_val = val.replace("'", "&#39;").replace('"', "&quot;")
+        _ob_html += (
+            '<button id="ob_' + val.replace(" ", "_") + '" onclick="pickOutcome(this,&#39;' + safe_val + '&#39;)" '
+            'style="background:' + SURFACE + ';color:' + TEXT + ';border:2px solid ' + BORDER + ';border-radius:8px;'
+            'padding:10px 4px;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;'
+            'line-height:1.4;text-align:center" data-color="' + btn_color + '" data-txtcolor="' + txt_color + '">'
+            + emoji + '<br>' + label + '</button>'
+        )
+    _ob_html += '</div><input type="hidden" id="d-outcome" value="">'
+    outcome_btns_json = _json.dumps(_ob_html)
 
     return (
         '<style>'
@@ -1152,8 +1178,8 @@ def _outreach(data):
         + '<script>'
         + 'var _contacts = ' + contact_data_json + ';'
         + 'var _fuMap = ' + fu_json + ';'
+        + 'var _outcomeBtns = ' + outcome_btns_json + ';'
         + 'var _selectedId = null;'
-        + 'var _outcomeOpts = "' + outcome_opts.replace('"', '\\"') + '";'
 
         + 'function selectContact(did) {'
         + '  _selectedId = did;'
@@ -1219,12 +1245,15 @@ def _outreach(data):
 
         + '    + intelHtml'
 
+        # ── Call script card (built via JS function for clean escaping) ───
+        + '    + buildCallScript(c)'
+
         + '    + "<div style=\'background:' + CARD + ';border:1px solid ' + BORDER + ';border-radius:10px;padding:18px;margin-top:4px\'>"'
         + '      + "<div style=\'font-size:14px;font-weight:700;color:' + TEXT + ';margin-bottom:14px\'>Log This Call</div>"'
 
         + '      + "<div style=\'margin-bottom:12px\'>"'
-        + '        + "<label style=\'font-size:11px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px\'>Outcome</label>"'
-        + '        + "<select id=\'d-outcome\' onchange=\'updateFU()\' style=\'width:100%;background:' + SURFACE + ';color:' + TEXT + ';border:1px solid ' + BORDER + ';border-radius:6px;padding:10px;font-size:14px\'>" + _outcomeOpts + "</select>"'
+        + '        + "<label style=\'font-size:11px;color:' + MUTED + ';font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px\'>Outcome</label>"'
+        + '        + _outcomeBtns'
         + '      + "</div>"'
 
         + '      + "<div style=\'margin-bottom:12px\'>"'
@@ -1249,6 +1278,20 @@ def _outreach(data):
         + '  updateFU();'
         + '}'
 
+        + 'function pickOutcome(btn, val) {'
+        + '  document.querySelectorAll("[id^=\'ob_\']").forEach(function(b) {'
+        + '    b.style.borderColor = "' + BORDER + '";'
+        + '    b.style.background = "' + SURFACE + '";'
+        + '    b.style.color = "' + TEXT + '";'
+        + '  });'
+        + '  var c = btn.getAttribute("data-color");'
+        + '  var tc = btn.getAttribute("data-txtcolor");'
+        + '  btn.style.borderColor = c; btn.style.background = c + "22"; btn.style.color = c;'
+        + '  var inp = document.getElementById("d-outcome");'
+        + '  if (inp) inp.value = val;'
+        + '  updateFU();'
+        + '}'
+
         + 'function updateFU() {'
         + '  var el = document.getElementById("d-outcome");'
         + '  var fEl = document.getElementById("d-fudate");'
@@ -1258,6 +1301,7 @@ def _outreach(data):
 
         + 'async function saveCall(did) {'
         + '  var outcome    = (document.getElementById("d-outcome") || {}).value || "";'
+        + '  if (!outcome) { alert("Tap an outcome first"); return; }'
         + '  var transcript = (document.getElementById("d-transcript") || {}).value || "";'
         + '  var fudate     = (document.getElementById("d-fudate") || {}).value || "";'
         + '  var resEl      = document.getElementById("d-result");'
@@ -1269,9 +1313,18 @@ def _outreach(data):
         + '    var r = await fetch("/deals/" + did + "/log-call", {method:"POST", body:fd});'
         + '    var d = await r.json();'
         + '    if (d.ok) {'
-        + '      resEl.style.color = "' + GREEN + '"; resEl.textContent = "✓ Saved — " + outcome; resEl.style.display = "block";'
+        + '      var fuTxt = d.follow_up_date ? " · follow-up " + d.follow_up_date : "";'
+        + '      resEl.style.color = "' + GREEN + '"; resEl.textContent = "✓ " + outcome + fuTxt; resEl.style.display = "block";'
         + '      var li = document.getElementById("li-" + did);'
-        + '      if (li) li.style.opacity = "0.45";'
+        + '      if (li) li.style.opacity = "0.4";'
+        + '      var allLis = Array.from(document.querySelectorAll("[id^=\'li-\']"));'
+        + '      var curIdx = allLis.findIndex(function(el) { return el.id === "li-" + did; });'
+        + '      var nextId = null;'
+        + '      for (var i = curIdx + 1; i < allLis.length; i++) {'
+        + '        var nEl = allLis[i];'
+        + '        if (parseFloat(nEl.style.opacity || "1") > 0.5) { nextId = parseInt(nEl.id.replace("li-","")); break; }'
+        + '      }'
+        + '      if (nextId) { setTimeout(function() { selectContact(nextId); }, 700); }'
         + '    } else {'
         + '      resEl.style.color = "' + RED + '"; resEl.textContent = d.error || "Error"; resEl.style.display = "block";'
         + '    }'
@@ -1480,7 +1533,7 @@ def _inperson_day(data):
     queue = data.get("queue", [])
     log   = data.get("log", [])
 
-    # All active deals sorted T1 first — good for in-person territory work
+    # Show only deals flagged for in-person (model already filters, but guard against stale data)
     targets = [d for d in queue if dict(d).get("stage") not in ("Closed Won", "Closed Lost")]
 
     def _visit_card(d):
@@ -1504,9 +1557,14 @@ def _inperson_day(data):
             tbadge = f'<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T0</span>'
 
         touch_info = []
-        if last_called:  touch_info.append(f"called {last_called}")
-        if last_emailed: touch_info.append(f"emailed {last_emailed}")
+        if last_called:  touch_info.append(f"called {last_called[:10]}")
+        if last_emailed: touch_info.append(f"emailed {last_emailed[:10]}")
         touch_str = " · ".join(touch_info) if touch_info else "no prior contact"
+        next_action = _esc(d.get("next_action") or "")
+        next_action_date = (d.get("next_action_date") or "")[:10]
+        flag_html = ""
+        if next_action:
+            flag_html = f'<div style="background:{BLUE}18;border:1px solid {BLUE}44;border-radius:6px;padding:4px 8px;font-size:11px;color:{BLUE};margin-top:2px">📍 {next_action}{" · " + next_action_date if next_action_date else ""}</div>'
 
         return f'''
 <div id="vcard-{did}" style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
@@ -1514,8 +1572,9 @@ def _inperson_day(data):
     <span style="font-weight:700;font-size:14px;color:{TEXT};flex:1">{company}</span>
     {tbadge}
   </div>
-  <div style="font-size:11px;color:{MUTED}">{industry} · {contact}</div>
+  <div style="font-size:11px;color:{MUTED}">{industry}{" · " + contact if contact else ""}</div>
   <div style="font-size:11px;color:{MUTED}">{touch_str}</div>
+  {flag_html}
   <div style="display:flex;gap:8px;margin-top:6px">
     <button onclick="openVisitModal({did},'{company_js}','{contact_js}')"
             style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
@@ -1679,15 +1738,18 @@ document.getElementById('transcript-modal').addEventListener('click', function(e
 document.addEventListener('keydown', function(e) {{ if (e.key === 'Escape') {{ closeVisitModal(); closeTranscriptModal(); closeEmailModal && closeEmailModal(); }} }});
 </script>'''
 
+    empty_msg = f'<div style="padding:40px;color:{MUTED};font-size:13px;text-align:center">No in-person contacts flagged yet.<br><br>Contacts appear here when you log a call with <strong>Language Barrier</strong> outcome<br>or manually set next_action to "In-person visit".</div>' if not targets else ""
+
     return visit_modal + transcript_modal + f'''<div style="max-width:1100px;margin:0 auto">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
   <div>
     <h1 style="margin:0;font-size:20px;font-weight:800;color:{TEXT}">In-Person Day</h1>
     <div style="font-size:12px;color:{MUTED};margin-top:2px">
-      Click <strong style="color:{GOLD}">Log Visit</strong> after each stop · Click <strong style="color:#8b5cf6">🎙 Score</strong> to paste conversation notes and get coaching feedback
+      {len(targets)} stop{"s" if len(targets) != 1 else ""} flagged · Click <strong style="color:{GOLD}">Log Visit</strong> after each stop · <strong style="color:#8b5cf6">🎙 Score</strong> for coaching feedback
     </div>
   </div>
 </div>
+{empty_msg}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
 {cards_html}
 </div>

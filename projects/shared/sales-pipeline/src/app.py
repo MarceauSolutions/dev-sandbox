@@ -146,32 +146,6 @@ async def delete_deal_route(deal_id: int):
     return RedirectResponse("/deals", status_code=303)
 
 
-@app.post("/deals/{deal_id}/log-call")
-async def log_call_route(
-    deal_id: int,
-    outcome: str = Form(...),
-    notes: str = Form(""),
-):
-    """Log a phone call interaction for a deal."""
-    conn = get_db()
-    deal = get_deal(conn, deal_id)
-    if not deal:
-        conn.close()
-        raise HTTPException(404, "Deal not found")
-
-    log_outreach(conn, deal_id, deal["company"], deal["contact_name"] or "",
-                 channel="Call", message=outcome, response=notes)
-    log_activity(conn, deal_id, "call_logged", f"{outcome}" + (f" — {notes[:80]}" if notes else ""))
-
-    if outcome == "Answered - Interested":
-        update_deal(conn, deal_id, stage="Qualified")
-    elif outcome == "Answered - Callback":
-        update_deal(conn, deal_id, next_action="Call back — callback requested")
-
-    conn.close()
-    return JSONResponse({"ok": True})
-
-
 @app.post("/deals/{deal_id}/log-visit")
 async def log_visit_route(
     deal_id: int,
@@ -401,23 +375,53 @@ async def log_call_route(
         raise HTTPException(404, "Deal not found")
 
     message = f"Call: {outcome}" if outcome else "Call logged"
-    log_outreach(conn, deal_id, dict(deal)["company"], dict(deal).get("contact_name") or "",
-                 "Call", message, "", follow_up_date or None)
 
-    # Auto-advance stage
-    if outcome == "Answered - Interested" and dict(deal)["stage"] in ("Intake",):
-        update_deal(conn, deal_id, stage="Qualified")
-    elif outcome == "Not Interested":
-        update_deal(conn, deal_id, stage="Closed Lost")
+    # ── Follow-up routing based on outcome ──────────────────────────────────
+    # Compute auto follow-up date if not supplied by user
+    today = _date.today()
+    _routing = {
+        "Voicemail Left":         {"days": 3,  "action": "Re-call",                         "method": None},
+        "No Answer":              {"days": 3,  "action": "Re-call",                         "method": None},
+        "Answered - Interested":  {"days": 1,  "action": "Book meeting — qualified lead",   "method": None,  "stage": "Qualified"},
+        "Answered - Callback":    {"days": 1,  "action": "Call back — callback requested",  "method": None},
+        "Language Barrier":       {"days": 1,  "action": "In-person visit",                 "method": "in-person"},
+        "Already Has System":     {"days": 90, "action": "Check back — verify system works","method": None},
+        "Wrong Number":           {"days": None,"action": "Update phone number",             "method": None},
+        "Not Interested":         {"days": 30, "action": "Re-email with value-add",         "method": None},
+    }
+    rule = _routing.get(outcome, {})
+    resolved_fu = follow_up_date or (
+        (today + timedelta(days=rule["days"])).strftime("%Y-%m-%d") if rule.get("days") else None
+    )
+
+    log_outreach(conn, deal_id, dict(deal)["company"], dict(deal).get("contact_name") or "",
+                 "Call", message, "", resolved_fu)
+
+    # Apply routing: stage, next_action, outreach_method
+    update_kwargs = {}
+    if rule.get("stage") and dict(deal)["stage"] in ("Intake",):
+        update_kwargs["stage"] = rule["stage"]
+    if rule.get("action"):
+        update_kwargs["next_action"] = rule["action"]
+    if resolved_fu:
+        update_kwargs["next_action_date"] = resolved_fu
+    if rule.get("method"):
+        update_kwargs["outreach_method"] = rule["method"]
+    if update_kwargs:
+        update_deal(conn, deal_id, **update_kwargs)
 
     # Append notes
     if notes:
         existing = dict(deal).get("notes") or ""
-        note_entry = f"[{_date.today()}] {outcome}: {notes}"
+        note_entry = f"[{today}] {outcome}: {notes}"
         update_deal(conn, deal_id, notes=(existing + "\n" + note_entry).strip())
 
     conn.close()
-    return JSONResponse({"ok": True})
+    return JSONResponse({
+        "ok": True,
+        "follow_up_action": rule.get("action", ""),
+        "follow_up_date": resolved_fu or "",
+    })
 
 
 # ─── Send Proposal + Signing Agreement ──────────────────────
