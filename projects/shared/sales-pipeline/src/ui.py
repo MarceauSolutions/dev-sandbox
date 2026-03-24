@@ -215,7 +215,7 @@ label{{font-size:12px;color:{MUTED};margin-bottom:4px;display:block;font-weight:
 
 
 def _nav(active=""):
-    tabs = [("dashboard", "Pipeline", "/"), ("deals", "All Prospects", "/deals"), ("outreach", "Outreach", "/outreach"), ("import", "Import CSV", "/import")]
+    tabs = [("dashboard", "Pipeline", "/"), ("deals", "All Prospects", "/deals"), ("outreach", "📞 Call Day", "/outreach"), ("email-day", "✉ Email Day", "/email-day"), ("inperson-day", "🚶 In-Person Day", "/inperson-day"), ("import", "Import CSV", "/import")]
     links = "".join(f'<a href="{h}" class="{"active" if t==active else ""}">{l}</a>' for t, l, h in tabs)
     return f'''<nav class="topnav"><div class="topnav-inner">
         <a href="/" class="logo">Sales<span>Pipeline™</span></a>
@@ -242,6 +242,10 @@ def render_page(page, title, data, error=""):
         return _shell(title, _deal_detail(data), "deals")
     elif page == "outreach":
         return _shell(title, _outreach(data), "outreach")
+    elif page == "email-day":
+        return _shell(title, _email_day(data), "email-day")
+    elif page == "inperson-day":
+        return _shell(title, _inperson_day(data), "inperson-day")
     elif page == "new_proposal":
         return _shell(title, _new_proposal(data), "deals")
     elif page == "import":
@@ -843,40 +847,649 @@ async function sendProposal(e, dealId) {{
 
 
 def _outreach(data):
-    log = data.get("log", [])
-    followups = data.get("followups", [])
-    deals = data.get("deals", [])
-    channels = data.get("channels", [])
+    from datetime import date as _date, timedelta
+    queue = data.get("queue", [])
+    log   = data.get("log", [])
+    today = _date.today().strftime("%Y-%m-%d")
 
-    deal_opts = '<option value="">— No deal —</option>' + "".join(f'<option value="{d["id"]}">{_esc(d["company"])}</option>' for d in deals)
-    ch_opts = "".join(f'<option value="{c}">{c}</option>' for c in channels)
+    t1  = [d for d in queue if (d["tier"] if isinstance(d, dict) else d["tier"]) == 1]
+    t2  = [d for d in queue if (d["tier"] if isinstance(d, dict) else d["tier"]) == 2]
+    all_deals = queue
 
-    form = f'''<div class="card"><h2>Log Outreach</h2>
-        <form method="POST" action="/outreach/log">
-        <div class="form-grid">
-            <div class="form-group"><label>Link to Deal</label><select name="deal_id">{deal_opts}</select></div>
-            <div class="form-group"><label>Company</label><input name="company" placeholder="If not linked to deal"></div>
-            <div class="form-group"><label>Contact</label><input name="contact" placeholder="Name"></div>
-            <div class="form-group"><label>Channel</label><select name="channel">{ch_opts}</select></div>
-            <div class="form-group"><label>Message</label><input name="message" placeholder="What did you say?"></div>
-            <div class="form-group"><label>Follow-up Date</label><input type="date" name="follow_up_date"></div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-sm">Log</button>
-        </form></div>'''
+    def _fu_date(outcome):
+        """Suggest a follow-up date based on outcome."""
+        if "Voicemail" in outcome or "No Answer" in outcome:
+            return (_date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
+        if "Callback" in outcome:
+            return (_date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+        return ""
 
-    # Follow-ups
-    fu_html = ""
-    if followups:
-        rows = "".join(f'<tr><td>{_esc(f.get("deal_company") or f.get("company",""))}</td><td>{_esc(f["contact"])}</td><td>{_esc(f["channel"])}</td><td style="color:{RED}">{_esc(f.get("follow_up_date",""))}</td></tr>' for f in followups)
-        fu_html = f'<div class="card"><h2 style="color:{RED}">Follow-ups Due ({len(followups)})</h2><table><tr><th>Company</th><th>Contact</th><th>Channel</th><th>Due</th></tr>{rows}</table></div>'
+    def _card(d):
+        d = dict(d)
+        did     = d["id"]
+        company = _esc(d.get("company") or "")
+        contact = _esc(d.get("contact_name") or "")
+        phone   = _esc(d.get("contact_phone") or "")
+        email   = _esc(d.get("contact_email") or "")
+        industry= _esc(d.get("industry") or "")
+        tier    = d.get("tier", 0)
+        stage   = d.get("stage", "Intake")
+        call_count = d.get("call_count", 0) or 0
+        last_called = (d.get("last_called") or "")[:10]
+        last_emailed = (d.get("last_emailed") or "")[:10]
+        last_email_subj = _esc((d.get("last_email_subject") or "")[:60])
+        sc = STAGE_COLORS.get(stage, MUTED)
 
-    # Log
-    rows = ""
+        # Tier badge
+        if tier == 1:
+            tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
+        elif tier == 2:
+            tbadge = f'<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T2</span>'
+        else:
+            tbadge = f'<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T0</span>'
+
+        # Stage badge
+        sbadge = f'<span style="color:{sc};font-size:10px;font-weight:600">{_esc(stage)}</span>'
+
+        # Phone row
+        if phone:
+            tel_link = f'<a href="tel:{phone}" style="color:{GREEN};font-weight:700;font-size:15px;text-decoration:none">📞 {phone}</a>'
+        else:
+            # Google link to find their number
+            query = urllib.parse.quote(f"{d.get('company','')} {d.get('industry','')} Naples FL phone number")
+            tel_link = f'<a href="https://www.google.com/search?q={query}" target="_blank" style="color:{MUTED};font-size:12px;text-decoration:none">🔍 Find number →</a>'
+
+        # Email row
+        email_row = f'<div style="font-size:11px;color:{MUTED};margin-top:2px">{email}</div>' if email else ""
+
+        # Called indicator
+        call_indicator = ""
+        if call_count and call_count > 0:
+            call_indicator = f'<span style="background:{GREEN}22;color:{GREEN};border:1px solid {GREEN}33;border-radius:3px;font-size:10px;padding:1px 5px">{call_count}x called</span>'
+        if last_emailed:
+            call_indicator += f'<span style="color:{MUTED};font-size:10px;margin-left:6px">emailed {last_emailed}</span>'
+
+        # Email template hint
+        subj_html = f'<div style="font-size:10px;color:{MUTED};margin-top:3px;font-style:italic">"{last_email_subj}"</div>' if last_email_subj else ""
+
+        return f'''
+<div id="card-{did}" style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-weight:700;font-size:14px;color:{TEXT};flex:1">{company}</span>
+    {tbadge}
+    {sbadge}
+  </div>
+  <div style="font-size:11px;color:{MUTED}">{industry}</div>
+  <div style="font-size:12px;color:{TEXT};font-weight:600">{contact}</div>
+  <div>{tel_link}</div>
+  {email_row}
+  {subj_html}
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px">{call_indicator}</div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button onclick="openModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}','{phone}')"
+            style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
+      📞 Log Call
+    </button>
+    <a href="/deals/{did}" style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;text-decoration:none">Brief →</a>
+  </div>
+</div>'''
+
+    # ── Build card sections ──
+    def _section(title, deals_list, section_id):
+        if not deals_list:
+            return f'<div id="{section_id}" style="display:none"></div>'
+        cards_html = "".join(_card(d) for d in deals_list)
+        count = len(deals_list)
+        return f'''<div id="{section_id}">
+<div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px">
+  <h2 style="margin:0;font-size:15px;font-weight:700;color:{TEXT}">{title}</h2>
+  <span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:12px;font-size:11px;font-weight:700;padding:2px 8px">{count}</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+{cards_html}
+</div>
+</div>'''
+
+    t1_section  = _section("Tier 1 — Priority Calls", t1, "sec-t1")
+    t2_section  = _section("Tier 2 — Secondary Calls", t2, "sec-t2")
+
+    # ── Recent outreach log ──
+    log_rows = ""
     for o in log:
-        rows += f'<tr><td style="color:{MUTED}">{_esc((o["created_at"] or "")[:10])}</td><td>{_esc(o["company"] or "")}</td><td>{_esc(o["contact"] or "")}</td><td>{_esc(o["channel"])}</td><td>{_esc(o["message_summary"] or "")}</td><td>{_esc(o["response"] or "—")}</td></tr>'
-    log_html = f'<div class="card"><h2>Outreach Log</h2><table><tr><th>Date</th><th>Company</th><th>Contact</th><th>Ch</th><th>Message</th><th>Response</th></tr>{rows}</table></div>' if rows else ""
+        log_rows += f'<tr><td style="color:{MUTED};white-space:nowrap">{_esc((o["created_at"] or "")[:10])}</td><td>{_esc(o["company"] or "")}</td><td>{_esc(o["channel"])}</td><td style="color:{MUTED}">{_esc((o["message_summary"] or "")[:60])}</td></tr>'
+    log_section = ""
+    if log_rows:
+        log_section = f'''<div style="margin-top:28px">
+<h2 style="font-size:15px;font-weight:700;color:{TEXT};margin-bottom:10px">Recent Activity</h2>
+<div style="background:{CARD};border:1px solid {BORDER};border-radius:10px;overflow:hidden">
+<table style="width:100%;border-collapse:collapse">
+<tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">DATE</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">COMPANY</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">CH</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">SUMMARY</th></tr>
+{log_rows}
+</table></div></div>'''
 
-    return form + fu_html + log_html
+    # ── Filter bar ──
+    filter_bar = f'''<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+  <button onclick="showSection('all')" id="fb-all" class="fb fb-active" style="background:{GOLD};color:#111;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">All ({len(all_deals)})</button>
+  <button onclick="showSection('t1')"  id="fb-t1"  class="fb" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">T1 ({len(t1)})</button>
+  <button onclick="showSection('t2')"  id="fb-t2"  class="fb" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">T2 ({len(t2)})</button>
+</div>'''
+
+    # ── Modal ──
+    outcomes = ["Answered - Interested", "Answered - Callback", "Voicemail Left", "No Answer", "Not Interested"]
+    outcome_opts = "".join(f'<option value="{o}">{o}</option>' for o in outcomes)
+
+    modal = f'''
+<div id="call-modal" style="display:none;position:fixed;inset:0;background:#00000088;z-index:9999;align-items:center;justify-content:center">
+  <div style="background:{CARD};border:1px solid {GOLD}55;border-radius:14px;padding:24px;width:100%;max-width:440px;margin:20px;box-shadow:0 20px 60px #000c">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="margin:0;font-size:16px;color:{TEXT}">Log Call</h2>
+      <button onclick="closeModal()" style="background:none;border:none;color:{MUTED};font-size:20px;cursor:pointer;padding:0">×</button>
+    </div>
+    <div id="modal-company" style="font-size:18px;font-weight:700;color:{GOLD};margin-bottom:4px"></div>
+    <div id="modal-contact" style="font-size:13px;color:{MUTED};margin-bottom:16px"></div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Outcome</label>
+      <select id="modal-outcome" onchange="updateFollowUp()" style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:14px">
+        {outcome_opts}
+      </select>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Notes</label>
+      <textarea id="modal-notes" rows="3" placeholder="Key objections, pain points, what they said..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>
+      <input type="date" id="modal-fudate" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="submitCall()" style="flex:1;background:{GOLD};color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Save & Next →</button>
+      <button onclick="closeModal()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="modal-error" style="color:{RED};font-size:12px;margin-top:8px;display:none"></div>
+  </div>
+</div>'''
+
+    # ── JS ──
+    fu_map = {o: _fu_date(o) for o in outcomes}
+    import json as _json
+    fu_json = _json.dumps(fu_map)
+
+    js = f'''<script>
+var _activeDealId = null;
+var _fuMap = {fu_json};
+
+function openModal(dealId, company, contact, phone) {{
+  _activeDealId = dealId;
+  document.getElementById('modal-company').textContent = company;
+  document.getElementById('modal-contact').textContent = contact + (phone ? ' · ' + phone : '');
+  document.getElementById('modal-outcome').value = 'No Answer';
+  document.getElementById('modal-notes').value = '';
+  updateFollowUp();
+  var m = document.getElementById('call-modal');
+  m.style.display = 'flex';
+  document.getElementById('modal-notes').focus();
+}}
+
+function closeModal() {{
+  document.getElementById('call-modal').style.display = 'none';
+  _activeDealId = null;
+}}
+
+function updateFollowUp() {{
+  var o = document.getElementById('modal-outcome').value;
+  document.getElementById('modal-fudate').value = _fuMap[o] || '';
+}}
+
+async function submitCall() {{
+  if (!_activeDealId) return;
+  var outcome  = document.getElementById('modal-outcome').value;
+  var notes    = document.getElementById('modal-notes').value;
+  var fudate   = document.getElementById('modal-fudate').value;
+  var errEl    = document.getElementById('modal-error');
+  errEl.style.display = 'none';
+
+  var fd = new FormData();
+  fd.append('outcome', outcome);
+  fd.append('notes', notes);
+  fd.append('follow_up_date', fudate);
+
+  try {{
+    var r = await fetch('/deals/' + _activeDealId + '/log-call', {{method:'POST', body:fd}});
+    var d = await r.json();
+    if (d.ok) {{
+      // Mark card as called
+      var card = document.getElementById('card-' + _activeDealId);
+      if (card) {{
+        var badge = document.createElement('span');
+        badge.textContent = '✓ ' + outcome;
+        badge.style.cssText = 'background:{GREEN}22;color:{GREEN};border:1px solid {GREEN}33;border-radius:4px;font-size:11px;font-weight:600;padding:3px 8px;display:block;margin-top:4px';
+        card.appendChild(badge);
+        card.style.opacity = '0.55';
+      }}
+      closeModal();
+    }} else {{
+      errEl.textContent = d.error || 'Error saving';
+      errEl.style.display = 'block';
+    }}
+  }} catch(e) {{
+    errEl.textContent = 'Network error: ' + e;
+    errEl.style.display = 'block';
+  }}
+}}
+
+// Filter tabs
+function showSection(which) {{
+  document.getElementById('sec-t1').style.display = (which === 'all' || which === 't1') ? '' : 'none';
+  document.getElementById('sec-t2').style.display = (which === 'all' || which === 't2') ? '' : 'none';
+  document.querySelectorAll('.fb').forEach(function(b) {{
+    b.style.background = '{SURFACE}';
+    b.style.color = '{TEXT}';
+    b.style.border = '1px solid {BORDER}';
+  }});
+  var active = document.getElementById('fb-' + which);
+  if (active) {{ active.style.background = '{GOLD}'; active.style.color = '#111'; active.style.border = 'none'; }}
+}}
+
+// Close modal on backdrop click
+document.getElementById('call-modal').addEventListener('click', function(e) {{
+  if (e.target === this) closeModal();
+}});
+
+// Keyboard shortcut: ESC to close
+document.addEventListener('keydown', function(e) {{
+  if (e.key === 'Escape') closeModal();
+}});
+</script>'''
+
+    return modal + f'''<div style="max-width:1100px;margin:0 auto">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+  <div>
+    <h1 style="margin:0;font-size:20px;font-weight:800;color:{TEXT}">Call Day</h1>
+    <div style="font-size:12px;color:{MUTED};margin-top:2px">Click <strong style="color:{GOLD}">Log Call</strong> after each call · T1 = priority · Sorted highest tier first</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a href="/deals" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:7px 14px;font-size:12px;text-decoration:none;font-weight:600">← All Deals</a>
+  </div>
+</div>
+{filter_bar}
+{t1_section}
+{t2_section}
+{log_section}
+</div>
+{js}'''
+
+
+def _email_day(data):
+    """Email Day dashboard — compose + track batch email outreach."""
+    from datetime import date as _date
+    queue  = data.get("queue", [])
+    log    = data.get("log", [])
+
+    # Show uncontacted or Intake stage deals sorted T1 first
+    targets = [d for d in queue if dict(d).get("stage") in ("Intake", "Qualified")]
+
+    def _email_card(d):
+        d = dict(d)
+        did     = d["id"]
+        company = _esc(d.get("company") or "")
+        contact = _esc(d.get("contact_name") or "")
+        email   = _esc(d.get("contact_email") or "")
+        industry= _esc(d.get("industry") or "")
+        tier    = d.get("tier", 0)
+        stage   = d.get("stage", "Intake")
+        last_emailed = (d.get("last_emailed") or "")[:10]
+        last_email_subj = _esc((d.get("last_email_subject") or "")[:60])
+
+        if tier == 1:
+            tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
+        elif tier == 2:
+            tbadge = f'<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T2</span>'
+        else:
+            tbadge = f'<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T0</span>'
+
+        emailed_badge = f'<span style="color:{MUTED};font-size:10px">emailed {last_emailed}</span>' if last_emailed else f'<span style="color:{GREEN};font-size:10px;font-weight:600">not yet emailed</span>'
+        subj_html = f'<div style="font-size:10px;color:{MUTED};font-style:italic">Last: "{last_email_subj}"</div>' if last_email_subj else ""
+        email_link = f'<a href="mailto:{email}" style="color:{BLUE};font-size:13px;font-weight:600;text-decoration:none">{email}</a>' if email else f'<span style="color:{MUTED};font-size:12px">No email on file</span>'
+
+        return f'''
+<div id="ecard-{did}" style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-weight:700;font-size:14px;color:{TEXT};flex:1">{company}</span>
+    {tbadge}
+  </div>
+  <div style="font-size:11px;color:{MUTED}">{industry} · {contact}</div>
+  {email_link}
+  {emailed_badge}
+  {subj_html}
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button onclick="openEmailModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}','{email.replace("'","\\'")}')"
+            style="flex:1;background:{BLUE};color:#fff;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
+      ✉ Log Email
+    </button>
+    <a href="/deals/{did}" style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;text-decoration:none">Brief →</a>
+  </div>
+</div>'''
+
+    cards_html = "".join(_email_card(d) for d in targets)
+    if not cards_html:
+        cards_html = f'<div style="color:{MUTED};font-size:13px;padding:20px 0">No targets — all deals have been contacted or are in later stages.</div>'
+
+    # Recent email log
+    email_log = [o for o in log if (o["channel"] or "") == "Email"]
+    log_rows = "".join(f'<tr><td style="color:{MUTED};white-space:nowrap">{_esc((o["created_at"] or "")[:10])}</td><td>{_esc(o["company"] or "")}</td><td style="color:{MUTED}">{_esc((o["message_summary"] or "")[:70])}</td></tr>' for o in email_log[:20])
+    log_html = f'<div style="margin-top:28px"><h2 style="font-size:15px;font-weight:700;color:{TEXT};margin-bottom:10px">Recent Emails Logged</h2><div style="background:{CARD};border:1px solid {BORDER};border-radius:10px;overflow:hidden"><table style="width:100%;border-collapse:collapse"><tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">DATE</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">COMPANY</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">SUBJECT</th></tr>{log_rows}</table></div></div>' if log_rows else ""
+
+    modal = f'''
+<div id="email-modal" style="display:none;position:fixed;inset:0;background:#00000088;z-index:9999;align-items:center;justify-content:center">
+  <div style="background:{CARD};border:1px solid {BLUE}55;border-radius:14px;padding:24px;width:100%;max-width:480px;margin:20px;box-shadow:0 20px 60px #000c">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="margin:0;font-size:16px;color:{TEXT}">Log Email</h2>
+      <button onclick="closeEmailModal()" style="background:none;border:none;color:{MUTED};font-size:20px;cursor:pointer;padding:0">×</button>
+    </div>
+    <div id="em-company" style="font-size:18px;font-weight:700;color:{BLUE};margin-bottom:4px"></div>
+    <div id="em-contact" style="font-size:13px;color:{MUTED};margin-bottom:16px"></div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Subject / Template</label>
+      <input id="em-subject" type="text" placeholder="e.g. Quick question about missed calls..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Notes</label>
+      <textarea id="em-notes" rows="2" placeholder="Personalization added, variant used, anything notable..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>
+      <input type="date" id="em-fudate" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="submitEmail()" style="flex:1;background:{BLUE};color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Log Email</button>
+      <button onclick="closeEmailModal()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="em-error" style="color:{RED};font-size:12px;margin-top:8px;display:none"></div>
+  </div>
+</div>'''
+
+    from datetime import timedelta
+    default_fu = (_date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
+
+    js = f'''<script>
+var _emDealId = null;
+function openEmailModal(id, company, contact, email) {{
+  _emDealId = id;
+  document.getElementById('em-company').textContent = company;
+  document.getElementById('em-contact').textContent = contact + (email ? ' · ' + email : '');
+  document.getElementById('em-subject').value = '';
+  document.getElementById('em-notes').value = '';
+  document.getElementById('em-fudate').value = '{default_fu}';
+  document.getElementById('em-error').style.display = 'none';
+  var m = document.getElementById('email-modal');
+  m.style.display = 'flex';
+  setTimeout(function() {{ document.getElementById('em-subject').focus(); }}, 50);
+}}
+function closeEmailModal() {{
+  document.getElementById('email-modal').style.display = 'none';
+  _emDealId = null;
+}}
+async function submitEmail() {{
+  if (!_emDealId) return;
+  var subject = document.getElementById('em-subject').value;
+  var notes   = document.getElementById('em-notes').value;
+  var fudate  = document.getElementById('em-fudate').value;
+  var errEl   = document.getElementById('em-error');
+  if (!subject) {{ errEl.textContent = 'Enter a subject or template name'; errEl.style.display = 'block'; return; }}
+  errEl.style.display = 'none';
+  var fd = new FormData();
+  fd.append('outcome', 'Email Sent');
+  fd.append('notes', (subject ? 'Subject: ' + subject + (notes ? ' | ' + notes : '') : notes));
+  fd.append('follow_up_date', fudate);
+  fd.append('channel', 'Email');
+  try {{
+    var r = await fetch('/deals/' + _emDealId + '/log-call', {{method:'POST', body:fd}});
+    var d = await r.json();
+    if (d.ok) {{
+      var card = document.getElementById('ecard-' + _emDealId);
+      if (card) {{ card.style.opacity = '0.5'; }}
+      closeEmailModal();
+    }} else {{
+      errEl.textContent = d.error || 'Error'; errEl.style.display = 'block';
+    }}
+  }} catch(e) {{ errEl.textContent = 'Network error'; errEl.style.display = 'block'; }}
+}}
+document.getElementById('email-modal').addEventListener('click', function(e) {{ if (e.target === this) closeEmailModal(); }});
+document.addEventListener('keydown', function(e) {{ if (e.key === 'Escape') closeEmailModal(); }});
+</script>'''
+
+    return modal + f'''<div style="max-width:1100px;margin:0 auto">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+  <div>
+    <h1 style="margin:0;font-size:20px;font-weight:800;color:{TEXT}">Email Day</h1>
+    <div style="font-size:12px;color:{MUTED};margin-top:2px">Click <strong style="color:{BLUE}">Log Email</strong> after sending · {len(targets)} contacts ready to email</div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+{cards_html}
+</div>
+{log_html}
+</div>
+{js}'''
+
+
+def _inperson_day(data):
+    """In-Person Day dashboard — walk-in route with transcript logging."""
+    from datetime import date as _date, timedelta
+    queue = data.get("queue", [])
+    log   = data.get("log", [])
+
+    # All active deals sorted T1 first — good for in-person territory work
+    targets = [d for d in queue if dict(d).get("stage") not in ("Closed Won", "Closed Lost")]
+
+    def _visit_card(d):
+        d = dict(d)
+        did     = d["id"]
+        company = _esc(d.get("company") or "")
+        contact = _esc(d.get("contact_name") or "")
+        industry= _esc(d.get("industry") or "")
+        tier    = d.get("tier", 0)
+        stage   = d.get("stage", "Intake")
+        last_called  = (d.get("last_called") or "")[:10]
+        last_emailed = (d.get("last_emailed") or "")[:10]
+
+        if tier == 1:
+            tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
+        elif tier == 2:
+            tbadge = f'<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T2</span>'
+        else:
+            tbadge = f'<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T0</span>'
+
+        touch_info = []
+        if last_called:  touch_info.append(f"called {last_called}")
+        if last_emailed: touch_info.append(f"emailed {last_emailed}")
+        touch_str = " · ".join(touch_info) if touch_info else "no prior contact"
+
+        return f'''
+<div id="vcard-{did}" style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-weight:700;font-size:14px;color:{TEXT};flex:1">{company}</span>
+    {tbadge}
+  </div>
+  <div style="font-size:11px;color:{MUTED}">{industry} · {contact}</div>
+  <div style="font-size:11px;color:{MUTED}">{touch_str}</div>
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button onclick="openVisitModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}')"
+            style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
+      🚶 Log Visit
+    </button>
+    <button onclick="openTranscriptModal({did},'{company.replace("'","\\'")}','{contact.replace("'","\\'")}')"
+            style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer">
+      🎙 Score
+    </button>
+    <a href="/deals/{did}" style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;text-decoration:none">Brief →</a>
+  </div>
+</div>'''
+
+    cards_html = "".join(_visit_card(d) for d in targets[:40])
+
+    # Visit modal
+    visit_outcomes = ["Had conversation — Interested", "Had conversation — Not Interested", "Left material — Call back", "Not in / Closed", "Spoke to staff only"]
+    visit_opts = "".join(f'<option value="{o}">{o}</option>' for o in visit_outcomes)
+    default_fu = (_date.today() + timedelta(days=2)).strftime("%Y-%m-%d")
+
+    visit_modal = f'''
+<div id="visit-modal" style="display:none;position:fixed;inset:0;background:#00000088;z-index:9999;align-items:center;justify-content:center">
+  <div style="background:{CARD};border:1px solid {GOLD}55;border-radius:14px;padding:24px;width:100%;max-width:460px;margin:20px;box-shadow:0 20px 60px #000c">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="margin:0;font-size:16px;color:{TEXT}">Log Visit</h2>
+      <button onclick="closeVisitModal()" style="background:none;border:none;color:{MUTED};font-size:20px;cursor:pointer;padding:0">×</button>
+    </div>
+    <div id="vm-company" style="font-size:18px;font-weight:700;color:{GOLD};margin-bottom:4px"></div>
+    <div id="vm-contact" style="font-size:13px;color:{MUTED};margin-bottom:16px"></div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Outcome</label>
+      <select id="vm-outcome" style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:14px">{visit_opts}</select>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Notes</label>
+      <textarea id="vm-notes" rows="3" placeholder="Who you spoke to, what they said, any objections..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>
+      <input type="date" id="vm-fudate" value="{default_fu}" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="submitVisit()" style="flex:1;background:{GOLD};color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Save Visit</button>
+      <button onclick="closeVisitModal()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="vm-error" style="color:{RED};font-size:12px;margin-top:8px;display:none"></div>
+  </div>
+</div>'''
+
+    # Transcript modal (paste iOS Notes transcript → send to call coach for scoring)
+    transcript_modal = f'''
+<div id="transcript-modal" style="display:none;position:fixed;inset:0;background:#00000088;z-index:9999;align-items:center;justify-content:center">
+  <div style="background:{CARD};border:1px solid #8b5cf655;border-radius:14px;padding:24px;width:100%;max-width:540px;margin:20px;box-shadow:0 20px 60px #000c">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="margin:0;font-size:16px;color:{TEXT}">Score In-Person Conversation</h2>
+      <button onclick="closeTranscriptModal()" style="background:none;border:none;color:{MUTED};font-size:20px;cursor:pointer;padding:0">×</button>
+    </div>
+    <div id="tm-company" style="font-size:16px;font-weight:700;color:#8b5cf6;margin-bottom:12px"></div>
+    <div style="background:{SURFACE};border:1px solid {BORDER};border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:{MUTED}">
+      📱 iPhone → Voice Memos or Notes → copy your conversation notes or transcript → paste below
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Paste Conversation / Transcript</label>
+      <textarea id="tm-transcript" rows="7" placeholder="Paste your notes or call transcript here..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:12px;resize:vertical;box-sizing:border-box;font-family:monospace"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="submitTranscript()" style="flex:1;background:#8b5cf6;color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Score Conversation →</button>
+      <button onclick="closeTranscriptModal()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="tm-result" style="margin-top:12px;display:none"></div>
+  </div>
+</div>'''
+
+    js = f'''<script>
+var _vmDealId = null;
+var _tmDealId = null;
+var _tmCompany = '';
+
+function openVisitModal(id, company, contact) {{
+  _vmDealId = id;
+  document.getElementById('vm-company').textContent = company;
+  document.getElementById('vm-contact').textContent = contact;
+  document.getElementById('vm-notes').value = '';
+  document.getElementById('vm-error').style.display = 'none';
+  document.getElementById('visit-modal').style.display = 'flex';
+  setTimeout(function() {{ document.getElementById('vm-notes').focus(); }}, 50);
+}}
+function closeVisitModal() {{
+  document.getElementById('visit-modal').style.display = 'none';
+  _vmDealId = null;
+}}
+async function submitVisit() {{
+  if (!_vmDealId) return;
+  var outcome = document.getElementById('vm-outcome').value;
+  var notes   = document.getElementById('vm-notes').value;
+  var fudate  = document.getElementById('vm-fudate').value;
+  var errEl   = document.getElementById('vm-error');
+  errEl.style.display = 'none';
+  var fd = new FormData();
+  fd.append('outcome', 'In-Person: ' + outcome);
+  fd.append('notes', notes);
+  fd.append('follow_up_date', fudate);
+  try {{
+    var r = await fetch('/deals/' + _vmDealId + '/log-call', {{method:'POST', body:fd}});
+    var d = await r.json();
+    if (d.ok) {{
+      var card = document.getElementById('vcard-' + _vmDealId);
+      if (card) {{ card.style.opacity = '0.5'; }}
+      closeVisitModal();
+    }} else {{
+      errEl.textContent = d.error || 'Error'; errEl.style.display = 'block';
+    }}
+  }} catch(e) {{ errEl.textContent = 'Network error'; errEl.style.display = 'block'; }}
+}}
+document.getElementById('visit-modal').addEventListener('click', function(e) {{ if (e.target === this) closeVisitModal(); }});
+
+function openTranscriptModal(id, company, contact) {{
+  _tmDealId = id;
+  _tmCompany = company;
+  document.getElementById('tm-company').textContent = company;
+  document.getElementById('tm-transcript').value = '';
+  document.getElementById('tm-result').style.display = 'none';
+  document.getElementById('transcript-modal').style.display = 'flex';
+  setTimeout(function() {{ document.getElementById('tm-transcript').focus(); }}, 50);
+}}
+function closeTranscriptModal() {{
+  document.getElementById('transcript-modal').style.display = 'none';
+  _tmDealId = null;
+}}
+async function submitTranscript() {{
+  var transcript = document.getElementById('tm-transcript').value.trim();
+  if (!transcript) return;
+  var btn = document.querySelector('#transcript-modal button[onclick="submitTranscript()"]');
+  btn.textContent = 'Scoring...';
+  btn.disabled = true;
+  var resultEl = document.getElementById('tm-result');
+  try {{
+    var fd = new FormData();
+    fd.append('transcript_text', transcript);
+    fd.append('business_name', _tmCompany);
+    var r = await fetch('https://calls.marceausolutions.com/calls/submit', {{method:'POST', body:fd}});
+    var d = await r.json();
+    if (d.scores) {{
+      var s = d.scores;
+      resultEl.innerHTML = '<div style="background:{SURFACE};border:1px solid #8b5cf633;border-radius:8px;padding:12px">' +
+        '<div style="color:#8b5cf6;font-weight:700;font-size:14px;margin-bottom:8px">Score: ' + (d.overall_score || '—') + '/10</div>' +
+        '<div style="font-size:12px;color:{MUTED}">Full results at <a href="https://calls.marceausolutions.com" target="_blank" style="color:#8b5cf6">calls.marceausolutions.com</a></div>' +
+        '</div>';
+      resultEl.style.display = 'block';
+    }}
+    btn.textContent = 'Score Conversation →';
+    btn.disabled = false;
+  }} catch(e) {{
+    resultEl.innerHTML = '<div style="color:{RED};font-size:12px">Error connecting to Call Coach. Try pasting at <a href="https://calls.marceausolutions.com" target="_blank" style="color:{BLUE}">calls.marceausolutions.com</a></div>';
+    resultEl.style.display = 'block';
+    btn.textContent = 'Score Conversation →';
+    btn.disabled = false;
+  }}
+}}
+document.getElementById('transcript-modal').addEventListener('click', function(e) {{ if (e.target === this) closeTranscriptModal(); }});
+document.addEventListener('keydown', function(e) {{ if (e.key === 'Escape') {{ closeVisitModal(); closeTranscriptModal(); closeEmailModal && closeEmailModal(); }} }});
+</script>'''
+
+    return visit_modal + transcript_modal + f'''<div style="max-width:1100px;margin:0 auto">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+  <div>
+    <h1 style="margin:0;font-size:20px;font-weight:800;color:{TEXT}">In-Person Day</h1>
+    <div style="font-size:12px;color:{MUTED};margin-top:2px">
+      Click <strong style="color:{GOLD}">Log Visit</strong> after each stop · Click <strong style="color:#8b5cf6">🎙 Score</strong> to paste conversation notes and get coaching feedback
+    </div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+{cards_html}
+</div>
+</div>
+{js}'''
 
 
 def _import_page(data):

@@ -150,7 +150,27 @@ def get_deal(conn, deal_id):
 
 
 def get_all_deals(conn):
-    return conn.execute("SELECT * FROM deals ORDER BY updated_at DESC").fetchall()
+    return conn.execute("""
+        SELECT * FROM deals
+        ORDER BY CASE WHEN tier=1 THEN 0 WHEN tier=2 THEN 1 ELSE 2 END, company ASC
+    """).fetchall()
+
+
+def get_call_queue(conn):
+    """Deals for call day — T1 first, with call stats and last email date."""
+    return conn.execute("""
+        SELECT d.*,
+               COUNT(DISTINCT CASE WHEN o.channel='Call' THEN o.id END) AS call_count,
+               MAX(CASE WHEN o.channel='Call' THEN o.created_at END)    AS last_called,
+               MAX(CASE WHEN o.channel='Email' THEN o.created_at END)   AS last_emailed,
+               MAX(CASE WHEN o.channel='Email' THEN o.message_summary END) AS last_email_subject
+        FROM deals d
+        LEFT JOIN outreach_log o ON o.deal_id = d.id
+        WHERE d.stage NOT IN ('Closed Won','Closed Lost')
+        GROUP BY d.id
+        ORDER BY CASE WHEN d.tier=1 THEN 0 WHEN d.tier=2 THEN 1 ELSE 2 END,
+                 d.company ASC
+    """).fetchall()
 
 
 def get_deals_by_stage(conn):

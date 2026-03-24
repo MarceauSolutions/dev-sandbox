@@ -26,6 +26,7 @@ from .models import (
     delete_deal, log_outreach, get_outreach_log, get_todays_followups,
     create_proposal, get_proposals, save_call_brief, get_call_briefs,
     get_activities, get_pipeline_stats, log_activity, get_tier1_queue,
+    get_call_queue,
     STAGES, STAGE_COLORS, CHANNELS, INDUSTRIES
 )
 from .ui import render_page
@@ -335,24 +336,62 @@ async def sync_outreach():
 @app.get("/outreach", response_class=HTMLResponse)
 async def outreach_page():
     conn = get_db()
-    log = get_outreach_log(conn, limit=50)
-    followups = get_todays_followups(conn)
-    deals = get_all_deals(conn)
+    queue = get_call_queue(conn)
+    log = get_outreach_log(conn, limit=30)
     conn.close()
-    return render_page("outreach", "Outreach", {"log": log, "followups": followups, "deals": deals, "channels": CHANNELS})
+    return render_page("outreach", "Call Day", {"queue": queue, "log": log})
 
 
-@app.post("/outreach/log")
-async def log_outreach_route(
-    deal_id: str = Form(""), company: str = Form(""), contact: str = Form(""),
-    channel: str = Form("Email"), message: str = Form(""), response: str = Form(""),
-    follow_up_date: str = Form(""), lead_source: str = Form(""),
-):
+@app.get("/email-day", response_class=HTMLResponse)
+async def email_day_page():
     conn = get_db()
-    did = int(deal_id) if deal_id else None
-    log_outreach(conn, did, company, contact, channel, message, response, follow_up_date or None, lead_source)
+    queue = get_call_queue(conn)
+    log = get_outreach_log(conn, limit=30)
     conn.close()
-    return RedirectResponse("/outreach", status_code=303)
+    return render_page("email-day", "Email Day", {"queue": queue, "log": log})
+
+
+@app.get("/inperson-day", response_class=HTMLResponse)
+async def inperson_day_page():
+    conn = get_db()
+    queue = get_call_queue(conn)
+    log = get_outreach_log(conn, limit=30)
+    conn.close()
+    return render_page("inperson-day", "In-Person Day", {"queue": queue, "log": log})
+
+
+@app.post("/deals/{deal_id}/log-call")
+async def log_call_route(
+    deal_id: int,
+    outcome: str = Form(""),
+    notes: str = Form(""),
+    follow_up_date: str = Form(""),
+):
+    from datetime import date as _date, timedelta
+    conn = get_db()
+    deal = get_deal(conn, deal_id)
+    if not deal:
+        conn.close()
+        raise HTTPException(404, "Deal not found")
+
+    message = f"Call: {outcome}" if outcome else "Call logged"
+    log_outreach(conn, deal_id, dict(deal)["company"], dict(deal).get("contact_name") or "",
+                 "Call", message, "", follow_up_date or None)
+
+    # Auto-advance stage
+    if outcome == "Answered - Interested" and dict(deal)["stage"] in ("Intake",):
+        update_deal(conn, deal_id, stage="Qualified")
+    elif outcome == "Not Interested":
+        update_deal(conn, deal_id, stage="Closed Lost")
+
+    # Append notes
+    if notes:
+        existing = dict(deal).get("notes") or ""
+        note_entry = f"[{_date.today()}] {outcome}: {notes}"
+        update_deal(conn, deal_id, notes=(existing + "\n" + note_entry).strip())
+
+    conn.close()
+    return JSONResponse({"ok": True})
 
 
 # ─── Send Proposal + Signing Agreement ──────────────────────
