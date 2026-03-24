@@ -618,6 +618,27 @@ def _send_telegram_notification(agreement, signer_name: str):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
+@app.route("/")
+def index():
+    return render_template_string("""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marceau Solutions — Client Portal</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d1117;color:#e6edf3;font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:40px;max-width:480px;width:100%;text-align:center}
+.logo{color:#C9963C;font-size:22px;font-weight:700;margin-bottom:8px}
+.tagline{color:#8b949e;font-size:14px;margin-bottom:32px}
+h1{font-size:18px;margin-bottom:12px}
+p{color:#8b949e;font-size:14px;line-height:1.6}
+</style></head>
+<body><div class="card">
+<div class="logo">Marceau Solutions</div>
+<div class="tagline">Embrace the Pain &amp; Defy the Odds</div>
+<h1>Client Signing Portal</h1>
+<p>This portal is accessed via a personalized link sent to you by William Marceau.<br><br>
+If you received a proposal, please use the link in your email to review and sign your agreement.</p>
+</div></body></html>""")
+
+
 @app.route("/health")
 def health():
     return jsonify({"status": "ok", "service": "signing-portal", "port": PORT})
