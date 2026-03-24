@@ -847,278 +847,335 @@ async function sendProposal(e, dealId) {{
 
 
 def _outreach(data):
+    """Call Day — split panel. Left: grouped list. Right: contact detail + transcript log."""
     from datetime import date as _date, timedelta
+    import json as _json
+    import collections
+
     queue = data.get("queue", [])
     log   = data.get("log", [])
-    today = _date.today().strftime("%Y-%m-%d")
 
-    t1  = [d for d in queue if (d["tier"] if isinstance(d, dict) else d["tier"]) == 1]
-    t2  = [d for d in queue if (d["tier"] if isinstance(d, dict) else d["tier"]) == 2]
-    all_deals = queue
+    # Build per-deal email metadata from outreach_log
+    emailed_on      = {}
+    emailed_subj    = {}
+    emailed_verdict = {}
+    called_count_by_id = {}
+    called_today = set()
+    today_str = _date.today().strftime("%Y-%m-%d")
+
+    for o in log:
+        did = o["deal_id"]
+        if not did:
+            continue
+        ch = o["channel"] or ""
+        dt = (o["created_at"] or "")[:10]
+        if ch == "Email":
+            if did not in emailed_on or dt > emailed_on[did]:
+                emailed_on[did] = dt
+                raw = o["message_summary"] or ""
+                subj = raw.split(" | Research:")[0].replace("Subject: ", "").strip()
+                emailed_subj[did] = subj
+                if " | Research: " in raw:
+                    emailed_verdict[did] = raw.split(" | Research: ", 1)[1][:200]
+        elif ch == "Call":
+            called_count_by_id[did] = called_count_by_id.get(did, 0) + 1
+            if dt == today_str:
+                called_today.add(did)
+
+    # Group deals by emailed date, newest batch first
+    groups = collections.defaultdict(list)
+    no_email = []
+    for d in queue:
+        d = dict(d)
+        date_key = emailed_on.get(d["id"], "")
+        if date_key:
+            groups[date_key].append(d)
+        else:
+            no_email.append(d)
+
+    # Sort within each group: T1 first, then T2, then others; alpha within tier
+    def _sort_key(d):
+        t = d.get("tier", 0)
+        return (0 if t==1 else 1 if t==2 else 2, (d.get("company") or "").lower())
+
+    # Build JS contact data map: id -> {company, contact, phone, email, subject, verdict, called}
+    contact_data = {}
+    for d in queue:
+        d = dict(d)
+        did = d["id"]
+        contact_data[did] = {
+            "company":  (d.get("company") or ""),
+            "contact":  (d.get("contact_name") or ""),
+            "phone":    (d.get("contact_phone") or ""),
+            "email":    (d.get("contact_email") or ""),
+            "industry": (d.get("industry") or ""),
+            "tier":     (d.get("tier") or 0),
+            "stage":    (d.get("stage") or "Intake"),
+            "subject":  emailed_subj.get(did, ""),
+            "verdict":  emailed_verdict.get(did, ""),
+            "called":   called_count_by_id.get(did, 0),
+        }
+
+    contact_data_json = _json.dumps(contact_data)
+
+    def _list_item(d):
+        did     = d["id"]
+        company = _esc(d.get("company") or "")
+        tier    = d.get("tier", 0)
+        stage   = d.get("stage", "Intake")
+        sc      = STAGE_COLORS.get(stage, MUTED)
+        called  = called_count_by_id.get(did, 0)
+        was_called_today = did in called_today
+
+        if tier == 1:
+            tbadge = f'''<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T1</span>'''
+        elif tier == 2:
+            tbadge = f'''<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T2</span>'''
+        else:
+            tbadge = f'''<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:3px;font-size:9px;font-weight:700;padding:1px 5px">T0</span>'''
+
+        called_mark = f'''<span style="color:{GREEN};font-size:10px;margin-left:4px">✓</span>''' if was_called_today else ""
+        call_ct = f'''<span style="font-size:9px;color:{MUTED};margin-left:4px">{called}x</span>''' if called > 0 else ""
+        industry = _esc(d.get("industry") or "")
+
+        return f'''<div id="li-{did}" onclick="selectContact({did})"
+  style="padding:10px 14px;border-bottom:1px solid {BORDER}22;cursor:pointer;transition:background .1s"
+  onmouseover="this.style.background='{SURFACE}'"
+  onmouseout="this.style.background=(window._selectedId=={did}?'{SURFACE}99':'transparent')">
+  <div style="display:flex;align-items:center;gap:6px">
+    {tbadge}
+    <span style="font-size:13px;font-weight:600;color:{TEXT};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{company}</span>
+    {called_mark}{call_ct}
+  </div>
+  <div style="font-size:10px;color:{MUTED};margin-top:2px">{industry}</div>
+</div>'''
+
+    def _group_html(date_label, deals):
+        sorted_deals = sorted(deals, key=_sort_key)
+        t1c = sum(1 for d in sorted_deals if d.get("tier")==1)
+        items = "".join(_list_item(d) for d in sorted_deals)
+        badges = ""
+        if t1c:
+            badges += f'''<span style="background:{GOLD}22;color:{GOLD};font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;border:1px solid {GOLD}44">{t1c} T1</span>'''
+        return f'''<div style="border-bottom:1px solid {BORDER}33">
+<div style="padding:8px 14px;background:{SURFACE};border-bottom:1px solid {BORDER}22;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:1">
+  <span style="font-size:11px;font-weight:700;color:{GOLD}">Emailed {date_label}</span>
+  <span style="font-size:10px;color:{MUTED}">{len(sorted_deals)}</span>
+  {badges}
+</div>
+{items}
+</div>'''
+
+    # Build left panel HTML
+    left_html = ""
+    for date_key in sorted(groups.keys(), reverse=True):
+        left_html += _group_html(date_key, groups[date_key])
+    if no_email:
+        left_html += _group_html("(not emailed)", no_email)
+
+    total = len(queue)
+    t1_total = sum(1 for d in queue if (dict(d).get("tier") or 0) == 1)
+    called_count = len(called_today)
+
+    outcomes = ["Answered - Interested", "Answered - Callback", "Voicemail Left", "No Answer", "Not Interested"]
+    outcome_opts = "".join(f'<option value="{o}">{o}</option>' for o in outcomes)
 
     def _fu_date(outcome):
-        """Suggest a follow-up date based on outcome."""
         if "Voicemail" in outcome or "No Answer" in outcome:
             return (_date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
         if "Callback" in outcome:
             return (_date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
         return ""
 
-    def _card(d):
-        d = dict(d)
-        did     = d["id"]
-        company = _esc(d.get("company") or "")
-        contact = _esc(d.get("contact_name") or "")
-        phone   = _esc(d.get("contact_phone") or "")
-        email   = _esc(d.get("contact_email") or "")
-        industry= _esc(d.get("industry") or "")
-        tier    = d.get("tier", 0)
-        stage   = d.get("stage", "Intake")
-        call_count = d.get("call_count", 0) or 0
-        last_called = (d.get("last_called") or "")[:10]
-        last_emailed = (d.get("last_emailed") or "")[:10]
-        company_js = company.replace("'", "\\'")
-        contact_js = contact.replace("'", "\\'")
-        last_email_subj = _esc((d.get("last_email_subject") or "")[:60])
-        sc = STAGE_COLORS.get(stage, MUTED)
-
-        # Tier badge
-        if tier == 1:
-            tbadge = f'<span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T1</span>'
-        elif tier == 2:
-            tbadge = f'<span style="background:{BLUE}22;color:{BLUE};border:1px solid {BLUE}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T2</span>'
-        else:
-            tbadge = f'<span style="background:{MUTED}22;color:{MUTED};border:1px solid {MUTED}44;border-radius:4px;font-size:10px;font-weight:700;padding:2px 7px">T0</span>'
-
-        # Stage badge
-        sbadge = f'<span style="color:{sc};font-size:10px;font-weight:600">{_esc(stage)}</span>'
-
-        # Phone row
-        if phone:
-            tel_link = f'<a href="tel:{phone}" style="color:{GREEN};font-weight:700;font-size:15px;text-decoration:none">📞 {phone}</a>'
-        else:
-            # Google link to find their number
-            query = urllib.parse.quote(f"{d.get('company','')} {d.get('industry','')} Naples FL phone number")
-            tel_link = f'<a href="https://www.google.com/search?q={query}" target="_blank" style="color:{MUTED};font-size:12px;text-decoration:none">🔍 Find number →</a>'
-
-        # Email row
-        email_row = f'<div style="font-size:11px;color:{MUTED};margin-top:2px">{email}</div>' if email else ""
-
-        # Called indicator
-        call_indicator = ""
-        if call_count and call_count > 0:
-            call_indicator = f'<span style="background:{GREEN}22;color:{GREEN};border:1px solid {GREEN}33;border-radius:3px;font-size:10px;padding:1px 5px">{call_count}x called</span>'
-        if last_emailed:
-            call_indicator += f'<span style="color:{MUTED};font-size:10px;margin-left:6px">emailed {last_emailed}</span>'
-
-        # Email template hint
-        subj_html = f'<div style="font-size:10px;color:{MUTED};margin-top:3px;font-style:italic">"{last_email_subj}"</div>' if last_email_subj else ""
-
-        return f'''
-<div id="card-{did}" style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s">
-  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-    <span style="font-weight:700;font-size:14px;color:{TEXT};flex:1">{company}</span>
-    {tbadge}
-    {sbadge}
-  </div>
-  <div style="font-size:11px;color:{MUTED}">{industry}</div>
-  <div style="font-size:12px;color:{TEXT};font-weight:600">{contact}</div>
-  <div>{tel_link}</div>
-  {email_row}
-  {subj_html}
-  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px">{call_indicator}</div>
-  <div style="display:flex;gap:8px;margin-top:4px">
-    <button onclick="openModal({did},'{company_js}','{contact_js}','{phone}')"
-            style="flex:1;background:{GOLD};color:#111;border:none;border-radius:6px;padding:8px;font-size:12px;font-weight:700;cursor:pointer">
-      📞 Log Call
-    </button>
-    <a href="/deals/{did}" style="flex:0;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:8px 12px;font-size:12px;text-decoration:none">Brief →</a>
-  </div>
-</div>'''
-
-    # ── Build card sections ──
-    def _section(title, deals_list, section_id):
-        if not deals_list:
-            return f'<div id="{section_id}" style="display:none"></div>'
-        cards_html = "".join(_card(d) for d in deals_list)
-        count = len(deals_list)
-        return f'''<div id="{section_id}">
-<div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px">
-  <h2 style="margin:0;font-size:15px;font-weight:700;color:{TEXT}">{title}</h2>
-  <span style="background:{GOLD}22;color:{GOLD};border:1px solid {GOLD}44;border-radius:12px;font-size:11px;font-weight:700;padding:2px 8px">{count}</span>
-</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
-{cards_html}
-</div>
-</div>'''
-
-    t1_section  = _section("Tier 1 — Priority Calls", t1, "sec-t1")
-    t2_section  = _section("Tier 2 — Secondary Calls", t2, "sec-t2")
-
-    # ── Recent outreach log ──
-    log_rows = ""
-    for o in log:
-        log_rows += f'<tr><td style="color:{MUTED};white-space:nowrap">{_esc((o["created_at"] or "")[:10])}</td><td>{_esc(o["company"] or "")}</td><td>{_esc(o["channel"])}</td><td style="color:{MUTED}">{_esc((o["message_summary"] or "")[:60])}</td></tr>'
-    log_section = ""
-    if log_rows:
-        log_section = f'''<div style="margin-top:28px">
-<h2 style="font-size:15px;font-weight:700;color:{TEXT};margin-bottom:10px">Recent Activity</h2>
-<div style="background:{CARD};border:1px solid {BORDER};border-radius:10px;overflow:hidden">
-<table style="width:100%;border-collapse:collapse">
-<tr style="border-bottom:1px solid {BORDER}"><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">DATE</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">COMPANY</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">CH</th><th style="text-align:left;padding:10px 14px;font-size:11px;color:{MUTED};font-weight:600">SUMMARY</th></tr>
-{log_rows}
-</table></div></div>'''
-
-    # ── Filter bar ──
-    filter_bar = f'''<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
-  <button onclick="showSection('all')" id="fb-all" class="fb fb-active" style="background:{GOLD};color:#111;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">All ({len(all_deals)})</button>
-  <button onclick="showSection('t1')"  id="fb-t1"  class="fb" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">T1 ({len(t1)})</button>
-  <button onclick="showSection('t2')"  id="fb-t2"  class="fb" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">T2 ({len(t2)})</button>
-</div>'''
-
-    # ── Modal ──
-    outcomes = ["Answered - Interested", "Answered - Callback", "Voicemail Left", "No Answer", "Not Interested"]
-    outcome_opts = "".join(f'<option value="{o}">{o}</option>' for o in outcomes)
-
-    modal = f'''
-<div id="call-modal" style="display:none;position:fixed;inset:0;background:#00000088;z-index:9999;align-items:center;justify-content:center">
-  <div style="background:{CARD};border:1px solid {GOLD}55;border-radius:14px;padding:24px;width:100%;max-width:440px;margin:20px;box-shadow:0 20px 60px #000c">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <h2 style="margin:0;font-size:16px;color:{TEXT}">Log Call</h2>
-      <button onclick="closeModal()" style="background:none;border:none;color:{MUTED};font-size:20px;cursor:pointer;padding:0">×</button>
-    </div>
-    <div id="modal-company" style="font-size:18px;font-weight:700;color:{GOLD};margin-bottom:4px"></div>
-    <div id="modal-contact" style="font-size:13px;color:{MUTED};margin-bottom:16px"></div>
-    <div style="margin-bottom:12px">
-      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Outcome</label>
-      <select id="modal-outcome" onchange="updateFollowUp()" style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:14px">
-        {outcome_opts}
-      </select>
-    </div>
-    <div style="margin-bottom:12px">
-      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Notes</label>
-      <textarea id="modal-notes" rows="3" placeholder="Key objections, pain points, what they said..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;resize:vertical;box-sizing:border-box"></textarea>
-    </div>
-    <div style="margin-bottom:18px">
-      <label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>
-      <input type="date" id="modal-fudate" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">
-    </div>
-    <div style="display:flex;gap:10px">
-      <button onclick="submitCall()" style="flex:1;background:{GOLD};color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Save & Next →</button>
-      <button onclick="closeModal()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:14px;cursor:pointer">Cancel</button>
-    </div>
-    <div id="modal-error" style="color:{RED};font-size:12px;margin-top:8px;display:none"></div>
-  </div>
-</div>'''
-
-    # ── JS ──
     fu_map = {o: _fu_date(o) for o in outcomes}
-    import json as _json
     fu_json = _json.dumps(fu_map)
 
-    js = f'''<script>
-var _activeDealId = null;
+    return f'''
+<style>
+.callday-wrap {{display:flex;height:calc(100vh - 70px);gap:0;overflow:hidden}}
+.callday-list {{width:320px;min-width:260px;overflow-y:auto;border-right:1px solid {BORDER};flex-shrink:0}}
+.callday-detail {{flex:1;overflow-y:auto;padding:24px}}
+@media(max-width:700px) {{
+  .callday-wrap {{flex-direction:column;height:auto}}
+  .callday-list {{width:100%;max-height:40vh;border-right:none;border-bottom:1px solid {BORDER}}}
+  .callday-detail {{padding:16px}}
+}}
+</style>
+
+<div style="padding:14px 18px;border-bottom:1px solid {BORDER};display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+  <div>
+    <span style="font-size:18px;font-weight:800;color:{TEXT}">Call Day</span>
+    <span style="font-size:12px;color:{MUTED};margin-left:10px">{total} contacts · <span style="color:{GOLD}">{t1_total} T1</span> · {called_count} called today</span>
+  </div>
+  <button id="sync-btn" onclick="syncAndReload()" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:600">⟳ Sync New Emails</button>
+</div>
+
+<div class="callday-wrap">
+  <!-- LEFT: scrollable contact list -->
+  <div class="callday-list">
+    {left_html}
+  </div>
+
+  <!-- RIGHT: detail pane -->
+  <div class="callday-detail" id="detail-pane">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:{MUTED};text-align:center;gap:8px;padding:40px">
+      <div style="font-size:32px">👈</div>
+      <div style="font-size:14px;font-weight:600;color:{TEXT}">Select a contact</div>
+      <div style="font-size:12px">T1 contacts are at the top of each batch group</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _contacts = {contact_data_json};
 var _fuMap = {fu_json};
+var _selectedId = null;
 
-function openModal(dealId, company, contact, phone) {{
-  _activeDealId = dealId;
-  document.getElementById('modal-company').textContent = company;
-  document.getElementById('modal-contact').textContent = contact + (phone ? ' · ' + phone : '');
-  document.getElementById('modal-outcome').value = 'No Answer';
-  document.getElementById('modal-notes').value = '';
-  updateFollowUp();
-  var m = document.getElementById('call-modal');
-  m.style.display = 'flex';
-  document.getElementById('modal-notes').focus();
+function selectContact(did) {{
+  _selectedId = did;
+  // Update highlight
+  document.querySelectorAll('[id^="li-"]').forEach(function(el) {{
+    el.style.background = 'transparent';
+  }});
+  var li = document.getElementById('li-' + did);
+  if (li) li.style.background = '{SURFACE}99';
+
+  var c = _contacts[did];
+  if (!c) return;
+
+  var phoneHtml = c.phone
+    ? '<a href="tel:' + c.phone + '" style="color:{GREEN};font-size:20px;font-weight:700;text-decoration:none">' + c.phone + '</a>'
+    : '<a href="https://www.google.com/search?q=' + encodeURIComponent(c.company + ' Naples FL phone') + '" target="_blank" style="color:{MUTED};font-size:13px">🔍 Find phone number →</a>';
+
+  var tierColor = c.tier===1 ? '{GOLD}' : c.tier===2 ? '{BLUE}' : '{MUTED}';
+  var tierLabel = c.tier===1 ? 'T1 — Priority' : c.tier===2 ? 'T2 — Secondary' : 'T0 — Unscored';
+
+  var verdictHtml = c.verdict ? '<div style="background:{SURFACE};border:1px solid {BORDER};border-radius:8px;padding:10px 14px;margin-bottom:14px"><div style="font-size:10px;color:{MUTED};font-weight:600;text-transform:uppercase;margin-bottom:4px">Research Note</div><div style="font-size:12px;color:{TEXT}">' + c.verdict + '</div></div>' : '';
+
+  var subjHtml = c.subject ? '<div style="font-size:11px;color:{MUTED};margin-top:4px">Email sent: <em>' + c.subject + '</em></div>' : '';
+
+  var calledHtml = c.called > 0 ? '<span style="color:{GREEN};font-size:11px;font-weight:600">Called ' + c.called + 'x previously</span>' : '';
+
+  document.getElementById('detail-pane').innerHTML = ''
+    + '<div style="max-width:600px">'
+    + '<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:18px">'
+    + '<div style="flex:1">'
+    + '<div style="font-size:22px;font-weight:800;color:{TEXT};">' + c.company + '</div>'
+    + '<div style="font-size:13px;color:{MUTED};margin-top:4px">' + (c.contact || '—') + ' · ' + (c.industry || '') + '</div>'
+    + subjHtml
+    + '<div style="margin-top:6px">' + calledHtml + '</div>'
+    + '</div>'
+    + '<span style="background:' + tierColor + '22;color:' + tierColor + ';border:1px solid ' + tierColor + '44;border-radius:6px;font-size:11px;font-weight:700;padding:4px 10px">' + tierLabel + '</span>'
+    + '</div>'
+
+    + '<div style="margin-bottom:16px">' + phoneHtml + '</div>'
+    + '<div style="font-size:12px;color:{MUTED};margin-bottom:16px">' + (c.email || '') + '</div>'
+
+    + verdictHtml
+
+    + '<div style="background:{CARD};border:1px solid {BORDER};border-radius:10px;padding:18px;margin-top:4px">'
+    + '<div style="font-size:14px;font-weight:700;color:{TEXT};margin-bottom:14px">Log This Call</div>'
+
+    + '<div style="margin-bottom:12px">'
+    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Outcome</label>'
+    + '<select id="d-outcome" onchange="updateFU()" style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:14px">' + '{outcome_opts}' + '</select>'
+    + '</div>'
+
+    + '<div style="margin-bottom:12px">'
+    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Paste Transcript or Notes</label>'
+    + '<textarea id="d-transcript" rows="5" placeholder="Paste iOS Notes call transcript here, or type what was said..." style="width:100%;background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:12px;resize:vertical;box-sizing:border-box;font-family:monospace"></textarea>'
+    + '</div>'
+
+    + '<div style="margin-bottom:16px">'
+    + '<label style="font-size:11px;color:{MUTED};font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Follow-up Date</label>'
+    + '<input type="date" id="d-fudate" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:10px;font-size:13px;width:100%;box-sizing:border-box">'
+    + '</div>'
+
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap">'
+    + '<button onclick="saveCall(' + did + ')" style="flex:1;min-width:140px;background:{GOLD};color:#111;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer">Save Call</button>'
+    + '<button onclick="scoreTranscript(' + did + ',\'' + c.company.replace("'","\\'") + '\')" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:13px;cursor:pointer">🎯 Score</button>'
+    + '<a href="/deals/' + did + '" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:8px;padding:12px 16px;font-size:13px;text-decoration:none">Brief →</a>'
+    + '</div>'
+    + '<div id="d-result" style="margin-top:10px;font-size:12px;display:none"></div>'
+    + '</div>'
+    + '</div>';
+
+  updateFU();
 }}
 
-function closeModal() {{
-  document.getElementById('call-modal').style.display = 'none';
-  _activeDealId = null;
+function updateFU() {{
+  var el = document.getElementById('d-outcome');
+  var fEl = document.getElementById('d-fudate');
+  if (!el || !fEl) return;
+  fEl.value = _fuMap[el.value] || '';
 }}
 
-function updateFollowUp() {{
-  var o = document.getElementById('modal-outcome').value;
-  document.getElementById('modal-fudate').value = _fuMap[o] || '';
-}}
-
-async function submitCall() {{
-  if (!_activeDealId) return;
-  var outcome  = document.getElementById('modal-outcome').value;
-  var notes    = document.getElementById('modal-notes').value;
-  var fudate   = document.getElementById('modal-fudate').value;
-  var errEl    = document.getElementById('modal-error');
-  errEl.style.display = 'none';
+async function saveCall(did) {{
+  var outcome    = (document.getElementById('d-outcome') || {{}}).value || '';
+  var transcript = (document.getElementById('d-transcript') || {{}}).value || '';
+  var fudate     = (document.getElementById('d-fudate') || {{}}).value || '';
+  var resEl      = document.getElementById('d-result');
 
   var fd = new FormData();
   fd.append('outcome', outcome);
-  fd.append('notes', notes);
+  fd.append('notes', transcript);
   fd.append('follow_up_date', fudate);
 
   try {{
-    var r = await fetch('/deals/' + _activeDealId + '/log-call', {{method:'POST', body:fd}});
+    var r = await fetch('/deals/' + did + '/log-call', {{method:'POST', body:fd}});
     var d = await r.json();
     if (d.ok) {{
-      // Mark card as called
-      var card = document.getElementById('card-' + _activeDealId);
-      if (card) {{
-        var badge = document.createElement('span');
-        badge.textContent = '✓ ' + outcome;
-        badge.style.cssText = 'background:{GREEN}22;color:{GREEN};border:1px solid {GREEN}33;border-radius:4px;font-size:11px;font-weight:600;padding:3px 8px;display:block;margin-top:4px';
-        card.appendChild(badge);
-        card.style.opacity = '0.55';
-      }}
-      closeModal();
+      resEl.style.color = '{GREEN}';
+      resEl.textContent = '✓ Saved — ' + outcome;
+      resEl.style.display = 'block';
+      // dim the list item
+      var li = document.getElementById('li-' + did);
+      if (li) li.style.opacity = '0.45';
     }} else {{
-      errEl.textContent = d.error || 'Error saving';
-      errEl.style.display = 'block';
+      resEl.style.color = '{RED}'; resEl.textContent = d.error || 'Error'; resEl.style.display = 'block';
     }}
   }} catch(e) {{
-    errEl.textContent = 'Network error: ' + e;
-    errEl.style.display = 'block';
+    resEl.style.color='{RED}'; resEl.textContent='Network error'; resEl.style.display='block';
   }}
 }}
 
-// Filter tabs
-function showSection(which) {{
-  document.getElementById('sec-t1').style.display = (which === 'all' || which === 't1') ? '' : 'none';
-  document.getElementById('sec-t2').style.display = (which === 'all' || which === 't2') ? '' : 'none';
-  document.querySelectorAll('.fb').forEach(function(b) {{
-    b.style.background = '{SURFACE}';
-    b.style.color = '{TEXT}';
-    b.style.border = '1px solid {BORDER}';
-  }});
-  var active = document.getElementById('fb-' + which);
-  if (active) {{ active.style.background = '{GOLD}'; active.style.color = '#111'; active.style.border = 'none'; }}
+async function scoreTranscript(did, company) {{
+  var transcript = (document.getElementById('d-transcript') || {{}}).value || '';
+  if (!transcript.trim()) {{ alert('Paste the call transcript first'); return; }}
+  var resEl = document.getElementById('d-result');
+  resEl.style.color = '{MUTED}'; resEl.textContent = 'Scoring...'; resEl.style.display = 'block';
+  try {{
+    var fd = new FormData();
+    fd.append('transcript_text', transcript);
+    fd.append('business_name', company);
+    var r = await fetch('https://calls.marceausolutions.com/calls/submit', {{method:'POST', body:fd}});
+    var d = await r.json();
+    if (d.overall_score !== undefined) {{
+      resEl.style.color = '{GREEN}';
+      resEl.innerHTML = '✓ Scored: <strong>' + d.overall_score + '/10</strong> · <a href="https://calls.marceausolutions.com" target="_blank" style="color:{BLUE}">View full breakdown →</a>';
+    }} else {{
+      resEl.textContent = 'Submitted to calls.marceausolutions.com'; resEl.style.color = '{MUTED}';
+    }}
+  }} catch(e) {{
+    resEl.style.color='{MUTED}'; resEl.textContent='Score at calls.marceausolutions.com'; resEl.style.display='block';
+  }}
 }}
 
-// Close modal on backdrop click
-document.getElementById('call-modal').addEventListener('click', function(e) {{
-  if (e.target === this) closeModal();
-}});
-
-// Keyboard shortcut: ESC to close
-document.addEventListener('keydown', function(e) {{
-  if (e.key === 'Escape') closeModal();
-}});
+async function syncAndReload() {{
+  var btn = document.getElementById('sync-btn');
+  btn.textContent = 'Syncing...'; btn.disabled = true;
+  try {{
+    var r = await fetch('/deals/sync-outreach', {{method:'POST'}});
+    var d = await r.json();
+    if (d.ok) {{
+      btn.textContent = (d.added||0) + ' new · ' + (d.logged||0) + ' emails logged';
+      setTimeout(function() {{ window.location.reload(); }}, 1200);
+    }} else {{
+      btn.textContent = 'Error: ' + (d.error || '?'); btn.disabled = false;
+    }}
+  }} catch(e) {{ btn.textContent='Error'; btn.disabled=false; }}
+}}
 </script>'''
-
-    return modal + f'''<div style="max-width:1100px;margin:0 auto">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-  <div>
-    <h1 style="margin:0;font-size:20px;font-weight:800;color:{TEXT}">Call Day</h1>
-    <div style="font-size:12px;color:{MUTED};margin-top:2px">Click <strong style="color:{GOLD}">Log Call</strong> after each call · T1 = priority · Sorted highest tier first</div>
-  </div>
-  <div style="display:flex;gap:8px">
-    <a href="/deals" style="background:{SURFACE};color:{TEXT};border:1px solid {BORDER};border-radius:6px;padding:7px 14px;font-size:12px;text-decoration:none;font-weight:600">← All Deals</a>
-  </div>
-</div>
-{filter_bar}
-{t1_section}
-{t2_section}
-{log_section}
-</div>
-{js}'''
 
 
 def _email_day(data):

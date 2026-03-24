@@ -254,79 +254,99 @@ async def import_csv(file: UploadFile = File(...), stage: str = Form("Intake"), 
 
 @app.post("/deals/sync-outreach")
 async def sync_outreach():
-    """Create pipeline deals from today's outreach tracking JSON, skipping duplicates."""
+    """Import deals + log outreach from ALL tracking files (not date-filtered).
+    New deals are created for unrecognized emails/companies.
+    For existing deals, the email is logged to outreach_log if not already there.
+    """
     try:
-        today_str = str(date.today())
         conn = get_db()
 
-        # Existing emails and companies
-        existing_emails = set(
-            (r[0] or "").lower()
-            for r in conn.execute("SELECT contact_email FROM deals WHERE contact_email IS NOT NULL AND contact_email != ''").fetchall()
-        )
-        existing_companies = set(
-            (r[0] or "").lower()
-            for r in conn.execute("SELECT LOWER(company) FROM deals").fetchall()
-        )
+        existing_email_to_id = {
+            (r[0] or "").lower(): r[1]
+            for r in conn.execute("SELECT contact_email, id FROM deals WHERE contact_email IS NOT NULL AND contact_email != ''").fetchall()
+        }
+        existing_company_to_id = {
+            (r[0] or "").lower(): r[1]
+            for r in conn.execute("SELECT LOWER(company), id FROM deals").fetchall()
+        }
 
         added = 0
+        logged = 0
         skipped = 0
 
-        for f in sorted(TRACKING_DIR.glob("outreach_tracking_*.json")):
+        for f in sorted(TRACKING_DIR.glob("outreach_tracking_*.json"), reverse=True):
             try:
                 data = json.loads(f.read_text())
             except Exception:
                 continue
 
-            # File may be a single batch dict OR a list of batch dicts
             batches = data if isinstance(data, list) else [data]
 
             for batch in batches:
                 if not isinstance(batch, dict):
                     continue
-                if batch.get("date") != today_str:
-                    continue
                 for em in batch.get("emails", []):
-                    email = (em.get("recipient") or "").lower().strip()
-                    company = (em.get("company") or "").strip()
+                    email      = (em.get("recipient") or "").lower().strip()
+                    company    = (em.get("company") or "").strip()
                     company_key = company.lower()
-
-                    # Skip if already exists by email or company name
-                    if email and email in existing_emails:
-                        skipped += 1
-                        continue
-                    if company_key and company_key in existing_companies:
-                        skipped += 1
-                        continue
-                    if not company and not email:
-                        continue
-
+                    subject    = (em.get("subject") or "").strip()
+                    sent_at    = (em.get("sent_at") or str(date.today()))[:19]
+                    verdict    = (em.get("research_verdict") or "").strip()
+                    pain       = (em.get("pain_point_angle") or "").strip()
                     first_name = (em.get("first_name") or "").strip()
-                    subject = (em.get("subject") or "").strip()
-                    em_tier = em.get("tier", 0)
+
                     try:
-                        em_tier = int(em_tier)
+                        em_tier = int(em.get("tier", 0))
                     except (ValueError, TypeError):
                         em_tier = 0
-                    em_template = (em.get("pain_point_angle") or "").strip()
 
-                    create_deal(conn, company or email,
-                                contact_name=first_name,
-                                contact_email=email,
-                                stage="Intake",
-                                lead_source="Outreach Sync",
-                                tier=em_tier,
-                                email_template=em_template or None,
-                                notes=f"Auto-synced from outreach. Subject: {subject}")
+                    # Resolve deal_id
+                    deal_id = existing_email_to_id.get(email) or existing_company_to_id.get(company_key)
 
-                    if email:
-                        existing_emails.add(email)
-                    if company_key:
-                        existing_companies.add(company_key)
-                    added += 1
+                    if deal_id is None:
+                        # New deal
+                        if not company and not email:
+                            continue
+                        deal_id = create_deal(
+                            conn, company or email,
+                            contact_name=first_name,
+                            contact_email=email,
+                            stage="Intake",
+                            lead_source="Outreach Sync",
+                            tier=em_tier,
+                            email_template=pain or None,
+                            notes=("[Research] " + verdict) if verdict else "",
+                        )
+                        if email:
+                            existing_email_to_id[email] = deal_id
+                        if company_key:
+                            existing_company_to_id[company_key] = deal_id
+                        added += 1
+
+                    # Log the email to outreach_log if not already there
+                    existing_log = conn.execute(
+                        "SELECT id FROM outreach_log WHERE deal_id=? AND channel='Email' AND message_summary LIKE ?",
+                        (deal_id, "%" + subject[:25] + "%")
+                    ).fetchone()
+                    if existing_log:
+                        skipped += 1
+                        continue
+
+                    msg = ("Subject: " + subject) if subject else "Email sent"
+                    if verdict:
+                        msg += " | Research: " + verdict[:120]
+                    log_outreach(conn, deal_id, company, first_name, "Email",
+                                 msg, "", "", "cold-email-sprint")
+                    # Preserve original sent_at timestamp
+                    conn.execute(
+                        "UPDATE outreach_log SET created_at=? WHERE id=(SELECT MAX(id) FROM outreach_log WHERE deal_id=?)",
+                        (sent_at, deal_id)
+                    )
+                    conn.commit()
+                    logged += 1
 
         conn.close()
-        return JSONResponse({"ok": True, "added": added, "skipped": skipped})
+        return JSONResponse({"ok": True, "added": added, "logged": logged, "skipped": skipped})
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
@@ -337,7 +357,7 @@ async def sync_outreach():
 async def outreach_page():
     conn = get_db()
     queue = get_call_queue(conn)
-    log = get_outreach_log(conn, limit=30)
+    log = get_outreach_log(conn, limit=200)
     conn.close()
     return render_page("outreach", "Call Day", {"queue": queue, "log": log})
 
