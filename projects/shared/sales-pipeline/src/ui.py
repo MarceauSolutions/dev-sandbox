@@ -1181,6 +1181,44 @@ def _outreach(data):
         + 'var _outcomeBtns = ' + outcome_btns_json + ';'
         + 'var _selectedId = null;'
 
+        # buildCallScript JS function — avoids Python string escaping hell
+        + r"""
+function buildCallScript(c) {
+  var G = '""" + GOLD + r"""';
+  var M = '""" + MUTED + r"""';
+  var S = '""" + SURFACE + r"""';
+  var CD = '""" + CARD + r"""';
+  var name = (c.contact && c.contact !== "\u2014") ? c.contact.split(" ")[0] : "";
+  var greeting = name ? ("Hey " + name + ", this is William.") : "Hey, this is William.";
+  var ind = c.industry || "business";
+  var noSite = !c.website ? '<div style="background:'+S+';border-radius:6px;padding:10px 12px;margin-bottom:10px"><span style="color:'+G+';font-weight:700;font-size:11px">\u26a1 NO WEBSITE</span><div style="font-size:12px;margin-top:4px">By the way \u2014 I noticed you don\u2019t have a website yet. That\u2019s actually something I could put together for you as part of the system. Most of my clients see it as the first thing that starts capturing leads on its own.</div></div>' : '';
+  var lbl = function(t){return '<div style="color:'+M+';font-size:10px;font-weight:600;text-transform:uppercase;margin-bottom:4px">'+t+'</div>';};
+  return '<div style="background:'+CD+';border:1px solid '+G+'55;border-radius:10px;padding:16px 18px;margin-bottom:14px">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="var b=this.parentElement.querySelector(\'.sb\');b.style.display=b.style.display===\'none\'?\'block\':\'none\'">'
+    + '<span style="font-size:12px;font-weight:700;color:'+G+';text-transform:uppercase;letter-spacing:.6px">\ud83d\udcde Call Script</span>'
+    + '<span style="color:'+M+';font-size:11px">\u25bc</span></div>'
+    + '<div class="sb" style="margin-top:12px;font-size:13px;line-height:1.7">'
+    + lbl("Gatekeeper")
+    + '<div style="margin-bottom:14px">Hi, is the owner or manager available? I\u2019m calling about their business operations.</div>'
+    + lbl("When You Get the Decision-Maker")
+    + '<div style="margin-bottom:14px">' + greeting + ' I run a small AI automation shop here in Naples. I\u2019m not trying to sell you anything on this call \u2014 I just had a quick question.<br><br>'
+    + '<strong style="color:'+G+'">What\u2019s the one thing your team spends the most time on every week that doesn\u2019t actually require a human to do it?</strong></div>'
+    + lbl("After They Answer (Listen First!)")
+    + '<div style="margin-bottom:14px">That\u2019s exactly the kind of thing I automate for businesses around here. I set up AI systems that handle stuff like that in the background \u2014 so your team gets 5 to 10 hours back every week without changing how you operate.<br><br>'
+    + 'I\u2019m not going to pitch you on the phone. Would it be cool if I sent over a quick 2-minute email showing what I built for a local <strong>' + ind + '</strong> company? You can see if it\u2019s even relevant.</div>'
+    + lbl("When They Say Yes")
+    + '<div style="margin-bottom:14px">Perfect \u2014 what\u2019s the best email? <em>(confirm email)</em><br>I\u2019ll send that over today. And honestly, if it\u2019s not a fit, no hard feelings \u2014 I only work with businesses where I can actually make a difference.</div>'
+    + noSite
+    + lbl("Common Objections")
+    + '<div style="font-size:12px;color:'+M+';line-height:1.8">'
+    + '<strong>\u201cWe already have something\u201d</strong> \u2192 Totally fair \u2014 most businesses do. The stuff I build works alongside what you have, not instead of it. Worth a look?<br>'
+    + '<strong>\u201cNot interested\u201d</strong> \u2192 No worries at all. If you ever want a second opinion on how your follow-up is working, I\u2019m easy to find.<br>'
+    + '<strong>\u201cWhat does it cost?\u201d</strong> \u2192 Depends on what you need \u2014 starts around $297/mo after a free 2-week trial where I build everything first. But let me send the case study first so you can see if it even applies.<br>'
+    + '<strong>\u201cI\u2019m busy\u201d</strong> \u2192 Totally respect that \u2014 when\u2019s a better 90 seconds? I\u2019ll call back then.'
+    + '</div></div></div>';
+}
+"""
+
         + 'function selectContact(did) {'
         + '  _selectedId = did;'
         + '  document.querySelectorAll("[id^=\'li-\']").forEach(function(el) { el.style.background = "transparent"; });'
@@ -1189,6 +1227,9 @@ def _outreach(data):
         + '  var c = _contacts[did];'
         + '  if (!c) return;'
 
+        + '  var askForHtml = (c.contact && c.contact !== "—")'
+        + '    ? "<div style=\'display:inline-flex;align-items:center;gap:6px;background:' + GOLD + '22;border:1px solid ' + GOLD + '44;border-radius:6px;padding:4px 10px;margin-bottom:8px;font-size:12px\'>📞 Ask for: <strong style=\'color:' + GOLD + '\'>" + c.contact + "</strong></div>"'
+        + '    : "<div style=\'display:inline-flex;align-items:center;gap:6px;background:' + MUTED + '18;border-radius:6px;padding:4px 10px;margin-bottom:8px;font-size:11px;color:' + MUTED + '\'>Ask: &ldquo;Is the owner or manager available?&rdquo;</div>";'
         + '  var phoneHtml = c.phone'
         + '    ? "<a href=\'tel:" + c.phone + "\' style=\'color:' + GREEN + ';font-size:22px;font-weight:800;text-decoration:none;display:block;margin-bottom:4px\'>" + c.phone + "</a>"'
         + '    : "<a href=\'https://www.google.com/search?q=" + encodeURIComponent(c.company + " Naples FL phone number") + "\' target=\'_blank\' style=\'color:' + MUTED + ';font-size:13px\'>&#128269; Find phone number &#x2192;</a>";'
@@ -1241,6 +1282,7 @@ def _outreach(data):
         + '      + "</div>"'
         + '    + "</div>"'
 
+        + '    + askForHtml'
         + '    + "<div style=\'margin-bottom:18px\'>" + phoneHtml + "</div>"'
 
         + '    + intelHtml'
