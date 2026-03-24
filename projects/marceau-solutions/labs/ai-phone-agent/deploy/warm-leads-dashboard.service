@@ -1,0 +1,15 @@
+[Unit]
+Description=Warm Leads Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=clawdbot
+WorkingDirectory=/home/clawdbot/dev-sandbox/projects/marceau-solutions/labs/ai-phone-agent
+ExecStart=/usr/bin/python3.11 src/dashboard.py
+Restart=always
+RestartSec=10
+Environment=HOME=/home/clawdbot
+
+[Install]
+WantedBy=multi-user.target

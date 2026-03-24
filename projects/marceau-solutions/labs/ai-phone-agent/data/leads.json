@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "phone": "+15551234567",
+    "name": "",
+    "email": "",
+    "source": "ai-phone-agent",
+    "status": "warm_lead",
+    "business_type": "HVAC Company",
+    "pain_points": "Missing customer calls after hours",
+    "timeline": "",
+    "notes": "",
+    "call_sid": "",
+    "recording_url": "",
+    "created_at": "2026-03-24T12:16:51.705978",
+    "updated_at": "2026-03-24T12:16:51.705988",
+    "follow_up_at": null,
+    "contacted": false
+  }
+]
