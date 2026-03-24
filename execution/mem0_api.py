@@ -178,15 +178,19 @@ def search_memory(
 @app.get("/memory/all")
 def list_memories(
     agent_id: Optional[str] = Query(None, description="Filter by agent"),
+    user_id: Optional[str] = Query(None, description="Filter by user (alias for agent_id)"),
     limit: int = Query(50, description="Max results"),
 ):
-    """List all memories, optionally filtered by agent."""
+    """List all memories, optionally filtered by agent/user."""
     try:
-        kwargs = {}
-        if agent_id:
-            kwargs["user_id"] = agent_id
+        effective_id = agent_id or user_id
+        if not effective_id:
+            raise HTTPException(
+                status_code=400,
+                detail="agent_id or user_id query parameter is required",
+            )
 
-        results = memory.get_all(**kwargs)
+        results = memory.get_all(user_id=effective_id)
 
         memories = []
         if isinstance(results, dict) and "results" in results:
