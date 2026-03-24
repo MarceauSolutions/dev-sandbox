@@ -23,6 +23,22 @@ import logging
 from datetime import datetime
 from typing import Optional
 
+# Load .env so ANTHROPIC_API_KEY is available even when not set in the shell env
+try:
+    from dotenv import load_dotenv
+    # Try multiple .env locations (ec2-user vs clawdbot dev-sandbox)
+    for _env_path in [
+        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"),
+        os.path.expanduser("~/dev-sandbox/.env"),
+        "/home/ec2-user/dev-sandbox/.env",
+        "/home/clawdbot/dev-sandbox/.env",
+    ]:
+        if os.path.exists(_env_path):
+            load_dotenv(_env_path)
+            break
+except ImportError:
+    pass  # dotenv not installed — rely on shell env
+
 try:
     from fastapi import FastAPI, HTTPException, Query
     from pydantic import BaseModel
