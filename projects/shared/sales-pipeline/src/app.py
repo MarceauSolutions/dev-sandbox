@@ -286,43 +286,43 @@ async def sync_outreach():
                 if batch.get("date") != today_str:
                     continue
                 for em in batch.get("emails", []):
-                email = (em.get("recipient") or "").lower().strip()
-                company = (em.get("company") or "").strip()
-                company_key = company.lower()
+                    email = (em.get("recipient") or "").lower().strip()
+                    company = (em.get("company") or "").strip()
+                    company_key = company.lower()
 
-                # Skip if already exists by email or company name
-                if email and email in existing_emails:
-                    skipped += 1
-                    continue
-                if company_key and company_key in existing_companies:
-                    skipped += 1
-                    continue
-                if not company and not email:
-                    continue
+                    # Skip if already exists by email or company name
+                    if email and email in existing_emails:
+                        skipped += 1
+                        continue
+                    if company_key and company_key in existing_companies:
+                        skipped += 1
+                        continue
+                    if not company and not email:
+                        continue
 
-                first_name = (em.get("first_name") or "").strip()
-                subject = (em.get("subject") or "").strip()
-                em_tier = em.get("tier", 0)
-                try:
-                    em_tier = int(em_tier)
-                except (ValueError, TypeError):
-                    em_tier = 0
-                em_template = (em.get("pain_point_angle") or "").strip()
+                    first_name = (em.get("first_name") or "").strip()
+                    subject = (em.get("subject") or "").strip()
+                    em_tier = em.get("tier", 0)
+                    try:
+                        em_tier = int(em_tier)
+                    except (ValueError, TypeError):
+                        em_tier = 0
+                    em_template = (em.get("pain_point_angle") or "").strip()
 
-                create_deal(conn, company or email,
-                            contact_name=first_name,
-                            contact_email=email,
-                            stage="Intake",
-                            lead_source="Outreach Sync",
-                            tier=em_tier,
-                            email_template=em_template or None,
-                            notes=f"Auto-synced from outreach. Subject: {subject}")
+                    create_deal(conn, company or email,
+                                contact_name=first_name,
+                                contact_email=email,
+                                stage="Intake",
+                                lead_source="Outreach Sync",
+                                tier=em_tier,
+                                email_template=em_template or None,
+                                notes=f"Auto-synced from outreach. Subject: {subject}")
 
-                if email:
-                    existing_emails.add(email)
-                if company_key:
-                    existing_companies.add(company_key)
-                added += 1
+                    if email:
+                        existing_emails.add(email)
+                    if company_key:
+                        existing_companies.add(company_key)
+                    added += 1
 
         conn.close()
         return JSONResponse({"ok": True, "added": added, "skipped": skipped})
