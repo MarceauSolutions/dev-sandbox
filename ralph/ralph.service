@@ -1,0 +1,15 @@
+[Unit]
+Description=Ralph - Autonomous PRD Execution Agent
+After=network.target
+
+[Service]
+Type=simple
+User=clawdbot
+WorkingDirectory=/home/clawdbot/dev-sandbox/ralph
+ExecStart=/usr/bin/python3.11 /home/clawdbot/dev-sandbox/ralph/ralph_service.py
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
