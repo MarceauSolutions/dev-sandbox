@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GD&T Quick Reference Guide</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-card: #141414;
+            --border: #2a2a2a;
+            --text: #e8e8e8;
+            --text-dim: #999;
+            --accent: #0066cc;
+            --green: #22c55e;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --purple: #a855f7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Download Buttons */
+        .download-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .download-btn.secondary {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--accent);
+        }
+
+        p {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        /* Symbol Table */
+        .symbol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+
+        .symbol-table th {
+            background: var(--bg-card);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .symbol-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .symbol-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .symbol {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            min-width: 50px;
+        }
+
+        .symbol-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Category Colors */
+        .cat-form { color: var(--green); }
+        .cat-orientation { color: var(--orange); }
+        .cat-location { color: var(--accent); }
+        .cat-runout { color: var(--purple); }
+        .cat-profile { color: var(--red); }
+
+        /* Feature Control Frame */
+        .fcf {
+            display: inline-flex;
+            border: 2px solid var(--text);
+            font-family: monospace;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .fcf-cell {
+            padding: 0.4rem 0.6rem;
+            border-right: 2px solid var(--text);
+        }
+
+        .fcf-cell:last-child {
+            border-right: none;
+        }
+
+        /* Modifier Table */
+        .modifier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .modifier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .modifier-symbol {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .modifier-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .modifier-desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Rule Box */
+        .rule-box {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .rule-box h4 {
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .rule-box p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Quick Reference Cards */
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ref-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .ref-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ref-card ul {
+            margin-left: 1.25rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .ref-card li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Datum Section */
+        .datum-example {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .datum-letters {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+
+        .datum-letter {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .download-bar {
+                display: none;
+            }
+            
+            .symbol-table th {
+                background: #f0f0f0;
+            }
+            
+            .ref-card, .modifier-card, .rule-box {
+                border: 1px solid #ccc;
+                background: #fafafa;
+            }
+
+            h2 {
+                border-bottom-color: #333;
+            }
+
+            .cat-form, .cat-orientation, .cat-location, .cat-runout, .cat-profile {
+                color: black;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            .symbol-table { font-size: 0.85rem; }
+            .symbol { font-size: 1.2rem; }
+            .download-bar { flex-direction: column; }
+            .download-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 GD&T Quick Reference</h1>
+            <p class="subtitle">Geometric Dimensioning & Tolerancing — ASME Y14.5</p>
+        </header>
+
+        <div class="download-bar" id="downloadBar">
+            <button class="download-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
+            <button class="download-btn secondary" onclick="copyToClipboard()">📋 Copy as Text</button>
+            <a class="download-btn secondary" href="data:text/html,${encodeURIComponent(document.documentElement.outerHTML)}" download="gdt-reference.html">💾 Save HTML</a>
+        </div>
+
+        <!-- GD&T Symbols -->
+        <section id="symbols">
+            <h2>GD&T Symbols</h2>
+            
+            <h3 class="cat-form">Form Controls (No Datum Required)</h3>
+            <table class="symbol-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>What It Controls</th>
+                        <th>Tolerance Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="symbol">⏤</td>
+                        <td class="symbol-name">Flatness</td>
+                        <td>How flat a surface is</td>
+                        <td>Two parallel planes</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">⌭</td>
+                        <td class="symbol-name">Straightness</td>
+                        <td>How straight a line/axis is</td>
+                        <td>Two parallel lines or cylinder</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">○</td>
+                        <td class="symbol-name">Circularity (Roundness)</td>
+                        <td>How round a cross-section is</td>
+                        <td>Two concentric circles</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">⌓</td>
+                        <td class="symbol-name">Cylindricity</td>
+                        <td>Combined roundness + straightness of cylinder</td>
+                        <td>Two concentric cylinders</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="cat-orientation">Orientation Controls (Datum Required)</h3>
+            <table class="symbol-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>What It Controls</th>
+                        <th>Tolerance Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="symbol">⟂</td>
+                        <td class="symbol-name">Perpendicularity</td>
+                        <td>90° relationship to datum</td>
+                        <td>Two parallel planes/cylinder at 90° to datum</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">∠</td>
+                        <td class="symbol-name">Angularity</td>
+                        <td>Angle relationship to datum (not 90°)</td>
+                        <td>Two parallel planes at specified angle</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">∥</td>
+                        <td class="symbol-name">Parallelism</td>
+                        <td>Parallel relationship to datum</td>
+                        <td>Two parallel planes/cylinder parallel to datum</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="cat-location">Location Controls (Datum Required)</h3>
+            <table class="symbol-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>What It Controls</th>
+                        <th>Tolerance Zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="symbol">⌖</td>
+                        <td class="symbol-name">Position</td>
+                        <td>Location of feature from datums</td>
+                        <td>Cylindrical zone (holes) or parallel planes</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">◎</td>
+                        <td class="symbol-name">Concentricity</td>
+                        <td>Center points alignment</td>
+                        <td>Cylindrical zone about datum axis</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">⌯</td>
+                        <td class="symbol-name">Symmetry</td>
+                        <td>Symmetrical relationship to datum</td>
+                        <td>Two parallel planes centered on datum</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="cat-profile">Profile Controls</h3>
+            <table class="symbol-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>What It Controls</th>
+                        <th>Datum Required?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="symbol">⌒</td>
+                        <td class="symbol-name">Profile of a Line</td>
+                        <td>2D profile shape at any cross-section</td>
+                        <td>Optional (controls form, orientation, location)</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">⌓</td>
+                        <td class="symbol-name">Profile of a Surface</td>
+                        <td>3D surface shape</td>
+                        <td>Optional (controls form, orientation, location)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="cat-runout">Runout Controls (Datum Required)</h3>
+            <table class="symbol-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Name</th>
+                        <th>What It Controls</th>
+                        <th>Measurement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="symbol">↗</td>
+                        <td class="symbol-name">Circular Runout</td>
+                        <td>Surface variation at any single cross-section during rotation</td>
+                        <td>FIM (Full Indicator Movement) at each circle</td>
+                    </tr>
+                    <tr>
+                        <td class="symbol">↗↗</td>
+                        <td class="symbol-name">Total Runout</td>
+                        <td>Surface variation across entire surface during rotation</td>
+                        <td>FIM across all circles simultaneously</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Feature Control Frame -->
+        <section id="fcf">
+            <h2>Feature Control Frame</h2>
+            <p>The Feature Control Frame (FCF) is how GD&T callouts are displayed on drawings:</p>
+            
+            <div style="text-align: center; margin: 1.5rem 0;">
+                <div class="fcf">
+                    <div class="fcf-cell">⌖</div>
+                    <div class="fcf-cell">⌀ 0.25 Ⓜ</div>
+                    <div class="fcf-cell">A</div>
+                    <div class="fcf-cell">B</div>
+                    <div class="fcf-cell">C</div>
+                </div>
+            </div>
+
+            <div class="ref-grid">
+                <div class="ref-card">
+                    <h4>1️⃣ Symbol</h4>
+                    <ul>
+                        <li>First compartment</li>
+                        <li>Identifies the geometric characteristic</li>
+                        <li>One of the 14 GD&T symbols</li>
+                    </ul>
+                </div>
+                <div class="ref-card">
+                    <h4>2️⃣ Tolerance</h4>
+                    <ul>
+                        <li>Second compartment</li>
+                        <li>⌀ = diametral zone (for holes/pins)</li>
+                        <li>Tolerance value in drawing units</li>
+                        <li>Material modifiers (Ⓜ, Ⓛ, etc.)</li>
+                    </ul>
+                </div>
+                <div class="ref-card">
+                    <h4>3️⃣ Primary Datum</h4>
+                    <ul>
+                        <li>Third compartment</li>
+                        <li>Most important reference</li>
+                        <li>Constrained first</li>
+                    </ul>
+                </div>
+                <div class="ref-card">
+                    <h4>4️⃣ Secondary/Tertiary</h4>
+                    <ul>
+                        <li>Fourth & fifth compartments</li>
+                        <li>Additional references</li>
+                        <li>Order = constraint priority</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Material Modifiers -->
+        <section id="modifiers">
+            <h2>Material Condition Modifiers</h2>
+            
+            <div class="modifier-grid">
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓜ</div>
+                    <div class="modifier-name">MMC — Maximum Material Condition</div>
+                    <div class="modifier-desc">Feature contains max material (smallest hole, largest pin). Provides BONUS tolerance as feature departs from MMC.</div>
+                </div>
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓛ</div>
+                    <div class="modifier-name">LMC — Least Material Condition</div>
+                    <div class="modifier-desc">Feature contains least material (largest hole, smallest pin). Bonus tolerance as feature departs from LMC.</div>
+                </div>
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓢ</div>
+                    <div class="modifier-name">RFS — Regardless of Feature Size</div>
+                    <div class="modifier-desc">Default condition. Tolerance applies at any size. No bonus tolerance. (Implied if no modifier shown)</div>
+                </div>
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓟ</div>
+                    <div class="modifier-name">Projected Tolerance Zone</div>
+                    <div class="modifier-desc">Tolerance zone projects beyond the feature (e.g., above a threaded hole for stud clearance).</div>
+                </div>
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓕ</div>
+                    <div class="modifier-name">Free State</div>
+                    <div class="modifier-desc">Tolerance applies in free state (unrestrained). Used for flexible parts.</div>
+                </div>
+                <div class="modifier-card">
+                    <div class="modifier-symbol">Ⓣ</div>
+                    <div class="modifier-name">Tangent Plane</div>
+                    <div class="modifier-desc">Tolerance applies to a plane tangent to the surface (not the surface itself).</div>
+                </div>
+            </div>
+
+            <div class="rule-box">
+                <h4>💡 Bonus Tolerance (MMC/LMC)</h4>
+                <p><strong>Bonus = |Actual Size - MMC Size|</strong><br>
+                If a ⌀10.0 ±0.1 hole is at ⌀10.05 (actual) with position tolerance ⌀0.25 at MMC:<br>
+                Bonus = |10.05 - 9.9| = 0.15 → Total allowed position = 0.25 + 0.15 = <strong>⌀0.40</strong></p>
+            </div>
+        </section>
+
+        <!-- Datums -->
+        <section id="datums">
+            <h2>Datum Reference Frame</h2>
+            
+            <p>Datums establish the coordinate system for measurement. They constrain degrees of freedom in order: Primary → Secondary → Tertiary.</p>
+
+            <div class="datum-example">
+                <div class="datum-letters">
+                    <div class="datum-letter">A</div>
+                    <div class="datum-letter">B</div>
+                    <div class="datum-letter">C</div>
+                </div>
+                <p style="color: var(--text-dim); margin-top: 1rem;">Datum letters in squares on drawings</p>
+            </div>
+
+            <div class="ref-grid">
+                <div class="ref-card">
+                    <h4>Primary Datum (A)</h4>
+                    <ul>
+                        <li>Removes 3 DOF (plane) or 4 DOF (cylinder)</li>
+                        <li>Part sits on this first</li>
+                        <li>Usually the largest/most stable surface</li>
+                    </ul>
+                </div>
+                <div class="ref-card">
+                    <h4>Secondary Datum (B)</h4>
+                    <ul>
+                        <li>Removes 2 additional DOF</li>
+                        <li>Perpendicular to primary</li>
+                        <li>Orients the part</li>
+                    </ul>
+                </div>
+                <div class="ref-card">
+                    <h4>Tertiary Datum (C)</h4>
+                    <ul>
+                        <li>Removes final DOF</li>
+                        <li>Fully constrains part</li>
+                        <li>Locates in remaining direction</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rule-box">
+                <h4>🔧 Datum Selection Tips</h4>
+                <p>• Choose functional surfaces (mating faces, bearing surfaces)<br>
+                • Primary should be large, accessible, stable<br>
+                • Consider how the part will be fixtured in manufacturing<br>
+                • Match datum structure to assembly sequence when possible</p>
+            </div>
+        </section>
+
+        <!-- Rules -->
+        <section id="rules">
+            <h2>Fundamental Rules</h2>
+            
+            <div class="rule-box">
+                <h4>Rule #1 — Envelope Rule (Taylor Principle)</h4>
+                <p>The surface of a feature of size cannot extend beyond the MMC boundary (perfect form at MMC). Applies to individual features of size unless overridden by a straightness or flatness callout.</p>
+            </div>
+
+            <div class="rule-box">
+                <h4>Rule #2 — Default RFS</h4>
+                <p>Unless MMC Ⓜ or LMC Ⓛ is specified, RFS (Regardless of Feature Size) applies. No bonus tolerance is available by default.</p>
+            </div>
+
+            <div class="rule-box">
+                <h4>Rule #3 — Screw Thread Convention</h4>
+                <p>For screw threads, each tolerance and datum reference applies to the pitch cylinder (axis) unless otherwise specified.</p>
+            </div>
+        </section>
+
+        <!-- Common Formulas -->
+        <section id="formulas">
+            <h2>Quick Formulas</h2>
+            
+            <div class="ref-grid">
+                <div class="ref-card">
+                    <h4>📍 Position (Holes)</h4>
+                    <p style="font-family: monospace; font-size: 0.9rem;">
+                        Position Error = 2 × √(X² + Y²)<br><br>
+                        Where X, Y = deviation from true position
+                    </p>
+                </div>
+                <div class="ref-card">
+                    <h4>🎯 Bonus Tolerance</h4>
+                    <p style="font-family: monospace; font-size: 0.9rem;">
+                        Bonus = |Actual Size - MMC|<br><br>
+                        Total Tol = Stated Tol + Bonus
+                    </p>
+                </div>
+                <div class="ref-card">
+                    <h4>🔩 Fixed Fastener</h4>
+                    <p style="font-family: monospace; font-size: 0.9rem;">
+                        T = H - F<br><br>
+                        T = position tolerance (each part)<br>
+                        H = MMC hole size<br>
+                        F = MMC fastener size
+                    </p>
+                </div>
+                <div class="ref-card">
+                    <h4>🔩 Floating Fastener</h4>
+                    <p style="font-family: monospace; font-size: 0.9rem;">
+                        T = (H - F) / 2<br><br>
+                        Divide by 2 because tolerance<br>
+                        is shared between two parts
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Common Mistakes -->
+        <section id="mistakes">
+            <h2>Common Mistakes to Avoid</h2>
+            
+            <div class="ref-grid">
+                <div class="ref-card" style="border-left: 3px solid var(--red);">
+                    <h4>❌ Using Position Without Datums</h4>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Position ALWAYS requires datum references. Without them, there's no origin to measure from.</p>
+                </div>
+                <div class="ref-card" style="border-left: 3px solid var(--red);">
+                    <h4>❌ Circular Tolerance on Holes</h4>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Don't use ± for hole positions. Use ⌀ (diametral) position tolerance — it gives 57% more tolerance area.</p>
+                </div>
+                <div class="ref-card" style="border-left: 3px solid var(--red);">
+                    <h4>❌ Over-Tolerancing</h4>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Only call out what matters functionally. More GD&T ≠ better parts. It = higher cost.</p>
+                </div>
+                <div class="ref-card" style="border-left: 3px solid var(--red);">
+                    <h4>❌ Wrong Datum Order</h4>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Datum order matters. A|B|C ≠ B|A|C. Match your datum structure to functional requirements.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem; color: var(--text-dim); border-top: 1px solid var(--border); margin-top: 2rem;">
+            <p>Reference: ASME Y14.5-2018</p>
+            <p style="margin-top: 0.5rem;">Use Ctrl+P / Cmd+P to print or save as PDF</p>
+        </footer>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const content = document.body.innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Content copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Fix the download HTML button
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.querySelector('a[download="gdt-reference.html"]');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const html = document.documentElement.outerHTML;
+                    const blob = new Blob([html], {type: 'text/html'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'gdt-reference.html';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
