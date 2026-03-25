@@ -744,7 +744,7 @@ async def startup_enrich():
 
 @app.get("/api/health")
 async def health():
-    return {"status": "healthy", "service": "sales-pipeline", "version": "1.0.0"}
+    return {"status": "healthy", "service": "sales-pipeline", "version": "1.1.0"}
 
 
 @app.get("/api/stats")
@@ -761,6 +761,195 @@ async def api_deals():
     deals = get_all_deals(conn)
     conn.close()
     return [dict(d) for d in deals]
+
+
+# ─── Call Logger API (Panacea) ──────────────────────────────
+
+from .call_logger import log_call, get_recent_calls, get_calls_for_business, parse_call_command
+
+@app.post("/api/calls/log")
+async def api_log_call(request: Request):
+    """Log a call. Body: {business, outcome, notes?, contact_name?, phone?, email?}"""
+    data = await request.json()
+    business = data.get("business", "").strip()
+    outcome = data.get("outcome", "").strip()
+    if not business or not outcome:
+        return JSONResponse({"ok": False, "error": "business and outcome required"}, status_code=400)
+    result = log_call(
+        business, outcome,
+        notes=data.get("notes", ""),
+        contact_name=data.get("contact_name", ""),
+        phone=data.get("phone", ""),
+        email=data.get("email", ""),
+    )
+    return {"ok": True, **result}
+
+
+@app.post("/api/calls/parse")
+async def api_parse_call(request: Request):
+    """Parse natural language call command. Body: {text}
+    e.g. 'called Dolphin Cooling: callback, will follow up Thursday'
+    """
+    data = await request.json()
+    text = data.get("text", "").strip()
+    parsed = parse_call_command(text)
+    if not parsed:
+        return JSONResponse({"ok": False, "error": "Could not parse. Use: called [business]: [outcome], [notes]"}, status_code=400)
+    result = log_call(parsed["business"], parsed["outcome"], notes=parsed.get("notes", ""))
+    return {"ok": True, "parsed": parsed, **result}
+
+
+@app.get("/api/calls/recent")
+async def api_recent_calls(limit: int = 20):
+    """Get recent call history."""
+    return get_recent_calls(limit)
+
+
+@app.get("/api/calls/{business}")
+async def api_calls_for_business(business: str):
+    """Get all outreach history for a business."""
+    return get_calls_for_business(business)
+
+
+# ─── Visit Scheduler API (Panacea) ─────────────────────────
+
+from .visit_scheduler import build_visit_schedule, format_visit_schedule, log_visit
+
+@app.get("/api/visits/schedule")
+async def api_visit_schedule(max_visits: int = 10):
+    """Generate optimized visit schedule (farthest-first routing)."""
+    candidates = build_visit_schedule(max_visits=max_visits)
+    return {
+        "ok": True,
+        "count": len(candidates),
+        "formatted": format_visit_schedule(candidates),
+        "visits": [
+            {
+                "business": c.business_name,
+                "address": c.address,
+                "distance_miles": round(c.distance_from_home, 1),
+                "signals": c.signals,
+                "notes": c.notes,
+                "contact_name": c.contact_name,
+                "phone": c.phone,
+                "priority_score": c.priority_score,
+                "last_contact": c.last_contact_date,
+            }
+            for c in candidates
+        ],
+    }
+
+
+@app.post("/api/visits/log")
+async def api_log_visit(request: Request):
+    """Log an in-person visit. Body: {business, outcome, notes?}"""
+    data = await request.json()
+    business = data.get("business", "").strip()
+    outcome = data.get("outcome", "").strip()
+    if not business or not outcome:
+        return JSONResponse({"ok": False, "error": "business and outcome required"}, status_code=400)
+    visit = log_visit(business, outcome, notes=data.get("notes", ""))
+    return {"ok": True, **visit}
+
+
+# ─── Unified Tracker API (Panacea) ─────────────────────────
+
+from .unified_tracker import (
+    get_lead_profile, format_lead_profile,
+    get_hot_leads, format_hot_leads,
+    get_next_actions, format_next_actions,
+)
+
+@app.get("/api/leads/hot")
+async def api_hot_leads(limit: int = 10):
+    """Get highest-engagement leads."""
+    leads = get_hot_leads(limit)
+    return {
+        "ok": True,
+        "count": len(leads),
+        "formatted": format_hot_leads(leads),
+        "leads": [
+            {
+                "company": p.company,
+                "engagement_score": p.engagement_score,
+                "pipeline_stage": p.pipeline_stage,
+                "last_contact": p.last_contact,
+                "next_action": p.next_action,
+                "phone": p.phone,
+            }
+            for p in leads
+        ],
+    }
+
+
+@app.get("/api/leads/actions")
+async def api_next_actions(limit: int = 15):
+    """Get prioritized next actions across all leads."""
+    actions = get_next_actions(limit)
+    return {
+        "ok": True,
+        "count": len(actions),
+        "formatted": format_next_actions(actions),
+        "actions": actions,
+    }
+
+
+@app.get("/api/leads/{company}")
+async def api_lead_profile(company: str):
+    """Get complete lead profile with all touchpoints."""
+    profile = get_lead_profile(company)
+    return {
+        "ok": True,
+        "formatted": format_lead_profile(profile),
+        "profile": {
+            "company": profile.company,
+            "contact_name": profile.contact_name,
+            "phone": profile.phone,
+            "email": profile.email,
+            "pipeline_stage": profile.pipeline_stage,
+            "engagement_score": profile.engagement_score,
+            "last_contact": profile.last_contact,
+            "next_action": profile.next_action,
+            "next_action_reason": profile.next_action_reason,
+            "touchpoint_count": len(profile.touchpoints),
+        },
+    }
+
+
+# ─── Auto Follow-up API (n8n triggers this) ────────────────
+
+from .auto_followup import process_followups, format_summary, get_followups_due as get_auto_followups_due
+import sqlite3 as _sqlite3
+
+@app.get("/api/followups/due")
+async def api_followups_due():
+    """Get all follow-ups due today (for n8n preview/check)."""
+    conn = _sqlite3.connect(str(_SRC_DIR.parent / "data" / "pipeline.db"))
+    conn.row_factory = _sqlite3.Row
+    due = get_auto_followups_due(conn)
+    conn.close()
+    return {"ok": True, "count": len(due), "followups": due}
+
+
+@app.post("/api/followups/send")
+async def api_send_followups(request: Request):
+    """Send all due follow-ups. Body: {dry_run?: bool, sms_only?: bool}
+    n8n calls this daily at 8:00 AM.
+    """
+    data = await request.json() if request.headers.get("content-type") == "application/json" else {}
+    dry_run = data.get("dry_run", False)
+    sms_only = data.get("sms_only", False)
+    results = process_followups(dry_run=dry_run, sms_only=sms_only)
+    summary = format_summary(results)
+    sent = sum(1 for r in results if r.get("success") and not r.get("dry_run"))
+    return {
+        "ok": True,
+        "dry_run": dry_run,
+        "sent": sent,
+        "total": len(results),
+        "summary": summary,
+        "results": results,
+    }
 
 
 if __name__ == "__main__":

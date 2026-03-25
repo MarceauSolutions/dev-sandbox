@@ -32,9 +32,10 @@ def get_db() -> sqlite3.Connection:
 
 
 def _migrate(conn):
-    """Safely add new columns to deals table if they don't already exist."""
-    existing = {row[1] for row in conn.execute("PRAGMA table_info(deals)").fetchall()}
-    migrations = [
+    """Safely add new columns to existing tables."""
+    # Deals table migrations
+    deals_cols = {row[1] for row in conn.execute("PRAGMA table_info(deals)").fetchall()}
+    deals_migrations = [
         ("tier",             "INTEGER DEFAULT 0"),
         ("research_verdict", "TEXT"),
         ("email_template",   "TEXT"),
@@ -45,9 +46,21 @@ def _migrate(conn):
         ("lead_score",       "INTEGER DEFAULT 0"),
         ("outreach_day",     "TEXT"),
     ]
-    for col, col_def in migrations:
-        if col not in existing:
+    for col, col_def in deals_migrations:
+        if col not in deals_cols:
             conn.execute(f"ALTER TABLE deals ADD COLUMN {col} {col_def}")
+
+    # Outreach_log table migrations (tower, template tracking, A/B testing)
+    outreach_cols = {row[1] for row in conn.execute("PRAGMA table_info(outreach_log)").fetchall()}
+    outreach_migrations = [
+        ("tower",          "TEXT"),
+        ("template_used",  "TEXT"),
+        ("variant_group",  "TEXT"),
+    ]
+    for col, col_def in outreach_migrations:
+        if col not in outreach_cols:
+            conn.execute(f"ALTER TABLE outreach_log ADD COLUMN {col} {col_def}")
+
     conn.commit()
 
 
@@ -84,6 +97,9 @@ def _create_tables(conn):
             response TEXT,
             follow_up_date TEXT,
             lead_source TEXT,
+            tower TEXT,
+            template_used TEXT,
+            variant_group TEXT,
             created_at TEXT DEFAULT (datetime('now'))
         );
 

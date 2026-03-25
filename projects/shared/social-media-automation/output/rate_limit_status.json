@@ -4,7 +4,7 @@
   "last_post_time": "2026-01-26T18:00:03.639483",
   "daily_limit": 50,
   "monthly_limit": 1500,
-  "reset_date": "2026-01-01",
+  "reset_date": "2026-03-01",
   "consecutive_rate_limits": 0,
   "last_rate_limit_time": null
 }

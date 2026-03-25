@@ -567,8 +567,8 @@ struct ContentView: View {
                 case 1: ProgramsView()
                 case 2: ExercisesView()
                 case 3: NutritionView()
-                case 4: ProgressView()
-                case 5: TimerView()
+                case 4: MyProgressView()
+                case 5: SettingsView()
                 default: HomeView()
                 }
             }
@@ -580,7 +580,7 @@ struct ContentView: View {
                 tabItem(icon:"dumbbell.fill", label:"Exercises", idx:2)
                 tabItem(icon:"fork.knife", label:"Nutrition", idx:3)
                 tabItem(icon:"chart.line.uptrend.xyaxis", label:"Progress", idx:4)
-                tabItem(icon:"timer", label:"Timer", idx:5)
+                tabItem(icon:"gearshape.fill", label:"Settings", idx:5)
             }
             .padding(.top, 10)
             .padding(.bottom, 6)
@@ -729,12 +729,36 @@ struct ProgramsView: View {
 
 // MARK: - Program Detail
 struct ProgramDetailView: View {
+    @EnvironmentObject var store: WorkoutStore
     let program: Program
+    var isActive: Bool { store.selectedProgram == program.id }
     var body: some View {
         ScrollView {
             VStack(alignment:.leading, spacing:16) {
-                Text(program.name).font(.title).fontWeight(.black)
-                Text("\(program.description)  •  \(program.frequency)").font(.subheadline).foregroundColor(.dim)
+                HStack {
+                    VStack(alignment:.leading, spacing:4) {
+                        Text(program.name).font(.title).fontWeight(.black)
+                        Text("\(program.description)  •  \(program.frequency)").font(.subheadline).foregroundColor(.dim)
+                    }
+                    Spacer()
+                    if isActive {
+                        Text("ACTIVE").font(.caption).fontWeight(.bold).foregroundColor(.gold)
+                            .padding(.horizontal, 10).padding(.vertical, 5).background(Color.goldDim).cornerRadius(8)
+                    }
+                }
+                if !isActive {
+                    Button {
+                        store.selectedProgram = program.id
+                        store.save()
+                        UIImpactFeedbackGenerator(style:.medium).impactOccurred()
+                    } label: {
+                        Text("Set as Active Program")
+                            .font(.subheadline).fontWeight(.bold).foregroundColor(.gold)
+                            .frame(maxWidth:.infinity).padding(12)
+                            .background(Color.goldDim).cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius:12).stroke(Color.gold, lineWidth:1))
+                    }
+                }
 
                 ForEach(Array(program.days.enumerated()), id:\.offset) { idx, day in
                     VStack(alignment:.leading, spacing:8) {
@@ -817,88 +841,127 @@ struct ActiveWorkoutView: View {
     @State private var exercises: [ActiveExercise] = []
     @State private var startTime = Date()
     @State private var expanded: Set<String> = []
-    @State private var showFinish = false
+    @State private var showSummary = false
+    @State private var summaryData: WorkoutSummaryData? = nil
+    // Rest timer
+    @State private var restRemaining = 0
+    @State private var restTotal = 0
+    @State private var restTimer: Timer? = nil
 
     var body: some View {
-        ScrollView {
-            VStack(alignment:.leading, spacing:12) {
-                Text(day.name).font(.title).fontWeight(.black)
-                Text("\(day.focus)  •  \(elapsed) min").font(.subheadline).foregroundColor(.dim)
+        ZStack {
+            ScrollView {
+                VStack(alignment:.leading, spacing:12) {
+                    Text(day.name).font(.title).fontWeight(.black)
+                    Text("\(day.focus)  •  \(elapsed) min").font(.subheadline).foregroundColor(.dim)
 
-                ForEach(Array(exercises.indices), id:\.self) { ei in
-                    let ex = exercises[ei]
-                    if let e = exerciseFor(ex.exerciseId) {
-                        VStack(spacing:0) {
-                            // Header
-                            Button {
-                                withAnimation { if expanded.contains(ex.id) { expanded.remove(ex.id) } else { expanded.insert(ex.id) } }
-                            } label: {
-                                HStack {
-                                    Text("\(e.icon) \(e.name)").font(.subheadline).fontWeight(.semibold)
-                                    Spacer()
-                                    let done = ex.sets.filter(\.done).count
-                                    Text("\(done)/\(ex.targetSets)").font(.caption).foregroundColor(.dim)
-                                    Image(systemName: expanded.contains(ex.id) ? "chevron.up" : "chevron.down").font(.caption).foregroundColor(.dim)
+                    ForEach(Array(exercises.indices), id:\.self) { ei in
+                        let ex = exercises[ei]
+                        if let e = exerciseFor(ex.exerciseId) {
+                            VStack(spacing:0) {
+                                Button {
+                                    withAnimation { if expanded.contains(ex.id) { expanded.remove(ex.id) } else { expanded.insert(ex.id) } }
+                                } label: {
+                                    HStack {
+                                        Text("\(e.icon) \(e.name)").font(.subheadline).fontWeight(.semibold)
+                                        Spacer()
+                                        let done = ex.sets.filter(\.done).count
+                                        Text("\(done)/\(ex.targetSets)").font(.caption).foregroundColor(done == ex.targetSets ? .gold : .dim)
+                                        Image(systemName: expanded.contains(ex.id) ? "chevron.up" : "chevron.down").font(.caption).foregroundColor(.dim)
+                                    }
+                                    .padding(14)
                                 }
-                                .padding(14)
-                            }
-                            .buttonStyle(.plain)
+                                .buttonStyle(.plain)
 
-                            if expanded.contains(ex.id) {
-                                VStack(spacing:8) {
-                                    Text("Target: \(ex.targetSets)x\(ex.targetReps)  •  Rest: \(ex.rest)s")
-                                        .font(.caption).foregroundColor(.dim)
-                                    ForEach(Array(ex.sets.indices), id:\.self) { si in
-                                        HStack(spacing:8) {
-                                            Text("Set \(si+1)").font(.caption).foregroundColor(.dim).frame(width:44, alignment:.leading)
-                                            TextField("lbs", text: $exercises[ei].sets[si].weight)
-                                                .keyboardType(.numberPad).textFieldStyle(.roundedBorder).frame(height:38)
-                                            TextField("reps", text: $exercises[ei].sets[si].reps)
-                                                .keyboardType(.numberPad).textFieldStyle(.roundedBorder).frame(height:38)
-                                            Button {
-                                                exercises[ei].sets[si].done.toggle()
-                                            } label: {
-                                                Image(systemName: exercises[ei].sets[si].done ? "checkmark.circle.fill" : "circle")
-                                                    .font(.title2).foregroundColor(exercises[ei].sets[si].done ? .gold : .gray)
+                                if expanded.contains(ex.id) {
+                                    VStack(spacing:8) {
+                                        Text("Target: \(ex.targetSets)x\(ex.targetReps)  •  Rest: \(ex.rest)s")
+                                            .font(.caption).foregroundColor(.dim)
+                                        ForEach(Array(ex.sets.indices), id:\.self) { si in
+                                            HStack(spacing:8) {
+                                                Text("Set \(si+1)").font(.caption).foregroundColor(.dim).frame(width:44, alignment:.leading)
+                                                TextField("lbs", text: $exercises[ei].sets[si].weight)
+                                                    .keyboardType(.numberPad).textFieldStyle(.roundedBorder).frame(height:38)
+                                                TextField("reps", text: $exercises[ei].sets[si].reps)
+                                                    .keyboardType(.numberPad).textFieldStyle(.roundedBorder).frame(height:38)
+                                                Button {
+                                                    exercises[ei].sets[si].done.toggle()
+                                                    if exercises[ei].sets[si].done {
+                                                        UIImpactFeedbackGenerator(style:.medium).impactOccurred()
+                                                        startRest(seconds: ex.rest)
+                                                    }
+                                                } label: {
+                                                    Image(systemName: exercises[ei].sets[si].done ? "checkmark.circle.fill" : "circle")
+                                                        .font(.title2).foregroundColor(exercises[ei].sets[si].done ? .gold : .gray)
+                                                }
                                             }
                                         }
-                                    }
-                                    // Form cues
-                                    VStack(alignment:.leading, spacing:4) {
-                                        Text("FORM CUES").font(.system(size:10, weight:.semibold)).foregroundColor(.gold).tracking(0.5)
-                                        ForEach(e.cues, id:\.self) { cue in
-                                            HStack(alignment:.top, spacing:6) {
-                                                Circle().fill(Color.goldDim).frame(width:6, height:6).padding(.top,5)
-                                                Text(cue).font(.caption).foregroundColor(.dim)
+                                        VStack(alignment:.leading, spacing:4) {
+                                            Text("FORM CUES").font(.system(size:10, weight:.semibold)).foregroundColor(.gold).tracking(0.5)
+                                            ForEach(e.cues, id:\.self) { cue in
+                                                HStack(alignment:.top, spacing:6) {
+                                                    Circle().fill(Color.goldDim).frame(width:6, height:6).padding(.top,5)
+                                                    Text(cue).font(.caption).foregroundColor(.dim)
+                                                }
                                             }
                                         }
+                                        .padding(12).background(Color.bg2).cornerRadius(10)
                                     }
-                                    .padding(12).background(Color.bg2).cornerRadius(10)
+                                    .padding(.horizontal, 14).padding(.bottom, 14)
                                 }
-                                .padding(.horizontal, 14).padding(.bottom, 14)
                             }
+                            .background(Color.bg3).cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius:12).stroke(Color(.systemGray5), lineWidth:1))
                         }
-                        .background(Color.bg3).cornerRadius(12)
-                        .overlay(RoundedRectangle(cornerRadius:12).stroke(Color(.systemGray5), lineWidth:1))
                     }
-                }
 
-                Button {
-                    store.activeWorkout = exercises
-                    store.activeWorkoutName = day.name
-                    store.activeWorkoutStart = startTime
-                    store.finishWorkout()
-                    dismiss()
-                } label: {
-                    Text("Finish Workout")
-                        .font(.headline).fontWeight(.bold).foregroundColor(.black)
-                        .frame(maxWidth:.infinity).padding(16).background(Color.green).cornerRadius(14)
+                    Button { finishWorkout() } label: {
+                        Text("Finish Workout")
+                            .font(.headline).fontWeight(.bold).foregroundColor(.black)
+                            .frame(maxWidth:.infinity).padding(16).background(Color.gold).cornerRadius(14)
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, restRemaining > 0 ? 80 : 0)
                 }
-                .padding(.top, 12)
+                .padding()
             }
-            .padding()
+            .background(Color.bg)
+
+            // Floating rest timer
+            if restRemaining > 0 {
+                VStack {
+                    Spacer()
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle().stroke(Color(.systemGray5), lineWidth: 4).frame(width: 44, height: 44)
+                            Circle().trim(from: 0, to: CGFloat(restRemaining) / CGFloat(max(restTotal, 1)))
+                                .stroke(Color.gold, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                                .frame(width: 44, height: 44).rotationEffect(.degrees(-90))
+                            Text("\(restRemaining)").font(.system(size: 14, weight: .bold, design: .monospaced))
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("REST").font(.caption).fontWeight(.bold).foregroundColor(.gold).tracking(1)
+                            Text("Next set in \(restRemaining)s").font(.caption).foregroundColor(.dim)
+                        }
+                        Spacer()
+                        Button {
+                            restTimer?.invalidate()
+                            restRemaining = 0
+                        } label: {
+                            Text("Skip").font(.caption).fontWeight(.bold).foregroundColor(.gold)
+                                .padding(.horizontal, 14).padding(.vertical, 8)
+                                .background(Color.goldDim).cornerRadius(8)
+                        }
+                    }
+                    .padding(16)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(16)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
-        .background(Color.bg)
         .scrollDismissesKeyboard(.immediately)
         .toolbar { ToolbarItemGroup(placement:.keyboard) { Spacer(); Button("Done") { hideKeyboard() }.fontWeight(.semibold) } }
         .onAppear {
@@ -911,9 +974,102 @@ struct ActiveWorkoutView: View {
                 }
             }
         }
+        .onDisappear { restTimer?.invalidate() }
+        .sheet(isPresented: $showSummary) {
+            if let data = summaryData {
+                WorkoutSummaryView(data: data) { dismiss() }
+            }
+        }
     }
 
     var elapsed: Int { Int(Date().timeIntervalSince(startTime) / 60) }
+
+    func startRest(seconds: Int) {
+        restTimer?.invalidate()
+        restTotal = seconds
+        restRemaining = seconds
+        withAnimation { }
+        restTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            if restRemaining > 1 {
+                restRemaining -= 1
+            } else {
+                restTimer?.invalidate()
+                withAnimation { restRemaining = 0 }
+                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+            }
+        }
+    }
+
+    func finishWorkout() {
+        restTimer?.invalidate()
+        restRemaining = 0
+        let duration = Int(Date().timeIntervalSince(startTime) / 60)
+        var volume = 0; var exCount = 0; var setsCompleted = 0
+        for ex in exercises {
+            var had = false
+            for s in ex.sets where s.done {
+                let w = Double(s.weight) ?? 0; let r = Int(s.reps) ?? 0
+                volume += Int(w) * r; setsCompleted += 1; had = true
+            }
+            if had { exCount += 1 }
+        }
+        summaryData = WorkoutSummaryData(name: day.name, duration: duration, exerciseCount: exCount, setsCompleted: setsCompleted, totalVolume: volume)
+        store.activeWorkout = exercises
+        store.activeWorkoutName = day.name
+        store.activeWorkoutStart = startTime
+        store.finishWorkout()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        showSummary = true
+    }
+}
+
+// MARK: - Workout Summary
+struct WorkoutSummaryData {
+    let name: String; let duration: Int; let exerciseCount: Int; let setsCompleted: Int; let totalVolume: Int
+}
+
+struct WorkoutSummaryView: View {
+    let data: WorkoutSummaryData
+    let onDismiss: () -> Void
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            Text("WORKOUT COMPLETE").font(.caption).fontWeight(.bold).foregroundColor(.gold).tracking(2)
+            Text(data.name).font(.title).fontWeight(.black)
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+                summaryCard(value: "\(data.duration)", label: "Minutes", icon: "clock.fill")
+                summaryCard(value: "\(data.exerciseCount)", label: "Exercises", icon: "dumbbell.fill")
+                summaryCard(value: "\(data.setsCompleted)", label: "Sets Done", icon: "checkmark.circle.fill")
+                summaryCard(value: data.totalVolume > 1000 ? "\(data.totalVolume/1000)K" : "\(data.totalVolume)", label: "Volume (lbs)", icon: "flame.fill")
+            }
+            .padding(.horizontal)
+
+            Spacer()
+
+            Button { onDismiss() } label: {
+                Text("Done")
+                    .font(.headline).fontWeight(.bold).foregroundColor(.black)
+                    .frame(maxWidth: .infinity).padding(16).background(Color.gold).cornerRadius(14)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 30)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.bg)
+        .interactiveDismissDisabled()
+    }
+
+    func summaryCard(value: String, label: String, icon: String) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon).font(.title2).foregroundColor(.gold)
+            Text(value).font(.system(size: 28, weight: .black)).foregroundColor(.white)
+            Text(label.uppercased()).font(.system(size: 9, weight: .semibold)).foregroundColor(.dim).tracking(0.5)
+        }
+        .frame(maxWidth: .infinity).padding(20).background(Color.bg3).cornerRadius(14)
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Color(.systemGray5), lineWidth: 1))
+    }
 }
 
 // MARK: - Exercises View
@@ -1127,7 +1283,7 @@ struct TimerView: View {
 }
 
 // MARK: - Progress View
-struct ProgressView: View {
+struct MyProgressView: View {
     @EnvironmentObject var store: WorkoutStore
     @State private var showAddMetric = false
     @State private var newWeight = ""
@@ -1604,6 +1760,142 @@ struct NutritionTargetsView: View {
                 .padding(14).background(Color.bg3).cornerRadius(12)
                 .overlay(RoundedRectangle(cornerRadius:12).stroke(Color(.systemGray5), lineWidth:1))
         }
+    }
+}
+
+// MARK: - Settings View
+struct SettingsView: View {
+    @EnvironmentObject var store: WorkoutStore
+    @State private var showResetAlert = false
+
+    var activeProgram: Program? { programDB.first { $0.id == store.selectedProgram } }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Profile Card
+                    VStack(spacing: 8) {
+                        ZStack {
+                            Circle().fill(Color.goldDim).frame(width: 70, height: 70)
+                            Text("MF").font(.title).fontWeight(.black).foregroundColor(.gold)
+                        }
+                        Text("MARCEAU FITNESS").font(.headline).fontWeight(.black).foregroundColor(.gold)
+                        Text("Embrace the Pain & Defy the Odds").font(.caption).foregroundColor(.dim).italic()
+                    }
+                    .frame(maxWidth: .infinity).padding(24).background(Color.bg3).cornerRadius(16)
+                    .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(.systemGray5), lineWidth: 1))
+
+                    // Active Program
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("ACTIVE PROGRAM").font(.caption).fontWeight(.bold).foregroundColor(.dim).tracking(1)
+                        if let prog = activeProgram {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(prog.name).font(.subheadline).fontWeight(.bold)
+                                    Text("\(prog.frequency)  •  \(prog.level)").font(.caption).foregroundColor(.dim)
+                                }
+                                Spacer()
+                                NavigationLink { ProgramDetailView(program: prog) } label: {
+                                    Text("View").font(.caption).fontWeight(.bold).foregroundColor(.gold)
+                                        .padding(.horizontal, 12).padding(.vertical, 6).background(Color.goldDim).cornerRadius(8)
+                                }
+                            }
+                            .padding(14).background(Color.bg3).cornerRadius(12)
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gold, lineWidth: 1))
+                        }
+
+                        Text("SWITCH PROGRAM").font(.caption).fontWeight(.bold).foregroundColor(.dim).tracking(1).padding(.top, 4)
+                        ForEach(programDB.filter { $0.id != store.selectedProgram }) { prog in
+                            Button {
+                                store.selectedProgram = prog.id
+                                store.save()
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(prog.name).font(.subheadline).fontWeight(.semibold)
+                                        Text(prog.frequency).font(.caption).foregroundColor(.dim)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "arrow.right.circle").foregroundColor(.dim)
+                                }
+                                .padding(14).background(Color.bg3).cornerRadius(12)
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5), lineWidth: 1))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+
+                    // Stats Summary
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("LIFETIME STATS").font(.caption).fontWeight(.bold).foregroundColor(.dim).tracking(1)
+                        HStack(spacing: 12) {
+                            miniStat(value: "\(store.totalWorkouts)", label: "Workouts")
+                            miniStat(value: "\(store.streak)", label: "Streak")
+                            miniStat(value: store.totalVolume > 1000 ? "\(store.totalVolume/1000)K" : "\(store.totalVolume)", label: "Volume")
+                        }
+                    }
+
+                    // Rest Timer (standalone)
+                    NavigationLink { TimerView() } label: {
+                        HStack {
+                            Image(systemName: "timer").foregroundColor(.gold)
+                            Text("Standalone Rest Timer").font(.subheadline).fontWeight(.medium)
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.caption).foregroundColor(.dim)
+                        }
+                        .padding(14).background(Color.bg3).cornerRadius(12)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+
+                    // Reset
+                    Button { showResetAlert = true } label: {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise").foregroundColor(.red.opacity(0.7))
+                            Text("Reset All Data").font(.subheadline).foregroundColor(.red.opacity(0.7))
+                            Spacer()
+                        }
+                        .padding(14).background(Color.bg3).cornerRadius(12)
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("Marceau Fitness v1.0").font(.caption).foregroundColor(.dim).padding(.top, 8)
+                }
+                .padding()
+            }
+            .background(Color.bg)
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 4) {
+                        Text("MARCEAU").font(.headline).fontWeight(.black).foregroundColor(.gold)
+                        Text("SETTINGS").font(.headline).fontWeight(.bold)
+                    }
+                }
+            }
+            .alert("Reset All Data?", isPresented: $showResetAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Reset", role: .destructive) {
+                    store.history = []; store.totalWorkouts = 0; store.streak = 0
+                    store.totalVolume = 0; store.foodLog = []; store.bodyMetrics = []
+                    store.selectedProgram = "defy_the_odds"; store.save()
+                }
+            } message: {
+                Text("This will delete all workout history, nutrition logs, and body measurements. This cannot be undone.")
+            }
+        }
+    }
+
+    func miniStat(value: String, label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value).font(.system(size: 22, weight: .black)).foregroundColor(.gold)
+            Text(label.uppercased()).font(.system(size: 9, weight: .semibold)).foregroundColor(.dim).tracking(0.5)
+        }
+        .frame(maxWidth: .infinity).padding(14).background(Color.bg3).cornerRadius(12)
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5), lineWidth: 1))
     }
 }
 

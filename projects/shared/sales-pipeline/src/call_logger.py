@@ -12,10 +12,11 @@ Commands via Telegram:
 import os
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Optional, Dict, List, Any
 
-DB_PATH = "/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db"
+DB_PATH = str(Path(__file__).parent.parent / "data" / "pipeline.db")
 
 OUTCOME_ALIASES = {
     "interested": "interested", "int": "interested", "positive": "interested",
@@ -41,16 +42,16 @@ NEGATIVE = ["not_interested", "wrong_number", "has_ai_already"]
 
 STAGE_MAP = {
     "interested": "Qualified",
-    "callback": "Contacted",
-    "meeting_booked": "Demo Scheduled",
-    "email_requested": "Contacted",
-    "voicemail": "Contacted",
+    "callback": "Qualified",
+    "meeting_booked": "Meeting Booked",
+    "email_requested": "Qualified",
+    "voicemail": "Intake",
     "no_answer": "Intake",
-    "gatekeeper": "Contacted",
+    "gatekeeper": "Intake",
     "not_interested": "Closed Lost",
     "wrong_number": "Closed Lost",
     "has_ai_already": "Closed Lost",
-    "spanish_speaker": "Contacted",
+    "spanish_speaker": "Intake",
     "busy": "Intake",
 }
 
@@ -77,7 +78,7 @@ def log_call(business, outcome, notes="", contact_name="", phone="", email=""):
         params.append(email)
     if normalized in POSITIVE + NEUTRAL:
         updates.append("next_action_date = ?")
-        params.append((datetime.now().replace(day=datetime.now().day + 3)).strftime("%Y-%m-%d"))
+        params.append((datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d"))
     params.append(business)
     conn.execute("UPDATE deals SET " + ", ".join(updates) + " WHERE company LIKE ?", params)
 

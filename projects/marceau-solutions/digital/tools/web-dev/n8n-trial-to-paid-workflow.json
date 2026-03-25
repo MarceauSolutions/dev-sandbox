@@ -1,0 +1,234 @@
+{
+  "name": "AI-Services-Trial-to-Paid",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 12}]
+        }
+      },
+      "id": "trigger",
+      "name": "Check Trials Every 12h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8785/api/deals",
+        "options": {}
+      },
+      "id": "get-deals",
+      "name": "Get All Deals",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter deals in 'Trial Active' stage and calculate days since trial start\nconst deals = $input.all().map(item => item.json);\nconst now = new Date();\nconst trialDeals = [];\n\nfor (const deal of deals) {\n  if (deal.stage !== 'Trial Active') continue;\n  \n  // Use close_date as trial start, or created_at\n  const trialStart = deal.close_date || deal.created_at;\n  if (!trialStart) continue;\n  \n  const startDate = new Date(trialStart);\n  const daysSinceStart = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));\n  \n  trialDeals.push({\n    deal_id: deal.id,\n    company: deal.company,\n    contact_name: deal.contact_name || '',\n    contact_phone: deal.contact_phone || '',\n    contact_email: deal.contact_email || '',\n    trial_start: trialStart,\n    days_in_trial: daysSinceStart,\n    monthly_fee: deal.monthly_fee || 297,\n    setup_fee: deal.setup_fee || 500,\n    notes: deal.notes || ''\n  });\n}\n\nreturn trialDeals.map(d => ({json: d}));"
+      },
+      "id": "filter-trials",
+      "name": "Filter Trial Deals + Calc Days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+                "conditions": [
+                  {"leftValue": "={{ $json.days_in_trial }}", "rightValue": 10, "operator": {"type": "number", "operation": "equals"}}
+                ]
+              },
+              "renameOutput": true,
+              "outputLabel": "Day 10 Check-in"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+                "conditions": [
+                  {"leftValue": "={{ $json.days_in_trial }}", "rightValue": 13, "operator": {"type": "number", "operation": "equals"}}
+                ]
+              },
+              "renameOutput": true,
+              "outputLabel": "Day 13 Warning"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+                "conditions": [
+                  {"leftValue": "={{ $json.days_in_trial }}", "rightValue": 14, "operator": {"type": "number", "operation": "gte"}}
+                ]
+              },
+              "renameOutput": true,
+              "outputLabel": "Day 14+ Expired"
+            }
+          ]
+        },
+        "options": {"allMatchingOutputs": true}
+      },
+      "id": "route-by-day",
+      "name": "Route by Trial Day",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Day 10: Check-in SMS showing results\nconst deal = $input.first().json;\nconst firstName = deal.contact_name.split(' ')[0] || 'there';\n\nconst message = `Hey ${firstName}, it's William from Marceau Solutions. You're 10 days into your AI system trial -- how's it going? I'd love to hear if you've noticed a difference in missed calls. Quick 5-min call this week to review your numbers? Just reply with a good time.`;\n\nreturn [{\n  json: {\n    phone: deal.contact_phone,\n    message: message,\n    deal_id: deal.deal_id,\n    company: deal.company,\n    action: 'day10_checkin'\n  }\n}];"
+      },
+      "id": "day10-msg",
+      "name": "Day 10 Check-in Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 140]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Day 13: Trial ending warning\nconst deal = $input.first().json;\nconst firstName = deal.contact_name.split(' ')[0] || 'there';\nconst paymentLink = 'https://buy.stripe.com/eVq9ATeW3gD620o8H8g360j';\n\nconst message = `Hey ${firstName}, heads up -- your AI system trial ends tomorrow. If you want to keep it running, here's the link to activate your plan: ${paymentLink}\\n\\nIf you have any questions, just reply here or call me at (239) 398-5676. Either way, thanks for trying it out!`;\n\nreturn [{\n  json: {\n    phone: deal.contact_phone,\n    message: message,\n    deal_id: deal.deal_id,\n    company: deal.company,\n    action: 'day13_warning'\n  }\n}];"
+      },
+      "id": "day13-msg",
+      "name": "Day 13 Warning Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Day 14+: Trial expired -- notify William, move to Closed Lost\nconst deal = $input.first().json;\n\nconst williamMsg = `Trial expired: ${deal.company} (${deal.contact_name}). No payment received after 14 days. Moving to Closed Lost. Phone: ${deal.contact_phone}`;\n\nconst clientMsg = `Hey ${deal.contact_name.split(' ')[0] || 'there'}, your Marceau Solutions AI trial has ended and the system has been paused. If you'd like to reactivate anytime, just text me at (239) 398-5676. Thanks for giving it a shot!`;\n\nreturn [{\n  json: {\n    client_phone: deal.contact_phone,\n    client_message: clientMsg,\n    william_message: williamMsg,\n    deal_id: deal.deal_id,\n    company: deal.company,\n    action: 'day14_expired'\n  }\n}];"
+      },
+      "id": "day14-msg",
+      "name": "Day 14 Expiry Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 460]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.phone }}",
+        "message": "={{ $json.message }}"
+      },
+      "id": "send-sms-day10",
+      "name": "Send Day 10 SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1320, 140],
+      "credentials": {"twilioApi": {"id": "twilio-creds", "name": "Twilio"}}
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.phone }}",
+        "message": "={{ $json.message }}"
+      },
+      "id": "send-sms-day13",
+      "name": "Send Day 13 SMS",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1320, 300],
+      "credentials": {"twilioApi": {"id": "twilio-creds", "name": "Twilio"}}
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "from": "={{ $env.TWILIO_PHONE_NUMBER }}",
+        "to": "={{ $json.client_phone }}",
+        "message": "={{ $json.client_message }}"
+      },
+      "id": "send-sms-day14-client",
+      "name": "Send Day 14 SMS to Client",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1320, 420],
+      "credentials": {"twilioApi": {"id": "twilio-creds", "name": "Twilio"}}
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "={{ $json.william_message }}"
+      },
+      "id": "notify-william-day14",
+      "name": "Notify William (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1320, 520],
+      "credentials": {"telegramApi": {"id": "telegram-creds", "name": "Telegram"}}
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8785/deals/{{ $json.deal_id }}/update",
+        "method": "POST",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {"name": "stage", "value": "Closed Lost"},
+            {"name": "notes", "value": "Trial expired Day 14 -- no payment received. Auto-closed by n8n."}
+          ]
+        }
+      },
+      "id": "close-deal-day14",
+      "name": "Move Deal to Closed Lost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 460]
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=Trial check-in sent to {{ $json.company }} (Day 10). Phone: {{ $json.phone }}"
+      },
+      "id": "notify-william-day10",
+      "name": "Log Day 10 (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1540, 140],
+      "credentials": {"telegramApi": {"id": "telegram-creds", "name": "Telegram"}}
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=Trial ending tomorrow for {{ $json.company }}. Payment link sent. Phone: {{ $json.phone }}"
+      },
+      "id": "notify-william-day13",
+      "name": "Log Day 13 (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1540, 300],
+      "credentials": {"telegramApi": {"id": "telegram-creds", "name": "Telegram"}}
+    }
+  ],
+  "connections": {
+    "Check Trials Every 12h": {"main": [[{"node": "Get All Deals", "type": "main", "index": 0}]]},
+    "Get All Deals": {"main": [[{"node": "Filter Trial Deals + Calc Days", "type": "main", "index": 0}]]},
+    "Filter Trial Deals + Calc Days": {"main": [[{"node": "Route by Trial Day", "type": "main", "index": 0}]]},
+    "Route by Trial Day": {
+      "main": [
+        [{"node": "Day 10 Check-in Message", "type": "main", "index": 0}],
+        [{"node": "Day 13 Warning Message", "type": "main", "index": 0}],
+        [{"node": "Day 14 Expiry Messages", "type": "main", "index": 0}]
+      ]
+    },
+    "Day 10 Check-in Message": {"main": [[{"node": "Send Day 10 SMS", "type": "main", "index": 0}]]},
+    "Day 13 Warning Message": {"main": [[{"node": "Send Day 13 SMS", "type": "main", "index": 0}]]},
+    "Day 14 Expiry Messages": {"main": [
+      [{"node": "Send Day 14 SMS to Client", "type": "main", "index": 0}],
+      [{"node": "Notify William (Telegram)", "type": "main", "index": 0}]
+    ]},
+    "Send Day 10 SMS": {"main": [[{"node": "Log Day 10 (Telegram)", "type": "main", "index": 0}]]},
+    "Send Day 13 SMS": {"main": [[{"node": "Log Day 13 (Telegram)", "type": "main", "index": 0}]]},
+    "Send Day 14 SMS to Client": {"main": [[{"node": "Move Deal to Closed Lost", "type": "main", "index": 0}]]},
+    "Notify William (Telegram)": {"main": [[{"node": "Move Deal to Closed Lost", "type": "main", "index": 0}]]}
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

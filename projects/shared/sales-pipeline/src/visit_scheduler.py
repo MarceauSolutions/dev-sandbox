@@ -16,14 +16,15 @@ import os
 import math
 import requests
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
 # Load environment
-load_dotenv("/home/clawdbot/dev-sandbox/.env")
+load_dotenv(str(Path(__file__).resolve().parents[4] / ".env"))
 
-DATA_DIR = "/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data"
+DATA_DIR = str(Path(__file__).parent.parent / "data")
 CALL_LOG_PATH = os.path.join(DATA_DIR, "call_log.json")
 VISIT_LOG_PATH = os.path.join(DATA_DIR, "visit_log.json")
 PIPELINE_PATH = os.path.join(DATA_DIR, "pipeline.json")
