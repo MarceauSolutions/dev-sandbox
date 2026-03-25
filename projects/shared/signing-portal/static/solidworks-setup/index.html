@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolidWorks Workspace Setup Guide</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-card: #141414;
+            --border: #2a2a2a;
+            --text: #e8e8e8;
+            --text-dim: #999;
+            --accent: #0066cc;
+            --accent-glow: rgba(0, 102, 204, 0.15);
+            --green: #22c55e;
+            --orange: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-card);
+            border-radius: 100px;
+            height: 8px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--green));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 100px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        /* Step Card */
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .step-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-number {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .step-card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-card p {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .step-card ul {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: var(--text-dim);
+        }
+
+        .step-card li {
+            margin-bottom: 0.5rem;
+        }
+
+        .step-card li strong {
+            color: var(--text);
+        }
+
+        .path {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4e;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--orange);
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .tip {
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 3px solid var(--green);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tip-label {
+            color: var(--green);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--orange);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-label {
+            color: var(--orange);
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--green);
+        }
+
+        .checklist label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .checklist .checked {
+            color: var(--text-dim);
+            text-decoration: line-through;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-prev {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        .btn-prev:hover {
+            background: var(--bg-card);
+            color: var(--text);
+        }
+
+        .btn-next {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-next:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-complete {
+            background: var(--green);
+            color: white;
+        }
+
+        /* Complete Screen */
+        .complete-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .complete-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .complete-screen h2 {
+            margin-bottom: 1rem;
+        }
+
+        .complete-screen p {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .restart-btn {
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Settings Preview */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .setting-item {
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .setting-item .label {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .setting-item .value {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ SolidWorks Workspace Setup</h1>
+            <p class="subtitle">Get your environment dialed in before you start building</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <p class="progress-text"><span id="currentStep">1</span> of <span id="totalSteps">10</span> steps</p>
+
+        <!-- Step 1: Units -->
+        <div class="step-card active" data-step="1">
+            <span class="step-number">Step 1</span>
+            <h2>Set Your Units</h2>
+            <p>First things first — make sure SolidWorks speaks your language. Nothing worse than designing in inches when you meant millimeters.</p>
+            
+            <div class="path">Tools → Options → Document Properties → Units</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="units1">
+                    <label for="units1">Select your unit system (IPS, MMGS, or Custom)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="units2">
+                    <label for="units2">Set decimal places (2-3 for inches, 1-2 for mm)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="units3">
+                    <label for="units3">Set angular units (degrees, 2 decimal places)</label>
+                </li>
+            </ul>
+
+            <div class="tip">
+                <div class="tip-label">💡 Pro Tip</div>
+                <p>If you're doing any manufacturing, use the same units your shop uses. Saves translation errors.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" disabled>← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Document Templates -->
+        <div class="step-card" data-step="2">
+            <span class="step-number">Step 2</span>
+            <h2>Set Up Document Templates</h2>
+            <p>Create templates with your preferred settings so every new part/assembly starts right.</p>
+            
+            <div class="path">File → Save As → Save as type: Part Template (*.prtdot)</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="template1">
+                    <label for="template1">Create a Part template with your units & material</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="template2">
+                    <label for="template2">Create an Assembly template</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="template3">
+                    <label for="template3">Create a Drawing template with your title block</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="template4">
+                    <label for="template4">Set default template location in Options</label>
+                </li>
+            </ul>
+
+            <div class="path">Tools → Options → System Options → File Locations → Document Templates</div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 3: File Locations -->
+        <div class="step-card" data-step="3">
+            <span class="step-number">Step 3</span>
+            <h2>Configure File Locations</h2>
+            <p>Tell SolidWorks where to find your stuff. This saves hours of hunting for files.</p>
+            
+            <div class="path">Tools → Options → System Options → File Locations</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="files1">
+                    <label for="files1">Set <strong>Document Templates</strong> folder</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="files2">
+                    <label for="files2">Set <strong>Custom Properties Files</strong> folder</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="files3">
+                    <label for="files3">Set <strong>Materials Databases</strong> folder</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="files4">
+                    <label for="files4">Set <strong>Design Library</strong> location</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="files5">
+                    <label for="files5">Set <strong>Toolbox</strong> location (if using)</label>
+                </li>
+            </ul>
+
+            <div class="warning">
+                <div class="warning-label">⚠️ Important</div>
+                <p>If working with a team, make sure everyone points to the same network locations for shared resources.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Display Settings -->
+        <div class="step-card" data-step="4">
+            <span class="step-number">Step 4</span>
+            <h2>Optimize Display Settings</h2>
+            <p>Get your graphics running smooth. Nothing kills flow like laggy rotation.</p>
+            
+            <div class="path">Tools → Options → System Options → Display</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="display1">
+                    <label for="display1">Enable <strong>Anti-aliasing</strong> (if your GPU handles it)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="display2">
+                    <label for="display2">Set <strong>Edge quality</strong> to High (or Medium for slower machines)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="display3">
+                    <label for="display3">Enable <strong>Dynamic highlight from graphics view</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="display4">
+                    <label for="display4">Set background color (dark = easier on eyes)</label>
+                </li>
+            </ul>
+
+            <div class="path">Tools → Options → System Options → Performance</div>
+
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="perf1">
+                    <label for="perf1">Enable <strong>Use Software OpenGL</strong> only if having graphics issues</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="perf2">
+                    <label for="perf2">Set <strong>Level of detail</strong> based on your hardware</label>
+                </li>
+            </ul>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 5: Grid and Snap -->
+        <div class="step-card" data-step="5">
+            <span class="step-number">Step 5</span>
+            <h2>Grid & Snap Settings</h2>
+            <p>Set up your sketch environment for precision.</p>
+            
+            <div class="path">Tools → Options → Document Properties → Grid/Snap</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="grid1">
+                    <label for="grid1">Set <strong>Major grid spacing</strong> (e.g., 1 inch or 25mm)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="grid2">
+                    <label for="grid2">Set <strong>Minor lines per major</strong> (4-5 typical)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="grid3">
+                    <label for="grid3">Enable <strong>Snap to grid</strong> for sketch mode</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="grid4">
+                    <label for="grid4">Set snap distance for points/vertices</label>
+                </li>
+            </ul>
+
+            <div class="tip">
+                <div class="tip-label">💡 Pro Tip</div>
+                <p>Turn grid display OFF but keep snap ON. Cleaner view, same precision.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 6: Keyboard Shortcuts -->
+        <div class="step-card" data-step="6">
+            <span class="step-number">Step 6</span>
+            <h2>Set Up Keyboard Shortcuts</h2>
+            <p>Speed is everything. Set up shortcuts for commands you use constantly.</p>
+            
+            <div class="path">Tools → Customize → Keyboard</div>
+            
+            <p>Essential shortcuts to set up:</p>
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <div class="label">Sketch</div>
+                    <div class="value">S</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Extrude</div>
+                    <div class="value">E</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Smart Dimension</div>
+                    <div class="value">D</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Mate</div>
+                    <div class="value">M</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Measure</div>
+                    <div class="value">I</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Normal To</div>
+                    <div class="value">Ctrl+8</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Rebuild</div>
+                    <div class="value">Ctrl+Q</div>
+                </div>
+                <div class="setting-item">
+                    <div class="label">Hide/Show</div>
+                    <div class="value">Tab</div>
+                </div>
+            </div>
+
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="keys1">
+                    <label for="keys1">Set up your most-used command shortcuts</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="keys2">
+                    <label for="keys2">Export keyboard settings for backup</label>
+                </li>
+            </ul>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 7: Mouse Gestures -->
+        <div class="step-card" data-step="7">
+            <span class="step-number">Step 7</span>
+            <h2>Configure Mouse Gestures</h2>
+            <p>Right-click + drag for instant access to 8 commands. Huge time saver.</p>
+            
+            <div class="path">Tools → Customize → Mouse Gestures</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="mouse1">
+                    <label for="mouse1">Enable mouse gestures (4 or 8 gesture mode)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mouse2">
+                    <label for="mouse2">Assign gestures for <strong>Part</strong> environment</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mouse3">
+                    <label for="mouse3">Assign gestures for <strong>Assembly</strong> environment</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mouse4">
+                    <label for="mouse4">Assign gestures for <strong>Sketch</strong> environment</label>
+                </li>
+            </ul>
+
+            <div class="tip">
+                <div class="tip-label">💡 Pro Tip</div>
+                <p>Put your most frequent commands at 12, 3, 6, 9 o'clock positions — they're easiest to hit accurately.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 8: Command Manager -->
+        <div class="step-card" data-step="8">
+            <span class="step-number">Step 8</span>
+            <h2>Customize Command Manager</h2>
+            <p>Set up your toolbar tabs so everything you need is one click away.</p>
+            
+            <p>Right-click on the Command Manager tabs to customize.</p>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="cmd1">
+                    <label for="cmd1">Enable/disable tabs you use (Features, Sketch, Evaluate, etc.)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="cmd2">
+                    <label for="cmd2">Add frequently used commands to the toolbar</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="cmd3">
+                    <label for="cmd3">Remove commands you never use (cleaner interface)</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="cmd4">
+                    <label for="cmd4">Set "Use Large Buttons with Text" if you prefer</label>
+                </li>
+            </ul>
+
+            <div class="warning">
+                <div class="warning-label">⚠️ Note</div>
+                <p>Don't go overboard. A cluttered toolbar is as bad as missing tools. Keep it lean.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 9: Material Setup -->
+        <div class="step-card" data-step="9">
+            <span class="step-number">Step 9</span>
+            <h2>Set Up Materials Library</h2>
+            <p>Having the right materials ready saves time and ensures accurate mass properties.</p>
+            
+            <div class="path">Right-click on Material in Feature Tree → Edit Material</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="mat1">
+                    <label for="mat1">Add your commonly used materials to <strong>Favorites</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mat2">
+                    <label for="mat2">Create <strong>custom materials</strong> if using specialty alloys</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mat3">
+                    <label for="mat3">Set a <strong>default material</strong> in your part template</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="mat4">
+                    <label for="mat4">Verify material properties (density, yield strength, etc.)</label>
+                </li>
+            </ul>
+
+            <div class="tip">
+                <div class="tip-label">💡 Pro Tip</div>
+                <p>If you work with sheet metal, make sure your materials have bend allowance data set up correctly.</p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+
+        <!-- Step 10: Backup & Final -->
+        <div class="step-card" data-step="10">
+            <span class="step-number">Step 10</span>
+            <h2>Backup Your Settings</h2>
+            <p>You just spent time dialing this in. Don't lose it.</p>
+            
+            <div class="path">Tools → Save/Restore Settings → Save Settings</div>
+            
+            <ul class="checklist">
+                <li>
+                    <input type="checkbox" id="backup1">
+                    <label for="backup1">Export your <strong>System Options</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="backup2">
+                    <label for="backup2">Export your <strong>Keyboard Shortcuts</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="backup3">
+                    <label for="backup3">Export your <strong>Mouse Gestures</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="backup4">
+                    <label for="backup4">Export your <strong>Menu Customization</strong></label>
+                </li>
+                <li>
+                    <input type="checkbox" id="backup5">
+                    <label for="backup5">Save settings file to cloud/backup location</label>
+                </li>
+            </ul>
+
+            <div class="tip">
+                <div class="tip-label">💡 Pro Tip</div>
+                <p>Name your settings file with the date and SW version: <code>MySettings_2024_SW2024.sldsettings</code></p>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep()">← Previous</button>
+                <button class="btn-next btn-complete" onclick="completeSetup()">Complete Setup ✓</button>
+            </div>
+        </div>
+
+        <!-- Complete Screen -->
+        <div class="step-card" data-step="complete">
+            <div class="complete-screen">
+                <div class="complete-icon">🎉</div>
+                <h2>Workspace Ready!</h2>
+                <p>Your SolidWorks environment is now optimized for productivity. Go build something awesome.</p>
+                
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Quick Reference</h3>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <div class="label">Sketch</div>
+                        <div class="value">S</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Extrude</div>
+                        <div class="value">E</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Dimension</div>
+                        <div class="value">D</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Mate</div>
+                        <div class="value">M</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Measure</div>
+                        <div class="value">I</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Normal To</div>
+                        <div class="value">Ctrl+8</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Rebuild</div>
+                        <div class="value">Ctrl+Q</div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="label">Mouse Gesture</div>
+                        <div class="value">RMB + Drag</div>
+                    </div>
+                </div>
+
+                <button class="restart-btn" onclick="restartGuide()" style="margin-top: 2rem;">Start Over</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 10;
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('currentStep').textContent = currentStep;
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            const targetCard = document.querySelector(`.step-card[data-step="${step}"]`);
+            if (targetCard) {
+                targetCard.classList.add('active');
+            }
+            
+            updateProgress();
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function completeSetup() {
+            document.querySelectorAll('.step-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector('.step-card[data-step="complete"]').classList.add('active');
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('currentStep').textContent = totalSteps;
+        }
+
+        function restartGuide() {
+            currentStep = 1;
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            showStep(1);
+        }
+
+        // Checkbox styling
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'checkbox') {
+                const label = e.target.nextElementSibling;
+                if (e.target.checked) {
+                    label.classList.add('checked');
+                } else {
+                    label.classList.remove('checked');
+                }
+            }
+        });
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
