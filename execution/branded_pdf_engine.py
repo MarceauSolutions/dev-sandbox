@@ -30,6 +30,29 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
     PageBreak, Image, KeepTogether, HRFlowable
 )
+from reportlab.platypus.flowables import Flowable
+
+
+class _NoWrapText(Flowable):
+    """Draws text centered in its cell without any word-wrapping."""
+    def __init__(self, text, font_name, font_size, color):
+        Flowable.__init__(self)
+        self.text = str(text)
+        self.font_name = font_name
+        self.font_size = font_size
+        self.color = color
+        self._w = 0
+
+    def wrap(self, availW, availH):
+        self._w = availW
+        return availW, self.font_size * 1.5
+
+    def draw(self):
+        self.canv.saveState()
+        self.canv.setFont(self.font_name, self.font_size)
+        self.canv.setFillColor(self.color)
+        self.canv.drawCentredString(self._w / 2, 2, self.text)
+        self.canv.restoreState()
 
 # --- Brand Configuration ---
 
@@ -325,18 +348,22 @@ def metric_card(label, value, color=None):
     if color is None:
         color = BrandConfig.GOLD
     styles = get_brand_styles()
+    # Auto-size font so value fits on one line
+    card_text_width = 1.7 * 72  # conservative estimate of available pts
+    font_size = 18
+    for fs in [18, 16, 14, 12, 10, 8]:
+        if pdfmetrics.stringWidth(str(value), BrandConfig.HEADING_FONT, fs) <= card_text_width:
+            font_size = fs
+            break
     data = [[
-        Paragraph(f'<font size="18" color="{color.hexval()}">{value}</font>', ParagraphStyle(
-            "MetricVal", fontName=BrandConfig.HEADING_FONT, fontSize=18,
-            alignment=TA_CENTER, textColor=color, leading=24
-        )),
+        _NoWrapText(value, BrandConfig.HEADING_FONT, font_size, color),
     ], [
         Paragraph(label, ParagraphStyle(
             "MetricLabel", fontName=BrandConfig.BODY_FONT, fontSize=8,
             alignment=TA_CENTER, textColor=BrandConfig.DARK_GRAY, leading=11
         )),
     ]]
-    t = Table(data, colWidths=[1.4 * inch])
+    t = Table(data, colWidths=[2.0 * inch])
     t.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), BrandConfig.LIGHT_GRAY),
         ("BOX", (0, 0), (-1, -1), 1, BrandConfig.MID_GRAY),

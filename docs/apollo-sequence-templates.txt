@@ -1,198 +1,334 @@
 ======================================================================
 APOLLO.IO EMAIL SEQUENCE TEMPLATES
 Ready to paste into Apollo.io Sequences UI
-Generated: 2026-03-22 16:03
+Updated: 2026-03-24 — Rewritten in William's voice (Hormozi framework)
 ======================================================================
 
 ──────────────────────────────────────────────────────────────────────
-SEQUENCE: Naples AI Outreach — A: General Local Business
+SEQUENCE A: General AI Services
+Target: Property Management, Other, Electrical, Smart Home (42 contacts)
 ──────────────────────────────────────────────────────────────────────
 
   Step 1 — Day 0
-  Subject: Quick question about {{company_name}}
+  Subject: {{first_name | default: "Hey"}} — built something for businesses like yours
   ..................................................
   Hi {{first_name}},
-  
-  I noticed {{company_name}} doesn't have automated lead follow-up — which means you're probably losing 30-50% of inbound leads to slow response time. Most Naples businesses are.
-  
-  I build AI systems that capture, qualify, and follow up with every lead automatically — 24/7, no staff needed. One of my clients went from missing half their leads to booking 10+ qualified appointments per week within 30 days.
-  
-  Worth a 15-minute call to see if it fits?
-  
-  William Marceau
-  Marceau Solutions
-  (239) 398-5676
 
+  I came across {{company_name}} and I've already built systems for businesses
+  just like yours here in Naples — so I wanted to reach out directly.
 
-  Step 2 — Day 3
-  Subject: Re: Quick question about {{company_name}}
-  ..................................................
-  {{first_name}},
-  
-  I recorded a quick 2-min video showing exactly what an AI lead system would look like for a {{industry}} business like yours: {{loom_link}}
-  
-  No fluff — just the specific automations and what they'd save you in time and missed revenue.
-  
-  Happy to walk through it live if it looks interesting.
-  
-  William
+  What I do: I build AI-powered intake systems that capture every lead,
+  follow up automatically, and book appointments 24/7 — without adding
+  headcount. The businesses I work with typically stop losing 30-40% of
+  their inbound leads within the first 30 days.
 
+  Not sure if it's the right fit for you, but worth a 15-minute conversation
+  to find out.
 
-  Step 3 — Day 7
-  Subject: Last note on this
-  ..................................................
-  {{first_name}},
-  
-  I only take 5 automation clients per quarter (every system is built personally, not outsourced). I have 2 spots left for Q2.
-  
-  If automating your lead follow-up and booking isn't a priority right now, no worries at all. But if it is — let's grab 15 minutes this week before the spots fill.
-  
-  Book here: https://calendly.com/wmarceau/ai-services-discovery-call
-  
-  William
-
-
-──────────────────────────────────────────────────────────────────────
-SEQUENCE: Naples AI Outreach — B: HVAC / Home Services
-──────────────────────────────────────────────────────────────────────
-
-  Step 1 — Day 0
-  Subject: {{company_name}} — missed calls costing you jobs?
-  ..................................................
-  Hi {{first_name}},
-  
-  Here's what I see with most HVAC companies in Southwest Florida: a customer calls about a broken AC at 8pm, gets voicemail, and calls the next company on Google. That one missed call is $3,000-$8,000 in lost revenue.
-  
-  I build AI phone systems that answer every call, qualify the job, and book it on your schedule — 24/7, including weekends and holidays. No answering service, no call center. Just an AI that sounds natural and knows your business.
-  
-  Worth a 15-minute call to see how it works?
-  
   William Marceau
   Marceau Solutions | (239) 398-5676
+  https://calendly.com/wmarceau/ai-services-discovery-call
 
 
   Step 2 — Day 3
-  Subject: Re: {{company_name}} — missed calls costing you jobs?
+  Subject: {{first_name | default: "Hey"}} — what this looks like for {{company_name}}
   ..................................................
   {{first_name}},
-  
-  Quick math: if you miss just 3 after-hours calls per week and each job averages $4,000 — that's $48,000/month walking to your competitors.
-  
-  An AI receptionist costs $750/month and captures every single one. The ROI isn't even close.
-  
-  I can show you exactly how it works in 15 minutes: https://calendly.com/wmarceau/ai-services-discovery-call
-  
+
+  I put together a quick look at what the system would actually do for
+  {{company_name}} specifically — not a generic demo, but the exact
+  automations that make sense for your type of business.
+
+  The short version: every inquiry that comes in after hours, on weekends,
+  or when your team is heads-down gets answered, qualified, and either
+  booked or followed up with automatically. Nothing falls through the cracks.
+
+  We build the whole thing during a free 2-week onboarding — no cost until
+  you've seen it working.
+
+  If you want to see it: https://calendly.com/wmarceau/ai-services-discovery-call
+
   William
 
 
   Step 3 — Day 7
-  Subject: One more thing for {{company_name}}
+  Subject: {{first_name | default: "Hey"}} — last one from me
   ..................................................
   {{first_name}},
-  
-  I build these systems personally (not outsourced) so I only take 5 clients per quarter. If after-hours calls and slow follow-up aren't costing you money, ignore this completely.
-  
-  But if they are — I guarantee 10 qualified leads in 30 days or I work free until it happens. No risk on your end.
-  
+
+  I'll keep this short — I only take 5 clients per quarter because I build
+  every system personally. I have 2 spots left for Q2.
+
+  If the timing isn't right, no hard feelings. But if you've been thinking
+  about how to stop losing leads to slow follow-up or after-hours gaps —
+  this is the conversation to have before those spots are gone.
+
   https://calendly.com/wmarceau/ai-services-discovery-call
-  
-  William
+
+  William Marceau | (239) 398-5676
 
 
 ──────────────────────────────────────────────────────────────────────
-SEQUENCE: Naples AI Outreach — C: Med Spa / Dental
+SEQUENCE B: HVAC AI Automation
+Target: HVAC / Air Conditioning (4 contacts)
 ──────────────────────────────────────────────────────────────────────
 
   Step 1 — Day 0
-  Subject: {{company_name}} — filling last-minute cancellations?
+  Subject: {{first_name | default: "Hey"}} — built something for businesses like yours
   ..................................................
   Hi {{first_name}},
-  
-  The #1 revenue killer for med spas and dental practices isn't marketing — it's cancellations and no-shows. Most practices lose 15-25% of booked revenue to them every month.
-  
-  I build AI systems that automatically fill cancellations from your waitlist, send smart reminders that actually reduce no-shows, and follow up with every inquiry within 60 seconds — even at midnight.
-  
-  One practice I work with cut their no-show rate by 40% in the first month.
-  
-  Worth a quick call?
-  
+
+  I came across {{company_name}} and I've been building AI systems for
+  HVAC companies in Southwest Florida — so I figured I'd reach out.
+
+  Here's what I keep seeing: a homeowner's AC goes down at 8pm, they call,
+  get voicemail, and call the next company on Google. That's a $3,000-$8,000
+  job gone. It happens multiple times a week for most companies and nobody's
+  tracking it because you never knew the call came in.
+
+  The system I build answers every call, qualifies the job, and books it on
+  your schedule — 24/7, including weekends. No answering service. Just AI
+  that knows your business and sounds like it.
+
+  Worth 15 minutes?
+
   William Marceau
   Marceau Solutions | (239) 398-5676
+  https://calendly.com/wmarceau/ai-services-discovery-call
 
 
   Step 2 — Day 3
-  Subject: Re: {{company_name}} — filling last-minute cancellations?
+  Subject: {{first_name | default: "Hey"}} — what this looks like for {{company_name}}
   ..................................................
   {{first_name}},
-  
-  Here's exactly what the system does for an appointment-based business:
-  
-  1. Patient inquires (web, phone, Instagram DM) — AI responds in under 60 seconds
-  2. Cancellation happens — AI texts the top 5 waitlist patients instantly
-  3. 24 hours before appointment — smart reminder goes out (not a generic text)
-  4. After visit — automated review request at the perfect moment
-  
-  All of this runs without your front desk touching it. I recorded a 2-min demo: {{loom_link}}
-  
+
+  If {{company_name}} misses 3 after-hours calls a week at an average of
+  $4,000 per job — that's $48,000 a month going to whoever picks up.
+
+  The system I build costs a fraction of that and captures every single one.
+  The ROI conversation is pretty short.
+
+  I'll show you exactly how it works in 15 minutes, and if it doesn't make
+  sense for your operation I'll tell you that too.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
   William
 
 
   Step 3 — Day 7
-  Subject: Final note — {{company_name}}
+  Subject: {{first_name | default: "Hey"}} — last one from me
   ..................................................
   {{first_name}},
-  
-  I take 5 clients per quarter and have 2 spots left. Every system is built personally, which is why it works and why capacity is limited.
-  
-  If no-shows and slow follow-up aren't a problem for you — great, ignore this. But if they are: 15 minutes and I'll show you exactly how much revenue you're leaving on the table.
-  
+
+  I build every system personally — no outsourcing — so I cap it at 5 clients
+  per quarter. Two Q2 spots left.
+
+  If after-hours calls and missed follow-ups aren't a problem, ignore this.
+  But if they are: I guarantee 10 qualified leads in 30 days or I keep
+  working until it delivers.
+
   https://calendly.com/wmarceau/ai-services-discovery-call
-  
-  William
+
+  William Marceau | (239) 398-5676
 
 
 ──────────────────────────────────────────────────────────────────────
-SEQUENCE: Naples AI Outreach — D: Restaurant / Hospitality
+SEQUENCE C: Plumbing AI Automation
+Target: Plumbing (1 contact)
 ──────────────────────────────────────────────────────────────────────
 
   Step 1 — Day 0
-  Subject: {{company_name}} — your reviews on autopilot?
+  Subject: {{first_name | default: "Hey"}} — built something for businesses like yours
   ..................................................
   Hi {{first_name}},
-  
-  Two things kill restaurants on Google: not enough reviews, and not responding to the bad ones fast enough. Most Naples restaurants have half the reviews they should because they never ask — and one angry 1-star sits unanswered for weeks.
-  
-  I build AI systems that automatically request reviews after every visit, respond to every Google/Yelp review within hours (positive and negative), and handle reservation inquiries 24/7 — even when you're slammed on a Saturday night.
-  
-  Worth 15 minutes to see how it works?
-  
+
+  I came across {{company_name}} and I've been working with plumbing
+  companies in Naples on something I thought you'd want to hear about.
+
+  The problem I keep seeing: emergency calls come in after 5pm or on
+  weekends, hit voicemail, and the homeowner calls the next plumber on
+  Google. The average emergency plumbing job is $400-$800. You never knew
+  you lost it because the call never got logged.
+
+  I build AI phone systems that answer every call, qualify the job urgency,
+  and either book it or route it to you immediately — 24/7. The businesses
+  I've built this for stopped losing those jobs within the first month.
+
+  15 minutes to see if it makes sense for {{company_name}}?
+
   William Marceau
   Marceau Solutions | (239) 398-5676
+  https://calendly.com/wmarceau/ai-services-discovery-call
 
 
   Step 2 — Day 3
-  Subject: Re: {{company_name}} — your reviews on autopilot?
+  Subject: {{first_name | default: "Hey"}} — what this looks like for {{company_name}}
   ..................................................
   {{first_name}},
-  
-  Quick numbers: restaurants that actively collect reviews see 18% more foot traffic from Google. And responding to negative reviews within 24 hours reduces their impact by 70%.
-  
-  The system I build does both automatically — plus handles reservation questions via text, Instagram DM, and your website so your host staff isn't tied to the phone.
-  
-  Happy to show you in 15 minutes: https://calendly.com/wmarceau/ai-services-discovery-call
-  
+
+  Here's the specific setup I'd build for {{company_name}}:
+
+  — AI answers every call after hours and on weekends
+  — Urgent jobs (active leak, no hot water) get routed to you immediately
+  — Non-emergency jobs get booked on your calendar automatically
+  — Every missed call gets an automatic text-back within 60 seconds
+
+  Built during a free 2-week onboarding. No cost until you've seen it working.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
   William
 
 
   Step 3 — Day 7
-  Subject: Last note for {{company_name}}
+  Subject: {{first_name | default: "Hey"}} — last one from me
   ..................................................
   {{first_name}},
-  
-  I work with 5 businesses per quarter — every system built personally, not a cookie-cutter template. I have 2 Q2 spots remaining.
-  
-  If online reviews and reservation management are handled — great. But if not, I guarantee measurable results in 30 days or I keep working for free until it delivers.
-  
+
+  5 clients per quarter, personally built. Two Q2 spots left.
+
+  If you're not losing jobs to after-hours voicemail — great, ignore this.
+  If you are, let's talk before those spots are gone.
+
   https://calendly.com/wmarceau/ai-services-discovery-call
-  
+
+  William Marceau | (239) 398-5676
+
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE D: Med Spa & Healthcare AI
+Target: Dental / Medical / Healthcare (16 contacts)
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: {{first_name | default: "Hey"}} — built something for businesses like yours
+  ..................................................
+  Hi {{first_name}},
+
+  I came across {{company_name}} and I've already built systems for medical
+  and aesthetic practices here in Naples — so I wanted to reach out directly.
+
+  What I keep seeing in this space: someone finds a practice on Instagram or
+  Google at 9pm, wants to book or ask a question, hits a voicemail or a
+  contact form that gets answered Monday — and by then they've already booked
+  somewhere else. High-consideration treatments especially. People research
+  at night.
+
+  I build AI intake systems that respond to every inquiry within 60 seconds,
+  handle the qualifying questions, and book consultations automatically —
+  so your team walks in Monday morning with a full schedule instead of a
+  list of leads to chase.
+
+  Worth a 15-minute conversation?
+
+  William Marceau
+  Marceau Solutions | (239) 398-5676
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
+
+  Step 2 — Day 3
+  Subject: {{first_name | default: "Hey"}} — what this looks like for {{company_name}}
+  ..................................................
+  {{first_name}},
+
+  The specific things I'd build for {{company_name}}:
+
+  — After-hours inquiry capture: anyone who reaches out after 5pm gets a
+    real response, not a voicemail
+  — Consultation booking automation: they answer a few qualifying questions
+    and land on your calendar without anyone on your team involved
+  — Cancellation fill: when a slot opens up, the waitlist gets texted
+    automatically and the gap fills itself
+  — Post-visit review requests: sent at exactly the right moment, not
+    a generic blast
+
+  Free 2-week build. No cost until it's working.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
   William
+
+
+  Step 3 — Day 7
+  Subject: {{first_name | default: "Hey"}} — last one from me
+  ..................................................
+  {{first_name}},
+
+  I take 5 clients per quarter — every system built personally, not
+  templated out. Two Q2 spots left.
+
+  If your inquiry follow-up and booking are already dialed in, ignore this.
+  But if leads are slipping through after hours or your team is spending
+  time chasing inquiries that should be booking themselves — 15 minutes and
+  I'll show you exactly what's possible.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
+  William Marceau | (239) 398-5676
+
+
+──────────────────────────────────────────────────────────────────────
+SEQUENCE E: Roofing AI Automation
+Target: Roofing (3 contacts)
+──────────────────────────────────────────────────────────────────────
+
+  Step 1 — Day 0
+  Subject: {{first_name | default: "Hey"}} — built something for businesses like yours
+  ..................................................
+  Hi {{first_name}},
+
+  I came across {{company_name}} and I've been building AI systems for
+  roofing and construction companies in Southwest Florida — figured it was
+  worth reaching out.
+
+  Storm season changes everything for roofing. The companies that win are
+  the ones who respond first. A homeowner who just had roof damage calls 3
+  companies — whoever follows up fastest gets the job. Most of the time
+  that's a $10,000-$30,000 ticket.
+
+  I build AI systems that respond to every inquiry instantly, qualify the
+  job, and get it on your estimate calendar before your competitors even
+  call back.
+
+  15 minutes to see how it works?
+
+  William Marceau
+  Marceau Solutions | (239) 398-5676
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
+
+  Step 2 — Day 3
+  Subject: {{first_name | default: "Hey"}} — what this looks like for {{company_name}}
+  ..................................................
+  {{first_name}},
+
+  Studies on home services show the company that responds to a lead within
+  5 minutes is 9x more likely to close the job than one that responds in
+  an hour. Most roofing companies respond in 4+ hours, if at all.
+
+  The system I build for {{company_name}} would respond to every inquiry
+  in under 60 seconds — web form, phone call, text — qualify the damage
+  type, and book the estimate automatically.
+
+  Free 2-week build. No risk.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
+  William
+
+
+  Step 3 — Day 7
+  Subject: {{first_name | default: "Hey"}} — last one from me
+  ..................................................
+  {{first_name}},
+
+  5 clients per quarter, personally built. Two Q2 spots left — especially
+  want to lock one in before storm season accelerates.
+
+  If your lead response and follow-up are already handled, no worries.
+  If not — let's talk.
+
+  https://calendly.com/wmarceau/ai-services-discovery-call
+
+  William Marceau | (239) 398-5676

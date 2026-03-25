@@ -148,12 +148,13 @@ def render_leave_behind(data: dict, styles: dict):
     metrics = case_study.get("metrics", [])
     if metrics:
         cards = [metric_card(m["label"], m["value"]) for m in metrics]
-        metrics_table = Table([cards], colWidths=[1.625 * inch] * len(cards))
+        card_width = (7.2 / len(cards)) * inch
+        metrics_table = Table([cards], colWidths=[card_width] * len(cards))
         metrics_table.setStyle(TableStyle([
             ("ALIGN", (0, 0), (-1, -1), "CENTER"),
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 4),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("LEFTPADDING", (0, 0), (-1, -1), 6),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
         ]))
         story.append(metrics_table)
 

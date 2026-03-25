@@ -227,7 +227,7 @@ def validate_training_time(summary: str, start: str) -> dict:
             return {
                 "valid": False,
                 "reason": f"Training scheduled at {start_dt.strftime('%I:%M %p')} — "
-                          f"Training is ALWAYS in the afternoon (2:45pm). Never before noon.",
+                          f"Training is NEVER before noon. Default to 6:00-8:00pm.",
             }
     return {"valid": True}
 

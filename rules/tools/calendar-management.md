@@ -51,8 +51,10 @@ This is the BASE template. Day-specific work blocks replace the `[DEEP WORK]` sl
 
 ### Training Time — NEVER at 5am
 
-Training is ALWAYS in the afternoon: **2:45 - 3:45pm** (most days) or **3:00 - 5:00pm** (Tue).
+Training is in the **evening: 6:00 - 8:00pm** (William's current preference as of March 2026).
+Previous Time Blocks show 2:45pm but William has been training at 6-8pm lately.
 The 5am-7am slot on primary was a one-time error. Do not repeat.
+**Rule**: Training is NEVER before noon. Default to 6:00-8:00pm unless William says otherwise.
 
 ## Color Rules
 
