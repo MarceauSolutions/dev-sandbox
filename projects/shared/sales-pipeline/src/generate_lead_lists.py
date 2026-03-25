@@ -11,41 +11,40 @@ DB_PATH = '/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeli
 
 
 def get_tier_1_phone_leads(limit: int = 20) -> list:
-    """Get highest priority leads for phone outreach."""
+    """Get highest priority leads for phone outreach — NEVER CALLED."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    
+
     cursor.execute("""
         SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
                d.industry, d.lead_score, d.stage, d.phone_dependency
         FROM deals d
         WHERE d.stage IN ('Intake', 'Contacted')
-        AND d.lead_score >= 85
-        AND (d.outreach_method = 'phone' OR d.phone_dependency = 'high')
         AND d.contact_phone IS NOT NULL AND d.contact_phone != ''
+        AND d.company NOT IN (SELECT DISTINCT company FROM outreach_log WHERE channel = 'Call')
         ORDER BY d.lead_score DESC, d.phone_dependency DESC
         LIMIT ?
     """, (limit,))
-    
+
     results = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return results
 
 
 def get_tier_2_phone_leads(limit: int = 20) -> list:
-    """Get second priority leads for phone outreach."""
+    """Get second priority leads for phone outreach — NEVER CALLED."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    
+
     cursor.execute("""
         SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
                d.industry, d.lead_score, d.stage
         FROM deals d
         WHERE d.stage IN ('Intake', 'Contacted')
-        AND d.lead_score >= 70 AND d.lead_score < 85
         AND d.contact_phone IS NOT NULL AND d.contact_phone != ''
+        AND d.company NOT IN (SELECT DISTINCT company FROM outreach_log WHERE channel = 'Call')
         ORDER BY d.lead_score DESC
         LIMIT ?
     """, (limit,))
