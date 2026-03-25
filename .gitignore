@@ -142,3 +142,8 @@ execution/send_mom_letter.py
 projects/shared/api-key-manager/data/.encryption_key
 projects/shared/api-key-manager/data/.jwt_secret
 projects/shared/api-key-manager/data/*.db
+
+# SQLite temp files — cause git sync failures
+*.db-shm
+*.db-wal
+*.db-journal
