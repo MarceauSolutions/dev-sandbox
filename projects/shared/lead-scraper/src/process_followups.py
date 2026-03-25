@@ -264,7 +264,7 @@ def process_followups(dry_run: bool = False) -> Dict[str, Any]:
     }
 
     for file_path, data in tracking_files:
-        emails: List[Dict[str, Any]] = data.get("emails", [])
+        emails = data.get("emails", data.get("records", [])) if isinstance(data, dict) else data
         file_modified = False
 
         logger.info(f"Checking {file_path.name} ({len(emails)} records)")
