@@ -4,6 +4,64 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+### Session 2026-03-24 21:00 (Evening — Blitz Day 2 EOD)
+**Focus**: Phone blitz execution, Apollo sequence setup, calendar architecture fix, agent gateway
+
+**Blitz Stats — March 24, 2026:**
+- **30 cold calls** made (logged individually with outcomes)
+- **98 phone blitz touches** (Apollo/automated)
+- **5 follow-up emails** sent (Golden Plumbing, Pros Plumbing, PlumbingPro, Cloud 9, Von & Co)
+- **133 total outreach touches** for the day
+
+**Call Outcomes:**
+- Interested / follow-up: Golden Plumbing (Dawn → Chris Martin), Pros Plumbing (Alexandra), PlumbingPro (Zach Johnson), Cloud 9 Med Spa (Carrie — objection: human touch), Von & Co (Rachel Hayes), Tru Glo (Jessica — 2-3 months), North Trail Chiro (email obtained), Grant Construction (co-dev partner opportunity)
+- Not interested: 8
+- Voicemail: 3
+- Hung up / language barrier: 4
+
+**Warm Leads for Tomorrow (In-Person):**
+1. ⭐ Golden Plumbing — Dawn Martin, strongest lead, has email
+2. Cloud 9 Med Spa — Carrie, handle "human touch" objection in person
+3. Von & Co — Rachel Hayes, pattern interrupt (she expects email not face)
+4. A&Y Auto — Spanish speaker, flier + demo number
+5. North Trail Chiro — email obtained, check doctor name on door
+
+**Built:**
+- Leave-behind flier fixed — `_NoWrapText` Flowable bypasses ReportLab word-wrap
+- In-person route plan PDF with per-stop scripts
+- All 5 Apollo sequences rewritten (Hormozi voice, `{{first_name | default: "Hey"}}`)
+- `export_apollo_csv.py` — filters records missing first_name before Apollo import
+- SPF record added to marceausolutions.com DNS (was missing — spam delivery root cause)
+- **Agent Calendar Gateway** (`execution/agent_calendar_gateway.py`) — deployed on EC2 port 5015
+  - Validates conflicts across both calendars before creating events
+  - Blocks wrong calendar placement (routine on primary, specific on time blocks)
+  - Blocks training before noon
+  - SQLite audit log of all agent actions
+  - Panacea MUST use gateway — no direct Calendar API
+- Calendar rules documented in `rules/tools/calendar-management.md`
+- Clawdbot `soul_insert.md` updated with gateway-enforced calendar rules
+- Wednesday calendar rebuilt clean (no overlaps, correct structure)
+- ElevenLabs AI phone agent integrated — (855) 239-9364 live with voice clone
+- n8n ElevenLabs Call Poller + Gmail Reply Watcher workflows active
+
+**Training — March 24:**
+- Lat pulldown: 4×8 @ 195 lbs
+- Strict standing curls: 4×8 @ 35 lb dumbbells
+- Rows: 8×8 @ 80 lbs each side
+- Turkish get-ups: 2 sets @ 60 lb kettlebell each side
+
+**Key Decisions:**
+- Training time updated to 6-8pm (William's current preference)
+- Three-agent calendar coordination: gateway-enforced, not prose-enforced
+- n8n conflict monitor needs API key setup (manual in UI)
+
+**Open for Tomorrow:**
+- Apollo sequences: Med Spa, Plumbing, Roofing still need contacts added + activated
+- Apollo deliverability: re-run SPF/DKIM check after propagation
+- Print leave-behind fliers + route plan (already generated)
+
+---
+
 ### Session 2026-03-24 17:22
 **Focus**: scalable rules enforcement system; Clean up dashboard stats tiles; Add 'Ask for' owner name prompt on Call Day; and 2 more changes
 **Completed**:
