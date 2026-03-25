@@ -7,8 +7,9 @@ Should be called by Clawdbot heartbeat or cron.
 
 import sqlite3
 from datetime import datetime, timedelta
+from pathlib import Path
 
-DB_PATH = '/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db'
+DB_PATH = str(Path(__file__).parent.parent / "data" / "pipeline.db")
 
 
 def get_followups_due(days_range: int = 0) -> list:

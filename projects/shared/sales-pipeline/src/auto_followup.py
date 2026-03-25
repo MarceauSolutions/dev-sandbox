@@ -202,7 +202,8 @@ def process_followups(dry_run=True, sms_only=False):
     results = []
     for deal in due:
         action = deal["next_action"] or ""
-        first_name = (deal["contact_name"] or "").split()[0] or "there"
+        name_parts = (deal["contact_name"] or "").split()
+        first_name = name_parts[0] if name_parts else "there"
         company = deal["company"] or "your business"
         phone = deal["contact_phone"] or ""
         email = deal["contact_email"] or ""

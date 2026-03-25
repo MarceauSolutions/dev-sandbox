@@ -916,6 +916,111 @@ async def api_lead_profile(company: str):
     }
 
 
+# ─── Daily Lead Lists API ───────────────────────────────────
+
+from .generate_lead_lists import (
+    get_tier_1_phone_leads, get_tier_2_phone_leads, get_email_leads,
+    get_inperson_leads, get_warm_leads, generate_daily_lists,
+    format_phone_list, format_warm_leads,
+)
+
+@app.get("/api/lists/daily")
+async def api_daily_lists():
+    """Generate all daily outreach lists. n8n calls this at 7:00 AM."""
+    lists = generate_daily_lists()
+    return {
+        "ok": True,
+        "generated_at": lists["generated_at"],
+        "tier_1_phone": {"count": len(lists["tier_1_phone"]), "leads": lists["tier_1_phone"]},
+        "tier_2_phone": {"count": len(lists["tier_2_phone"]), "leads": lists["tier_2_phone"]},
+        "email": {"count": len(lists["email"]), "leads": lists["email"]},
+        "inperson": {"count": len(lists["inperson"]), "leads": lists["inperson"]},
+        "warm": {"count": len(lists["warm"]), "leads": lists["warm"]},
+        "formatted_phone": format_phone_list(lists["tier_1_phone"], "TIER 1"),
+        "formatted_warm": format_warm_leads(lists["warm"]),
+    }
+
+
+@app.get("/api/lists/phone")
+async def api_phone_list(limit: int = 30):
+    """Get phone call list (Tier 1 + 2 combined, never-called only)."""
+    t1 = get_tier_1_phone_leads(limit)
+    t2 = get_tier_2_phone_leads(limit)
+    # Deduplicate
+    seen = {l["id"] for l in t1}
+    combined = t1 + [l for l in t2 if l["id"] not in seen]
+    return {"ok": True, "count": len(combined), "leads": combined[:limit]}
+
+
+@app.get("/api/lists/warm")
+async def api_warm_list():
+    """Get warm leads (qualified, meeting booked, proposal sent)."""
+    leads = get_warm_leads()
+    return {"ok": True, "count": len(leads), "leads": leads, "formatted": format_warm_leads(leads)}
+
+
+# ─── Phone Enrichment API ──────────────────────────────────
+
+from .enrich_phones import get_phone_stats, get_deals_missing_phone
+
+@app.get("/api/phones/stats")
+async def api_phone_stats():
+    """Get phone coverage statistics."""
+    conn = get_db()
+    stats = get_phone_stats(conn)
+    conn.close()
+    return {"ok": True, **stats}
+
+
+@app.post("/api/phones/enrich")
+async def api_enrich_phones(request: Request):
+    """Enrich missing phone numbers via Apollo. Body: {dry_run?: bool, limit?: int}"""
+    data = await request.json() if request.headers.get("content-type") == "application/json" else {}
+    dry_run = data.get("dry_run", True)
+    from .enrich_phones import run_enrichment
+    results = run_enrichment(dry_run=dry_run)
+    return {"ok": True, "dry_run": dry_run, **results}
+
+
+# ─── Pipeline Health & Analytics API ───────────────────────
+
+from .pipeline_health import get_pipeline_health, get_stale_deals, rescore_leads, format_health_report
+
+@app.get("/api/health/report")
+async def api_health_report():
+    """Full pipeline health report — funnel, velocity, channel effectiveness."""
+    conn = get_db()
+    health = get_pipeline_health(conn)
+    stale = get_stale_deals(conn)
+    conn.close()
+    return {
+        "ok": True,
+        "formatted": format_health_report(health, stale),
+        **health,
+        "stale_count": len(stale),
+    }
+
+
+@app.get("/api/health/stale")
+async def api_stale_deals(days: int = 5):
+    """Deals that haven't been touched in X days."""
+    conn = get_db()
+    stale = get_stale_deals(conn, days_threshold=days)
+    conn.close()
+    return {"ok": True, "count": len(stale), "deals": stale}
+
+
+@app.post("/api/health/rescore")
+async def api_rescore(request: Request):
+    """Recalculate lead scores based on engagement. Body: {dry_run?: bool}"""
+    data = await request.json() if request.headers.get("content-type") == "application/json" else {}
+    dry_run = data.get("dry_run", True)
+    conn = get_db()
+    result = rescore_leads(conn, dry_run=dry_run)
+    conn.close()
+    return {"ok": True, **result}
+
+
 # ─── Auto Follow-up API (n8n triggers this) ────────────────
 
 from .auto_followup import process_followups, format_summary, get_followups_due as get_auto_followups_due

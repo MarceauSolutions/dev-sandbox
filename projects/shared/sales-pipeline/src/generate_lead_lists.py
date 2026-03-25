@@ -6,12 +6,13 @@ Outputs lists ready for phone blitz, email campaigns, or in-person visits.
 
 import sqlite3
 from datetime import datetime
+from pathlib import Path
 
-DB_PATH = '/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db'
+DB_PATH = str(Path(__file__).parent.parent / "data" / "pipeline.db")
 
 
 def get_tier_1_phone_leads(limit: int = 20) -> list:
-    """Get highest priority leads for phone outreach — NEVER CALLED."""
+    """Get highest priority leads for phone outreach — not yet called."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -20,7 +21,7 @@ def get_tier_1_phone_leads(limit: int = 20) -> list:
         SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
                d.industry, d.lead_score, d.stage, d.phone_dependency
         FROM deals d
-        WHERE d.stage IN ('Intake', 'Contacted')
+        WHERE d.stage IN ('Intake', 'Qualified')
         AND d.contact_phone IS NOT NULL AND d.contact_phone != ''
         AND d.company NOT IN (SELECT DISTINCT company FROM outreach_log WHERE channel = 'Call')
         ORDER BY d.lead_score DESC, d.phone_dependency DESC
@@ -33,7 +34,7 @@ def get_tier_1_phone_leads(limit: int = 20) -> list:
 
 
 def get_tier_2_phone_leads(limit: int = 20) -> list:
-    """Get second priority leads for phone outreach — NEVER CALLED."""
+    """Get second priority leads for phone outreach — not yet called."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -42,7 +43,7 @@ def get_tier_2_phone_leads(limit: int = 20) -> list:
         SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
                d.industry, d.lead_score, d.stage
         FROM deals d
-        WHERE d.stage IN ('Intake', 'Contacted')
+        WHERE d.stage IN ('Intake', 'Qualified')
         AND d.contact_phone IS NOT NULL AND d.contact_phone != ''
         AND d.company NOT IN (SELECT DISTINCT company FROM outreach_log WHERE channel = 'Call')
         ORDER BY d.lead_score DESC
@@ -110,7 +111,7 @@ def get_warm_leads() -> list:
         SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
                d.stage, d.next_action, d.next_action_date
         FROM deals d
-        WHERE d.stage IN ('Qualified', 'Demo Scheduled', 'Proposal Sent')
+        WHERE d.stage IN ('Qualified', 'Meeting Booked', 'Proposal Sent')
         ORDER BY d.stage DESC, d.next_action_date ASC
     """)
     
