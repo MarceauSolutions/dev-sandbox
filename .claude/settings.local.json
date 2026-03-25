@@ -124,7 +124,8 @@
       "Bash(tar:*)",
       "Bash(zip:*)",
       "Bash(unzip:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(ffprobe -v quiet -print_format json -show_format \"/Users/williammarceaujr./dev-sandbox/projects/marceau-solutions/labs/life-rings/life-rings-demo-final.mp4\")"
     ]
   },
   "hooks": {
