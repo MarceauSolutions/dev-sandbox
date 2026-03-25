@@ -99,6 +99,15 @@ APPS = [
 
     # ── Operations ──────────────────────────────────────────────────────────
     {
+        "id": "life-rings",
+        "name": "Life Rings",
+        "description": "Gamified daily operating system — close your rings across morning protocol, business execution, follow-up, fitness, discipline, and evening review.",
+        "port": 8797,
+        "script": "life-rings.sh",
+        "category": "productivity",
+        "icon": "&#9711;",
+    },
+    {
         "id": "accountability",
         "name": "Accountability Engine",
         "description": "90-day goal tracking, daily check-ins, health-aware coaching.",
