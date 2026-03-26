@@ -147,3 +147,5 @@ projects/shared/api-key-manager/data/*.db
 *.db-shm
 *.db-wal
 *.db-journal
+projects/ai-systems/src/output/
+*.bak

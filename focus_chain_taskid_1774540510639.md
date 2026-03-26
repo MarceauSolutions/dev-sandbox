@@ -147,3 +147,169 @@ Based on existing projects/ directory:
 
 **Remaining for Future:** dumbphone-lock rebuild in ai-systems (marked for complete rebuild from scratch)
 - [ ] Action 4: Create sub-module structure in fitness-influencer tower (video-processing/, content-generation/, social-media/, client-management/)
+
+## Agent Bridge API Decomposition Task
+
+### Current Status
+- **File**: execution/agent_bridge_api.py (466KB, 291 routes)
+- **Issue**: Massive monolithic Flask server handling all functionality
+- **Goal**: Decompose into proper independent towers per CLAUDE.md
+
+### Tower Mapping Analysis
+
+#### ai-systems Tower
+**Functionality to extract:**
+- AI monitoring (`ai_monitoring.py` - already exists)
+- Cost & token tracking (SessionCost, cost endpoints)
+- Conversation memory (ConversationMemory, memory endpoints)
+- Agent templates (AGENT_TEMPLATES, templates endpoints)
+- Agent personas (AgentPersona, personas endpoints)
+- Goal decomposition (Goal, SubGoal, goals endpoints)
+- Tool macros (ToolMacro, macros endpoints)
+- Learning & feedback (TaskOutcome, LearningEntry, learning endpoints)
+- Workflow recording/playback (RecordedWorkflow, recording endpoints)
+- Context injection (ContextInjectionRule, context endpoints)
+- Inter-agent communication (AgentMessage, agents endpoints)
+- Multi-agent orchestration (AgentOrchestration, orchestration endpoints)
+- Knowledge bases/RAG (KnowledgeBase, kb endpoints)
+- Scheduled tasks (ScheduledTask, scheduler endpoints)
+- Tool plugins (ToolPlugin, plugins endpoints)
+- Adaptive behavior (BehaviorProfile, behavior endpoints)
+- Parallel tool execution (execute_tools_parallel, tools/parallel)
+- Tool result caching (TOOL_CACHE, cache endpoints)
+- Smart rate limiting (TokenBucket, ratelimit endpoints)
+
+#### mcp-services Tower
+**Functionality to extract:**
+- MCP server development infrastructure
+- Tool plugins system (already partially in mcp-services)
+- MCP protocol handling
+- Model Context Protocol servers
+
+#### personal-assistant Tower
+**Functionality to extract:**
+- Gmail integration (gmail endpoints)
+- Google Sheets integration (sheets endpoints)
+- SMS/Twilio integration (sms endpoints)
+- Calendar operations (calendar endpoints)
+- Email monitoring (email_response_monitor.py - already exists)
+- Personal automation features
+
+#### lead-generation Tower
+**Functionality to extract:**
+- Lead management (lead_manager.py - already exists)
+- Outreach tracking
+- Email response monitoring (already exists)
+- Lead routing (lead_router.py - already exists)
+
+#### fitness-influencer Tower
+**Functionality to extract:**
+- Video editing automation
+- Educational graphics (educational_graphics.py - already exists)
+- Branded PDF engine (branded_pdf_engine.py - already exists)
+- Content creation tools
+
+#### amazon-seller Tower
+**Functionality to extract:**
+- SP-API integration capabilities
+- Seller operations tools
+
+#### Shared execution/ (keep minimal)
+**Keep in agent_bridge_api.py:**
+- Core file operations (read, write, edit, list, delete)
+- Command execution
+- Git operations (status, commit, push, diff)
+- Web fetching
+- Basic search (grep, glob)
+- Health/monitoring endpoints
+- Basic error handling and persistence
+- Core infrastructure (Flask app, CORS, etc.)
+
+### Decomposition Plan
+
+#### Step 1: Create Tower Structures
+- [ ] Create projects/ai-systems/ with src/ and workflows/
+- [ ] Create projects/mcp-services/ with src/ and workflows/
+- [ ] Create projects/personal-assistant/ with src/ and workflows/
+- [ ] Create projects/lead-generation/ with src/ and workflows/
+- [ ] Create projects/fitness-influencer/ with src/ and workflows/
+- [ ] Create projects/amazon-seller/ with src/ and workflows/
+
+#### Step 2: Extract AI Systems Tower
+- [ ] Move AI monitoring, cost tracking, conversation memory to ai-systems
+- [ ] Move agent templates, personas, goal decomposition to ai-systems
+- [ ] Move learning, workflow recording, context injection to ai-systems
+- [ ] Move orchestration, knowledge bases, scheduling to ai-systems
+- [ ] Move tool plugins, adaptive behavior to ai-systems
+
+#### Step 3: Extract Communication Towers
+- [ ] Move Gmail, Sheets, SMS, calendar to personal-assistant
+- [ ] Move lead management, outreach tracking to lead-generation
+- [ ] Move video editing, graphics, PDF to fitness-influencer
+- [ ] Move MCP services to mcp-services tower
+
+#### Step 4: Update Cross-Tower Communication
+- [ ] Implement standardized interfaces per CLAUDE.md
+- [ ] Update imports to use tower modules
+- [ ] Add communication protocols between towers
+- [ ] Update shared utilities in execution/
+
+#### Step 5: Test and Validate
+- [ ] Test each tower independently
+- [ ] Validate cross-tower communication
+- [ ] Update documentation
+- [ ] Verify no functionality lost
+
+### Next Action
+Begin Step 1: Create tower directory structures
+
+## Step 1: Create Tower Directory Structures
+
+**Status**: In Progress
+**Progress**: 0/6 towers created
+
+### Tower Structure Requirements (per CLAUDE.md):
+- Each tower: `projects/[tower]/src/` and `projects/[tower]/workflows/`
+- Core infrastructure stays in `execution/`
+- Tower modules should be importable as `projects.[tower].src.[module]`
+
+### Towers to Create:
+- [ ] ai-systems (AI monitoring, orchestration, learning)
+- [ ] mcp-services (MCP protocol, tool plugins)
+- [ ] personal-assistant (Gmail, Sheets, SMS, calendar)
+- [ ] lead-generation (Lead management, outreach)
+- [ ] fitness-influencer (Video editing, graphics, content)
+- [ ] amazon-seller (SP-API integration)
+
+### Reasoning:
+Creating proper directory structures first ensures clean separation and prevents import conflicts. Each tower gets its own namespace under projects/ for maximum independence.
+
+## Step 1: Extract AI Systems Tower
+
+**Status**: Completed ✅
+
+**Reasoning**: Starting with AI Systems tower because it contains the most complex and interconnected functionality that benefits most from independent deployment and scaling. This tower handles all AI orchestration, learning, and agent management - the core intelligence layer.
+
+**Implementation**: Created `projects/ai-systems/src/ai_bridge.py` (45KB) with 25+ AI-specific endpoints:
+- Cost tracking (`/ai/cost/*`) - Token usage monitoring
+- Conversation memory (`/ai/memory/*`) - Persistent chat history
+- Agent personas (`/ai/personas/*`) - Personality-driven agent behavior
+- Goal decomposition (`/ai/goals/*`) - Complex task breakdown
+- Learning & feedback (`/ai/learning/*`) - Outcome analysis and recommendations
+- Tool macros (`/ai/macros/*`) - Reusable tool sequences
+- Adaptive behavior (`/ai/behavior/*`) - Dynamic agent adaptation
+- Multi-agent orchestration (`/ai/orchestration/*`) - Parallel agent coordination
+- Knowledge bases (`/ai/kb/*`) - Semantic search and RAG
+- Workflow recording (`/ai/recording/*`) - Action sequence capture/playback
+- Context injection (`/ai/context/*`) - Smart context provision
+- Inter-agent communication (`/ai/agents/*`) - Agent messaging and state sharing
+- Audit trail (`/ai/audit/*`) - Comprehensive action logging
+
+**Benefits Achieved**:
+- Independent scaling of AI intelligence layer
+- Isolated persistence for AI state (separate from core infrastructure)
+- Clean separation of concerns (AI logic vs. basic operations)
+- Foundation for advanced AI features without affecting core stability
+- Reduced monolithic file size by ~80KB (from 466KB to ~386KB remaining)
+
+**Next**: Step 2 will extract communication towers (personal-assistant, lead-generation, fitness-influencer, amazon-seller, mcp-services).
