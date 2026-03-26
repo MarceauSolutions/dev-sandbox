@@ -1,0 +1,6 @@
+[submodule "projects/marceau-solutions/digital/website"]
+	path = projects/marceau-solutions/digital/website
+	url = https://github.com/MarceauSolutions/marceausolutions.com
+[submodule "projects/marceau-solutions/digital/clients/swflorida-hvac/website"]
+	path = projects/marceau-solutions/digital/clients/swflorida-hvac/website
+	url = https://github.com/MarceauSolutions/swflorida-comfort-hvac
