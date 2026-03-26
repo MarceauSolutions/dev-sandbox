@@ -8,7 +8,7 @@ Features:
 - Shows WHY each business is on the list
 - Integrates with Google Maps for distance calculation
 
-Home base: 2776 Longboat Dr, Naples, FL 34109
+Home base: loaded from environment
 """
 
 import json
@@ -29,9 +29,9 @@ CALL_LOG_PATH = os.path.join(DATA_DIR, "call_log.json")
 VISIT_LOG_PATH = os.path.join(DATA_DIR, "visit_log.json")
 PIPELINE_PATH = os.path.join(DATA_DIR, "pipeline.json")
 
-# Home base coordinates (2776 Longboat Dr, Naples, FL)
+# Home base coordinates (from HOME_ADDRESS env var)
 HOME_BASE = {
-    "address": "2776 Longboat Dr, Naples, FL 34109",
+    "address": os.getenv("HOME_ADDRESS", "Naples, FL"),
     "lat": 26.2304,
     "lng": -81.8076
 }
@@ -377,7 +377,7 @@ def format_visit_schedule(candidates: List[VisitCandidate]) -> str:
     
     lines = [
         f"🚗 **IN-PERSON VISITS** — {datetime.utcnow().strftime('%Y-%m-%d')}",
-        f"Route: Farthest → Home (2776 Longboat Dr)",
+        f"Route: Farthest → Home",
         f"Total stops: {len(candidates)}",
         ""
     ]
