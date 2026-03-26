@@ -47,46 +47,46 @@ WILLIAM_PHONE = "+12393985676"
 
 SMS_TEMPLATES = {
     # From call outcomes → next_action values set by app.py log-call routing
+    # NOTE: No "AI" language — frame as business automation / results
     "Re-call": (
         "Hey {first_name}, this is William from Marceau Solutions. "
-        "I tried reaching you the other day about helping {company} automate your phone system "
-        "so you never miss a call. Still open to a quick chat? Just reply with a good time."
+        "I tried reaching you the other day about helping {company} make sure no leads slip "
+        "through the cracks. Still open to a quick chat? Just reply with a good time."
     ),
     "Call back — callback requested": (
         "Hey {first_name}, it's William from Marceau Solutions -- following up as promised. "
-        "Still a good time to chat about the AI phone system for {company}? "
+        "Still a good time to chat about streamlining how {company} handles calls and follow-ups? "
         "I can do a quick 10-min call whenever works for you."
     ),
     "Book meeting — qualified lead": (
         "Hey {first_name}, great chatting the other day! Here's my calendar link to grab 15 min "
         "this week: calendly.com/wmarceau/ai-services-discovery -- looking forward to showing you "
-        "how the AI system works for {company}."
+        "how the system works for {company}."
     ),
     "In-person visit": (
         "Hey {first_name}, this is William from Marceau Solutions. "
-        "I'd love to stop by {company} and show you a quick demo of the AI phone system -- "
+        "I'd love to stop by {company} and show you a quick demo of the system -- "
         "takes about 5 minutes. What day works best this week?"
     ),
     "Try direct line/email": (
         "Hi {first_name}, this is William with Marceau Solutions. "
-        "I help businesses like {company} set up AI phone systems so they never miss a call. "
-        "Would you be open to a quick 10-minute call this week? No pressure either way."
+        "I help businesses like {company} connect their calls, texts, and web leads into one "
+        "system so nothing falls through the cracks. Quick 10-min call this week? No pressure."
     ),
     "Check back — verify system works": (
         "Hey {first_name}, William from Marceau Solutions. "
-        "Just checking in on {company} -- how's your current system working out? "
-        "If you ever want a second opinion or upgrade, I'm here. No pitch, just a resource."
+        "Just checking in on {company} -- how's everything running? "
+        "If you ever want a second opinion on your setup, I'm here. No pitch, just a resource."
     ),
-    # From call_logger outcomes that set next_action_date but no next_action
     "voicemail_followup": (
         "Hey {first_name}, this is William from Marceau Solutions. "
-        "I left you a voicemail the other day about helping {company} with AI phone automation. "
+        "I left you a voicemail about helping {company} capture more leads automatically. "
         "Would a quick 5-minute call work sometime this week?"
     ),
     "no_answer_followup": (
         "Hey {first_name}, William from Marceau Solutions here. "
-        "I tried calling {company} but couldn't get through. I help local businesses set up AI "
-        "that answers their phone 24/7 -- never miss a lead again. Worth a quick chat?"
+        "I tried calling {company} but couldn't get through. I help local businesses make sure "
+        "every call and inquiry gets answered and followed up with -- worth a quick chat?"
     ),
     "Re-email with value-add": None,  # Email only, no SMS
     "Update phone number": None,  # Skip - needs manual action
@@ -97,10 +97,10 @@ EMAIL_TEMPLATES = {
         "subject": "Quick thought for {company}",
         "body": (
             "Hi {first_name},\n\n"
-            "I reached out recently about helping {company} with AI automation. "
+            "I reached out recently about helping {company} streamline how you handle leads and follow-ups. "
             "I know it might not have been the right time, so I wanted to share something useful either way.\n\n"
-            "I looked at how {company} handles inbound calls and noticed a few things that could "
-            "save your team hours every week -- even without AI. Happy to share if you're curious.\n\n"
+            "I took a quick look at how {company} handles inbound calls and inquiries and noticed a few "
+            "things that could save your team hours every week. Happy to share if you're curious.\n\n"
             "Either way, no pressure. Just wanted to be helpful.\n\n"
             "Best,\nWilliam Marceau\nMarceau Solutions\n(239) 398-5676\nmarceausolutions.com"
         ),
@@ -172,15 +172,19 @@ def send_email(to_email, subject, body, dry_run=False):
 
 
 def log_followup(conn, deal_id, company, contact, channel, message_summary, template_name=""):
-    """Log the follow-up to outreach_log and advance next_action_date."""
+    """Log the follow-up to outreach_log (does NOT advance next_action_date)."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn.execute(
         "INSERT INTO outreach_log (deal_id, company, contact, channel, message_summary, created_at, tower, template_used) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         (deal_id, company, contact, channel, message_summary, now, "digital-ai-services", template_name)
     )
-    # Push next_action_date forward by 3 days
-    next_date = (datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d")
+    conn.commit()
+
+
+def advance_next_action_date(conn, deal_id, days=3):
+    """Push next_action_date forward — only call after a successful send."""
+    next_date = (datetime.now() + timedelta(days=days)).strftime("%Y-%m-%d")
     conn.execute(
         "UPDATE deals SET next_action_date = ? WHERE id = ?",
         (next_date, deal_id)
@@ -190,6 +194,12 @@ def log_followup(conn, deal_id, company, contact, channel, message_summary, temp
 
 def process_followups(dry_run=True, sms_only=False):
     """Process all due follow-ups."""
+    # Validate Twilio credentials before attempting to send
+    if not dry_run:
+        if not TWILIO_SID or not TWILIO_TOKEN:
+            print("ERROR: TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN must be set in .env")
+            return []
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     due = get_followups_due(conn)
@@ -238,7 +248,6 @@ def process_followups(dry_run=True, sms_only=False):
                 sent_something = True
             elif not dry_run and not result["success"]:
                 print(f"  [FAIL] SMS to {company}: {result.get('error')}")
-                # Do NOT advance next_action_date — retry tomorrow
 
             print(f"  {'[DRY]' if dry_run else '[SENT]' if result.get('success') else '[FAIL]'} SMS to {company} ({phone}): {action}")
 
@@ -280,8 +289,13 @@ def process_followups(dry_run=True, sms_only=False):
                 log_followup(conn, deal["id"], company, deal["contact_name"] or "",
                             "SMS", f"Auto follow-up (generic): {generic[:100]}...",
                             template_name="generic_followup")
+                sent_something = True
 
             print(f"  {'[DRY]' if dry_run else '[SENT]' if result.get('success') else '[FAIL]'} SMS generic to {company} ({phone})")
+
+        # Only advance next_action_date if at least one message actually sent
+        if sent_something and not dry_run:
+            advance_next_action_date(conn, deal["id"], days=3)
 
         if not phone and not email:
             print(f"  [SKIP] {company} — no phone or email on file")

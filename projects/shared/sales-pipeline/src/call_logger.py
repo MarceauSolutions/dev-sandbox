@@ -60,8 +60,12 @@ def normalize_outcome(text):
     return OUTCOME_ALIASES.get(text.lower().strip(), text.lower().strip())
 
 
-def log_call(business, outcome, notes="", contact_name="", phone="", email=""):
-    """Log call directly to pipeline.db."""
+def log_call(business, outcome, notes="", contact_name="", phone="", email="", deal_id=None):
+    """Log call directly to pipeline.db.
+
+    Args:
+        deal_id: If provided, update by deal ID (exact). Otherwise match by company name (exact).
+    """
     conn = sqlite3.connect(DB_PATH)
     normalized = normalize_outcome(outcome)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -79,13 +83,23 @@ def log_call(business, outcome, notes="", contact_name="", phone="", email=""):
     if normalized in POSITIVE + NEUTRAL:
         updates.append("next_action_date = ?")
         params.append((datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d"))
-    params.append(business)
-    conn.execute("UPDATE deals SET " + ", ".join(updates) + " WHERE company LIKE ?", params)
+
+    if deal_id:
+        conn.execute("UPDATE deals SET " + ", ".join(updates) + " WHERE id = ?", params + [deal_id])
+    else:
+        conn.execute("UPDATE deals SET " + ", ".join(updates) + " WHERE company = ?", params + [business])
+
+    # Resolve deal_id for outreach_log foreign key if not provided
+    resolved_deal_id = deal_id
+    if not resolved_deal_id:
+        row = conn.execute("SELECT id FROM deals WHERE company = ? LIMIT 1", (business,)).fetchone()
+        if row:
+            resolved_deal_id = row[0]
 
     # Log to outreach_log
     conn.execute(
-        "INSERT INTO outreach_log (company, contact, channel, message_summary, response, created_at, tower) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        (business, contact_name, "Call", notes or normalized, normalized, now, "digital-ai-services")
+        "INSERT INTO outreach_log (deal_id, company, contact, channel, message_summary, response, created_at, tower) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        (resolved_deal_id, business, contact_name, "Call", notes or normalized, normalized, now, "digital-ai-services")
     )
 
     conn.commit()
@@ -107,13 +121,22 @@ def get_recent_calls(limit=20):
     return [dict(r) for r in rows]
 
 
-def get_calls_for_business(business):
+def get_calls_for_business(business=None, deal_id=None):
+    """Get outreach history for a business by exact name or deal_id."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    rows = conn.execute(
-        "SELECT company, contact, channel, message_summary, response, created_at FROM outreach_log WHERE company LIKE ? ORDER BY id",
-        (f"%{business}%",)
-    ).fetchall()
+    if deal_id:
+        rows = conn.execute(
+            "SELECT company, contact, channel, message_summary, response, created_at FROM outreach_log WHERE deal_id = ? ORDER BY id",
+            (deal_id,)
+        ).fetchall()
+    elif business:
+        rows = conn.execute(
+            "SELECT company, contact, channel, message_summary, response, created_at FROM outreach_log WHERE company = ? ORDER BY id",
+            (business,)
+        ).fetchall()
+    else:
+        rows = []
     conn.close()
     return [dict(r) for r in rows]
 

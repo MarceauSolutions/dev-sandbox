@@ -59,12 +59,12 @@ def render_leave_behind(data: dict, styles: dict):
         alignment=TA_CENTER, spaceAfter=2,
     )
     story.append(Paragraph(
-        "AI AUTOMATION FOR LOCAL BUSINESSES",
+        "BUSINESS AUTOMATION FOR LOCAL COMPANIES",
         label_style
     ))
 
     headline = data.get("headline",
-        "Stop Losing Customers to Missed Calls and Slow Follow-Ups")
+        "Your Leads Are Scattered. Your Follow-Ups Are Falling Through the Cracks.")
     title_style = ParagraphStyle(
         "LBTitle", fontName=BrandConfig.HEADING_FONT,
         fontSize=18, leading=22, textColor=BrandConfig.CHARCOAL,
@@ -75,10 +75,12 @@ def render_leave_behind(data: dict, styles: dict):
 
     # --- Value Proposition ---
     value_prop = data.get("value_prop",
-        "I build AI systems that answer your phones 24/7, book appointments "
-        "automatically, and follow up with every lead — so you never miss "
-        "another customer. Based in Naples, FL — serving local businesses "
-        "and companies nationwide.")
+        "Right now, your leads come in from phone calls, Google, your website, "
+        "texts, and referrals — but they all land in different places. Some get "
+        "followed up with. Most don't. I connect everything into one system so "
+        "every lead gets captured, every follow-up happens automatically, and "
+        "you know exactly where every potential customer stands — without adding "
+        "anything to your plate.")
 
     vp_style = ParagraphStyle(
         "LBValueProp", fontName=BrandConfig.BODY_FONT,
@@ -91,19 +93,24 @@ def render_leave_behind(data: dict, styles: dict):
     # --- Services Table ---
     services = data.get("services", [
         {
-            "name": "Voice AI Receptionist",
-            "features": "Answers every call 24/7, books appointments, routes emergencies",
-            "price": "$199-499/mo",
+            "name": "Unified Lead Dashboard",
+            "features": "All calls, texts, forms, and emails in one place. Know where every lead stands.",
+            "price": "Included",
         },
         {
-            "name": "Lead Capture & Follow-Up",
-            "features": "Automated outreach, SMS/email sequences, CRM pipeline",
-            "price": "$1K-3K setup + $200-500/mo",
+            "name": "Automated Follow-Up",
+            "features": "Every missed call gets a text. Every lead gets followed up with. Nothing falls through.",
+            "price": "$500-1,000/mo",
         },
         {
-            "name": "Business Process Automation",
-            "features": "Custom workflows, scheduling, invoicing, reporting",
-            "price": "$500-2,000 setup + $500-1,000/mo",
+            "name": "After-Hours Coverage",
+            "features": "Calls answered 24/7. Appointments booked. Emergencies routed to you.",
+            "price": "Included",
+        },
+        {
+            "name": "Review & Referral System",
+            "features": "Automatically request reviews after service. Build your reputation on autopilot.",
+            "price": "Included",
         },
     ])
 
@@ -124,12 +131,12 @@ def render_leave_behind(data: dict, styles: dict):
 
     # --- Case Study Box ---
     case_study = data.get("case_study", {
-        "title": "Naples HVAC Company — 45-Day Results",
+        "title": "What Our Clients Stop Worrying About",
         "metrics": [
-            {"label": "AI Call Answer Rate", "value": "90%+"},
-            {"label": "Monthly Savings", "value": "$2,600"},
-            {"label": "After-Hours Coverage", "value": "100%"},
-            {"label": "Appointments Booked", "value": "15+"},
+            {"label": "Missed Calls Captured", "value": "100%"},
+            {"label": "Avg Follow-Up Time", "value": "< 60 sec"},
+            {"label": "Leads That Get a Reply", "value": "Every One"},
+            {"label": "Your Extra Work", "value": "Zero"},
         ],
     })
 
@@ -197,8 +204,8 @@ def render_leave_behind(data: dict, styles: dict):
         Paragraph(f'<b>Web:</b> {contact.get("website", "")}', contact_style),
         Spacer(1, 6),
         Paragraph(
-            '<i>"We find the gaps you didn\'t know you had — and build '
-            'better solutions than what you asked for."</i>',
+            '<i>"I connect the tools you already use into one system '
+            'that makes sure no lead gets left behind."</i>',
             ParagraphStyle(
                 "LBTagline", fontName=BrandConfig.BODY_FONT,
                 fontSize=9, leading=13, textColor=BrandConfig.GOLD,
