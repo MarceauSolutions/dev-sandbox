@@ -1,0 +1,1 @@
+The ai-systems tower provides core AI infrastructure, shared utilities, and model integrations for the modular multi-tower architecture. This tower serves as the foundation for AI capabilities used across other towers, including tooling for automation, monitoring, and intelligent orchestration.

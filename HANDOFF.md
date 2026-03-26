@@ -19,7 +19,7 @@
 ### What Was Built (for Clawdbot and Ralph awareness):
 
 **Infrastructure & Data:**
-- Demo line (239) 457-0662 fully operational — TwiML voicemail, text-back fires within 10s, William gets Telegram alert on every demo call
+- Demo line (855) 239-9364 — consolidated: AI voice receptionist + missed-call text-back. Old (239) 457-0662 retired.
 - Hunter.io + Snov.io enrichment waterfall replacing Apollo enrichment (Apollo enrichment broken — pivot to Hunter/Snov)
 - EC2 canonical `pipeline.db` with multi-tower schema — single source of truth for all deals, outreach, and intake
 - 8 new pipeline endpoints added to `agent_bridge_api` — Clawdbot can now query pipeline directly

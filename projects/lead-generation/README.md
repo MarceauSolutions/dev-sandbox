@@ -1,0 +1,1 @@
+The lead-generation tower handles lead scraping, SMS campaigns, and follow-up sequences for the modular multi-tower architecture. This tower focuses on acquiring and nurturing potential customers through automated outreach and engagement workflows.

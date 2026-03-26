@@ -1,0 +1,2591 @@
+{
+  "run_at": "2026-03-23T10:09:00.578257",
+  "reveal": false,
+  "attempted": 369,
+  "found": 229,
+  "details": [
+    {
+      "name": "Ron",
+      "company": "Dolphin Cooling & Heating Inc",
+      "apollo_id": "6287308c64170100015eb6e8",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "David",
+      "company": "Jones Air Conditioning",
+      "apollo_id": "5c3dbab9f65125b40ab0013a",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jake",
+      "company": "Naples Plumbing LLC",
+      "apollo_id": "5de93321d0eb6400013e8bf9",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Bill",
+      "company": "Bill Jones Repair and Reroofs",
+      "apollo_id": "5f65c86a94e058000131e76a",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Eduardo",
+      "company": "Tocci Roofing Contractors, LLC",
+      "apollo_id": "6683319c6d091c00018b4a9c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Brittany",
+      "company": "A-1 Affordable Plumbing Inc.",
+      "apollo_id": "5f7307843df1850001e98229",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Phil",
+      "company": "Collier Pest Control",
+      "apollo_id": "5fac1851d9831900019b718c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kenneth",
+      "company": "Local Repairs & Reroofs",
+      "apollo_id": "5cc19c26f651259b34eeb9c4",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Reece",
+      "company": "All About Air Conditioning Inc",
+      "apollo_id": "57e12538a6da987dbcec2fd0",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Douglas",
+      "company": "Vision Ace Hardware",
+      "apollo_id": "60706dda4f0ba2000199af03",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Rob",
+      "company": "Summer Oak Landscaping",
+      "apollo_id": "5f503fec1ca0760001c50395",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Cory",
+      "company": "Comfort Control Air Conditioning Specialist",
+      "apollo_id": "5ade233aa6da984d5a61af0f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Roofing",
+      "company": "Roofing Solutions Unlimited",
+      "apollo_id": "5fbb8517b439d20001637e7d",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Megan",
+      "company": "Full Circle Maintenance",
+      "apollo_id": "66f83a72a8551a0001404cbc",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jesus",
+      "company": "Eco Green Drone",
+      "apollo_id": "63dcf93fc4568d0001646253",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kay",
+      "company": "MICHAEL C SHAFFER DC PA",
+      "apollo_id": "54fb2b1d746869790f286c02",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Margaret",
+      "company": "Alternative Healing Health & Healing Center",
+      "apollo_id": "54a4deb674686934429bf769",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Cyndi",
+      "company": "Yag-Howard Cosmetic Dermatology",
+      "apollo_id": "6273c7f4abea230001ff0c6e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Edsel",
+      "company": "Collier Physical Therapy",
+      "apollo_id": "54a7a7c57468696829632949",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Wally",
+      "company": "Torrens Dental Care PA",
+      "apollo_id": "54c1a47474686916398c962e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Randy",
+      "company": "The Animalife Veterinary Center",
+      "apollo_id": "54ebf65f7468694311c59733",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jennifer",
+      "company": "Naples Abundant Health Chiropractic",
+      "apollo_id": "61665ad1e9e57c0001ee3d06",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Lazaro",
+      "company": "Pine Ridge Dental Wellness",
+      "apollo_id": "66f50cf79138d100014f0b14",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Paul",
+      "company": "PAUL D BAUMGARDNER DC PA",
+      "apollo_id": "54a38ae67468692abf92ef01",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Cliff",
+      "company": "FOOT AND ANKLE MANAGEMENT GROUP LLC",
+      "apollo_id": "6138324ce7f4440001ce9eed",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "George",
+      "company": "Moon Family Health Center",
+      "apollo_id": "616338355de6cb0001f2b0bc",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Caroline",
+      "company": "Cederquist Medical Wellness Center",
+      "apollo_id": "66f73fb2fc40750001df29a3",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "All",
+      "company": "All Saints Eye Center",
+      "apollo_id": "5e890363c2aa98000193467b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Sorina",
+      "company": "Sorina Dental",
+      "apollo_id": "5d4a4c40f6512520ddf19ee2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Drsonia",
+      "company": "Tower Dental Arts",
+      "apollo_id": "66f512a79138d10001511fbd",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jennifer",
+      "company": "Naples Family Chiropractic",
+      "apollo_id": "66ffe913cc3ad600015ef4d7",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Nancy",
+      "company": "Insight to Health & Wellness",
+      "apollo_id": "5aa98161a6da987d1e621205",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dan",
+      "company": "SIGNATURE DENTAL LAB",
+      "apollo_id": "57d4403da6da9853ee95495b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kim",
+      "company": "Gulfshore Animal Hospital",
+      "apollo_id": "54a4bc287468693b8c60325f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jackie",
+      "company": "Quail Communities Realty",
+      "apollo_id": "66f75ad5513dba0001fcefe0",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Bea",
+      "company": "5th Avenue Real Estate",
+      "apollo_id": "54a23b797468693318cbdd17",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Robyn",
+      "company": "Expo Painting and Contracting, LLC",
+      "apollo_id": "57d44800a6da9853e644a7f3",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Chae",
+      "company": "duPont Law, PA",
+      "apollo_id": "54a78d0f746869705a34ec3f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Betsy",
+      "company": "Olde Naples Real Estate Inc",
+      "apollo_id": "602cfa2935b8e10001acc499",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Bailey",
+      "company": "NOC Industries LLC",
+      "apollo_id": "5e62f6e327cdc9000149282a",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Michael",
+      "company": "LaPlaya Beach & Golf Resort",
+      "apollo_id": "5c58496380f93eb526561908",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dan",
+      "company": "Bar Beverage Control Systems",
+      "apollo_id": "54a18b927468697d82a25001",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ming",
+      "company": "Cafe Nutrients",
+      "apollo_id": "61f4c8c0e156bf000178eacc",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ciro",
+      "company": "Goldies Restaurant",
+      "apollo_id": "57d7220fa6da9805dd1c33be",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Tim",
+      "company": "AIR BAR BLOWOUTS & EXTENSIONS, LLC",
+      "apollo_id": "54a76e977468696de7dd0a34",
+      "email_found": "timj@myairbar.com",
+      "status": "verified"
+    },
+    {
+      "name": "Andy",
+      "company": "Hyde n Chic Restaurant",
+      "apollo_id": "57d5ffb4a6da986171afb563",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Wendell",
+      "company": "Eco-Quest Nature Tours",
+      "apollo_id": "54a4672c7468693442a1b544",
+      "email_found": "wendell@ecoquestnaturetours.com",
+      "status": "verified"
+    },
+    {
+      "name": "Robert",
+      "company": "Creative Catering Naples",
+      "apollo_id": "5b2711eba6da98c305d1d8f1",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Wynne",
+      "company": "Ridgway Bar And Grill",
+      "apollo_id": "54a7f5ad746869730a07e159",
+      "email_found": "wynne@ridgwaybarandgrill.com",
+      "status": "verified"
+    },
+    {
+      "name": "Thomas",
+      "company": "Port of the Islands Resort",
+      "apollo_id": "54a4da3f746869344249a968",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Deriggi",
+      "company": "Hudson Park Interior Design",
+      "apollo_id": "61a1b65736ca510001cb08fa",
+      "email_found": "la@hudsonparkdesign.com",
+      "status": "verified"
+    },
+    {
+      "name": "Marina",
+      "company": "Salon Sararo",
+      "apollo_id": "66fea529de79ad00011bf50c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Steffi",
+      "company": "Lotus Wellness Spa",
+      "apollo_id": "54ebafc0746869444c21230e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kiley",
+      "company": "Simple Beauty Studio",
+      "apollo_id": "66fc84570cbf900001610dc4",
+      "email_found": "kiley.burd@simplebeautystudio.com",
+      "status": "verified"
+    },
+    {
+      "name": "Robert",
+      "company": "Robert of Philadelphia Salons",
+      "apollo_id": "66f69ba844f6860001fd0f38",
+      "email_found": "robert@ropsalons.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jeannette",
+      "company": "Poetic Beauty Salon Suites",
+      "apollo_id": "635d2ae1da80510001f04546",
+      "email_found": "jeannette@poeticbeautyllc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Anne",
+      "company": "Olde Naples Animal Wellness Center",
+      "apollo_id": "66ffe9e6cc3ad600015f3318",
+      "email_found": "dranne@oldenaplesvet.com",
+      "status": "verified"
+    },
+    {
+      "name": "Saadia",
+      "company": "Blush Aesthetics Studio",
+      "apollo_id": "668b4de151d58200011f26dd",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Rose",
+      "company": "Permanent Cosmetic Specialists",
+      "apollo_id": "54a4ce1674686938ac5f1565",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jennifer",
+      "company": "Purely You Spa, Naples FL",
+      "apollo_id": "6059d85352d99800014790d9",
+      "email_found": "jenn@purelyyouspa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Priscilla",
+      "company": "Eskap Head Spa",
+      "apollo_id": "64805dcc18d96d0001fc9658",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Maybel",
+      "company": "Treviso Bay Spa",
+      "apollo_id": "673a408303cab50001864bf8",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Bridgett",
+      "company": "Spavia Day Spa - Naples",
+      "apollo_id": "66f6f1b6a3aaf100015e3e4a",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Mark",
+      "company": "Spavia Day Spa - Naples",
+      "apollo_id": "684a378d479bfe00015fab75",
+      "email_found": "mark@spavianaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Maria",
+      "company": "Always Blue Pool & Spa",
+      "apollo_id": "64f9c08d67a53e0001088860",
+      "email_found": "maria@bluepoolsnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "John",
+      "company": "Dyehouse Comeriato Architect",
+      "apollo_id": "54a482c57468693209a3374d",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Shierly",
+      "company": "Naples Organic Salon Spa",
+      "apollo_id": "557107467369644416200100",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Rhonda",
+      "company": "Euro Spa Of Naples",
+      "apollo_id": "54aa8e6174686906304b2e0b",
+      "email_found": "rhonda@eurospaofnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Oksana",
+      "company": "Praha Spa and Salt",
+      "apollo_id": "66f6f54ca3aaf100015f637f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jennifer",
+      "company": "Rejuvenate Medical Spa and Laser",
+      "apollo_id": "65cf95decef7740001ac75c6",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Frank",
+      "company": "ProFloors and Cabinets",
+      "apollo_id": "67b1c242efc6a40001c1d297",
+      "email_found": "f.eckenrode@profloors.biz",
+      "status": "verified"
+    },
+    {
+      "name": "Tina",
+      "company": "Before & After Salon & Spa",
+      "apollo_id": "66f6f4dca3aaf100015f4226",
+      "email_found": "tina.swflalady@beforenafter.us",
+      "status": "verified"
+    },
+    {
+      "name": "Sorrenti",
+      "company": "Andrea's  Organic Hair Studio and Health Spa",
+      "apollo_id": "54a43df07468693b8c489537",
+      "email_found": "sorrenti@naplesorganichairstudio.com",
+      "status": "extrapolated"
+    },
+    {
+      "name": "Paul",
+      "company": "Jackson Total Service",
+      "apollo_id": "66f8246beee1360001b983ad",
+      "email_found": "paul@jacksontotal.com",
+      "status": "verified"
+    },
+    {
+      "name": "Keith",
+      "company": "Crawford Landscaping",
+      "apollo_id": "54a7e1c27468696de79db755",
+      "email_found": "kmahan@yellowstonelandscape.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brandon",
+      "company": "Pro-Tec Plumbing and Air",
+      "apollo_id": "66f54c4f628c950001c2d9bc",
+      "email_found": "brandon@ptpflorida.com",
+      "status": "verified"
+    },
+    {
+      "name": "Chris",
+      "company": "Bears Plumbing",
+      "apollo_id": "5d59059680f93eb68ccf0696",
+      "email_found": "cstephens@bearsplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gerardo",
+      "company": "Crawford Landscaping",
+      "apollo_id": "5f584131ae242600018e7004",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dena",
+      "company": "Homepatible",
+      "apollo_id": "612bd37f57ecb20001840f09",
+      "email_found": "dena@homepatible.com",
+      "status": "verified"
+    },
+    {
+      "name": "Chris",
+      "company": "Black Flag Roofing",
+      "apollo_id": "6843bfde8205ce0001e90886",
+      "email_found": "chris@blackflagroofing.co",
+      "status": "verified"
+    },
+    {
+      "name": "Zachary",
+      "company": "CASTILLA ROOFING INC.",
+      "apollo_id": "60b16381128e3b00014795af",
+      "email_found": "zfarrell@castillaroofing.us",
+      "status": "verified"
+    },
+    {
+      "name": "Lisa",
+      "company": "Naples Plumbing Studio",
+      "apollo_id": "66f7db3ca8551a000124750c",
+      "email_found": "lisa@naplesplumbingstudio.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kimberley",
+      "company": "TE Reliable Home Services",
+      "apollo_id": "5af8daf5a3ae61522d9bc860",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Chris",
+      "company": "EJ Kovath & Associates, Inc. (est. 1984)",
+      "apollo_id": "6564ff8eeeb37200013606fd",
+      "email_found": "chris@kovath.com",
+      "status": "verified"
+    },
+    {
+      "name": "Steve",
+      "company": "Creative Tile & Hardwood Floors",
+      "apollo_id": "54a32e0e7468693a7ea6955a",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dusty",
+      "company": "Greenscapes of SWFL",
+      "apollo_id": "57de5186a6da987b4d980070",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Michael",
+      "company": "EnviroHOLD",
+      "apollo_id": "54a5003a7468692cf0bbc774",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jim",
+      "company": "Vital Command",
+      "apollo_id": "5b97b49b324d445ff8c55ce9",
+      "email_found": "jim@vitalcommand.com",
+      "status": "verified"
+    },
+    {
+      "name": "Rick",
+      "company": "Gemini Properties Group, Inc.",
+      "apollo_id": "61f92e642e06f30001c69088",
+      "email_found": "rick@geminipg.com",
+      "status": "verified"
+    },
+    {
+      "name": "Bryan",
+      "company": "GROVES SWIMMING POOL SERVICE, INC.",
+      "apollo_id": "63a609c058e70d000177274d",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Julie",
+      "company": "Romeo Air Conditioning",
+      "apollo_id": "66f816f3eee1360001b599ac",
+      "email_found": "julie@romeoair.com",
+      "status": "verified"
+    },
+    {
+      "name": "Bob",
+      "company": "Conroy Roofing",
+      "apollo_id": "616a4b0ac71cd5000146e469",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Rickie",
+      "company": "JOHNSON'S AIR CONDITIONING, INC.",
+      "apollo_id": "658d5c348b124500017b90be",
+      "email_found": "rickie@johnsonsairconditioning.com",
+      "status": "verified"
+    },
+    {
+      "name": "Holger",
+      "company": "Herbeau Kitchen, Bathroom and Powder Room Couture\u00ae",
+      "apollo_id": "54a5ff947468693b8ccd44ba",
+      "email_found": "holger@herbeau.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brandon",
+      "company": "Palm Brothers Remodeling",
+      "apollo_id": "57de4a5ba6da987af53c505f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jason",
+      "company": "Elegance In Plumbing",
+      "apollo_id": "5abe2b31a6da984048b44e79",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Brian",
+      "company": "Tru-Flo Plumbing",
+      "apollo_id": "62ddade2cd17fd0001ed53f8",
+      "email_found": "brian@trufloswfl.com",
+      "status": "verified"
+    },
+    {
+      "name": "Randy",
+      "company": "Acres & Son Plumbing Inc",
+      "apollo_id": "54a41c2774686938acb1732d",
+      "email_found": "randy@acresplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Diego",
+      "company": "STRIKING ELECTRIC LLC",
+      "apollo_id": "54a483ab7468692abf48504d",
+      "email_found": "diegoa@strikingelectric.com",
+      "status": "verified"
+    },
+    {
+      "name": "Anthony",
+      "company": "Your Home Mailers",
+      "apollo_id": "647a5555114bba00016f97ef",
+      "email_found": "tony@yhmagazine.com",
+      "status": "verified"
+    },
+    {
+      "name": "Daniel",
+      "company": "Monroy Electric",
+      "apollo_id": "628e20700bc4e60001d45d2d",
+      "email_found": "daniel@monroyec.com",
+      "status": "verified"
+    },
+    {
+      "name": "Donald",
+      "company": "National Electric Sales, LLC",
+      "apollo_id": "54a589ab7468693b8c67a69a",
+      "email_found": "don.cirillo@natelecsales.com",
+      "status": "verified"
+    },
+    {
+      "name": "Stephanie",
+      "company": "Stabilized Steps",
+      "apollo_id": "66fb0f47d1617900012dbbc8",
+      "email_found": "sgomez@stabilizedsteps.com",
+      "status": "verified"
+    },
+    {
+      "name": "Craig",
+      "company": "Craig Lindell & Associates LLC",
+      "apollo_id": "66f457d0577ba30001aa700c",
+      "email_found": "craig@craiglindell.com",
+      "status": "verified"
+    },
+    {
+      "name": "Lawrence",
+      "company": "PANIRA Healthcare Clinic",
+      "apollo_id": "5adfead8a6da984d0d6862cf",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Joseph",
+      "company": "Physician Practice Advisor, LLC",
+      "apollo_id": "611b89c52ea79e0001291644",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jared",
+      "company": "Holes & Company CPAs",
+      "apollo_id": "66fe7b305898520001d9a867",
+      "email_found": "jared@holescpas.com",
+      "status": "verified"
+    },
+    {
+      "name": "Bryan",
+      "company": "Naples Orthopedics",
+      "apollo_id": "645cd7b147a268000164f24c",
+      "email_found": "bwittdo@naplesorthopedics.com",
+      "status": "verified"
+    },
+    {
+      "name": "Karla",
+      "company": "Quality of Life Publishing Co.",
+      "apollo_id": "66f151fb79b638000155c3bc",
+      "email_found": "kwheeler@qolpublishing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jan",
+      "company": "For the Love of Cats",
+      "apollo_id": "54a4a7f87468692abfa99758",
+      "email_found": "jan@fortheloveofcatsfl.com",
+      "status": "verified"
+    },
+    {
+      "name": "Paul",
+      "company": "NAPLES FAMILY DENTISTRY INC",
+      "apollo_id": "66f50a1e9138d100014deac5",
+      "email_found": "smile@naplesfamilydentist.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jeffrey",
+      "company": "ER QuickCare",
+      "apollo_id": "54a330d974686935be421a5b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Michael",
+      "company": "Collier Podiatry, P.A. Dr. Michael Petrocelli",
+      "apollo_id": "55708f0f73696426d7871e00",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Raul",
+      "company": "RIA INSURANCE GROUP",
+      "apollo_id": "60c210102373680001bf809e",
+      "email_found": "raul@riainsurancegroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Tami",
+      "company": "Help A Diabetic Child (HADC)",
+      "apollo_id": "55df3d53f3e5bb1f2b0044ed",
+      "email_found": "tami@helpadiabeticchild.org",
+      "status": "verified"
+    },
+    {
+      "name": "Eric",
+      "company": "Cottrell Title",
+      "apollo_id": "66fb3106518a660001e79b35",
+      "email_found": "eric@fltitlegroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Timothy",
+      "company": "PBS Contractors",
+      "apollo_id": "66f4bf6534175d0001295b41",
+      "email_found": "tdupre@pbscontractors.com",
+      "status": "verified"
+    },
+    {
+      "name": "Stephen",
+      "company": "CredEvolv",
+      "apollo_id": "66f17a781084890001552c93",
+      "email_found": "steve@credevolv.com",
+      "status": "verified"
+    },
+    {
+      "name": "Laura",
+      "company": "Matrix Design & Property Management",
+      "apollo_id": "54a63ae27468693676e04ecc",
+      "email_found": "lrosa@matrixhomedesign.com",
+      "status": "verified"
+    },
+    {
+      "name": "Tara",
+      "company": "Elite Auctions",
+      "apollo_id": "6104051091696d0001d6ffaa",
+      "email_found": "tara@eliteauctions.com",
+      "status": "verified"
+    },
+    {
+      "name": "Robyn",
+      "company": "B-Squared Advertising",
+      "apollo_id": "607430da0a279800019f2ffd",
+      "email_found": "robyn@b2ads.com",
+      "status": "verified"
+    },
+    {
+      "name": "Bart",
+      "company": "PBS Contractors",
+      "apollo_id": "54a7bfa274686968293f754f",
+      "email_found": "ap@pbscontractors.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kathleen",
+      "company": "Bonness Inc",
+      "apollo_id": "66fc535567c55b000142405f",
+      "email_found": "kbailie@bonnessinc.com",
+      "status": "verified"
+    },
+    {
+      "name": "David",
+      "company": "Keys Claims Consultants, LLC",
+      "apollo_id": "54aaa1ba74686903779b6f0f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ken",
+      "company": "Pro America Insurance Agency, Inc",
+      "apollo_id": "66f6dbf8ec0c8e000140a88c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Peggy",
+      "company": "Wilson Creative Group, Inc.",
+      "apollo_id": "608f99cd3707eb0001d96773",
+      "email_found": "peggy@wcgpros.com",
+      "status": "verified"
+    },
+    {
+      "name": "Lauren",
+      "company": "Maxwell Mortgage Team",
+      "apollo_id": "66f55840a66a15000184ee01",
+      "email_found": "lauren@maxwellmortgageloans.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jane",
+      "company": "The TEAM Group, LLC",
+      "apollo_id": "610d2de6f95fc70001365352",
+      "email_found": "jane@theteamgroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Andrew",
+      "company": "ISCHEBECK USA, INC.",
+      "apollo_id": "66faf00874e3af000106c2a1",
+      "email_found": "andrew.bombassaro@ischebeckusa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Joseph",
+      "company": "Gulf Coast Commercial Corp.",
+      "apollo_id": "6909bab61a4135000188c316",
+      "email_found": "josephm@gulfcoastcommercial.com",
+      "status": "verified"
+    },
+    {
+      "name": "Howard",
+      "company": "Mr. Grab Bar, Inc.",
+      "apollo_id": "60f9544bb270aa00010cdb95",
+      "email_found": "howard@mrgrabbar.com",
+      "status": "verified"
+    },
+    {
+      "name": "Phil",
+      "company": "Uptown Network",
+      "apollo_id": "66f898dd1cc13a0001eeb4b7",
+      "email_found": "phil@uptownnetwork.com",
+      "status": "verified"
+    },
+    {
+      "name": "Joey",
+      "company": "Five Star Valet, Naples FL",
+      "apollo_id": "66f768169e9ea00001b5a8f6",
+      "email_found": "joey@5starnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Chad",
+      "company": "Kava Luv Social Lounge",
+      "apollo_id": "640f4a27dfff92000159ba39",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jen",
+      "company": "Jen Mitchell Travel, LLC",
+      "apollo_id": "57e1d4b9a6da9808de0eb2aa",
+      "email_found": "jen@jenmitchelltravel.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jon",
+      "company": "Connor+Gaskins Homes",
+      "apollo_id": "5ab7739aa6da98b0368a0300",
+      "email_found": "jon@cgunlimited.com",
+      "status": "verified"
+    },
+    {
+      "name": "Peter",
+      "company": "Earth Supplied Products",
+      "apollo_id": "66fb6b8259b0010001ded91e",
+      "email_found": "pboncelet@espllc.us",
+      "status": "verified"
+    },
+    {
+      "name": "Justin",
+      "company": "Ford's LLC",
+      "apollo_id": "66fa4f25b8b4ca0001589dce",
+      "email_found": "justinf@fords-experience.com",
+      "status": "verified"
+    },
+    {
+      "name": "Greg",
+      "company": "KGT Builders",
+      "apollo_id": "66fec020bc19de0001ca912a",
+      "email_found": "greg@kgtremodeling.com",
+      "status": "verified"
+    },
+    {
+      "name": "Marybeth",
+      "company": "Truox Aquatics",
+      "apollo_id": "5f59aba84275ff0001ac06bd",
+      "email_found": "marybeth@truox.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kim",
+      "company": "Bay Colony Community Association",
+      "apollo_id": "66f764b49e9ea00001b4b783",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Theresa",
+      "company": "KGT Builders",
+      "apollo_id": "54a3b48274686938ac80670c",
+      "email_found": "theresa@kgtbuilders.com",
+      "status": "verified"
+    },
+    {
+      "name": "Felicia",
+      "company": "Suncoast Custom Pools",
+      "apollo_id": "626c913b36028a0001fef800",
+      "email_found": "felicia@sccpools.com",
+      "status": "verified"
+    },
+    {
+      "name": "Ryan",
+      "company": "Truox Aquatics",
+      "apollo_id": "6087e5eac6279a0001cdaa3d",
+      "email_found": "ryan@truox.com",
+      "status": "verified"
+    },
+    {
+      "name": "Paul",
+      "company": "Invis-a-Beam LLC",
+      "apollo_id": "66fdcc1267154b000138e90c",
+      "email_found": "p.weiner@invis-a-beam.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gary",
+      "company": "SunConnect USA",
+      "apollo_id": "5d931aa980f93e708514329f",
+      "email_found": "gkassem@sunconnectusa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jeff",
+      "company": "Puddle Pool Services - Paradise Coast",
+      "apollo_id": "66fa35d116af62000119d215",
+      "email_found": "jberger@puddlepools.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mai",
+      "company": "Park Family & Cosmetic Dentistry",
+      "apollo_id": "66f50f2b9138d100014fd477",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Marcelo",
+      "company": "Dental Crown In An Hour",
+      "apollo_id": "54ebad8a746869431144400c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Richard",
+      "company": "Doctor Hospital Data, LLC",
+      "apollo_id": "611599452fa54d00016bfbfe",
+      "email_found": "richard@doctorhospitaldata.com",
+      "status": "verified"
+    },
+    {
+      "name": "Marilyn",
+      "company": "GoodCheckup",
+      "apollo_id": "66f4419047af530001ba432c",
+      "email_found": "drsandor@goodcheckup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jacey",
+      "company": "J. Lee Salon Suites",
+      "apollo_id": "66f96d3b611997000154117d",
+      "email_found": "jacey@jleesalonsuites.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sandraliz",
+      "company": "Solano Lifestyle Medicine, LLC",
+      "apollo_id": "6700607a5b13700001204dcb",
+      "email_found": "ssolano@solanolifestylemedicine.com",
+      "status": "verified"
+    },
+    {
+      "name": "Matthew",
+      "company": "Epic Filmworks",
+      "apollo_id": "66f9a3758d59570001a51ef2",
+      "email_found": "matt@epicfilmworks.com",
+      "status": "verified"
+    },
+    {
+      "name": "Dennis",
+      "company": "Soluria\u00ae",
+      "apollo_id": "692d5a2117ee260001afef63",
+      "email_found": "dennis@soluria.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gretchen",
+      "company": "Quality of Life Publishing Co.",
+      "apollo_id": "66f77f74dad8b900012de555",
+      "email_found": "glandolt@qolpublishing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kelly",
+      "company": "Junction of Function",
+      "apollo_id": "54aba0057468692a6b257201",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dawn",
+      "company": "The Family Birth Center of Naples",
+      "apollo_id": "54a7962f746869705a5b4a43",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Andrew",
+      "company": "Onda Housing Group",
+      "apollo_id": "66f18441c4f4710001b23d3b",
+      "email_found": "acribbs@ondagrp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Paul",
+      "company": "QORVAL PARTNERS, LLC",
+      "apollo_id": "66faf84902cfe100014e0288",
+      "email_found": "paulf@qorval.com",
+      "status": "verified"
+    },
+    {
+      "name": "Christine",
+      "company": "Luxure Lifestyle",
+      "apollo_id": "66f3e264e6010500018edc4b",
+      "email_found": "christine@luxurelifestyle.com",
+      "status": "verified"
+    },
+    {
+      "name": "Joe",
+      "company": "Joe The Home Pro",
+      "apollo_id": "66f64a8e1023d3000165c259",
+      "email_found": "joe@joethehomepro.com",
+      "status": "verified"
+    },
+    {
+      "name": "Wayne",
+      "company": "The Falbey Group, LLC",
+      "apollo_id": "54a40cab7468693442547c28",
+      "email_found": "wayne@falbeygroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Andre",
+      "company": "Xchange.Loans",
+      "apollo_id": "66f41561e3be2600016887b6",
+      "email_found": "dre@xchange.loans",
+      "status": "verified"
+    },
+    {
+      "name": "Tom",
+      "company": "Lund Capital Group",
+      "apollo_id": "5f5bb23fe2860e000145420d",
+      "email_found": "tom@lundcapital.com",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "Patten Properties",
+      "apollo_id": "66431d40c77ff600019fe91b",
+      "email_found": "mpatten@pattenco.com",
+      "status": "verified"
+    },
+    {
+      "name": "Lisa",
+      "company": "Habitat for Humanity of Collier County",
+      "apollo_id": "66fb4047c0231d00010dd220",
+      "email_found": "llefkow@habitatcollier.org",
+      "status": "verified"
+    },
+    {
+      "name": "Duane",
+      "company": "Sigma\u00b7IQ",
+      "apollo_id": "610230409a8a0d0001dec67c",
+      "email_found": "dmassie@sigmaiq.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jesse",
+      "company": "LongView Wealth Group",
+      "apollo_id": "66ffb5b16e752a0001cfc583",
+      "email_found": "jesse@longviewwealthgroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Carlos",
+      "company": "VERSAGYM\u2122",
+      "apollo_id": "66ff4f2e60729700015e0a3b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Shelley",
+      "company": "Senior Advocacy Group",
+      "apollo_id": "66ff03262dac9b0001b18f23",
+      "email_found": "sperry@senioragroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jon",
+      "company": "The Feins Group",
+      "apollo_id": "66f9798b611997000158b594",
+      "email_found": "jon.feins@compass.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mike",
+      "company": "Naples Area Board of REALTORS\u00ae",
+      "apollo_id": "66f96dc9611997000154459d",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Carl",
+      "company": "Pivotal Analytics",
+      "apollo_id": "66f3c9ff61327700017448ff",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Robert",
+      "company": "Homes and Land Brokers, Inc",
+      "apollo_id": "66f99cf661199700016601ce",
+      "email_found": "rob@hlbrokers.com",
+      "status": "verified"
+    },
+    {
+      "name": "Erica",
+      "company": "Nagel Media Inc.",
+      "apollo_id": "66efb3834a088e0001317732",
+      "email_found": "erica@nagelmediagroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Nadine",
+      "company": "Uptown Network",
+      "apollo_id": "66f9b8d0d1c6fd0001702272",
+      "email_found": "nadine@uptownnetwork.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kirk",
+      "company": "Profit Cookers\u2120",
+      "apollo_id": "66fab49201d297000171cb3d",
+      "email_found": "kirk@virtualprofitcooker.com",
+      "status": "verified"
+    },
+    {
+      "name": "Stephen",
+      "company": "The National Golf Course Restaurant Association- The NGCRA",
+      "apollo_id": "60351626d3098c00012cd991",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Colin",
+      "company": "Toole Companies",
+      "apollo_id": "66fc280c93950f0001951e57",
+      "email_found": "ctoole@toolecompanies.com",
+      "status": "verified"
+    },
+    {
+      "name": "Paola",
+      "company": "Geoponics Corp",
+      "apollo_id": "5efc9172fcdc5b008c4d54a5",
+      "email_found": "pwicker@geoponicscorp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "Clark Empire",
+      "apollo_id": "687f287deb4425000155958b",
+      "email_found": "mike@clarkempire.com",
+      "status": "verified"
+    },
+    {
+      "name": "Drvishva",
+      "company": "Muscle and Joint Chiropractic, PLLC",
+      "apollo_id": "56546d04a6da984b080075ac",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Peter",
+      "company": "BIG CYPRESS COUNSELING, LLC",
+      "apollo_id": "64cce8c3f4cb7700016cd3a4",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ramon",
+      "company": "My Dental Designs Naples & Fort Myers",
+      "apollo_id": "66f5098a9138d100014db845",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Justin",
+      "company": "J. Lee Salon Suites",
+      "apollo_id": "66fdfc0c5e0d170001ea1517",
+      "email_found": "justin@jleesalonsuites.com",
+      "status": "verified"
+    },
+    {
+      "name": "Rick",
+      "company": "Age Management Medicine Group (AMMG)",
+      "apollo_id": "66f570cec402e40001139b50",
+      "email_found": "rmerner@agemed.org",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "HealthMe\u00ae",
+      "apollo_id": "66fab518cd9f3b0001597fa5",
+      "email_found": "mhavig@healthmedocs.com",
+      "status": "verified"
+    },
+    {
+      "name": "Irene",
+      "company": "LEAP Project Glammers\u00ae\ufe0f Academy",
+      "apollo_id": "54a761b174686965d92e722f",
+      "email_found": "irene@projectglammersleap.com",
+      "status": "verified"
+    },
+    {
+      "name": "Todd",
+      "company": "Adventures in Medicine",
+      "apollo_id": "54a53bb974686934420e9087",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Steve",
+      "company": "TerraCap Management, LLC",
+      "apollo_id": "6973dcc323e9840001b8a503",
+      "email_found": "steve@terracapmgmt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Randy",
+      "company": "Elite Auctions",
+      "apollo_id": "6104050e7bf115000185a473",
+      "email_found": "randy@eliteauctions.com",
+      "status": "verified"
+    },
+    {
+      "name": "Heather",
+      "company": "Alliance Global Advisors",
+      "apollo_id": "66f2b5a36892900001d6a620",
+      "email_found": "hfernstrom@alliance-globaladvisors.com",
+      "status": "verified"
+    },
+    {
+      "name": "John",
+      "company": "Allari",
+      "apollo_id": "66f40538d5fd210001487e2b",
+      "email_found": "john@allari.com",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "Woods, Weidenmiller, Michetti& Rudnick,LLP",
+      "apollo_id": "54a2e68b74686933187c0245",
+      "email_found": "mmichetti@lawfirmnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sean",
+      "company": "The Law Offices of Sean P. Murphy & Associates",
+      "apollo_id": "66f5902bf0ce2e0001db3929",
+      "email_found": "sean@spmurphypllc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Matthew",
+      "company": "Pikus Properties",
+      "apollo_id": "54a2aeca7468693cdd684a35",
+      "email_found": "matt@pikusproperties.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brian",
+      "company": "Waltbillig & Hood | General Contractors, LLC",
+      "apollo_id": "67b98f8e1f71870001bd6eba",
+      "email_found": "brianh@wh-gc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Karen",
+      "company": "Broad Avenue Studios",
+      "apollo_id": "648f75870539dc000108761e",
+      "email_found": "karen@broadavestudios.com",
+      "status": "verified"
+    },
+    {
+      "name": "Rodney",
+      "company": "Luxe Travel Consultants",
+      "apollo_id": "54a626f27468693b8c76cfc6",
+      "email_found": "rodney@luxetravelconsultants.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jeff",
+      "company": "Omega3.llc",
+      "apollo_id": "667f1ea69c20600001c436a5",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Edward",
+      "company": "Uptown Network",
+      "apollo_id": "66f6a5f004ad110001f2a032",
+      "email_found": "ed@uptownnetwork.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kristina",
+      "company": "STEAM Caf\u00e9  & Florida Higher Education Coalition",
+      "apollo_id": "5dc64bfb4756bd000122dba7",
+      "email_found": "kristina@steamcafenaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Nelson",
+      "company": "NuSight Consultants",
+      "apollo_id": "6656f8fecbc314000160b8a0",
+      "email_found": "nrengifo@nusightconsultants.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kelly",
+      "company": "Visit Naples",
+      "apollo_id": "66f76e209e9ea00001b75b0c",
+      "email_found": "kelly@visitnaplesfl.com",
+      "status": "verified"
+    },
+    {
+      "name": "Victory",
+      "company": "Aquarius Group Water Intelligence",
+      "apollo_id": "66ff4c4f60729700015d1ce2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Trisha",
+      "company": "Eyelashes Unlimited",
+      "apollo_id": "6107d0c32f092f000160ee56",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dana",
+      "company": "D-Lux Medspa",
+      "apollo_id": "54a745d67468696829032125",
+      "email_found": "dana@dluxmedspa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Colby",
+      "company": "Jeff Wilson Pool Service, Inc",
+      "apollo_id": "66fe5f1dd2d9d70001f10081",
+      "email_found": "colby@jwpsinc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Maria",
+      "company": "Greenscapes of SWFL",
+      "apollo_id": "631b207ea8056e000190b76f",
+      "email_found": "mbartolomeo@greenscapesfl.com",
+      "status": "verified"
+    },
+    {
+      "name": "Becca",
+      "company": "Classic Diamond Plumbing",
+      "apollo_id": "6647314b0451300001d92565",
+      "email_found": "becca@classicdiamondplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sonia",
+      "company": "FLORIDA POOL SERVICE, INC.",
+      "apollo_id": "6535b3550df8d900019fdb52",
+      "email_found": "sonia@floridapoolservice.net",
+      "status": "verified"
+    },
+    {
+      "name": "Leah",
+      "company": "Beacon Outdoor Lighting",
+      "apollo_id": "62b875192304750001303779",
+      "email_found": "leahb@beaconoutdoorlighting.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jean-Jean",
+      "company": "Naples Fertilizer & Garden Centers",
+      "apollo_id": "54abf804746869332d8d3919",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "John",
+      "company": "Naples Fertilizer & Garden Centers",
+      "apollo_id": "54ec0b03746869431131ed43",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Tayler",
+      "company": "SERVPRO of East Naples",
+      "apollo_id": "608997d7590a890001ea0b19",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Gloria",
+      "company": "Geoponics Corp",
+      "apollo_id": "60b8a365781d0d0001853e70",
+      "email_found": "gloria@geoponicscorp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Scott",
+      "company": "TPC Treviso Bay",
+      "apollo_id": "651675fdb3750800011c3ef6",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kelly",
+      "company": "Richlin International",
+      "apollo_id": "5d482e4980f93e10fd696467",
+      "email_found": "kelly@richlininternational.com",
+      "status": "verified"
+    },
+    {
+      "name": "Coleen",
+      "company": "HOME CHECK SYSTEMS",
+      "apollo_id": "671fe65202e3450001d3219c",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jason",
+      "company": "GGB Industries Inc",
+      "apollo_id": "652beef5b52b53000156f92e",
+      "email_found": "jason@ggb.com",
+      "status": "verified"
+    },
+    {
+      "name": "Christle",
+      "company": "Collins Physical Therapy Institute",
+      "apollo_id": "673012c80d55d00001a96a8f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Brittany",
+      "company": "Bayview Dental Arts",
+      "apollo_id": "634ff9a1f4dcf80001d8b01b",
+      "email_found": "brittany@bayviewdentalarts.com",
+      "status": "verified"
+    },
+    {
+      "name": "Angela",
+      "company": "Bayview Dental Arts",
+      "apollo_id": "6035be180fcc370001c7d63b",
+      "email_found": "angela@bayviewdentalarts.com",
+      "status": "verified"
+    },
+    {
+      "name": "Christie",
+      "company": "Naples Dental Center",
+      "apollo_id": "54ec1cb2746869444c740b52",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jackie",
+      "company": "Collins Physical Therapy Institute",
+      "apollo_id": "68695d7ff1cbed0001aa49d6",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Paulina",
+      "company": "Gateway of Naples Dental",
+      "apollo_id": "54eba8127468694311fb9a07",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Pat",
+      "company": "Jaffe Sports Medicine",
+      "apollo_id": "54a50db27468693209408d78",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Zayda",
+      "company": "My Dental Designs Naples & Fort Myers",
+      "apollo_id": "645beddb57703a0001c46821",
+      "email_found": "zayda@topdentaldesigns.com",
+      "status": "verified"
+    },
+    {
+      "name": "Tammy",
+      "company": "GRIFFITH COSMETIC & FAMILY DENTAL CARE",
+      "apollo_id": "6257d42ae3a6d100015f8ae0",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Patrick",
+      "company": "NCH Heart Institute",
+      "apollo_id": "5d387d53a3ae616985cf3053",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Alison",
+      "company": "All Saints Eye Center",
+      "apollo_id": "54a53f86746869344211c788",
+      "email_found": "alison.burberry@allsaintseyecenter.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kelly",
+      "company": "Gulfshore Animal Hospital",
+      "apollo_id": "5ac35550a6da981507a44f67",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Christy",
+      "company": "Premier Inpatient Partners, LLC",
+      "apollo_id": "68484380dac14000018b84d7",
+      "email_found": "cdeleon@premierhosp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jennifer",
+      "company": "Naples Women's Center",
+      "apollo_id": "61644d208625e80001135637",
+      "email_found": "jenniferlindsey@napleswomenscenter.com",
+      "status": "extrapolated"
+    },
+    {
+      "name": "Lisa",
+      "company": "AKTIVE MOTION PHYSICAL THERAPY INC",
+      "apollo_id": "6315c06015a7ef00012458e4",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Lori",
+      "company": "NAPLES HEART RHYTHM SPECIALISTS, PA",
+      "apollo_id": "57d94a5ea6da98725ad9dbaf",
+      "email_found": "lcapalbo@naplesheartrhythm.com",
+      "status": "verified"
+    },
+    {
+      "name": "Dellene",
+      "company": "Aesthetic Plastic Surgery & Med Spa of Naples / Kent V. Hasen, M.D.",
+      "apollo_id": "54c1ccb27468697af745cc49",
+      "email_found": "dellene@drhasen.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brittany",
+      "company": "GARDNER PLASTIC SURGERY INC",
+      "apollo_id": "54aa700a74686923667b7b05",
+      "email_found": "brittany@gardnerplasticsurgery.com",
+      "status": "verified"
+    },
+    {
+      "name": "Tiffany",
+      "company": "MARY ELLEN FRAZIER, PSY.D. P.A.",
+      "apollo_id": "6910f81a9fd26c0001752b41",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Melinda",
+      "company": "ER QuickCare",
+      "apollo_id": "54a4ed3c7468692abf54736e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Sandra",
+      "company": "Galleria Dentistry",
+      "apollo_id": "54c22da87468697af7292582",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "The",
+      "company": "Galleria Dentistry",
+      "apollo_id": "60ca966169f62b00018e5847",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Lisa",
+      "company": "Big Cypress Animal Clinic",
+      "apollo_id": "63c4bee9c51f910001ac7254",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dana",
+      "company": "JEFFREY A ALPER MD PA",
+      "apollo_id": "68c48a0809921a0001fcb892",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Josiah",
+      "company": "Countryside Golf & Country Club",
+      "apollo_id": "66475e626734a900016598f2",
+      "email_found": "jsmith@csgcc.net",
+      "status": "verified"
+    },
+    {
+      "name": "Andrea",
+      "company": "Cottrell Title",
+      "apollo_id": "607dc3a818f30c00018918b4",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Teresa",
+      "company": "Florida 360 Property Management",
+      "apollo_id": "5e8b37e6fd237000017b8e33",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Suzanne",
+      "company": "Southwest Property Management",
+      "apollo_id": "66fecf68498b1f000188c2d3",
+      "email_found": "sperez@swpropmgt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Lilly",
+      "company": "RE/MAX Blue Skies",
+      "apollo_id": "66ffdb0a3809d40001affd97",
+      "email_found": "lilly.santavicca@remax.net",
+      "status": "verified"
+    },
+    {
+      "name": "Marleny",
+      "company": "Seacrest Southwest",
+      "apollo_id": "680b86a37a6dfb00011d011c",
+      "email_found": "mramirez@swpropmgt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Glenn",
+      "company": "Seacrest Southwest",
+      "apollo_id": "54c25a1e746869163983b28f",
+      "email_found": "wcmanager@swpropmgt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Dee",
+      "company": "Habitat for Humanity of Collier County",
+      "apollo_id": "587e845ef651251d27858665",
+      "email_found": "dproehl@habitatcollier.org",
+      "status": "verified"
+    },
+    {
+      "name": "Matthew",
+      "company": "The Perry Hotel Naples",
+      "apollo_id": "603c0b8a434aac00011d627e",
+      "email_found": "mstrunk@perryhotelnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jessica",
+      "company": "Campagna Hospitality Group",
+      "apollo_id": "54a29e2f7468693fda629130",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Daniel",
+      "company": "Campagna Hospitality Group",
+      "apollo_id": "66f7da48eee1360001a2d13e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Maria",
+      "company": "Inn on Fifth",
+      "apollo_id": "54a3920774686936764c1903",
+      "email_found": "mhamilton@innonfifth.com",
+      "status": "verified"
+    },
+    {
+      "name": "Randy",
+      "company": "GreenLinks Golf Villas at Lely Resort",
+      "apollo_id": "66ec4696d107950001bbe266",
+      "email_found": "randy@greenlinksnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mia",
+      "company": "Inn on Fifth",
+      "apollo_id": "57dd3456a6da987ae4906c2b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Paul",
+      "company": "Inn on Fifth",
+      "apollo_id": "57d446aaa6da985396800dd9",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ken",
+      "company": "Stevie Tomato's Sports Page",
+      "apollo_id": "57dff79fa6da980b4a0c4544",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Brett",
+      "company": "Food and Thought 2",
+      "apollo_id": "5c330f0080f93e8cf304374d",
+      "email_found": "brett.rainwater@foodandthought2.com",
+      "status": "verified"
+    },
+    {
+      "name": "Scott",
+      "company": "The Club at Kalea Bay",
+      "apollo_id": "55c9c5a9f3e5bb4f2800670f",
+      "email_found": "scott.haegele@kaleabayclub.com",
+      "status": "verified"
+    },
+    {
+      "name": "Maria",
+      "company": "The Quarry Beach Club",
+      "apollo_id": "6690eeaf6a6e2100013c41d2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kathryn",
+      "company": "Tibur\u00f3n Golf Club",
+      "apollo_id": "5d64034680f93edf6a577eae",
+      "email_found": "kzalewski@troon.com",
+      "status": "verified"
+    },
+    {
+      "name": "Robert",
+      "company": "Above Property Services (APS)",
+      "apollo_id": "5ec250a35a2a72008c04479c",
+      "email_found": "robert.smyth@aboveproperty.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gary",
+      "company": "Innovation Hotel",
+      "apollo_id": "54a3acb07468693b8cc1a409",
+      "email_found": "ghyre@innovationhotel.com",
+      "status": "verified"
+    },
+    {
+      "name": "Joshua",
+      "company": "Crave Culinaire by Chef Brian Roland",
+      "apollo_id": "5e7c1fec8250ac00015e03cc",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kari",
+      "company": "Park Shore Resort",
+      "apollo_id": "6239735ed5cd8f00010cd7b2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Juilet",
+      "company": "Innovation Hotel",
+      "apollo_id": "61ebc5912372fd000113a35f",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Alan",
+      "company": "Quail Village Golf Club",
+      "apollo_id": "5fdbd3a573a15c000140edfb",
+      "email_found": "jlane@quailvillagegolfclub.org",
+      "status": "verified"
+    },
+    {
+      "name": "Jim",
+      "company": "Naples Tomato Franchising, LLC",
+      "apollo_id": "54a43d8f7468692cf0739d37",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Dennis",
+      "company": "Off The Hook Comedy Club",
+      "apollo_id": "5ed0800a056dfa00010f99c4",
+      "email_found": "dennis@offthehookcomedy.com",
+      "status": "verified"
+    },
+    {
+      "name": "Benjamin",
+      "company": "Naples Transportation & Tours",
+      "apollo_id": "54a45a487468693209f2fa40",
+      "email_found": "bbrown@nttep.com",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "The Club at the Dunes",
+      "apollo_id": "57dd8586a6da987aec211e3f",
+      "email_found": "michael.broughton@troon.com",
+      "status": "verified"
+    },
+    {
+      "name": "Daniel",
+      "company": "Bar Tulia",
+      "apollo_id": "61384e9169403c0001220e20",
+      "email_found": "daniel@bartulia.com",
+      "status": "verified"
+    },
+    {
+      "name": "Dan",
+      "company": "Cafe Lurcat",
+      "apollo_id": "54a6e42774686965d9eba601",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Mia",
+      "company": "Off The Hook Comedy Club",
+      "apollo_id": "60eba572cd0e4c000184bf84",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Michelle",
+      "company": "Coleman Taylor Klaus Doup\u00e9 Diaz & Torrez P.A.",
+      "apollo_id": "66fe882dfcf9a8000144f8c2",
+      "email_found": "mschmitt@chtlegal.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sebastian",
+      "company": "TPC Treviso Bay",
+      "apollo_id": "6631e1f7e6021f0007a3a272",
+      "email_found": "sruggieri@tpctrevisobay.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brianna",
+      "company": "Bay Colony Community Association",
+      "apollo_id": "640f1562a010d00001d94f6d",
+      "email_found": "briannaw@bcca-inc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Ayerim",
+      "company": "The Players Club & Spa",
+      "apollo_id": "6316301426bf1a00010fc681",
+      "email_found": "ayerim.benitez@playersclubandspa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Alisha",
+      "company": "Pelican Isle Yacht Club",
+      "apollo_id": "66f66cf8e5c85800014b1cd1",
+      "email_found": "ali@piyc.net",
+      "status": "verified"
+    },
+    {
+      "name": "Juliana",
+      "company": "Alchemist Kava Bar & Social Lounge",
+      "apollo_id": "66a6aa089b87cc000116e1e5",
+      "email_found": "juliana.coppola@alchemistkava.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mackenzie",
+      "company": "Simple Beauty Studio",
+      "apollo_id": "5f4ebaccbf82630001feb901",
+      "email_found": "mackenzie.krantz@simplebeautystudio.com",
+      "status": "verified"
+    },
+    {
+      "name": "Amanda",
+      "company": "Vineyards Country Club in Naples Florida",
+      "apollo_id": "63d9032bea799100010aad8a",
+      "email_found": "asaunders@vineyardscountryclubnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kristell",
+      "company": "ADVANCED DERMATOLOGIC & COSMETIC INSTITUTE INC",
+      "apollo_id": "54a7125c746869730ae49012",
+      "email_found": "kristell@drprodanovich.com",
+      "status": "verified"
+    },
+    {
+      "name": "Daniel",
+      "company": "Club Pelican Bay",
+      "apollo_id": "5e7d1f2df210070001c492ca",
+      "email_found": "dgiroux@clubpelicanbay.com",
+      "status": "verified"
+    },
+    {
+      "name": "Ryan",
+      "company": "Club Pelican Bay",
+      "apollo_id": "66f9208eb0136a0001a067f9",
+      "email_found": "rshaw@clubpelicanbay.com",
+      "status": "verified"
+    },
+    {
+      "name": "Denise",
+      "company": "The Players Club & Spa",
+      "apollo_id": "66f765399e9ea00001b4db37",
+      "email_found": "dmurphy@playersclubandspa.com",
+      "status": "verified"
+    },
+    {
+      "name": "Teri",
+      "company": "The Players Club & Spa",
+      "apollo_id": "64ca63da4312630001dd4b57",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Luann",
+      "company": "Bay Colony Community Association",
+      "apollo_id": "6689f78f99f4860001368e0d",
+      "email_found": "luanng@bcca-inc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Lee",
+      "company": "Jeff Wilson Pool Service, Inc",
+      "apollo_id": "6576ba965bd9180001274615",
+      "email_found": "lee@jwpsinc.com",
+      "status": "verified"
+    },
+    {
+      "name": "Larry",
+      "company": "Bears Plumbing",
+      "apollo_id": "61c9aaee7a8c9f00013ed6f3",
+      "email_found": "bears1900@bearsplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gerald",
+      "company": "Design-Pro Roofing Systems",
+      "apollo_id": "57e0e1f5a6da987d94b1dd2e",
+      "email_found": "jrichards@prolinkrs.com",
+      "status": "verified"
+    },
+    {
+      "name": "Rebecca",
+      "company": "Automated Shading",
+      "apollo_id": "54a6f3bf7468696829826807",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "James",
+      "company": "Ocean Group Construction Inc",
+      "apollo_id": "68bbcf372f5c7200019c2b06",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Clara",
+      "company": "STRIKING ELECTRIC LLC",
+      "apollo_id": "6060d95200755f000182a197",
+      "email_found": "claraa@strikingelectric.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sara",
+      "company": "Premier Inpatient Partners, LLC",
+      "apollo_id": "5f5978d358b5890001467cbc",
+      "email_found": "smaus@premierhosp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Krystal",
+      "company": "Michael G. Lawler P.A.",
+      "apollo_id": "66fb41078aba0a00013d2f9d",
+      "email_found": "krystal@michaellawler.com",
+      "status": "verified"
+    },
+    {
+      "name": "Zahra",
+      "company": "ADG4",
+      "apollo_id": "66feba82a6bb820001c4fb12",
+      "email_found": "zahra.antaramian@adg4companies.com",
+      "status": "verified"
+    },
+    {
+      "name": "Philip",
+      "company": "Gulf Coast Commercial Corp.",
+      "apollo_id": "66f55c1fe86e4e00019c634d",
+      "email_found": "philipm@gulfcoastcommercial.com",
+      "status": "verified"
+    },
+    {
+      "name": "Marcello",
+      "company": "Campagna Hospitality Group",
+      "apollo_id": "67d9458eea89ca0001e0d783",
+      "email_found": "marcello@rusticfood.us",
+      "status": "verified"
+    },
+    {
+      "name": "Youssef",
+      "company": "LaPlaya Beach & Golf Resort",
+      "apollo_id": "66633cae7fae0800015febf7",
+      "email_found": "youalidi@laplayaresort.com",
+      "status": "verified"
+    },
+    {
+      "name": "Tommy",
+      "company": "Inn on Fifth",
+      "apollo_id": "620228c0e7480500018bd7b0",
+      "email_found": "ttarr@innonfifth.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jessica",
+      "company": "Tibur\u00f3n Golf Club",
+      "apollo_id": "68abe3419743240001a2b018",
+      "email_found": "jessica.dupree@troon.com",
+      "status": "verified"
+    },
+    {
+      "name": "Larry",
+      "company": "Two Guys Kitchen & Catering",
+      "apollo_id": "66474029557c98000148e350",
+      "email_found": "larry@tg-hg.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mike",
+      "company": "Connor+Gaskins",
+      "apollo_id": "5de424f08c7214000140b01b",
+      "email_found": "mike@cgunlimited.com",
+      "status": "verified"
+    },
+    {
+      "name": "Carlos",
+      "company": "Hamilton Harbor Yacht Club",
+      "apollo_id": "5aaced6ba6da98c373a1d6f2",
+      "email_found": "ctorres@hamiltonharboryachtclub.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kendall",
+      "company": "Pelican Isle Yacht Club",
+      "apollo_id": "6316a9f15c3fa900017283f2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Kristen",
+      "company": "GlobalWorks Events & Destination Management",
+      "apollo_id": "66f76def9cab90000118125e",
+      "email_found": "ktiffan@globalworksevents.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mark",
+      "company": "Thermal Wire and Cable, LLC",
+      "apollo_id": "54a796f07468696220ec2543",
+      "email_found": "markg@thermalwire.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kirsten",
+      "company": "Xavier Defense, LLC",
+      "apollo_id": "5e7c1099618733000127951c",
+      "email_found": "kjf@xavdef.com",
+      "status": "verified"
+    },
+    {
+      "name": "Santo",
+      "company": "Naples Fertilizer & Garden Centers",
+      "apollo_id": "57db2dd8a6da984ba801ab50",
+      "email_found": "stomaini@naples-fertilizer.com",
+      "status": "verified"
+    },
+    {
+      "name": "Nicole",
+      "company": "Bextera Health",
+      "apollo_id": "66ffa39c03b9b70001740471",
+      "email_found": "nslacik@bextera.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kelly",
+      "company": "LIFE Home Health",
+      "apollo_id": "6737e0d70822b500013aecd0",
+      "email_found": "kelly@lifehomehealth.com",
+      "status": "verified"
+    },
+    {
+      "name": "Jonathan",
+      "company": "Premier Inpatient Partners, LLC",
+      "apollo_id": "5ae727fea6da989d334c9186",
+      "email_found": "jmarsh@premierhosp.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gregory",
+      "company": "Apex Brain & Spine",
+      "apollo_id": "62d80f22cc66c000011b1ab0",
+      "email_found": "gjcannarsa@apexbrainandspine.com",
+      "status": "verified"
+    },
+    {
+      "name": "Graham",
+      "company": "Moore Property Management, LLC",
+      "apollo_id": "54c250b97468691639e29c8c",
+      "email_found": "gnorcombe@moorepm.com",
+      "status": "verified"
+    },
+    {
+      "name": "Paul",
+      "company": "EBL PARTNERS, LLC",
+      "apollo_id": "66facf0fe001d900013d24c0",
+      "email_found": "pbenson@eblpartners.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brittany",
+      "company": "Cowan Boyd, PLLC",
+      "apollo_id": "666c207fa76f4b000118c53e",
+      "email_found": "brittany@cowanboyd.com",
+      "status": "verified"
+    },
+    {
+      "name": "Gregory",
+      "company": "Woods, Weidenmiller, Michetti& Rudnick,LLP",
+      "apollo_id": "5dbc04f69a858500012dedf1",
+      "email_found": "gwoods@lawfirmnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Yani",
+      "company": "Access Title Agency FL",
+      "apollo_id": "5e8a9dbd97b22f00014e0959",
+      "email_found": "yani@accesstitlefl.com",
+      "status": "verified"
+    },
+    {
+      "name": "Karen",
+      "company": "Gray Parker Associates, LLC",
+      "apollo_id": "60b5e6fcd9eaf5000132e546",
+      "email_found": "karen@grayparkerassociates.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brian",
+      "company": "Goede, DeBoest & Cross, PLLC",
+      "apollo_id": "67c83fb31118a4000195afe4",
+      "email_found": "bcross@gadclaw.com",
+      "status": "verified"
+    },
+    {
+      "name": "Frank",
+      "company": "M Consulting Group",
+      "apollo_id": "66f78f0bdad8b90001313a02",
+      "email_found": "fmambuca@mconsultinggroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Kody",
+      "company": "Preferred Travel & Company",
+      "apollo_id": "66fe7265cf38fb00018b4bec",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "John",
+      "company": "Bayside Seafood Grill & Bar",
+      "apollo_id": "60f2746654935300010e4729",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ken",
+      "company": "Naples Pursuit",
+      "apollo_id": "6611c7a3e9bf700007dc77a2",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Noelle",
+      "company": "GlobalWorks Events & Destination Management",
+      "apollo_id": "54a1212e69702d88c4a26202",
+      "email_found": "nchristie@globalworksevents.com",
+      "status": "verified"
+    },
+    {
+      "name": "Katie",
+      "company": "GlobalWorks Events & Destination Management",
+      "apollo_id": "5ac5f0c1a6da989211c4c1d4",
+      "email_found": "kadams@globalworksevents.com",
+      "status": "verified"
+    },
+    {
+      "name": "Spenser",
+      "company": "Black Flag Roofing",
+      "apollo_id": "66f263d4c144370001d300e9",
+      "email_found": "spollard@blackflagroofing.co",
+      "status": "verified"
+    },
+    {
+      "name": "Justin",
+      "company": "Design-Pro Roofing Systems",
+      "apollo_id": "681e30d8a9b3f30001c2a723",
+      "email_found": "justin@designproroofing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Chris",
+      "company": "Criteria Of Naples",
+      "apollo_id": "61f8d85356e0770001406cee",
+      "email_found": "chris@criteriaofnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Michael",
+      "company": "Easy Flow USA",
+      "apollo_id": "60ff250b4a13bb000101893b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Damian",
+      "company": "Classic Diamond Plumbing",
+      "apollo_id": "6947b150d7f26c0001085a25",
+      "email_found": "damian@classicdiamondplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Scott",
+      "company": "Paul Stein Plumbing",
+      "apollo_id": "5ad306d4a6da988392c82026",
+      "email_found": "scott@paulsteinplumbing.com",
+      "status": "verified"
+    },
+    {
+      "name": "Henry",
+      "company": "JOINT REPLACEMENT INSTITUTE, LLC",
+      "apollo_id": "67b78e3ec465dc000133edb3",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Health",
+      "company": "Health Smart Services",
+      "apollo_id": "66ff9eee0891c30001bd0187",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jeffrey",
+      "company": "Renew Regenerative Medicine",
+      "apollo_id": "64f46aa6458f5700012e412d",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Michael",
+      "company": "HealthLynked",
+      "apollo_id": "66f703b56946060001268532",
+      "email_found": "mdent@healthlynked.com",
+      "status": "verified"
+    },
+    {
+      "name": "Ray",
+      "company": "The Leaders Rheum",
+      "apollo_id": "66f2e56e63b38c000111e96a",
+      "email_found": "ray@theleadersrheum.com",
+      "status": "verified"
+    },
+    {
+      "name": "Matthew",
+      "company": "Aqualane Clinical Research",
+      "apollo_id": "5c3f1677f65125102ab3b9eb",
+      "email_found": "matthew@aqualaneresearch.com",
+      "status": "verified"
+    },
+    {
+      "name": "Bobby",
+      "company": "Halstatt Real Estate Partners",
+      "apollo_id": "5d586efca3ae61f76207691c",
+      "email_found": "bsullivan@halstatt.com",
+      "status": "verified"
+    },
+    {
+      "name": "David",
+      "company": "The Roy Group Real Estate Services",
+      "apollo_id": "66fd6828817b6a00014f2d19",
+      "email_found": "droy@theroygroup.com",
+      "status": "verified"
+    },
+    {
+      "name": "Anthony",
+      "company": "KOVA Companies, LLC",
+      "apollo_id": "66f42fd9b518cd00013f84ee",
+      "email_found": "aemma@kovapartners.com",
+      "status": "verified"
+    },
+    {
+      "name": "Steven",
+      "company": "Halstatt Real Estate Partners",
+      "apollo_id": "54a212e774686930c2bc710a",
+      "email_found": "siannaccone@halstatt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Sara",
+      "company": "Halstatt Real Estate Partners",
+      "apollo_id": "66fdeedc5e0d170001e56436",
+      "email_found": "sboyd@halstatt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Peter",
+      "company": "Halstatt Real Estate Partners",
+      "apollo_id": "66f9a62060c52600011474c4",
+      "email_found": "pmichaels@halstatt.com",
+      "status": "verified"
+    },
+    {
+      "name": "Stefan",
+      "company": "PACT Real Estate Group",
+      "apollo_id": "54a3e4a074686932098fc51b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Marty",
+      "company": "Naples Area Board of REALTORS\u00ae",
+      "apollo_id": "68621baa837a1f00017d8b09",
+      "email_found": "marty@nabor.com",
+      "status": "verified"
+    },
+    {
+      "name": "Roger",
+      "company": "SK2",
+      "apollo_id": "67003a7e5de7840001d2e77a",
+      "email_found": "rsaad@sk2capital.com",
+      "status": "verified"
+    },
+    {
+      "name": "Francesco",
+      "company": "Adesso Business Group",
+      "apollo_id": "60ece7e0c80f5100018a72cc",
+      "email_found": "frankp@pecorarocompanies.com",
+      "status": "verified"
+    },
+    {
+      "name": "Dana",
+      "company": "Naples Florida Rentals",
+      "apollo_id": "66f9a784611997000169b30b",
+      "email_found": "dana@naplesfloridarentals.com",
+      "status": "verified"
+    },
+    {
+      "name": "William",
+      "company": "Good People Naples",
+      "apollo_id": "606623c5320ab6000193d939",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Jodi",
+      "company": "J. Shaw Enterprises",
+      "apollo_id": "54a21dda74686930c283e10d",
+      "email_found": "jodi@jshawenterprises.com",
+      "status": "verified"
+    },
+    {
+      "name": "Eric",
+      "company": "Growth Development Associates, Inc.",
+      "apollo_id": "5aec68fda6da98129464433b",
+      "email_found": "erichardson@growthdevelopment.com",
+      "status": "verified"
+    },
+    {
+      "name": "Aram",
+      "company": "PROJECT B.U.I.L.D.",
+      "apollo_id": "67179b417d1a4700014156dd",
+      "email_found": "aram@projectbuildswfl.org",
+      "status": "verified"
+    },
+    {
+      "name": "Kelly",
+      "company": "Tacos and Tequila Cantina",
+      "apollo_id": "66f6376908dcb700012a2b83",
+      "email_found": "kelly@tandtcantina.com",
+      "status": "verified"
+    },
+    {
+      "name": "Ricardo",
+      "company": "Creative Catering Naples",
+      "apollo_id": "6006fcc842462600017799be",
+      "email_found": "ricardo@creativecateringnaples.com",
+      "status": "verified"
+    },
+    {
+      "name": "Mike",
+      "company": "Paul Fleming Restaurants LLC",
+      "apollo_id": "5ab97a16a6da98b7b8a6088a",
+      "email_found": "michaelg@thelakeparkdiner.com",
+      "status": "verified"
+    },
+    {
+      "name": "Evan",
+      "company": "Naples Bay Water Shuttle",
+      "apollo_id": "60e3174e4948c900018bd5d5",
+      "email_found": "evan@naplesbaywatershuttle.com",
+      "status": "verified"
+    },
+    {
+      "name": "Randy",
+      "company": "Naples Transportation & Tours",
+      "apollo_id": "66f77be826ca4800012944ab",
+      "email_found": "randy@nttep.com",
+      "status": "verified"
+    },
+    {
+      "name": "Brittany",
+      "company": "PrivateChef",
+      "apollo_id": "613040cfee8b5e000147624e",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Christopher",
+      "company": "Colli Construction Group, LLC.",
+      "apollo_id": "6254d1cd8d34bb0001c28293",
+      "email_found": "christopher@collicg.com",
+      "status": "verified"
+    },
+    {
+      "name": "Robin",
+      "company": "Horizon Business Services, Inc.",
+      "apollo_id": "66f881bf1cc13a0001e7c21c",
+      "email_found": "robin@caterease.com",
+      "status": "verified"
+    },
+    {
+      "name": "Thomas",
+      "company": "Imperial Golf Club",
+      "apollo_id": "5ac33acda6da9815a39a146e",
+      "email_found": "tsmith@imperialgolfclub.org",
+      "status": "verified"
+    },
+    {
+      "name": "Susie",
+      "company": "La Playa Resort and Spa",
+      "apollo_id": "57d70776a6da98288d82132b",
+      "email_found": "",
+      "status": "unavailable"
+    },
+    {
+      "name": "Ron",
+      "company": "The Club Spa At Fiddlers Creek",
+      "apollo_id": "67225a0f13152c0001845743",
+      "email_found": "",
+      "status": "unavailable"
+    }
+  ]
+}

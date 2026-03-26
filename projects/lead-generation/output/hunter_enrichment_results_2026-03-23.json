@@ -1,0 +1,50 @@
+[
+  {
+    "company": "Jones Air Conditioning",
+    "segment": "HVAC / Air Conditioning",
+    "email": "info@jonesairconditioning.com",
+    "confidence": 80,
+    "source": "hunter_domain",
+    "domain": "jonesairconditioning.com"
+  },
+  {
+    "company": "Bill Jones Repair and Reroofs",
+    "segment": "Roofing",
+    "email": "bill@billjonesroofing.com",
+    "confidence": 99,
+    "source": "hunter_domain",
+    "domain": "billjonesroofing.com"
+  },
+  {
+    "company": "Roofing Solutions Unlimited",
+    "segment": "Roofing",
+    "email": "office@roofingsolutionsunlimited.com",
+    "confidence": 75,
+    "source": "hunter_domain",
+    "domain": "roofingsolutionsunlimited.com"
+  },
+  {
+    "company": "Yag-Howard Cosmetic Dermatology",
+    "segment": "Dental / Medical / Healthcare",
+    "email": "linda@yhderm.com",
+    "confidence": 99,
+    "source": "hunter_domain",
+    "domain": "yhderm.com"
+  },
+  {
+    "company": "All Saints Eye Center",
+    "segment": "Dental / Medical / Healthcare",
+    "email": "alison.burberry@allsaintseyecenter.com",
+    "confidence": 99,
+    "source": "hunter_domain",
+    "domain": "allsaintseyecenter.com"
+  },
+  {
+    "company": "Gulfshore Animal Hospital",
+    "segment": "Dental / Medical / Healthcare",
+    "email": "drdave@gulfshoreanimalhospital.com",
+    "confidence": 99,
+    "source": "hunter_domain",
+    "domain": "gulfshoreanimalhospital.com"
+  }
+]

@@ -1,0 +1,162 @@
+{
+  "last_updated": "2026-03-23",
+  "notes": "Tracks which pain point angles were used per industry and (over time) their reply rates. Update reply counts via gmail_reply_watcher.py.",
+  "industries": {
+    "hvac": {
+      "total_sends": 2,
+      "total_replies": 0,
+      "angles": {
+        "after_hours_emergency": {
+          "sends": 2,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Kozak AC", "Dolphin Cooling"]
+        }
+      }
+    },
+    "roofing": {
+      "total_sends": 2,
+      "total_replies": 0,
+      "angles": {
+        "storm_surge_calls": {
+          "sends": 2,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Vogel Roofing", "Bill Jones Repair and Reroofs"]
+        }
+      }
+    },
+    "electrical": {
+      "total_sends": 2,
+      "total_replies": 0,
+      "angles": {
+        "response_speed_wins_bid": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["ADVANCED POWER ELECTRICAL CONTRACTORS, INC."]
+        },
+        "after_hours_emergency": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Dan House Electric"]
+        }
+      }
+    },
+    "dental": {
+      "total_sends": 2,
+      "total_replies": 0,
+      "angles": {
+        "implant_consult_followup": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Marsh Cove Dental and Implant Center"]
+        },
+        "missed_calls_during_procedures": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Fantastic Dental Arts"]
+        }
+      }
+    },
+    "physical_therapy": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "direct_pay_intake": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Berman Physical Therapy"]
+        }
+      }
+    },
+    "pool_service": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "response_speed_wins_bid": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["HORIZON POOL SERVICE LLC"]
+        }
+      }
+    },
+    "veterinary": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "after_hours_urgency": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Big Cypress Animal Clinic"]
+        }
+      }
+    },
+    "contractor": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "general_response_time": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Antimidators"]
+        }
+      }
+    },
+    "home_services": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "general_response_time": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Precise Home Pros"]
+        }
+      }
+    },
+    "plumbing": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "after_hours_emergency": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["SPS Naples"]
+        }
+      }
+    },
+    "home_watch": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "general_response_time": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Platinum Pro Assist"]
+        }
+      }
+    },
+    "smart_home": {
+      "total_sends": 1,
+      "total_replies": 0,
+      "angles": {
+        "general_response_time": {
+          "sends": 1,
+          "replies": 0,
+          "reply_rate": 0.0,
+          "examples": ["Smart Home Specialists"]
+        }
+      }
+    }
+  }
+}

@@ -42,12 +42,52 @@ RESET = "\033[0m"
 GOLD = "\033[33m"
 
 FAILURES = []
+# Structured failure records for self-healing consumption
+FAILURE_RECORDS = []
 
 def ok(msg): return f"{GREEN}✓{RESET} {msg}"
-def fail(msg):
+def fail(msg, category=None, service=None, detail=None):
     FAILURES.append(msg)
+    FAILURE_RECORDS.append({
+        "message": msg,
+        "category": category or _infer_category(msg),
+        "service": service,
+        "detail": detail,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    })
     return f"{RED}✗{RESET} {msg}"
 def warn(msg): return f"{YELLOW}⚠{RESET} {msg}"
+
+def _infer_category(msg):
+    """Best-effort category inference from failure message text."""
+    msg_lower = msg.lower()
+    if any(s in msg_lower for s in ["clawdbot", "mem0", "n8n", "fitai", "voice-api", "ai-phone"]):
+        return "service_down"
+    if "memory" in msg_lower:
+        return "high_memory"
+    if "disk" in msg_lower:
+        return "high_disk"
+    if "google token" in msg_lower:
+        return "google_token_expired"
+    if "twilio" in msg_lower and "webhook" in msg_lower:
+        return "twilio_webhook_missing"
+    if "twilio" in msg_lower and "balance" in msg_lower:
+        return "twilio_balance_low"
+    if "telegram" in msg_lower and "cred" in msg_lower:
+        return "telegram_cred_stale"
+    if "symlink" in msg_lower:
+        return "n8n_symlink_missing"
+    if "sync" in msg_lower:
+        return "repo_out_of_sync"
+    if "unstable" in msg_lower:
+        return "service_unstable"
+    if "workflow" in msg_lower and "failing" in msg_lower:
+        return "n8n_workflow_failing"
+    if "soul.md" in msg_lower:
+        return "soul_md_issue"
+    if "anthropic" in msg_lower or "elevenlabs" in msg_lower:
+        return "api_key_invalid"
+    return "unknown"
 def header(msg): return f"\n{BOLD}{GOLD}{'━' * 50}{RESET}\n{BOLD}  {msg}{RESET}\n{'━' * 50}"
 
 
@@ -92,7 +132,7 @@ def check_ec2_services():
         if status == "active":
             print(f"  {ok(svc)}: {desc}")
         else:
-            print(f"  {fail(svc)}: {desc} [{status}]")
+            print(f"  {fail(svc, category='service_down', service=svc, detail=status)}: {desc} [{status}]")
 
     # Check n8n restart count in last 24h (unexpected restarts = instability)
     out, _ = ssh("sudo journalctl -u n8n --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Started n8n.service'")
@@ -102,7 +142,7 @@ def check_ec2_services():
     elif n8n_restarts <= 6:
         print(f"  {warn('n8n restarted')}: {n8n_restarts} restart(s) in 24h")
     else:
-        print(f"  {fail('n8n unstable')}: {n8n_restarts} restart(s) in 24h")
+        print(f"  {fail('n8n unstable', category='service_unstable', service='n8n', detail=str(n8n_restarts))}: {n8n_restarts} restart(s) in 24h")
 
 
 def check_disk_memory():
@@ -116,7 +156,7 @@ def check_disk_memory():
                 used_pct = int(parts[4].replace("%", ""))
                 label = f"Disk: {parts[2]}/{parts[1]} ({parts[4]})"
                 if used_pct > 85:
-                    print(f"  {fail(label)}")
+                    print(f"  {fail(label, category='high_disk', detail=str(used_pct))}")
                 else:
                     color = YELLOW if used_pct > 75 else GREEN
                     print(f"  {color}{label}{RESET}")
@@ -127,7 +167,7 @@ def check_disk_memory():
                 pct = int(used / total * 100)
                 label = f"Memory: {used}M/{total}M ({pct}%)"
                 if pct > 80:
-                    print(f"  {fail(label)}")
+                    print(f"  {fail(label, category='high_memory', detail=str(pct))}")
                 else:
                     color = YELLOW if pct > 65 else GREEN
                     print(f"  {color}{label}{RESET}")
@@ -274,21 +314,27 @@ def check_credential_lifecycle():
     if token_path.exists():
         try:
             import subprocess as sp
-            result = sp.run([
-                sys.executable, "-c",
-                "from google.oauth2.credentials import Credentials; "
-                "from googleapiclient.discovery import build; "
-                "creds = Credentials.from_authorized_user_file('token.json'); "
-                "service = build('gmail', 'v1', credentials=creds); "
-                "profile = service.users().getProfile(userId='me').execute(); "
-                "print(profile.get('emailAddress', 'unknown'))"
-            ], capture_output=True, text=True, timeout=15, cwd=str(ROOT))
-            if result.returncode == 0 and "@" in result.stdout:
-                email = result.stdout.strip()
-                print(f"  {ok(f'Google token: valid ({email})')}")
+            result = sp.run(
+                [sys.executable, str(ROOT / "scripts" / "validate_google_token.py")],
+                capture_output=True, text=True, timeout=15, cwd=str(ROOT)
+            )
+            out = result.stdout.strip()
+            if out in ("VALID", "REFRESHED"):
+                status = "valid" if out == "VALID" else "refreshed"
+                print(f"  {ok(f'Google token: {status}')}")
+            elif out == "NO_REFRESH":
+                print(f"  {fail('Google token: expired, no refresh token', category='google_token_expired', detail='no_refresh_token')}")
+            elif out == "NO_TOKEN":
+                print(f"  {fail('Google token.json not found', category='google_token_expired')}")
+            elif out.startswith("ERROR:"):
+                err = out[6:]
+                if "invalid_grant" in err.lower():
+                    print(f"  {fail('Google token: refresh revoked — needs re-auth', category='google_token_expired', detail='invalid_grant')}")
+                else:
+                    print(f"  {fail(f'Google token: INVALID — {err[:80]}', category='google_token_expired', detail=err[:80])}")
             else:
-                err = result.stderr.strip()[:80] if result.stderr else "unknown error"
-                print(f"  {fail(f'Google token: INVALID — {err}')}")
+                err = result.stderr.strip()[:80] if result.stderr else "unknown"
+                print(f"  {fail(f'Google token: INVALID — {err}', category='google_token_expired', detail=err)}")
         except Exception as e:
             print(f"  {warn(f'Google token: check failed ({str(e)[:40]})')}")
     else:
@@ -315,7 +361,7 @@ def check_credential_lifecycle():
                 if sms_url:
                     print(f"  {ok(f'Twilio {friendly}: SMS webhook set')}")
                 else:
-                    print(f"  {fail(f'Twilio {friendly}: NO SMS webhook — inbound texts silently dropped')}")
+                    print(f"  {fail(f'Twilio {friendly}: NO SMS webhook — inbound texts silently dropped', category='twilio_webhook_missing', service='twilio', detail=phone)}")
         except Exception as e:
             print(f"  {warn(f'Twilio number check failed: {str(e)[:40]}')}")
 
@@ -332,14 +378,14 @@ def check_ec2_stability():
     elif cb_restarts <= 3:
         print(f"  {warn(f'Clawdbot restarted {cb_restarts}x in 24h')}")
     else:
-        print(f"  {fail(f'Clawdbot unstable: {cb_restarts} restarts in 24h')}")
+        print(f"  {fail(f'Clawdbot unstable: {cb_restarts} restarts in 24h', category='service_unstable', service='clawdbot', detail=str(cb_restarts))}")
 
     # n8n symlink check (prevents crash-loop on restart)
     out, success = ssh("sudo test -L /home/ec2-user/.local/bin/n8n && echo exists || echo missing")
     if "exists" in (out or ""):
         print(f"  {ok('n8n symlink: ~/.local/bin/n8n exists')}")
     else:
-        print(f"  {fail('n8n symlink MISSING — will crash-loop on restart. Fix: sudo ln -sf /usr/bin/n8n /home/ec2-user/.local/bin/n8n')}")
+        print(f"  {fail('n8n symlink MISSING — will crash-loop on restart', category='n8n_symlink_missing', service='n8n')}")
 
     # SOUL.md version check
     out, _ = ssh("sudo grep 'Version' /home/clawdbot/clawd/SOUL.md 2>/dev/null | head -1")
@@ -698,7 +744,7 @@ def check_workflow_health():
             print(f"  {ok(f'{checked} workflows scanned — all healthy')}")
         else:
             if critical > 0:
-                print(f"  {fail(f'{critical} critical issue(s) in {checked} workflows')}")
+                print(f"  {fail(f'{critical} critical issue(s) in {checked} workflows', category='n8n_config_issues', detail=str(critical))}")
             if high > 0:
                 print(f"  {warn(f'{high} high-severity issue(s)')}")
             # Show first 3 issues
@@ -709,6 +755,83 @@ def check_workflow_health():
                 print(f"    ... and {total - 3} more. Run: python scripts/n8n_workflow_validator.py --fix-report")
     except Exception as e:
         print(f"  {warn(f'Validator error: {str(e)[:50]}')}")
+
+
+def check_pipeline_health():
+    """Check sales pipeline for business process failures — orphaned leads, stalled sequences."""
+    print(header("SALES PIPELINE HEALTH"))
+    import sqlite3
+
+    db_path = ROOT / "projects" / "shared" / "sales-pipeline" / "data" / "pipeline.db"
+    if not db_path.exists():
+        print(f"  {warn('pipeline.db not found — skipping')}")
+        return
+
+    try:
+        conn = sqlite3.connect(str(db_path))
+        conn.row_factory = sqlite3.Row
+
+        # 1. Orphaned leads: emailed but no follow-up date set
+        orphaned = conn.execute("""
+            SELECT COUNT(DISTINCT d.id) FROM deals d
+            JOIN outreach_log o ON o.deal_id = d.id AND o.channel = 'Email'
+            WHERE d.stage NOT IN ('Closed Won', 'Closed Lost')
+            AND (d.next_action_date IS NULL OR d.next_action_date = '')
+        """).fetchone()[0]
+
+        if orphaned > 0:
+            print(f"  {fail(f'{orphaned} leads emailed but NOT in follow-up sequence', category='orphaned_leads', detail=str(orphaned))}")
+        else:
+            print(f"  {ok('All emailed leads have follow-up dates')}")
+
+        # 2. Overdue follow-ups: next_action_date in the past, not acted on
+        overdue = conn.execute("""
+            SELECT COUNT(*) FROM deals
+            WHERE next_action_date < date('now', '-2 days')
+            AND next_action_date IS NOT NULL AND next_action_date != ''
+            AND stage NOT IN ('Closed Won', 'Closed Lost')
+        """).fetchone()[0]
+
+        if overdue > 10:
+            print(f"  {fail(f'{overdue} follow-ups overdue by 2+ days', category='overdue_followups', detail=str(overdue))}")
+        elif overdue > 0:
+            print(f"  {warn(f'{overdue} follow-up(s) overdue by 2+ days')}")
+        else:
+            print(f"  {ok('No overdue follow-ups')}")
+
+        # 3. Stalled deals: deals with outreach but no activity in 7+ days
+        stalled = conn.execute("""
+            SELECT COUNT(DISTINCT d.id) FROM deals d
+            JOIN outreach_log o ON o.deal_id = d.id
+            WHERE d.stage NOT IN ('Closed Won', 'Closed Lost')
+            AND d.stage != 'New'
+            GROUP BY d.id
+            HAVING MAX(o.created_at) < date('now', '-7 days')
+        """).fetchall()
+
+        stalled_count = len(stalled)
+        if stalled_count > 20:
+            print(f"  {fail(f'{stalled_count} deals stalled (no activity in 7+ days)', category='stalled_deals', detail=str(stalled_count))}")
+        elif stalled_count > 0:
+            print(f"  {warn(f'{stalled_count} deal(s) with no activity in 7+ days')}")
+        else:
+            print(f"  {ok('No stalled deals')}")
+
+        # 4. Pipeline summary (informational)
+        total_active = conn.execute("""
+            SELECT COUNT(*) FROM deals WHERE stage NOT IN ('Closed Won', 'Closed Lost')
+        """).fetchone()[0]
+        due_today = conn.execute("""
+            SELECT COUNT(*) FROM deals
+            WHERE next_action_date <= date('now')
+            AND next_action_date IS NOT NULL AND next_action_date != ''
+            AND stage NOT IN ('Closed Won', 'Closed Lost')
+        """).fetchone()[0]
+        print(f"  Pipeline: {total_active} active deals, {due_today} due today")
+
+        conn.close()
+    except Exception as e:
+        print(f"  {warn(f'Pipeline check failed: {str(e)[:60]}')}")
 
 
 def check_repo_sync():
@@ -761,7 +884,7 @@ def check_repo_sync():
         )
         a = ahead.stdout.strip()
         b = behind.stdout.strip()
-        print(f"  {fail(f'Local ↔ GitHub out of sync ({a} ahead, {b} behind)')}")
+        print(f"  {fail(f'Local ↔ GitHub out of sync ({a} ahead, {b} behind)', category='repo_out_of_sync', detail=f'local: {a} ahead, {b} behind')}")
     else:
         print(f"  {ok('Local ↔ GitHub in sync')}")
 
@@ -769,7 +892,7 @@ def check_repo_sync():
     if ec2_commit == "unknown":
         print(f"  {warn('Cannot verify EC2 sync (SSH failed)')}")
     elif ec2_commit != github_commit:
-        print(f"  {fail(f'EC2 ↔ GitHub out of sync (EC2={ec2_commit}, GitHub={github_commit})')}")
+        print(f"  {fail(f'EC2 ↔ GitHub out of sync (EC2={ec2_commit}, GitHub={github_commit})', category='ec2_repo_out_of_sync', detail=f'ec2={ec2_commit}, github={github_commit}')}")
     else:
         print(f"  {ok('EC2 ↔ GitHub in sync')}")
 
@@ -836,6 +959,7 @@ def repatch_telegram():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--fast", action="store_true", help="Skip SSH checks")
+    parser.add_argument("--json", action="store_true", help="Output structured JSON failures (for self-heal)")
     parser.add_argument("--repatch-telegram", action="store_true", help="Re-patch stale Telegram cred in n8n")
     args = parser.parse_args()
 
@@ -857,6 +981,7 @@ def main():
         check_ai_apis()
         check_stripe_webhooks()
         check_credential_lifecycle()
+        check_pipeline_health()
 
     check_local_env()
 
@@ -865,6 +990,16 @@ def main():
         check_workflow_health()
 
     # Summary + exit code (don't call fail() here — it would mutate FAILURES)
+    if args.json:
+        # Structured output for self_heal.py consumption
+        print(json.dumps({
+            "failures": FAILURE_RECORDS,
+            "failure_count": len(FAILURES),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }))
+        sys.exit(1 if FAILURES else 0)
+        return
+
     print(f"\n{'━' * 50}")
     if FAILURES:
         print(f"  {RED}✗{RESET} {len(FAILURES)} critical failure(s): {', '.join(FAILURES[:3])}")

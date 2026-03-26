@@ -1,0 +1,64 @@
+{
+  "batch": 1,
+  "date": "2026-03-23",
+  "status": "pending_review",
+  "sender": "wmarceau@marceausolutions.com",
+  "emails": [
+    {
+      "id": "bill-jones-roofing",
+      "to": "bill@billjonesroofing.com",
+      "first_name": "Bill",
+      "company": "Bill Jones Repair and Reroofs",
+      "industry": "roofing",
+      "tier": 1,
+      "score": 100,
+      "subject": "Bill Jones Roofing — missed calls after storms",
+      "body": "Hey Bill,\n\nNoticed Bill Jones Repair and Reroofs has great reviews on Google — customers clearly trust your work.\n\nQuick question: when someone calls about a roof estimate at 6pm or after a storm and you're on a job — does that call get followed up with the same day?\n\nI build AI phone/text systems for home service businesses in Naples that handle those calls automatically — responds within 2 minutes, qualifies the job, sends you the details.\n\nIf it's something you'd want to try, I build and run the whole thing free for 2 weeks so you can see exactly how many calls it catches before you decide if it's worth paying for.\n\nWorth a 15-minute call?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "Post-storm surge calls going to voicemail — Naples homeowners call multiple roofers and hire whoever responds first",
+      "hook": "Storm season urgency + competitive market; roofers win jobs on response time not quality alone",
+      "research_notes": "Owner/President = Bill, residential/commercial roofing, strong Google reviews, Naples coverage"
+    },
+    {
+      "id": "advanced-power-electrical",
+      "to": "luis@advancedelectric.net",
+      "first_name": "Luis",
+      "company": "ADVANCED POWER ELECTRICAL CONTRACTORS, INC.",
+      "industry": "electrical",
+      "tier": 1,
+      "score": 100,
+      "subject": "Advanced Power Electrical — response time question",
+      "body": "Hey Luis,\n\nCame across Advanced Power Electrical while researching Naples commercial contractors — impressive project portfolio.\n\nOne thing I keep hearing from electrical contractors: it's not the quality of work they lose bids on, it's response time. Client calls at 7am about an emergency job and goes with whoever calls back first.\n\nI build AI systems that handle first-response for service calls — qualifies the job and notifies you within minutes so you're always first to respond, even when you're on-site.\n\nI build and run the full system free for 2 weeks so you can see what it would have caught before committing to anything.\n\nWould a 15-minute call make sense?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "Emergency commercial electrical calls going to whoever responds first — being on-site means missed call = lost bid",
+      "hook": "Commercial electrical = large jobs decided in minutes; response speed beats price most of the time",
+      "research_notes": "President/Owner = Luis, commercial electrical, strong credentials, Naples + SWFL coverage"
+    },
+    {
+      "id": "horizon-pool-service",
+      "to": "jeremy.meyers@horizonpoolsupply.com",
+      "first_name": "Jeremy",
+      "company": "HORIZON POOL SERVICE LLC",
+      "industry": "pool_service",
+      "tier": 1,
+      "score": 100,
+      "subject": "Horizon Pool Service — new customer inquiry response",
+      "body": "Hey Jeremy,\n\nHorizon Pool Service has solid coverage across Naples — you clearly know the market.\n\nHere's what I keep seeing with pool companies: a homeowner calls 3 services for a quote. First one to respond with a specific answer wins 80% of the time. The other two get \"we already found someone, thanks.\"\n\nI build AI response systems for pool companies that handle incoming calls and texts — qualifies the job, sends pricing info, books the site visit automatically.\n\nI build and run it free for 2 weeks so you can see the actual leads it captures before you decide if it's worth paying for.\n\n15 minutes to see if it fits what you're doing?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "Pool service quote requests go to multiple vendors — first to respond with a real answer wins the job",
+      "hook": "Naples has high-density pool homes; new customer acquisition is competitive and speed-driven",
+      "research_notes": "Owner/Operator = Jeremy, pool service + supply, Naples market, recurring service model"
+    },
+    {
+      "id": "dan-house-electric",
+      "to": "dmhouse@danhouseelectric.com",
+      "first_name": "Dan",
+      "company": "Dan House Electric",
+      "industry": "electrical",
+      "tier": 1,
+      "score": 100,
+      "subject": "Dan House Electric — after-hours call question",
+      "body": "Hey Dan,\n\nDan House Electric has great reviews around Naples — consistent 5-star feedback, which is rare in residential electrical.\n\nOne thing I'm curious about: when someone has an electrical issue at night or over the weekend and calls you — what's your process for making sure they don't end up hiring someone else before Monday?\n\nI build AI systems for home service businesses that handle those off-hours calls, qualify the urgency, and reach back out within minutes.\n\nI build and run the whole thing free for 2 weeks so you can see exactly what you're currently missing before deciding whether it's worth paying for.\n\nWorth a quick chat?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "After-hours electrical calls are urgent — homeowner won't wait until Monday and will hire whoever responds",
+      "hook": "Residential electrical emergencies (no power, panel issues) force same-day decisions",
+      "research_notes": "Owner = Dan House, residential electrical, 5-star reviews, Naples coverage"
+    }
+  ]
+}

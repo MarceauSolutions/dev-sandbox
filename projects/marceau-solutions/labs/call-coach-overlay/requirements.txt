@@ -1,5 +1,0 @@
-sounddevice
-numpy
-openai
-anthropic
-python-dotenv

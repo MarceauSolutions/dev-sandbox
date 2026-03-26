@@ -677,7 +677,7 @@ def render_sprint(tasks_data, outreach_stats, error=None):
         {_stat_card(len(today_pending), "Today's Tasks", "📋", GOLD)}
         {_stat_card(stats.get("total_completed", 0), "Completed", "✓", GREEN)}
         {_stat_card(days_left, "Days to April 6", "⏳", BLUE)}
-        {_stat_card("(239) 457-0662", "Demo Line", "📞", GOLD)}
+        {_stat_card("(855) 239-9364", "Demo Line", "📞", GOLD)}
     </div>'''
 
     # ── Today's Tasks ──
@@ -799,7 +799,7 @@ async function closeSession() {{
         {close_script}
         <footer style="text-align:center;padding:24px;color:{MUTED};font-size:11px;border-top:1px solid {BORDER};margin-top:20px">
             Sprint Hub — <a href="/" style="color:{GOLD};text-decoration:none">Back to 90-Day Tracker</a>
-            &nbsp;|&nbsp; Demo Line: (239) 457-0662 &nbsp;|&nbsp; Call it → voicemail → text in 10 sec
+            &nbsp;|&nbsp; Demo Line: (855) 239-9364 &nbsp;|&nbsp; AI receptionist + missed-call text-back
         </footer>
     </div>'''
 

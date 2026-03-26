@@ -1,0 +1,643 @@
+{
+  "updated_at": "2026-03-26T13:00:00.128765",
+  "queue": [
+    {
+      "id": "marceau-solutions_20260305_10",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-05T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951873",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T10:00:00.575262"
+    },
+    {
+      "id": "marceau-solutions_20260305_11",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-05T11:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951889",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T11:00:00.528681"
+    },
+    {
+      "id": "marceau-solutions_20260305_12",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-05T12:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951909",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "marceau-solutions_20260305_13",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-05T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951919",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "marceau-solutions_20260305_14",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-05T14:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951928",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T14:00:00.222445"
+    },
+    {
+      "id": "marceau-solutions_sms_20260305_10",
+      "business_id": "marceau-solutions",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-05T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951939",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-05T10:00:00.575262"
+    },
+    {
+      "id": "marceau-solutions_sms_20260305_13",
+      "business_id": "marceau-solutions",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-05T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:00:00.951948",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "swflorida-hvac_20260305_10",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-05T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785846",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T10:00:00.575262"
+    },
+    {
+      "id": "swflorida-hvac_20260305_11",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-05T11:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785856",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T11:00:00.528681"
+    },
+    {
+      "id": "swflorida-hvac_20260305_12",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-05T12:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785863",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "swflorida-hvac_20260305_13",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-05T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785870",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "swflorida-hvac_20260305_14",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-05T14:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785876",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-05T14:00:00.222445"
+    },
+    {
+      "id": "swflorida-hvac_sms_20260305_10",
+      "business_id": "swflorida-hvac",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-05T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785883",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-05T10:00:00.575262"
+    },
+    {
+      "id": "swflorida-hvac_sms_20260305_13",
+      "business_id": "swflorida-hvac",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-05T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-05T06:05:00.785889",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-05T13:00:00.465515"
+    },
+    {
+      "id": "marceau-solutions_20260317_10",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-17T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.062985",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-17T10:00:01.073385"
+    },
+    {
+      "id": "marceau-solutions_20260317_11",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-17T11:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.062999",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-17T11:00:01.179688"
+    },
+    {
+      "id": "marceau-solutions_20260317_12",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-17T12:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.063006",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "marceau-solutions_20260317_13",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-17T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.063012",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "marceau-solutions_20260317_14",
+      "business_id": "marceau-solutions",
+      "type": "email",
+      "count": 4,
+      "scheduled_time": "2026-03-17T14:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.063018",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews",
+          "no_online_transactions"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "marceau-solutions_sms_20260317_10",
+      "business_id": "marceau-solutions",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-17T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.063025",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-17T10:00:01.073385"
+    },
+    {
+      "id": "marceau-solutions_sms_20260317_13",
+      "business_id": "marceau-solutions",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-17T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:00:01.063037",
+      "filters": {
+        "categories": [
+          "gym",
+          "salon",
+          "restaurant"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "swflorida-hvac_20260317_10",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-17T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891060",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-17T10:00:01.073385"
+    },
+    {
+      "id": "swflorida-hvac_20260317_11",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-17T11:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891071",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-17T11:00:01.179688"
+    },
+    {
+      "id": "swflorida-hvac_20260317_12",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-17T12:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891078",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "swflorida-hvac_20260317_13",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-17T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891085",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "swflorida-hvac_20260317_14",
+      "business_id": "swflorida-hvac",
+      "type": "email",
+      "count": 3,
+      "scheduled_time": "2026-03-17T14:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891091",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website",
+          "few_reviews"
+        ],
+        "enrich": true
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    },
+    {
+      "id": "swflorida-hvac_sms_20260317_10",
+      "business_id": "swflorida-hvac",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-17T10:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891098",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-17T10:00:01.073385"
+    },
+    {
+      "id": "swflorida-hvac_sms_20260317_13",
+      "business_id": "swflorida-hvac",
+      "type": "sms",
+      "count": 5,
+      "scheduled_time": "2026-03-17T13:00:00",
+      "status": "sent",
+      "created_at": "2026-03-17T06:05:00.891107",
+      "filters": {
+        "categories": [
+          "restaurant",
+          "gym",
+          "retail",
+          "salon",
+          "spa"
+        ],
+        "pain_points": [
+          "no_website"
+        ]
+      },
+      "sent_at": "2026-03-18T09:00:52.517757"
+    }
+  ]
+}

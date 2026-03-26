@@ -138,6 +138,45 @@ def _create_tables(conn):
             description TEXT,
             created_at TEXT DEFAULT (datetime('now'))
         );
+
+        CREATE TABLE IF NOT EXISTS ab_tests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_name TEXT NOT NULL,
+            test_type TEXT NOT NULL, -- 'email_subject', 'email_content', 'call_script', 'followup_timing', 'proposal_template'
+            status TEXT DEFAULT 'active' CHECK(status IN ('active', 'paused', 'completed')),
+            start_date TEXT DEFAULT (datetime('now')),
+            end_date TEXT,
+            target_metric TEXT NOT NULL, -- 'response_rate', 'meeting_booked', 'proposal_sent', 'closed_won'
+            control_variant TEXT NOT NULL, -- JSON description of control
+            test_variants TEXT NOT NULL, -- JSON array of test variants
+            sample_size INTEGER DEFAULT 100,
+            confidence_threshold REAL DEFAULT 0.95,
+            created_at TEXT DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS ab_test_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_id INTEGER NOT NULL REFERENCES ab_tests(id),
+            variant_name TEXT NOT NULL,
+            impressions INTEGER DEFAULT 0,
+            conversions INTEGER DEFAULT 0,
+            conversion_rate REAL DEFAULT 0,
+            confidence_interval TEXT, -- JSON: [lower, upper]
+            statistical_significance REAL DEFAULT 0,
+            is_winner BOOLEAN DEFAULT FALSE,
+            updated_at TEXT DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS ab_test_assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            deal_id INTEGER NOT NULL REFERENCES deals(id),
+            test_id INTEGER NOT NULL REFERENCES ab_tests(id),
+            variant_name TEXT NOT NULL,
+            assigned_at TEXT DEFAULT (datetime('now')),
+            converted BOOLEAN DEFAULT FALSE,
+            conversion_date TEXT,
+            notes TEXT
+        );
     """)
     conn.commit()
     _migrate(conn)
@@ -514,3 +553,201 @@ def get_tier1_queue(conn):
         END
         LIMIT 10
     """).fetchall()
+
+
+# ─── A/B Testing ─────────────────────────────────────────────
+
+def create_ab_test(conn, test_name, test_type, target_metric, control_variant,
+                   test_variants, sample_size=100, confidence_threshold=0.95):
+    """Create a new A/B test."""
+    cur = conn.execute("""
+        INSERT INTO ab_tests (test_name, test_type, target_metric, control_variant,
+                             test_variants, sample_size, confidence_threshold)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (test_name, test_type, target_metric, control_variant, test_variants,
+          sample_size, confidence_threshold))
+    conn.commit()
+    return cur.lastrowid
+
+
+def get_active_ab_tests(conn, test_type=None):
+    """Get all active A/B tests, optionally filtered by type."""
+    query = "SELECT * FROM ab_tests WHERE status = 'active'"
+    params = []
+    if test_type:
+        query += " AND test_type = ?"
+        params.append(test_type)
+    query += " ORDER BY created_at DESC"
+    return conn.execute(query, params).fetchall()
+
+
+def assign_variant_to_deal(conn, deal_id, test_id):
+    """Assign a random variant to a deal for A/B testing."""
+    # Get test details
+    test = conn.execute("SELECT * FROM ab_tests WHERE id = ?", (test_id,)).fetchone()
+    if not test:
+        return None
+
+    import json
+    import random
+
+    variants = json.loads(test["test_variants"])
+    all_variants = ["control"] + variants
+
+    # Check if deal already assigned to this test
+    existing = conn.execute(
+        "SELECT variant_name FROM ab_test_assignments WHERE deal_id = ? AND test_id = ?",
+        (deal_id, test_id)
+    ).fetchone()
+
+    if existing:
+        return existing["variant_name"]
+
+    # Random assignment
+    variant = random.choice(all_variants)
+
+    # Record assignment
+    conn.execute("""
+        INSERT INTO ab_test_assignments (deal_id, test_id, variant_name)
+        VALUES (?, ?, ?)
+    """, (deal_id, test_id, variant))
+
+    # Update impressions
+    conn.execute("""
+        INSERT INTO ab_test_results (test_id, variant_name, impressions)
+        VALUES (?, ?, 1)
+        ON CONFLICT(test_id, variant_name) DO UPDATE SET
+            impressions = impressions + 1,
+            updated_at = datetime('now')
+    """, (test_id, variant))
+
+    conn.commit()
+    return variant
+
+
+def record_ab_conversion(conn, deal_id, test_id, variant_name):
+    """Record a conversion for an A/B test variant."""
+    # Update assignment
+    conn.execute("""
+        UPDATE ab_test_assignments
+        SET converted = TRUE, conversion_date = datetime('now')
+        WHERE deal_id = ? AND test_id = ? AND variant_name = ?
+    """, (deal_id, test_id, variant_name))
+
+    # Update results
+    conn.execute("""
+        UPDATE ab_test_results
+        SET conversions = conversions + 1,
+            conversion_rate = (conversions + 1.0) / impressions,
+            updated_at = datetime('now')
+        WHERE test_id = ? AND variant_name = ?
+    """, (test_id, variant_name))
+
+    conn.commit()
+
+
+def get_ab_test_results(conn, test_id):
+    """Get detailed results for an A/B test with statistical analysis."""
+    results = conn.execute("""
+        SELECT * FROM ab_test_results
+        WHERE test_id = ?
+        ORDER BY conversion_rate DESC
+    """, (test_id,)).fetchall()
+
+    if not results:
+        return []
+
+    # Calculate statistical significance (simplified chi-square test)
+    import json
+    from scipy import stats
+    import numpy as np
+
+    results_list = []
+    for result in results:
+        r = dict(result)
+        impressions = r["impressions"]
+        conversions = r["conversions"]
+
+        if impressions > 0:
+            r["conversion_rate"] = conversions / impressions
+
+            # Calculate confidence interval (Wilson score interval)
+            if conversions > 0:
+                z = 1.96  # 95% confidence
+                p_hat = conversions / impressions
+                denominator = 1 + (z**2 / impressions)
+                center = (p_hat + z**2 / (2 * impressions)) / denominator
+                spread = z * np.sqrt((p_hat * (1 - p_hat) + z**2 / (4 * impressions)) / impressions) / denominator
+                r["confidence_interval"] = [max(0, center - spread), min(1, center + spread)]
+            else:
+                r["confidence_interval"] = [0, 0]
+
+        results_list.append(r)
+
+    # Mark winner if statistically significant
+    if len(results_list) >= 2:
+        control = next((r for r in results_list if r["variant_name"] == "control"), None)
+        if control:
+            control_rate = control["conversion_rate"]
+            for result in results_list:
+                if result["variant_name"] != "control":
+                    # Simple significance test (difference > 2 standard deviations)
+                    if result["impressions"] > 10 and control["impressions"] > 10:
+                        diff = abs(result["conversion_rate"] - control_rate)
+                        pooled_se = np.sqrt(
+                            result["conversion_rate"] * (1 - result["conversion_rate"]) / result["impressions"] +
+                            control_rate * (1 - control_rate) / control["impressions"]
+                        )
+                        if diff > 2 * pooled_se:
+                            result["is_winner"] = result["conversion_rate"] > control_rate
+                            if result["is_winner"]:
+                                conn.execute(
+                                    "UPDATE ab_test_results SET is_winner = TRUE WHERE id = ?",
+                                    (result["id"],)
+                                )
+
+    conn.commit()
+    return results_list
+
+
+def get_deal_ab_assignments(conn, deal_id):
+    """Get all A/B test assignments for a deal."""
+    return conn.execute("""
+        SELECT a.*, t.test_name, t.test_type, t.target_metric
+        FROM ab_test_assignments a
+        JOIN ab_tests t ON a.test_id = t.id
+        WHERE a.deal_id = ?
+        ORDER BY a.assigned_at DESC
+    """, (deal_id,)).fetchall()
+
+
+def get_ab_test_summary(conn):
+    """Get summary of all A/B tests for dashboard."""
+    tests = conn.execute("""
+        SELECT t.*,
+               COUNT(CASE WHEN a.converted THEN 1 END) as total_conversions,
+               COUNT(a.id) as total_assignments,
+               AVG(CASE WHEN a.converted THEN r.conversion_rate END) as avg_conversion_rate
+        FROM ab_tests t
+        LEFT JOIN ab_test_assignments a ON t.id = a.test_id
+        LEFT JOIN ab_test_results r ON t.id = r.test_id AND a.variant_name = r.variant_name
+        GROUP BY t.id
+        ORDER BY t.created_at DESC
+    """).fetchall()
+
+    return [dict(t) for t in tests]
+
+
+def complete_ab_test(conn, test_id, winner_variant=None):
+    """Mark an A/B test as completed and optionally set a winner."""
+    if winner_variant:
+        conn.execute(
+            "UPDATE ab_test_results SET is_winner = TRUE WHERE test_id = ? AND variant_name = ?",
+            (test_id, winner_variant)
+        )
+
+    conn.execute(
+        "UPDATE ab_tests SET status = 'completed', end_date = datetime('now') WHERE id = ?",
+        (test_id,)
+    )
+    conn.commit()

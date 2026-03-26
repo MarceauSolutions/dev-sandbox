@@ -1,0 +1,74 @@
+[
+  {
+    "name": "David ",
+    "company": "?",
+    "email": "info@jonesairconditioning.com",
+    "confidence": 80
+  },
+  {
+    "name": "Bill ",
+    "company": "?",
+    "email": "bill@billjonesroofing.com",
+    "confidence": 99
+  },
+  {
+    "name": "Douglas ",
+    "company": "?",
+    "email": "wauchula@visionacehardware.com",
+    "confidence": 75
+  },
+  {
+    "name": "Roofing ",
+    "company": "?",
+    "email": "office@roofingsolutionsunlimited.com",
+    "confidence": 75
+  },
+  {
+    "name": "Jesus ",
+    "company": "?",
+    "email": "michelle@ecogreendrone.com",
+    "confidence": 91
+  },
+  {
+    "name": "Cyndi ",
+    "company": "?",
+    "email": "linda@yhderm.com",
+    "confidence": 99
+  },
+  {
+    "name": "All ",
+    "company": "?",
+    "email": "alison.burberry@allsaintseyecenter.com",
+    "confidence": 99
+  },
+  {
+    "name": "Kim ",
+    "company": "?",
+    "email": "drdave@gulfshoreanimalhospital.com",
+    "confidence": 99
+  },
+  {
+    "name": "Jackie ",
+    "company": "?",
+    "email": "tyler@qcrealty.com",
+    "confidence": 99
+  },
+  {
+    "name": "Bea ",
+    "company": "?",
+    "email": "info@naples5th.com",
+    "confidence": 81
+  },
+  {
+    "name": "Betsy ",
+    "company": "?",
+    "email": "info@oldenaplesrealestate.com",
+    "confidence": 79
+  },
+  {
+    "name": "Michael ",
+    "company": "?",
+    "email": "youalidi@laplayaresort.com",
+    "confidence": 97
+  }
+]

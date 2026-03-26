@@ -103,10 +103,18 @@ def log_call(business, outcome, notes="", contact_name="", phone="", email="", d
     )
 
     conn.commit()
-    
+
     signal = "+" if normalized in POSITIVE else ("-" if normalized in NEGATIVE else "~")
     result = {"business": business, "outcome": normalized, "signal": signal, "stage": stage}
     conn.close()
+
+    # Auto-log accountability outcomes
+    try:
+        from .accountability_tracker import auto_log_call_outcomes
+        auto_log_call_outcomes()
+    except Exception as e:
+        print(f"Warning: Failed to auto-log accountability: {e}")
+
     return result
 
 

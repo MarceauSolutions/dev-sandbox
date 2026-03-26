@@ -26,11 +26,13 @@ from .models import (
     delete_deal, log_outreach, get_outreach_log, get_todays_followups,
     create_proposal, get_proposals, save_call_brief, get_call_briefs,
     get_activities, get_pipeline_stats, log_activity, get_tier1_queue,
-    get_call_queue, get_email_queue, get_phone_queue, get_inperson_queue,
-    get_outreach_stats, assign_outreach_method,
+    get_call_queue, get_email_queue, get_inperson_queue, get_outreach_stats,
     get_daily_outreach_counts, get_leads_by_tier_and_method,
+    assign_outreach_method, get_ab_test_summary,
     STAGES, STAGE_COLORS, CHANNELS, INDUSTRIES
 )
+from .ab_testing import assign_ab_tests_to_deal, track_pipeline_conversion, get_personalized_content
+from .autonomous_agent import run_autonomous_sales_cycle, analyze_single_lead
 from .ui import render_page
 
 app = FastAPI(title="Marceau Sales Pipeline", version="1.0.0")
@@ -91,6 +93,13 @@ async def add_deal_submit(
                           contact_email=contact_email, industry=industry, pain_points=pain_points,
                           lead_source=lead_source, notes=notes)
     conn.close()
+
+    # Assign A/B tests to the new deal
+    try:
+        assign_ab_tests_to_deal(deal_id)
+    except Exception as e:
+        print(f"Warning: Failed to assign A/B tests to deal {deal_id}: {e}")
+
     return RedirectResponse(f"/deals/{deal_id}", status_code=303)
 
 
@@ -141,6 +150,13 @@ async def change_stage(deal_id: int, stage: str = Form(...)):
         if deal:
             update_deal(conn, deal_id, close_date=datetime.now().strftime("%Y-%m-%d"))
     conn.close()
+
+    # Track A/B test conversions
+    try:
+        track_pipeline_conversion(deal_id, stage)
+    except Exception as e:
+        print(f"Warning: Failed to track A/B conversion for deal {deal_id}: {e}")
+
     return RedirectResponse(f"/deals/{deal_id}", status_code=303)
 
 
@@ -747,6 +763,79 @@ async def health():
     return {"status": "healthy", "service": "sales-pipeline", "version": "1.1.0"}
 
 
+@app.get("/ab-testing", response_class=HTMLResponse)
+async def ab_testing_dashboard():
+    conn = get_db()
+    ab_tests = get_ab_test_summary(conn)
+    conn.close()
+    return render_page("ab_testing", "A/B Testing", {"ab_tests": ab_tests})
+
+
+@app.post("/ab-testing/create")
+async def create_ab_test_route(
+    test_name: str = Form(...),
+    test_type: str = Form(...),
+    target_metric: str = Form(...),
+    control_variant: str = Form(...),
+    test_variants: str = Form(...),
+    sample_size: int = Form(100)
+):
+    from .ab_testing import ABTestingEngine
+    engine = ABTestingEngine()
+    test_id = engine.create_test_from_template(
+        test_type,
+        test_name,
+        sample_size
+    )
+    return RedirectResponse("/ab-testing", status_code=303)
+
+
+@app.get("/api/ab-tests")
+async def api_ab_tests():
+    conn = get_db()
+    tests = get_ab_test_summary(conn)
+    conn.close()
+    return {"ok": True, "tests": tests}
+
+
+@app.get("/api/ab-tests/{test_id}/results")
+async def api_ab_test_results(test_id: int):
+    from .ab_testing import ABTestingEngine
+    engine = ABTestingEngine()
+    results = engine.get_test_results(test_id)
+    return results
+
+
+@app.post("/api/ab-tests/{test_id}/complete")
+async def complete_ab_test_route(test_id: int, winner_variant: str = Form(...)):
+    from .models import complete_ab_test
+    conn = get_db()
+    complete_ab_test(conn, test_id, winner_variant)
+    conn.close()
+    return JSONResponse({"ok": True})
+
+
+@app.get("/autonomous", response_class=HTMLResponse)
+async def autonomous_dashboard():
+    return render_page("autonomous", "Autonomous Agent", {})
+
+
+@app.post("/api/autonomous/cycle")
+async def api_autonomous_cycle(request: Request):
+    """Run a complete autonomous sales cycle."""
+    data = await request.json() if request.headers.get("content-type") == "application/json" else {}
+    dry_run = data.get("dry_run", True)
+    result = run_autonomous_sales_cycle(dry_run=dry_run)
+    return {"ok": True, **result}
+
+
+@app.get("/api/autonomous/analyze/{deal_id}")
+async def api_analyze_deal(deal_id: int):
+    """Analyze a specific deal and get autonomous recommendations."""
+    result = analyze_single_lead(deal_id)
+    return {"ok": True, **result}
+
+
 @app.get("/api/stats")
 async def api_stats():
     conn = get_db()
@@ -957,6 +1046,41 @@ async def api_warm_list():
     """Get warm leads (qualified, meeting booked, proposal sent)."""
     leads = get_warm_leads()
     return {"ok": True, "count": len(leads), "leads": leads, "formatted": format_warm_leads(leads)}
+
+
+@app.post("/api/call-sheet/generate")
+async def api_generate_call_sheet(limit: int = 15, email: bool = True):
+    """Generate morning call sheet with full context and email it."""
+    from .morning_call_sheet import get_full_call_list, generate_html, html_to_pdf, email_call_sheet
+    from pathlib import Path as P
+    from datetime import datetime as dt
+
+    from .morning_call_sheet import validate_pipeline_before_generating
+    validate_pipeline_before_generating()
+
+    leads = get_full_call_list(limit=limit)
+    if not leads:
+        return {"ok": False, "error": "No leads available"}
+
+    html = generate_html(leads)
+    output_dir = P(__file__).parent.parent / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    today = dt.now().strftime("%Y-%m-%d")
+    pdf_path = output_dir / f"call-sheet-{today}.pdf"
+
+    html_to_pdf(html, pdf_path)
+    output_path = pdf_path if pdf_path.exists() else pdf_path.with_suffix(".html")
+
+    emailed = False
+    if email:
+        emailed = email_call_sheet(output_path)
+
+    return {
+        "ok": True,
+        "leads": len(leads),
+        "file": str(output_path),
+        "emailed": emailed,
+    }
 
 
 # ─── Phone Enrichment API ──────────────────────────────────

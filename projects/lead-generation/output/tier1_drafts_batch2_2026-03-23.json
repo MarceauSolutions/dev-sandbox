@@ -1,0 +1,64 @@
+{
+  "batch": 2,
+  "date": "2026-03-23",
+  "status": "pending_review",
+  "sender": "wmarceau@marceausolutions.com",
+  "emails": [
+    {
+      "id": "marsh-cove-dental",
+      "to": "evgeny.titov@marshcovedental.com",
+      "first_name": "Evgeny",
+      "company": "Marsh Cove Dental and Implant Center",
+      "industry": "dental",
+      "tier": 1,
+      "score": 95,
+      "subject": "Marsh Cove Dental — implant consult follow-ups",
+      "body": "Hey Evgeny,\n\nCame across Marsh Cove Dental and Implant Center while researching Naples dental practices. Really strong positioning on implants.\n\nQuick observation: implant patients are high-intent — they've already decided they want the procedure. But they call 2-3 offices before booking. The practice that follows up fastest gets the consult.\n\nI build AI follow-up systems for dental practices — captures missed calls, sends a personalized text back within 2 minutes, books the consult automatically.\n\nI build and run the whole system free for 2 weeks so you can see how many consult leads it recovers before you decide if it's worth paying for.\n\nWorth 15 minutes?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "High-value implant consults lost to slow follow-up — patients call 2-3 offices and book with whoever responds first",
+      "hook": "Implant patient high-intent + multi-office shopping behavior",
+      "research_notes": "Implant Center branding, Dentist/Owner = Evgeny, no automated booking observed, strong Google presence"
+    },
+    {
+      "id": "berman-pt",
+      "to": "drberman@bermanpt.com",
+      "first_name": "Jake",
+      "company": "Berman Physical Therapy",
+      "industry": "physical_therapy",
+      "tier": 1,
+      "score": 95,
+      "subject": "Berman PT — direct-pay patient inquiry question",
+      "body": "Hey Jake,\n\nFound Berman Physical Therapy while looking at direct-pay practices in Naples — love the model. No insurance, no middleman.\n\nHere's the thing about direct-pay patients: they're already sold on paying out of pocket. That's a motivated patient. But if they call at 7pm for a new patient consult and get voicemail, by morning they've either forgotten or moved on.\n\nI build AI intake systems for cash-pay practices — answers calls 24/7, handles new patient questions, books the initial eval.\n\nI build and run the full system free for 2 weeks so you can see the actual patients it captures before committing to anything.\n\nWorth a quick call?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "Direct-pay PT patients are motivated but phone-first — off-hours missed calls mean lost patients who won't call back",
+      "hook": "Direct-pay model = zero friction patients who are already sold; gap is availability not quality",
+      "research_notes": "Direct-pay model confirmed, phone-first intake, no online booking widget, Jake Berman = owner"
+    },
+    {
+      "id": "fantastic-dental-arts",
+      "to": "dr.phan@fantasticdentalarts.com",
+      "first_name": "Queanh",
+      "company": "Fantastic Dental Arts",
+      "industry": "dental",
+      "tier": 1,
+      "score": 95,
+      "subject": "Fantastic Dental Arts — new patient calls during procedures",
+      "body": "Hey Queanh,\n\nCame across Fantastic Dental Arts in Naples — solid practice, consistent reviews.\n\nOne thing I hear constantly from dental practice owners: new patient calls come in while you're in a procedure. By the time you call back (even same day), they've already booked with someone else.\n\nI build AI systems that answer those calls immediately and schedule the patient automatically — no extra front desk staff needed.\n\nI build and run it free for 2 weeks so you can see exactly how many new patient calls it handles before you decide if it's worth paying for.\n\nWould a 15-minute call make sense?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "New patient calls coming in during procedures — by the time you call back they've already booked with a competitor",
+      "hook": "Dentists are physically unavailable to answer calls for hours at a time; every missed new patient call is $500-2K lost",
+      "research_notes": "General dental, Owner = Dr. Phan (Queanh), phone-heavy intake, no automated booking system observed"
+    },
+    {
+      "id": "big-cypress-animal",
+      "to": "davidr@bigcypressanimalclinic.com",
+      "first_name": "David",
+      "company": "Big Cypress Animal Clinic",
+      "industry": "veterinary",
+      "tier": 1,
+      "score": 95,
+      "subject": "Big Cypress Animal Clinic — appointment call question",
+      "body": "Hey David,\n\nBig Cypress Animal Clinic has great reviews across Naples — pet owners clearly trust your team.\n\nQuick question: when someone calls about their pet and your front desk is tied up or it's after 5pm — how do you make sure that call doesn't go to a competitor?\n\nI build AI intake systems for veterinary practices — handles appointment requests, answers FAQs, sends a follow-up text within 2 minutes if no one picks up.\n\nI build and run the full system free for 2 weeks so you can see what you're currently losing to missed calls before committing to anything.\n\nWorth a quick call?\n\nWilliam Marceau\nMarceau Solutions\nwmarceau@marceausolutions.com",
+      "pain_point": "Busy clinic = missed calls during appointments and after hours; pet owners with urgent concerns won't wait",
+      "hook": "Veterinary urgency creates emotional decision-making — whoever responds first gets the appointment",
+      "research_notes": "Owner = David, no booking system observed, strong reviews, high-volume practice, Naples coverage"
+    }
+  ]
+}

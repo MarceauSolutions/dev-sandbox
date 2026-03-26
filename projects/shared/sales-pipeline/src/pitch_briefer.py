@@ -24,82 +24,154 @@ DB_PATH = str(Path(__file__).parent.parent / "data" / "pipeline.db")
 # Each maps to a specific opening line and value prop
 # NO "AI" language — everything framed as business outcomes
 
+# --- STAGE-AWARE SCRIPT SYSTEM ---
+# Core positioning: We don't sell standalone AI tools.
+# We unify everything you already have into one engine that closes more sales.
+#
+# Differentiation line (use in every cold call):
+# "Most AI companies just sell you another standalone tool.
+#  We turn everything you already have into one unified engine."
+#
+# Rules:
+# - Lead with THEIR pain (fragmentation), not our features
+# - Question-driven, not monologue
+# - One clear CTA per script
+# - 60-90 seconds max for cold calls
+
+# The core cold call framework (industry-agnostic)
+COLD_CALL_FRAMEWORK = {
+    "greeting": "Hi {contact}, this is William with Marceau Solutions. How's your day going so far?",
+    "bridge": "I'll keep this to 45 seconds.",
+    "pain": "We've been working with {industry} businesses that already use things like automated text-backs and call handling. What we keep hearing is that those leads end up in different places — chat leads go one way, phone leads another, and nothing actually talks to each other. Leads slip through the cracks and follow-ups get delayed.",
+    "qualify": "Does that sound familiar at all?",
+    "differentiate": "What we do differently is build a single system that integrates everything you already have. It captures every lead no matter where it comes from, routes it to the right person, sends follow-ups at the right time, and manages the whole process through to closing — without jumping between five different tools.",
+    "separator": "Most AI companies just sell you another standalone chatbot or voice agent. We turn all your existing systems into one unified engine that actually closes more sales.",
+    "discovery": "{discovery_question}",
+    "close": "If you're open to it, I'd love to show you a quick 10-15 minute demo tailored to your setup. What does your calendar look like this week?",
+}
+
+VOICEMAIL_SCRIPT = "Hi {contact}, this is William with Marceau Solutions. I help businesses eliminate the lead fragmentation that happens when your automation tools don't talk to each other. We built a system that integrates everything you already use into one platform — captures every lead, follows up automatically, and takes it all the way to closing. If you're seeing leads slip through the cracks, give me a call back at (239) 398-5676. Have a great day."
+
+OBJECTION_HANDLERS = {
+    "already_have_ai": "Perfect — most of our clients did too. We don't replace what you have. We connect it all into one system so the pieces actually work together instead of competing. Would you be open to seeing how that looks in 10 minutes?",
+    "not_interested": "I totally understand. Most people feel the same way until they see how much revenue is falling through the cracks between their existing tools. Would it be okay if I sent you a one-page case study showing the lift our clients get in lead-to-close conversion?",
+    "too_busy": "No problem at all. The whole point of our system is to save you time, not add more work. If you ever notice follow-ups getting missed or leads going to the wrong place, I'm only a call away.",
+    "send_info": "Absolutely. I'll send that over today. What email should I use? And just so I send you the right stuff — are you more interested in the lead capture side or the follow-up automation side?",
+    "how_much": "It depends on what you need connected, but most of our clients are in the $300-500/month range and see ROI within the first month from leads they were already losing. Want me to put together a quick quote based on your setup?",
+}
+
+# Industry-specific pain + discovery questions (plugged into the framework)
 PITCH_ANGLES = {
     "no_website": {
-        "opener": "I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now.",
-        "hook": "I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical.",
-        "services": ["Simple website with booking", "Google Business optimization", "Automated review requests"],
+        "opener": "I noticed you don't have a website — your business runs on reputation. But anyone searching Google right now can't find you.",
+        "hook": "I build simple sites that capture leads automatically. No tech needed on your end.",
+        "services": ["Website with booking", "Google Business optimization", "Automated review requests"],
     },
-    "missed_calls": {
-        "opener": "I was looking at your business and noticed calls after hours go to voicemail. For a {industry} company, that means every missed call is a customer calling your competitor instead.",
-        "hook": "I set up a system that answers every call — even at 2 AM — books the appointment, and texts you the details. You wake up with new business on your calendar.",
-        "services": ["24/7 call answering", "Automatic appointment booking", "Emergency routing to your cell"],
+    "systems_gap": {
+        "opener": COLD_CALL_FRAMEWORK["pain"],
+        "hook": COLD_CALL_FRAMEWORK["differentiate"] + " " + COLD_CALL_FRAMEWORK["separator"],
+        "services": ["Unified lead pipeline", "Cross-channel automation", "Real-time lead routing"],
     },
-    "scattered_leads": {
-        "opener": "Most {industry} businesses I talk to have the same problem — leads come in from Google, phone calls, their website form, maybe Facebook — and they all land in different places. Some get followed up with, some don't.",
-        "hook": "I build one system that catches everything and makes sure every single lead gets a response within 60 seconds. Nothing falls through the cracks.",
-        "services": ["Unified lead dashboard", "Instant missed-call text-back", "Automated follow-up sequences"],
+    "redundancy": {
+        "opener": "Quick question: if your main person who handles leads was out for a week, would every inquiry still get handled the same way?",
+        "hook": "I build systems that run whether you're there or not. Your business handles leads the same on your worst day as your best.",
+        "services": ["Automated lead intake", "Self-running follow-up", "After-hours coverage"],
+    },
+    "speed_to_lead": {
+        "opener": "The biggest difference I see between {industry} businesses growing and ones stuck is response time. The fast ones are closing way more.",
+        "hook": "I build systems that respond to every lead in under 60 seconds. Your competitor is still checking voicemail while your system already booked the appointment.",
+        "services": ["Instant lead response", "Automated booking", "Speed-to-lead pipeline"],
     },
     "has_basic_automation": {
-        "opener": "I can see you already have some automation set up — {detail}. Smart move. But from what I can tell, those systems aren't talking to each other.",
-        "hook": "I connect all your existing tools into one system so your leads flow from first contact to booked appointment without you touching anything.",
-        "services": ["System integration", "Automated follow-up", "Pipeline visibility dashboard"],
+        "opener": "I can see you have some automation — {detail}. Smart move. But are those systems talking to each other?",
+        "hook": "I connect your existing tools into one system. Leads flow from first contact to booked appointment without you touching anything.",
+        "services": ["System integration", "Automated follow-up", "Pipeline visibility"],
     },
     "competitor_advantage": {
-        "opener": "I've been working with a few {industry} businesses in Naples, and the ones that are growing fastest right now are the ones where every lead gets followed up with instantly — not the ones with the biggest ad budget.",
-        "hook": "I can set up the same system for you. Two-week trial, no commitment. If it doesn't work, you owe me nothing.",
-        "services": ["Lead capture system", "Automated follow-up", "Review generation"],
+        "opener": "I work with {industry} businesses in Naples. The ones growing fastest aren't spending more on ads — they're the ones where every lead gets handled instantly, automatically.",
+        "hook": "Two-week trial, no commitment. If it doesn't work, you owe me nothing.",
+        "services": ["Full lead automation", "Follow-up sequences", "Review generation"],
     },
     "default": {
-        "opener": "Hey, I'm William with Marceau Solutions — I help local businesses make sure no lead falls through the cracks.",
-        "hook": "Most businesses have calls, texts, and web inquiries coming in from different places. I connect it all into one system that follows up automatically. Two-week free trial if you want to see it in action.",
-        "services": ["Unified lead capture", "Automated follow-up", "After-hours coverage"],
+        "opener": COLD_CALL_FRAMEWORK["pain"],
+        "hook": COLD_CALL_FRAMEWORK["differentiate"] + " " + COLD_CALL_FRAMEWORK["separator"],
+        "services": ["Unified lead capture", "Automated follow-up", "Cross-channel integration"],
     },
 }
 
 # Industry-specific language (avoid jargon, speak their language)
 INDUSTRY_CONTEXT = {
-    "HVAC / Home Services": {
+    "HVAC": {
         "their_world": "service calls, emergency repairs, seasonal demand",
-        "their_pain": "missed after-hours emergency calls going to competitors",
-        "their_metric": "How many calls do you miss on weekends?",
-        "best_angle": "missed_calls",
+        "their_pain": "leads from multiple channels not connected — Google, phone, Angi, website all going to different places",
+        "their_metric": "When a lead comes in from Google and another from a phone call — does that all land in one place?",
+        "best_angle": "systems_gap",
     },
-    "Medical / Dental": {
+    "Medical": {
         "their_world": "patient scheduling, no-shows, insurance verification",
-        "their_pain": "patients booking with whoever answers first",
-        "their_metric": "How many new patients call and don't book?",
-        "best_angle": "scattered_leads",
+        "their_pain": "new patient inquiries coming from phone, website, Google — handled by different people with no unified tracking",
+        "their_metric": "If your front desk person is out sick, does every new patient inquiry still get handled?",
+        "best_angle": "redundancy",
     },
     "Real Estate": {
         "their_world": "listings, showings, buyer inquiries, time-sensitive leads",
-        "their_pain": "leads going cold because follow-up takes too long",
-        "their_metric": "How fast do your leads get a response?",
-        "best_angle": "scattered_leads",
+        "their_pain": "leads going cold because follow-up takes too long or falls through cracks between systems",
+        "their_metric": "How fast does a new inquiry get a response — and is that consistent even when you're in a showing?",
+        "best_angle": "speed_to_lead",
     },
-    "Restaurants / Hospitality": {
+    "Restaurant": {
         "their_world": "reservations, catering inquiries, reviews",
-        "their_pain": "missed catering/event inquiries, review management",
-        "their_metric": "How many 5-star reviews did you get this month?",
-        "best_angle": "competitor_advantage",
+        "their_pain": "catering and event inquiries getting lost between phone, email, and DMs",
+        "their_metric": "When a catering inquiry comes in on a busy Friday night, what happens to it?",
+        "best_angle": "systems_gap",
     },
     "Legal": {
         "their_world": "consultations, case intake, client communication",
-        "their_pain": "potential clients going to whoever responds first",
-        "their_metric": "When someone calls after hours, what happens?",
-        "best_angle": "missed_calls",
+        "their_pain": "potential clients going to whoever responds first — speed to lead is everything",
+        "their_metric": "When someone fills out your contact form at 9 PM, how fast do they hear back?",
+        "best_angle": "speed_to_lead",
     },
-    "Salon / Spa": {
+    "Salon": {
         "their_world": "appointments, rebooking, product sales, reviews",
-        "their_pain": "no-shows, forgetting to rebook, lost review opportunities",
-        "their_metric": "What percentage of clients rebook before leaving?",
-        "best_angle": "competitor_advantage",
+        "their_pain": "no-shows, rebooking gaps, new client inquiries handled inconsistently",
+        "their_metric": "When a new client inquires, does the same follow-up happen every time — or does it depend on who's at the desk?",
+        "best_angle": "redundancy",
     },
-    "Auto / Tire": {
+    "Med Spa": {
+        "their_world": "consultations, treatment plans, high-value bookings",
+        "their_pain": "high-value consultation requests handled inconsistently — some get fast follow-up, some don't",
+        "their_metric": "When a $3,000 treatment inquiry comes in, is the follow-up the same whether it's Monday morning or Saturday night?",
+        "best_angle": "redundancy",
+    },
+    "Auto": {
         "their_world": "service appointments, parts inquiries, fleet accounts",
-        "their_pain": "phone tag with customers about their car status",
-        "their_metric": "How do customers know when their car is ready?",
-        "best_angle": "scattered_leads",
+        "their_pain": "customer communication scattered across phone, text, email — no single view",
+        "their_metric": "How do your customers know when their car is ready — and how many calls does that take?",
+        "best_angle": "systems_gap",
+    },
+    "Roofing": {
+        "their_world": "estimates, storm damage calls, insurance claims, subcontractor coordination",
+        "their_pain": "post-storm call surges that overwhelm your team — leads lost because you can't answer fast enough",
+        "their_metric": "After the last big storm, how many calls did you miss in the first 48 hours?",
+        "best_angle": "speed_to_lead",
+    },
+    "Plumbing": {
+        "their_world": "emergency calls, scheduled maintenance, estimates",
+        "their_pain": "emergency calls after hours going to voicemail while competitors answer",
+        "their_metric": "When someone has a burst pipe at midnight, what happens when they call you?",
+        "best_angle": "redundancy",
+    },
+    "Chiropractic": {
+        "their_world": "patient scheduling, treatment plans, follow-up appointments",
+        "their_pain": "new patient calls coming in during adjustments — front desk can't always answer",
+        "their_metric": "How many new patient calls come in while you're with a patient — and what happens to those?",
+        "best_angle": "redundancy",
+    },
+    "Electrical": {
+        "their_world": "service calls, estimates, permit coordination, emergency work",
+        "their_pain": "leads from multiple sources not tracked in one place",
+        "their_metric": "When you get a call, a Google inquiry, and a referral in the same day — does all of that land in one system?",
+        "best_angle": "systems_gap",
     },
 }
 
@@ -127,7 +199,7 @@ def get_deal(deal_id: int = None, company: str = None) -> dict:
 
     # Get outreach history
     outreach = conn.execute(
-        "SELECT channel, message_summary, created_at FROM outreach_log WHERE deal_id = ? ORDER BY created_at DESC",
+        "SELECT channel, message_summary, response, created_at FROM outreach_log WHERE deal_id = ? ORDER BY created_at DESC",
         (result["id"],)
     ).fetchall()
     result["outreach_history"] = [dict(o) for o in outreach]
@@ -155,62 +227,122 @@ def determine_pitch_angle(deal: dict) -> str:
     if "text-back" in combined or "automated" in combined or "crm" in combined or "already has" in combined:
         return "has_basic_automation"
 
-    if not website or website.strip() == "":
-        return "no_website"
+    if not website or website.strip() == "" or website.strip() == "None":
+        # Only use no_website if research explicitly confirmed it
+        if "no website" in combined or "doesn't have a site" in combined or "no site" in combined:
+            return "no_website"
 
-    if "voicemail" in combined or "after hours" in combined or "missed call" in combined:
-        return "missed_calls"
-
-    # Use industry default
+    # Use industry default or systems_gap (safest general angle)
     ctx = INDUSTRY_CONTEXT.get(industry, {})
-    return ctx.get("best_angle", "scattered_leads")
+    return ctx.get("best_angle", "systems_gap")
 
 
 def generate_pitch_brief(deal: dict) -> dict:
-    """Generate a complete pitch brief for a deal."""
+    """Generate a pitch brief that uses ACTUAL conversation history.
 
-    angle_key = determine_pitch_angle(deal)
-    angle = PITCH_ANGLES.get(angle_key, PITCH_ANGLES["default"])
+    If we've talked to this person before, the script reflects that.
+    Never generate a cold opener for someone we've had a real conversation with.
+    """
+
+    outreach_history = deal.get("outreach_history", [])
     industry = deal.get("industry", "Other")
     industry_ctx = INDUSTRY_CONTEXT.get(industry, {})
+    next_action = deal.get("next_action", "") or ""
 
-    # Determine a clean detail string for the opener
-    notes = (deal.get("notes", "") or "").lower()
-    if "text-back" in notes:
-        detail = "a missed-call text-back system"
-    elif "crm" in notes:
-        detail = "a CRM for tracking leads"
-    elif "automated" in notes:
-        detail = "some automated follow-up"
+    # Analyze what actually happened with this lead
+    has_conversation = False
+    last_response = ""
+    last_response_detail = ""
+    contact_name = deal.get("contact_name", "") or ""
+    channels_used = set()
+
+    for o in outreach_history:
+        channels_used.add(o.get("channel", ""))
+        resp = (o.get("response") or "").strip()
+        summary = (o.get("message_summary") or "").strip()
+        if resp:
+            has_conversation = True
+            last_response = resp
+            last_response_detail = f"{o.get('channel', '')}: {summary[:40]} -> {resp[:60]}"
+
+    # --- WARM LEAD: We've spoken, they responded ---
+    if has_conversation:
+        opener, hook, discovery_q, close = _build_warm_script(
+            deal, last_response, contact_name, next_action, industry_ctx
+        )
+        angle_key = "warm_followup"
     else:
-        detail = "some basic automation"
+        # --- COLD LEAD: Never spoken, use template ---
+        angle_key = determine_pitch_angle(deal)
+        angle = PITCH_ANGLES.get(angle_key, PITCH_ANGLES["default"])
 
-    # Personalize the opener
-    opener = angle["opener"].format(
-        industry=industry.split("/")[0].strip().lower() if "/" in industry else industry.lower(),
-        detail=detail,
-    )
+        notes = (deal.get("notes", "") or "").lower()
+        if "text-back" in notes:
+            detail = "a missed-call text-back system"
+        elif "crm" in notes:
+            detail = "a CRM for tracking leads"
+        elif "automated" in notes:
+            detail = "some automated follow-up"
+        else:
+            detail = "some basic automation"
 
-    # Build the brief
+        # Format industry name naturally
+        ind_name = industry.split("/")[0].strip().lower() if "/" in industry else industry.lower()
+        if ind_name in ("other", "none", ""):
+            ind_name = "local"
+        elif ind_name == "hvac":
+            ind_name = "HVAC"
+        elif ind_name == "med spa":
+            ind_name = "med spa"
+
+        opener = angle["opener"].format(
+            industry=ind_name,
+            detail=detail,
+        )
+        hook = angle["hook"]
+        discovery_q = industry_ctx.get("their_metric", "When a lead comes in from Google and another from a phone call — does all of that land in one place, or are you checking multiple things?")
+        close = "If you're open to it, I'd love to show you a quick 10-15 minute demo tailored to your setup. What does your calendar look like this week?"
+
+    # Determine services based on angle
+    if angle_key == "warm_followup":
+        services = _services_from_context(deal, last_response, industry_ctx)
+    else:
+        angle = PITCH_ANGLES.get(angle_key, PITCH_ANGLES["default"])
+        services = angle["services"]
+
+    # Build voicemail script (for cold leads only)
+    contact_first = contact_name.split("(")[0].strip().split()[0] if contact_name and contact_name not in ("Unknown", "the owner", "") else "there"
+    voicemail = VOICEMAIL_SCRIPT.format(contact=contact_first) if not has_conversation else ""
+
+    # Generate full personalized script incorporating differentiation
+    full_script = _build_full_personalized_script(deal, opener, hook, discovery_q, close, industry_ctx, has_conversation)
+
     brief = {
         "company": deal.get("company", "Unknown"),
-        "contact": deal.get("contact_name", "the owner"),
+        "contact": contact_name or "the owner",
         "phone": deal.get("contact_phone", ""),
         "industry": industry,
         "lead_score": deal.get("lead_score", 0),
+        "win_probability": deal.get("win_probability", 0),
         "angle": angle_key,
+        "is_warm": has_conversation,
         "pitch": {
             "opener": opener,
-            "hook": angle["hook"],
-            "discovery_question": industry_ctx.get("their_metric", "What happens when you miss a call?"),
-            "services_to_mention": angle["services"],
-            "close": "I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free.",
+            "hook": hook,
+            "discovery_question": discovery_q,
+            "services_to_mention": services,
+            "close": close,
+            "full_script": full_script,
         },
+        "objection_handlers": OBJECTION_HANDLERS,
+        "voicemail": voicemail,
         "context": {
             "their_world": industry_ctx.get("their_world", "customer inquiries, follow-ups, scheduling"),
-            "their_pain": industry_ctx.get("their_pain", "leads falling through the cracks"),
+            "their_pain": industry_ctx.get("their_pain", "leads from multiple channels not connected"),
+            "last_interaction": last_response_detail if has_conversation else "No prior contact",
+            "next_action": next_action,
         },
-        "outreach_history": deal.get("outreach_history", []),
+        "outreach_history": outreach_history,
         "do_not_say": [
             "AI", "artificial intelligence", "machine learning",
             "algorithm", "neural network", "LLM",
@@ -228,6 +360,159 @@ def generate_pitch_brief(deal: dict) -> dict:
     }
 
     return brief
+
+
+def _build_full_personalized_script(deal, opener, hook, discovery_q, close, industry_ctx, has_conversation):
+    """Build a complete, natural script incorporating differentiation and industry pain points."""
+    company = deal.get("company", "")
+    industry = deal.get("industry", "Other")
+    contact_name = deal.get("contact_name", "") or ""
+
+    # Clean contact name for natural conversation
+    if contact_name and contact_name not in ("Unknown", "the owner", ""):
+        first_name = contact_name.split()[0]
+        greeting = f"Hi {first_name}"
+    else:
+        greeting = "Hi there"
+
+    # Core differentiation to weave in naturally
+    differentiation = "I help businesses eliminate the lead fragmentation that happens when conversational AI agents and missed-call follow-up tools don't talk to each other. We built the only AI automation platform that integrates everything you already have into one seamless system that captures every lead, routes it properly, follows up automatically, and manages the entire sales process all the way to closing — without jumping between five different tools."
+
+    # Industry-specific pain points (1-2 per industry)
+    industry_pains = {
+        "HVAC": ["leads from Google, phone, and Angi going to different people", "emergency calls after hours getting lost"],
+        "Medical": ["new patient inquiries scattered across phone, website, and email", "front desk overwhelmed with coordination"],
+        "Real Estate": ["buyer inquiries coming in at all hours from multiple sources", "time-sensitive leads going cold"],
+        "Restaurant": ["catering and event inquiries getting lost between channels", "busy periods causing missed opportunities"],
+        "Legal": ["potential client calls coming in during consultations", "follow-ups getting delayed"],
+        "Salon": ["new client inquiries handled inconsistently", "rebooking gaps from manual processes"],
+        "Med Spa": ["high-value consultation requests not followed up consistently", "leads slipping through cracks"],
+        "Auto": ["service inquiries scattered across phone, text, and email", "customer communication fragmented"],
+        "Roofing": ["post-storm call surges overwhelming the team", "insurance claims and estimates getting lost"],
+        "Plumbing": ["emergency calls after hours going unanswered", "estimates and scheduling coordination issues"],
+        "Chiropractic": ["new patient calls during adjustments going to voicemail", "follow-up appointment coordination"],
+        "Electrical": ["service calls and estimates from multiple channels", "coordination between office and field teams"],
+    }
+
+    pains = industry_pains.get(industry, ["leads from different channels not connecting", "follow-ups getting missed"])
+
+    # SPIN-style discovery question (Situation/Problem/Implication/Need-payoff)
+    spin_question = f"When {pains[0]}, what typically happens to those leads?"
+
+    # Build the full script
+    script_parts = []
+
+    # Greeting and opener
+    script_parts.append(f"{greeting}, this is William with Marceau Solutions. How's your day going so far?")
+    script_parts.append("")
+    script_parts.append("GREETING RESPONSE: (Wait for answer, then...)")
+    script_parts.append("")
+    script_parts.append(f"I'll keep this to 60 seconds. {opener}")
+    script_parts.append("")
+    script_parts.append("INDUSTRY-SPECIFIC PAIN:")
+    script_parts.append(f"For {industry.lower()} businesses like {company}, I see two big pain points:")
+    script_parts.append(f"1. {pains[0]}")
+    if len(pains) > 1:
+        script_parts.append(f"2. {pains[1]}")
+    script_parts.append("")
+    script_parts.append("DIFFERENTIATION:")
+    script_parts.append(differentiation)
+    script_parts.append("")
+    script_parts.append("DISCOVERY QUESTION:")
+    script_parts.append(f"{spin_question}")
+    script_parts.append("")
+    script_parts.append("CLOSE:")
+    script_parts.append(close)
+
+    return "\n".join(script_parts)
+
+
+def _build_warm_script(deal, last_response, contact_name, next_action, industry_ctx):
+    """Build a script for someone we've ALREADY talked to."""
+    company = deal.get("company", "")
+    resp_lower = last_response.lower()
+    # Clean contact name — use first name only for natural conversation
+    raw_name = contact_name if contact_name and contact_name not in ("Unknown", "the owner", "") else ""
+    if raw_name and "(" in raw_name:
+        raw_name = raw_name.split("(")[0].strip()
+    # Use first name only
+    name_part = raw_name.split()[0] if raw_name else ""
+
+    # Also check the message_summary for context (some details are there, not in response)
+    last_summary = ""
+    for o in deal.get("outreach_history", []):
+        s = (o.get("message_summary") or "").strip()
+        if s:
+            last_summary = s
+            break  # most recent first
+    combined_context = resp_lower + " " + last_summary.lower()
+
+    # Tailor based on what happened last — ORDER MATTERS, most specific first
+    if any(kw in combined_context for kw in ["co-dev", "partner", "1099", "contract", "redundan"]):
+        opener = f"Hey {name_part or 'there'}, it's William — following up on our conversation about working together."
+        hook = "I've been thinking about what we discussed. There's a real opportunity here."
+        discovery_q = "What does your timeline look like for getting started?"
+        close = "Want to map out the details this week?"
+
+    elif "called back" in combined_context or "they called" in combined_context:
+        opener = f"Hey {name_part or 'there'}, it's William — thanks for calling back the other day. Appreciated the conversation."
+        hook = "Wanted to follow up and see if there's a good next step."
+        discovery_q = "Have you had a chance to think about what we talked about?"
+        close = "Would a quick proposal or a short demo be more useful?"
+
+    elif "interested" in resp_lower and "not interested" not in resp_lower:
+        opener = f"Hey {name_part or 'there'}, it's William — we spoke the other day and you mentioned you'd be open to hearing more."
+        hook = "I put together a quick overview of what the system would look like for your business specifically."
+        discovery_q = "What's the biggest bottleneck you're dealing with right now?"
+        close = "When works best for a 15-minute walkthrough this week?"
+
+    elif "gave email" in resp_lower or "email" in resp_lower:
+        opener = f"Hey {name_part or 'there'}, it's William — sent over that info you asked for. Wanted to make sure you got it."
+        hook = "Happy to walk through it live if that's easier than reading."
+        discovery_q = "Did you get a chance to look at what I sent?"
+        close = "Want me to walk you through it in a quick screen share?"
+
+    elif "voicemail" in resp_lower:
+        opener = f"Hey {name_part or 'there'}, it's William from Marceau Solutions — left you a voicemail the other day."
+        hook = "I'll keep it quick — I help local businesses make sure no inquiry falls through the cracks."
+        discovery_q = industry_ctx.get("their_metric", "When leads come in from different places, does that all land in one system?")
+        close = "If it sounds relevant, I can show you in 15 minutes. If not, no worries."
+
+    elif "not ready" in resp_lower or "future" in resp_lower:
+        opener = f"Hey {name_part or 'there'}, it's William — just checking in. I know the timing wasn't right last time."
+        hook = "Not here to push. Just wanted to see if anything's changed on your end."
+        discovery_q = "Is this something your team is actively trying to solve this quarter?"
+        close = "Want me to check back in a month, or is there a better time?"
+
+    else:
+        opener = f"Hey {name_part or 'there'}, it's William from Marceau Solutions — we connected recently."
+        hook = "Wanted to follow up and see if there's anything I can help with."
+        discovery_q = industry_ctx.get("their_metric", "When leads come in from different channels, does that all land in one system?")
+        close = "Would you be open to a quick call this week?"
+
+    # If there's a specific next_action, override the close
+    if next_action and next_action not in ("Follow-up call", "Re-email with value-add", "Follow-up email/call", "Follow-up email"):
+        close = f"[Per pipeline: {next_action}]"
+
+    return opener, hook, discovery_q, close
+
+
+def _services_from_context(deal, last_response, industry_ctx):
+    """Determine relevant services based on conversation context."""
+    resp_lower = last_response.lower()
+    notes = (deal.get("notes", "") or "").lower()
+    combined = resp_lower + " " + notes
+
+    if "missed call" in combined or "after hours" in combined:
+        return ["24/7 call answering", "Missed-call text-back", "After-hours coverage"]
+    elif "website" in combined:
+        return ["Website with booking", "Google Business optimization", "Online lead capture"]
+    elif "leads" in combined or "follow up" in combined:
+        return ["Lead capture system", "Automated follow-up", "Pipeline dashboard"]
+    elif "review" in combined:
+        return ["Automated review requests", "Review management", "Reputation monitoring"]
+    else:
+        return ["Lead capture", "Automated follow-up", "After-hours coverage"]
 
 
 def format_brief_for_telegram(brief: dict) -> str:
@@ -288,7 +573,7 @@ def generate_call_list_with_briefs(limit: int = 10) -> list:
             deal = dict(d)
             deal["outreach_history"] = [
                 dict(o) for o in conn.execute(
-                    "SELECT channel, message_summary, created_at FROM outreach_log WHERE deal_id = ? ORDER BY created_at DESC LIMIT 3",
+                    "SELECT channel, message_summary, response, created_at FROM outreach_log WHERE deal_id = ? ORDER BY created_at DESC LIMIT 5",
                     (d["id"],)
                 ).fetchall()
             ]
@@ -301,7 +586,7 @@ def generate_call_list_with_briefs(limit: int = 10) -> list:
         remaining = limit - len(results)
         uncalled = conn.execute("""
             SELECT * FROM deals
-            WHERE stage IN ('Intake', 'Qualified')
+            WHERE stage IN ('Intake', 'Contacted', 'Qualified')
             AND contact_phone IS NOT NULL AND contact_phone != ''
             AND id NOT IN (SELECT DISTINCT deal_id FROM outreach_log WHERE channel = 'Call' AND deal_id IS NOT NULL)
             ORDER BY lead_score DESC
@@ -310,7 +595,12 @@ def generate_call_list_with_briefs(limit: int = 10) -> list:
         for d in uncalled:
             if d["id"] not in seen:
                 deal = dict(d)
-                deal["outreach_history"] = []
+                deal["outreach_history"] = [
+                    dict(o) for o in conn.execute(
+                        "SELECT channel, message_summary, response, created_at FROM outreach_log WHERE deal_id = ? ORDER BY created_at DESC LIMIT 5",
+                        (d["id"],)
+                    ).fetchall()
+                ]
                 deal["priority"] = "COLD - FIRST CALL"
                 results.append(deal)
                 seen.add(d["id"])

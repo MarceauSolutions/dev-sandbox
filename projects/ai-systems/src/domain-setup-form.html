@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Setup — Flames of Passion</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #C9963C;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .logo p {
+            color: #888;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .card {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #3d3d3d;
+        }
+        .card h2 {
+            color: #C9963C;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .card .subtitle {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .question {
+            margin-bottom: 24px;
+        }
+        .question label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+        .question .hint {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+        .question input[type="text"],
+        .question input[type="email"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: #1a1a1a;
+            color: #f5f5f5;
+            font-size: 1rem;
+        }
+        .question input:focus {
+            outline: none;
+            border-color: #C9963C;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #555;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .radio-option:has(input:checked) {
+            border-color: #C9963C;
+            background: #333;
+        }
+        .radio-option input[type="radio"] {
+            accent-color: #C9963C;
+            width: 18px;
+            height: 18px;
+        }
+        .radio-option label {
+            cursor: pointer;
+            font-weight: normal;
+            margin-bottom: 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: #C9963C;
+            color: #1a1a1a;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: #C9963C;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #D4AF37;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+        input::-webkit-input-placeholder { color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Marceau Solutions</h1>
+            <p>Domain Setup for Flames of Passion</p>
+        </div>
+
+        <div class="card">
+            <h2>Quick Questions</h2>
+            <p class="subtitle">I need a few details so I can set up your domain properly and make sure you're not paying for anything you don't need.</p>
+
+            <form action="https://formsubmit.co/wmarceau@marceausolutions.com" method="POST">
+                <!-- FormSubmit config -->
+                <input type="hidden" name="_subject" value="Flames of Passion — Domain Setup Form">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://marceausolutions.com/domain-setup-form.html#done">
+                <input type="text" name="_honey" style="display:none">
+
+                <div class="question">
+                    <label><span class="step-number">1</span>What is your exact domain name?</label>
+                    <div class="hint">e.g., flamesofpassionentertainment.com</div>
+                    <input type="text" name="Domain Name" placeholder="yourdomain.com" required>
+                </div>
+
+                <div class="question">
+                    <label><span class="step-number">2</span>Do you use a business email on this domain?</label>
+                    <div class="hint">Like info@yourdomain.com or anything@yourdomain.com</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="Business Email" id="email-yes" value="Yes" required>
+                            <label for="email-yes">Yes, I use email on this domain</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Business Email" id="email-no" value="No">
+                            <label for="email-no">No, I don't use email on this domain</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Business Email" id="email-unsure" value="Not sure">
+                            <label for="email-unsure">I'm not sure</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label><span class="step-number">3</span>Are you paying for Google Workspace?</label>
+                    <div class="hint">This would show up as a monthly charge from Google, usually $7-14/month</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="Google Workspace" id="gw-yes" value="Yes" required>
+                            <label for="gw-yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Google Workspace" id="gw-no" value="No">
+                            <label for="gw-no">No</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Google Workspace" id="gw-unsure" value="Not sure">
+                            <label for="gw-unsure">Not sure</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <label><span class="step-number">4</span>Are you paying for Squarespace?</label>
+                    <div class="hint">Monthly charge from Squarespace, around $16-49/month for a website plan</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="Squarespace Subscription" id="ss-yes" value="Yes" required>
+                            <label for="ss-yes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Squarespace Subscription" id="ss-no" value="No">
+                            <label for="ss-no">No</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="Squarespace Subscription" id="ss-unsure" value="Not sure">
+                            <label for="ss-unsure">Not sure</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
+
+            <div id="done" style="display:none; text-align:center; padding: 40px 0;">
+                <div style="font-size: 2rem; margin-bottom: 15px;">&#10003;</div>
+                <h2 style="margin-bottom: 10px;">Got it!</h2>
+                <p style="color: #aaa;">Thanks! William will take it from here and get your domain set up. You'll get a text when it's ready.</p>
+            </div>
+        </div>
+
+        <p class="footer">Marceau Solutions &mdash; (239) 398-5676</p>
+    </div>
+
+    <script>
+        // Show success message if redirected back with #done
+        if (window.location.hash === '#done') {
+            document.querySelector('form').style.display = 'none';
+            document.querySelector('.subtitle').style.display = 'none';
+            document.getElementById('done').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

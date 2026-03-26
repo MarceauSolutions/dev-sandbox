@@ -1,0 +1,68 @@
+{
+  "replies": [
+    {
+      "message_sid": "SMa091b65c2b59ee51b040ad787fec070b",
+      "from_phone": "+12397846792",
+      "to_phone": "+18552399364",
+      "body": "Yes",
+      "date_sent": "2026-03-05 16:49:59+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "hot_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    },
+    {
+      "message_sid": "SM2dd25d594c6f733066773c79f6a47562",
+      "from_phone": "+12397846792",
+      "to_phone": "+18552399364",
+      "body": "Yes",
+      "date_sent": "2026-03-05 16:49:47+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "hot_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    },
+    {
+      "message_sid": "SMf2ee2bef3ea2fef167e1e3a7b7989eae",
+      "from_phone": "+12397846792",
+      "to_phone": "+18552399364",
+      "body": "Yes",
+      "date_sent": "2026-03-05 16:49:41+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "hot_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    },
+    {
+      "message_sid": "SM40e6d2052a33029626f2c74f10155fd4",
+      "from_phone": "+12397846792",
+      "to_phone": "+18552399364",
+      "body": "Yes ",
+      "date_sent": "2026-03-05 16:48:56+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "hot_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "hot_leads": 4,
+    "warm_leads": 0,
+    "opt_outs": 0,
+    "unknown": 0
+  },
+  "last_updated": "2026-03-05T11:54:09.970135"
+}

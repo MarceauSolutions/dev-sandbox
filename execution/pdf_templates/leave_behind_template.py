@@ -40,132 +40,172 @@ def _make_qr_image(url, size=1.3 * inch):
 def render_leave_behind(data: dict, styles: dict):
     """Render a one-page leave-behind for in-person AI services outreach.
 
+    Sales-driven layout: pain → solution → tiered value → risk reversal → CTA.
+
     Expected data keys (all optional — sensible defaults provided):
-        headline (str): Main headline
-        value_prop (str): 2-3 sentence value proposition
-        services (list[dict]): Each with "name", "features" (list), "price"
-        case_study (dict): "title", "metrics" (list of {"label", "value"})
-        qr_url (str): URL for QR code (default: marceausolutions.com/ai-automation.html)
+        headline (str): Main pain-focused headline
+        subhead (str): Agitation line
+        pain_points (list[str]): 3-4 pain bullets
+        tiers (list[dict]): Each with "name", "outcome", "includes" (list), "price", "setup"
+        guarantee (str): Risk reversal statement
+        qr_url (str): URL for QR code
         contact (dict): "email", "phone", "website"
     """
     story = []
 
-    # --- Headline ---
-    story.append(Spacer(1, 0.15 * inch))
-
-    label_style = ParagraphStyle(
-        "LBLabel", fontName=BrandConfig.HEADING_FONT,
-        fontSize=10, leading=13, textColor=BrandConfig.GOLD,
-        alignment=TA_CENTER, spaceAfter=2,
-    )
-    story.append(Paragraph(
-        "BUSINESS AUTOMATION FOR LOCAL COMPANIES",
-        label_style
-    ))
+    # --- Pain-Focused Headline ---
+    story.append(Spacer(1, 0.1 * inch))
 
     headline = data.get("headline",
-        "Your Leads Are Scattered. Your Follow-Ups Are Falling Through the Cracks.")
+        "How Many Customers Called You This Week<br/>and Never Heard Back?")
     title_style = ParagraphStyle(
         "LBTitle", fontName=BrandConfig.HEADING_FONT,
-        fontSize=18, leading=22, textColor=BrandConfig.CHARCOAL,
-        alignment=TA_CENTER, spaceAfter=4,
+        fontSize=17, leading=21, textColor=BrandConfig.CHARCOAL,
+        alignment=TA_CENTER, spaceAfter=3,
     )
     story.append(Paragraph(headline, title_style))
     story.append(accent_line())
 
-    # --- Value Proposition ---
-    value_prop = data.get("value_prop",
-        "Right now, your leads come in from phone calls, Google, your website, "
-        "texts, and referrals — but they all land in different places. Some get "
-        "followed up with. Most don't. I connect everything into one system so "
-        "every lead gets captured, every follow-up happens automatically, and "
-        "you know exactly where every potential customer stands — without adding "
-        "anything to your plate.")
-
-    vp_style = ParagraphStyle(
-        "LBValueProp", fontName=BrandConfig.BODY_FONT,
-        fontSize=10, leading=14, textColor=BrandConfig.CHARCOAL,
-        alignment=TA_CENTER, spaceAfter=8,
+    # --- Agitate the Pain ---
+    subhead = data.get("subhead",
+        "If you're like most local businesses, the answer is: you don't know. "
+        "And that's the problem.")
+    sub_style = ParagraphStyle(
+        "LBSub", fontName=BrandConfig.BODY_FONT,
+        fontSize=10, leading=13, textColor=BrandConfig.CHARCOAL,
+        alignment=TA_CENTER, spaceAfter=4,
     )
-    story.append(Paragraph(value_prop, vp_style))
-    story.append(Spacer(1, 0.05 * inch))
+    story.append(Paragraph(subhead, sub_style))
 
-    # --- Services Table ---
-    services = data.get("services", [
+    pain_points = data.get("pain_points", [
+        "Missed calls go to voicemail — and voicemails don't get returned",
+        "Leads come in from 5 different places — nobody tracks them all",
+        "You're too busy doing the work to chase down new customers",
+        "By the time you follow up, they already called your competitor",
+    ])
+    pain_style = ParagraphStyle(
+        "LBPain", fontName=BrandConfig.BODY_FONT,
+        fontSize=9, leading=12, textColor=BrandConfig.CHARCOAL,
+        alignment=TA_LEFT, leftIndent=36, spaceAfter=2,
+    )
+    for pain in pain_points:
+        story.append(Paragraph(f"\u2717  {pain}", pain_style))
+
+    story.append(Spacer(1, 0.08 * inch))
+
+    # --- Solution Bridge ---
+    bridge = data.get("bridge",
+        "We fix this. Not with another app you have to check — with an AI-powered "
+        "system that answers your phone, talks to your customers, follows up on "
+        "every lead, and manages your entire sales pipeline. You focus on the work. "
+        "The system handles everything else.")
+    bridge_style = ParagraphStyle(
+        "LBBridge", fontName=BrandConfig.HEADING_FONT,
+        fontSize=9.5, leading=13, textColor=BrandConfig.GOLD,
+        alignment=TA_CENTER, spaceAfter=6,
+    )
+    story.append(Paragraph(bridge, bridge_style))
+    story.append(Spacer(1, 0.03 * inch))
+
+    # --- 3-Tier Value Stack ---
+    tiers = data.get("tiers", [
         {
-            "name": "Unified Lead Dashboard",
-            "features": "All calls, texts, forms, and emails in one place. Know where every lead stands.",
-            "price": "Included",
+            "name": "Starter",
+            "outcome": "Never miss a call again",
+            "includes": [
+                "Instant text-back on every missed call",
+                "After-hours call answering + routing",
+                "Automated 5-star review requests",
+            ],
+            "price": "$297/mo",
+            "setup": "$500 one-time setup",
         },
         {
-            "name": "Automated Follow-Up",
-            "features": "Every missed call gets a text. Every lead gets followed up with. Nothing falls through.",
-            "price": "$500-1,000/mo",
+            "name": "Growth",
+            "outcome": "An AI employee that works 24/7",
+            "includes": [
+                "Everything in Starter, plus:",
+                "AI agent trained on YOUR services, pricing, and FAQs",
+                "Books appointments and qualifies leads before they reach you",
+            ],
+            "price": "$497/mo",
+            "setup": "$750 one-time setup",
         },
         {
-            "name": "After-Hours Coverage",
-            "features": "Calls answered 24/7. Appointments booked. Emergencies routed to you.",
-            "price": "Included",
-        },
-        {
-            "name": "Review & Referral System",
-            "features": "Automatically request reviews after service. Build your reputation on autopilot.",
-            "price": "Included",
+            "name": "Complete\nSystem",
+            "outcome": "Your entire front office — handled",
+            "includes": [
+                "Everything in Growth, plus:",
+                "Full CRM — every lead tracked from first call to close",
+                "Automated follow-up sequences so no lead goes cold",
+                "Monthly optimization + strategy calls",
+            ],
+            "price": "$997/mo",
+            "setup": "$1,000 one-time setup",
         },
     ])
 
-    service_rows = []
-    for svc in services:
-        service_rows.append([
-            svc["name"],
-            svc["features"],
-            svc["price"],
+    tier_rows = []
+    bullet_style = ParagraphStyle(
+        "TierBullet", fontName=BrandConfig.BODY_FONT,
+        fontSize=7.5, leading=10, textColor=BrandConfig.CHARCOAL,
+    )
+    tier_name_style = ParagraphStyle(
+        "TierName", fontName=BrandConfig.HEADING_FONT,
+        fontSize=9, leading=11, textColor=BrandConfig.CHARCOAL,
+    )
+    outcome_style = ParagraphStyle(
+        "TierOutcome", fontName=BrandConfig.HEADING_FONT,
+        fontSize=7.5, leading=10, textColor=BrandConfig.GOLD,
+    )
+    tier_price_style = ParagraphStyle(
+        "TierPrice", fontName=BrandConfig.HEADING_FONT,
+        fontSize=9, leading=12, textColor=BrandConfig.GOLD,
+        alignment=TA_CENTER,
+    )
+
+    for tier in tiers:
+        name_text = f'{tier["name"]}'
+        outcome_text = f'<i>{tier.get("outcome", "")}</i>'
+        bullets = "<br/>".join(f"\u2022 {item}" for item in tier["includes"])
+        setup_text = tier.get("setup", "")
+        price_text = f'<b>{tier["price"]}</b><br/><font size=7 color="#94a3b8">{setup_text}</font>'
+
+        # Combine name + outcome in first column
+        name_block = (
+            f'{name_text}<br/>'
+            f'<font name="{BrandConfig.HEADING_FONT}" size=7 color="#C9963C">'
+            f'<i>{tier.get("outcome", "")}</i></font>'
+        )
+
+        tier_rows.append([
+            Paragraph(name_block, tier_name_style),
+            Paragraph(bullets, bullet_style),
+            Paragraph(price_text, tier_price_style),
         ])
 
     story.append(branded_table(
-        ["Service", "What You Get", "Investment"],
-        service_rows,
-        col_widths=[1.6 * inch, 3.2 * inch, 1.7 * inch],
+        ["Tier", "What's Included", "Investment"],
+        tier_rows,
+        col_widths=[1.4 * inch, 3.5 * inch, 1.6 * inch],
     ))
-    story.append(Spacer(1, 0.15 * inch))
+    story.append(Spacer(1, 0.08 * inch))
 
-    # --- Case Study Box ---
-    case_study = data.get("case_study", {
-        "title": "What Our Clients Stop Worrying About",
-        "metrics": [
-            {"label": "Missed Calls Captured", "value": "100%"},
-            {"label": "Avg Follow-Up Time", "value": "< 60 sec"},
-            {"label": "Leads That Get a Reply", "value": "Every One"},
-            {"label": "Your Extra Work", "value": "Zero"},
-        ],
-    })
-
-    # Case study header
-    cs_header_style = ParagraphStyle(
-        "CSHeader", fontName=BrandConfig.HEADING_FONT,
-        fontSize=11, leading=14, textColor=BrandConfig.GOLD,
-        alignment=TA_CENTER, spaceAfter=6,
+    # --- Risk Reversal ---
+    guarantee = data.get("guarantee",
+        "FREE 2-WEEK TRIAL  \u2014  We build your system, you test it with real customers. "
+        "If it doesn't work for you, you pay nothing. No contracts. Cancel anytime with 30 days notice.")
+    guarantee_style = ParagraphStyle(
+        "LBGuarantee", fontName=BrandConfig.HEADING_FONT,
+        fontSize=9, leading=12, textColor=BrandConfig.CHARCOAL,
+        alignment=TA_CENTER, spaceAfter=2,
+        borderWidth=1, borderColor=BrandConfig.GOLD,
+        borderPadding=8, backColor=BrandConfig.GOLD_BG,
     )
-    story.append(Paragraph(
-        f'PROOF: {case_study.get("title", "Real Results")}',
-        cs_header_style
-    ))
-
-    # Metric cards in a row
-    metrics = case_study.get("metrics", [])
-    if metrics:
-        cards = [metric_card(m["label"], m["value"]) for m in metrics]
-        card_width = (7.2 / len(cards)) * inch
-        metrics_table = Table([cards], colWidths=[card_width] * len(cards))
-        metrics_table.setStyle(TableStyle([
-            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-            ("VALIGN", (0, 0), (-1, -1), "TOP"),
-            ("LEFTPADDING", (0, 0), (-1, -1), 6),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
-        ]))
-        story.append(metrics_table)
-
-    story.append(Spacer(1, 0.15 * inch))
+    story.append(KeepTogether([
+        Paragraph(guarantee, guarantee_style),
+    ]))
+    story.append(Spacer(1, 0.06 * inch))
     story.append(accent_line())
 
     # --- QR Code + Contact Info (side by side) ---
@@ -197,20 +237,20 @@ def render_leave_behind(data: dict, styles: dict):
 
     # Left column: CTA + contact details
     left_content = [
-        Paragraph("Book a Free 15-Minute Discovery Call", cta_style),
+        Paragraph("Ready to Stop Losing Customers?", cta_style),
         Spacer(1, 4),
-        Paragraph(f'<b>Email:</b> {contact.get("email", "")}', contact_style),
-        Paragraph(f'<b>Phone:</b> {contact.get("phone", "")}', contact_style),
-        Paragraph(f'<b>Web:</b> {contact.get("website", "")}', contact_style),
-        Spacer(1, 6),
         Paragraph(
-            '<i>"I connect the tools you already use into one system '
-            'that makes sure no lead gets left behind."</i>',
+            "Call or text me directly. I'll show you exactly how many "
+            "customers you're losing — and how we fix it.",
             ParagraphStyle(
-                "LBTagline", fontName=BrandConfig.BODY_FONT,
-                fontSize=9, leading=13, textColor=BrandConfig.GOLD,
+                "LBCtaSub", fontName=BrandConfig.BODY_FONT,
+                fontSize=9, leading=12, textColor=BrandConfig.CHARCOAL,
+                spaceAfter=6,
             )
         ),
+        Paragraph(f'<b>William Marceau</b>', contact_style),
+        Paragraph(f'{contact.get("phone", "")}  |  {contact.get("email", "")}', contact_style),
+        Paragraph(f'{contact.get("website", "")}', contact_style),
     ]
 
     # Right column: QR code
