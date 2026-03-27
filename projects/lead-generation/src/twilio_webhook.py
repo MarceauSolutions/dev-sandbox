@@ -465,6 +465,19 @@ def create_webhook_app(handler: TwilioWebhookHandler):
                     logger.error(f"Schedule approval failed: {e}")
                     result = {"success": False, "error": str(e)}
 
+            # Goal update ("goal short: Land 2 clients by April 15")
+            elif stripped.startswith("goal "):
+                try:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "projects" / "personal-assistant" / "src"))
+                    from goal_manager import quick_set
+                    result_msg = quick_set(body.strip())
+                    logger.info(f"Goal update: {result_msg}")
+                    result = {"success": True, "message": result_msg}
+                except Exception as e:
+                    logger.error(f"Goal update failed: {e}")
+                    result = {"success": False, "error": str(e)}
+
             # Tower/project approval ("yes real-estate")
             elif stripped.startswith("yes "):
                 try:

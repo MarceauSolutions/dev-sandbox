@@ -144,13 +144,63 @@ def get_goal_context() -> str:
     lines = ["Current Goals:"]
     for term, data in goals.items():
         if term == "research_phase":
-            lines.append(f"  Research Policy: {data.get('note', '')[:150]}")
+            lines.append(f"  RESEARCH POLICY: {data.get('note', '')}")
             continue
         goal = data.get("goal", "")
         deadline = data.get("deadline", "")
         if goal:
             lines.append(f"  {term}: {goal}" + (f" (by {deadline})" if deadline else ""))
     return "\n".join(lines)
+
+
+def get_research_directive() -> str:
+    """Return the research-first execution directive for AI agents.
+
+    This should be included in every orchestrator prompt and scheduler decision
+    to prevent opinion-injection and ensure data-driven recommendations.
+    """
+    goals = load_goals()
+    policy = goals.get("research_phase", {}).get("note", "")
+    if not policy:
+        return ""
+    return (
+        "EXECUTION DIRECTIVE — RESEARCH FIRST:\n"
+        f"{policy}\n"
+        "Before recommending an action:\n"
+        "  1. Check pipeline.db for data (what's working, what's not)\n"
+        "  2. Check outcome tracking (which visits/calls actually converted)\n"
+        "  3. Consider alternatives (not just the first suggestion)\n"
+        "  4. Present options with tradeoffs, then recommend\n"
+        "  5. Do NOT simply execute William's first instinct — validate it with data first"
+    )
+
+
+def quick_set(text: str) -> str:
+    """Parse a natural language goal update from SMS/Telegram.
+
+    Examples:
+        "goal short: Land 2 clients by April 15"
+        "goal medium: $3000/mo recurring by June"
+        "goal long: Full-time Marceau Solutions by 2027"
+
+    Returns confirmation message.
+    """
+    lower = text.lower().strip()
+
+    term_map = {
+        "short": "short_term",
+        "medium": "medium_term",
+        "long": "long_term",
+        "post": "post_april6",
+    }
+
+    for prefix, term in term_map.items():
+        if lower.startswith(f"goal {prefix}:") or lower.startswith(f"goal {prefix} :"):
+            goal_text = text.split(":", 1)[1].strip()
+            set_goal(term, goal_text)
+            return f"✓ {term} goal updated: {goal_text}"
+
+    return "Format: goal short: [your goal] | goal medium: [your goal] | goal long: [your goal]"
 
 
 def format_for_digest() -> str:

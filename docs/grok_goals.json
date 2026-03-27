@@ -83,5 +83,39 @@
     "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
     "claude_prompt": "List the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
     "priority": "high"
+  },
+  {
+    "goal": "Land first client by April 6",
+    "analyzed_at": "2026-03-27T08:13:29.904492",
+    "days_to_april_6": 9,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 9
+    },
+    "blockers": [],
+    "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
+    "claude_prompt": "List the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
+    "priority": "high"
+  },
+  {
+    "goal": "Land 2 clients by April 15",
+    "analyzed_at": "2026-03-27T08:24:24.138334",
+    "days_to_april_6": 9,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 9
+    },
+    "blockers": [],
+    "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
+    "claude_prompt": "[EXECUTION DIRECTIVE \u2014 RESEARCH FIRST:\nBefore acting on a goal, the assistant should research options and tradeoffs rather than immediately executing based on William's first instinct. Use data from pipeline.db, outcome tracking, and market signals to recommend the best path \u2014 not just the path William suggests in the moment.\nBefore recommending an action:\n  1. Check pipeline.db for data (what's working, what's not)\n  2. Check outcome tracking (which visits/calls actually converted)\n  3. Consider alternatives (not just the first suggestion)\n  4. Present options with tradeoffs, then recommend\n  5. Do NOT simply execute William's first instinct \u2014 validate it with data first]\n\nGOAL CONTEXT:\nCurrent Goals:\n  short_term: Land 2 AI clients by April 15 (by 2026-04-06)\n  medium_term: $5000/mo recurring by July (by 2026-05-15)\n  long_term: Replace day job income with Marceau Solutions AI services (by 2026-12-31)\n  post_april6: Run business evenings and weekends while working at Collier County 7am-3pm (by ongoing)\n  RESEARCH POLICY: Before acting on a goal, the assistant should research options and tradeoffs rather than immediately executing based on William's first instinct. Use data from pipeline.db, outcome tracking, and market signals to recommend the best path \u2014 not just the path William suggests in the moment.\n\nTASK:\nList the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
+    "priority": "high"
   }
 ]

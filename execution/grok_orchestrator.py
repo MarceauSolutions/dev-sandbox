@@ -126,8 +126,10 @@ def analyze_goal(goal: str) -> Dict[str, Any]:
         gm = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(gm)
         state["goals"] = gm.get_goal_context()
+        state["research_directive"] = gm.get_research_directive()
     except Exception:
         state["goals"] = "Goals not loaded"
+        state["research_directive"] = ""
 
     analysis = {
         "goal": goal,
@@ -248,6 +250,15 @@ def analyze_goal(goal: str) -> Dict[str, Any]:
             f"The goal is: '{goal}'. Show me the current system state: "
             "pipeline status, health check, tower versions, and the morning digest preview. "
             "Then recommend the single highest-leverage action."
+        )
+
+    # Prepend research directive to every Claude prompt
+    research = state.get("research_directive", "")
+    if research and analysis["claude_prompt"]:
+        analysis["claude_prompt"] = (
+            f"[{research}]\n\n"
+            f"GOAL CONTEXT:\n{state.get('goals', '')}\n\n"
+            f"TASK:\n{analysis['claude_prompt']}"
         )
 
     return analysis
