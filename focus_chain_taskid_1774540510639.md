@@ -2239,6 +2239,37 @@ curl -X POST https://n8n.marceausolutions.com/webhook/groq-edit \
 # Show goals
 cd projects/personal-assistant && python3 -m src.goal_manager show
 
-# Update a goal
+# Update a goal (CLI)
 python3 -m src.goal_manager set --term short_term --goal "Land 2 clients by April 15" --deadline 2026-04-15
+
+# Update a goal (SMS — text this to Twilio number)
+# "goal short: Land 2 clients by April 15"
+# "goal medium: $5000/mo by July"
+# "goal long: Full-time Marceau Solutions by 2027"
 ```
+
+## Research-First Execution + Dynamic Goals + Honest Groq Assessment
+
+**Date**: 2026-03-27
+
+### What was still wrong after last "fix"
+1. Research-first policy was a passive note in JSON — not enforced in code
+2. Goals could only be updated via CLI — not from phone/Telegram
+3. No honest assessment of whether n8n is the right tool for Groq file editing
+4. Orchestrator generated Claude prompts without considering goals or research policy
+
+### What was actually built
+1. **Research directive enforced**: Every grok_orchestrator Claude prompt now includes
+   the 5-step research-first policy. Agents must check data, consider alternatives,
+   and validate before executing.
+2. **SMS goal updates**: Text "goal short: [text]" to Twilio number → goal updates instantly.
+   Wired into twilio_webhook.py.
+3. **Honest Groq assessment**: n8n is NOT a Claude Code replacement. It's one-shot
+   request/response with no context. The workflow exists for automated one-shot edits.
+   For interactive editing, use Continue.dev, Cursor, or a local agent script.
+4. **Orchestrator enhanced**: Claude prompts now include goal context + research directive.
+
+### Remaining honest gaps
+- GROQ_API_KEY not yet in EC2 .env (get from console.groq.com/keys)
+- n8n Groq workflow is functional but limited (one-shot, not conversational)
+- Panacea may cache old alerts — new alerts should stop within 24h
