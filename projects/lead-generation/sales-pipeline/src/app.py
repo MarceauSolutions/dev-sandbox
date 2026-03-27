@@ -41,7 +41,7 @@ PORT = int(os.getenv("PIPELINE_PORT", "8785"))
 # Paths
 _SRC_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _SRC_DIR.parents[3]
-TRACKING_DIR = _PROJECT_ROOT / "projects/shared/lead-scraper/output"
+TRACKING_DIR = _PROJECT_ROOT / "projects/lead-generation/output"
 
 
 @app.get("/", response_class=HTMLResponse)

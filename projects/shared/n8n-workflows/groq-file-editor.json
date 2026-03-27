@@ -1,0 +1,73 @@
+{
+  "name": "Groq-File-Editor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "groq-edit",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — /groq-edit",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GROQ_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [ { role: 'system', content: 'You are a precise file editor. Given a file\\'s content and an instruction, output ONLY the complete edited file content. No explanations, no markdown code blocks — just the raw edited file.' }, { role: 'user', content: 'FILE PATH: ' + $json.body.file_path + '\\n\\nCURRENT CONTENT:\\n' + $json.body.content + '\\n\\nINSTRUCTION: ' + $json.body.instruction } ], temperature: 0.1, max_tokens: 4096 }) }}",
+        "options": {}
+      },
+      "id": "groq-api",
+      "name": "Groq API — Edit File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst edited = response.choices[0].message.content;\nconst filePath = $('Webhook — /groq-edit').first().json.body.file_path;\n\nreturn [{ json: { file_path: filePath, edited_content: edited, model: 'llama-3.3-70b-versatile', status: 'success' } }];"
+      },
+      "id": "extract-result",
+      "name": "Extract Edited Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    }
+  ],
+  "connections": {
+    "Webhook — /groq-edit": {
+      "main": [
+        [{ "node": "Groq API — Edit File", "type": "main", "index": 0 }]
+      ]
+    },
+    "Groq API — Edit File": {
+      "main": [
+        [{ "node": "Extract Edited Content", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

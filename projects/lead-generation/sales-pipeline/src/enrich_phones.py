@@ -35,7 +35,7 @@ _apollo = None
 def get_apollo():
     global _apollo
     if _apollo is None:
-        sys.path.insert(0, str(_PROJECT_ROOT / "projects/shared/lead-scraper"))
+        sys.path.insert(0, str(_PROJECT_ROOT / "projects/lead-generation/src"))
         from src.apollo import ApolloClient
         _apollo = ApolloClient(api_key=APOLLO_API_KEY)
     return _apollo
