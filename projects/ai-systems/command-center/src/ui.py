@@ -945,7 +945,7 @@ def render_outreach(records, error=None):
         <h2>Automation Status</h2>
         <p style="font-size:12px;color:{MUTED}">Follow-up emails fire automatically every day at <strong style="color:{GOLD}">9:00am</strong> via Mac launchd (<code style="background:{SURFACE};padding:2px 6px;border-radius:4px">com.marceausolutions.cold-email-followup</code>).
         No action needed — the system checks for due touches and sends them.
-        Logs: <code style="background:{SURFACE};padding:2px 6px;border-radius:4px">projects/shared/lead-scraper/output/followup.log</code></p>
+        Logs: <code style="background:{SURFACE};padding:2px 6px;border-radius:4px">projects/lead-generation/logs/daily-loop.log</code></p>
         <div style="margin-top:8px;font-size:12px;color:{MUTED}">
             Touch sequence: Day 3 (soft check-in) → Day 7 (social proof / HVAC case study) → Day 14 (wrong inbox?) → Day 21 (breakup / close the file)
         </div>

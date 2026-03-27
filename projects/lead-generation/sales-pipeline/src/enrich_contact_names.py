@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../../'))
 from dotenv import load_dotenv
 load_dotenv('.env')
 
-DB_PATH = 'projects/shared/sales-pipeline/data/pipeline.db'
+DB_PATH = 'projects/lead-generation/sales-pipeline/data/pipeline.db'
 
 # Company name suffixes that indicate a named owner practice
 # Format: (pattern_regex, title_prefix)

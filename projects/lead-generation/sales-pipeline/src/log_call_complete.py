@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 
 load_dotenv('/home/clawdbot/dev-sandbox/.env')
 
-DB_PATH = '/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db'
+DB_PATH = '/home/clawdbot/dev-sandbox/projects/lead-generation/sales-pipeline/data/pipeline.db'
 SMTP_HOST = os.getenv('SMTP_HOST')
 SMTP_USER = os.getenv('SMTP_USERNAME')
 SMTP_PASS = os.getenv('SMTP_PASSWORD')

@@ -38,9 +38,9 @@ PLAN_START = datetime(2026, 3, 17)
 PLAN_END = datetime(2026, 6, 7)
 SCORECARD_ID = "1Y5PwloUBbHM8AeiL032_zWy9jjo9vwhyRZkl7qaKw5o"
 TASKS_FILE = PROJECT_ROOT / "projects/marceau-solutions/fitness/tools/fitness-influencer/data/tenants/wmarceau/tasks.json"
-TRACKING_DIR = PROJECT_ROOT / "projects/shared/lead-scraper/output"
+TRACKING_DIR = PROJECT_ROOT / "projects/lead-generation/output"
 APOLLO_CSV = PROJECT_ROOT / "projects/marceau-solutions/digital/outputs/naples-ai-prospects-apollo-enriched-2026-03-23.csv"
-PIPELINE_DB = PROJECT_ROOT / "projects/shared/sales-pipeline/data/pipeline.db"
+PIPELINE_DB = PROJECT_ROOT / "projects/lead-generation/sales-pipeline/data/pipeline.db"
 CALENDAR_TOKEN = PROJECT_ROOT / "token.json"
 TIME_BLOCKS_CALENDAR_ID = "c_710cb4eceeac036e44157b8626fe6447b430ce3fd0100020d4b32fc44af1f164@group.calendar.google.com"
 

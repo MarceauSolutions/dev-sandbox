@@ -21,7 +21,7 @@ SMTP_PASS = os.getenv('SMTP_PASSWORD')
 SENDER_EMAIL = os.getenv('SENDER_EMAIL', 'wmarceau@marceausolutions.com')
 SENDER_NAME = os.getenv('SENDER_NAME', 'William Marceau')
 
-DB_PATH = '/home/clawdbot/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db'
+DB_PATH = '/home/clawdbot/dev-sandbox/projects/lead-generation/sales-pipeline/data/pipeline.db'
 
 def get_email_template(company_name: str, contact_name: str, industry: str = "business") -> tuple[str, str]:
     """Generate subject and HTML body for follow-up email."""

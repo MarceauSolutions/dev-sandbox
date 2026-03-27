@@ -23,7 +23,7 @@ from .ui import render_dashboard, render_landing, render_sprint
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 TASKS_FILE = PROJECT_ROOT / "projects/marceau-solutions/fitness/tools/fitness-influencer/data/tenants/wmarceau/tasks.json"
-TRACKING_DIR = PROJECT_ROOT / "projects/shared/lead-scraper/output"
+TRACKING_DIR = PROJECT_ROOT / "projects/lead-generation/output"
 SESSION_CLOSE_LOG = PROJECT_ROOT / "output" / "session_close_log.json"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = "5692454753"
