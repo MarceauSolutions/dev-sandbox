@@ -6,7 +6,7 @@ One source of truth, readable by Claude Code (Mac), Clawdbot (EC2), and the Pipe
 
 DATA LOCATION:
   - EC2 (primary): /home/clawdbot/data/pipeline.db
-  - Mac (dev):     ~/dev-sandbox/projects/shared/sales-pipeline/data/pipeline.db
+  - Mac (dev):     ~/dev-sandbox/projects/lead-generation/sales-pipeline/data/pipeline.db
   - Auto-detected: on EC2 → uses EC2 path; on Mac → uses local path
 
 TOWERS:
@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 EC2_HOST = "ec2-user@34.193.98.97"
 EC2_KEY = Path.home() / ".ssh" / "marceau-ec2-key.pem"
 EC2_DB_PATH = "/home/clawdbot/data/pipeline.db"
-MAC_DB_PATH = Path(__file__).parents[1] / "projects/shared/sales-pipeline/data/pipeline.db"
+MAC_DB_PATH = Path(__file__).parents[1] / "projects/lead-generation/sales-pipeline/data/pipeline.db"
 
 
 def _is_ec2() -> bool:

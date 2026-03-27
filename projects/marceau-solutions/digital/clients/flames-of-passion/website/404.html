@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Flames of Passion Entertainment</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --flame-orange: #e8600a;
+            --flame-gold: #d4a24e;
+            --flame-gold-light: #e8c174;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --text: #f5f0e8;
+            --text-muted: #9a9087;
+            --font-display: 'Cinzel', serif;
+            --font-decorative: 'Cinzel Decorative', serif;
+            --font-elegant: 'Cormorant Garamond', serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        html, body { height: 100%; }
+        body {
+            font-family: var(--font-body);
+            background: var(--darker);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 2rem;
+            border: 2px solid var(--flame-gold);
+        }
+        .error-code {
+            font-family: var(--font-decorative);
+            font-size: clamp(4rem, 12vw, 8rem);
+            background: linear-gradient(135deg, var(--flame-orange), var(--flame-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        h1 {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+        p {
+            font-family: var(--font-elegant);
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        .home-link {
+            display: inline-block;
+            padding: 0.9rem 2.5rem;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--darker);
+            background: linear-gradient(135deg, var(--flame-gold), var(--flame-gold-light));
+            border-radius: 4px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .home-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(232, 96, 10, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <img src="/assets/images/LogoDark.png" alt="Flames of Passion Entertainment" class="logo">
+    <div class="error-code">404</div>
+    <h1>The Flame Has Gone Out</h1>
+    <p>The page you're looking for doesn't exist or has been moved. Let's get you back to the fire.</p>
+    <a href="/" class="home-link">Return Home</a>
+</body>
+</html>

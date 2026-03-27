@@ -1,0 +1,1123 @@
+{
+  "sequences": [
+    {
+      "lead_id": "b19c3be6ce7f",
+      "phone": "(239) 269-1042",
+      "business_name": "Nixon Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.593754",
+      "last_touch_at": "2026-03-26T17:06:04.474886",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.593754",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.593754",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.593754",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "4e80eb6db740",
+      "phone": "(239) 251-0199",
+      "business_name": "Applied Heating and Cooling",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.595654",
+      "last_touch_at": "2026-03-26T17:06:06.481288",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.595654",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.595654",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.595654",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "9c687daf8323",
+      "phone": "(239) 251-1221",
+      "business_name": "Heating & Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.595893",
+      "last_touch_at": "2026-03-26T17:06:08.488946",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.595893",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.595893",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.595893",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "ee4cea2c8f99",
+      "phone": "(239) 977-0145",
+      "business_name": "Speedy Air Conditioning Contractors",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.596116",
+      "last_touch_at": "2026-03-26T17:06:10.497688",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "franchise_intro",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.596116",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.596116",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.596116",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "197ba408dde3",
+      "phone": "(239) 737-2671",
+      "business_name": "Heating and AC Experts",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.596439",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.596439",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.596439",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.596439",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "736864e2b103",
+      "phone": "(239) 380-2343",
+      "business_name": "Low Temp A/C LLC",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.596766",
+      "last_touch_at": "2026-03-26T17:06:14.506330",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.596766",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.596766",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.596766",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "5bf5ecfafeb2",
+      "phone": "(239) 221-0219",
+      "business_name": "Carden-239 HVAC Repair Cooling & Heating",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.597241",
+      "last_touch_at": "2026-03-26T17:06:16.516126",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.597241",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.597241",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.597241",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "3cde9ee048bf",
+      "phone": "(239) 263-1557",
+      "business_name": "Darrow Chiropractic Clinic",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.597636",
+      "last_touch_at": "2026-03-26T17:06:18.526409",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.597636",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.597636",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.597636",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "5dcc1bda79c6",
+      "phone": "(239) 774-4041",
+      "business_name": "Chiropractic Healthcare-Naples: Clatworthy Erin DC",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.598041",
+      "last_touch_at": "2026-03-26T17:06:20.534188",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.598041",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.598041",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.598041",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "28bcb295314b",
+      "phone": "(239) 206-3810",
+      "business_name": "Chiropractic Healthcare-Naples",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.598462",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.598462",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.598462",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.598462",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "c2d0cdf3dd4e",
+      "phone": "(239) 248-4446",
+      "business_name": "Severyn Cool Services",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.598980",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.598980",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.598980",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.598980",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "5141858d05c6",
+      "phone": "(239) 566-3633",
+      "business_name": "JP Brett & Sons Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.599376",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.599376",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.599376",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.599376",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "576e8cd9c66a",
+      "phone": "(239) 354-4326",
+      "business_name": "Family Air Conditioning and Heating, Inc.",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.599815",
+      "last_touch_at": "2026-03-26T17:06:28.553465",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.599815",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.599815",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.599815",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "55157068123b",
+      "phone": "(239) 513-9199",
+      "business_name": "Cool Zone Inc",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.600251",
+      "last_touch_at": "2026-03-26T17:06:30.562428",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "few_reviews",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.600251",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.600251",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.600251",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "32cd60e2f783",
+      "phone": "(239) 233-4356",
+      "business_name": "One Way Air",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.600906",
+      "last_touch_at": "2026-03-26T17:06:32.569569",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "franchise_intro",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.600906",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.600906",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.600906",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "4ea816d3e0c0",
+      "phone": "(239) 237-3360",
+      "business_name": "One Hour Heating & Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.601880",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.601880",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.601880",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.601880",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "802529800e38",
+      "phone": "(239) 216-4759",
+      "business_name": "Good Neighbors Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.602379",
+      "last_touch_at": "2026-03-26T17:06:36.579078",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "franchise_intro",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.602379",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.602379",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.602379",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "7686375107ae",
+      "phone": "(239) 264-0324",
+      "business_name": "26 Degree HVAC LLC",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.603051",
+      "last_touch_at": "2026-03-26T17:06:38.586593",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.603051",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.603051",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.603051",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "2911ba17b625",
+      "phone": "(239) 597-7873",
+      "business_name": "Pure Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.603715",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.603715",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.603715",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.603715",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "7659a4eeada4",
+      "phone": "(239) 398-6370",
+      "business_name": "First Choice Cooling & Heating",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.604329",
+      "last_touch_at": "2026-03-26T17:06:42.596117",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.604329",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.604329",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.604329",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "62fd29737bf4",
+      "phone": "(239) 256-2577",
+      "business_name": "Wicked Cool Air Conditioning",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.604914",
+      "last_touch_at": "2026-03-26T17:06:44.604071",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "social_proof",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.604914",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.604914",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.604914",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "767d01585bc3",
+      "phone": "(239) 596-9044",
+      "business_name": "Dolphin Cooling & Heating Inc",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.605538",
+      "last_touch_at": "2026-03-26T17:06:46.613335",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "few_reviews",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.605538",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.605538",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.605538",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "4f929cbf1150",
+      "phone": "(239) 643-2445",
+      "business_name": "Conditioned Air Naples",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.606152",
+      "last_touch_at": "2026-03-26T17:06:48.617138",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "franchise_intro",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.606152",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.606152",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.606152",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "cd4a64f43624",
+      "phone": "(239) 746-8240",
+      "business_name": "Grande Aire Services Inc.",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.606803",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.606803",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.606803",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.606803",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "a853cafa12a2",
+      "phone": "(239) 748-0609",
+      "business_name": "General Air and Plumbing - An Elevate Home Services Company",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.607591",
+      "last_touch_at": "",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "competitor_hook",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.607591",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.607591",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.607591",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    },
+    {
+      "lead_id": "beca97796675",
+      "phone": "(239) 285-7905",
+      "business_name": "Stone Cold HVAC",
+      "sending_business_id": "marceau-solutions",
+      "status": "in_sequence",
+      "started_at": "2026-03-26T17:06:03.608297",
+      "last_touch_at": "2026-03-26T17:06:54.633935",
+      "response_at": "",
+      "notes": "",
+      "touchpoints": [
+        {
+          "touch_number": 1,
+          "template_name": "few_reviews",
+          "days_after_initial": 0,
+          "scheduled_at": "2026-03-26T17:06:03.608297",
+          "sent_at": "DRY_RUN",
+          "status": "sent",
+          "message_sid": "dry_run_sid",
+          "response": ""
+        },
+        {
+          "touch_number": 2,
+          "template_name": "no_website_followup_question",
+          "days_after_initial": 3,
+          "scheduled_at": "2026-03-29T17:06:03.608297",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        },
+        {
+          "touch_number": 3,
+          "template_name": "no_website_followup_breakup",
+          "days_after_initial": 7,
+          "scheduled_at": "2026-04-02T17:06:03.608297",
+          "sent_at": "",
+          "status": "pending",
+          "message_sid": "",
+          "response": ""
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-03-26T17:06:54.634812"
+}

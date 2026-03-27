@@ -25,8 +25,20 @@ logger = logging.getLogger(__name__)
 # Gmail service singleton
 _gmail_service = None
 
+FULL_SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.modify',
+]
+
+
 def get_gmail_service():
-    """Get or create Gmail API service for personal-assistant tower."""
+    """Get or create Gmail API service for personal-assistant tower.
+
+    Loads the token WITHOUT forcing specific scopes so it works with
+    whatever scopes the token already has (e.g. gmail.readonly only).
+    Only triggers a re-auth flow if the token file is missing entirely.
+    """
     global _gmail_service
     if _gmail_service is not None:
         return _gmail_service
@@ -37,31 +49,27 @@ def get_gmail_service():
         from google.auth.transport.requests import Request
         from googleapiclient.discovery import build
 
-        SCOPES = [
-            'https://www.googleapis.com/auth/gmail.readonly',
-            'https://www.googleapis.com/auth/gmail.send',
-            'https://www.googleapis.com/auth/gmail.modify'
-        ]
-
         creds = None
         token_path = Path(__file__).resolve().parent.parent.parent.parent / "token.json"
         creds_path = Path(__file__).resolve().parent.parent.parent.parent / "credentials.json"
 
         if token_path.exists():
-            creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
+            # Load WITHOUT specifying scopes — use whatever the token has
+            creds = Credentials.from_authorized_user_file(str(token_path))
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
+                with open(token_path, 'w') as token:
+                    token.write(creds.to_json())
             elif creds_path.exists():
-                flow = InstalledAppFlow.from_client_secrets_file(str(creds_path), SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(str(creds_path), FULL_SCOPES)
                 creds = flow.run_local_server(port=0)
+                with open(token_path, 'w') as token:
+                    token.write(creds.to_json())
             else:
                 logger.error("Gmail credentials not found")
                 return None
-
-            with open(token_path, 'w') as token:
-                token.write(creds.to_json())
 
         _gmail_service = build('gmail', 'v1', credentials=creds)
         logger.info("Gmail service initialized for personal-assistant tower")
@@ -70,6 +78,21 @@ def get_gmail_service():
     except Exception as e:
         logger.error(f"Gmail service initialization failed: {e}")
         return None
+
+
+def has_send_scope() -> bool:
+    """Check if the current token has gmail.send scope."""
+    token_path = Path(__file__).resolve().parent.parent.parent.parent / "token.json"
+    if not token_path.exists():
+        return False
+    try:
+        import json
+        with open(token_path) as f:
+            token_data = json.load(f)
+        scopes = token_data.get("scopes", [])
+        return "https://www.googleapis.com/auth/gmail.send" in scopes
+    except Exception:
+        return False
 
 
 def list_emails(max_results: int = 10, query: str = "", label_ids: Optional[List[str]] = None) -> Dict[str, Any]:
@@ -346,6 +369,58 @@ def search_emails(query: str, max_results: int = 20) -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
+def search_all_accounts(query: str, accounts: str = "all", max_results: int = 10) -> Dict[str, Any]:
+    """
+    Search emails across ALL registered Gmail accounts (business + personal).
+
+    Uses multi_gmail_search.py subprocess for multi-account support.
+
+    Args:
+        query: Gmail search query
+        accounts: "all", "business", "personal", or comma-separated aliases
+        max_results: Max results per account
+
+    Returns:
+        Dict with search results from all accounts
+    """
+    import subprocess
+    import sys
+    import json
+
+    if not query:
+        return {"success": False, "error": "query is required"}
+
+    try:
+        search_script = Path(__file__).resolve().parent.parent.parent.parent / "execution" / "multi_gmail_search.py"
+        cmd = [
+            sys.executable, '-W', 'ignore', str(search_script),
+            '--query', query,
+            '--accounts', accounts,
+            '--max-results', str(max_results),
+            '--json-output'
+        ]
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=30,
+            cwd=str(search_script.parent.parent)
+        )
+        if result.returncode != 0:
+            return {"success": False, "error": result.stderr.strip()}
+
+        emails = json.loads(result.stdout) if result.stdout.strip() else []
+        return {
+            "success": True,
+            "query": query,
+            "accounts": accounts,
+            "emails": emails,
+            "count": len(emails),
+        }
+    except subprocess.TimeoutExpired:
+        return {"success": False, "error": "Search timed out after 30s"}
+    except Exception as e:
+        logger.error(f"Failed to search all accounts: {e}")
+        return {"success": False, "error": str(e)}
+
+
 # Tower interface functions for CLAUDE.md compliance
 def get_tower_capabilities() -> Dict[str, Any]:
     """Return tower capabilities for Gmail operations."""
@@ -357,7 +432,8 @@ def get_tower_capabilities() -> Dict[str, Any]:
             "read_email",
             "send_email",
             "create_draft",
-            "search_emails"
+            "search_emails",
+            "search_all_accounts"
         ],
         "protocols": ["direct_import", "mcp_server"]
     }

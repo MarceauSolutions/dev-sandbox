@@ -135,13 +135,13 @@
     "estimated_cost_per_batch": 7.9,
     "monthly_budget": 100.0
   },
-  "launched_at": "2026-01-21T11:45:32.082586",
+  "launched_at": "2026-03-26T20:04:26.340586",
   "stats": {
     "business_id": "marceau-solutions",
     "business_name": "Marceau Solutions",
-    "total_targeted": 5,
-    "sent": 5,
-    "enrolled_in_sequence": 5,
+    "total_targeted": 26,
+    "sent": 26,
+    "enrolled_in_sequence": 26,
     "errors": [],
     "dry_run": false
   },

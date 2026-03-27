@@ -439,10 +439,38 @@ def create_webhook_app(handler: TwilioWebhookHandler):
 
         logger.info(f"Received SMS from {from_phone}: {body[:50]}...")
 
-        result = handler.process_reply(from_phone, to_phone, body, message_sid)
+        # Check if this is William replying
+        if from_phone.endswith("2393985676"):
+            stripped = body.strip().lower()
+
+            # HOT lead reply (1/2/3)
+            if stripped in ("1", "2", "3"):
+                try:
+                    from .hot_lead_handler import handle_william_reply
+                    result = handle_william_reply(stripped)
+                    logger.info(f"William HOT lead reply handled: {result}")
+                except Exception as e:
+                    logger.error(f"Hot lead handler failed: {e}")
+                    result = {"success": False, "error": str(e)}
+
+            # Tower/project approval ("yes real-estate")
+            elif stripped.startswith("yes "):
+                try:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "execution"))
+                    from autonomous_tower_manager import handle_approval
+                    name = stripped[4:].strip()
+                    result = handle_approval(name)
+                    logger.info(f"Tower approval handled: {result}")
+                except Exception as e:
+                    logger.error(f"Tower approval failed: {e}")
+                    result = {"success": False, "error": str(e)}
+            else:
+                result = handler.process_reply(from_phone, to_phone, body, message_sid)
+        else:
+            result = handler.process_reply(from_phone, to_phone, body, message_sid)
 
         # Return TwiML response (empty = no auto-reply)
-        # To auto-reply, return: <Response><Message>Thanks!</Message></Response>
         twiml = '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
         return Response(twiml, mimetype="text/xml")
 
