@@ -230,9 +230,16 @@ def detect_signals() -> List[Dict[str, Any]]:
 
 
 def propose_via_sms(signal: Dict[str, Any], dry_run: bool = False) -> bool:
-    """Send a tower/project creation proposal to William via SMS.
+    """Save a tower/project proposal for inclusion in the daily digest.
 
-    William replies "yes [name]" to approve, "no" to decline.
+    Proposals are NO LONGER sent as individual SMS (too spammy).
+    Instead they are saved to proposals file and surfaced in:
+      1. The 5:30pm pipeline digest
+      2. The 6:30am morning digest
+      3. The `pending` CLI command
+
+    William approves by replying "yes [name]" to any SMS from the system,
+    or by running: python execution/autonomous_tower_manager.py approve --name [name]
     """
     name = signal["suggested_name"]
     reason = signal["reason"]
@@ -252,21 +259,8 @@ def propose_via_sms(signal: Dict[str, Any], dry_run: bool = False) -> bool:
         logger.info(f"  Reason: {reason}")
         return True
 
-    # Send SMS
-    try:
-        from twilio.rest import Client
-        account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-        auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-        from_number = os.getenv("TWILIO_PHONE_NUMBER")
-        if not all([account_sid, auth_token, from_number]):
-            logger.warning("Twilio not configured — logging proposal only")
-            return False
-        client = Client(account_sid, auth_token)
-        client.messages.create(body=body, from_=from_number, to=WILLIAM_PHONE)
-        logger.info(f"Proposal SMS sent for: {name}")
-    except Exception as e:
-        logger.error(f"SMS send failed: {e}")
-        return False
+    # Save proposal (NO individual SMS — batched into daily digest)
+    logger.info(f"Proposal saved: {name} ({sig_type})")
 
     # Save proposal
     proposals = _load_proposals()
@@ -278,6 +272,27 @@ def propose_via_sms(signal: Dict[str, Any], dry_run: bool = False) -> bool:
     _save_proposals(proposals)
 
     return True
+
+
+def format_proposals_for_digest() -> str:
+    """Format pending proposals as a line for inclusion in Telegram digests.
+
+    Returns empty string if no pending proposals (no noise).
+    """
+    proposals = _load_proposals()
+    pending = [p for p in proposals if p.get("status") == "pending"]
+    if not pending:
+        return ""
+
+    lines = [f"🏗️ *TOWER PROPOSALS ({len(pending)})*"]
+    for p in pending[:3]:
+        name = p["suggested_name"]
+        reason = p.get("reason", "")[:60]
+        lines.append(f"  • {name}: {reason}")
+    if len(pending) > 3:
+        lines.append(f"  ... +{len(pending) - 3} more")
+    lines.append(f"  _Approve: reply 'yes [name]' to any system SMS_")
+    return "\n".join(lines)
 
 
 def handle_approval(name: str) -> Dict[str, Any]:

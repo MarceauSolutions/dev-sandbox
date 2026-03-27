@@ -462,10 +462,25 @@ def generate_digest(hours_back: int = 12, preview: bool = False) -> str:
     except Exception as e:
         logger.warning(f"Compliance check failed: {e}")
 
+    # Tower proposals (batched, not individual SMS)
+    proposals_line = ""
+    try:
+        import importlib.util as ilu
+        spec2 = ilu.spec_from_file_location(
+            "autonomous_tower_manager", REPO_ROOT / "execution" / "autonomous_tower_manager.py"
+        )
+        atm = ilu.module_from_spec(spec2)
+        spec2.loader.exec_module(atm)
+        proposals_line = atm.format_proposals_for_digest()
+    except Exception as e:
+        logger.warning(f"Tower proposals check failed: {e}")
+
     # Format
     combined_health = health_line
     if compliance_line:
         combined_health = (health_line + "\n" + compliance_line).strip() if health_line else compliance_line
+    if proposals_line:
+        combined_health = (combined_health + "\n\n" + proposals_line).strip() if combined_health else proposals_line
     message = format_telegram_digest(pipeline, emails, calendar, sms, hours_back,
                                      health_line=combined_health)
 

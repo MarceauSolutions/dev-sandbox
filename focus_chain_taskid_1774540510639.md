@@ -1547,3 +1547,46 @@ Then save:
 ```bash
 ./scripts/save.sh --include-new "feat: full session - towers + daily loop + digest + enforcer + recovery"
 ```
+
+## Notification Tuning + Parallel Activation Ready — System Running Tonight
+
+**Status**: DONE ✅
+**Date**: 2026-03-26
+
+### Notification Changes
+**Before**: Tower proposals sent as individual SMS (up to 5 per run = phone spam).
+**After**: Proposals batched into daily digests only. Zero individual SMS for proposals.
+
+| Notification Type | Channel | When | Changed? |
+|-------------------|---------|------|----------|
+| HOT lead alert | SMS (immediate) | When detected | No change (high value) |
+| Tower proposals | Digest (batched) | 6:30am + 5:30pm | **Changed: was individual SMS, now batched** |
+| Outreach summary | Digest (batched) | 5:30pm | No change (already batched) |
+| Health/compliance | Digest | 6:30am | No change |
+| Loop degradation | Telegram alert | After 2 failures | No change |
+
+### Digest Now Shows Proposals
+Morning digest includes `🏗️ TOWER PROPOSALS (N)` section when pending proposals exist.
+William approves via "yes [name]" reply or CLI command — no SMS spam.
+
+### Verification
+- 6/6 daily loop stages pass
+- Morning digest: 831 chars with health + proposals + pipeline + email + calendar
+- No Twilio SMS sends in tower manager code (confirmed via grep)
+- All protected content safe (marceausolutions.com + 3 client sites)
+
+## Final Verification Complete — System Ready for Parallel Operation
+
+**Date**: 2026-03-26 8:15pm ET
+
+All items confirmed implemented and passing:
+- Notification batching: ✓ (0 individual SMS for proposals, batched into digest)
+- HOT lead SMS: ✓ (immediate, with full context)
+- Protected content: ✓ (5 sites, 17 PROTECTED_PATHS entries)
+- Launchd: ✓ (4/4 jobs loaded, check-responses actively polling)
+- Daily loop: ✓ (6/6 stages)
+- Morning digest: ✓ (831 chars, health + proposals + pipeline + email + calendar)
+- Safe git save: ✓ (scripts/save.sh ready)
+- Pipeline: 488 live deals
+
+**System is LIVE for parallel operation. Run supervised --for-real tonight.**
