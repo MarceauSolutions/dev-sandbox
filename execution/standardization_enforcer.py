@@ -143,7 +143,12 @@ def check_no_web_contamination() -> List[str]:
 
 
 def check_cross_tower_imports() -> List[str]:
-    """Check for direct imports between towers (should use tower_protocol)."""
+    """Check for direct imports between towers (should use tower_protocol).
+
+    Catches both:
+      1. from projects.other_tower.src import X
+      2. sys.path.insert(...projects/other-tower/src...) + from X import Y
+    """
     violations = []
     for tower in TOWERS:
         src_dir = REPO_ROOT / "projects" / tower / "src"
@@ -155,13 +160,24 @@ def check_cross_tower_imports() -> List[str]:
                 for other_tower in TOWERS:
                     if other_tower == tower:
                         continue
-                    # Check for direct imports like "from projects.other_tower"
                     other_mod = other_tower.replace("-", "_")
+                    # Check 1: from projects.other_tower imports
                     if f"from projects.{other_mod}" in content or f"import projects.{other_mod}" in content:
                         violations.append(
                             f"CROSS-IMPORT: {py_file.relative_to(REPO_ROOT)} imports from {other_tower} "
                             f"(use execution/tower_protocol.py instead)"
                         )
+                    # Check 2: sys.path manipulation to reach another tower
+                    if f"projects/{other_tower}/src" in content or f"projects/{other_tower}\\/src" in content:
+                        # Ignore comments
+                        for line in content.split("\n"):
+                            stripped = line.strip()
+                            if f"projects/{other_tower}/src" in stripped and not stripped.startswith("#"):
+                                violations.append(
+                                    f"CROSS-PATH: {py_file.relative_to(REPO_ROOT)} adds {other_tower}/src to sys.path "
+                                    f"(tower independence violation)"
+                                )
+                                break
             except Exception:
                 pass
     return violations

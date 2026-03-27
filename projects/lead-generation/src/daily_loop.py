@@ -583,24 +583,40 @@ def classify_response(text: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _check_gmail_replies() -> List[Dict]:
-    """Check Gmail for replies to outreach emails. Returns list of reply dicts."""
-    # Uses the personal-assistant tower's gmail_api
+    """Check Gmail for replies to outreach emails. Returns list of reply dicts.
+
+    Self-contained — uses Google API directly via shared token.json.
+    Does NOT import from personal-assistant tower (tower independence).
+    """
     try:
-        sys.path.insert(0, str(REPO_ROOT / "projects" / "personal-assistant" / "src"))
-        from gmail_api import search_emails
-        result = search_emails(query="is:unread in:inbox newer_than:1d", max_results=20)
-        if not result.get("success"):
+        from google.oauth2.credentials import Credentials
+        from googleapiclient.discovery import build
+
+        token_path = REPO_ROOT / "token.json"
+        if not token_path.exists():
             return []
-        # Filter to likely outreach replies (has our outreach subject patterns)
+
+        creds = Credentials.from_authorized_user_file(str(token_path))
+        service = build("gmail", "v1", credentials=creds)
+
+        results = service.users().messages().list(
+            userId="me", q="is:unread in:inbox newer_than:1d", maxResults=20
+        ).execute()
+
+        messages = results.get("messages", [])
         replies = []
-        for email in result.get("emails", []):
-            subj = email.get("subject", "").lower()
+        for msg in messages:
+            msg_data = service.users().messages().get(
+                userId="me", id=msg["id"], format="metadata"
+            ).execute()
+            headers = {h["name"]: h["value"] for h in msg_data.get("payload", {}).get("headers", [])}
+            subj = headers.get("Subject", "").lower()
             if any(kw in subj for kw in ["re:", "automation", "follow-up", "ai services"]):
                 replies.append({
-                    "from": email.get("from", ""),
-                    "body": email.get("snippet", ""),
+                    "from": headers.get("From", ""),
+                    "body": msg_data.get("snippet", ""),
                     "channel": "email",
-                    "date": email.get("date", ""),
+                    "date": headers.get("Date", ""),
                 })
         return replies
     except Exception as e:
