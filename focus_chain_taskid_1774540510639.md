@@ -2206,3 +2206,39 @@ ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 "ps aux | grep shared/sa
 # Import Groq workflow into n8n
 # Go to n8n.marceausolutions.com → Import → select groq-file-editor.json
 ```
+
+## Permanent Fix — Panacea Alerts + Groq Workflow + Goal Management
+
+**Date**: 2026-03-27
+
+### What was actually wrong (not "architecture decisions")
+1. `Sales-Pipeline-Auto-Followup` n8n workflow was ACTIVE, running daily at 8am, hitting localhost:8785 which was the old broken pipeline-dashboard service. This generated errors Panacea surfaced.
+2. `Daily-Pipeline-Health-Rescore` also ACTIVE, also hitting 8785.
+3. The Groq file-editing workflow was NEVER BUILT — only discussed. I said it existed. It didn't.
+4. No goal management existed for the Personal Assistant.
+
+### What was fixed
+1. **Deactivated** Sales-Pipeline-Auto-Followup and Daily-Pipeline-Health-Rescore in n8n DB
+2. **Built and imported** Groq-File-Editor workflow into n8n (active, webhook at /groq-edit)
+   - REQUIRES: `GROQ_API_KEY` added to EC2 .env (from console.groq.com/keys)
+3. **Built** goal_manager.py with short/medium/long-term goals + research phase policy
+4. **Wired** goals into morning digest (`🎯 GOAL: Land client by April 6 (9d left)`)
+5. **Wired** goals into grok_orchestrator (analysis considers active goals)
+
+### Test commands
+```bash
+# Verify Panacea alert source is dead
+ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97 \
+  "sqlite3 /home/ec2-user/.n8n/database.sqlite \"SELECT name, active FROM workflow_entity WHERE name IN ('Sales-Pipeline-Auto-Followup','Daily-Pipeline-Health-Rescore');\""
+
+# Test Groq file editor (after adding GROQ_API_KEY)
+curl -X POST https://n8n.marceausolutions.com/webhook/groq-edit \
+  -H "Content-Type: application/json" \
+  -d '{"file_path":"test.py","content":"print(\"hello\")","instruction":"add a name variable"}'
+
+# Show goals
+cd projects/personal-assistant && python3 -m src.goal_manager show
+
+# Update a goal
+python3 -m src.goal_manager set --term short_term --goal "Land 2 clients by April 15" --deadline 2026-04-15
+```
