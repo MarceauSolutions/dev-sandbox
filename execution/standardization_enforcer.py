@@ -314,7 +314,7 @@ def send_alert(result: Dict[str, Any]) -> bool:
             f"https://api.telegram.org/bot{bot_token}/sendMessage",
             data=data, headers={"Content-Type": "application/json"}, method="POST",
         )
-        urllib.request.urlopen(req, timeout=10)
+        urllib.request.urlopen(req, timeout=10, context=__import__("ssl").create_default_context(cafile=__import__("certifi").where()))
         return True
     except Exception:
         return False

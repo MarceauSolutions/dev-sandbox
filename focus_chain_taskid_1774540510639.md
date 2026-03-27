@@ -2054,3 +2054,38 @@ All 11 plists moved to `~/.launchd-disabled/` (recoverable if needed).
 | com.marceausolutions.revenue-report | Revenue reporting | ✓ Useful |
 
 ### Working systems: UNTOUCHED (daily loop 6/6, digest 1,492 chars)
+
+## Telegram SSL Certificate Fix — Morning Digest Now Sends Reliably
+
+**Status**: DONE ✅
+**Date**: 2026-03-26
+
+### Root Cause
+Python 3.14 under launchd doesn't inherit the system CA certificate bundle.
+`urllib.request.urlopen()` to `api.telegram.org` fails with
+`SSL: CERTIFICATE_VERIFY_FAILED` because there's no CA bundle to verify against.
+
+### Fix Applied (two layers of protection)
+
+**Layer 1: Code fix** — Added `certifi` SSL context to every `urlopen` call:
+- `unified_morning_digest.py` — `_get_ssl_context()` helper + `context=` param
+- `daily_loop.py` — same pattern
+- `standardization_enforcer.py` — inline certifi context
+- `three_agent_orchestrator.py` — inline certifi context
+
+**Layer 2: Environment fix** — Added `SSL_CERT_FILE` to all 4 launchd plists:
+- Points to `/opt/homebrew/lib/python3.14/site-packages/certifi/cacert.pem`
+- Plists reloaded with `launchctl unload/load`
+
+### Test Result
+```
+✓ Telegram send succeeded with certifi SSL context
+```
+Test message "✅ SSL fix test from Claude Code" delivered to Telegram.
+
+### Core systems: UNTOUCHED
+- daily_loop.py: 6/6 stages (only send_telegram function touched)
+- digest generation: unchanged
+- hot_lead_handler: unchanged
+- safe_git_save: unchanged
+- standardization_enforcer checks: unchanged

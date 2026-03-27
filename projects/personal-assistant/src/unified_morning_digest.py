@@ -406,6 +406,16 @@ def _generate_action_items(pipeline: Dict, emails: Dict, calendar: List, sms: Di
 # Delivery
 # ---------------------------------------------------------------------------
 
+def _get_ssl_context():
+    """Get SSL context with proper CA bundle (fixes launchd SSL errors)."""
+    import ssl
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
+
+
 def send_telegram(message: str) -> bool:
     """Send to William via Telegram."""
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -423,7 +433,7 @@ def send_telegram(message: str) -> bool:
             f"https://api.telegram.org/bot{bot_token}/sendMessage",
             data=data, headers={"Content-Type": "application/json"}, method="POST",
         )
-        urllib.request.urlopen(req, timeout=15)
+        urllib.request.urlopen(req, timeout=15, context=_get_ssl_context())
         logger.info("Telegram digest sent")
         return True
     except Exception as e:
