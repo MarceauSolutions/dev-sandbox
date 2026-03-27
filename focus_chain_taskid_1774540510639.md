@@ -2113,6 +2113,9 @@ Test message "✅ SSL fix test from Claude Code" delivered to Telegram.
 - [x] **#3**: Deleted shared/sales-pipeline empty shell (symlink-only directory)
 - [x] **#4**: Gitignored runtime output JSON files (response_links.json, sms_campaigns.json)
 - [x] **#5**: Added outcome recording command (`python -m src.daily_loop record --deal 42 --outcome meeting_booked`)
-- [ ] **#6**: Wire outcome data into morning digest (show yesterday's results)
-- [ ] **#7**: Verify 6 towers can start independently
-- [ ] **#8**: Add `__init__.py` exports for standardized tower imports
+- [x] **#6**: CRITICAL FIX — Standardized Python imports now work for all 6 towers. `from projects.lead_generation.src import pipeline_api` resolves correctly. projects/__init__.py maps underscore names to hyphenated directories via sys.modules injection.
+- [ ] **#7**: Wire outcome data into morning digest (show yesterday's results)
+- [ ] **#8**: Add basic workflow documentation to 5 empty tower workflows/ directories
+- [ ] **#9**: Make tower_protocol the actual cross-tower channel (replace raw SQL)
+- [ ] **#10**: Verify all 6 towers can start their Flask/FastAPI app and respond to /health
+- [ ] **#11**: Create data/ directory structure per CLAUDE.md with shared data formats
