@@ -1,0 +1,87 @@
+[
+  {
+    "goal": "Land first client by April 6",
+    "analyzed_at": "2026-03-26T20:52:48.837737",
+    "days_to_april_6": 10,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 10
+    },
+    "blockers": [],
+    "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
+    "claude_prompt": "List the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
+    "priority": "high"
+  },
+  {
+    "goal": "Make the Personal Assistant fully run my life with ROI scheduling and delegation",
+    "analyzed_at": "2026-03-26T21:16:25.048835",
+    "days_to_april_6": 10,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 10
+    },
+    "blockers": [],
+    "next_action": "ASSESS \u2014 Goal doesn't match known patterns. Showing system state for manual decision.",
+    "claude_prompt": "The goal is: 'Make the Personal Assistant fully run my life with ROI scheduling and delegation'. Show me the current system state: pipeline status, health check, tower versions, and the morning digest preview. Then recommend the single highest-leverage action.",
+    "priority": "high"
+  },
+  {
+    "goal": "Make the Personal Assistant fully run my life with ROI scheduling and delegation",
+    "analyzed_at": "2026-03-26T21:17:55.685177",
+    "days_to_april_6": 10,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 10
+    },
+    "blockers": [],
+    "next_action": "SYSTEM ALREADY COMPLETE \u2014 PA has: daily_scheduler (ROI blocks + calendar write), morning digest (health + schedule + pipeline), clawdbot handlers (conversational). Run it live and iterate based on real outcome data.",
+    "claude_prompt": "The Personal Assistant is already built. Run: python -m src.daily_scheduler preview && python -m src.unified_morning_digest --preview to verify, then run the daily loop --for-real to generate leads.",
+    "priority": "low"
+  },
+  {
+    "goal": "Land first AI client by April 6",
+    "analyzed_at": "2026-03-26T21:17:56.011082",
+    "days_to_april_6": 10,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 10
+    },
+    "blockers": [],
+    "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
+    "claude_prompt": "List the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
+    "priority": "high"
+  },
+  {
+    "goal": "Land first client",
+    "analyzed_at": "2026-03-26T21:20:15.573759",
+    "days_to_april_6": 10,
+    "system_state_summary": {
+      "total_deals": 488,
+      "hot_leads": 0,
+      "qualified": 9,
+      "system_healthy": true,
+      "loop_failures": 0,
+      "days_left": 10
+    },
+    "blockers": [],
+    "next_action": "VISIT QUALIFIED LEADS \u2014 9 qualified leads. Walk-ins convert 5-10x vs email.",
+    "claude_prompt": "List the top 5 qualified leads from pipeline.db sorted by industry, with addresses if available. I want to plan walk-in visits today.",
+    "priority": "high"
+  }
+]

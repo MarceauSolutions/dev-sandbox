@@ -221,6 +221,19 @@ def _create_tables(conn: sqlite3.Connection):
             created_at      TEXT    DEFAULT (datetime('now'))
         );
 
+        CREATE TABLE IF NOT EXISTS scheduled_outcomes (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            deal_id         INTEGER REFERENCES deals(id),
+            task_type       TEXT    NOT NULL,
+            company         TEXT,
+            scheduled_date  TEXT,
+            completed       INTEGER DEFAULT 0,
+            outcome         TEXT    DEFAULT NULL,
+            resulted_in     TEXT    DEFAULT NULL,
+            notes           TEXT,
+            created_at      TEXT    DEFAULT (datetime('now'))
+        );
+
     """)
     conn.commit()
     # Indexes created separately to handle cases where columns may not exist yet
@@ -427,6 +440,53 @@ def log_activity(conn: sqlite3.Connection, deal_id: int, activity_type: str,
         (deal_id, tower, activity_type, description)
     )
     conn.commit()
+
+
+# ── Outcome Tracking ──────────────────────────────────────────────────────────
+
+def log_scheduled_task(conn: sqlite3.Connection, deal_id: int, task_type: str,
+                       company: str, scheduled_date: str = None) -> int:
+    """Log a scheduled task (visit/call) for outcome tracking."""
+    if not scheduled_date:
+        scheduled_date = datetime.now().strftime("%Y-%m-%d")
+    cur = conn.execute(
+        "INSERT INTO scheduled_outcomes (deal_id, task_type, company, scheduled_date) "
+        "VALUES (?, ?, ?, ?)",
+        (deal_id, task_type, company, scheduled_date)
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def record_outcome(conn: sqlite3.Connection, outcome_id: int,
+                   completed: bool, outcome: str = "", resulted_in: str = "",
+                   notes: str = ""):
+    """Record the outcome of a scheduled task.
+
+    resulted_in: 'no_show' | 'conversation' | 'meeting_booked' | 'proposal_sent' | 'client_won'
+    """
+    conn.execute(
+        "UPDATE scheduled_outcomes SET completed = ?, outcome = ?, resulted_in = ?, notes = ? "
+        "WHERE id = ?",
+        (1 if completed else 0, outcome, resulted_in, notes, outcome_id)
+    )
+    conn.commit()
+
+
+def get_outcome_stats(conn: sqlite3.Connection) -> dict:
+    """Get conversion stats from scheduled tasks."""
+    total = conn.execute("SELECT COUNT(*) FROM scheduled_outcomes").fetchone()[0]
+    completed = conn.execute("SELECT COUNT(*) FROM scheduled_outcomes WHERE completed = 1").fetchone()[0]
+    won = conn.execute("SELECT COUNT(*) FROM scheduled_outcomes WHERE resulted_in = 'client_won'").fetchone()[0]
+    meetings = conn.execute("SELECT COUNT(*) FROM scheduled_outcomes WHERE resulted_in IN ('meeting_booked', 'proposal_sent', 'client_won')").fetchone()[0]
+    return {
+        "total_scheduled": total,
+        "completed": completed,
+        "meetings_booked": meetings,
+        "clients_won": won,
+        "completion_rate": round(completed / total * 100, 1) if total else 0,
+        "meeting_rate": round(meetings / completed * 100, 1) if completed else 0,
+    }
 
 
 # ── Referrals ─────────────────────────────────────────────────────────────────

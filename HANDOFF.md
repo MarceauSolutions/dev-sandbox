@@ -261,3 +261,33 @@ The FitAI frontend at `fitai.marceausolutions.com` loads but looks broken/unusab
 - (2026-03-22) Claude Dispatch evaluation — rejected, our system is better
 - (2026-03-22) Panacea three-agent bridge (agent_comms.py, CLAUDE-CODE-BRIDGE.md)
 - (2026-03-22) Project tracker (execution/project_tracker/)
+
+## Pending Handoff — 2026-03-26 21:13
+
+**Task**: Wire clawdbot_handlers.py into Clawdbot Telegram bot on EC2. File at projects/personal-assistant/src/clawdbot_handlers.py. See docs/CLAWDBOT-PA-INTEGRATION.md for full spec. Requires: import route_message from clawdbot_handlers, call it in message handler, return response if not None.
+
+**Context**:
+```json
+{}
+```
+
+**Status**: Pending — Ralph to pick up
+
+**Deployment steps for Ralph**:
+1. `git pull` on EC2 to get `projects/personal-assistant/src/clawdbot_handlers.py`
+2. Copy or symlink `clawdbot_handlers.py` into Clawdbot's working directory
+3. In Clawdbot's main message handler, add:
+   ```python
+   from clawdbot_handlers import route_message
+   # In handle_message():
+   pa_response = route_message(text)
+   if pa_response:
+       bot.send_message(chat_id, pa_response, parse_mode="Markdown")
+       return  # PA handled it
+   ```
+4. William starts SSH tunnel on Mac: `bash scripts/tunnel-to-ec2.sh`
+5. Test: send "schedule" in Telegram → should return today's ROI plan
+
+**Full spec**: `docs/CLAWDBOT-PA-INTEGRATION.md`
+
+---

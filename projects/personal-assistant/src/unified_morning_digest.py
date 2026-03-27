@@ -370,6 +370,13 @@ def _generate_action_items(pipeline: Dict, emails: Dict, calendar: List, sms: Di
     if hot:
         items.append(f"🔥 {len(hot)} hot lead(s) awaiting response — check SMS alerts")
 
+    # Qualified leads ready for outreach/visit (high-ROI for manual effort)
+    stages = pipeline.get("stages", {}) if pipeline else {}
+    qualified = stages.get("Qualified", 0)
+    warm = stages.get("Warm Response", 0)
+    if qualified + warm > 0:
+        items.append(f"🎯 {qualified + warm} qualified/warm lead(s) — consider call or walk-in visit")
+
     # Proposals pending
     proposals = pipeline.get("proposals", []) if pipeline else []
     drafts = [p for p in proposals if p.get("status") == "draft"]
@@ -475,12 +482,24 @@ def generate_digest(hours_back: int = 12, preview: bool = False) -> str:
     except Exception as e:
         logger.warning(f"Tower proposals check failed: {e}")
 
+    # Daily schedule (ROI-based time blocking)
+    schedule_line = ""
+    try:
+        from .daily_scheduler import generate_proposed_schedule, format_for_digest as fmt_schedule
+        is_post_april6 = datetime.now() >= datetime(2026, 4, 6)
+        schedule = generate_proposed_schedule(post_april_6=is_post_april6)
+        schedule_line = fmt_schedule(schedule)
+    except Exception as e:
+        logger.warning(f"Daily scheduler failed: {e}")
+
     # Format
     combined_health = health_line
     if compliance_line:
         combined_health = (health_line + "\n" + compliance_line).strip() if health_line else compliance_line
     if proposals_line:
         combined_health = (combined_health + "\n\n" + proposals_line).strip() if combined_health else proposals_line
+    if schedule_line:
+        combined_health = (combined_health + "\n\n" + schedule_line).strip() if combined_health else schedule_line
     message = format_telegram_digest(pipeline, emails, calendar, sms, hours_back,
                                      health_line=combined_health)
 
@@ -499,6 +518,23 @@ def generate_digest(hours_back: int = 12, preview: bool = False) -> str:
         # Fallback: print to stdout so launchd log captures it
         logger.warning("Telegram failed — printing to stdout")
         print(message)
+
+    # Log delivery to loop_health.json so we can verify it fired
+    try:
+        health_file = REPO_ROOT / "projects" / "lead-generation" / "logs" / "loop_health.json"
+        if health_file.exists():
+            import json as _json
+            with open(health_file) as f:
+                health = _json.load(f)
+            health["last_digest"] = {
+                "delivered": sent,
+                "timestamp": datetime.now().isoformat(),
+                "length": len(message),
+            }
+            with open(health_file, "w") as f:
+                _json.dump(health, f, indent=2)
+    except Exception:
+        pass  # Non-critical — don't break digest over logging
 
     return message
 

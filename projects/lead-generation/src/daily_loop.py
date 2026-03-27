@@ -750,6 +750,19 @@ def run_full_loop(dry_run: bool = True):
 
     record_run_health(STAGE_RESULTS)
 
+    # Auto-save after successful run (safe — only tracked files, no secrets)
+    if not dry_run and successes == total:
+        try:
+            sys.path.insert(0, str(REPO_ROOT / "execution"))
+            from safe_git_save import safe_save
+            save_result = safe_save(
+                message=f"auto: daily loop {successes}/{total} — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+            )
+            if save_result.get("saved"):
+                logger.info(f"Auto-save: {save_result.get('files', 0)} files committed")
+        except Exception as e:
+            logger.warning(f"Auto-save skipped: {e}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Lead Generation Daily Loop")

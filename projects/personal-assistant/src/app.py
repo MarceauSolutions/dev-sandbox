@@ -133,6 +133,42 @@ def create_app():
             limit=data.get('limit', 20), direction=data.get('direction')
         ))
 
+    # --- Scheduler Blueprint (for Clawdbot integration) ---
+    scheduler_bp = Blueprint('scheduler', __name__, url_prefix='/scheduler')
+
+    @scheduler_bp.route('/today', methods=['GET'])
+    def scheduler_today():
+        """Get today's proposed schedule. Clawdbot calls this for 'What's my schedule?'"""
+        from .daily_scheduler import generate_proposed_schedule, format_for_digest
+        is_post_april6 = __import__('datetime').datetime.now() >= __import__('datetime').datetime(2026, 4, 6)
+        schedule = generate_proposed_schedule(post_april_6=is_post_april6)
+        return jsonify({
+            "success": True,
+            "schedule": schedule,
+            "formatted": format_for_digest(schedule),
+        })
+
+    @scheduler_bp.route('/approve', methods=['POST'])
+    def scheduler_approve():
+        """Approve pending schedule → create calendar blocks.
+        Clawdbot calls this when William says 'yes schedule' in Telegram."""
+        from .daily_scheduler import create_approved_blocks
+        result = create_approved_blocks()
+        return jsonify({"success": True, **result})
+
+    @scheduler_bp.route('/digest', methods=['GET'])
+    def scheduler_digest():
+        """Get the morning digest. Clawdbot calls this for 'morning briefing'."""
+        from .unified_morning_digest import generate_digest
+        message = generate_digest(hours_back=12, preview=True)
+        return jsonify({"success": True, "digest": message})
+
+    @scheduler_bp.route('/health-check', methods=['GET'])
+    def scheduler_health():
+        """Get system health. Clawdbot calls this for 'system status'."""
+        from .system_health_check import run_all_checks
+        return jsonify(run_all_checks())
+
     # --- Health ---
     @app.route('/health', methods=['GET'])
     def health():
@@ -150,6 +186,7 @@ def create_app():
     app.register_blueprint(gmail_bp)
     app.register_blueprint(sheets_bp)
     app.register_blueprint(sms_bp)
+    app.register_blueprint(scheduler_bp)
 
     return app
 

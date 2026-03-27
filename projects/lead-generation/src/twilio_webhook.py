@@ -453,6 +453,18 @@ def create_webhook_app(handler: TwilioWebhookHandler):
                     logger.error(f"Hot lead handler failed: {e}")
                     result = {"success": False, "error": str(e)}
 
+            # Schedule approval ("yes schedule")
+            elif stripped == "yes schedule":
+                try:
+                    import sys
+                    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "projects" / "personal-assistant" / "src"))
+                    from daily_scheduler import create_approved_blocks
+                    result = create_approved_blocks()
+                    logger.info(f"Schedule approval handled: {result}")
+                except Exception as e:
+                    logger.error(f"Schedule approval failed: {e}")
+                    result = {"success": False, "error": str(e)}
+
             # Tower/project approval ("yes real-estate")
             elif stripped.startswith("yes "):
                 try:

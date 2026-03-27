@@ -130,3 +130,15 @@ William → Morning digest (reads) → Action items → Phone actions
 | William approves | Twilio webhook | tower_factory | CLAUDE.md-compliant creation |
 | Pipeline query | William (Telegram) | Clawdbot (EC2) | Pipeline DB read |
 | PRD assigned | Grok | Ralph (EC2) | PRD JSON → autonomous execution |
+| Task routing needed | Any | three_agent_orchestrator.py | Classifies → routes to best agent |
+| Ralph handoff | Claude Code | Ralph | HANDOFF.md + Telegram notification |
+| Goal analysis | Grok | grok_orchestrator.py | Reads state → generates Claude prompt |
+
+## Orchestration Scripts
+
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `grok_orchestrator.py` | Goal → state analysis → next action + Claude prompt | `python execution/grok_orchestrator.py goal "Land client"` |
+| `three_agent_orchestrator.py` | Task classification + inter-agent handoff | `python execution/three_agent_orchestrator.py route "Run A/B test"` |
+| `tower_protocol.py` | Cross-tower messaging via pipeline.db | Used programmatically by towers |
+| `tower_factory.py` | CLAUDE.md-compliant tower/project creation | `python execution/tower_factory.py create-tower [name]` |

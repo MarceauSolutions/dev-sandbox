@@ -1,0 +1,9 @@
+[
+  {
+    "to": "ralph",
+    "task": "Wire clawdbot_handlers.py into Clawdbot Telegram bot on EC2. File at projects/personal-assistant/src/clawdbot_handlers.py. See docs/CLAWDBOT-PA-INTEGRATION.md for full spec. Requires: import route_message from clawdbot_handlers, call it in message handler, return response if not None.",
+    "context": {},
+    "created_at": "2026-03-26T21:13:55.092719",
+    "status": "pending"
+  }
+]
