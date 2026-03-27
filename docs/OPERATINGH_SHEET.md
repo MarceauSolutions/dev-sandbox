@@ -108,3 +108,10 @@ Convert any Markdown file to a branded PDF (auto-detects template):
 
 Auto-detects: proposal, workout, nutrition, onboarding, progress, agreement.
 Output: `projects/fitness-influencer/outputs/branded-pdfs/`
+
+**Shortcut** (same thing, shorter name):
+```bash
+./make-pdf.sh docs/LIVE-OPERATION-GUIDE.md
+```
+
+**Tip**: Re-run after every major guide update to keep the PDF current.

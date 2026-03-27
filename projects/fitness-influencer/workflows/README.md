@@ -40,3 +40,22 @@ Auto-detects the best template from filename/content keywords.
 **Template auto-detection**: proposal, workout, nutrition, onboarding, progress, agreement keywords in the filename or first 5 lines.
 
 **Output**: `projects/fitness-influencer/outputs/branded-pdfs/<name>_<date>.pdf`
+
+### Cross-Tower Usage
+
+Any tower can generate branded PDFs by calling the script from the repo root:
+
+```bash
+# From lead-generation (e.g., generating a client proposal):
+cd ~/dev-sandbox
+./make-pdf.sh projects/lead-generation/drafts/naples-medspa-proposal.md
+
+# From personal-assistant (e.g., generating an operation guide):
+./make-pdf.sh docs/LIVE-OPERATION-GUIDE.md
+
+# From any tower's Python code (subprocess call):
+import subprocess
+subprocess.run(["bash", "scripts/md-to-branded-pdf.sh", "path/to/file.md"], cwd=REPO_ROOT)
+```
+
+No cross-tower imports needed — the script uses `branded_pdf_engine.py` from execution context.
