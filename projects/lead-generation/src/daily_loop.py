@@ -774,14 +774,46 @@ def run_full_loop(dry_run: bool = True):
             logger.warning(f"Auto-save skipped: {e}")
 
 
+def record_visit_outcome(deal_id: int, outcome: str, notes: str = ""):
+    """Record the outcome of a scheduled visit or call.
+
+    Usage from phone/terminal:
+        python -m src.daily_loop record --deal 42 --outcome meeting_booked --notes "Call back Thursday"
+
+    Outcomes: no_show, conversation, meeting_booked, proposal_sent, client_won, callback, not_interested
+    """
+    pdb = get_pipeline_db()
+    conn = pdb.get_db()
+
+    deal = conn.execute("SELECT company FROM deals WHERE id = ?", (deal_id,)).fetchone()
+    if not deal:
+        print(f"Deal #{deal_id} not found")
+        conn.close()
+        return
+
+    pdb.log_scheduled_task(conn, deal_id, "manual_visit", deal["company"])
+    # Get the ID of what we just logged
+    last_id = conn.execute("SELECT MAX(id) FROM scheduled_outcomes").fetchone()[0]
+    pdb.record_outcome(conn, last_id, completed=True, outcome=outcome,
+                       resulted_in=outcome, notes=notes)
+    conn.close()
+
+    print(f"✓ Recorded: Deal #{deal_id} ({deal['company']}) → {outcome}")
+    if notes:
+        print(f"  Notes: {notes}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Lead Generation Daily Loop")
-    parser.add_argument("command", choices=["full", "check-responses", "digest", "status"],
+    parser.add_argument("command", choices=["full", "check-responses", "digest", "status", "record"],
                         help="Which operation to run")
     parser.add_argument("--dry-run", action="store_true", default=False,
                         help="Preview without sending (default for full loop)")
     parser.add_argument("--for-real", action="store_true", default=False,
                         help="Actually send outreach")
+    parser.add_argument("--deal", type=int, help="Deal ID (for record command)")
+    parser.add_argument("--outcome", help="Outcome: no_show, conversation, meeting_booked, proposal_sent, client_won, callback, not_interested")
+    parser.add_argument("--notes", default="", help="Notes about the outcome")
 
     args = parser.parse_args()
     dry_run = not args.for_real
@@ -794,6 +826,11 @@ def main():
         stage_digest()
     elif args.command == "status":
         show_status()
+    elif args.command == "record":
+        if not args.deal or not args.outcome:
+            print("Usage: python -m src.daily_loop record --deal 42 --outcome meeting_booked")
+            return
+        record_visit_outcome(args.deal, args.outcome, args.notes)
 
 
 if __name__ == "__main__":
