@@ -2111,5 +2111,8 @@ Test message "✅ SSL fix test from Claude Code" delivered to Telegram.
 - [x] **#1**: Committed 377 untracked files (12 dirs moved from shared/ to towers, never staged)
 - [x] **#2**: Fixed 2 dead cross-tower imports in apollo_pipeline.py (was: `from projects.shared.lead_scraper`, now: `from . import hunter/snov`)
 - [x] **#3**: Deleted shared/sales-pipeline empty shell (symlink-only directory)
-- [ ] **#4**: Verify 6 towers can start independently
-- [ ] **#5**: Add `__init__.py` exports for standardized tower imports
+- [x] **#4**: Gitignored runtime output JSON files (response_links.json, sms_campaigns.json)
+- [x] **#5**: Added outcome recording command (`python -m src.daily_loop record --deal 42 --outcome meeting_booked`)
+- [ ] **#6**: Wire outcome data into morning digest (show yesterday's results)
+- [ ] **#7**: Verify 6 towers can start independently
+- [ ] **#8**: Add `__init__.py` exports for standardized tower imports
