@@ -1,0 +1,392 @@
+{
+  "updatedAt": "2026-02-23T23:48:11.000Z",
+  "createdAt": "2026-01-31T03:08:14.280Z",
+  "id": "MmXDtZMsY9nR5Wrx",
+  "name": "Form-Submission-Pipeline",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "form-webhook",
+      "name": "Form Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "form-submit",
+        "responseMode": "lastNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "normalize-data",
+      "name": "Normalize Form Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "lead_id",
+              "name": "lead_id",
+              "value": "={{ 'form_' + $now.toMillis() }}",
+              "type": "string"
+            },
+            {
+              "id": "name",
+              "name": "name",
+              "value": "={{ $json.name || $json.full_name || $json.fullName || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "name": "email",
+              "value": "={{ $json.email || $json.Email || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "phone",
+              "name": "phone",
+              "value": "={{ $json.phone || $json.Phone || $json.telephone || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "company",
+              "name": "company",
+              "value": "={{ $json.company || $json.Company || $json.business || 'Not provided' }}",
+              "type": "string"
+            },
+            {
+              "id": "message",
+              "name": "message",
+              "value": "={{ $json.message || $json.Message || $json.comments || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "source",
+              "name": "source",
+              "value": "={{ $json.source || $json.utm_source || 'website' }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "score-lead",
+      "name": "Score Lead Quality",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Score lead quality based on form data\nconst items = $input.all();\n\nfor (const item of items) {\n  let score = 0;\n  \n  // Has email (+2)\n  if (item.json.email && item.json.email.includes('@')) score += 2;\n  \n  // Has phone (+3)\n  if (item.json.phone && item.json.phone.length >= 10) score += 3;\n  \n  // Has message (+2)\n  if (item.json.message && item.json.message.length > 10) score += 2;\n  \n  // Message contains buying signals (+3)\n  const buyingSignals = ['interested', 'quote', 'price', 'cost', 'urgent', 'asap', 'need', 'help', 'automation', 'ai'];\n  const msg = (item.json.message || '').toLowerCase();\n  if (buyingSignals.some(signal => msg.includes(signal))) score += 3;\n  \n  // Determine quality tier\n  if (score >= 7) {\n    item.json.quality = 'HIGH';\n    item.json.action = 'CREATE_TASK';\n    item.json.emoji = '🔥';\n  } else if (score >= 4) {\n    item.json.quality = 'MEDIUM';\n    item.json.action = 'NOTIFY';\n    item.json.emoji = '📋';\n  } else {\n    item.json.quality = 'LOW';\n    item.json.action = 'LOG_ONLY';\n    item.json.emoji = '📝';\n  }\n  \n  item.json.score = score;\n}\n\nreturn items;"
+      }
+    },
+    {
+      "id": "log-to-sheets",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        300
+      ],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1iXAvYMJBqAH-VBWBiy4mXpGXP6wxLWy23U2HaHUtmk4"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Form_Submissions"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead_ID": "={{ $json.lead_id }}",
+            "Timestamp": "={{ $json.timestamp }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Company": "={{ $json.company }}",
+            "Message": "={{ $json.message }}",
+            "Source": "={{ $json.source }}",
+            "Quality": "={{ $json.quality }}",
+            "Score": "={{ $json.score }}"
+          }
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "route-by-quality",
+      "name": "Route by Quality",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        300
+      ],
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "rules": [
+            {
+              "value": "HIGH",
+              "operation": "equals",
+              "outputKey": "high"
+            },
+            {
+              "value": "MEDIUM",
+              "operation": "equals",
+              "outputKey": "medium"
+            }
+          ],
+          "fallbackOutput": "low"
+        },
+        "dataPropertyName": "quality",
+        "options": {}
+      }
+    },
+    {
+      "id": "telegram-structured-alert",
+      "name": "Telegram Structured Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        180
+      ],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "={{ $json.emoji }} ACTION REQUIRED: {{ $json.quality }} Lead\n\n📋 Details:\n• Name: {{ $json.name }}\n• Company: {{ $json.company }}\n• Email: {{ $json.email }}\n• Phone: {{ $json.phone || 'Not provided' }}\n• Source: {{ $json.source }}\n• Score: {{ $json.score }}/10\n\n💬 Message:\n\"{{ $json.message.substring(0, 200) }}{{ $json.message.length > 200 ? '...' : '' }}\"\n\n⚡ Quick Actions:\n• \"draft email\" - I'll write a personalized follow-up\n• \"research {{ $json.company }}\" - I'll look them up\n• \"call back\" - I'll schedule a reminder\n• \"skip\" - Log and move on\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram Bot - Clawdbot"
+        }
+      }
+    },
+    {
+      "id": "telegram-medium-alert",
+      "name": "Telegram Medium Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        340
+      ],
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "5692454753",
+        "text": "={{ $json.emoji }} New Lead: {{ $json.quality }}\n\n📋 Details:\n• Name: {{ $json.name }}\n• Company: {{ $json.company }}\n• Email: {{ $json.email }}\n• Phone: {{ $json.phone || 'Not provided' }}\n• Source: {{ $json.source }}\n• Score: {{ $json.score }}/10\n\n💬 Message:\n\"{{ $json.message.substring(0, 200) }}{{ $json.message.length > 200 ? '...' : '' }}\"\n\n⚡ Quick Actions:\n• \"draft email\" - Follow up\n• \"skip\" - Log only\n\n🆔 Lead ID: {{ $json.lead_id }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "Fwu0inHSbIWAsiUF",
+          "name": "Telegram Bot - Clawdbot"
+        }
+      }
+    },
+    {
+      "id": "respond-success",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": true, \"message\": \"Thank you for your submission!\", \"lead_id\": \"{{ $json.lead_id }}\"}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Form Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Form Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Form Data": {
+      "main": [
+        [
+          {
+            "node": "Score Lead Quality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Lead Quality": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Route by Quality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Quality": {
+      "main": [
+        [
+          {
+            "node": "Telegram Structured Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Medium Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Structured Alert": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Medium Alert": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionCounter": 8,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-31T03:08:14.282Z",
+      "createdAt": "2026-01-31T03:08:14.282Z",
+      "role": "workflow:owner",
+      "workflowId": "MmXDtZMsY9nR5Wrx",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2025-11-19T23:25:09.042Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-02-23T23:39:45.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-23",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": []
+}

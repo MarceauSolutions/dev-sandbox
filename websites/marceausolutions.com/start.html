@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Free 2-Week Trial | Marceau Solutions</title>
+    <meta name="description" content="Get your AI automation system live today. No credit card. No commitment. You see results before you pay anything.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111;
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+        .card {
+            background: #1c1c1c;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            max-width: 560px;
+            width: 100%;
+            padding: 48px 40px;
+        }
+        @media (max-width: 480px) { .card { padding: 32px 24px; } }
+        .brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .brand-label {
+            color: #C9963C;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #f0f0f0;
+            line-height: 1.25;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #C9963C, transparent);
+            margin: 28px 0;
+        }
+        label {
+            display: block;
+            color: #C9963C;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 13px 14px;
+            color: #f0f0f0;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #C9963C; }
+        select option { background: #1c1c1c; }
+        .field { margin-bottom: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        @media (max-width: 420px) { .grid-2 { grid-template-columns: 1fr; } }
+        textarea { resize: vertical; min-height: 80px; }
+        .btn {
+            width: 100%;
+            background: #C9963C;
+            color: #111;
+            border: none;
+            border-radius: 10px;
+            padding: 17px;
+            font-size: 16px;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 8px;
+        }
+        .btn:hover { background: #e0a93c; }
+        .btn:active { transform: scale(0.99); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .footer-note {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #2a2a2a;
+            color: #555;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+        .footer-note a { color: #C9963C; text-decoration: none; }
+        /* Success state */
+        #successState {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .success-icon { font-size: 56px; margin-bottom: 20px; }
+        .success-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            color: #C9963C;
+            margin-bottom: 14px;
+        }
+        .success-body { color: #aaa; font-size: 15px; line-height: 1.7; margin-bottom: 24px; }
+        .success-phone { color: #C9963C; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="card">
+
+    <!-- Brand header -->
+    <div class="brand">
+        <div class="brand-label">Marceau Solutions</div>
+        <h1>Start Your Free<br>2-Week Trial</h1>
+        <p class="subtitle">Fill this out and William will have your AI system live today.<br>No credit card. No commitment. Takes 2 minutes.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Form -->
+    <form id="intakeForm">
+        <div class="field">
+            <label>Business Name *</label>
+            <input name="business_name" required placeholder="Naples HVAC Pro">
+        </div>
+        <div class="field">
+            <label>Your Name *</label>
+            <input name="owner_name" required placeholder="John Smith">
+        </div>
+        <div class="grid-2">
+            <div>
+                <label>Phone *</label>
+                <input name="phone" required type="tel" placeholder="(239) 555-0100">
+            </div>
+            <div>
+                <label>Email *</label>
+                <input name="email" required type="email" placeholder="john@yourbiz.com">
+            </div>
+        </div>
+        <div class="field">
+            <label>Business Type *</label>
+            <select name="business_type" required>
+                <option value="">Select your industry...</option>
+                <option>HVAC / Air Conditioning</option>
+                <option>Plumbing</option>
+                <option>Electrical</option>
+                <option>Roofing</option>
+                <option>Dental / Medical</option>
+                <option>Chiropractic</option>
+                <option>Med Spa / Aesthetics</option>
+                <option>Legal</option>
+                <option>Property Management</option>
+                <option>Landscaping</option>
+                <option>Pest Control</option>
+                <option>Restaurant / Hospitality</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>City</label>
+            <input name="city" placeholder="Naples" value="Naples">
+        </div>
+        <div class="field">
+            <label>Biggest Pain Point</label>
+            <textarea name="pain_points" placeholder="e.g. We miss calls after hours and lose jobs to competitors..."></textarea>
+        </div>
+        <div class="field">
+            <label>How did you hear about us?</label>
+            <select name="how_heard">
+                <option value="">Select...</option>
+                <option>Phone call from William</option>
+                <option>In-person visit</option>
+                <option>Cold email</option>
+                <option>Instagram / Social media</option>
+                <option>Referral</option>
+                <option>Google search</option>
+                <option>YouTube</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">START MY FREE 2-WEEK TRIAL →</button>
+    </form>
+
+    <!-- Success state -->
+    <div id="successState">
+        <div class="success-icon">✅</div>
+        <div class="success-title">You're in!</div>
+        <p class="success-body">
+            William will contact you within the hour to get everything configured and live.<br><br>
+            Your AI system will be running <strong>today</strong>.
+        </p>
+        <p style="color:#666;font-size:13px;">
+            Questions? Call or text: <a href="tel:+18552399364" class="success-phone">(855) 239-9364</a>
+        </p>
+    </div>
+
+    <div class="footer-note">
+        No credit card required. No commitment.<br>
+        2 weeks free — you see results before you pay anything.<br><br>
+        <a href="https://marceausolutions.com">marceausolutions.com</a> &nbsp;·&nbsp; Naples, FL
+    </div>
+</div>
+
+<script>
+document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const data = {};
+    new FormData(this).forEach((v, k) => data[k] = v);
+
+    try {
+        const res = await fetch('https://pipeline.marceausolutions.com/api/intake', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.ok) {
+            document.getElementById('intakeForm').style.display = 'none';
+            document.getElementById('successState').style.display = 'block';
+        } else {
+            btn.textContent = 'START MY FREE 2-WEEK TRIAL →';
+            btn.disabled = false;
+            alert('Something went wrong. Please call (855) 239-9364 directly.');
+        }
+    } catch(err) {
+        btn.textContent = 'START MY FREE 2-WEEK TRIAL →';
+        btn.disabled = false;
+        alert('Connection error. Please call (855) 239-9364 directly.');
+    }
+});
+</script>
+</body>
+</html>

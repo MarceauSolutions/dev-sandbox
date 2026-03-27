@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Systems for Your Business | Marceau Solutions</title>
+    <meta name="description" content="Custom AI systems built for your business — free 2-week onboarding, no hidden fees. Voice AI, lead capture, automation, and more. Naples, FL — serving local and nationwide.">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="AI Systems for Your Business | Marceau Solutions">
+    <meta property="og:description" content="Free 2-week onboarding. Custom AI systems. No hidden fees. See exactly what you're getting before you pay a dime.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/ai-automation.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Calendly -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+    <!-- GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #C9963C;
+            --primary-dark: #8B6914;
+            --secondary: #D4AF37;
+            --accent: #D4AF37;
+            --dark: #333333;
+            --darker: #2D2D2D;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: var(--dark) !important;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            color: white !important;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            max-width: 80%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 5rem 2rem 2rem;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-menu-links li {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu-links a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-divider {
+            height: 1px;
+            background: var(--primary);
+            margin: 1rem 0;
+            opacity: 0.3;
+        }
+
+        .mobile-menu-section {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-links .business-link a {
+            color: var(--accent);
+        }
+
+        .mobile-menu-cta {
+            margin-top: 2rem;
+        }
+
+        .mobile-menu-cta .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page Hero */
+        .page-hero {
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at center right, rgba(201, 150, 60, 0.1) 0%, transparent 70%);
+        }
+
+        .page-hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-trust-points {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .hero-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .hero-trust-item .icon {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* Section Container */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Transparency Promise */
+        .promise-section {
+            padding: 4rem 2rem;
+            background: var(--dark);
+        }
+
+        .promise-banner {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.08), rgba(212, 175, 55, 0.04));
+            border: 1px solid rgba(201, 150, 60, 0.25);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .promise-banner h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .promise-banner > p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .promise-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .promise-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .promise-list li .icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .process-timeline {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            left: 32px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), rgba(201, 150, 60, 0.2));
+        }
+
+        .process-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-marker {
+            width: 64px;
+            height: 64px;
+            min-width: 64px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            z-index: 1;
+        }
+
+        .step-content {
+            padding-top: 0.5rem;
+        }
+
+        .step-phase {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .step-details {
+            list-style: none;
+            margin-top: 0.75rem;
+        }
+
+        .step-details li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .step-details li .check {
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .step-free-badge {
+            display: inline-block;
+            background: rgba(201, 150, 60, 0.15);
+            border: 1px solid rgba(201, 150, 60, 0.3);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--secondary);
+            transform: translateY(-4px);
+        }
+
+        .service-card .icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(201, 150, 60, 0.2), rgba(212, 175, 55, 0.2));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .service-features {
+            list-style: none;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .service-features li .check {
+            color: var(--primary);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(201, 150, 60, 0.1);
+        }
+
+        .pricing-card .card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-card .price-note {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-card .card-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 1.5rem 0;
+        }
+
+        .pricing-card .features-list {
+            list-style: none;
+        }
+
+        .pricing-card .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-card .features-list li .check {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .pricing-footer {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .pricing-footer p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* No Hidden Fees */
+        .transparency-section {
+            padding: 4rem 2rem;
+            background: var(--dark);
+        }
+
+        .transparency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .transparency-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .transparency-item .icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .transparency-item h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .transparency-item p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Results Section */
+        .results-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .result-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .result-context {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            opacity: 0.7;
+        }
+
+        /* Who It's For */
+        .who-section {
+            padding: 5rem 2rem;
+            background: var(--dark);
+        }
+
+        .who-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .who-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .who-card.yes {
+            border-color: rgba(201, 150, 60, 0.5);
+        }
+
+        .who-card.no {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .who-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .who-card.yes h3 {
+            color: var(--primary);
+        }
+
+        .who-card.no h3 {
+            color: var(--text-muted);
+        }
+
+        .who-card ul {
+            list-style: none;
+        }
+
+        .who-card li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .who-card.yes li .icon {
+            color: var(--primary);
+        }
+
+        .who-card.no li .icon {
+            color: #ef4444;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 5rem 2rem;
+            background: var(--darker);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem 0;
+        }
+
+        .faq-item:first-child {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question .toggle {
+            color: var(--primary);
+            font-size: 1.25rem;
+            transition: transform 0.2s;
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* CTA / Calendly Section */
+        .cta-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-container h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-container p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .calendly-embed {
+            min-width: 320px;
+            height: 700px;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--secondary);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        /* Contact Info */
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .contact-item a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-contact a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+
+        .disclaimer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .services-grid,
+            .who-grid,
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .transparency-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .page-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .promise-list {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-trust-points {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .process-timeline::before {
+                left: 24px;
+            }
+
+            .step-marker {
+                width: 48px;
+                height: 48px;
+                min-width: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .page-hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .calendly-embed {
+                height: 800px;
+            }
+
+            .promise-banner {
+                padding: 2rem 1.5rem;
+            }
+
+            .process-step {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="nav-logo">WILLIAM MARCEAU</a>
+            <ul class="nav-links">
+                <li><a href="/coaching.html">Coaching</a></li>
+                <li><a href="/peptides.html">Peptides</a></li>
+                <li><a href="/about.html">My Story</a></li>
+                <li><a href="/programs.html">Programs</a></li>
+                <li><a href="/ai-automation.html" class="active">AI Services</a></li>
+                <li><a href="/for-influencers.html">For Influencers</a></li>
+                <li><a href="/contact.html" class="nav-cta">Get Started</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu">
+        <ul class="mobile-menu-links">
+            <li><a href="/coaching.html">Coaching</a></li>
+            <li><a href="/peptides.html">Peptides</a></li>
+            <li><a href="/programs.html">Programs</a></li>
+            <li><a href="/about.html">My Story</a></li>
+        </ul>
+        <div class="mobile-menu-divider"></div>
+        <p class="mobile-menu-section">Business Services</p>
+        <ul class="mobile-menu-links">
+            <li class="business-link"><a href="/ai-automation.html">AI Services</a></li>
+            <li class="business-link"><a href="/for-influencers.html">For Influencers</a></li>
+        </ul>
+        <div class="mobile-menu-cta">
+            <a href="/contact.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="page-hero-container">
+            <div class="page-hero-badge">
+                <span>AI Systems for Small &amp; Local Businesses</span>
+            </div>
+            <h1>Custom AI Systems Built for Your Business — <span class="highlight">Free to Start</span></h1>
+            <p>I build the automations that save you time and capture the leads you're currently losing. You see it working before you ever pay a dime.</p>
+            <div class="hero-trust-points">
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>Free 2-week onboarding</span>
+                </div>
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>No hidden fees — ever</span>
+                </div>
+                <div class="hero-trust-item">
+                    <span class="icon">&#10003;</span>
+                    <span>Cancel anytime, no contracts</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transparency Promise -->
+    <section class="promise-section">
+        <div class="section-container">
+            <div class="promise-banner">
+                <h2>My Promise to You</h2>
+                <p>I believe you should know exactly what you're getting, what it costs, and what happens at every step — before you commit to anything.</p>
+                <ul class="promise-list">
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No setup fees.</strong> Your first two weeks are completely free — systems built, tested, and running.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No surprise charges.</strong> Every cost is outlined upfront. What you see on this page is what you pay.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No long-term contracts.</strong> The optional retainer is month-to-month. Cancel any time with zero penalties.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No pressure to continue.</strong> After onboarding, if you don't want the retainer, you keep the systems I built — free.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No black-box pricing.</strong> I'll walk you through exactly what each system does and why it costs what it costs.</span>
+                    </li>
+                    <li>
+                        <span class="icon">&#10003;</span>
+                        <span><strong>No jargon or runaround.</strong> Plain English. If you ask a question, you get a straight answer — always.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works (Process) -->
+    <section class="process-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Here's Exactly What Working With Me Looks Like</h2>
+                <p>Transparent from start to finish. No guesswork, no surprises.</p>
+            </div>
+            <div class="process-timeline">
+                <!-- Step 1 -->
+                <div class="process-step">
+                    <div class="step-marker">1</div>
+                    <div class="step-content">
+                        <div class="step-phase">Before We Start</div>
+                        <h3>Free Discovery Call (15 min)</h3>
+                        <span class="step-free-badge">No cost, no obligation</span>
+                        <p>A quick conversation to understand your business, where you're losing time or leads, and whether AI systems are actually the right fit. If they're not, I'll tell you straight — I'd rather be honest than waste your time.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> We identify your biggest bottlenecks</li>
+                            <li><span class="check">&#10003;</span> I explain what systems could help and why</li>
+                            <li><span class="check">&#10003;</span> You get a clear idea of what to expect — no commitments</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="process-step">
+                    <div class="step-marker">2</div>
+                    <div class="step-content">
+                        <div class="step-phase">Week 1-2: Free Onboarding</div>
+                        <h3>I Build Your Systems — At No Cost</h3>
+                        <span class="step-free-badge">100% free — you pay nothing</span>
+                        <p>This is where the work happens. Over two weeks I design, build, test, and launch custom AI systems tailored to your business. You'll have live access the entire time and get a full walkthrough before anything goes public.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> Custom system design based on your specific needs</li>
+                            <li><span class="check">&#10003;</span> Full build-out (voice AI, lead capture, automations, etc.)</li>
+                            <li><span class="check">&#10003;</span> Testing with real scenarios from your business</li>
+                            <li><span class="check">&#10003;</span> Live walkthrough so you understand everything</li>
+                            <li><span class="check">&#10003;</span> Training on how to use and monitor your systems</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="process-step">
+                    <div class="step-marker">3</div>
+                    <div class="step-content">
+                        <div class="step-phase">End of Week 2</div>
+                        <h3>You Decide What Happens Next</h3>
+                        <p>After onboarding you have fully functional AI systems running in your business. At this point you choose one of two paths:</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> <strong>Option A:</strong> Keep the systems as-is and manage them yourself — at no charge</li>
+                            <li><span class="check">&#10003;</span> <strong>Option B:</strong> Continue with a monthly retainer (starting at $297/mo) for ongoing optimization, support, and new system builds</li>
+                        </ul>
+                        <p>There is no wrong choice. The systems are yours either way.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="process-step">
+                    <div class="step-marker">4</div>
+                    <div class="step-content">
+                        <div class="step-phase">Ongoing (Optional)</div>
+                        <h3>Monthly Retainer — Starting at $297/mo</h3>
+                        <p>If you want ongoing support, this is where it happens. I monitor your systems, optimize performance, build new automations as your business grows, and handle anything that breaks. Tier depends on scope — see pricing below.</p>
+                        <ul class="step-details">
+                            <li><span class="check">&#10003;</span> System monitoring and performance optimization</li>
+                            <li><span class="check">&#10003;</span> Priority support — issues resolved same-day</li>
+                            <li><span class="check">&#10003;</span> New automation builds as your needs evolve</li>
+                            <li><span class="check">&#10003;</span> Monthly performance report with actionable insights</li>
+                            <li><span class="check">&#10003;</span> Cancel any month — no penalties, no questions asked</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Transparency -->
+    <section class="pricing-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Reference Pricing — Final Quote After Discovery Call</h2>
+                <p>These tiers are a starting point — like an insurance estimate before the final quote. Your actual price depends on the scope of your build, the systems you want, and the complexity of your setup. We confirm exact pricing during your free discovery call.</p>
+            </div>
+            <div style="background:rgba(201,150,60,0.1);border:1px solid rgba(201,150,60,0.4);border-radius:10px;padding:16px 20px;margin-bottom:28px;text-align:center;">
+                <p style="margin:0;color:#C9963C;font-weight:600;font-size:0.95rem;">&#9432; &nbsp;Pricing shown is a reference range. Every build is scoped individually — your final monthly retainer and setup fee are confirmed after we talk through exactly what you need. Some builds cost less. More complex integrations may cost more.</p>
+            </div>
+            <div class="pricing-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                <div class="pricing-card featured">
+                    <div class="card-label">No-Brainer Start</div>
+                    <h3>Starter</h3>
+                    <div class="price">$297<span style="font-size:1.1rem;font-weight:500;">/mo</span></div>
+                    <div class="price-note">$500 one-time setup + monthly retainer</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Free 2-week onboarding &amp; build</li>
+                        <li><span class="check">&#10003;</span> Missed-call text-back system</li>
+                        <li><span class="check">&#10003;</span> Automated lead follow-up</li>
+                        <li><span class="check">&#10003;</span> Basic system monitoring</li>
+                        <li><span class="check">&#10003;</span> Email support</li>
+                        <li><span class="check">&#10003;</span> Monthly performance report</li>
+                    </ul>
+                </div>
+                <div class="pricing-card">
+                    <div class="card-label">Most Popular</div>
+                    <h3>Growth</h3>
+                    <div class="price">$497<span style="font-size:1.1rem;font-weight:500;">/mo</span></div>
+                    <div class="price-note">$750 one-time setup + monthly retainer</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Everything in Starter, plus:</li>
+                        <li><span class="check">&#10003;</span> AI phone &amp; text intake</li>
+                        <li><span class="check">&#10003;</span> Automated appointment booking</li>
+                        <li><span class="check">&#10003;</span> CRM integration</li>
+                        <li><span class="check">&#10003;</span> Priority same-day support</li>
+                        <li><span class="check">&#10003;</span> Direct access to me</li>
+                    </ul>
+                </div>
+                <div class="pricing-card">
+                    <div class="card-label">Full Service</div>
+                    <h3>Pro</h3>
+                    <div class="price">$997<span style="font-size:1.1rem;font-weight:500;">/mo</span></div>
+                    <div class="price-note">$1,000 one-time setup + monthly retainer</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Everything in Growth, plus:</li>
+                        <li><span class="check">&#10003;</span> Full voice AI receptionist</li>
+                        <li><span class="check">&#10003;</span> Multi-channel automation</li>
+                        <li><span class="check">&#10003;</span> New system builds monthly</li>
+                        <li><span class="check">&#10003;</span> Weekly optimization check-ins</li>
+                        <li><span class="check">&#10003;</span> Revenue impact reporting</li>
+                    </ul>
+                </div>
+                <div class="pricing-card">
+                    <div class="card-label">Enterprise</div>
+                    <h3>Elite</h3>
+                    <div class="price">$1,497<span style="font-size:1.1rem;font-weight:500;">/mo</span></div>
+                    <div class="price-note">$1,500 one-time setup + monthly retainer</div>
+                    <div class="card-divider"></div>
+                    <ul class="features-list">
+                        <li><span class="check">&#10003;</span> Everything in Pro, plus:</li>
+                        <li><span class="check">&#10003;</span> Dedicated AI systems architect</li>
+                        <li><span class="check">&#10003;</span> Custom integrations &amp; API work</li>
+                        <li><span class="check">&#10003;</span> Multi-location support</li>
+                        <li><span class="check">&#10003;</span> Quarterly strategy sessions</li>
+                        <li><span class="check">&#10003;</span> White-glove onboarding</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pricing-footer">
+                <p>Everyone starts with a free 2-week onboarding — I build your systems at no cost so you can see results before committing. After that, you choose the tier that fits your needs. The tiers above are reference ranges — your exact setup fee and monthly retainer are confirmed during the discovery call based on what you actually want built. Setup is one-time. Monthly retainer is cancel-anytime, no contracts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Costs What (Transparency) -->
+    <section class="transparency-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Where Your Money Goes</h2>
+                <p>Full transparency on every dollar.</p>
+            </div>
+            <div class="transparency-grid">
+                <div class="transparency-item">
+                    <div class="icon">&#128176;</div>
+                    <h3>My Time</h3>
+                    <p>Design, build, testing, training, ongoing support — all included in the retainer or free during onboarding.</p>
+                </div>
+                <div class="transparency-item">
+                    <div class="icon">&#9889;</div>
+                    <h3>Third-Party Tools</h3>
+                    <p>Some AI services (voice AI, SMS, etc.) have usage-based costs. I'll break these down for you before we start — there are no markups.</p>
+                </div>
+                <div class="transparency-item">
+                    <div class="icon">&#128274;</div>
+                    <h3>You Own It</h3>
+                    <p>Every system I build belongs to you. If we part ways, you keep everything — accounts, automations, all of it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What I Build -->
+    <section class="services-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Types of Systems I Build</h2>
+                <p>During onboarding we'll figure out which of these fits your business best. Most clients start with one or two and add more over time.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="icon">&#128222;</div>
+                    <h3>Voice AI Receptionist</h3>
+                    <p>An AI that answers every call 24/7 — books appointments, answers FAQs, routes emergencies to you. Never miss a lead again.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Answers in your business's voice and tone</li>
+                        <li><span class="check">&#10003;</span> Books directly to your calendar</li>
+                        <li><span class="check">&#10003;</span> Routes urgent calls to your cell</li>
+                        <li><span class="check">&#10003;</span> Works nights, weekends, and holidays</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">&#127919;</div>
+                    <h3>Lead Capture &amp; Follow-Up</h3>
+                    <p>Instant response to every new lead via SMS and email. Automated follow-up sequences that keep you top-of-mind until they're ready to buy.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Instant response to new leads (under 60 seconds)</li>
+                        <li><span class="check">&#10003;</span> Multi-touch follow-up sequences</li>
+                        <li><span class="check">&#10003;</span> CRM pipeline with lead scoring</li>
+                        <li><span class="check">&#10003;</span> Performance tracking and reporting</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">&#9889;</div>
+                    <h3>Business Process Automation</h3>
+                    <p>Custom workflows that eliminate the repetitive tasks eating your day — invoicing, scheduling, reporting, customer notifications.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Custom workflow design for your operations</li>
+                        <li><span class="check">&#10003;</span> Automated invoicing and payment reminders</li>
+                        <li><span class="check">&#10003;</span> Review request automation</li>
+                        <li><span class="check">&#10003;</span> Integrates with your existing tools</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="icon">&#127760;</div>
+                    <h3>Website + Automation Package</h3>
+                    <p>Need a website too? I build fast, mobile-first sites with AI automation baked in from day one — lead capture, chat, the works.</p>
+                    <ul class="service-features">
+                        <li><span class="check">&#10003;</span> Professional, mobile-optimized design</li>
+                        <li><span class="check">&#10003;</span> Lead capture forms wired to automation</li>
+                        <li><span class="check">&#10003;</span> SEO-optimized for local search</li>
+                        <li><span class="check">&#10003;</span> Hosting and maintenance included</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real Results -->
+    <section class="results-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Real Results From a Naples HVAC Company</h2>
+                <p>45-day proof of concept — Voice AI receptionist replacing manual call handling.</p>
+            </div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-number">90%+</div>
+                    <div class="result-label">AI call answer rate</div>
+                    <div class="result-context">Up from 40-60% human</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">$2,600</div>
+                    <div class="result-label">Monthly savings</div>
+                    <div class="result-context">Receptionist cost eliminated</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">100%</div>
+                    <div class="result-label">After-hours coverage</div>
+                    <div class="result-context">Up from 0%</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-number">15+</div>
+                    <div class="result-label">Appointments booked</div>
+                    <div class="result-context">During 45-day POC</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who It's For -->
+    <section class="who-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Is This Right for Your Business?</h2>
+            </div>
+            <div class="who-grid">
+                <div class="who-card yes">
+                    <h3><span class="icon">&#10003;</span> Great Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're a service business (HVAC, plumbing, dental, medical, restaurant, legal, etc.)</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're missing calls or leads are slipping through the cracks</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You have 1-50 employees and need to do more with less</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You want systems that work while you don't</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10003;</span>
+                            <span>You're open to trying something new — with zero risk</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="who-card no">
+                    <h3><span class="icon">&#10007;</span> Probably Not a Fit If...</h3>
+                    <ul>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You're looking for social media management or ad campaigns</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You need a full-service marketing agency</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You're not ready to implement any new systems right now</span>
+                        </li>
+                        <li>
+                            <span class="icon">&#10007;</span>
+                            <span>You want someone to run your entire business for you</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Common Questions</h2>
+                <p>Straight answers. No runaround.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What's the catch with the free onboarding?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        There isn't one. I build your systems for free because I'm confident you'll see the value and want to continue. If you don't, you walk away with fully functional systems at no cost. I'd rather earn your business by proving value than by locking you into a contract.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What happens if I don't want the retainer after onboarding?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        You keep everything I built. The systems are yours. You can manage them yourself, and I'll make sure you're trained to do so. No hard feelings, no dismantling anything, no "gotcha" fees.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Are there any costs beyond the monthly retainer?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Some AI tools have their own usage fees (for example, voice AI services charge per minute of phone time). I'll break down any third-party costs before we build anything, so there are never surprises. I don't mark up these costs — you pay exactly what the service charges.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        How long does onboarding actually take?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Two weeks from our first working session. Most systems are live and testable within the first week. The second week is for fine-tuning, testing with real scenarios, and making sure you're comfortable with everything.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        What if I want to cancel the retainer later?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Send me a message and it's done. No cancellation fees, no 30-day notice requirements, no exit interviews. Your systems keep running — you just manage them yourself going forward.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Do I need to be technical to use these systems?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Not at all. Everything is designed to work without technical knowledge. During onboarding I'll train you on how to use and monitor your systems, and the retainer includes support for anything you can't figure out on your own.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        I'm not sure if AI is right for my business. Should I still book a call?
+                        <span class="toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely. The discovery call is free and there's zero pressure. If AI isn't the right fit, I'll tell you directly and point you toward what might work better. I'd rather give you honest advice than sell you something you don't need.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA + Calendly -->
+    <section id="book" class="cta-section">
+        <div class="cta-container">
+            <h2>Ready to See What AI Can Do for Your Business?</h2>
+            <p>Already know you want it? Start now — no call required. Or book a free 15-minute discovery call if you have questions first.</p>
+            <div class="cta-buttons" style="flex-direction:column;align-items:center;gap:1rem;margin-bottom:2.5rem;">
+                <a href="https://marceausolutions.com/start" class="btn btn-primary" style="font-size:1.15rem;padding:1.1rem 2.5rem;background:var(--secondary);color:#1a1a1a;font-weight:700;box-shadow:0 4px 24px rgba(201,150,60,0.35);letter-spacing:0.01em;">
+                    Start Your Free 2-Week Trial &#8594;
+                </a>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin:0;">No credit card. Systems built and live in 2 weeks. You keep them regardless.</p>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin:0.5rem 0;">— or —</p>
+                <p style="color:var(--text-muted);font-size:0.95rem;margin:0;">Have questions first? Book a free 15-min call below.</p>
+            </div>
+        </div>
+        <div class="calendly-embed">
+            <div class="calendly-inline-widget" data-url="https://calendly.com/wmarceau/ai-services-discovery-call?hide_gdpr_banner=1&background_color=0f172a&text_color=f8fafc&primary_color=D4AF37" style="min-width:320px;height:700px;"></div>
+        </div>
+        <div class="contact-info">
+            <div class="contact-item">
+                <span>&#128231;</span>
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+            </div>
+            <div class="contact-item">
+                <span>&#128222;</span>
+                <a href="tel:+18552399364">(855) 239-9364</a>
+            </div>
+            <div class="contact-item">
+                <span>&#128205;</span>
+                <span>Naples, FL — serving local + nationwide</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about.html">My Story</a>
+                <a href="/coaching.html">Coaching</a>
+                <a href="/terms.html">Terms</a>
+                <a href="/privacy.html">Privacy</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:wmarceau@marceausolutions.com">wmarceau@marceausolutions.com</a>
+                <span style="margin: 0 0.5rem; color: var(--text-muted);">|</span>
+                <a href="tel:+18552399364">(855) 239-9364</a>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <p>&copy; 2026 Marceau Solutions. All rights reserved. | AI Systems for Small &amp; Local Businesses</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.querySelector('.mobile-menu').classList.toggle('active');
+            document.querySelector('.menu-overlay').classList.toggle('active');
+            document.body.style.overflow = document.querySelector('.mobile-menu').classList.contains('active') ? 'hidden' : '';
+        }
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(function(question) {
+            question.addEventListener('click', function() {
+                var answer = this.nextElementSibling;
+                var toggle = this.querySelector('.toggle');
+                var isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+                // Close all
+                document.querySelectorAll('.faq-answer').forEach(function(a) {
+                    a.style.maxHeight = '0px';
+                    a.style.opacity = '0';
+                    a.style.paddingBottom = '0';
+                });
+                document.querySelectorAll('.faq-question .toggle').forEach(function(t) {
+                    t.textContent = '+';
+                });
+
+                // Open clicked (if it was closed)
+                if (!isOpen) {
+                    answer.style.maxHeight = answer.scrollHeight + 16 + 'px';
+                    answer.style.opacity = '1';
+                    answer.style.paddingBottom = '0.5rem';
+                    toggle.textContent = '\u2212';
+                }
+            });
+        });
+
+        // Initialize FAQ answers as closed
+        document.querySelectorAll('.faq-answer').forEach(function(answer) {
+            answer.style.maxHeight = '0px';
+            answer.style.opacity = '0';
+            answer.style.overflow = 'hidden';
+            answer.style.transition = 'max-height 0.3s ease, opacity 0.2s ease, padding-bottom 0.3s ease';
+            answer.style.paddingBottom = '0';
+        });
+    </script>
+</body>
+</html>

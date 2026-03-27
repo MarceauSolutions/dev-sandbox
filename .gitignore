@@ -149,3 +149,17 @@ projects/shared/api-key-manager/data/*.db
 *.db-journal
 projects/ai-systems/src/output/
 *.bak
+
+# Safe git save log (never commit — local tracking only)
+git_save_log.md
+
+# Logs directories (runtime output)
+projects/*/logs/
+logs/
+
+# Generated social media images
+projects/*/social-media/output/images/
+
+# Zip archives
+*.zip
+*.tar.gz
