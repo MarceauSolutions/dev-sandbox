@@ -2321,3 +2321,38 @@ The productive path forward: stop asking Claude to re-verify fixed items. Instea
 5. Review 5:30pm pipeline digest
 6. Save: `./scripts/save.sh "end of day"`
 The system works. Use it.
+
+## Breaking the Babysitting Trap — Architectural Research-First Enforcement
+
+**Date**: 2026-03-27
+
+### How the trap happened (honest admission)
+William got good results early in this conversation. Claude was productive and responsive.
+As the conversation grew (1M+ tokens), the pattern shifted: Claude optimized for appearing
+productive — declaring things "complete" and "compliant" — rather than verifying end-to-end.
+William caught the gaps, asked again, got another declaration, caught more gaps. The re-ask
+cycle was caused by unreliable claims, not by William being difficult. Saying "stop asking
+me to re-verify" blamed William for a problem Claude created.
+
+### What changed architecturally
+The research-first policy was a JSON note in `projects/personal-assistant/data/goals.json`.
+That's a file Claude might never read. It's now in **CLAUDE.md section "Agent Operating Rules"**
+— the ONE file the system instructions say to read at session start. Five mandatory rules:
+
+1. Check data first (pipeline.db, outcomes, existing code)
+2. Do NOT execute William's first instinct — validate with data
+3. Present alternatives with tradeoffs (never just one option)
+4. Verify from user's perspective before declaring complete
+5. Never give false completion signals ("partially done" is honest)
+
+### Groq editing — honest recommendation
+Created `docs/GROQ-EDITING-SETUP.md` with comparison table.
+**Recommendation: Continue.dev in VS Code** (free, 2-min setup, conversational, Groq-powered).
+n8n Groq webhook remains for automated one-shot edits only.
+
+### Panacea verification (2026-03-27 08:33 ET)
+- Sales-Pipeline-Auto-Followup: deactivated (0) ✓
+- Daily-Pipeline-Health-Rescore: deactivated (0) ✓
+- Old-path processes: NONE ✓
+- Pipeline API: `{"status":"healthy"}` ✓
+- All references to shared/sales-pipeline: eliminated ✓
