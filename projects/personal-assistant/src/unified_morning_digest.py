@@ -97,6 +97,24 @@ def get_pipeline_summary() -> Dict[str, Any]:
             "WHERE p.status IN ('draft', 'sent')"
         ).fetchall()
 
+        # Outcome stats (yesterday's visit/call results)
+        outcomes = {}
+        try:
+            total_outcomes = conn.execute(
+                "SELECT COUNT(*) FROM scheduled_outcomes WHERE completed = 1"
+            ).fetchone()[0]
+            recent_outcomes = conn.execute(
+                "SELECT task_type, outcome, company, notes FROM scheduled_outcomes "
+                "WHERE completed = 1 AND date(created_at) >= ? "
+                "ORDER BY created_at DESC LIMIT 5", (yesterday,)
+            ).fetchall()
+            outcomes = {
+                "total": total_outcomes,
+                "recent": [dict(r) for r in recent_outcomes],
+            }
+        except Exception:
+            pass  # Table may not exist yet on fresh DBs
+
         conn.close()
 
         return {
@@ -106,6 +124,7 @@ def get_pipeline_summary() -> Dict[str, Any]:
             "recent_outreach": recent_outreach["cnt"] if recent_outreach else 0,
             "followups_today": followups["cnt"] if followups else 0,
             "proposals": [dict(r) for r in proposals],
+            "outcomes": outcomes,
         }
     except Exception as e:
         logger.warning(f"Pipeline data unavailable: {e}")
@@ -267,6 +286,23 @@ def format_telegram_digest(
             lines.append(f"\n📋 *PROPOSALS ({len(proposals)})*")
             for p in proposals:
                 lines.append(f"  • {p.get('company', '?')} — {p.get('status', '?')}")
+
+        # Outcome results (yesterday's visits/calls)
+        outcomes = pipeline.get("outcomes", {})
+        recent = outcomes.get("recent", [])
+        if recent:
+            lines.append(f"\n📝 *YESTERDAY'S RESULTS ({len(recent)})*")
+            for o in recent[:3]:
+                company = o.get("company", "?")
+                outcome = o.get("outcome", "?")
+                notes = o.get("notes", "")
+                icon = {"client_won": "🎉", "meeting_booked": "📅", "proposal_sent": "📋",
+                        "conversation": "💬", "callback": "📞", "no_show": "❌",
+                        "not_interested": "👋"}.get(outcome, "•")
+                line = f"  {icon} {company}: {outcome}"
+                if notes:
+                    line += f" — _{notes[:50]}_"
+                lines.append(line)
 
         lines.append("")
 
