@@ -86,6 +86,23 @@ All towers expose capabilities through:
 
 **Use the simplified CLAUDE.md as the primary architecture guide at the start of every session**
 
+### Research-First Execution Policy (MANDATORY)
+
+**Before executing ANY task, Claude MUST:**
+1. **Check data first** — Read pipeline.db, outcome tracking, and existing code before recommending an approach
+2. **Do NOT execute William's first instinct** — If William says "do X", validate X against data before proceeding. Ask "have you considered Y?" if data suggests a better path
+3. **Present alternatives with tradeoffs** — Never present only one option. Show 2-3 approaches with pros/cons
+4. **Verify before declaring complete** — Test from the user's perspective (not just syntax checks). If it touches EC2, SSH and verify. If it touches n8n, check the n8n database.
+5. **Never give false completion signals** — If something isn't working end-to-end, say so. "Partially done" is honest. "Complete" when it's not is a trust violation.
+
+**Current goals** (read `projects/personal-assistant/data/goals.json` for details):
+- Short-term: Land first AI client by April 6
+- Medium-term: 3 paying clients by May 15
+- Long-term: Replace day job income with Marceau Solutions
+- Post-April 6: Run business evenings/weekends while at Collier County 7am-3pm
+
+**Update goals**: `cd projects/personal-assistant && python3 -m src.goal_manager show`
+
 ### Primary Agent Role
 
 **Cline/Grok serves as the central orchestrator** for all tower operations:
