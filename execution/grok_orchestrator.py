@@ -117,6 +117,18 @@ def analyze_goal(goal: str) -> Dict[str, Any]:
     april_6 = datetime(2026, 4, 6)
     days_left = (april_6 - now).days
 
+    # Load current goals for context
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "goal_manager", REPO_ROOT / "projects" / "personal-assistant" / "src" / "goal_manager.py"
+        )
+        gm = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(gm)
+        state["goals"] = gm.get_goal_context()
+    except Exception:
+        state["goals"] = "Goals not loaded"
+
     analysis = {
         "goal": goal,
         "analyzed_at": now.isoformat(),

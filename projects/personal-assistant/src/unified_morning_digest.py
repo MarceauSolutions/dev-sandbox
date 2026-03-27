@@ -255,6 +255,16 @@ def format_telegram_digest(
         lines.append(health_line)
         lines.append("")
 
+    # Current goal (keeps focus visible every morning)
+    try:
+        from .goal_manager import format_for_digest as fmt_goal
+        goal_line = fmt_goal()
+        if goal_line:
+            lines.append(goal_line)
+            lines.append("")
+    except Exception:
+        pass
+
     # --- Pipeline Status ---
     if pipeline:
         hot = pipeline.get("hot_leads", [])

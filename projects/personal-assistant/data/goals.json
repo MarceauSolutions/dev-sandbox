@@ -1,0 +1,45 @@
+{
+  "short_term": {
+    "goal": "Land first AI client by April 6",
+    "deadline": "2026-04-06",
+    "metrics": [
+      "1 signed client",
+      "1 discovery call completed",
+      "pipeline producing warm leads"
+    ],
+    "updated": "2026-03-27"
+  },
+  "medium_term": {
+    "goal": "3 paying AI automation clients by May 15",
+    "deadline": "2026-05-15",
+    "metrics": [
+      "$1500+ monthly recurring",
+      "referral from first client"
+    ],
+    "updated": "2026-03-27"
+  },
+  "long_term": {
+    "goal": "Replace day job income with Marceau Solutions AI services",
+    "deadline": "2026-12-31",
+    "metrics": [
+      "$5000+/mo recurring",
+      "5+ active clients",
+      "system runs autonomously"
+    ],
+    "updated": "2026-03-27"
+  },
+  "post_april6": {
+    "goal": "Run business evenings and weekends while working at Collier County 7am-3pm",
+    "deadline": "ongoing",
+    "metrics": [
+      "Morning digest at 6:30am",
+      "System handles outreach during work hours",
+      "Manual work limited to calls, visits, and closing after 3pm"
+    ],
+    "updated": "2026-03-27"
+  },
+  "research_phase": {
+    "note": "Before acting on a goal, the assistant should research options and tradeoffs rather than immediately executing based on William's first instinct. Use data from pipeline.db, outcome tracking, and market signals to recommend the best path \u2014 not just the path William suggests in the moment.",
+    "updated": "2026-03-27"
+  }
+}
