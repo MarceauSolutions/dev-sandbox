@@ -75,9 +75,11 @@ ralph/output/
 # AI tool testing outputs
 projects/marceau-solutions/media/fitness-influencer/tools/output/
 
-# Generated social media content
+# Generated social media content and runtime output data
 projects/*/output/generated_posts_*.json
 projects/*/output/*.pdf
+projects/*/output/*.json
+projects/*/output/*.jsonl
 
 # Infographics and generated images
 projects/*/output/infographics/
