@@ -1,0 +1,266 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-15",
+
+  "posting_schedule": {
+    "weekday": {
+      "posts_per_day": 4,
+      "times": ["09:00", "12:00", "15:00", "18:00"],
+      "primary": "09:00",
+      "secondary": "12:00",
+      "tertiary": "15:00",
+      "evening": "18:00"
+    },
+    "weekend": {
+      "posts_per_day": 2,
+      "times": ["10:00", "16:00"],
+      "primary": "10:00"
+    },
+    "timezone": "America/New_York",
+    "notes": {
+      "peak_day": "Wednesday",
+      "peak_time": "09:00",
+      "rationale": "Research shows highest global engagement Wed 9AM EST",
+      "strategy_update": "2026-01-30: Shifted to AI Builder in Public strategy"
+    }
+  },
+
+  "daily_content_mix": {
+    "monday": {
+      "theme": "motivation",
+      "content_types": ["motivational_quote", "weekly_goals", "mindset"],
+      "tone": "energetic",
+      "hashtags": ["MondayMotivation", "FitnessGoals", "NewWeek"]
+    },
+    "tuesday": {
+      "theme": "educational",
+      "content_types": ["tips", "how_to", "science_backed"],
+      "tone": "informative",
+      "hashtags": ["TransformationTuesday", "FitnessTips", "LearnSomething"]
+    },
+    "wednesday": {
+      "theme": "social_proof",
+      "content_types": ["testimonials", "client_results", "case_studies"],
+      "tone": "inspiring",
+      "hashtags": ["WorkoutWednesday", "FitnessJourney", "Results"]
+    },
+    "thursday": {
+      "theme": "pain_point",
+      "content_types": ["common_mistakes", "myth_busting", "problem_solution"],
+      "tone": "empathetic",
+      "hashtags": ["ThrowbackThursday", "FitnessFacts", "TruthBomb"]
+    },
+    "friday": {
+      "theme": "transformation",
+      "content_types": ["before_after", "progress_pics", "success_stories"],
+      "tone": "celebratory",
+      "hashtags": ["FitnessFriday", "Transformation", "ProgressNotPerfection"]
+    },
+    "saturday": {
+      "theme": "stats_data",
+      "content_types": ["statistics", "research", "data_driven"],
+      "tone": "authoritative",
+      "hashtags": ["SaturdaySweat", "FitnessStats", "KnowledgeIsPower"]
+    },
+    "sunday": {
+      "theme": "rest",
+      "content_types": ["recovery", "self_care", "weekly_recap"],
+      "tone": "reflective",
+      "hashtags": ["SelfCareSunday", "RestDay", "Recovery"],
+      "post_frequency": "optional"
+    }
+  },
+
+  "seasonal_themes": {
+    "q1": {
+      "name": "New Year, New You",
+      "months": ["january", "february", "march"],
+      "focus": ["goal_setting", "fresh_starts", "habit_building"],
+      "content_angles": [
+        "New Year resolutions",
+        "Goal setting frameworks",
+        "Habit stacking techniques",
+        "Valentine's self-care",
+        "Partner workouts",
+        "Spring prep routines"
+      ],
+      "hashtags": ["NewYearNewYou", "FitnessGoals2026", "HealthyHabits"]
+    },
+    "q2": {
+      "name": "Summer Body Season",
+      "months": ["april", "may", "june"],
+      "focus": ["lean_out", "outdoor_fitness", "vacation_ready"],
+      "content_angles": [
+        "Spring cleaning fitness routines",
+        "Memorial Day prep",
+        "Outdoor workout transitions",
+        "Summer body final push",
+        "Vacation fitness tips"
+      ],
+      "hashtags": ["SummerBody", "BeachReady", "OutdoorFitness"]
+    },
+    "q3": {
+      "name": "Maintain & Build",
+      "months": ["july", "august", "september"],
+      "focus": ["maintenance", "consistency", "back_to_routine"],
+      "content_angles": [
+        "Summer maintenance mode",
+        "Vacation workout routines",
+        "Back to school discipline",
+        "Fall fitness reset",
+        "New program launches"
+      ],
+      "hashtags": ["SummerFitness", "ConsistencyIsKey", "FallFitness"]
+    },
+    "q4": {
+      "name": "Holiday Hustle",
+      "months": ["october", "november", "december"],
+      "focus": ["bulk_season", "holiday_survival", "year_reflection"],
+      "content_angles": [
+        "Pre-holiday bulk season",
+        "Thanksgiving fitness tips",
+        "Holiday survival guide",
+        "Year in review",
+        "Goal setting for next year"
+      ],
+      "hashtags": ["HolidayFitness", "BulkSeason", "YearEndReview"]
+    }
+  },
+
+  "recurring_hashtags": {
+    "always_include": ["FitnessCoach", "FitLife"],
+    "campaign_specific": ["MarceauFitness"],
+    "engagement_boosters": ["FitnessMotivation", "GymLife", "HealthyLifestyle"],
+    "niche_specific": ["PersonalTrainer", "FitnessInfluencer", "FitFam"]
+  },
+
+  "format_priority": {
+    "native_video": {
+      "priority": 1,
+      "engagement_multiplier": 10,
+      "frequency": "2-3x/week",
+      "optimal_length": "15-60s",
+      "notes": "Highest engagement, prioritize for key messages"
+    },
+    "thread_with_images": {
+      "priority": 2,
+      "engagement_multiplier": 3,
+      "frequency": "1-2x/week",
+      "optimal_length": "3-7 tweets",
+      "notes": "Good for educational content and storytelling"
+    },
+    "image_with_text": {
+      "priority": 3,
+      "engagement_multiplier": 2,
+      "frequency": "daily",
+      "notes": "Reliable engagement, easy to produce"
+    },
+    "text_only": {
+      "priority": 4,
+      "engagement_multiplier": 1,
+      "frequency": "minimize",
+      "notes": "Lowest engagement, use for quick thoughts only"
+    }
+  },
+
+  "algorithm_weights": {
+    "retweets": {
+      "weight": 20,
+      "strategy": "Create share-worthy, quotable content"
+    },
+    "replies": {
+      "weight": 13.5,
+      "strategy": "Ask questions, spark discussion"
+    },
+    "profile_clicks": {
+      "weight": 12,
+      "strategy": "Tease more content, create curiosity"
+    },
+    "link_clicks": {
+      "weight": 11,
+      "strategy": "Strong CTAs, clear value proposition"
+    },
+    "bookmarks": {
+      "weight": 10,
+      "strategy": "Create save-worthy tips and guides"
+    },
+    "likes": {
+      "weight": 1,
+      "strategy": "Nice to have but least valuable"
+    }
+  },
+
+  "growth_phase_strategy": {
+    "phase_1": {
+      "follower_range": "0-500",
+      "posts_per_day": "3-5",
+      "focus": "Build content library, test what resonates",
+      "duration_months": "1-2"
+    },
+    "phase_2": {
+      "follower_range": "500-2000",
+      "posts_per_day": "5-7",
+      "focus": "Scale what performs, engage with niche",
+      "duration_months": "2-3"
+    },
+    "phase_3": {
+      "follower_range": "2000+",
+      "posts_per_day": "4-5",
+      "focus": "Optimize based on data, quality over quantity",
+      "duration_months": "ongoing"
+    }
+  },
+
+  "engagement_rules": {
+    "reply_to_comments": {
+      "within_minutes": 60,
+      "priority": "high_engagement_posts_first"
+    },
+    "quote_retweet_ratio": "1 quote RT per 5 original posts",
+    "engage_with_niche": "15-30 min/day liking and commenting on similar accounts",
+    "follow_strategy": "Follow engaged commenters and niche accounts"
+  },
+
+  "content_templates": {
+    "workout_tip": {
+      "structure": "Hook + Tip + CTA",
+      "example": "Stop doing [common mistake]! Here's why: [explanation]. Try this instead: [better approach]. Save this for your next workout."
+    },
+    "question_hook": {
+      "structure": "Question + Value + Engagement ask",
+      "example": "What's your biggest fitness struggle right now? Mine was [struggle] until I discovered [solution]. Drop yours below."
+    },
+    "value_list": {
+      "structure": "Number + Promise + Bullet points",
+      "example": "5 exercises that changed my physique:\n\n1. [Exercise]\n2. [Exercise]\n...\n\nWhich one are you adding to your routine?"
+    },
+    "social_proof": {
+      "structure": "Result + Story + Method",
+      "example": "My client lost 20lbs in 3 months. Here's exactly what we did: [method]. The key was [insight]."
+    },
+    "pain_point": {
+      "structure": "Problem + Empathy + Solution",
+      "example": "Feeling stuck in your fitness journey? You're not alone. 90% of people quit in the first 3 months. Here's how to be in the 10%..."
+    }
+  },
+
+  "platform_limits": {
+    "free_tier": {
+      "posts_per_month": 1500,
+      "posts_per_day": 50,
+      "minimum_gap_minutes": 2
+    },
+    "premium_tier": {
+      "posts_per_month": 3000,
+      "visibility_boost_percent": 30,
+      "cost_per_month_usd": 100
+    }
+  },
+
+  "utm_tracking": {
+    "source": "twitter",
+    "medium": "social",
+    "campaign": "fitness-launch",
+    "link_format": "https://marceausolutions.com/fitness?utm_source={source}&utm_medium={medium}&utm_campaign={campaign}"
+  }
+}

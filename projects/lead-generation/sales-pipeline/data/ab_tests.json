@@ -1,0 +1,57 @@
+{
+  "email_subjects": {
+    "active_variants": {
+      "subject_a": {
+        "text": "Quick question about {company}",
+        "sends": 52,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090215"
+      },
+      "subject_b": {
+        "text": "Noticed something about {company}'s lead flow",
+        "sends": 60,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090231"
+      }
+    },
+    "champion": "subject_a",
+    "history": []
+  },
+  "email_bodies": {
+    "active_variants": {
+      "body_a": {
+        "text": "pain_first",
+        "sends": 52,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090235"
+      },
+      "body_b": {
+        "text": "social_proof_first",
+        "sends": 60,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090238"
+      }
+    },
+    "champion": "body_a",
+    "history": []
+  },
+  "call_openers": {
+    "active_variants": {
+      "opener_v1": {
+        "text": "permission_based",
+        "sends": 0,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090241"
+      },
+      "opener_v2": {
+        "text": "direct_value",
+        "sends": 0,
+        "replies": 0,
+        "created": "2026-03-26T10:06:35.090244"
+      }
+    },
+    "champion": "opener_v1",
+    "history": []
+  },
+  "updated_at": "2026-03-26T10:10:30.837290"
+}

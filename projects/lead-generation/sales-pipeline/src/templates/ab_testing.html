@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A/B Testing Dashboard - Marceau Sales Pipeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .variant-card { transition: all 0.2s; }
+        .variant-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .winner-badge { background: linear-gradient(135deg, #10b981, #059669); }
+        .metric-up { color: #10b981; }
+        .metric-down { color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-xl font-bold text-gray-900">Sales Pipeline</a>
+                    <span class="text-gray-300">|</span>
+                    <h1 class="text-lg font-semibold text-gray-700">A/B Testing</h1>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="/" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded">Dashboard</a>
+                    <a href="/deals" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded">Deals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Create New Test -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Create New A/B Test</h2>
+            <form action="/ab-testing/create" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Test Name</label>
+                    <input type="text" name="test_name" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Test Type</label>
+                    <select name="test_type" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="email_subject">Email Subject Line</option>
+                        <option value="email_content">Email Content</option>
+                        <option value="call_script">Call Script</option>
+                        <option value="followup_timing">Follow-up Timing</option>
+                        <option value="proposal_template">Proposal Template</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Target Metric</label>
+                    <select name="target_metric" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="response_rate">Response Rate</option>
+                        <option value="meeting_booked">Meeting Booked</option>
+                        <option value="proposal_sent">Proposal Sent</option>
+                        <option value="closed_won">Closed Won</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sample Size</label>
+                    <input type="number" name="sample_size" value="100" min="10" max="1000"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium">
+                        Create Test
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Active Tests -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% for test in ab_tests %}
+            <div class="bg-white rounded-lg shadow-sm p-6 variant-card">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ test.test_name }}</h3>
+                        <p class="text-sm text-gray-600">{{ test.test_type.replace('_', ' ').title() }}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full
+                        {% if test.status == 'active' %}bg-green-100 text-green-800{% elif test.status == 'completed' %}bg-blue-100 text-blue-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                        {{ test.status.title() }}
+                    </span>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Target:</span>
+                        <span class="font-medium">{{ test.target_metric.replace('_', ' ').title() }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Sample Size:</span>
+                        <span class="font-medium">{{ test.sample_size }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Assignments:</span>
+                        <span class="font-medium">{{ test.total_assignments or 0 }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Conversions:</span>
+                        <span class="font-medium">{{ test.total_conversions or 0 }}</span>
+                    </div>
+                    {% if test.total_assignments and test.total_assignments > 0 %}
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Conversion Rate:</span>
+                        <span class="font-medium">{{ "%.1f"|format((test.total_conversions or 0) / test.total_assignments * 100) }}%</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <button onclick="showTestResults({{ test.id }})"
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View Detailed Results →
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if not ab_tests %}
+        <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+            <div class="text-gray-400 mb-4">
+                <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No A/B Tests Yet</h3>
+            <p class="text-gray-600">Create your first A/B test to start optimizing your sales process.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Test Results Modal -->
+    <div id="resultsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold" id="modalTitle">Test Results</h2>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modalContent">
+                        <div class="text-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p class="mt-2 text-gray-600">Loading results...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTestId = null;
+
+        function showTestResults(testId) {
+            currentTestId = testId;
+            document.getElementById('resultsModal').classList.remove('hidden');
+            document.getElementById('modalTitle').textContent = 'Test Results';
+
+            fetch(`/api/ab-tests/${testId}/results`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.test && data.results) {
+                        displayTestResults(data);
+                    } else {
+                        document.getElementById('modalContent').innerHTML =
+                            '<div class="text-center py-8 text-gray-600">No results available yet.</div>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('modalContent').innerHTML =
+                        '<div class="text-center py-8 text-red-600">Error loading results.</div>';
+                });
+        }
+
+        function displayTestResults(data) {
+            const test = data.test;
+            const results = data.results;
+
+            let html = `
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2">${test.test_name}</h3>
+                    <p class="text-gray-600">${test.test_type.replace('_', ' ').toUpperCase()} • Target: ${test.target_metric.replace('_', ' ').toUpperCase()}</p>
+                    <p class="text-sm text-gray-500">Created: ${new Date(test.created_at).toLocaleDateString()}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Test Overview</h4>
+                        <div class="space-y-1 text-sm">
+                            <div>Total Impressions: <span class="font-medium">${data.total_impressions || 0}</span></div>
+                            <div>Total Conversions: <span class="font-medium">${data.total_conversions || 0}</span></div>
+                            <div>Overall Rate: <span class="font-medium">${data.total_impressions ? ((data.total_conversions / data.total_impressions) * 100).toFixed(1) : 0}%</span></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Best Performer</h4>
+                        ${data.best_performing ? `
+                            <div class="text-sm">
+                                <div class="font-medium">${data.best_performing.variant_name}</div>
+                                <div>Rate: ${(data.best_performing.conversion_rate * 100).toFixed(1)}%</div>
+                                <div>Impressions: ${data.best_performing.impressions}</div>
+                            </div>
+                        ` : '<div class="text-gray-500">No data yet</div>'}
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="font-semibold">Variant Performance</h4>
+            `;
+
+            results.forEach(result => {
+                const isWinner = result.is_winner;
+                const rate = (result.conversion_rate * 100).toFixed(1);
+
+                html += `
+                    <div class="border rounded-lg p-4 ${isWinner ? 'border-green-300 bg-green-50' : 'border-gray-200'}">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-medium">${result.variant_name}</span>
+                                ${isWinner ? '<span class="px-2 py-1 text-xs bg-green-600 text-white rounded-full winner-badge">WINNER</span>' : ''}
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-semibold">${rate}%</div>
+                                <div class="text-sm text-gray-600">${result.conversions}/${result.impressions} conversions</div>
+                            </div>
+                        </div>
+                        ${result.confidence_interval ? `
+                            <div class="text-xs text-gray-600">
+                                95% CI: [${(result.confidence_interval[0] * 100).toFixed(1)}%, ${(result.confidence_interval[1] * 100).toFixed(1)}%]
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            if (data.winner_detected) {
+                html += `
+                    <div class="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-medium text-green-800">Winner Detected!</span>
+                        </div>
+                        <p class="text-green-700 mt-1">This test has reached statistical significance. Consider adopting the winning variant.</p>
+                        <button onclick="completeTest('${results.find(r => r.is_winner)?.variant_name}')"
+                                class="mt-2 px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700">
+                            Complete Test & Adopt Winner
+                        </button>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            document.getElementById('modalContent').innerHTML = html;
+        }
+
+        function completeTest(winnerVariant) {
+            if (!winnerVariant || !currentTestId) return;
+
+            fetch(`/api/ab-tests/${currentTestId}/complete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `winner_variant=${encodeURIComponent(winnerVariant)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    closeModal();
+                    location.reload();
+                } else {
+                    alert('Error completing test');
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('resultsModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('resultsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

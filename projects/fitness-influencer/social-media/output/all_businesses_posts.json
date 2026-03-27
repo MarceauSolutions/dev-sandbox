@@ -1,0 +1,68 @@
+[
+  {
+    "business_id": "squarefoot-shipping",
+    "business_name": "Square Foot Shipping & Storage",
+    "content": "Warehouse storage that actually works.\n\nClimate-controlled\n24/7 security monitoring\nFlexible space as you grow\n\nGet a free quote: (239) 880-3365\n\n#Logistics #SWFL",
+    "template_used": "service_highlight",
+    "campaign": "general-awareness",
+    "hashtags": [
+      "Logistics",
+      "Shipping",
+      "Naples",
+      "SWFL"
+    ],
+    "cta": "Visit our site",
+    "created_at": "2026-01-18T13:37:33.023244",
+    "scheduled_for": null,
+    "posted": false
+  },
+  {
+    "business_id": "squarefoot-shipping",
+    "business_name": "Square Foot Shipping & Storage",
+    "content": "Worried about inventory damage in storage?\n\nThat's why we offer scalable warehouse space grows with you.\n\n99% on-time delivery rate.\n\nCall (239) 880-3365 for a free quote.\n\n#Business #SWFL",
+    "template_used": "pain_solution",
+    "campaign": "general-awareness",
+    "hashtags": [
+      "Logistics",
+      "Shipping",
+      "Naples",
+      "SWFL"
+    ],
+    "cta": "Visit our site",
+    "created_at": "2026-01-18T13:37:33.023258",
+    "scheduled_for": null,
+    "posted": false
+  },
+  {
+    "business_id": "swflorida-hvac",
+    "business_name": "SW Florida Comfort HVAC",
+    "content": "AC out? In Florida? That's an emergency.\n\n24/7 service, no overtime charges. We come to you.\n\n(239) 766-6129\n\n#ACRepair #SWFL",
+    "template_used": "emergency_ready",
+    "campaign": "general-awareness",
+    "hashtags": [
+      "HVAC",
+      "ACRepair",
+      "Naples"
+    ],
+    "cta": "Schedule service today",
+    "created_at": "2026-01-18T13:37:33.023263",
+    "scheduled_for": null,
+    "posted": false
+  },
+  {
+    "business_id": "swflorida-hvac",
+    "business_name": "SW Florida Comfort HVAC",
+    "content": "AC Tune-Up Special: $199/year maintenance plan\n\n2 tune-ups\nPriority scheduling\n15% off repairs\n\nBook now: (239) 766-6129\n\n#HVAC #Naples",
+    "template_used": "service_promo",
+    "campaign": "general-awareness",
+    "hashtags": [
+      "HVAC",
+      "ACRepair",
+      "Naples"
+    ],
+    "cta": "Schedule service today",
+    "created_at": "2026-01-18T13:37:33.023266",
+    "scheduled_for": null,
+    "posted": false
+  }
+]

@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: letter; margin: 0.5in; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f1a; color: #f0f0f5; font-size: 11px; line-height: 1.4;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 3px solid #C9963C;
+    padding: 16px 20px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header h1 { color: #C9963C; font-size: 20px; letter-spacing: 1px; }
+  .header .date { color: #8888aa; font-size: 11px; text-align: right; }
+  .stats {
+    display: flex; gap: 12px; margin: 0 8px 12px 8px;
+  }
+  .stat {
+    flex: 1; background: #1e1e30; border: 1px solid #2a2a3e;
+    border-radius: 6px; padding: 8px 12px; text-align: center;
+  }
+  .stat .num { font-size: 22px; font-weight: 700; color: #C9963C; }
+  .stat .label { font-size: 9px; color: #8888aa; text-transform: uppercase; letter-spacing: 1px; }
+  .lead-card {
+    background: #1e1e30; border: 1px solid #2a2a3e; border-radius: 8px;
+    margin: 8px; padding: 0; page-break-inside: avoid; overflow: hidden;
+  }
+  .lead-header {
+    padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #2a2a3e;
+  }
+  .lead-num { color: #C9963C; font-weight: 700; font-size: 14px; margin-right: 8px; }
+  .lead-company { font-size: 14px; font-weight: 600; }
+  .lead-priority {
+    font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .priority-warm { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b44; }
+  .priority-cold { background: #3b82f622; color: #3b82f6; border: 1px solid #3b82f644; }
+  .lead-body { padding: 10px 14px; }
+  .lead-meta {
+    display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .meta-item { font-size: 10px; color: #8888aa; }
+  .meta-item strong { color: #f0f0f5; }
+  .meta-item a { color: #C9963C; text-decoration: none; font-weight: 600; font-size: 12px; }
+  .section-label {
+    font-size: 9px; color: #C9963C; text-transform: uppercase; letter-spacing: 1px;
+    font-weight: 600; margin-top: 8px; margin-bottom: 4px;
+  }
+  .script-box {
+    background: #0f0f1a; border-left: 3px solid #C9963C; padding: 6px 10px;
+    margin: 4px 0; font-size: 10.5px; line-height: 1.5;
+    border-radius: 0 4px 4px 0;
+  }
+  .outreach-timeline {
+    margin: 4px 0; font-size: 10px;
+  }
+  .outreach-item {
+    padding: 2px 0; color: #8888aa; display: flex; gap: 6px;
+  }
+  .outreach-item .ch { color: #C9963C; font-weight: 600; min-width: 40px; }
+  .outreach-item .dt { color: #8888aa; min-width: 60px; }
+  .outreach-item .msg { color: #f0f0f5; }
+  .services { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .svc-tag {
+    background: #C9963C18; color: #C9963C; border: 1px solid #C9963C44;
+    padding: 1px 8px; border-radius: 10px; font-size: 9px;
+  }
+  .stage-badge {
+    display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 9px; font-weight: 600;
+  }
+  .stage-intake { background: #3b82f622; color: #3b82f6; }
+  .stage-contacted { background: #f59e0b22; color: #f59e0b; }
+  .stage-qualified { background: #22c55e22; color: #22c55e; }
+  .discovery-q {
+    background: #3b82f615; border: 1px solid #3b82f633; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10.5px; font-style: italic;
+  }
+  .next-action {
+    background: #f59e0b15; border: 1px solid #f59e0b33; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10.5px;
+  }
+  .two-col { display: flex; gap: 12px; }
+  .two-col > div { flex: 1; }
+  .close-script {
+    background: #22c55e12; border: 1px solid #22c55e33; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10px;
+  }
+  .footer {
+    text-align: center; padding: 12px; color: #8888aa; font-size: 9px;
+    border-top: 1px solid #2a2a3e; margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>CALL SHEET</h1>
+    <div style="color:#8888aa;font-size:10px;margin-top:2px">Marceau Solutions</div>
+  </div>
+  <div class="date">
+    Thursday, March 26, 2026<br>08:27 AM<br>15 leads prioritized
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">15</div><div class="label">Total Calls</div></div>
+  <div class="stat"><div class="num">15</div><div class="label">Follow-ups</div></div>
+  <div class="stat"><div class="num">0</div><div class="label">Cold Calls</div></div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#1</span>
+      <span class="lead-company">RoofProspect AI (Grant Construction)</span>
+      <span class="stage-badge stage-qualified">Qualified</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2395952257">(239) 595-2257</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Grant (Owner)</div>
+      <div class="meta-item"><strong>Industry:</strong> AI / PropTech</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-24</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Follow-up call — discussed 1099 co-dev partnership, he called back interested (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">They called back after voicemail — discussed co-dev opportunity for redundant AI → <strong>Answered - Interested (co-dev partner)</strong></span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">Cold call - phone blitz → <strong>Voicemail Left</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Grant, it's William — following up on our conversation about working together."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I've been thinking about what we discussed and I think there's a real opportunity here."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What does your timeline look like for getting something started?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Follow-up call — discussed 1099 co-dev partnership, he called back interested]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Online lead capture</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#2</span>
+      <span class="lead-company">Golden Plumbing</span>
+      <span class="stage-badge stage-qualified">Qualified</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2398994653">(239) 899-4653</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Dawn Martin (scheduling)</div>
+      <div class="meta-item"><strong>Industry:</strong> Plumbing</div>
+      <div class="meta-item"><strong>Score:</strong> 98</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-24</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> In-person visit (due 2026-03-25)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-24</span><span class="msg">Follow-up email sent post cold call. After-hours capture angle. Calendly link in</span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">Answered - Interested → <strong>Interested in services. Provided email goldenplumbingfl@gmail.com to send more info.</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Dawn, it's William from Marceau Solutions — we spoke the other day and you mentioned you'd be open to hearing more."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I wanted to follow up and see if you had a chance to think about what we discussed. I've put together a quick overview of what the system would look like for your business specifically."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What's the biggest bottleneck you're dealing with right now?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: In-person visit]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Online lead capture</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">Pain: No after-hours answering — emergency calls at night/Sundays go unanswered. Manual intake bottleneck during peak season. | Website: https://www.goldenplumbingfl.com</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#3</span>
+      <span class="lead-company">PlumbingPro Naples</span>
+      <span class="stage-badge stage-qualified">Qualified</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2392121120">(239) 212-1120</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Zach Johnson (Service Manager)</div>
+      <div class="meta-item"><strong>Industry:</strong> Plumbing</div>
+      <div class="meta-item"><strong>Score:</strong> 98</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-24</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Send proposal email to Zach Johnson (due 2026-03-25)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-24</span><span class="msg">Follow-up email sent post cold call. Call intake angle. Calendly link included.</span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">Answered - Interested → <strong>Rep gave service manager email: zach.johnson@plumbingpro.pro. Manager may be interested.</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Zach, it's William from Marceau Solutions — we spoke the other day and you mentioned you'd be open to hearing more."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I wanted to follow up and see if you had a chance to think about what we discussed. I've put together a quick overview of what the system would look like for your business specifically."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What's the biggest bottleneck you're dealing with right now?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Send proposal email to Zach Johnson]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Lead capture</span>
+      <span class="svc-tag">Automated follow-up</span>
+      <span class="svc-tag">After-hours coverage</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#4</span>
+      <span class="lead-company">Von & Co Medical Aesthetics Studio</span>
+      <span class="stage-badge stage-qualified">Qualified</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394483897">(239) 448-3897</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Rachel Hayes</div>
+      <div class="meta-item"><strong>Industry:</strong> Med Spa</div>
+      <div class="meta-item"><strong>Score:</strong> 95</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-25</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> In-person visit (due 2026-03-25)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-25</span><span class="msg">Follow-up email sent March 25</span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">Cold call - phone blitz. Directed to email Rachel Hayes. → <strong>Answered - Interested (follow up with Rachel)</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Rachel, it's William from Marceau Solutions — we spoke the other day and you mentioned you'd be open to hearing more."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I wanted to follow up and see if you had a chance to think about what we discussed. I've put together a quick overview of what the system would look like for your business specifically."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What's the biggest bottleneck you're dealing with right now?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: In-person visit]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Lead capture system</span>
+      <span class="svc-tag">Automated follow-up</span>
+      <span class="svc-tag">Pipeline dashboard</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#5</span>
+      <span class="lead-company">Jepsen Chiropractic Wellness Center Inc</span>
+      <span class="stage-badge stage-qualified">Qualified</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394650656">(239) 465-0656</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Dr. Jepsen</div>
+      <div class="meta-item"><strong>Industry:</strong> Chiropractic</div>
+      <div class="meta-item"><strong>Score:</strong> 76</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-24</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Send follow-up email (due 2026-03-24)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">Cold call - phone blitz. Resistant receptionist, finally gave email after persis → <strong>Answered - Unclear (receptionist gatekeeper, email obtained)</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Dr., it's William — I sent over that info you asked for. Wanted to make sure you got it and see if you had any questions."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"The email has a quick breakdown of how it works. Happy to walk through it live if that's easier."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"Did you get a chance to look at what I sent?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Send follow-up email]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Lead capture</span>
+      <span class="svc-tag">Automated follow-up</span>
+      <span class="svc-tag">After-hours coverage</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#6</span>
+      <span class="lead-company">Vogel Roofing</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394513203">(239) 451-3203</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Hannah</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Vogel Roofing — something on Google | Research: Roofing company Naples;</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#7</span>
+      <span class="lead-company">Smart Home Specialists</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2396763435">(239) 676-3435</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Jason</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Smart Home Specialists — quick thought | Research: Smart home installat</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#8</span>
+      <span class="lead-company">ADVANCED POWER ELECTRICAL CONTRACTORS, INC.</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2392531821">(239) 253-1821</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Luis</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Advanced Power Electrical — response time question | Research: Emergenc</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#9</span>
+      <span class="lead-company">Dan House Electric</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2392624420">(239) 262-4420</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Dan</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Dan House Electric — after-hours call question | Research: After-hours </span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#10</span>
+      <span class="lead-company">Martin's Cooling & Heating, Inc.</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394301685">(239) 430-1685</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Martin</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Martin's Cooling — when the AC dies at 10pm | Research: YES</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#11</span>
+      <span class="lead-company">Affordable Trapping</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394659291">(239) 465-9291</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Kenneth</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Affordable Trapping — calls you miss after hours | Research: MAYBE — sm</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#12</span>
+      <span class="lead-company">Expressions Model Furniture Outlet</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2397325800">(239) 732-5800</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Jason</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Expressions Furniture — customers calling after showroom hours | Resear</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#13</span>
+      <span class="lead-company">Marsh Cove Dental and Implant Center</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2393313575">(239) 331-3575</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Evgeny</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 98</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Marsh Cove Dental — implant consult follow-ups | Research: High-value i</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#14</span>
+      <span class="lead-company">Berman Physical Therapy</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394310232">(239) 431-0232</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Jake</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 98</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Berman PT — direct-pay patient inquiry question | Research: Direct-pay </span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#15</span>
+      <span class="lead-company">Fantastic Dental Arts</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2393483079">(239) 348-3079</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Queanh</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 98</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-23</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-03-26)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Fantastic Dental Arts — new patient calls during procedures | Research:</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"I noticed you don't have a website yet — which actually tells me your business is running on reputation and referrals. That's great. But you're invisible to anyone searching Google right now."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"I help businesses like yours get found online and capture leads automatically — without you having to learn anything technical."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"What happens when you miss a call?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"I'd love to show you how it works — takes 15 minutes. I can do a quick screen share this week, or if you want, I'll set up a two-week trial so you can see it in action risk-free."</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Simple website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Automated review requests</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="footer">
+  Call Sheet generated 2026-03-26 08:27 AM | Marceau Solutions<br>
+  Demo: (855) 239-9364 | marceausolutions.com
+</div>
+</body></html>

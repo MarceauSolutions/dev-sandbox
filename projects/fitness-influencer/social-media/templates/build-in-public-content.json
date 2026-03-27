@@ -1,0 +1,245 @@
+{
+  "business": "Build in Public - Fitness Business Journey",
+  "handle": "@wmarceau",
+  "niche": "build_in_public_fitness",
+  "brand_voice": "Transparent, authentic, data-driven founder sharing the journey",
+  "description": "Behind-the-scenes content documenting the journey of building a personal training + peptide education business",
+
+  "content_pillars": {
+    "revenue_updates": {
+      "weight": 25,
+      "description": "Weekly/monthly revenue, costs, and margins transparency",
+      "hooks": [
+        "Week {week_number} revenue: ${amount}. Here's the breakdown:",
+        "Monthly recap: ${revenue} in, ${costs} out. Margin: {margin}%",
+        "Hit ${milestone} this week. Here's how:",
+        "Lost ${amount} this month. Here's what went wrong:",
+        "My first {milestone} as a fitness creator. Lessons:"
+      ],
+      "category_code": "bip_revenue"
+    },
+    "wins_milestones": {
+      "weight": 20,
+      "description": "Celebrating wins and hitting milestones",
+      "hooks": [
+        "Just hit {milestone}. Wild.",
+        "{number} clients in {timeframe}. Here's what's working:",
+        "First {achievement} ever. Took {duration} to get here.",
+        "Biggest win this week:",
+        "Small wins matter. Today's:"
+      ],
+      "category_code": "bip_milestone"
+    },
+    "failures_lessons": {
+      "weight": 20,
+      "description": "Transparent sharing of failures and lessons learned",
+      "hooks": [
+        "Made a ${amount} mistake today. Here's what happened:",
+        "Failed at {thing}. Here's what I learned:",
+        "3 things that didn't work this week:",
+        "Honest update: {challenge} is harder than I thought.",
+        "Almost quit today. Here's why I didn't:"
+      ],
+      "category_code": "bip_lesson"
+    },
+    "tech_automation": {
+      "weight": 15,
+      "description": "Tools and automation being built",
+      "hooks": [
+        "Just automated {task}. Saves {time}/week now.",
+        "Building an n8n workflow for {purpose}. Here's how it works:",
+        "My tech stack for running this solo:",
+        "AI is handling {task} while I {activity}.",
+        "The automation that changed everything:"
+      ],
+      "category_code": "bip_tech"
+    },
+    "behind_scenes": {
+      "weight": 10,
+      "description": "Day-in-the-life and process documentation",
+      "hooks": [
+        "6 AM. Recording content. Coffee brewing. This is the life.",
+        "What my day actually looks like:",
+        "The boring stuff nobody sees:",
+        "Behind the camera:",
+        "Current setup for content creation:"
+      ],
+      "category_code": "bip_behind_scenes"
+    },
+    "engagement": {
+      "weight": 10,
+      "description": "Questions and discussion starters",
+      "hooks": [
+        "Building a fitness business in 2026. What would you want to know?",
+        "If you could automate one thing in your business, what would it be?",
+        "What's stopping you from starting?",
+        "Solo founders: what's your biggest challenge right now?",
+        "Peptide education + personal training. Weird combo? Or perfect?"
+      ],
+      "category_code": "bip_engagement"
+    }
+  },
+
+  "x_engagement_optimization": {
+    "algorithm_priority": [
+      "replies",
+      "quote_tweets",
+      "retweets",
+      "bookmarks",
+      "likes"
+    ],
+    "reply_triggers": [
+      "What would you do differently?",
+      "Anyone else experiencing this?",
+      "Drop your thoughts below",
+      "What's your take?",
+      "Building something similar? Let's connect",
+      "Reply with your biggest challenge",
+      "What would you want to see more of?"
+    ],
+    "bookmark_triggers": [
+      "Save this for when you're ready to start",
+      "Bookmark the tech stack breakdown",
+      "Reference this next time you're stuck"
+    ],
+    "retweet_triggers": [
+      "Share this with someone building in public",
+      "Tag a fellow founder",
+      "RT if this resonates"
+    ],
+    "optimal_post_times_est": [
+      "09:00",
+      "12:00",
+      "15:00",
+      "18:00"
+    ],
+    "best_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+  },
+
+  "post_templates": {
+    "revenue_update": {
+      "format": "single",
+      "structure": "{hook}\n\n{breakdown}\n\n{lesson}\n\n{engagement_cta}",
+      "examples": [
+        "Week 3 revenue: $847\n\n- 2 coaching clients: $600\n- YouTube ad revenue: $47\n- Affiliate link: $200\n\nNot quitting my day job yet.\nBut it's growing.\n\nWhat's your Week 3 goal?",
+        "Monthly recap: February 2026\n\nRevenue: $3,240\nCosts: $890 (tools, ads, content)\nProfit: $2,350\n\nMargin: 72%\n\nNot life-changing money yet.\nBut 100% better than $0.\n\nFollowing along? Reply with your numbers.",
+        "First $1,000 month.\n\nTook 4 months of:\n- Daily content\n- 200+ DMs\n- 3 failed strategies\n\nMost gave up by month 2.\n\nWhat's your timeline for first $1K?"
+      ]
+    },
+    "milestone_win": {
+      "format": "single",
+      "structure": "{hook}\n\n{context}\n\n{how}\n\n{engagement_cta}",
+      "examples": [
+        "Just hit 1,000 X followers.\n\n90 days ago: 47 followers.\n\nWhat changed:\n- Posted 3x/day minimum\n- Replied to everyone\n- Focused on providing value first\n\nSmall milestone. Feels big.\n\nWhat's your next milestone?",
+        "First coaching client from X.\n\n$300/month recurring.\n\nCame from a thread about BPC-157.\nThey asked a question.\nI answered in detail.\nThey DM'd.\n\nContent → Trust → Revenue.\n\nAnyone else getting clients from X?",
+        "YouTube hit 500 subscribers.\n\n6 months of weekly uploads.\nMost videos got <100 views.\n3 videos carried everything.\n\nConsistency > virality.\n\nWhat platform are you focusing on?"
+      ]
+    },
+    "failure_lesson": {
+      "format": "single",
+      "structure": "{hook}\n\n{what_happened}\n\n{lesson}\n\n{engagement_cta}",
+      "examples": [
+        "Spent $500 on ads. Made $47.\n\nLesson: I don't know ads (yet).\n\nGoing back to organic for now.\nWill learn ads when I have more budget to burn.\n\nAnyone else waste money learning the hard way?",
+        "Lost a $400/month client this week.\n\nReason: I was too slow to respond.\n\nNew rule: 2-hour max response time.\n\nSimple fix. Expensive lesson.\n\nWhat's a lesson that cost you money?",
+        "Thought I could do everything.\n\n- Film content\n- Edit videos\n- Write posts\n- Run coaching\n- Build automation\n\nResult: Nothing done well.\n\nHiring an editor next month.\n\nWhat's the first thing you outsourced?"
+      ]
+    },
+    "tech_stack": {
+      "format": "single",
+      "structure": "{hook}\n\n{tools}\n\n{result}\n\n{engagement_cta}",
+      "examples": [
+        "My solo fitness business tech stack:\n\n- n8n for automation\n- Claude for content ideas\n- Google Sheets for tracking\n- Notion for client management\n- Grok for image generation\n\nTotal cost: ~$50/month.\n\nWhat's in your stack?",
+        "Just automated my X posting.\n\nn8n workflow:\n1. Reads from Google Sheets\n2. Posts at optimal times\n3. Updates status\n4. Tracks analytics\n\nNow I batch content on Sunday.\nPosts itself all week.\n\nWhat have you automated?",
+        "AI is handling:\n- Content research\n- First drafts\n- Image creation\n- Email responses\n\nI'm handling:\n- Final edits\n- Strategy\n- Client calls\n- Being human\n\nThe hybrid approach works.\n\nHow are you using AI?"
+      ]
+    },
+    "behind_scenes": {
+      "format": "single",
+      "structure": "{hook}\n\n{reality}\n\n{engagement_cta}",
+      "examples": [
+        "What my day actually looks like:\n\n5:00 AM - Wake up, gym\n7:00 AM - Content batch (1 hour)\n8:00 AM - Day job starts\n5:00 PM - Day job ends\n6:00 PM - Client calls\n8:00 PM - Family time\n10:00 PM - Planning tomorrow\n\nNo magic. Just systems.\n\nWhat's your schedule?",
+        "Recording setup for under $200:\n\n- iPhone 13 (already had)\n- $30 tripod from Amazon\n- Ring light: $40\n- Lav mic: $25\n- Free editing software\n\nYou don't need expensive gear.\nYou need to start.\n\nWhat's holding you back?",
+        "The boring stuff nobody sees:\n\n- 2 hours tracking metrics\n- Responding to 50+ DMs\n- Uploading/scheduling content\n- Fixing broken automations\n- Researching new studies\n\nThe glamour is 10%.\nThe grind is 90%.\n\nWho else is in the grind phase?"
+      ]
+    },
+    "engagement_post": {
+      "format": "single",
+      "structure": "{hook}\n\n{engagement_cta}",
+      "examples": [
+        "Building a fitness business while working full-time.\n\nAsking everyone who's done this:\n\nWhen did you quit your job?\n\nOr did you keep both?",
+        "Peptide education + personal training.\n\nSeems like a weird combo to some.\n\nTo me, it's both about optimization.\n\nWhat's your niche combo?",
+        "If you could automate one thing in your business tomorrow, what would it be?\n\nI'll share how I'd do it.\n\nReply below."
+      ]
+    },
+    "week_preview": {
+      "format": "single",
+      "structure": "{hook}\n\n{goals}\n\n{engagement_cta}",
+      "examples": [
+        "Week 12 goals:\n\n- Finish 3 YouTube videos\n- Land 1 new coaching client\n- Hit 1,500 X followers\n- Automate client onboarding\n\nPublic accountability.\n\nWhat are your goals this week?",
+        "This week I'm focusing on:\n\n1. Peptide safety framework video\n2. Client check-ins\n3. Testing new content format\n\nSimplifying.\n\nLess is more.\n\nWhat's your ONE focus this week?"
+      ]
+    },
+    "week_recap": {
+      "format": "single",
+      "structure": "{hook}\n\n{wins}\n\n{losses}\n\n{next_week}\n\n{engagement_cta}",
+      "examples": [
+        "Week 11 recap:\n\nWins:\n- +127 X followers\n- $600 in coaching revenue\n- Finished content calendar\n\nLosses:\n- YouTube video flopped (42 views)\n- Missed 2 client check-ins\n\nNext week: Fix the systems.\n\nHow was your week?",
+        "Friday recap.\n\nBest: Landed my 5th coaching client\nWorst: Broke my posting automation (again)\nLearned: Need better error handling\n\nOverall: Good week.\n\nDrop your wins below."
+      ]
+    }
+  },
+
+  "content_calendar": {
+    "monday": {
+      "theme": "Week Preview",
+      "post_types": ["week_preview", "engagement_post"],
+      "description": "Set the tone for the week, share goals"
+    },
+    "tuesday": {
+      "theme": "Behind the Scenes",
+      "post_types": ["behind_scenes", "tech_stack"],
+      "description": "Show the work behind the results"
+    },
+    "wednesday": {
+      "theme": "Wins & Milestones",
+      "post_types": ["milestone_win", "engagement_post"],
+      "description": "Celebrate progress, no matter how small"
+    },
+    "thursday": {
+      "theme": "Lessons Learned",
+      "post_types": ["failure_lesson", "tech_stack"],
+      "description": "Transparency about what's not working"
+    },
+    "friday": {
+      "theme": "Week Recap",
+      "post_types": ["week_recap", "revenue_update"],
+      "description": "Summarize the week, share numbers"
+    },
+    "saturday": {
+      "theme": "Light Content",
+      "post_types": ["behind_scenes", "engagement_post"],
+      "description": "Casual, personal content"
+    },
+    "sunday": {
+      "theme": "Planning",
+      "post_types": ["week_preview", "tech_stack"],
+      "description": "Prep for the week ahead"
+    }
+  },
+
+  "hashtag_strategy": {
+    "primary": ["#buildinpublic", "#solopreneur", "#indiehacker"],
+    "secondary": ["#fitnessbusiness", "#creatoreconomy", "#sidehustle"],
+    "avoid": ["#getrichquick", "#passiveincome", "#overnight"],
+    "usage": "Max 2-3 hashtags per post, focused on #buildinpublic community"
+  },
+
+  "category_codes": {
+    "bip_revenue": "Revenue and financial updates",
+    "bip_milestone": "Wins and milestone celebrations",
+    "bip_lesson": "Failures and lessons learned",
+    "bip_tech": "Tech stack and automation updates",
+    "bip_behind_scenes": "Day-in-the-life content",
+    "bip_engagement": "Questions and community building"
+  }
+}
