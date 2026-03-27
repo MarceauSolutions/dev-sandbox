@@ -306,10 +306,8 @@ class ApolloPipeline:
         Returns:
             Path to enriched JSON with email_source and email_confidence fields
         """
-        import sys
-        sys.path.insert(0, str(Path(__file__).parents[3]))
-        from projects.shared.lead_scraper.src import hunter as hunter_module
-        from projects.shared.lead_scraper.src import snov as snov_module
+        from . import hunter as hunter_module
+        from . import snov as snov_module
         from urllib.parse import urlparse
 
         limit = limit or self.config.max_enrich_batch
