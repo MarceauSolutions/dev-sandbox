@@ -96,3 +96,15 @@ Execute high-ROI tasks (walk-ins/calls)
 When you receive a HOT lead SMS:
 
 Reply “1”, “2”, or “3”
+
+## Document Generation
+
+Convert any Markdown file to a branded PDF (auto-detects template):
+
+```bash
+./scripts/md-to-branded-pdf.sh docs/LIVE-OPERATION-GUIDE.md
+./scripts/md-to-branded-pdf.sh drafts/client-proposal.md “Naples Med Spa Proposal”
+```
+
+Auto-detects: proposal, workout, nutrition, onboarding, progress, agreement.
+Output: `projects/fitness-influencer/outputs/branded-pdfs/`
