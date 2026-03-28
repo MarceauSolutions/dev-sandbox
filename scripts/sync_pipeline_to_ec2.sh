@@ -50,10 +50,11 @@ if [ -n "$newest_py" ] || [ ! -f "$LAST_CODE_SYNC" ]; then
         "$PA_SRC/clawdbot_handlers.py" \
         "$PA_SRC/goal_manager.py" \
         "$PA_SRC/goal_progress.py" \
+        "$PA_SRC/outcome_learner.py" \
         "$EC2_HOST:/tmp/" 2>/dev/null
     if [ $? -eq 0 ]; then
         ssh -i "$EC2_KEY" -o ConnectTimeout=5 "$EC2_HOST" \
-            "sudo cp /tmp/clawdbot_handlers.py /tmp/goal_manager.py /tmp/goal_progress.py $EC2_PA/ && sudo chown clawdbot:clawdbot $EC2_PA/*.py" 2>/dev/null
+            "sudo cp /tmp/clawdbot_handlers.py /tmp/goal_manager.py /tmp/goal_progress.py /tmp/outcome_learner.py $EC2_PA/ && sudo chown clawdbot:clawdbot $EC2_PA/*.py" 2>/dev/null
         if [ $? -eq 0 ]; then
             touch "$LAST_CODE_SYNC"
             synced="${synced}handlers "

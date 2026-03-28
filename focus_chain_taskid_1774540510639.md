@@ -4087,6 +4087,34 @@ NEEDS YOUR ATTENTION:
 Rate-limited to 1 notification per hour. Away-mode auto-prep logged to activities
 table to prevent duplicate processing.
 
+### Remaining (session 24)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 25 — EC2 Away-Mode Complete: 9/9 Commands Verified (2026-03-28)
+
+Ran end-to-end away-mode simulation. Found 2 EC2 failures: `learned` and `health`
+commands failed because outcome_learner.py wasn't deployed and system_health_check.py
+doesn't exist on EC2.
+
+Fixed:
+1. Deployed outcome_learner.py to EC2
+2. Added EC2-aware health fallback (shows pipeline stats instead of Mac-only checks)
+3. Updated sync script to include outcome_learner.py in regular syncs
+4. All 9 away-mode commands verified on EC2: 9/9
+
+End-to-end away-mode verified:
+- 6:30am morning digest (launchd) ✓
+- 6-8am decision email (cross_tower_sync) ✓
+- 9am daily_loop (launchd) ✓
+- 15min check-responses (launchd) ✓
+- 5min cross_tower_sync (auto-proposals, follow-ups, alerts, EC2 sync) ✓
+- 5pm EOD summary (cross_tower_sync) ✓
+- Natural conversation on EC2 (9/9 commands) ✓
+- Post-save auto-sync to EC2 ✓
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
