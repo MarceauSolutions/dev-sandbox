@@ -117,15 +117,26 @@ def check_deal_attention(dry_run: bool = False) -> str:
         alerts = []
         actions_taken = []
 
-        # 1. Stale proposals (>3 days without follow-up call)
-        stale_proposals = conn.execute("""
+        # 1. Stale proposals — follow-up timing adapts based on learning
+        # Default: 3 days. With 5+ outcomes: 2 days (more aggressive).
+        try:
+            _ol_spec = importlib.util.spec_from_file_location(
+                "outcome_learner", REPO_ROOT / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+            )
+            _ol = importlib.util.module_from_spec(_ol_spec)
+            _ol_spec.loader.exec_module(_ol)
+            follow_up_days = _ol.load_preferences().get("follow_up_days", 3)
+        except Exception:
+            follow_up_days = 3
+
+        stale_proposals = conn.execute(f"""
             SELECT d.id, d.company, d.contact_name, d.contact_email, d.updated_at
             FROM deals d
             WHERE d.stage = 'Proposal Sent'
-            AND d.updated_at < datetime('now', '-3 days')
+            AND d.updated_at < datetime('now', '-{follow_up_days} days')
             AND d.id NOT IN (
                 SELECT deal_id FROM outreach_log
-                WHERE created_at > datetime('now', '-3 days')
+                WHERE created_at > datetime('now', '-{follow_up_days} days')
             )
         """).fetchall()
 

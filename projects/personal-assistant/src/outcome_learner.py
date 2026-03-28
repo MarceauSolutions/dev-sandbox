@@ -27,6 +27,8 @@ REPO_ROOT = Path(_os.environ["REPO_ROOT"]) if _os.environ.get("REPO_ROOT") else 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("outcome_learner")
 
+PREFS_FILE = REPO_ROOT / "projects" / "personal-assistant" / "data" / "learned_preferences.json"
+
 # Positive outcomes (led to advancement)
 POSITIVE_OUTCOMES = {"conversation", "interested", "meeting_booked", "proposal_sent", "callback", "client_won"}
 # Negative outcomes
@@ -213,6 +215,86 @@ def format_for_digest() -> str:
         lines.append(f"  {insight}")
 
     return "\n".join(lines)
+
+
+def save_preferences():
+    """Persist learned preferences to a JSON file.
+
+    Called after outcomes are recorded. Other modules read this file
+    to adapt their behavior. This is what makes the system ACTUALLY
+    self-improving — preferences persist across restarts and sync to EC2.
+
+    Preferences include:
+    - best_channel: which outreach channel works best
+    - industry_rankings: which industries convert, sorted by rate
+    - deprioritized_industries: industries with 0% conversion
+    - recommended_action: "call" or "visit" based on data
+    - follow_up_timing: how aggressive to be with follow-ups
+    """
+    insights = get_insights()
+    if insights.get("error"):
+        return
+
+    prefs = {
+        "updated_at": datetime.now().isoformat(),
+        "total_outcomes": insights["total_outcomes"],
+        "best_channel": insights.get("best_channel", "Call"),
+        "best_channel_rate": insights.get("best_channel_rate", 0),
+        "recommended_action": "call" if insights.get("best_channel_rate", 0) > 50 else "visit_or_call",
+        "industry_rankings": [],
+        "deprioritized_industries": [],
+        "follow_up_days": 3 if insights["total_outcomes"] < 5 else 2,  # More aggressive with more data
+        "insights": insights.get("insights", []),
+    }
+
+    # Rank industries by conversion
+    for ind, rates in sorted(
+        insights.get("by_industry", {}).items(),
+        key=lambda x: -x[1].get("conversion_pct", 0)
+    ):
+        if rates.get("conversion_pct", 0) > 0:
+            prefs["industry_rankings"].append({
+                "industry": ind,
+                "conversion_pct": rates["conversion_pct"],
+                "total": rates["total"],
+            })
+        elif rates.get("total", 0) > 1:
+            prefs["deprioritized_industries"].append(ind)
+
+    PREFS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(PREFS_FILE, "w") as f:
+        json.dump(prefs, f, indent=2)
+
+    logger.info(f"Preferences saved: {PREFS_FILE.name}")
+    return prefs
+
+
+def load_preferences() -> Dict[str, Any]:
+    """Load persisted learned preferences.
+
+    Other modules call this to adapt their behavior based on what the
+    system has learned. Returns defaults if no preferences exist yet.
+    """
+    defaults = {
+        "best_channel": "Call",
+        "best_channel_rate": 0,
+        "recommended_action": "call",
+        "industry_rankings": [],
+        "deprioritized_industries": [],
+        "follow_up_days": 3,
+        "insights": [],
+        "total_outcomes": 0,
+    }
+
+    if not PREFS_FILE.exists():
+        return defaults
+
+    try:
+        with open(PREFS_FILE) as f:
+            prefs = json.load(f)
+        return prefs
+    except (json.JSONDecodeError, OSError):
+        return defaults
 
 
 def main():

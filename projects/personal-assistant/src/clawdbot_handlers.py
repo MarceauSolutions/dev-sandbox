@@ -414,6 +414,19 @@ def handle_outcome(text: str) -> str:
         if total >= 5:
             response += " (READY!)"
 
+        # Self-improving: update learned preferences after every outcome
+        try:
+            ol_spec = importlib.util.spec_from_file_location(
+                "outcome_learner", repo_root / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+            )
+            ol = importlib.util.module_from_spec(ol_spec)
+            ol_spec.loader.exec_module(ol)
+            prefs = ol.save_preferences()
+            if prefs and prefs.get("insights"):
+                response += f"\n  Learned: {prefs['insights'][0][:60]}"
+        except Exception:
+            pass
+
         return response
 
     except Exception as e:

@@ -4115,6 +4115,36 @@ End-to-end away-mode verified:
 - Natural conversation on EC2 (9/9 commands) ✓
 - Post-save auto-sync to EC2 ✓
 
+### Remaining (session 25)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 26 — Persistent Self-Improving Preferences (2026-03-28)
+
+outcome_learner now saves persistent preferences to `learned_preferences.json`:
+- best_channel, best_channel_rate, recommended_action
+- industry_rankings (sorted by conversion), deprioritized_industries
+- follow_up_days (adapts: 3 days default, 2 days with 5+ outcomes)
+- insights (human-readable)
+
+Preferences persist across restarts and sync to EC2.
+
+Other modules now read preferences:
+- cross_tower_sync: follow-up timing adapts from learned_preferences
+- handle_outcome: saves preferences after every recorded outcome
+- handle_next: shows learned recommendation per industry
+
+The self-improving loop is now:
+1. William records outcome (natural language or command)
+2. outcome_learner.save_preferences() runs
+3. learned_preferences.json updated with new insights
+4. Next sync cycle reads preferences for follow-up timing
+5. Next `next` command reads preferences for recommendations
+6. Morning digest reads preferences for action item advice
+7. Preferences sync to EC2 via post-save hook
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
