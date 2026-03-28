@@ -4340,6 +4340,33 @@ EC2 now runs 5 cron jobs (all independent of Mac):
 - Gmail reply monitoring (EC2 has tokens but the code isn't deployed there)
 - Pipeline.db primary writes (EC2 has a copy synced when Mac is open)
 
+### Remaining (session 32)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 33 — Natural Conversation Everywhere + SOUL.md Rewrite (2026-03-28)
+
+Two things done:
+
+1. Updated Clawdbot SOUL.md (690 lines) with explicit directives:
+   - "CRITICAL: For ANY business question, call PA service FIRST"
+   - Natural language examples table (14 patterns)
+   - "ALWAYS USE THIS" header on PA section
+   - When to use PA vs answer yourself decision guide
+
+2. Added more natural conversation routes:
+   - "any updates" / "update me" -> away dashboard
+   - "hey whats going on with the business" -> away dashboard
+   - "how is antimidators doing" -> call prep for that company
+   - "send a proposal to dolphin cooling" -> send proposal flow
+   Total: 46/46 routes verified (Mac + EC2)
+
+Both Mac and EC2 have the updated handlers. William can now have
+natural conversations about business through Clawdbot/Panacea on
+Telegram without remembering any commands.
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes

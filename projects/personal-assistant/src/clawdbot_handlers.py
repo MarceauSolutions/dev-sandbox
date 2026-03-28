@@ -2073,12 +2073,27 @@ def route_message(text: str) -> Optional[str]:
                                    "give me scripts"]):
         return handle_call_scripts()
 
+    # General status / update requests
+    if any(kw in lower for kw in ["any updates", "update me", "whats going on",
+                                   "what's going on", "hey whats going on",
+                                   "what happened today", "anything new"]):
+        return handle_away_status()
+
+    # "send a proposal to X" (different from "send proposal X")
+    if "send a proposal to " in lower or "send proposal to " in lower:
+        for prefix in ["send a proposal to ", "send proposal to "]:
+            if prefix in lower:
+                company = lower.split(prefix, 1)[1].strip()
+                if company:
+                    return handle_send_proposal(f"send proposal {company}")
+
+    # "how is X doing" — check a specific deal
+    if lower.startswith("how is ") and " doing" in lower:
+        company = lower.replace("how is ", "").replace(" doing", "").strip()
+        if company:
+            return handle_call_prep(f"prep {company}")
+
     # --- Conversational intent parser (last resort before giving up) ---
-    # Handles natural language like:
-    #   "I just got off a call with Dolphin Cooling and they want a proposal"
-    #   "Antimidators called back and said yes"
-    #   "Just finished a visit to PlumbingPro, they want to think about it"
-    #   "Did anyone respond to my emails today"
     result = _parse_conversational_intent(text)
     if result:
         return result
