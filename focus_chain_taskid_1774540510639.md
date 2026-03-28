@@ -4018,6 +4018,43 @@ Goal: 33% | 8d left
 - Launchd: 9 jobs
 - Core: SAFE
 
+### Remaining (session 22)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 23 — Auto-Proposal Generation (2026-03-28)
+
+### What Changed
+cross_tower_sync now auto-generates branded proposal PDFs for qualified leads
+that have an email but no proposal yet. Runs every 5 minutes. Generates up to
+2 proposals per cycle to avoid overwhelming.
+
+Key design decision: proposals are generated locally but NOT auto-sent to clients.
+William must explicitly type "send proposal [company]" to send. This preserves
+quality control while eliminating the manual generation step.
+
+### Verification
+```
+Auto-proposal generated: proposal_Dolphin_Cooling_20260328.pdf (49KB)
+Auto-proposal generated: proposal_PlumbingPro_Naples_20260328.pdf (49KB)
+Activity log: "Proposal auto-generated for Dolphin Cooling"
+Activity log: "Proposal auto-generated for PlumbingPro Naples"
+```
+
+6 qualified leads with email, system auto-generates proposals for them.
+William can then approve sending with one command per lead.
+
+### Hospital-stay flow is now
+```
+System auto-generates proposals for qualified leads with email
+William types "send proposal dolphin" -> emails to client
+Client responds -> system detects via response monitoring
+William types "antimidators called back and said yes" -> records outcome
+System auto-generates follow-up for stale proposals (>3 days)
+```
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
