@@ -239,6 +239,66 @@ def get_sms_replies(hours_back: int = 12) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Today's Priorities (replaces daily_scheduler proposals)
+# ---------------------------------------------------------------------------
+
+def _format_todays_priorities(pipeline: Dict, calendar: List) -> str:
+    """Format today's key priorities based on pipeline and calendar.
+    
+    This replaces the daily_scheduler proposal section.
+    Shows what's important TODAY based on:
+    - Hot leads that need attention
+    - Proposals pending response
+    - Scheduled calls/meetings
+    - Follow-ups due
+    """
+    lines = []
+    
+    # Key items that need focus today
+    hot = pipeline.get("hot_leads", [])
+    proposals = pipeline.get("proposals", [])
+    followups = pipeline.get("followups_today", 0)
+    
+    # Count important calendar items
+    calls_today = [e for e in calendar if any(kw in e.get("summary", "").lower() 
+                   for kw in ["call", "meeting", "discovery", "consultation"])]
+    visits_today = [e for e in calendar if any(kw in e.get("summary", "").lower() 
+                    for kw in ["visit", "walk-in", "stop"])]
+    
+    if hot or proposals or calls_today or visits_today:
+        lines.append("🎯 *TODAY'S PRIORITIES*")
+        
+        # Hot leads = highest priority
+        if hot:
+            lines.append(f"  🔥 {len(hot)} hot lead(s) — ready to close")
+            for h in hot[:2]:
+                company = h.get("company", "Unknown")
+                lines.append(f"     • {company}")
+        
+        # Scheduled calls
+        if calls_today:
+            lines.append(f"  📞 {len(calls_today)} call(s) scheduled")
+            for c in calls_today[:2]:
+                lines.append(f"     • {c.get('time', '?')}: {c.get('summary', '?')[:30]}")
+        
+        # Visits
+        if visits_today:
+            lines.append(f"  🚗 {len(visits_today)} visit(s) planned")
+        
+        # Proposals waiting
+        if proposals:
+            pending = [p for p in proposals if p.get("status") == "sent"]
+            if pending:
+                lines.append(f"  📋 {len(pending)} proposal(s) awaiting response")
+        
+        # Auto follow-ups
+        if followups:
+            lines.append(f"  📧 {followups} auto follow-ups scheduled")
+    
+    return "\n".join(lines) if lines else ""
+
+
+# ---------------------------------------------------------------------------
 # Digest formatting
 # ---------------------------------------------------------------------------
 
@@ -630,15 +690,13 @@ def generate_digest(hours_back: int = 12, preview: bool = False) -> str:
     except Exception as e:
         logger.warning(f"Tower proposals check failed: {e}")
 
-    # Daily schedule (ROI-based time blocking)
+    # Note: Weekly planning now handles time blocks (weekly_planner.py)
+    # Morning digest shows what's ALREADY scheduled, doesn't propose new blocks
     schedule_line = ""
     try:
-        from .daily_scheduler import generate_proposed_schedule, format_for_digest as fmt_schedule
-        is_post_april6 = datetime.now() >= datetime(2026, 4, 6)
-        schedule = generate_proposed_schedule(post_april_6=is_post_april6)
-        schedule_line = fmt_schedule(schedule)
+        schedule_line = _format_todays_priorities(pipeline, calendar)
     except Exception as e:
-        logger.warning(f"Daily scheduler failed: {e}")
+        logger.warning(f"Today's priorities failed: {e}")
 
     # Format
     combined_health = health_line
