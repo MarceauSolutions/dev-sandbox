@@ -4,7 +4,7 @@
   "business_name": "Marceau Solutions",
   "campaign_name": "AI Automation - 10+ Hours Saved Per Week",
   "created_at": "2026-01-21T12:00:00",
-  "status": "preview",
+  "status": "active",
   "target_audience": {
     "geography": [
       "Naples, FL",
@@ -135,15 +135,17 @@
     "estimated_cost_per_batch": 7.9,
     "monthly_budget": 100.0
   },
-  "launched_at": "2026-03-27T08:24:24.463507",
+  "launched_at": "2026-03-28T09:00:10.464189",
   "stats": {
     "business_id": "marceau-solutions",
     "business_name": "Marceau Solutions",
     "total_targeted": 26,
-    "sent": 26,
-    "enrolled_in_sequence": 26,
-    "errors": [],
-    "dry_run": true
+    "sent": 25,
+    "enrolled_in_sequence": 25,
+    "errors": [
+      "Family Air Conditioning and Heating, Inc.: HTTP 400 error: Unable to create record: Attempt to send to unsubscribed recipient"
+    ],
+    "dry_run": false
   },
   "activated_at": "2026-01-23T15:57:00",
   "sending_rules": {

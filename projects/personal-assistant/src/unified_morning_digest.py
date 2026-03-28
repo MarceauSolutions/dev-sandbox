@@ -255,15 +255,30 @@ def format_telegram_digest(
         lines.append(health_line)
         lines.append("")
 
-    # Current goal (keeps focus visible every morning)
+    # Current goal + live progress (keeps focus visible every morning)
     try:
         from .goal_manager import format_for_digest as fmt_goal
         goal_line = fmt_goal()
         if goal_line:
             lines.append(goal_line)
-            lines.append("")
     except Exception:
         pass
+
+    # Live goal progress from pipeline.db (how close are we?)
+    try:
+        import importlib.util as _ilu
+        _gp_spec = _ilu.spec_from_file_location(
+            "goal_progress", REPO_ROOT / "projects" / "personal-assistant" / "src" / "goal_progress.py"
+        )
+        _gp = _ilu.module_from_spec(_gp_spec)
+        _gp_spec.loader.exec_module(_gp)
+        progress_line = _gp.format_for_digest()
+        if progress_line:
+            lines.append(progress_line)
+    except Exception as e:
+        logger.debug(f"Goal progress unavailable: {e}")
+
+    lines.append("")
 
     # --- Pipeline Status ---
     if pipeline:
@@ -408,7 +423,7 @@ def _add_prep_note(lines: List[str], event: Dict, pipeline: Dict):
 
 
 def _generate_action_items(pipeline: Dict, emails: Dict, calendar: List, sms: Dict) -> List[str]:
-    """Auto-generate prioritized action items."""
+    """Auto-generate prioritized action items using research gate data."""
     items = []
 
     # Hot leads are #1 priority
@@ -416,12 +431,19 @@ def _generate_action_items(pipeline: Dict, emails: Dict, calendar: List, sms: Di
     if hot:
         items.append(f"🔥 {len(hot)} hot lead(s) awaiting response — check SMS alerts")
 
-    # Qualified leads ready for outreach/visit (high-ROI for manual effort)
+    # Qualified leads — use research gate to recommend call vs visit
     stages = pipeline.get("stages", {}) if pipeline else {}
     qualified = stages.get("Qualified", 0)
     warm = stages.get("Warm Response", 0)
     if qualified + warm > 0:
-        items.append(f"🎯 {qualified + warm} qualified/warm lead(s) — consider call or walk-in visit")
+        outreach_advice = _get_research_outreach_advice()
+        items.append(f"🎯 {qualified + warm} qualified/warm lead(s) — {outreach_advice}")
+
+    # Proposals needing follow-up (sent >2 days ago with no response)
+    stale_proposals = _check_stale_proposals()
+    if stale_proposals:
+        for company in stale_proposals[:3]:
+            items.append(f"📋 Follow up: {company} (proposal sent, no response)")
 
     # Proposals pending
     proposals = pipeline.get("proposals", []) if pipeline else []
@@ -446,6 +468,62 @@ def _generate_action_items(pipeline: Dict, emails: Dict, calendar: List, sms: Di
         items.append(f"📤 {followups} auto follow-ups scheduled (no action needed)")
 
     return items
+
+
+def _get_research_outreach_advice() -> str:
+    """Get outreach recommendation from research gate data."""
+    try:
+        import importlib.util as _ilu
+        _rg_spec = _ilu.spec_from_file_location(
+            "research_gate", REPO_ROOT / "execution" / "research_gate.py"
+        )
+        _rg = _ilu.module_from_spec(_rg_spec)
+        _rg_spec.loader.exec_module(_rg)
+        ctx = _rg.gather_context()
+        channels = ctx.get("outreach", {}).get("by_channel", {})
+
+        call_rate = channels.get("Call", {}).get("response_rate", 0)
+        email_rate = channels.get("Email", {}).get("response_rate", 0)
+        visit_rate = channels.get("In-Person", {}).get("response_rate", 0)
+
+        if call_rate > 50:
+            return f"CALL them (calls convert at {call_rate}%, email at {email_rate}%)"
+        elif visit_rate > call_rate:
+            return f"visit in person ({visit_rate}% conversion)"
+        elif call_rate > email_rate:
+            return f"call preferred ({call_rate}% vs {email_rate}% email)"
+        else:
+            return "consider call or walk-in visit"
+    except Exception:
+        return "consider call or walk-in visit"
+
+
+def _check_stale_proposals() -> list:
+    """Check for proposals sent >2 days ago with no follow-up activity."""
+    try:
+        import importlib.util as _ilu
+        _spec = _ilu.spec_from_file_location(
+            "pipeline_db", REPO_ROOT / "execution" / "pipeline_db.py"
+        )
+        _pdb = _ilu.module_from_spec(_spec)
+        _spec.loader.exec_module(_pdb)
+        conn = _pdb.get_db()
+
+        stale = conn.execute("""
+            SELECT d.company FROM deals d
+            WHERE d.stage = 'Proposal Sent'
+            AND d.updated_at < datetime('now', '-2 days')
+            AND d.id NOT IN (
+                SELECT deal_id FROM outreach_log
+                WHERE created_at > datetime('now', '-2 days')
+                AND channel = 'Call'
+            )
+            ORDER BY d.updated_at ASC
+        """).fetchall()
+        conn.close()
+        return [dict(r)["company"] for r in stale]
+    except Exception:
+        return []
 
 
 # ---------------------------------------------------------------------------

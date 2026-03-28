@@ -26,7 +26,8 @@
       "5+ active clients",
       "system runs autonomously"
     ],
-    "updated": "2026-03-27"
+    "updated": "2026-03-27",
+    "protected": true
   },
   "post_april6": {
     "goal": "Run business evenings and weekends while working at Collier County 7am-3pm",

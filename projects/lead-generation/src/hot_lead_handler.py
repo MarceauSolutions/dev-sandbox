@@ -157,43 +157,31 @@ def handle_william_reply(reply_text: str, deal_id: Optional[int] = None) -> Dict
 
 
 def _send_calendly_email(deal: dict) -> bool:
-    """Send Calendly discovery call link to the prospect via Gmail."""
+    """Request personal-assistant tower to send Calendly link via tower_protocol.
+
+    Per CLAUDE.md: towers do NOT import from each other directly.
+    Lead-gen requests PA to send the email via the protocol layer.
+    """
     contact_email = deal.get("contact_email")
     if not contact_email:
-        logger.warning(f"No email for deal {deal['id']} — can't send Calendly link")
+        logger.warning(f"No email for deal {deal['id']} -- can't send Calendly link")
         return False
 
     try:
-        sys.path.insert(0, str(REPO_ROOT / "projects" / "personal-assistant" / "src"))
-        from gmail_api import send_email
+        sys.path.insert(0, str(REPO_ROOT / "execution"))
+        from tower_protocol import request_calendly_email
 
-        company = deal.get("company", "")
-        contact_name = deal.get("contact_name", "").split()[0] if deal.get("contact_name") else ""
-        greeting = f"Hi {contact_name}" if contact_name else "Hi"
-
-        subject = f"Let's find a time to chat — {company}"
-        body = (
-            f"{greeting},\n\n"
-            f"Thanks for your interest! I'd love to learn more about {company} "
-            f"and see if there's a fit.\n\n"
-            f"Here's my calendar — grab any time that works for you:\n"
-            f"{CALENDLY_LINK}\n\n"
-            f"Looking forward to it.\n\n"
-            f"William Marceau\n"
-            f"Marceau Solutions\n"
-            f"wmarceau@marceausolutions.com"
+        request_id = request_calendly_email(
+            deal_id=deal["id"],
+            contact_email=contact_email,
+            company=deal.get("company", ""),
         )
-
-        result = send_email(to=contact_email, subject=subject, body=body)
-        if result.get("success"):
-            logger.info(f"Calendly email sent to {contact_email}")
-            return True
-        else:
-            logger.error(f"Calendly email failed: {result.get('error')}")
-            return False
+        logger.info(f"Calendly email requested via tower_protocol (request #{request_id}) "
+                     f"for deal {deal['id']} -> {contact_email}")
+        return True
 
     except Exception as e:
-        logger.error(f"Failed to send Calendly email: {e}")
+        logger.error(f"Failed to request Calendly email via protocol: {e}")
         return False
 
 

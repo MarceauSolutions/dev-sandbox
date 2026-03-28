@@ -169,17 +169,51 @@ def create_app():
         from .system_health_check import run_all_checks
         return jsonify(run_all_checks())
 
+    # --- Tower Coordination Blueprint ---
+    towers_bp = Blueprint('towers', __name__, url_prefix='/towers')
+
+    @towers_bp.route('/process', methods=['POST'])
+    def towers_process():
+        """Process pending tower_protocol requests for personal-assistant.
+        Called by launchd, Clawdbot, or other towers to trigger request processing."""
+        data = request.get_json() or {}
+        dry_run = data.get('dry_run', False)
+        from .tower_handler import process_pending
+        result = process_pending(dry_run=dry_run)
+        return jsonify({"success": True, **result})
+
+    @towers_bp.route('/status', methods=['GET'])
+    def towers_status():
+        """Cross-tower request stats — shows pending/completed/failed across all towers."""
+        from .tower_handler import get_all_tower_stats
+        return jsonify({"success": True, **get_all_tower_stats()})
+
+    @towers_bp.route('/goals', methods=['GET'])
+    def towers_goals():
+        """Goal progress calculated from pipeline.db — the feedback loop."""
+        from .goal_progress import calculate_goal_progress
+        return jsonify({"success": True, "progress": calculate_goal_progress()})
+
+    @towers_bp.route('/goals/alerts', methods=['GET'])
+    def towers_goal_alerts():
+        """Check if any goals are off-track."""
+        from .goal_progress import check_alerts
+        alerts = check_alerts()
+        return jsonify({"success": True, "alerts": alerts, "all_on_track": len(alerts) == 0})
+
     # --- Health ---
     @app.route('/health', methods=['GET'])
     def health():
         return jsonify({
             "tower": "personal-assistant",
             "status": "healthy",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "endpoints": {
                 "gmail": ["/gmail/list", "/gmail/read", "/gmail/send", "/gmail/draft", "/gmail/search", "/gmail/search-all"],
                 "sheets": ["/sheets/read", "/sheets/write", "/sheets/append"],
-                "sms": ["/sms/send", "/sms/list"]
+                "sms": ["/sms/send", "/sms/list"],
+                "towers": ["/towers/process", "/towers/status", "/towers/goals", "/towers/goals/alerts"],
+                "scheduler": ["/scheduler/today", "/scheduler/approve", "/scheduler/digest", "/scheduler/health-check"]
             }
         })
 
@@ -187,6 +221,7 @@ def create_app():
     app.register_blueprint(sheets_bp)
     app.register_blueprint(sms_bp)
     app.register_blueprint(scheduler_bp)
+    app.register_blueprint(towers_bp)
 
     return app
 

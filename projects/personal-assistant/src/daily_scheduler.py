@@ -88,12 +88,52 @@ def _get_pipeline_db():
 # Lead analysis
 # ---------------------------------------------------------------------------
 
+def _get_best_outreach_method() -> str:
+    """Check research gate data to determine best outreach method.
+
+    Returns 'call' or 'visit' based on actual response rate data.
+    If calls convert significantly better than in-person, prefer calls.
+    Falls back to 'visit' if no data available.
+    """
+    try:
+        import importlib.util as _ilu
+        _rg_spec = _ilu.spec_from_file_location(
+            "research_gate", REPO_ROOT / "execution" / "research_gate.py"
+        )
+        _rg = _ilu.module_from_spec(_rg_spec)
+        _rg_spec.loader.exec_module(_rg)
+        ctx = _rg.gather_context()
+        channels = ctx.get("outreach", {}).get("by_channel", {})
+
+        call_rate = channels.get("Call", {}).get("response_rate", 0)
+        visit_rate = channels.get("In-Person", {}).get("response_rate", 0)
+
+        # If calls have meaningfully better response rate, prefer calls
+        if call_rate > visit_rate + 10:
+            logger.info(f"Research gate: Calls ({call_rate}%) beat visits ({visit_rate}%), preferring calls")
+            return "call"
+        elif visit_rate > call_rate + 10:
+            logger.info(f"Research gate: Visits ({visit_rate}%) beat calls ({call_rate}%), preferring visits")
+            return "visit"
+        else:
+            return "visit_or_call"
+    except Exception:
+        return "visit_or_call"
+
+
 def get_actionable_leads() -> List[Dict[str, Any]]:
-    """Get leads that need manual action today, ranked by ROI."""
+    """Get leads that need manual action today, ranked by ROI.
+
+    Uses research gate data to determine whether to propose calls or visits
+    for Tier 1-2 leads, instead of hardcoding action types.
+    """
     try:
         pdb = _get_pipeline_db()
         conn = pdb.get_db()
         leads = []
+
+        # Check research data for best outreach method
+        best_method = _get_best_outreach_method()
 
         # Tier 1: HOT (closest to cash — one conversation away from a deal)
         for r in conn.execute(
@@ -103,22 +143,33 @@ def get_actionable_leads() -> List[Dict[str, Any]]:
             "ORDER BY updated_at DESC LIMIT 5"
         ).fetchall():
             d = dict(r)
-            d.update(roi_tier=1, roi_reason="Replied interested — one call from a deal",
-                     action_type="visit_or_call", time_needed=30)
+            if best_method == "call":
+                d.update(roi_tier=1, roi_reason="Replied interested + calls convert best (data-driven)",
+                         action_type="call", time_needed=15)
+            else:
+                d.update(roi_tier=1, roi_reason="Replied interested — one call from a deal",
+                         action_type="visit_or_call", time_needed=30)
             leads.append(d)
 
-        # Tier 2: Qualified (scored high, worth a visit)
+        # Tier 2: Qualified (data-driven: calls vs visits)
         for r in conn.execute(
             "SELECT id, company, contact_name, contact_phone, industry, city "
             "FROM deals WHERE stage = 'Qualified' "
             "ORDER BY updated_at DESC LIMIT 5"
         ).fetchall():
             d = dict(r)
-            d.update(roi_tier=2, roi_reason="High-score lead — walk-in or call converts best",
-                     action_type="visit", time_needed=45)
+            if best_method == "call":
+                d.update(roi_tier=2, roi_reason="Qualified lead + calls outperform visits (data-driven)",
+                         action_type="call", time_needed=15)
+            elif best_method == "visit":
+                d.update(roi_tier=2, roi_reason="Qualified lead + in-person converts best (data-driven)",
+                         action_type="visit", time_needed=45)
+            else:
+                d.update(roi_tier=2, roi_reason="High-score lead — walk-in or call converts best",
+                         action_type="visit_or_call", time_needed=30)
             leads.append(d)
 
-        # Tier 3: Warm responses (engaged, need nurturing)
+        # Tier 3: Warm responses (always calls — nurturing is phone-based)
         for r in conn.execute(
             "SELECT id, company, contact_name, contact_phone, industry "
             "FROM deals WHERE stage = 'Warm Response' "
@@ -129,7 +180,7 @@ def get_actionable_leads() -> List[Dict[str, Any]]:
                      action_type="call", time_needed=15)
             leads.append(d)
 
-        # Tier 4: Proposals sent (need follow-through)
+        # Tier 4: Proposals sent (always calls — follow-through)
         for r in conn.execute(
             "SELECT id, company, contact_name, contact_phone "
             "FROM deals WHERE stage = 'Proposal Sent' "
@@ -348,6 +399,24 @@ def generate_proposed_schedule(post_april_6: bool = None) -> Dict[str, Any]:
         {"task": "Pipeline analytics", "handler": "5:30pm digest (auto)", "saves": "30min"},
     ]
 
+    # Research gate: capture outreach effectiveness data for informed scheduling
+    research_snapshot = {}
+    try:
+        import importlib.util as _ilu
+        _rg_spec = _ilu.spec_from_file_location(
+            "research_gate", REPO_ROOT / "execution" / "research_gate.py"
+        )
+        _rg = _ilu.module_from_spec(_rg_spec)
+        _rg_spec.loader.exec_module(_rg)
+        ctx = _rg.gather_context()
+        research_snapshot = {
+            "outreach_by_channel": ctx.get("outreach", {}).get("by_channel", {}),
+            "recent_7d": ctx.get("outreach", {}).get("recent_7d", 0),
+            "goal_progress_pct": ctx.get("goals", {}).get("short_term", {}).get("overall_pct", 0),
+        }
+    except Exception:
+        pass
+
     schedule = {
         "date": today.strftime("%A, %B %d"),
         "date_iso": today_str,
@@ -360,6 +429,7 @@ def generate_proposed_schedule(post_april_6: bool = None) -> Dict[str, Any]:
             "proposals": len([l for l in leads if l["roi_tier"] == 4]),
         },
         "learning_system": learning_status,
+        "research_snapshot": research_snapshot,
         "total_manual_minutes": sum(b["minutes"] for b in proposed_blocks),
         "post_april_6": post_april_6,
     }
