@@ -3977,6 +3977,47 @@ When William says "antimidators called back and said yes," the intent parser:
 
 This means natural conversation directly feeds the learning system.
 
+### Remaining (session 21)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 22 — Git Commit + EOD Telegram Summary (2026-03-28)
+
+### Critical Finding
+19 uncommitted changes across sessions 10-21. 12 new files completely untracked.
+If laptop crashed, ALL work from 12 sessions would be lost. Fixed.
+
+### Git Commits
+```
+937909bb feat: post-save EC2 auto-sync in safe_git_save.py
+50071d0b feat: sessions 10-21 — conversational intent parser, hospital-stay mode,
+         EC2 PA service, cross-tower sync, goal runner, research gate, decision email,
+         outcome learner, post-save EC2 auto-sync
+```
+15 files committed and pushed across 2 commits. All new files now tracked.
+
+### End-of-Day Telegram Summary
+cross_tower_sync now sends a daily summary at 5pm:
+```
+END OF DAY — Saturday March 28
+Outreach sent: 0
+Stage changes: 1
+Pipeline: 2 Proposal Sent, 10 Qualified, 1 Trial Active
+TOMORROW: 3 deal(s) close to cash — follow up first
+Then call 10 qualified leads (use 'next' for prep)
+Goal: 33% | 8d left
+```
+
+### System Status After Commit
+- Git: clean (4 non-critical untracked items)
+- GitHub: up to date with all session work
+- Routes: 39+ (36 keyword + 8 conversational)
+- EC2: healthy
+- Launchd: 9 jobs
+- Core: SAFE
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
