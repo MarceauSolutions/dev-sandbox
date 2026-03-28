@@ -4305,7 +4305,41 @@ NEXT ACTION: Call Test HVAC Co — John at 239-555-0100
 ```
 Natural language: "hows the business" / "give me the overview" / "sitrep"
 
+### Remaining (session 31)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+3. ~~EC2 doesn't monitor responses~~ FIXED (session 32)
+
+---
+
+## Session 32 — EC2 Response Monitoring Independent of Mac (2026-03-28)
+
+Created `ec2_check_responses.py` — standalone Twilio SMS monitor that runs
+on EC2 via cron every 15 minutes. When a prospect replies via SMS:
+1. Checks Twilio API for new inbound messages
+2. Classifies: hot (interested/yes) → warm (maybe/call me) → cold → opt-out
+3. Updates pipeline.db stage on EC2
+4. Sends Telegram alert for hot leads with company name + phone + reply text
+5. Logs all activity to activities and outreach_log tables
+
+EC2 cron: `*/15 13-22 * * * python3 ec2_check_responses.py`
+
+Tested on EC2: connects to Twilio, checks messages, logs correctly.
+
+EC2 now runs 5 cron jobs (all independent of Mac):
+```
+*/30       sync-agent (existing)
+30 10      away-mode morning (digest + decisions + next action)
+*/30 13-21 away-mode monitor (pipeline monitoring)
+0 21       away-mode EOD (end-of-day summary)
+*/15 13-22 response checker (Twilio SMS monitoring) [NEW]
+```
+
+### What still requires Mac
+- daily_loop stages 1-4 (lead discovery, scoring, enrichment, initial outreach)
+- Gmail reply monitoring (EC2 has tokens but the code isn't deployed there)
+- Pipeline.db primary writes (EC2 has a copy synced when Mac is open)
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
-3. EC2 doesn't run daily_loop
