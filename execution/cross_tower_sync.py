@@ -163,7 +163,68 @@ def check_deal_attention(dry_run: bool = False) -> str:
         for row in stale_trials:
             alerts.append(f"Trial needs check-in: {dict(row)['company']}")
 
-        # 4. Auto-generate proposals for qualified leads with email but no proposal yet
+        # 4. AWAY-MODE: Auto-prepare new hot/warm responses
+        # When a lead responds positively, don't just alert — prepare everything
+        # so William only needs to make ONE call.
+        new_responses = conn.execute("""
+            SELECT d.id, d.company, d.contact_name, d.contact_phone, d.contact_email,
+                   d.industry, d.city, d.stage, d.notes
+            FROM deals d
+            WHERE d.stage IN ('Hot Response', 'Warm Response', 'Qualified')
+            AND d.updated_at > datetime('now', '-1 hour')
+            AND d.id NOT IN (
+                SELECT deal_id FROM activities
+                WHERE description LIKE '%Away-mode auto-prep%'
+                AND created_at > datetime('now', '-6 hours')
+            )
+            LIMIT 3
+        """).fetchall()
+
+        for row in new_responses:
+            d = dict(row)
+            company = d["company"]
+            prep_actions = []
+
+            # Auto-generate proposal if email exists and no proposal yet
+            if d.get("contact_email") and not dry_run:
+                has_proposal = conn.execute(
+                    "SELECT COUNT(*) FROM activities WHERE deal_id = ? AND description LIKE '%Proposal%'",
+                    (d["id"],)
+                ).fetchone()[0]
+                if not has_proposal:
+                    if _auto_generate_proposal(d):
+                        pdb.log_activity(conn, d["id"], "outreach",
+                                         f"Proposal auto-generated for {company}")
+                        prep_actions.append("proposal generated")
+
+            # Build call prep context
+            phone = d.get("contact_phone") or "no phone"
+            name = d.get("contact_name") or "?"
+            industry = d.get("industry") or "?"
+            notes = (d.get("notes") or "")[:120]
+
+            # Log the away-mode prep
+            if not dry_run:
+                pdb.log_activity(conn, d["id"], "outreach",
+                                 f"Away-mode auto-prep: {', '.join(prep_actions) if prep_actions else 'call brief ready'}")
+
+            # Build notification with full context
+            notif_lines = [
+                f"NEW: {company} [{d['stage']}]",
+                f"  Call {name} at {phone}",
+                f"  Industry: {industry} | {d.get('city', 'Naples')}",
+            ]
+            if notes:
+                notif_lines.append(f"  Context: {notes}")
+            if prep_actions:
+                notif_lines.append(f"  Auto: {', '.join(prep_actions)}")
+            if d.get("contact_email"):
+                notif_lines.append(f"  Ready: 'send proposal {company}'")
+            notif_lines.append(f"  After call: 'result {company}: [outcome]'")
+
+            actions_taken.append("\n".join(notif_lines))
+
+        # 5. Auto-generate proposals for qualified leads with email but no proposal yet
         # This is the key hospital-stay automation: system creates proposals without William
         new_qualified = conn.execute("""
             SELECT d.id, d.company, d.contact_name, d.contact_email, d.industry

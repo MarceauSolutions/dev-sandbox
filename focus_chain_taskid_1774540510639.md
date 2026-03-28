@@ -4055,6 +4055,38 @@ William types "antimidators called back and said yes" -> records outcome
 System auto-generates follow-up for stale proposals (>3 days)
 ```
 
+### Remaining (session 23)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 24 — Away-Mode Auto-Prep for New Responses (2026-03-28)
+
+cross_tower_sync now auto-prepares new hot/warm/qualified responses:
+1. Detects deals updated in last hour that haven't been prepped
+2. Auto-generates branded proposal if email exists (49KB PDF)
+3. Builds contextual notification with: company, contact, phone, industry, notes,
+   what was auto-done, exact commands to send proposal and record outcome
+4. Sends single consolidated Telegram notification
+
+Verified notification output:
+```
+AUTO-ACTIONS TAKEN:
+  NEW: Cloud 9 Med Spa Naples [Qualified]
+  Call ? at (239) 253-1325
+  Industry: Med Spa | Naples
+  Context: Interested but key objection: AI removes human touch...
+  Auto: proposal generated
+  Ready: 'send proposal Cloud 9 Med Spa Naples'
+  After call: 'result Cloud 9 Med Spa Naples: [outcome]'
+NEEDS YOUR ATTENTION:
+  Trial needs check-in: Test HVAC Co
+```
+
+Rate-limited to 1 notification per hour. Away-mode auto-prep logged to activities
+table to prevent duplicate processing.
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
