@@ -181,6 +181,10 @@ def safe_save(message: str = "", dry_run: bool = False, include_new: bool = Fals
     if skipped_files:
         print(f"  Skipped: {len(skipped_files)} sensitive files")
 
+    # Post-save: sync pipeline.db and PA handlers to EC2
+    if pushed:
+        _sync_to_ec2()
+
     return {
         "saved": True,
         "files": len(safe_files),
@@ -188,6 +192,22 @@ def safe_save(message: str = "", dry_run: bool = False, include_new: bool = Fals
         "message": message,
         "skipped": len(skipped_files),
     }
+
+
+def _sync_to_ec2():
+    """Sync pipeline.db and PA handlers to EC2 after a successful push."""
+    import subprocess as _sp
+    sync_script = REPO_ROOT / "scripts" / "sync_pipeline_to_ec2.sh"
+    if sync_script.exists():
+        try:
+            result = _sp.run(["bash", str(sync_script)],
+                             capture_output=True, text=True, timeout=30)
+            if result.stdout.strip():
+                print(f"  EC2 sync: {result.stdout.strip()}")
+            else:
+                print("  EC2 sync: no changes to sync")
+        except Exception as e:
+            print(f"  EC2 sync skipped: {e}")
 
 
 def main():
