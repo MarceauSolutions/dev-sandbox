@@ -4620,4 +4620,30 @@ Every stage of the acquisition engine runs on EC2:
 - Stage 8: daily digest
 - Stage 9: tower signal detection
 
-To enable real outreach: `bash scripts/ec2_enable_outreach.sh enable`
+~~To enable real outreach: `bash scripts/ec2_enable_outreach.sh enable`~~
+**REAL OUTREACH ENABLED** (session 40, 2026-03-28)
+
+---
+
+## Session 40 — Outreach Enabled + Weekend Telegram Sent (2026-03-28)
+
+Outreach switched from --dry-run to --for-real on EC2. The daily_loop will
+send actual outreach emails starting Monday at 9am ET.
+
+Weekend action plan sent to William's Telegram with:
+- System status (all running)
+- Top 3 calls to make (Test HVAC, Antimidators, Dolphin Cooling)
+- Instructions for natural conversation
+- Goal reminder (8 days to April 6)
+
+Final verification:
+- Outreach mode: --for-real
+- EC2 cron jobs: 10
+- PA commands: 8/8
+- Gmail + Twilio: both work on EC2
+- PDF attachments: functional
+- Autonomous core: SAFE
+- Telegram weekend plan: delivered
+
+The system is running. William can close his Mac.
+What remains is human action: making 3-5 phone calls to convert leads.
