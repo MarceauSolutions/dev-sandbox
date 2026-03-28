@@ -163,6 +163,32 @@ def check_deal_attention(dry_run: bool = False) -> str:
         for row in stale_trials:
             alerts.append(f"Trial needs check-in: {dict(row)['company']}")
 
+        # 4. Auto-generate proposals for qualified leads with email but no proposal yet
+        # This is the key hospital-stay automation: system creates proposals without William
+        new_qualified = conn.execute("""
+            SELECT d.id, d.company, d.contact_name, d.contact_email, d.industry
+            FROM deals d
+            WHERE d.stage = 'Qualified'
+            AND d.contact_email IS NOT NULL AND d.contact_email != ''
+            AND d.id NOT IN (
+                SELECT deal_id FROM activities
+                WHERE activity_type = 'outreach'
+                AND description LIKE '%Proposal%'
+            )
+            LIMIT 2
+        """).fetchall()
+
+        for row in new_qualified:
+            d = dict(row)
+            if not dry_run:
+                generated = _auto_generate_proposal(d)
+                if generated:
+                    pdb.log_activity(conn, d["id"], "outreach",
+                                     f"Proposal auto-generated for {d['company']}")
+                    actions_taken.append(f"Proposal auto-generated: {d['company']}")
+            else:
+                actions_taken.append(f"[DRY] Would auto-generate proposal: {d['company']}")
+
         conn.close()
 
         # Build message
@@ -360,6 +386,78 @@ def run_sync(dry_run: bool = False):
     status = get_status()
     logger.info(f"Sync complete: {json.dumps(status)}")
     return status
+
+
+def _auto_generate_proposal(deal: dict) -> bool:
+    """Auto-generate a branded proposal PDF for a qualified lead.
+
+    Called by check_deal_attention when a qualified lead has an email
+    but no proposal has been generated yet. The proposal is saved locally
+    and William is notified — it is NOT auto-sent to the client (that
+    requires William's approval for quality control).
+    """
+    import importlib.util
+    import sys
+    from datetime import datetime
+
+    try:
+        # Generate the proposal using the same engine as handle_proposal
+        sys.path.insert(0, str(REPO_ROOT / "projects" / "fitness-influencer" / "src"))
+        import pdf_templates.proposal_template  # registers the template
+        from branded_pdf_engine import BrandedPDFEngine
+
+        industry = (deal.get("industry") or "business").lower()
+        pain_map = {
+            "hvac": ("Missing after-hours emergency calls.",
+                     "AI Phone Agent + Automated Follow-Up System"),
+            "med spa": ("No-shows and missed booking follow-ups.",
+                        "AI Booking Assistant + Smart Follow-Up Engine"),
+            "plumb": ("Emergency calls going to voicemail after hours.",
+                      "AI Emergency Call Handler + Lead Capture System"),
+            "chiro": ("New patient follow-ups falling through the cracks.",
+                      "AI Patient Engagement System"),
+        }
+
+        pain = "Manual follow-ups and missed opportunities."
+        solution = "AI Automation System"
+        for key, (p, s) in pain_map.items():
+            if key in industry:
+                pain, solution = p, s
+                break
+
+        proposal_data = {
+            "client_name": deal.get("contact_name") or "",
+            "business_name": deal["company"],
+            "industry": deal.get("industry") or "Local Business",
+            "problem_statement": pain,
+            "solution": solution,
+            "solution_details": [
+                "24/7 automated response to inquiries",
+                "Smart follow-up sequences via SMS and email",
+                "Lead qualification and appointment booking",
+                "Monthly analytics and ROI dashboard",
+            ],
+            "timeline": "7 days to full deployment",
+            "investment": {"setup": "$0 setup", "monthly": "$497/mo"},
+            "guarantee": "30-day money-back guarantee.",
+            "next_steps": "Book a demo: calendly.com/wmarceau/ai-services-discovery",
+        }
+
+        engine = BrandedPDFEngine()
+        output_dir = REPO_ROOT / "projects" / "personal-assistant" / "logs" / "proposals"
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        safe_name = deal["company"].replace(" ", "_").replace("/", "-").replace("&", "_")[:30]
+        filename = f"proposal_{safe_name}_{datetime.now().strftime('%Y%m%d')}.pdf"
+        output_path = output_dir / filename
+
+        engine.generate_to_file("proposal", proposal_data, str(output_path))
+        logger.info(f"Auto-proposal generated: {output_path.name} ({output_path.stat().st_size // 1024}KB)")
+        return True
+
+    except Exception as e:
+        logger.error(f"Auto-proposal failed for {deal.get('company', '?')}: {e}")
+        return False
 
 
 def _generate_eod_summary() -> str:
