@@ -1,0 +1,31 @@
+{
+  "industry_conversions": {
+    "Other:digital-ai-services": {
+      "won": 0,
+      "lost": 2
+    },
+    "HVAC:digital-ai-services": {
+      "won": 0,
+      "lost": 1
+    },
+    "Roofing:digital-ai-services": {
+      "won": 0,
+      "lost": 3
+    },
+    "Plumbing:digital-ai-services": {
+      "won": 0,
+      "lost": 3
+    },
+    "Pest Control:digital-ai-services": {
+      "won": 0,
+      "lost": 2
+    },
+    "Med Spa:digital-ai-services": {
+      "won": 0,
+      "lost": 3
+    }
+  },
+  "keyword_conversions": {},
+  "score_adjustments": {},
+  "last_updated": "2026-03-28T20:08:15.204797"
+}
