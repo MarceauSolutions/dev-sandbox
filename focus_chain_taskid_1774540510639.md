@@ -3671,6 +3671,115 @@ Days left: 8
 - Goal progress auto-calculates from pipeline data
 - Stale deal detection learns from pipeline update timestamps
 
+### Remaining (session 16)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 17 — Post-Save EC2 Sync + Enhanced Sync Script (2026-03-28)
+
+### What Was Done
+
+#### 1. Post-save EC2 auto-sync
+`execution/safe_git_save.py` now calls `_sync_to_ec2()` after every successful push.
+Every `./scripts/save.sh "message"` automatically syncs pipeline.db, PA handler code,
+and goals.json to EC2, then restarts the PA service.
+
+**Before:** William had to manually run sync after saves. EC2 could drift.
+**After:** Every push automatically syncs EC2. No manual step needed.
+
+#### 2. Enhanced sync script (sync_pipeline_to_ec2.sh)
+Now syncs three things (was just pipeline.db):
+- `pipeline.db` — only when modified (timestamp check)
+- `clawdbot_handlers.py`, `goal_manager.py`, `goal_progress.py` — only when .py files changed
+- `goals.json` — always (small file, ensures goal consistency)
+
+Also: restarts PA service on EC2 when code changes (separate SSH calls for reliability).
+
+#### 3. Correct save command documented
+The save command is `./scripts/save.sh "message"` (NOT `scripts/safe_git_save.sh`).
+Previous sessions used the wrong command. Now corrected.
+
+### Verification
+```
+Mac routes: 34/34
+EC2: {"status":"healthy"} (decisions command works)
+Launchd: 9 jobs
+Autonomous core: SAFE
+Post-save EC2 sync: active (2 references in safe_git_save.py)
+Days left: 8
+```
+
+### Self-improving capabilities
+- Post-save sync means EC2 always reflects latest code
+- Cross-tower sync (5 min) keeps pipeline.db in sync continuously
+- Research gate data drives scheduler and digest action items
+- Stale deal detection auto-follows-up on proposals
+- Outcome recording feeds learning system toward activation
+
+### Remaining (session 17)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 18 — Outcome Learner + Self-Improving Next Command (2026-03-28)
+
+### What Was Done
+
+#### 1. outcome_learner.py — self-improving intelligence
+New module: `projects/personal-assistant/src/outcome_learner.py`
+Analyzes all recorded outcomes to extract actionable insights:
+- Which industries convert best
+- Which channels produce best outcomes
+- Generates text recommendations based on data
+- Activates fully at 5+ outcomes (currently 1/5)
+
+#### 2. `next` command now includes learned recommendations
+Before: `NEXT ACTION: Call Test HVAC Co` (no data context)
+After: `NEXT ACTION: Call Test HVAC Co` + `Learned: call (Call at 90.6% response rate)`
+
+The system tells William what approach works best FOR THIS INDUSTRY based on
+historical data. As more outcomes are recorded, recommendations get more specific.
+
+#### 3. `learned` Telegram command
+Shows what the system has learned:
+```
+LEARNED (1 outcomes):
+  Only 1 outcome(s) recorded. Need more data for reliable insights.
+  Record outcomes via: result [company]: [outcome]
+
+Channel effectiveness:
+  Call: 32 sent, 90.6% response
+  Email: 242 sent, 0.0% response
+```
+
+#### 4. Learning insights in morning digest
+Digest now includes a LEARNING section showing the system's current intelligence
+state and key insights.
+
+### Self-Improving Architecture
+```
+William records outcome: "result Dolphin: meeting_booked"
+  -> pipeline.db scheduled_outcomes table updated
+  -> outcome_learner.get_insights() recalculates
+  -> next command includes updated recommendation
+  -> morning digest includes updated insights
+  -> scheduler adapts outreach method
+  -> System gets smarter with every interaction
+```
+
+### Verification
+```
+Routes: 36/36
+EC2: healthy
+Launchd: 9 jobs
+Core: SAFE
+next command: includes "Learned: call (Call at 90.6% response rate)"
+digest: includes LEARNING section
+```
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes

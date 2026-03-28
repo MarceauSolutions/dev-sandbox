@@ -278,6 +278,20 @@ def format_telegram_digest(
     except Exception as e:
         logger.debug(f"Goal progress unavailable: {e}")
 
+    # Self-improving: learning insights from outcomes
+    try:
+        import importlib.util as _ilu2
+        _ol_spec = _ilu2.spec_from_file_location(
+            "outcome_learner", REPO_ROOT / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+        )
+        _ol = _ilu2.module_from_spec(_ol_spec)
+        _ol_spec.loader.exec_module(_ol)
+        learning_line = _ol.format_for_digest()
+        if learning_line:
+            lines.append(learning_line)
+    except Exception:
+        pass
+
     lines.append("")
 
     # --- Pipeline Status ---

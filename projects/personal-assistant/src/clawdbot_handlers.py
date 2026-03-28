@@ -792,6 +792,18 @@ def handle_next() -> str:
             f"Industry: {industry} | {lead.get('city') or 'Naples'}",
         ]
 
+        # Self-improving: add learned recommendation for this industry
+        try:
+            ol_spec = importlib.util.spec_from_file_location(
+                "outcome_learner", repo_root / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+            )
+            ol = importlib.util.module_from_spec(ol_spec)
+            ol_spec.loader.exec_module(ol)
+            rec = ol.get_recommendation_for_lead(industry)
+            lines.append(f"Learned: {rec}")
+        except Exception:
+            pass
+
         if notes_preview:
             lines.append(f"Context: {notes_preview}")
 
@@ -848,6 +860,7 @@ def handle_help() -> str:
         "AUTONOMOUS:\n"
         "  run [goal] — autonomous Grok-Claude loop\n"
         "  runs — show recent goal runs\n"
+        "  learned — what the system has learned from outcomes\n"
         "\n"
         "SYSTEM:\n"
         "  health — system check\n"
@@ -914,6 +927,44 @@ def handle_goal_run_status() -> str:
 
     except Exception as e:
         return f"Goal run status failed: {e}"
+
+
+def handle_learned() -> str:
+    """Show what the system has learned from recorded outcomes.
+
+    Self-improving: displays insights about what's working and what isn't.
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "outcome_learner", repo_root / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+        )
+        ol = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ol)
+        insights = ol.get_insights()
+
+        lines = [f"LEARNED ({insights['total_outcomes']} outcomes):\n"]
+
+        for i in insights.get("insights", []):
+            lines.append(f"  {i}")
+
+        channels = insights.get("by_channel", {})
+        if channels:
+            lines.append(f"\nChannel effectiveness:")
+            for ch, stats in sorted(channels.items(), key=lambda x: -x[1]["response_rate"]):
+                lines.append(f"  {ch}: {stats['sent']} sent, {stats['response_rate']}% response")
+
+        if insights.get("learning_system_ready"):
+            lines.append(f"\nLearning system: ACTIVE")
+        else:
+            lines.append(f"\nLearning system: {insights['total_outcomes']}/5 outcomes needed")
+
+        return "\n".join(lines)
+
+    except Exception as e:
+        return f"Learning insights failed: {e}"
 
 
 def handle_decisions() -> str:
@@ -1465,6 +1516,10 @@ def route_message(text: str) -> Optional[str]:
     if lower in ("decisions", "decision", "what needs my attention",
                   "anything need me", "what do i need to decide"):
         return handle_decisions()
+
+    if lower in ("learned", "insights", "what have you learned",
+                  "what works", "what working"):
+        return handle_learned()
 
     if lower in ("help", "commands", "?"):
         return handle_help()

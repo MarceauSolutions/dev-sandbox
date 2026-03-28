@@ -169,3 +169,50 @@ def request_meeting_prep(deal_id: int, company: str) -> int:
         "personal-assistant", "ai-systems", "generate_meeting_prep",
         {"deal_id": deal_id, "company": company}
     )
+
+
+def request_notification_email(from_tower: str, to_email: str,
+                               subject: str, body: str) -> int:
+    """Any tower → Personal-assistant: Send a notification email via Gmail."""
+    return request_action(
+        from_tower, "personal-assistant", "send_notification_email",
+        {"to": to_email, "subject": subject, "body": body}
+    )
+
+
+def request_goal_progress_update(from_tower: str = "system") -> int:
+    """Any tower → Personal-assistant: Trigger goal progress recalculation."""
+    return request_action(
+        from_tower, "personal-assistant", "update_goal_progress", {}
+    )
+
+
+# ---------------------------------------------------------------------------
+# Tower status queries (read-only, no request creation)
+# ---------------------------------------------------------------------------
+
+def get_tower_health(tower: str) -> Dict[str, Any]:
+    """Check request health for a specific tower — pending, failed, recent completions."""
+    conn = _get_db()
+    pending = conn.execute(
+        "SELECT COUNT(*) FROM tower_requests WHERE to_tower = ? AND status = 'pending'",
+        (tower,)
+    ).fetchone()[0]
+    failed_recent = conn.execute(
+        "SELECT COUNT(*) FROM tower_requests WHERE to_tower = ? AND status = 'failed' "
+        "AND created_at > datetime('now', '-1 day')",
+        (tower,)
+    ).fetchone()[0]
+    completed_recent = conn.execute(
+        "SELECT COUNT(*) FROM tower_requests WHERE to_tower = ? AND status = 'completed' "
+        "AND created_at > datetime('now', '-1 day')",
+        (tower,)
+    ).fetchone()[0]
+    conn.close()
+    return {
+        "tower": tower,
+        "pending": pending,
+        "failed_24h": failed_recent,
+        "completed_24h": completed_recent,
+        "healthy": failed_recent == 0 and pending < 10,
+    }
