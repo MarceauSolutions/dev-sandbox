@@ -4647,3 +4647,33 @@ Final verification:
 
 The system is running. William can close his Mac.
 What remains is human action: making 3-5 phone calls to convert leads.
+
+---
+
+## Session 41 — Final Audit + Call Preps Sent (2026-03-28)
+
+### Brutal audit
+Everything is running. Outreach: --for-real. 10 cron jobs. PA healthy.
+n8n healthy. Clawdbot: 16 processes. Gmail + Twilio on EC2. PDF attachments.
+40+ natural conversation routes. Auto-proposals. Auto-follow-ups.
+
+### What was done differently
+Instead of adding another feature, sent 4 Telegram messages to William:
+1. Weekend system status + action plan
+2. Call prep: Test HVAC Co (Trial Active — convert to paid)
+3. Call prep: Antimidators (Proposal Sent — follow up)
+4. Call prep: Cloud 9 Med Spa (Qualified — book meeting)
+
+Each message has full context: contact name, phone, industry, notes,
+talking points, and "after call: just tell me what happened naturally."
+
+### Honest remaining blockers (ALL require human action)
+1. Learning system: 1/5 outcomes — William must make calls and record results
+2. XAI API key: 403 — William must check xAI dashboard
+3. 0 clients signed — William must make phone calls
+4. No amount of additional code changes these numbers
+
+### System state for the weekend
+The Company on a Laptop runs autonomously on EC2 with 10 cron jobs.
+William checks Telegram, makes calls, types outcomes naturally.
+The system handles everything else.
