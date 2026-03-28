@@ -166,3 +166,4 @@ projects/*/social-media/output/images/
 *.zip
 *.tar.gz
 .env.backup.*
+*.bak.*

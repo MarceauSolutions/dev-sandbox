@@ -202,7 +202,7 @@ def check_domains():
         "fitai.marceausolutions.com": "Fitness influencer platform",
         "marceausolutions.com": "Marceau Solutions website",
         "swfloridacomfort.com": "HVAC client website",
-        "www.boabfit.com": "BoabFit client website",
+        # "www.boabfit.com": "BoabFit client website",  # DISABLED 2026-03-28 - no longer a client
     }
     import ssl
     for domain, desc in domains.items():
