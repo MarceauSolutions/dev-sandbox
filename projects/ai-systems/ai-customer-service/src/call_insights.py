@@ -1,8 +1,9 @@
 """Call Insights and Follow-up Recommendations Engine."""
 
 import json
+import re
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, List, Tuple
 import anthropic
 
 from .config import get_settings
@@ -198,6 +199,231 @@ Be warm and reference the call. Sign as William.""",
         lines.append("=" * 60)
 
         return "\n".join(lines)
+
+
+class ServiceIntentDetector:
+    """Detects which service/tower a caller is interested in from transcripts."""
+    
+    # Service-to-tower mapping with keywords
+    SERVICE_KEYWORDS = {
+        "digital-ai-services": {
+            "label": "AI Services",
+            "keywords": [
+                "ai", "phone system", "voice ai", "calls", "answer calls", "missed calls",
+                "text back", "chatbot", "appointment booking", "24/7", "after hours",
+                "lead generation", "leads", "scraping", "outreach", "automation",
+                "answering service", "receptionist", "booking", "schedule"
+            ],
+            "weight": 1.0
+        },
+        "digital-web-dev": {
+            "label": "Web Development",
+            "keywords": [
+                "website", "web design", "landing page", "redesign", "seo",
+                "online presence", "ecommerce", "e-commerce", "mobile site",
+                "web development", "new site", "build a site", "update my site"
+            ],
+            "weight": 1.0
+        },
+        "fitness-influencer": {
+            "label": "Social Media / Influencer",
+            "keywords": [
+                "social media", "instagram", "tiktok", "twitter", "x posts",
+                "content creation", "influencer", "posting", "brand", "sponsorship",
+                "social presence", "followers", "engagement"
+            ],
+            "weight": 1.0
+        },
+        "fitness-coaching": {
+            "label": "Fitness Coaching",
+            "keywords": [
+                "personal training", "fitness coaching", "workout", "gym membership",
+                "nutrition", "weight loss", "muscle", "training program"
+            ],
+            "weight": 0.8  # Lower weight since less common for business calls
+        }
+    }
+    
+    def __init__(self):
+        self.settings = get_settings()
+        self.client = anthropic.Anthropic(api_key=self.settings.anthropic_api_key)
+    
+    def detect_from_transcript(self, transcript: List[Dict]) -> Dict:
+        """
+        Detect service intent from a call transcript.
+        
+        Args:
+            transcript: List of transcript entries (role + message)
+            
+        Returns:
+            Dict with:
+            - primary_tower: Most likely tower ID
+            - primary_confidence: 0.0 to 1.0
+            - secondary_tower: Second most likely (if any)
+            - secondary_confidence: 0.0 to 1.0
+            - detected_services: List of specific services mentioned
+            - raw_scores: All tower scores for debugging
+        """
+        # Combine all caller messages for analysis
+        caller_text = " ".join([
+            t.get("message", "") or t.get("content", "")
+            for t in transcript 
+            if t.get("role") in ("customer", "user", "human")
+        ]).lower()
+        
+        # Also include AI responses for context
+        full_text = " ".join([
+            t.get("message", "") or t.get("content", "")
+            for t in transcript
+        ]).lower()
+        
+        # Score each tower based on keyword matches
+        scores = self._score_keywords(caller_text, full_text)
+        
+        # If scores are ambiguous, use Claude for deeper analysis
+        if self._is_ambiguous(scores):
+            scores = self._analyze_with_claude(transcript, scores)
+        
+        # Rank towers by score
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        
+        # Calculate confidence (normalized to sum=1.0)
+        total_score = sum(s for _, s in ranked) or 1.0
+        
+        result = {
+            "primary_tower": ranked[0][0] if ranked else "digital-ai-services",
+            "primary_confidence": round(ranked[0][1] / total_score, 2) if ranked else 0.5,
+            "secondary_tower": ranked[1][0] if len(ranked) > 1 and ranked[1][1] > 0 else None,
+            "secondary_confidence": round(ranked[1][1] / total_score, 2) if len(ranked) > 1 else 0.0,
+            "detected_services": self._extract_services(caller_text),
+            "raw_scores": scores
+        }
+        
+        return result
+    
+    def _score_keywords(self, caller_text: str, full_text: str) -> Dict[str, float]:
+        """Score each tower based on keyword matches."""
+        scores = {}
+        
+        for tower_id, config in self.SERVICE_KEYWORDS.items():
+            score = 0.0
+            keywords = config["keywords"]
+            weight = config["weight"]
+            
+            for keyword in keywords:
+                # Caller mentions are worth more
+                if keyword in caller_text:
+                    score += 2.0 * weight
+                # AI mentions also count (context)
+                elif keyword in full_text:
+                    score += 0.5 * weight
+            
+            scores[tower_id] = score
+        
+        return scores
+    
+    def _is_ambiguous(self, scores: Dict[str, float]) -> bool:
+        """Check if scores are too close to call."""
+        sorted_scores = sorted(scores.values(), reverse=True)
+        if len(sorted_scores) < 2:
+            return False
+        
+        # If top two scores are within 20% of each other, it's ambiguous
+        if sorted_scores[0] == 0:
+            return False  # No signal at all, not ambiguous just empty
+        
+        ratio = sorted_scores[1] / sorted_scores[0]
+        return ratio > 0.8
+    
+    def _analyze_with_claude(self, transcript: List[Dict], 
+                             initial_scores: Dict[str, float]) -> Dict[str, float]:
+        """Use Claude to disambiguate service intent."""
+        transcript_text = "\n".join([
+            f"{'Caller' if t.get('role') in ('customer', 'user', 'human') else 'AI'}: {t.get('message', '') or t.get('content', '')}"
+            for t in transcript
+        ])
+        
+        prompt = f"""Analyze this call transcript to determine which service the caller is most interested in.
+
+AVAILABLE SERVICES:
+1. digital-ai-services: Voice AI phone systems, missed call text-back, lead generation automation
+2. digital-web-dev: Website design, landing pages, web development, SEO
+3. fitness-influencer: Social media automation, content creation for Instagram/TikTok
+4. fitness-coaching: Personal training, fitness programs (rare for business calls)
+
+TRANSCRIPT:
+{transcript_text}
+
+Based on what the caller is asking about, return JSON:
+{{
+  "primary_service": "tower-id",
+  "confidence": 0.0-1.0,
+  "secondary_service": "tower-id or null",
+  "reasoning": "brief explanation"
+}}"""
+        
+        try:
+            response = self.client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=200,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            
+            result_text = response.content[0].text
+            if "```json" in result_text:
+                result_text = result_text.split("```json")[1].split("```")[0]
+            elif "```" in result_text:
+                result_text = result_text.split("```")[1].split("```")[0]
+            
+            result = json.loads(result_text.strip())
+            
+            # Update scores based on Claude's analysis
+            primary = result.get("primary_service", "digital-ai-services")
+            confidence = result.get("confidence", 0.7)
+            
+            # Boost the identified tower
+            if primary in initial_scores:
+                initial_scores[primary] = max(initial_scores[primary], 10.0 * confidence)
+            
+            secondary = result.get("secondary_service")
+            if secondary and secondary in initial_scores:
+                initial_scores[secondary] = max(initial_scores[secondary], 5.0 * (1 - confidence))
+                
+        except Exception as e:
+            pass  # Fall back to keyword-based scores
+        
+        return initial_scores
+    
+    def _extract_services(self, text: str) -> List[str]:
+        """Extract specific services mentioned in the text."""
+        services = []
+        
+        service_patterns = {
+            "Voice AI": r"voice ai|ai phone|phone system|answering",
+            "Lead Generation": r"lead gen|leads|scraping|outreach",
+            "Website": r"website|web design|landing page|seo",
+            "Social Media": r"social media|instagram|tiktok|content"
+        }
+        
+        for service, pattern in service_patterns.items():
+            if re.search(pattern, text, re.IGNORECASE):
+                services.append(service)
+        
+        return services
+
+
+def detect_service_intent(transcript: List[Dict]) -> Dict:
+    """
+    Convenience function to detect service intent from a transcript.
+    
+    Args:
+        transcript: List of transcript entries
+        
+    Returns:
+        Service intent detection result
+    """
+    detector = ServiceIntentDetector()
+    return detector.detect_from_transcript(transcript)
 
 
 async def analyze_recent_calls(limit: int = 5) -> list[dict]:

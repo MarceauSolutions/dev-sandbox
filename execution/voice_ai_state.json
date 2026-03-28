@@ -1,0 +1,24 @@
+{
+  "processed_ids": [
+    "conv_1601kmv0g5fefs59g4d6hjt9yvy6",
+    "conv_5501kmtv6fz5fkva1vy5q00fvtaf",
+    "conv_3301kmt9hbmgf5ys2chngq3fbxre",
+    "conv_5901kmrxzabvf2zsgvw2ecdctb4n",
+    "conv_0501kmrj2nbbf2rsbyb78vqjyegd",
+    "conv_2601kmjw9tpde6z9f6rbz77jremn",
+    "conv_1501kmgy7fatfky9j3g8xzvd477v",
+    "conv_5301kmgthby0e3dr0v7m43t1e510",
+    "conv_3701kmgrqxh1far9xjmc69kh0wqp",
+    "conv_4201kmgmz0yyeesrjpat250gndp7"
+  ],
+  "last_check": "2026-03-28T20:15:02.850783",
+  "daily_stats": {
+    "2026-03-28": {
+      "total_calls": 10,
+      "hot_leads": 1,
+      "warm_leads": 0,
+      "cold_leads": 0,
+      "total_duration": 358
+    }
+  }
+}
