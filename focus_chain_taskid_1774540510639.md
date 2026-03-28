@@ -4422,7 +4422,55 @@ This is the revenue event. Everything is built for it.
 - **Ralph (EC2)**: Persistence, background execution — partially via cron jobs
 - **Grok (strategist)**: Provides direction via prompts — ACTIVE
 
-### Remaining
-1. Test daily_loop on EC2 (Step 1)
+### Remaining (session 34)
+1. ~~Test daily_loop on EC2~~ DONE (session 35)
 2. William makes phone calls (Step 2)
+3. XAI API key 403
+
+---
+
+## Session 35 — Daily Loop Running on EC2 (2026-03-28)
+
+### The breakthrough
+daily_loop runs FULLY on EC2. Tested: `status` (reads pipeline), `check-responses`
+(connects to Twilio + Gmail), and `full --dry-run` (6/6 stages pass).
+
+All 95 lead-gen Python files, pipeline_db, tower_protocol, Gmail tokens,
+credentials, Twilio keys, and .env already existed on EC2. No migration
+was needed — just testing and installing cron jobs.
+
+### Installed 3 new EC2 cron jobs:
+```
+0 13 * * 1-5     daily_loop full --dry-run (9am ET — acquisition engine)
+*/15 13-22 * * 1-5  daily_loop check-responses (every 15min — Gmail + Twilio)
+30 21 * * 1-5    daily_loop digest (5:30pm ET — evening report)
+```
+
+### EC2 now has 8 total cron jobs:
+1. sync-agent (every 30min)
+2. away-mode morning (6:30am ET)
+3. away-mode monitor (every 30min, 9am-5pm ET)
+4. away-mode EOD (5pm ET)
+5. response checker (every 15min, Twilio)
+6. daily_loop full --dry-run (9am ET) [NEW]
+7. daily_loop check-responses (every 15min) [NEW]
+8. daily_loop digest (5:30pm ET) [NEW]
+
+### Mac closed = system still runs:
+- Morning Telegram digest at 6:30am
+- Daily acquisition dry-run at 9am
+- Response monitoring every 15min (Gmail + Twilio)
+- Deal monitoring every 30min
+- EOD summary at 5pm
+- Evening digest at 5:30pm
+- All PA commands via Clawdbot (Telegram)
+
+### To enable real outreach from EC2:
+William changes one cron line on EC2:
+  `--dry-run` → `--for-real`
+This sends actual outreach emails. Currently dry-run for safety.
+
+### Remaining
+1. William changes --dry-run to --for-real when ready
+2. William makes phone calls
 3. XAI API key 403
