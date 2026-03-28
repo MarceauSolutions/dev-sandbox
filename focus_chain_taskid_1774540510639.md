@@ -4470,6 +4470,30 @@ William changes one cron line on EC2:
   `--dry-run` → `--for-real`
 This sends actual outreach emails. Currently dry-run for safety.
 
+### Remaining (session 35)
+1. William changes --dry-run to --for-real when ready
+2. William makes phone calls
+3. XAI API key 403
+
+---
+
+## Session 36 — PDF Attachments + Gmail API Fix + Sync Update (2026-03-28)
+
+### Critical fix: emails now include PDF attachments
+Previously: "send proposal Dolphin" sent an email that SAID "attached" but had no attachment.
+Now: gmail_api.send_email() accepts `attachments=["/path/to/file.pdf"]` parameter.
+
+Fixed 3 email flows:
+1. `send proposal [company]` — attaches the proposal PDF to client email
+2. `proposal [company]` — attaches PDF to William's notification email
+3. `agreement [company]` — attaches agreement PDF to William's review email
+
+Verified: `send_email(attachments=[proposal.pdf])` returns `{'attachments': ['proposal_Complete_Care_Air_20260328.pdf']}`
+
+### Sync updated
+sync_pipeline_to_ec2.sh now includes gmail_api.py in the code sync.
+gmail_api.py deployed to EC2 pa-handlers and dev-sandbox.
+
 ### Remaining
 1. William changes --dry-run to --for-real when ready
 2. William makes phone calls

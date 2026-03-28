@@ -1331,7 +1331,8 @@ def handle_agreement(text: str) -> str:
             gm.send_email(
                 to="wmarceau@marceausolutions.com",
                 subject=f"Agreement ready for review: {d['company']}",
-                body=f"Service agreement generated for {d['company']}.\n\nReview before sending to client.\nFile: {output_path}",
+                body=f"Service agreement generated for {d['company']}.\n\nReview the attached PDF before sending to client.\nClient email: {d.get('contact_email', 'not on file')}",
+                attachments=[str(output_path)],
             )
         except Exception:
             pass
@@ -1473,7 +1474,8 @@ def handle_proposal(text: str) -> str:
             result = gm.send_email(
                 to="wmarceau@marceausolutions.com",
                 subject=f"Proposal ready: {d['company']}",
-                body=f"Proposal PDF generated for {d['company']}.\nSaved at: {output_path}\n\nSend to: {d.get('contact_email') or 'no email on file'}",
+                body=f"Proposal PDF generated for {d['company']}.\nAttached for review.\n\nClient email: {d.get('contact_email') or 'no email on file'}\nTo send to client: send proposal {d['company']}",
+                attachments=[str(output_path)],
             )
             email_sent = result.get("success", False)
         except Exception:
@@ -1671,7 +1673,8 @@ def handle_send_proposal(text: str) -> str:
             f"(239) 398-5676"
         )
 
-        result = gm.send_email(to=d["contact_email"], subject=subject, body=body)
+        result = gm.send_email(to=d["contact_email"], subject=subject, body=body,
+                               attachments=[str(pdf_path)])
 
         if result.get("success"):
             # Update deal stage

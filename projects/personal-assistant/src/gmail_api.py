@@ -209,9 +209,10 @@ def read_email(message_id: str) -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
-def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: str = "") -> Dict[str, Any]:
+def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: str = "",
+               attachments: list = None) -> Dict[str, Any]:
     """
-    Send an email via Gmail SMTP.
+    Send an email via Gmail SMTP, optionally with file attachments.
 
     Args:
         to: Recipient email address
@@ -219,6 +220,7 @@ def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: st
         body: Email body
         cc: CC recipients
         bcc: BCC recipients
+        attachments: List of file paths to attach (e.g., ["/path/to/proposal.pdf"])
 
     Returns:
         Dict with send status
@@ -227,6 +229,9 @@ def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: st
         import smtplib
         from email.mime.text import MIMEText
         from email.mime.multipart import MIMEMultipart
+        from email.mime.base import MIMEBase
+        from email import encoders
+        from pathlib import Path
 
         smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
         smtp_port = int(os.getenv('SMTP_PORT', 587))
@@ -248,6 +253,19 @@ def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: st
 
         msg.attach(MIMEText(body, 'plain'))
 
+        # Attach files
+        attached_files = []
+        for filepath in (attachments or []):
+            fp = Path(filepath)
+            if fp.exists():
+                with open(fp, 'rb') as f:
+                    part = MIMEBase('application', 'octet-stream')
+                    part.set_payload(f.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename="{fp.name}"')
+                msg.attach(part)
+                attached_files.append(fp.name)
+
         with smtplib.SMTP(smtp_host, smtp_port) as server:
             server.starttls()
             server.login(smtp_user, smtp_pass)
@@ -257,7 +275,8 @@ def send_email(to: str, subject: str = "", body: str = "", cc: str = "", bcc: st
             "success": True,
             "method": "smtp",
             "to": to,
-            "subject": subject
+            "subject": subject,
+            "attachments": attached_files,
         }
 
     except Exception as e:
