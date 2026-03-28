@@ -833,6 +833,7 @@ def handle_help() -> str:
         "  proposal [company] — generate branded PDF proposal\n"
         "  send proposal [company] — email proposal to client\n"
         "  onboard [company] — Stripe link + welcome email + Closed Won\n"
+        "  decisions — everything needing your yes/no (hospital mode)\n"
         "\n"
         "PLANNING:\n"
         "  schedule — today's data-driven plan\n"
@@ -913,6 +914,96 @@ def handle_goal_run_status() -> str:
 
     except Exception as e:
         return f"Goal run status failed: {e}"
+
+
+def handle_decisions() -> str:
+    """Show everything that needs William's yes/no decision.
+
+    One screen: all items requiring human judgment, prioritized.
+    Designed for hospital-stay mode — check once a day, make decisions, done.
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+        )
+        pdb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pdb)
+        conn = pdb.get_db()
+
+        lines = ["DECISIONS NEEDED:\n"]
+        count = 0
+
+        # 1. Trial active — needs conversion decision
+        trials = conn.execute(
+            "SELECT company, contact_name, contact_phone FROM deals "
+            "WHERE stage = 'Trial Active'"
+        ).fetchall()
+        for r in trials:
+            d = dict(r)
+            count += 1
+            lines.append(f"{count}. CONVERT TRIAL: {d['company']}")
+            lines.append(f"   {d.get('contact_name', '?')} {d.get('contact_phone', '')}")
+            lines.append(f"   -> onboard {d['company']}  OR  result {d['company']}: not_interested")
+            lines.append("")
+
+        # 2. Proposals sent >3 days — needs follow-up call or close
+        stale = conn.execute(
+            "SELECT company, contact_name, contact_phone, updated_at FROM deals "
+            "WHERE stage = 'Proposal Sent' AND updated_at < datetime('now', '-3 days')"
+        ).fetchall()
+        for r in stale:
+            d = dict(r)
+            count += 1
+            lines.append(f"{count}. FOLLOW UP PROPOSAL: {d['company']}")
+            lines.append(f"   Sent: {d['updated_at'][:10]}")
+            lines.append(f"   -> Call {d.get('contact_phone', 'no phone')} and ask for decision")
+            lines.append("")
+
+        # 3. Qualified leads with phone — needs call
+        qualified = conn.execute(
+            "SELECT company, contact_phone FROM deals "
+            "WHERE stage = 'Qualified' AND contact_phone IS NOT NULL "
+            "ORDER BY updated_at DESC LIMIT 5"
+        ).fetchall()
+        if qualified:
+            count += 1
+            lines.append(f"{count}. CALL {len(qualified)} QUALIFIED LEADS:")
+            for r in qualified:
+                d = dict(r)
+                lines.append(f"   {d['company']} — {d['contact_phone']}")
+            lines.append(f"   -> Use 'next' for call prep + script")
+            lines.append("")
+
+        # 4. Goal alerts
+        try:
+            gp_spec = importlib.util.spec_from_file_location(
+                "goal_progress", repo_root / "projects" / "personal-assistant" / "src" / "goal_progress.py"
+            )
+            gp = importlib.util.module_from_spec(gp_spec)
+            gp_spec.loader.exec_module(gp)
+            alerts = gp.check_alerts()
+            if alerts:
+                count += 1
+                lines.append(f"{count}. GOAL ALERT:")
+                for a in alerts:
+                    lines.append(f"   {a}")
+                lines.append("")
+        except Exception:
+            pass
+
+        conn.close()
+
+        if count == 0:
+            return "No decisions needed right now. System is running autonomously."
+
+        lines.append(f"Total: {count} item(s) needing your decision")
+        return "\n".join(lines)
+
+    except Exception as e:
+        return f"Decision check failed: {e}"
 
 
 def handle_proposal(text: str) -> str:
@@ -1371,6 +1462,10 @@ def route_message(text: str) -> Optional[str]:
     if lower in ("next", "what next", "what should i do", "what now"):
         return handle_next()
 
+    if lower in ("decisions", "decision", "what needs my attention",
+                  "anything need me", "what do i need to decide"):
+        return handle_decisions()
+
     if lower in ("help", "commands", "?"):
         return handle_help()
 
@@ -1491,6 +1586,12 @@ def route_message(text: str) -> Optional[str]:
         if company:
             return handle_onboard(f"onboard {company}")
         return "Which company? Usage: onboard [company name]"
+
+    # Decisions (natural: "anything need me", "what needs my attention")
+    if any(kw in lower for kw in ["anything need me", "what needs my attention",
+                                   "need my decision", "what do i need to decide",
+                                   "need me for anything", "decisions needed"]):
+        return handle_decisions()
 
     # Goal progress (natural: "how are my goals", "am i on track")
     if any(kw in lower for kw in ["how are my goal", "am i on track",

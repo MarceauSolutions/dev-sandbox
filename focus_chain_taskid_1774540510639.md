@@ -3589,6 +3589,88 @@ PIPELINE SYNC:
   Mac is primary, EC2 gets copy
 ```
 
-### Remaining
+### Remaining (session 15)
 1. XAI API key 403 (William's account — only he can fix)
 2. Learning system 1/5 outcomes (needs William to record call results)
+
+---
+
+## Session 16 — Hospital-Stay Mode: Auto Follow-ups + Decision Queue (2026-03-28)
+
+### What Was Done
+
+Built three capabilities for "run the business while William is away":
+
+#### 1. Proactive deal monitoring in cross_tower_sync (every 5 min)
+`check_deal_attention()` runs automatically and:
+- Detects stale proposals (>3 days, no follow-up) -> auto-sends follow-up email
+- Detects qualified leads going cold (>5 days no contact) -> alerts William
+- Detects trial active needing check-in (>2 days) -> alerts William
+- Rate-limited: max 1 Telegram alert per hour (prevents spam)
+- Logs all auto-actions to pipeline.db activity table
+
+#### 2. `decisions` Telegram command
+One-screen view of everything needing William's yes/no:
+```
+DECISIONS NEEDED:
+
+1. CONVERT TRIAL: Test HVAC Co
+   John 239-555-0100
+   -> onboard Test HVAC Co  OR  result Test HVAC Co: not_interested
+
+2. CALL 5 QUALIFIED LEADS:
+   Cloud 9 Med Spa Naples — (239) 253-1325
+   A&Y Auto Service LLC — (239) 467-1152
+   ...
+   -> Use 'next' for call prep + script
+
+Total: 2 item(s) needing your decision
+```
+
+#### 3. Natural language routes for decision queue
+- "anything need me" -> decisions
+- "what needs my attention" -> decisions
+- "what do i need to decide" -> decisions
+
+### Hospital-Stay Mode Workflow
+```
+William checks phone once per day:
+  1. "decisions" -> see what needs yes/no
+  2. Make 2-3 decisions (onboard, result, or "skip for now")
+  3. Done — system handles everything else:
+     - Auto follow-up emails for stale proposals
+     - Hot lead SMS alerts
+     - Morning/evening digests
+     - Pipeline outreach continues via daily_loop
+     - Cross-tower sync every 5 min
+     - Pipeline syncs to EC2
+```
+
+### Human-in-the-loop gates (only these need William):
+1. Sales calls (cannot be automated)
+2. Final pricing decisions
+3. Legal commitments (contracts)
+4. Onboarding approval (typing "onboard [company]")
+
+Everything else runs autonomously.
+
+### Verification
+```
+Routes: 34/34 (was 31)
+Launchd: 9 jobs
+Pipeline: 488 deals, 13 callable
+EC2: healthy on port 8786
+Autonomous core: SAFE
+Days left: 8
+```
+
+### Self-improving capabilities
+- Research gate data drives scheduler decisions (calls 90.6% > visits)
+- Research gate data drives digest action items
+- Outcome recording feeds learning system (1/5, activates at 5)
+- Goal progress auto-calculates from pipeline data
+- Stale deal detection learns from pipeline update timestamps
+
+### Remaining
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
