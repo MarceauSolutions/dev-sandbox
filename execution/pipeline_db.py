@@ -272,8 +272,19 @@ def create_deal(conn: sqlite3.Connection, company: str,
         f"INSERT INTO deals ({', '.join(cols)}) VALUES ({placeholders})", vals
     )
     conn.commit()
-    log_activity(conn, cur.lastrowid, "deal_created", f"New deal: {company}", tower=tower)
-    return cur.lastrowid
+    deal_id = cur.lastrowid
+    log_activity(conn, deal_id, "deal_created", f"New deal: {company}", tower=tower)
+    
+    # Auto-assign recommended_tower via lead router
+    try:
+        from lead_router import auto_assign_on_import
+        auto_assign_on_import(deal_id)
+    except ImportError:
+        pass  # Lead router not available
+    except Exception as e:
+        logger.warning(f"Lead routing failed for deal {deal_id}: {e}")
+    
+    return deal_id
 
 
 def update_deal(conn: sqlite3.Connection, deal_id: int, **kwargs):
