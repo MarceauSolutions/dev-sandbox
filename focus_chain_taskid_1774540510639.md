@@ -4582,3 +4582,42 @@ cross_tower_sync on EC2 handles:
 - Decision email (6-8am, once/day)
 - EOD Telegram summary (5pm)
 - Pipeline.db sync (skipped on EC2 — reads local DB)
+
+---
+
+## Session 39 — Gmail Token Fix: Full Acquisition Engine on EC2 (2026-03-28)
+
+### The last technical blocker
+EC2 token.json had only calendar scope. Gmail API returned 403
+"Insufficient Permission" on every check-responses run. This meant
+EC2 could check Twilio SMS but NOT Gmail email replies.
+
+### Fix
+Copied Mac token.json (6 scopes: gmail.readonly, gmail.send, gmail.modify,
+spreadsheets, calendar, calendar.events) to EC2. Backed up EC2's old
+calendar-only token.
+
+### Verification
+```
+Before: "Gmail reply check failed: <HttpError 403... insufficientPermissions>"
+After:  "Gmail: 0 new replies"  (no error)
+
+Full daily_loop: 6/6 stages succeeded
+  Stage compliance: ✓
+  Stage discover_score: ✓ (26 outreached)
+  Gmail: 0 new replies (FIXED)
+  Stage check_responses: ✓
+  Stage follow_up: ✓
+  Stage digest: ✓
+  Stage tower_signals: ✓
+```
+
+### EC2 is now FULLY Mac-independent for acquisition
+Every stage of the acquisition engine runs on EC2:
+- Stages 1-4: discover, score, enrich, outreach (dry-run)
+- Stages 5-6: check Twilio + Gmail responses (BOTH work now)
+- Stage 7: follow-up sequences
+- Stage 8: daily digest
+- Stage 9: tower signal detection
+
+To enable real outreach: `bash scripts/ec2_enable_outreach.sh enable`
