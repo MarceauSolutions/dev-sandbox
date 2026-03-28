@@ -4244,6 +4244,46 @@ AI receptionist sounds like and links to the booking page.
 
 40/40 routes verified (was 39).
 
+### Remaining (session 29)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 30 — EC2 Away-Mode: Automation Runs When Mac Is Off (2026-03-28)
+
+### Critical finding
+ALL automation ran on Mac via launchd. When Mac lid closes (hospital, travel),
+everything stops: daily_loop, morning digest, check-responses, cross_tower_sync.
+EC2 has the PA service but no scheduler to call it. This meant hospital-stay
+mode was an illusion — the Mac had to stay open.
+
+### Fix
+Created `ec2_away_mode.sh` — a cron-based scheduler on EC2 that calls the
+PA service endpoints to maintain critical functions when Mac is off.
+
+Installed 3 cron jobs on EC2:
+```
+30 10 * * *        morning (6:30am ET) — goal progress + decisions + next action
+*/30 13-21 * * 1-5 monitor (every 30min) — check for new responses
+0 21 * * 1-5       eod (5pm ET) — end-of-day summary + learned insights
+```
+
+All 3 tested and logged:
+```
+15:22:16 Running morning sequence -> Morning sent
+15:25:29 Running deal monitor -> (no new responses)
+15:25:29 Running EOD -> EOD sent
+```
+
+### Before vs After
+Before: Mac lid closed = 0 automation, stale data, no notifications
+After: EC2 cron sends Telegram digest + monitors responses + sends EOD summary
+       PA service on port 8786 answers all commands from EC2
+       Pipeline.db on EC2 has data (synced when Mac was last open)
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
+3. EC2 doesn't run daily_loop (lead discovery/outreach) — that requires Mac
+   The EC2 away-mode handles notifications and monitoring but not new outreach
