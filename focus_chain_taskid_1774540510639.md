@@ -4494,7 +4494,52 @@ Verified: `send_email(attachments=[proposal.pdf])` returns `{'attachments': ['pr
 sync_pipeline_to_ec2.sh now includes gmail_api.py in the code sync.
 gmail_api.py deployed to EC2 pa-handlers and dev-sandbox.
 
-### Remaining
+### Remaining (session 36)
 1. William changes --dry-run to --for-real when ready
 2. William makes phone calls
 3. XAI API key 403
+
+---
+
+## Session 37 — Weekend Autonomy Verified (2026-03-28)
+
+### Final audit results
+- EC2: 9 cron jobs (was 8, +PA auto-restart), PA healthy, 8/8 commands OK
+- daily_loop runs on EC2 (dry-run mode — change to --for-real when ready)
+- check-responses works on EC2 (Twilio + Gmail)
+- PDF attachments: gmail_api supports attachments param, verified
+- Pipeline: 488 deals synced, 13 callable
+- PA service auto-restarts every 5 min if it crashes
+
+### What was fixed this session
+1. PA service auto-restart cron — if service crashes over weekend, auto-recovers
+2. Verified full EC2 end-to-end: morning sent, 8/8 PA commands OK, responses checked
+
+### Weekend autonomy state (Mac closed):
+```
+RUNS AUTOMATICALLY:
+  6:30am  Morning Telegram (goals + decisions + next action)
+  9:00am  daily_loop dry-run (acquisition analysis + response tracking)
+  15min   check-responses (Twilio SMS + Gmail replies)
+  15min   Twilio response checker (hot lead detection)
+  30min   Deal monitoring (stale proposals, cold leads)
+  5min    PA service health check + auto-restart
+  5:00pm  EOD summary to Telegram
+  5:30pm  Evening digest
+
+WILLIAM CAN DO FROM PHONE:
+  Natural conversation via Clawdbot -> PA service port 8786
+  "away" / "hows the business" -> full dashboard
+  "who should i call" -> priority call sheet
+  "next" -> call prep with script
+  "demo hvac" -> AI demo for prospect
+  "dolphin said they want a proposal" -> records + generates PDF
+  "send proposal dolphin" -> emails PDF to client
+  "agreement dolphin" -> service agreement PDF
+  "onboard dolphin" -> Stripe link + welcome email
+
+HUMAN-ONLY (cannot automate):
+  Sales calls (must be William)
+  --dry-run to --for-real (one cron edit)
+  XAI API key fix (account setting)
+```
