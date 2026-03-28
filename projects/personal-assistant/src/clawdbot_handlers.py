@@ -1665,7 +1665,147 @@ def route_message(text: str) -> Optional[str]:
                                    "give me scripts"]):
         return handle_call_scripts()
 
+    # --- Conversational intent parser (last resort before giving up) ---
+    # Handles natural language like:
+    #   "I just got off a call with Dolphin Cooling and they want a proposal"
+    #   "Antimidators called back and said yes"
+    #   "Just finished a visit to PlumbingPro, they want to think about it"
+    #   "Did anyone respond to my emails today"
+    result = _parse_conversational_intent(text)
+    if result:
+        return result
+
     return None  # Not a PA command -- let Clawdbot handle normally
+
+
+def _parse_conversational_intent(text: str) -> str:
+    """Parse natural conversational messages and extract intent + company.
+
+    Handles messages like:
+      "I just got off a call with Dolphin Cooling and they want a proposal"
+      "Antimidators called back and said yes"
+      "I met with Cloud 9 and they are interested but worried about cost"
+      "Just finished a visit to PlumbingPro they want to think about it"
+      "Did anyone respond to my emails today"
+
+    Returns: response string, or empty string if no intent detected.
+    """
+    import importlib.util
+    import re
+    repo_root = _REPO_ROOT
+    lower = text.lower().strip()
+
+    # --- Pattern: Call/visit outcome reporting ---
+    # "I just got off a call with [company] and [outcome description]"
+    # "just finished a visit to [company] [outcome]"
+    # "[company] called back and said [yes/no/etc]"
+    outcome_patterns = [
+        # "got off a call with X and they want a proposal"
+        (r"(?:got off|finished|had|did|made)\s+(?:a\s+)?(?:call|visit|meeting)\s+(?:with|to|at)\s+(.+?)(?:\s+and\s+|\s+they\s+|\s*[,.])", None),
+        # "X called back and said yes"
+        (r"^(.+?)\s+(?:called back|responded|replied|got back|said)\s+", None),
+        # "met with X and they are interested"
+        (r"(?:met|spoke|talked)\s+(?:with|to)\s+(.+?)(?:\s+and\s+|\s+they\s+|\s*[,.])", None),
+        # "visited X today" / "visit to X they want"
+        (r"visit(?:ed)?\s+(?:to\s+)?(.+?)(?:\s+today|\s+and|\s+they\s+|\s*[,.])", None),
+    ]
+
+    for pattern, _ in outcome_patterns:
+        match = re.search(pattern, lower)
+        if match:
+            company_guess = match.group(1).strip()
+            # Clean up the company name
+            company_guess = re.sub(r'\b(and|but|they|he|she|the|a|an)\b.*$', '', company_guess).strip()
+            if len(company_guess) < 2:
+                continue
+
+            # Try to match to a real deal
+            try:
+                spec = importlib.util.spec_from_file_location(
+                    "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+                )
+                pdb = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(pdb)
+                conn = pdb.get_db()
+                deal = conn.execute(
+                    "SELECT id, company FROM deals WHERE company LIKE ? ORDER BY updated_at DESC LIMIT 1",
+                    (f"%{company_guess}%",)
+                ).fetchone()
+                conn.close()
+
+                if not deal:
+                    continue
+                deal = dict(deal)
+                company_name = deal["company"]
+            except Exception:
+                continue
+
+            # Determine outcome from the rest of the message
+            rest = lower[match.end():] if match.end() < len(lower) else lower[match.start():]
+
+            if any(w in rest for w in ["said yes", "want to go", "sign", "let's do it", "onboard", "close"]):
+                return handle_outcome(f"result {company_name}: client_won")
+            elif any(w in rest for w in ["want a proposal", "send proposal", "wants pricing", "send them"]):
+                # Generate and offer to send
+                r = handle_proposal(f"proposal {company_name}")
+                return f"{r}\n\nSend to client? Type: send proposal {company_name}"
+            elif any(w in rest for w in ["interested", "want to learn", "curious", "intrigued"]):
+                notes = text[match.end():].strip()[:100] if match.end() < len(text) else ""
+                return handle_outcome(f"result {company_name}: interested - {notes}")
+            elif any(w in rest for w in ["think about it", "not ready", "maybe later", "not now"]):
+                return handle_outcome(f"result {company_name}: callback - {text[match.end():].strip()[:80]}")
+            elif any(w in rest for w in ["not interested", "no thanks", "pass", "said no"]):
+                return handle_outcome(f"result {company_name}: not_interested")
+            elif any(w in rest for w in ["meeting", "booked", "scheduled", "calendly", "discovery"]):
+                return handle_outcome(f"result {company_name}: meeting_booked")
+            else:
+                # Default: record as conversation
+                notes = text[match.end():].strip()[:100] if match.end() < len(text) else ""
+                return handle_outcome(f"result {company_name}: conversation - {notes}")
+
+    # --- Pattern: Status questions ---
+    if any(p in lower for p in ["anyone respond", "any responses", "any replies",
+                                  "email response", "who responded", "any new leads"]):
+        # Check recent responses
+        try:
+            spec = importlib.util.spec_from_file_location(
+                "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+            )
+            pdb = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(pdb)
+            conn = pdb.get_db()
+            recent = conn.execute(
+                "SELECT company, channel, response FROM outreach_log "
+                "WHERE response IS NOT NULL AND response != '' "
+                "AND created_at > datetime('now', '-2 days') "
+                "ORDER BY created_at DESC LIMIT 5"
+            ).fetchall()
+            conn.close()
+
+            if recent:
+                lines = [f"Recent responses ({len(recent)}):"]
+                for r in recent:
+                    d = dict(r)
+                    lines.append(f"  {d['company']} [{d['channel']}]: {(d['response'] or '')[:60]}")
+                return "\n".join(lines)
+            return "No new responses in the last 2 days."
+        except Exception:
+            return "Could not check responses."
+
+    # --- Pattern: "make/create/build a proposal for X" ---
+    if any(p in lower for p in ["make me a proposal", "create a proposal", "build a proposal",
+                                  "write a proposal", "draft a proposal"]):
+        # Try to extract company from the rest
+        for prefix in ["make me a proposal for ", "create a proposal for ",
+                        "build a proposal for ", "write a proposal for ",
+                        "draft a proposal for "]:
+            if prefix in lower:
+                company = lower.split(prefix, 1)[1].strip()
+                if company:
+                    return handle_proposal(f"proposal {company}")
+        return "Which company? Just say: proposal [company name]"
+
+    return ""
 
 
 def _extract_company_from_natural(text: str, prefixes: list) -> str:

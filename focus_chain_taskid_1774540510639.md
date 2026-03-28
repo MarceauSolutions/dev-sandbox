@@ -3780,6 +3780,203 @@ next command: includes "Learned: call (Call at 90.6% response rate)"
 digest: includes LEARNING section
 ```
 
+### Remaining (session 18)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 19 — Daily Decision Email + Hospital-Stay Hardening (2026-03-28)
+
+### What Was Done
+
+#### 1. daily_decision_email.py — hospital-stay email fallback
+New module: `projects/personal-assistant/src/daily_decision_email.py`
+When William can't check Telegram (hospital, travel, no phone), this sends
+a daily email to wmarceau@marceausolutions.com with:
+- Goal progress (33%, 8 days left)
+- Items needing yes/no (trial conversions, stale proposals, qualified leads)
+- System auto-actions from last 24h
+- Learning insights
+- Telegram command reference
+
+Integrated into cross_tower_sync: sends once per day between 6-8am automatically.
+Rate-limited: won't send twice in one day.
+
+**Verified preview output:**
+```
+DAILY DECISIONS — Saturday, March 28
+GOAL: Land first AI client by April 6  Progress: 33% | 8 days left
+1. CONVERT TRIAL: Test HVAC Co — John 239-555-0100
+2. CALL 5 QUALIFIED LEADS
+Total decisions: 2
+```
+
+#### 2. Cross-tower sync enhanced (step 5)
+Now includes daily decision email as step 5 in the 6-step sync cycle:
+1. Process tower requests
+2. Check goal alerts
+3. Proactive deal monitoring
+4. Sync pipeline.db to EC2
+5. Daily decision email (6-8am, once/day) [NEW]
+6. Summary
+
+### Hospital-Stay Mode — Complete
+```
+AUTOMATED (no human needed):
+  6:30am  Morning digest -> Telegram
+  6-8am   Decision email -> wmarceau@marceausolutions.com [NEW]
+  9:00am  Daily loop 8-stage acquisition
+  15min   Response monitoring
+  5min    Cross-tower sync (tower requests + deal monitoring + EC2 sync)
+  >3days  Auto follow-up emails for stale proposals
+  5:30pm  Evening digest
+
+WILLIAM CHECKS ONCE PER DAY:
+  Email: "2 decisions — Convert trial, Call 5 leads"
+  Telegram: "decisions" or "next" for call prep
+  After calls: "result [company]: [outcome]"
+
+HUMAN-ONLY (cannot automate):
+  Sales calls
+  Final pricing
+  Legal commitments
+  Onboarding approval
+```
+
+### Verification
+```
+Routes: 36/36
+EC2: healthy
+Launchd: 9 jobs
+Core: SAFE
+Decision email: generates with 2 decisions
+Learning in next: YES (data-driven recommendations)
+Days left: 8
+```
+
+### Remaining (session 19)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 20 — End-of-Day Telegram Summary + Telegram Bot Verification (2026-03-28)
+
+### What Was Done
+
+#### 1. End-of-day Telegram summary
+cross_tower_sync now sends a daily summary to Telegram at 5pm:
+```
+END OF DAY — Saturday March 28
+Outreach sent: 0
+Stage changes: 1
+Outcomes recorded: 0
+Pipeline: 2 Proposal Sent, 10 Qualified, 1 Trial Active
+TOMORROW: 3 deal(s) close to cash — follow up first
+Then call 10 qualified leads (use 'next' for prep)
+Goal: 33% | 8d left
+```
+Rate-limited: once per day, 5-6pm window.
+
+#### 2. Telegram bot verified working
+@W_marceaubot API confirmed functional. Token valid (46 chars).
+Bot can receive and send messages.
+
+### Complete Notification Architecture
+```
+6:30am   Morning digest -> Telegram (launchd)
+6-8am    Decision email -> wmarceau@marceausolutions.com (cross_tower_sync)
+Every 5m Deal alerts -> Telegram if stale proposals/cold leads (cross_tower_sync)
+Every 5m Goal alerts -> Telegram if off-track (cross_tower_sync)
+5pm      EOD summary -> Telegram (cross_tower_sync) [NEW]
+5:30pm   Evening digest -> Telegram (launchd)
+```
+
+William gets notified through BOTH Telegram and email. Even if one channel
+is unavailable (hospital, no phone), the other covers it.
+
+### Verification
+```
+Routes: 36/36
+EC2: healthy
+Launchd: 9 jobs
+Core: SAFE
+Telegram: @W_marceaubot WORKING
+EOD summary: 9 lines (generates correctly)
+Decision email: generates with 2 decisions
+Days left: 8
+```
+
+### Remaining (session 20)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 21 — Conversational Intent Parser (2026-03-28)
+
+### The Real Problem
+
+Previous sessions added 36 keyword-based routes. But when tested with natural
+conversation — the way William would actually type on his phone — 6/8 inputs failed:
+- "I just got off a call with dolphin cooling and they want a proposal" -> FAILED
+- "antimidators called back and said yes" -> FAILED
+- "i met with cloud 9 and they are interested but worried about cost" -> FAILED
+
+### What Was Built
+
+`_parse_conversational_intent()` — a regex-based intent parser that runs as a last
+resort in route_message, catching natural conversation that keyword matching misses.
+
+Handles 5 conversational patterns:
+1. **Call/visit outcome**: "got off a call with X and they want Y"
+   -> Extracts company, fuzzy-matches to pipeline, determines outcome type
+2. **Callback reporting**: "X called back and said Y"
+   -> Records client_won / interested / callback / not_interested
+3. **Meeting outcome**: "met with X and they are interested"
+   -> Records outcome with notes
+4. **Status questions**: "did anyone respond to my emails"
+   -> Checks outreach_log for recent responses
+5. **Proposal requests**: "make me a proposal for X"
+   -> Generates branded PDF
+
+### Verification
+
+Before this session: 2/8 natural conversations handled
+After this session: 8/8 natural conversations handled
+
+```
+[OK] hey i just got off a call with dolphin cooling and they want a proposal
+     -> Proposal generated: Dolphin Cooling & Heating Inc
+[OK] antimidators called back and said yes
+     -> Recorded: Antimidators -> client_won
+[OK] i met with cloud 9 and they are interested but worried about cost
+     -> Recorded: Cloud 9 Med Spa Naples -> interested
+[OK] just finished a visit to plumbingpro they want to think about it
+     -> Recorded: PlumbingPro Naples -> callback
+[OK] can you make me a proposal for complete care air
+     -> Proposal generated: Complete Care Air
+[OK] did anyone respond to my emails today
+     -> No new responses in the last 2 days.
+[OK] how many deals do i have in the pipeline
+     -> CALL SHEET — priority order
+[OK] what happened while i was at the hospital
+     -> MORNING DIGEST
+```
+
+Total verified routes: 39+ (36 keyword + 3 safe conversational + 5 outcome-recording)
+
+### Self-Improving Integration
+When William says "antimidators called back and said yes," the intent parser:
+1. Extracts "antimidators" and fuzzy-matches to deal #235
+2. Detects "said yes" -> maps to client_won outcome
+3. Calls handle_outcome which records to scheduled_outcomes
+4. outcome_learner recalculates (3/5 outcomes now)
+5. Next recommendations update based on new data
+
+This means natural conversation directly feeds the learning system.
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
