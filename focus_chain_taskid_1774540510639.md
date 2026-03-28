@@ -4171,7 +4171,57 @@ from natural conversation in Telegram. The towers involved:
 - fitness-influencer: branded PDF engine (proposals + agreements)
 - ai-systems: the product being sold (AI voice/customer service)
 
+### Remaining (session 27)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+3. ~~AI customer service demo needs pydantic_settings~~ FIXED (session 28)
+
+---
+
+## Session 28 — AI Product Demo Working + Telegram Integration (2026-03-28)
+
+The biggest gap across 27 sessions: we built a sales system but the actual product
+(AI customer service) was broken and un-demoa ble. Fixed in this session.
+
+### What was done
+
+1. Installed pydantic_settings (missing dependency)
+2. Fixed import path in businesses/marceau_solutions.py
+3. Created demo.py with 4 industry demos (HVAC, med spa, plumber, Marceau Solutions)
+4. Added `demo` Telegram command that generates live AI conversation demos via Haiku
+5. Verified all 4 demos produce professional, natural conversations
+
+### Demo output (HVAC):
+```
+AI DEMO: Naples Comfort HVAC
+
+Caller: Hi, my AC stopped working and it's really hot. I need someone today.
+
+AI: I'm sorry to hear your AC isn't working—that's definitely uncomfortable!
+You've called the right place, and I can get someone out today.
+
+AC Repair Service - Same Day Available
+- Our technician diagnoses for just $89 (waived with repair)
+- Same-day appointments available...
+```
+
+### Why this matters
+William can now show a prospect EXACTLY what their AI receptionist sounds like
+by typing "demo hvac" in Telegram. The demo generates a realistic conversation
+tailored to the prospect's industry. This is the product demo that was missing
+for closing deals by April 6.
+
+### Complete client acquisition flow (all towers):
+```
+lead-generation: discover + qualify leads
+personal-assistant: "demo hvac" -> show prospect what AI sounds like
+personal-assistant: "proposal Dolphin" -> branded PDF
+personal-assistant: "send proposal Dolphin" -> email to client
+personal-assistant: "agreement Dolphin" -> service agreement PDF
+personal-assistant: "onboard Dolphin" -> Stripe + welcome email
+ai-systems: deploy actual AI receptionist for the client
+```
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
-3. AI customer service demo needs pydantic_settings dependency to run

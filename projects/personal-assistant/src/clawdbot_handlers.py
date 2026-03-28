@@ -1085,6 +1085,101 @@ def handle_decisions() -> str:
         return f"Decision check failed: {e}"
 
 
+def handle_demo(text: str) -> str:
+    """Generate an AI receptionist demo conversation for a prospect.
+
+    Usage: demo hvac | demo medspa | demo plumber
+    Generates a sample AI call and returns the transcript.
+    """
+    import importlib.util
+    import asyncio
+    repo_root = _REPO_ROOT
+
+    business_type = text.strip().lower()
+    for prefix in ["demo "]:
+        if business_type.startswith(prefix):
+            business_type = business_type[len(prefix):]
+            break
+
+    # Map prospect industry to demo type
+    type_map = {
+        "hvac": "hvac", "ac": "hvac", "air": "hvac", "cooling": "hvac", "heating": "hvac",
+        "med spa": "medspa", "medspa": "medspa", "aesthetics": "medspa", "botox": "medspa",
+        "plumber": "plumber", "plumbing": "plumber", "pipe": "plumber",
+        "marceau": "marceau", "us": "marceau",
+    }
+    demo_type = type_map.get(business_type, "hvac")
+
+    # Demo messages per industry
+    demo_messages = {
+        "hvac": "Hi, my AC stopped working and it's really hot. I need someone out here today.",
+        "medspa": "Hi, I'm interested in Botox and fillers. How much and when can I come in?",
+        "plumber": "We have a burst pipe in the kitchen and water is everywhere. We need help now.",
+        "marceau": "Hi, I run an HVAC company and I keep missing calls after hours. Can you help?",
+    }
+    caller_msg = demo_messages.get(demo_type, demo_messages["hvac"])
+
+    demo_configs = {
+        "hvac": {"name": "Naples Comfort HVAC", "type": "hvac",
+                 "greeting": "Thank you for calling Naples Comfort HVAC! How can I help you today?",
+                 "services": [{"name": "AC Repair", "description": "Same-day", "pricing": "$89 diagnostic"},
+                              {"name": "24/7 Emergency", "description": "Always available", "pricing": "No overtime"}]},
+        "medspa": {"name": "Glow Med Spa", "type": "med_spa",
+                   "greeting": "Thank you for calling Glow Med Spa!",
+                   "services": [{"name": "Botox", "description": "Wrinkle treatment", "pricing": "$12/unit"},
+                                {"name": "Filler", "description": "Enhancement", "pricing": "From $650"}]},
+        "plumber": {"name": "Pro Plumbing Naples", "type": "plumbing",
+                    "greeting": "Pro Plumbing Naples, how can I help?",
+                    "services": [{"name": "Emergency", "description": "24/7", "pricing": "No trip fee"},
+                                 {"name": "Drain", "description": "All drains", "pricing": "$149"}]},
+        "marceau": {"name": "Marceau Solutions", "type": "ai_automation",
+                    "greeting": "Thank you for calling Marceau Solutions!",
+                    "services": [{"name": "Voice AI", "description": "24/7 answering", "pricing": "$497/mo"}]},
+    }
+
+    config = demo_configs.get(demo_type, demo_configs["hvac"])
+    services_text = "\n".join(f"- {s['name']}: {s['description']} ({s['pricing']})" for s in config["services"])
+    system_prompt = f"You are a professional AI receptionist for {config['name']}. Answer the caller's question naturally and helpfully. Services:\n{services_text}"
+
+    try:
+        import os, ssl, json, urllib.request, certifi
+        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            return "ANTHROPIC_API_KEY not set — cannot run demo"
+
+        ctx = ssl.create_default_context(cafile=certifi.where())
+        data = json.dumps({
+            "model": "claude-haiku-4-5-20251001",
+            "max_tokens": 300,
+            "system": system_prompt,
+            "messages": [{"role": "user", "content": caller_msg}],
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            }
+        )
+        resp = urllib.request.urlopen(req, timeout=30, context=ctx)
+        result = json.loads(resp.read())
+        ai_response = result["content"][0]["text"]
+
+        return (
+            f"AI DEMO: {config['name']}\n\n"
+            f"Caller: {caller_msg}\n\n"
+            f"AI: {ai_response}\n\n"
+            f"---\nThis is what your AI receptionist sounds like.\n"
+            f"$497/mo, live in 7 days. Book a demo: calendly.com/wmarceau/ai-services-discovery"
+        )
+
+    except Exception as e:
+        return f"Demo generation failed: {e}"
+
+
 def handle_agreement(text: str) -> str:
     """Generate a branded service agreement PDF for a client.
 
@@ -1678,6 +1773,9 @@ def route_message(text: str) -> Optional[str]:
 
     if lower.startswith("proposal "):
         return handle_proposal(text)
+
+    if lower.startswith("demo ") or lower == "demo":
+        return handle_demo(text if lower != "demo" else "demo hvac")
 
     if lower.startswith("agreement ") or lower.startswith("contract "):
         return handle_agreement(text)

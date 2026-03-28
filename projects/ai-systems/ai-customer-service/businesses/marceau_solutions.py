@@ -1,6 +1,9 @@
 """Marceau Solutions - Lead Qualification Voice AI Configuration"""
 
-from ..src.lead_qualification_voice import LEAD_QUALIFICATION_SYSTEM_PROMPT
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+from lead_qualification_voice import LEAD_QUALIFICATION_SYSTEM_PROMPT
 
 BUSINESS_CONFIG = {
     "name": "Marceau Solutions",
