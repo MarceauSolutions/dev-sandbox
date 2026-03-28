@@ -4145,6 +4145,33 @@ The self-improving loop is now:
 6. Morning digest reads preferences for action item advice
 7. Preferences sync to EC2 via post-save hook
 
+### Remaining (session 26)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 27 — Agreement Template + Complete Client Flow (2026-03-28)
+
+Added `agreement [company]` Telegram command that generates a branded service
+agreement PDF (52KB) with the client's business name, owner, effective date,
+$497/mo pricing, and 30-day terms. Emails to William for review before sending.
+
+Complete client acquisition flow via Telegram:
+```
+next -> (call) -> result X: interested
+proposal X -> send proposal X -> (client reviews)
+agreement X -> (William reviews) -> onboard X (Stripe + welcome email)
+```
+
+Every step from lead discovery to signed client to payment is now available
+from natural conversation in Telegram. The towers involved:
+- lead-generation: discovers and qualifies leads
+- personal-assistant: routes commands, manages goals, tracks outcomes
+- fitness-influencer: branded PDF engine (proposals + agreements)
+- ai-systems: the product being sold (AI voice/customer service)
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
+3. AI customer service demo needs pydantic_settings dependency to run

@@ -871,6 +871,7 @@ def handle_help() -> str:
         "  scripts — all call scripts at once\n"
         "  proposal [company] — generate branded PDF proposal\n"
         "  send proposal [company] — email proposal to client\n"
+        "  agreement [company] — generate service agreement PDF\n"
         "  onboard [company] — Stripe link + welcome email + Closed Won\n"
         "  decisions — everything needing your yes/no (hospital mode)\n"
         "\n"
@@ -1082,6 +1083,98 @@ def handle_decisions() -> str:
 
     except Exception as e:
         return f"Decision check failed: {e}"
+
+
+def handle_agreement(text: str) -> str:
+    """Generate a branded service agreement PDF for a client.
+
+    Usage: agreement Dolphin Cooling
+    Generates a service agreement with $497/mo pricing, 30-day terms,
+    and emails it to William for review before sending to client.
+    """
+    import importlib.util
+    from datetime import datetime
+    repo_root = _REPO_ROOT
+
+    company = text.strip()
+    for prefix in ["agreement ", "contract "]:
+        if company.lower().startswith(prefix):
+            company = company[len(prefix):]
+            break
+
+    if not company:
+        return "Usage: agreement [company name]"
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+        )
+        pdb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pdb)
+        conn = pdb.get_db()
+
+        deal = conn.execute(
+            "SELECT * FROM deals WHERE company LIKE ? ORDER BY updated_at DESC LIMIT 1",
+            (f"%{company}%",)
+        ).fetchone()
+        if not deal:
+            conn.close()
+            return f"No deal matching '{company}'"
+
+        d = dict(deal)
+        conn.close()
+
+        # Build agreement data
+        import sys
+        sys.path.insert(0, str(repo_root / "projects" / "fitness-influencer" / "src"))
+        import pdf_templates.agreement_template
+        from branded_pdf_engine import BrandedPDFEngine
+
+        agreement_data = {
+            "client_business_name": d["company"],
+            "client_owner_name": d.get("contact_name") or "",
+            "effective_date": datetime.now().strftime("%B %d, %Y"),
+            "setup_fee": "$0",
+            "monthly_rate": "$497/month",
+            "tier_name": "AI Automation — Starter",
+            "client_title": "Owner",
+        }
+
+        engine = BrandedPDFEngine()
+        output_dir = repo_root / "projects" / "personal-assistant" / "logs" / "agreements"
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        safe_name = d["company"].replace(" ", "_").replace("/", "-").replace("&", "_")[:30]
+        filename = f"agreement_{safe_name}_{datetime.now().strftime('%Y%m%d')}.pdf"
+        output_path = output_dir / filename
+
+        engine.generate_to_file("agreement", agreement_data, str(output_path))
+        size_kb = output_path.stat().st_size // 1024
+
+        # Email to William for review
+        try:
+            gm_spec = importlib.util.spec_from_file_location(
+                "gmail_api", repo_root / "projects" / "personal-assistant" / "src" / "gmail_api.py"
+            )
+            gm = importlib.util.module_from_spec(gm_spec)
+            gm_spec.loader.exec_module(gm)
+            gm.send_email(
+                to="wmarceau@marceausolutions.com",
+                subject=f"Agreement ready for review: {d['company']}",
+                body=f"Service agreement generated for {d['company']}.\n\nReview before sending to client.\nFile: {output_path}",
+            )
+        except Exception:
+            pass
+
+        response = f"Agreement generated: {d['company']}\n  File: {filename} ({size_kb}KB)"
+        if d.get("contact_email"):
+            response += f"\n  Client email: {d['contact_email']}"
+        response += f"\n  Review at: {output_path}"
+        response += f"\n  To send: email the PDF to {d.get('contact_email', 'client')}"
+        return response
+
+    except Exception as e:
+        return f"Agreement generation failed: {e}"
 
 
 def handle_proposal(text: str) -> str:
@@ -1585,6 +1678,9 @@ def route_message(text: str) -> Optional[str]:
 
     if lower.startswith("proposal "):
         return handle_proposal(text)
+
+    if lower.startswith("agreement ") or lower.startswith("contract "):
+        return handle_agreement(text)
 
     if lower.startswith("onboard "):
         return handle_onboard(text)
