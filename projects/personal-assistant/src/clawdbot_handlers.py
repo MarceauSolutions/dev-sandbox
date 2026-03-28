@@ -1087,6 +1087,79 @@ def handle_decisions() -> str:
         return f"Decision check failed: {e}"
 
 
+def handle_away_status() -> str:
+    """Show the full system status for away-mode — everything in one screen.
+
+    Combines: goal progress + decisions + pipeline + learning + next action
+    into one message so William can assess everything with one command.
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+    lines = []
+
+    try:
+        # Goal progress
+        gp_spec = importlib.util.spec_from_file_location(
+            "goal_progress", repo_root / "projects" / "personal-assistant" / "src" / "goal_progress.py"
+        )
+        gp = importlib.util.module_from_spec(gp_spec)
+        gp_spec.loader.exec_module(gp)
+        progress = gp.calculate_goal_progress()
+        short = progress.get("short_term", {})
+        if short:
+            lines.append(f"GOAL: {short.get('goal', '?')} [{short.get('overall_pct', 0)}% | {short.get('days_left', '?')}d]")
+
+        summary = progress.get("_summary", {})
+        lines.append(f"Pipeline: {summary.get('total_deals', '?')} deals, {summary.get('warm_plus_leads', '?')} warm+")
+        lines.append(f"Outreach 7d: {summary.get('recent_outreach_7d', '?')}")
+        lines.append("")
+    except Exception:
+        pass
+
+    # Decisions
+    try:
+        decisions_result = handle_decisions()
+        # Count decisions
+        decision_count = decisions_result.count(". ") if "DECISIONS" in decisions_result else 0
+        lines.append(f"DECISIONS: {decision_count} item(s)")
+        # Show first 2 items
+        for line in decisions_result.split("\n"):
+            if line.strip().startswith(("1.", "2.")):
+                lines.append(f"  {line.strip()[:60]}")
+        lines.append("")
+    except Exception:
+        pass
+
+    # Learning
+    try:
+        ol_spec = importlib.util.spec_from_file_location(
+            "outcome_learner", repo_root / "projects" / "personal-assistant" / "src" / "outcome_learner.py"
+        )
+        ol = importlib.util.module_from_spec(ol_spec)
+        ol_spec.loader.exec_module(ol)
+        insights = ol.get_insights()
+        lines.append(f"LEARNING: {insights['total_outcomes']}/5 outcomes")
+        if insights.get("insights"):
+            lines.append(f"  {insights['insights'][0][:60]}")
+        lines.append("")
+    except Exception:
+        pass
+
+    # Next action (just the headline)
+    try:
+        next_result = handle_next()
+        for line in next_result.split("\n"):
+            if "NEXT ACTION" in line or "CALL:" in line:
+                lines.append(line.strip())
+    except Exception:
+        pass
+
+    lines.append("")
+    lines.append("Commands: next | decisions | leads | demo | proposal | help")
+
+    return "\n".join(lines) if lines else "System status unavailable."
+
+
 def handle_demo(text: str) -> str:
     """Generate an AI receptionist demo conversation for a prospect.
 
@@ -1826,6 +1899,9 @@ def route_message(text: str) -> Optional[str]:
 
     # --- Exact command routing (fast path) ---
 
+    if lower in ("away", "status", "dashboard", "overview", "sitrep"):
+        return handle_away_status()
+
     if lower in ("next", "what next", "what should i do", "what now"):
         return handle_next()
 
@@ -1966,6 +2042,13 @@ def route_message(text: str) -> Optional[str]:
         if company:
             return handle_onboard(f"onboard {company}")
         return "Which company? Usage: onboard [company name]"
+
+    # Away status (natural: "how's the business", "give me the overview")
+    if any(kw in lower for kw in ["how's the business", "hows the business",
+                                   "give me the overview", "business status",
+                                   "how's everything", "hows everything",
+                                   "sitrep", "full status"]):
+        return handle_away_status()
 
     # Decisions (natural: "anything need me", "what needs my attention")
     if any(kw in lower for kw in ["anything need me", "what needs my attention",

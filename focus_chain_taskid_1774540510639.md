@@ -4282,8 +4282,30 @@ After: EC2 cron sends Telegram digest + monitors responses + sends EOD summary
        PA service on port 8786 answers all commands from EC2
        Pipeline.db on EC2 has data (synced when Mac was last open)
 
+### Remaining (session 30)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+3. EC2 doesn't run daily_loop — handles notifications/monitoring but not new outreach
+
+---
+
+## Session 31 — Away Status Dashboard + Full Simulation (2026-03-28)
+
+Ran complete 3-day away simulation (EC2 morning -> monitor -> PA commands -> EOD).
+All components connected and working. Added `away` command — single-screen dashboard:
+```
+GOAL: Land first AI client by April 6 [33% | 8d]
+Pipeline: 488 deals, 13 warm+
+Outreach 7d: 375
+DECISIONS: 2 item(s)
+  1. CONVERT TRIAL: Test HVAC Co
+  2. CALL 5 QUALIFIED LEADS
+LEARNING: 1/5 outcomes
+NEXT ACTION: Call Test HVAC Co — John at 239-555-0100
+```
+Natural language: "hows the business" / "give me the overview" / "sitrep"
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
-3. EC2 doesn't run daily_loop (lead discovery/outreach) — that requires Mac
-   The EC2 away-mode handles notifications and monitoring but not new outreach
+3. EC2 doesn't run daily_loop
