@@ -4367,6 +4367,62 @@ Both Mac and EC2 have the updated handlers. William can now have
 natural conversations about business through Clawdbot/Panacea on
 Telegram without remembering any commands.
 
-### Remaining
+### Remaining (session 33)
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
+
+---
+
+## Session 34 — Full System Audit + 3-Step Plan (2026-03-28)
+
+### Audit Results (verified, not declared)
+
+**Working (verified):**
+- Mac: 9 launchd jobs, 18/18 routes tested, 46+ total, autonomous core SAFE
+- EC2: 5 cron jobs, 10/10 PA routes, PA service healthy, Clawdbot running
+- Pipeline: 488 deals, 13 callable, 375 outreach in 7 days
+- Branded PDFs: proposals + agreements (50KB each)
+- AI demo: 4 industries, sendable via email
+- Natural conversation: intent parser, 46+ routes, SOUL.md PA-first directive
+- Git: all work committed and pushed
+- Post-save: auto-syncs code + pipeline.db to EC2
+
+**Real blockers:**
+1. Mac lid closed = daily_loop stops (no new outreach, no Gmail monitoring)
+2. Learning system: 1/5 outcomes (needs William to make calls + record results)
+3. XAI API key: 403 (William's account issue)
+4. 0 clients signed, 0 discovery calls, 8 days to April 6
+
+### 3-Step Plan to Finish
+
+**Step 1: Test daily_loop on EC2 (makes system Mac-independent)**
+The lead-gen code already exists at /home/clawdbot/dev-sandbox/. Dependencies
+(Google API, Twilio, Anthropic, Gmail tokens) are all on EC2. Testing if
+daily_loop can run there would make the entire acquisition engine 24/7.
+Estimated: 1 session to test + fix path issues.
+
+**Step 2: William makes 5 phone calls (activates the learning system)**
+The system has 13 callable leads with phone numbers and scripts. William
+types "next" to get call prep, makes the call, types the outcome naturally.
+5 outcomes activates the learning system. No code needed — human action.
+This also advances the April 6 goal directly.
+
+**Step 3: First client signed via full Telegram flow**
+When a prospect says yes:
+  "antimidators said yes" -> records client_won
+  "agreement antimidators" -> generates service agreement PDF
+  "onboard antimidators" -> Stripe link + welcome email
+  Then deploy the AI receptionist for their business.
+This is the revenue event. Everything is built for it.
+
+### Agent Architecture Status
+- **Claude Code (Mac)**: Precise edits, code changes, verification — WORKING
+- **Clawdbot/Panacea (EC2)**: Natural conversation, 10/10 PA routes, SOUL.md
+  instructs it to route all business Qs to PA service — WORKING
+- **Ralph (EC2)**: Persistence, background execution — partially via cron jobs
+- **Grok (strategist)**: Provides direction via prompts — ACTIVE
+
+### Remaining
+1. Test daily_loop on EC2 (Step 1)
+2. William makes phone calls (Step 2)
+3. XAI API key 403
