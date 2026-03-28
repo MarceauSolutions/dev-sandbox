@@ -869,6 +869,8 @@ def handle_help() -> str:
         "  result [company]: [outcome] — record what happened\n"
         "  reactivate [company] — re-open a closed lost deal\n"
         "  scripts — all call scripts at once\n"
+        "  demo [type] — AI receptionist demo (hvac/medspa/plumber)\n"
+        "  send demo [company] — email demo to prospect\n"
         "  proposal [company] — generate branded PDF proposal\n"
         "  send proposal [company] — email proposal to client\n"
         "  agreement [company] — generate service agreement PDF\n"
@@ -1416,6 +1418,105 @@ def handle_proposal(text: str) -> str:
         return f"Proposal generation failed: {e}"
 
 
+def handle_send_demo(text: str) -> str:
+    """Email a personalized AI demo to a prospect.
+
+    Usage: send demo Dolphin Cooling
+    Generates a demo conversation based on the prospect's industry
+    and emails it to their contact email with the Calendly link.
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+
+    company = text.strip()
+    for prefix in ["send demo "]:
+        if company.lower().startswith(prefix):
+            company = company[len(prefix):]
+            break
+
+    if not company:
+        return "Usage: send demo [company name]"
+
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+        )
+        pdb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pdb)
+        conn = pdb.get_db()
+
+        deal = conn.execute(
+            "SELECT id, company, contact_name, contact_email, industry FROM deals "
+            "WHERE company LIKE ? ORDER BY updated_at DESC LIMIT 1",
+            (f"%{company}%",)
+        ).fetchone()
+        if not deal:
+            conn.close()
+            return f"No deal matching '{company}'"
+        d = dict(deal)
+        conn.close()
+
+        if not d.get("contact_email"):
+            return f"No email on file for {d['company']}. Add email first."
+
+        # Map industry to demo type
+        industry = (d.get("industry") or "").lower()
+        demo_type = "hvac"
+        for key, dtype in [("hvac", "hvac"), ("med spa", "medspa"), ("aesthet", "medspa"),
+                           ("plumb", "plumber"), ("chiro", "hvac"), ("auto", "hvac")]:
+            if key in industry:
+                demo_type = dtype
+                break
+
+        # Generate demo conversation
+        demo_result = handle_demo(f"demo {demo_type}")
+        if not demo_result or "failed" in demo_result.lower():
+            return f"Demo generation failed for {d['company']}"
+
+        # Build email
+        contact = d.get("contact_name") or ""
+        first_name = contact.split()[0] if contact else ""
+        greeting = f"Hi {first_name}" if first_name else "Hi"
+
+        subject = f"Here's what your AI receptionist sounds like — {d['company']}"
+        body = (
+            f"{greeting},\n\n"
+            f"I wanted to show you exactly what an AI receptionist would sound like "
+            f"for {d['company']}. Here's a sample conversation:\n\n"
+            f"---\n{demo_result}\n---\n\n"
+            f"This is a live AI system — not a recording. It handles calls 24/7, "
+            f"books appointments, captures lead info, and never misses a call.\n\n"
+            f"Ready to see it in action for your business? Book a 15-minute demo:\n"
+            f"https://calendly.com/wmarceau/ai-services-discovery\n\n"
+            f"William Marceau\n"
+            f"Marceau Solutions\n"
+            f"wmarceau@marceausolutions.com\n"
+            f"(239) 398-5676"
+        )
+
+        gm_spec = importlib.util.spec_from_file_location(
+            "gmail_api", repo_root / "projects" / "personal-assistant" / "src" / "gmail_api.py"
+        )
+        gm = importlib.util.module_from_spec(gm_spec)
+        gm_spec.loader.exec_module(gm)
+        result = gm.send_email(to=d["contact_email"], subject=subject, body=body)
+
+        if result.get("success"):
+            # Log the outreach
+            conn2 = pdb.get_db()
+            pdb.log_activity(conn2, d["id"], "outreach",
+                             f"AI demo email sent to {d['contact_email']}")
+            conn2.close()
+            return (f"Demo sent to {d['contact_email']}\n"
+                    f"  Company: {d['company']}\n"
+                    f"  Industry demo: {demo_type}")
+        else:
+            return f"Email failed: {result.get('error', 'unknown')}"
+
+    except Exception as e:
+        return f"Send demo failed: {e}"
+
+
 def handle_send_proposal(text: str) -> str:
     """Send a previously generated proposal to the client's email.
 
@@ -1767,6 +1868,9 @@ def route_message(text: str) -> Optional[str]:
 
     if lower.startswith("prep "):
         return handle_call_prep(text)
+
+    if lower.startswith("send demo "):
+        return handle_send_demo(text)
 
     if lower.startswith("send proposal "):
         return handle_send_proposal(text)

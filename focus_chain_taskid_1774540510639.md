@@ -4222,6 +4222,28 @@ personal-assistant: "onboard Dolphin" -> Stripe + welcome email
 ai-systems: deploy actual AI receptionist for the client
 ```
 
+### Remaining (session 28)
+1. XAI API key 403 (William's account)
+2. Learning system 1/5 outcomes
+
+---
+
+## Session 29 — Send Demo to Prospects + 40/40 Routes (2026-03-28)
+
+Added `send demo [company]` command that emails an AI receptionist demo
+to a prospect. Generates a live conversation tailored to their industry
+and emails it with the Calendly booking link.
+
+Tested complete acquisition flow end-to-end (10 steps, all pass):
+next -> demo -> proposal -> send proposal -> agreement -> onboard ->
+natural conversation -> decisions -> goals -> learned
+
+Real business action: AI demo email sent to ltancreti@dolphinacnaples.com
+(Dolphin Cooling, HVAC industry). The email shows them exactly what their
+AI receptionist sounds like and links to the booking page.
+
+40/40 routes verified (was 39).
+
 ### Remaining
 1. XAI API key 403 (William's account)
 2. Learning system 1/5 outcomes
