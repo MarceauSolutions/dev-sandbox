@@ -4540,6 +4540,45 @@ WILLIAM CAN DO FROM PHONE:
 
 HUMAN-ONLY (cannot automate):
   Sales calls (must be William)
-  --dry-run to --for-real (one cron edit)
+  --dry-run to --for-real: bash scripts/ec2_enable_outreach.sh enable
   XAI API key fix (account setting)
 ```
+
+---
+
+## Session 38 — cross_tower_sync on EC2 + Outreach Toggle (2026-03-28)
+
+Found and fixed: cross_tower_sync.py was NOT running on EC2. This meant
+auto-proposal generation, stale proposal follow-ups, deal monitoring,
+goal alerts, and decision emails all stopped when Mac closed.
+
+Tested cross_tower_sync on EC2: runs successfully, sent Telegram alert.
+Installed as cron: every 10 minutes.
+
+Created `scripts/ec2_enable_outreach.sh` — one-command toggle for real outreach:
+```
+bash scripts/ec2_enable_outreach.sh enable   # sends real emails
+bash scripts/ec2_enable_outreach.sh disable  # dry-run mode
+bash scripts/ec2_enable_outreach.sh status   # check mode
+```
+
+EC2 now has 10 cron jobs:
+1. sync-agent (30min)
+2. away-mode morning (6:30am)
+3. away-mode monitor (30min, business hours)
+4. away-mode EOD (5pm)
+5. response checker (15min, Twilio)
+6. daily_loop full --dry-run (9am)
+7. daily_loop check-responses (15min)
+8. daily_loop digest (5:30pm)
+9. PA auto-restart (5min)
+10. cross_tower_sync (10min) [NEW]
+
+cross_tower_sync on EC2 handles:
+- Auto-proposal generation for qualified leads with email
+- Stale proposal auto-follow-up (>3 days)
+- Deal monitoring (cold leads, trial check-ins)
+- Goal alerts (if off-track)
+- Decision email (6-8am, once/day)
+- EOD Telegram summary (5pm)
+- Pipeline.db sync (skipped on EC2 — reads local DB)
