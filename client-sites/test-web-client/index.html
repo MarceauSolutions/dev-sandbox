@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Web Client - Professional Web Development & Testing</title>
+    <meta name="description" content="Expert web development and quality assurance testing services. Custom solutions that deliver results. Contact John Doe for professional web services today.">
+    <meta name="keywords" content="web development, quality assurance testing, web consulting, performance optimization, custom websites">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2C5282',
+                        secondary: '#4A90E2',
+                        accent: '#FF6B35'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        .gradient-bg { background: linear-gradient(135deg, #2C5282 0%, #4A90E2 100%); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="#" class="text-xl font-bold text-gray-900">Test Web Client</a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="text-gray-600 hover:text-gray-900 transition-colors">About</a>
+                    <a href="#services" class="text-gray-600 hover:text-gray-900 transition-colors">Services</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-gray-900 transition-colors">Testimonials</a>
+                    <a href="#contact" class="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-medium hover:shadow-lg transition-shadow">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg min-h-screen flex items-center pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="max-w-3xl">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    Professional Web Solutions That Deliver Results
+                </h1>
+                <p class="text-xl text-white/80 mb-8">
+                    Transform your digital presence with custom web development and testing services tailored to your business needs.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#contact" class="px-8 py-4 bg-white text-gray-900 rounded-full font-semibold hover:shadow-xl transition-shadow">
+                        Get Started
+                    </a>
+                    <a href="#about" class="px-8 py-4 border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-gray-900 transition-all">
+                        View Portfolio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                        About Test Web Client
+                    </h2>
+                    <p class="text-gray-600 text-lg mb-6">
+                        Test Web Client was founded with a mission to bridge the gap between innovative web technology and practical business solutions. We specialize in creating robust, scalable web applications and providing comprehensive testing services that ensure your digital platforms perform flawlessly. Our commitment to quality and attention to detail sets us apart in an increasingly complex digital landscape.
+                    </p>
+                    <p class="text-gray-700 font-medium italic border-l-4 border-indigo-500 pl-4">
+                        Empowering businesses through reliable web solutions and meticulous testing services that drive growth and success.
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                            J
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">John Doe</h3>
+                            <p class="text-indigo-600">Owner/Founder</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">
+                        John Doe brings years of expertise in web development and quality assurance to every project. As founder and owner, John is passionate about delivering exceptional results that exceed client expectations. His hands-on approach ensures every solution is tailored to meet specific business objectives while maintaining the highest standards of performance and reliability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Services</h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    Discover how we can help you achieve your goals
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+            <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl text-white">★</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Web Development</h3>
+                <p class="text-gray-600 mb-4">Custom websites and web applications built with modern technologies to meet your specific business requirements and goals.</p>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Responsive design across all devices</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Scalable architecture for future growth</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>SEO-optimized code structure</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl text-white">★</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Quality Assurance Testing</h3>
+                <p class="text-gray-600 mb-4">Comprehensive testing services to ensure your web applications function perfectly across all browsers, devices, and user scenarios.</p>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Reduced bugs and errors</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Improved user experience</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Faster time-to-market</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl text-white">★</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Performance Optimization</h3>
+                <p class="text-gray-600 mb-4">Advanced optimization techniques to improve your website's speed, performance, and search engine rankings for maximum impact.</p>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Faster loading times</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Better search rankings</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Increased conversion rates</li>
+                </ul>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl text-white">★</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Web Consulting</h3>
+                <p class="text-gray-600 mb-4">Strategic guidance and technical expertise to help you make informed decisions about your web development and testing initiatives.</p>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Expert technical advice</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Cost-effective solutions</li><li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Strategic planning support</li>
+                </ul>
+            </div>
+            
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Our Clients Say</h2>
+                <p class="text-gray-600 text-lg">Real results from real people</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span>
+                </div>
+                <p class="text-gray-700 italic mb-6">"John delivered exactly what we needed on time and within budget. Our new website exceeded all expectations and performs flawlessly."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        S
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Sarah Mitchell</p>
+                        <p class="text-gray-500 text-sm">Marketing Director, TechStart Solutions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span>
+                </div>
+                <p class="text-gray-700 italic mb-6">"The testing services provided by Test Web Client caught critical issues we missed. Their attention to detail saved us from potential disasters."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        M
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Michael Chen</p>
+                        <p class="text-gray-500 text-sm">CTO, Digital Innovations Inc</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="flex items-center gap-1 mb-4">
+                    <span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span><span class="text-yellow-400">★</span>
+                </div>
+                <p class="text-gray-700 italic mb-6">"Professional, reliable, and results-driven. Test Web Client transformed our online presence and significantly improved our user engagement metrics."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        A
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Amanda Rodriguez</p>
+                        <p class="text-gray-500 text-sm">Operations Manager, Growth Dynamics</p>
+                    </div>
+                </div>
+            </div>
+            
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Ready to Transform Your Web Presence?
+                </h2>
+                <p class="text-gray-600 text-lg mb-8">
+                    Let's discuss how we can help you achieve your goals.
+                </p>
+
+                <form class="space-y-6 text-left">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Your name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="you@example.com">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="(555) 123-4567">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="How can we help you?"></textarea>
+                    </div>
+                    <button type="submit" class="w-full px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-xl transition-shadow">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="gradient-bg py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-2">Test Web Client</h3>
+                    <p class="text-white/70">Building Better Web Experiences</p>
+                </div>
+                <div class="flex items-center gap-6">
+                    <span class="text-white/70">© 2026</span>
+                </div>
+            </div>
+            <p class="text-white/50 text-center mt-8 text-sm">Unknown</p>
+        </div>
+    </footer>
+
+    <!-- Smooth scroll for anchor links -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

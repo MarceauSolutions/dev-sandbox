@@ -1,0 +1,93 @@
+{
+  "domain": "content_quality",
+  "updated_at": "2026-03-28T19:45:26.338799",
+  "total_experiments": 2,
+  "experiments": [
+    {
+      "experiment_id": "content_quality_20260328_7dfc7295c835",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260328_7dfc7295c835",
+        "domain": "content_quality",
+        "variant_text": "Create a comprehensive 4-week muscle building and fat loss transformation program for a 35-year-old male professional. Include detailed weekly progression schedules with specific rep ranges and weight increases, 12 essential compound movements with proper form cues, complete recovery protocols including sleep optimization and active recovery days, sample meal timing guidelines to maximize results, and troubleshooting tips for common plateaus. Provide measurable weekly milestones to track progress.",
+        "baseline_text": "Create a 4-week workout program for a 35-year-old male \nlooking to build muscle and lose fat. Include progressive overload principles, \ncompound movements, and recovery protocols.",
+        "hypothesis": "This variant will outperform the baseline by providing more specific, actionable details and addressing the complete transformation journey rather than just workout structure, leading to higher engagement and perceived value",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-28T19:43:59.583265",
+        "metadata": {
+          "reasoning": "Since no strategy document exists and there are no past experiments to learn from, I'm applying general content quality principles. The baseline is relatively generic and lacks specificity. This variant improves upon it by: 1) Adding demographic context ('professional') for better targeting, 2) Promising specific deliverables (12 movements, weekly schedules), 3) Expanding scope to include nutrition timing and troubleshooting, 4) Including measurable outcomes (weekly milestones), and 5) using action-oriented language ('transformation program'). These elements should increase perceived value and engagement by providing a more comprehensive, actionable solution."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 5.5,
+          "brand_voice": 6.5,
+          "actionability": 7.0
+        },
+        "composite_score": 0.6625,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-28T19:44:36.729383"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 7,
+          "engagement": 7,
+          "brand_voice": 8,
+          "actionability": 6
+        },
+        "composite_score": 0.7,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-28T19:45:12.671283"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-28T19:43:59.584718",
+      "deployed_at": "2026-03-28T19:44:36.729400",
+      "evaluated_at": "2026-03-28T19:45:16.217918",
+      "result": "kept",
+      "learnings": "The variant's more specific and detailed approach worked because it promised a \"comprehensive transformation program\" with \"detailed weekly progression schedules\" and targeted a specific audience (\"35-year-old male professional\"), which increased perceived value and relevance compared to the baseline's generic workout request. This demonstrates that users prefer content that feels tailored to their specific situation and promises thorough, actionable guidance rather than basic structural information.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260328_677c0c4173ff",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260328_677c0c4173ff",
+        "domain": "content_quality",
+        "variant_text": "Create a science-backed 4-week body recomposition system for busy professionals in their 30s and 40s. Include a time-efficient workout blueprint with just 3 sessions per week (45 minutes max), progressive overload calculator with automatic weight adjustments, recovery optimization protocol for desk workers, intermittent fasting meal timing strategy proven for fat loss while building muscle, and a troubleshooting guide for breaking through stubborn plateaus. Features weekly body composition checkpoints and performance metrics to guarantee visible results.",
+        "baseline_text": "Create a comprehensive 4-week muscle building and fat loss transformation program for a 35-year-old male professional. Include detailed weekly progression schedules with specific rep ranges and weight increases, 12 essential compound movements with proper form cues, complete recovery protocols including sleep optimization and active recovery days, sample meal timing guidelines to maximize results, and troubleshooting tips for common plateaus. Provide measurable weekly milestones to track progress.",
+        "hypothesis": "This variant will outperform by targeting time-constrained professionals with a 'system' rather than 'program' (implying more comprehensive methodology), emphasizing efficiency (3x45min vs generic schedules), and promising guaranteed results with scientific backing, which appeals to the analytical mindset of professional demographics.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-28T19:45:26.338708",
+        "metadata": {
+          "reasoning": "Building on the successful learning that specific targeting and comprehensive detail drive engagement, this variant doubles down on audience specificity by expanding from '35-year-old male professional' to 'busy professionals in their 30s and 40s' - capturing a broader but still targeted demographic. The previous experiment showed that detailed, actionable content performs well, so this variant maintains that approach while adding 'science-backed' credibility and 'time-efficient' appeal. The shift from 'program' to 'system' suggests a more sophisticated methodology, and 'guarantee visible results' provides a stronger value proposition than just 'measurable milestones.' The emphasis on efficiency addresses the primary pain point of the target audience - time constraints."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {},
+        "composite_score": 0.0,
+        "sample_size": 0,
+        "collection_window_hours": 0,
+        "collected_at": ""
+      },
+      "variant_metrics": {
+        "raw": {},
+        "composite_score": 0.0,
+        "sample_size": 0,
+        "collection_window_hours": 0,
+        "collected_at": ""
+      },
+      "status": "proposed",
+      "approved_at": "",
+      "deployed_at": "",
+      "evaluated_at": "",
+      "result": "",
+      "learnings": "",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    }
+  ]
+}
