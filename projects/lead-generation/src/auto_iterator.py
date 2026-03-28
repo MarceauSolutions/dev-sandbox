@@ -171,7 +171,7 @@ class ExperimentStore:
     """JSON-based experiment persistence. One file per domain."""
 
     def __init__(self):
-        self._cache: dict[str, list[Experiment]] = {}
+        self._cache: Dict[str, List[Experiment]] = {}
 
     def _file_path(self, domain: str) -> Path:
         return EXPERIMENTS_DIR / f"{domain}_experiments.json"
@@ -208,7 +208,7 @@ class ExperimentStore:
         self._cache[domain].append(experiment)
         self.save_domain(domain)
 
-    def get_experiment(self, domain: str, experiment_id: str) -> Experiment | None:
+    def get_experiment(self, domain: str, experiment_id: str) -> Optional[Experiment]:
         experiments = self.load_domain(domain)
         for e in experiments:
             if e.experiment_id == experiment_id:
