@@ -4677,3 +4677,25 @@ talking points, and "after call: just tell me what happened naturally."
 The Company on a Laptop runs autonomously on EC2 with 10 cron jobs.
 William checks Telegram, makes calls, types outcomes naturally.
 The system handles everything else.
+
+---
+
+## Session 42 — Production daily_loop Verified on EC2 (2026-03-28)
+
+Ran daily_loop with --for-real on EC2. Result:
+```
+Stage compliance: ✓ (0 violations)
+Stage discover_score: ✓ (25 outreached)
+Gmail: 0 new replies (working — no more 403)
+Stage check_responses: ✓
+Stage follow_up: ✓ (0 sent, 0 skipped)
+Stage digest: ✓
+Stage tower_signals: ✓ (5 signals)
+DAILY LOOP COMPLETE: 6/6 stages succeeded
+```
+
+EC2 PA service: 10/10 commands pass (away, next, leads, decisions,
+demo hvac, learned, health, who should i call, any updates, hows the business).
+
+The acquisition engine runs in production mode on EC2.
+Outreach toggle: `bash scripts/ec2_enable_outreach.sh enable|disable|status`
