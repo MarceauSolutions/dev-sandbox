@@ -166,6 +166,27 @@ class MorningDigest:
             lines.append(f"  Response Rate: {digest.campaign.response_rate:.1f}%")
             lines.append("")
 
+        # Priority Follow-ups (from followup_prioritizer)
+        try:
+            import importlib.util
+            from pathlib import Path
+            repo_root = Path(__file__).resolve().parent.parent.parent.parent
+            spec = importlib.util.spec_from_file_location(
+                "followup_prioritizer", repo_root / "execution" / "followup_prioritizer.py"
+            )
+            fp = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(fp)
+            priority_list = fp.get_daily_priorities_for_digest()
+            if priority_list and "No high-priority" not in priority_list:
+                lines.append("=" * 60)
+                lines.append("📞 PRIORITY FOLLOW-UPS")
+                lines.append("=" * 60)
+                lines.append(priority_list)
+                lines.append("")
+        except Exception as e:
+            lines.append(f"[Priority list unavailable: {e}]")
+            lines.append("")
+
         # Action Items
         lines.append("=" * 60)
         lines.append("⚠️  ACTION ITEMS")

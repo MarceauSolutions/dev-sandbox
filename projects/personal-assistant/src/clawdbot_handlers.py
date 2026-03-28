@@ -426,6 +426,18 @@ def handle_outcome(text: str) -> str:
                 response += f"\n  Learned: {prefs['insights'][0][:60]}"
         except Exception:
             pass
+        
+        # Also update followup prioritizer industry rates
+        try:
+            fp_spec = importlib.util.spec_from_file_location(
+                "followup_prioritizer", repo_root / "execution" / "followup_prioritizer.py"
+            )
+            fp = importlib.util.module_from_spec(fp_spec)
+            fp_spec.loader.exec_module(fp)
+            prioritizer = fp.FollowupPrioritizer()
+            prioritizer.learn_from_outcomes()
+        except Exception:
+            pass
 
         return response
 
@@ -714,11 +726,11 @@ def handle_reactivate(text: str) -> str:
 def handle_next() -> str:
     """The most important command: what should William do RIGHT NOW?
 
-    Eliminates decision fatigue. Looks at pipeline data, picks the single
-    highest-ROI action, and delivers the prep in one message.
-
-    Priority: Trial Active > Proposal follow-up > Qualified (with phone)
-    Skips leads that were contacted today (via outreach_log).
+    Uses the FollowupPrioritizer to find the highest-ROI action.
+    Eliminates decision fatigue with data-driven prioritization.
+    
+    Factors: deal stage, days since contact, response history, 
+    expected value, industry conversion rate, and time decay.
     """
     import importlib.util
     from pathlib import Path
@@ -726,45 +738,24 @@ def handle_next() -> str:
     repo_root = _REPO_ROOT
 
     try:
+        # Use the new priority engine
         spec = importlib.util.spec_from_file_location(
-            "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+            "followup_prioritizer", repo_root / "execution" / "followup_prioritizer.py"
         )
-        pdb = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(pdb)
-        conn = pdb.get_db()
-
-        # Find the single highest-priority lead to call
-        # Priority: Trial Active > Proposal Sent > Qualified
-        # Must have phone number. Skip if outreach logged today.
-        today = datetime.now().strftime("%Y-%m-%d")
-
-        lead = None
-        reason = ""
-        for stage, why in [
-            ("Trial Active", "CLOSE THE DEAL — trial is running, convert to paid"),
-            ("Proposal Sent", "FOLLOW UP — proposal is out, one call closes or kills"),
-            ("Qualified", "BOOK A MEETING — qualified lead, call to schedule discovery"),
-        ]:
-            row = conn.execute(
-                "SELECT d.id, d.company, d.contact_name, d.contact_phone, "
-                "d.contact_email, d.industry, d.city, d.notes "
-                "FROM deals d "
-                "WHERE d.stage = ? "
-                "AND d.contact_phone IS NOT NULL AND d.contact_phone != '' "
-                "AND d.id NOT IN ("
-                "  SELECT deal_id FROM outreach_log "
-                "  WHERE created_at > ? AND channel = 'Call'"
-                ") "
-                "ORDER BY d.updated_at DESC LIMIT 1",
-                (stage, today)
-            ).fetchone()
-            if row:
-                lead = dict(row)
-                reason = why
-                break
-
+        fp = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fp)
+        
+        lead = fp.get_highest_priority_lead()
+        
         if not lead:
-            # Check for reactivation candidates before giving up
+            # Fall back to checking for reactivation candidates
+            pdb_spec = importlib.util.spec_from_file_location(
+                "pipeline_db", repo_root / "execution" / "pipeline_db.py"
+            )
+            pdb = importlib.util.module_from_spec(pdb_spec)
+            pdb_spec.loader.exec_module(pdb)
+            conn = pdb.get_db()
+            
             reactivatable = conn.execute(
                 "SELECT id, company, contact_phone, notes FROM deals "
                 "WHERE stage = 'Closed Lost' AND contact_phone IS NOT NULL "
@@ -789,35 +780,43 @@ def handle_next() -> str:
                 "Check: leads"
             )
 
-        # Get outreach history for context
-        history = conn.execute(
-            "SELECT channel, message_summary, response FROM outreach_log "
-            "WHERE deal_id = ? ORDER BY created_at DESC LIMIT 2",
-            (lead["id"],)
-        ).fetchall()
-
-        # Count outcomes for motivation
-        outcomes = conn.execute(
-            "SELECT COUNT(*) FROM scheduled_outcomes WHERE completed=1"
-        ).fetchone()[0]
-
-        conn.close()
-
-        # Build the one-screen action message
-        name = lead.get("contact_name") or "the owner"
-        phone = lead["contact_phone"]
-        company = lead["company"]
-        industry = lead.get("industry") or "local business"
-        notes_preview = (lead.get("notes") or "")[:150]
-
+        # Build the one-screen action message with priority data
+        name = lead.contact_name or "the owner"
+        phone = lead.contact_phone
+        company = lead.company
+        industry = lead.industry or "local business"
+        
+        # Urgency emoji
+        urgency_emoji = {
+            "critical": "🔴",
+            "high": "🟠",
+            "medium": "🟡",
+            "low": "⚪"
+        }.get(lead.urgency, "⚪")
+        
         lines = [
-            f"NEXT ACTION: Call {company}",
+            f"{urgency_emoji} NEXT ACTION: Call {company}",
             f"",
-            f"WHY: {reason}",
+            f"WHY: {lead.reason}",
+            f"💰 Expected Value: ${lead.expected_value:,.0f}",
+            f"📊 Priority Score: {lead.priority_score:.1f}",
             f"",
             f"CALL: {name} at {phone}",
-            f"Industry: {industry} | {lead.get('city') or 'Naples'}",
+            f"Industry: {industry} | Stage: {lead.stage}",
         ]
+        
+        # Days since contact
+        if lead.days_since_contact >= 0:
+            lines.append(f"Last contact: {lead.days_since_contact} day(s) ago")
+            if lead.decay_rate > 2:
+                lines.append(f"⚠️ Decaying at {lead.decay_rate}%/day — act fast!")
+        
+        # Talking points from priority engine
+        if lead.talking_points:
+            lines.append(f"")
+            lines.append(f"💬 Talking Points:")
+            for tp in lead.talking_points[:3]:
+                lines.append(f"  • {tp}")
 
         # Self-improving: add learned recommendation for this industry
         try:
@@ -827,34 +826,26 @@ def handle_next() -> str:
             ol = importlib.util.module_from_spec(ol_spec)
             ol_spec.loader.exec_module(ol)
             rec = ol.get_recommendation_for_lead(industry)
-            lines.append(f"Learned: {rec}")
+            lines.append(f"")
+            lines.append(f"🧠 Learned: {rec}")
         except Exception:
             pass
 
-        if notes_preview:
-            lines.append(f"Context: {notes_preview}")
-
-        if history:
-            lines.append(f"Previous:")
-            for h in history:
-                h = dict(h)
-                resp = f" -> {h['response'][:30]}" if h.get("response") else ""
-                lines.append(f"  {h['channel']}: {(h.get('message_summary') or '')[:35]}{resp}")
-
+        first_name = name.split()[0] if name != "the owner" else ""
         lines.extend([
             f"",
-            f"Opening: \"Hi {name.split()[0] if name != 'the owner' else ''}, this is William "
+            f"Opening: \"Hi {first_name}, this is William "
             f"from Marceau Solutions. I help {industry} businesses automate their "
             f"customer follow-ups so they never miss a lead. Do you have 2 minutes?\"",
             f"",
             f"After call: result {company}: [outcome]",
-            f"Outcomes: {outcomes}/5 toward learning system",
         ])
 
         return "\n".join(lines)
 
     except Exception as e:
-        return f"Next action failed: {e}"
+        import traceback
+        return f"Next action failed: {e}\n{traceback.format_exc()}"
 
 
 def handle_help() -> str:
@@ -863,7 +854,8 @@ def handle_help() -> str:
         "COMMANDS:\n"
         "\n"
         "ACTION:\n"
-        "  next — what to do right now (call prep included)\n"
+        "  next — what to do right now (highest ROI action)\n"
+        "  priorities — top 5 follow-ups ranked by expected value\n"
         "  leads — full call sheet by priority\n"
         "  prep [company] — detailed call prep\n"
         "  result [company]: [outcome] — record what happened\n"
@@ -995,6 +987,51 @@ def handle_learned() -> str:
 
     except Exception as e:
         return f"Learning insights failed: {e}"
+
+
+def handle_priorities(text: str = "") -> str:
+    """Show prioritized follow-up list ranked by expected ROI.
+    
+    Uses the FollowupPrioritizer engine for data-driven rankings.
+    Factors: deal stage, days since contact, response history, 
+    expected value, industry conversion rate, and time decay.
+    
+    Usage:
+        priorities          # Top 5
+        priorities all      # All ranked leads
+        priorities learn    # Update learnings from outcomes
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+    
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "followup_prioritizer", repo_root / "execution" / "followup_prioritizer.py"
+        )
+        fp = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(fp)
+        
+        prioritizer = fp.FollowupPrioritizer()
+        
+        text = text.strip().lower()
+        
+        if text == "learn":
+            learnings = prioritizer.learn_from_outcomes()
+            lines = ["Updated industry conversion rates:\n"]
+            for entry in learnings.get("learning_log", []):
+                lines.append(f"  {entry['industry']}: {entry['old_rate']:.1%} → {entry['new_rate']:.1%} (n={entry['sample_size']})")
+            if not learnings.get("learning_log"):
+                lines.append("  No changes — need more conversion data")
+            return "\n".join(lines)
+        
+        limit = 50 if text == "all" else 5
+        leads = prioritizer.get_prioritized_leads(limit=limit)
+        
+        return prioritizer.format_daily_list(leads)
+        
+    except Exception as e:
+        import traceback
+        return f"Priorities failed: {e}\n{traceback.format_exc()}"
 
 
 def handle_decisions() -> str:
@@ -1915,6 +1952,10 @@ def route_message(text: str) -> Optional[str]:
     if lower in ("learned", "insights", "what have you learned",
                   "what works", "what working"):
         return handle_learned()
+
+    if lower.startswith("priorities") or lower in ("priority", "top 5", "top5", "followups", "follow ups"):
+        arg = lower.replace("priorities", "").strip() if lower.startswith("priorities") else ""
+        return handle_priorities(arg)
 
     if lower in ("help", "commands", "?"):
         return handle_help()
