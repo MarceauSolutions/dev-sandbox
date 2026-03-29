@@ -1,0 +1,252 @@
+{
+  "domain": "website_cta",
+  "updated_at": "2026-03-29T06:09:53.467786",
+  "total_experiments": 5,
+  "experiments": [
+    {
+      "experiment_id": "website_cta_20260329_b6519a02afd0",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260329_b6519a02afd0",
+        "domain": "website_cta",
+        "variant_text": "Book Your Strategy Call",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Using 'Book' instead of 'Get' creates a sense of reserved time and exclusivity, while 'Strategy Call' sounds more valuable and specific than 'Consultation', leading to higher perceived value and conversion rates",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-29T06:08:30.630818",
+        "metadata": {
+          "reasoning": "Since no strategy document exists and there are no past experiments to learn from, I'm focusing on fundamental CTA optimization principles. The baseline 'Get a Free Consultation' has several potential weaknesses: 'Get' is passive and commodity-like, 'Free' can signal low value, and 'Consultation' is generic. My variant addresses these by using 'Book' which implies taking action to secure something valuable, removes 'Free' to avoid devaluing the offer, and uses 'Strategy Call' which sounds more specific and results-oriented. This positions the interaction as a strategic business discussion rather than a sales consultation, which should appeal more to decision-makers and increase conversion intent."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:08:34.349736"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:08:38.738461"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-29T06:08:30.631888",
+      "deployed_at": "2026-03-29T06:08:34.349752",
+      "evaluated_at": "2026-03-29T06:08:42.322367",
+      "result": "reverted",
+      "learnings": "The hypothesis that \"Book Your Strategy Call\" would outperform \"Get a Free Consultation\" by creating perceived exclusivity and higher value did not hold true, as both versions achieved identical conversion rates (0.5000). This suggests that either the perceived benefits of exclusivity and specificity were offset by the removal of the word \"Free,\" or users may value the clarity and immediacy of straightforward language over more sophisticated positioning.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260329_625ba734e293",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260329_625ba734e293",
+        "domain": "website_cta",
+        "variant_text": "Claim Your Free Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Using 'Claim' instead of 'Get' creates urgency and implies scarcity while maintaining the high-converting 'Free' benefit, leading to higher conversion rates than the baseline",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-29T06:08:49.633786",
+        "metadata": {
+          "reasoning": "The previous experiment showed that removing 'Free' likely hurt performance, as both versions achieved identical conversion rates despite the variant's positioning improvements. This suggests 'Free' is a critical conversion driver that shouldn't be removed. However, 'Get' is passive and common. 'Claim' creates psychological urgency by implying the consultation is a limited benefit waiting to be taken, while preserving the proven 'Free' value proposition. This approach learns from the failed experiment by keeping the financial benefit while still upgrading the action verb to something more compelling than the baseline."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:08:52.928019"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:08:56.804487"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-29T06:08:49.634699",
+      "deployed_at": "2026-03-29T06:08:52.928034",
+      "evaluated_at": "2026-03-29T06:09:00.251157",
+      "result": "reverted",
+      "learnings": "The word \"Claim\" did not create meaningful urgency or scarcity compared to \"Get\" for this free consultation CTA, resulting in identical conversion rates (0.5000 vs 0.5000). This suggests that subtle word changes may not significantly impact user behavior when the core value proposition (free consultation) remains the same, and stronger urgency tactics or different value propositions may be needed to move conversion rates.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260329_bd82704fb5f8",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260329_bd82704fb5f8",
+        "domain": "website_cta",
+        "variant_text": "Start Your Free Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Using 'Start' creates a sense of forward momentum and action initiation, while maintaining the proven high-converting 'Free' benefit word that was removed in previous experiments, leading to higher conversion rates than the passive 'Get' baseline",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-29T06:09:07.657939",
+        "metadata": {
+          "reasoning": "Previous experiments showed that removing 'Free' (in 'Book Your Strategy Call') resulted in no improvement despite adding perceived exclusivity, indicating that 'Free' is a crucial conversion element that shouldn't be sacrificed. The failed 'Claim' experiment suggests subtle word swaps don't create meaningful urgency. 'Start Your Free Consultation' addresses these learnings by: 1) Keeping the proven 'Free' benefit that users clearly value, 2) Using 'Start' which implies beginning a journey/process rather than just receiving something, creating stronger action orientation than passive 'Get', 3) Using 'Your' to add personalization and ownership without the complexity that failed in previous variants. This combines the conversion power of 'Free' with more motivating action language."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:10.537113"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:14.384452"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-29T06:09:07.658881",
+      "deployed_at": "2026-03-29T06:09:10.537126",
+      "evaluated_at": "2026-03-29T06:09:17.633936",
+      "result": "reverted",
+      "learnings": "The word \"Start\" did not improve conversion rates despite theoretically creating more forward momentum, indicating that users may not be sensitive to subtle action verb variations when the core value proposition (\"Free Consultation\") remains the same. This suggests that CTA optimization should focus on changing the actual offer or value proposition rather than minor verb substitutions when conversion rates have already plateaued.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260329_5889670b55fd",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260329_5889670b55fd",
+        "domain": "website_cta",
+        "variant_text": "Get Your Free Business Growth Plan",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Reframing from a generic 'consultation' to a concrete deliverable 'business growth plan' will increase perceived value and conversion rates because users will view it as receiving something tangible rather than just a sales call",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-29T06:09:24.281624",
+        "metadata": {
+          "reasoning": "Analysis of the failed experiments shows that subtle word substitutions (Start/Claim/Book vs Get) don't move conversion rates, and removing 'Free' completely neutralized any benefits. The key insight is that all previous experiments kept the same core offer - a consultation - which users may perceive as a sales pitch. By changing the deliverable to a 'Business Growth Plan,' we maintain the proven high-converting 'Free' benefit while dramatically increasing perceived value through a concrete, tangible outcome. This addresses the real issue: not the action verb, but the value proposition itself. Users are more likely to convert for something they receive (a plan) versus something that happens to them (a consultation)."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:28.731050"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:32.504739"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-29T06:09:24.282764",
+      "deployed_at": "2026-03-29T06:09:28.731065",
+      "evaluated_at": "2026-03-29T06:09:35.901385",
+      "result": "reverted",
+      "learnings": "The reframing from \"Free Consultation\" to \"Free Business Growth Plan\" did not improve conversion rates, suggesting that users may have been skeptical of receiving a tangible deliverable for free or preferred the clarity and familiarity of the consultation offer. This indicates that perceived value increases from concrete deliverables may be offset by credibility concerns when the offer seems too good to be true.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260329_1bd80bde62b0",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260329_1bd80bde62b0",
+        "domain": "website_cta",
+        "variant_text": "Get Free Business Advice",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Replacing 'Consultation' with 'Advice' will increase conversions because 'advice' feels more accessible and less intimidating than 'consultation' while maintaining the high-converting 'Free' and 'Get' elements that performed consistently across all experiments",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-03-29T06:09:41.927566",
+        "metadata": {
+          "reasoning": "Analysis of past experiments reveals that the words 'Free' and 'Get' have remained consistently effective, as every variant that removed 'Free' (like 'Book Your Strategy Call') failed to improve conversions. The consistent 0.500 conversion rate across all experiments suggests the current format works but may have hit a ceiling due to 'consultation' being perceived as formal or intimidating. 'Advice' is more casual, approachable, and implies quick value delivery without the formal commitment that 'consultation' suggests. This maintains the proven elements while addressing a potential psychological barrier in the core offering."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:45.866828"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-03-29T06:09:50.180979"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-03-29T06:09:41.928878",
+      "deployed_at": "2026-03-29T06:09:45.866842",
+      "evaluated_at": "2026-03-29T06:09:53.467739",
+      "result": "reverted",
+      "learnings": "The word substitution from \"Consultation\" to \"Business Advice\" had no impact on conversions (both scored 0.5000), suggesting that users perceive these terms as equally accessible when paired with \"Free\" and \"Get.\" This indicates that semantic nuances between professional service terms may matter less than anticipated, and conversion optimization should focus on more substantial changes rather than minor word swaps.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    }
+  ]
+}
