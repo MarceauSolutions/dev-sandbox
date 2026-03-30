@@ -2,6 +2,28 @@
 
 > This document defines the modular multi-tower architecture for laptop-based company operations. Read this at the start of every session.
 
+---
+
+## ⚠️ ACTUAL WORKFLOW (Updated 2026-03-30)
+
+**Note:** The original architecture described "laptop-first" development. In practice, the system has evolved to **EC2-first**:
+
+| Aspect | Original Design | Actual Current State |
+|--------|-----------------|---------------------|
+| Primary development | Mac laptop | EC2 (Clawdbot/Panacea) |
+| Who commits | Claude Code on Mac | Clawdbot on EC2 |
+| Sync direction | Mac → EC2 | Bidirectional via git |
+| Runtime | EC2 | EC2 |
+
+**Git workflow:**
+- EC2 commits and pushes changes to GitHub
+- Mac pulls to stay in sync: `git pull origin main`
+- Both can push; git is the sync mechanism
+
+**Why this matters:** If you're giving advice based on this doc, know that EC2 is the active development environment. The autonomous systems (daily_loop, morning digest, hot_lead_handler, etc.) all run on EC2 and Clawdbot makes direct code changes there.
+
+---
+
 ## Overview
 
 The system operates as a **modular multi-tower company** where each tower represents a specialized business unit. Towers operate independently but can communicate through standardized protocols. The entire system runs on a laptop with lightweight, version-controlled, and observable development practices.
