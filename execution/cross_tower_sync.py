@@ -712,23 +712,18 @@ def _generate_eod_summary() -> str:
 
 
 def _send_telegram_alert(message: str):
-    """Send an alert to William via Telegram (if credentials available)."""
-    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID", "5692454753")
-    if not bot_token:
-        logger.debug("No TELEGRAM_BOT_TOKEN, skipping alert")
-        return
-
+    """Queue alert for digest instead of sending immediately."""
     try:
-        import urllib.request
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        data = json.dumps({"chat_id": chat_id, "text": message}).encode()
-        req = urllib.request.Request(url, data=data,
-                                     headers={"Content-Type": "application/json"})
-        urllib.request.urlopen(req, timeout=10)
-        logger.info("Telegram alert sent")
+        from execution.notification_policy import queue_for_digest
+        queue_for_digest(
+            "tower_sync",
+            "Cross-Tower Sync Update",
+            message[:500],
+            metadata={"source": "cross_tower_sync"}
+        )
+        logger.info("Alert queued for digest")
     except Exception as e:
-        logger.error(f"Telegram alert failed: {e}")
+        logger.error(f"Failed to queue alert: {e}")
 
 
 def main():

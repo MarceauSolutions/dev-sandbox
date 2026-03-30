@@ -469,15 +469,34 @@ Return JSON:
                 elif report.lead_quality == "cold":
                     self.state["daily_stats"][today]["cold_leads"] += 1
                 
-                # Send report to Telegram
+                # Send report via notification policy
+                # Only HOT leads get immediate notification, rest queued for digest
+                from execution.notification_policy import notify, queue_for_digest
+                
                 message = self.format_telegram_message(report)
                 
-                # HOT leads get immediate priority
                 if report.lead_quality == "hot":
-                    message = "🚨 <b>HOT LEAD ALERT!</b> 🚨\n\n" + message
-                    self.send_telegram_message(message, priority="urgent")
+                    # Hot leads get immediate notification
+                    notify(
+                        "hot_lead",
+                        f"🔥 HOT LEAD: {report.caller_number}",
+                        message,
+                        metadata={"lead_quality": "hot", "caller": report.caller_number},
+                        force_immediate=True
+                    )
                 else:
-                    self.send_telegram_message(message)
+                    # Everything else queued for digest
+                    queue_for_digest(
+                        "voice_call_report",
+                        f"Call from {report.caller_number}",
+                        report.transcript_summary[:200],
+                        metadata={
+                            "lead_quality": report.lead_quality,
+                            "caller": report.caller_number,
+                            "duration": report.duration_seconds,
+                            "tower": report.detected_tower
+                        }
+                    )
                 
                 # Auto-route to pipeline (create lead)
                 lead_id = self.create_lead_from_call(report)
