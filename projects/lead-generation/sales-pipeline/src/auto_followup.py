@@ -350,6 +350,36 @@ if __name__ == "__main__":
         sent_count = sum(1 for r in results if r.get("success") and not r.get("dry_run"))
         if sent_count > 0:
             notify_msg = f"Auto follow-ups sent: {sent_count} messages. Check pipeline for details."
-            send_sms(WILLIAM_PHONE, notify_msg)
+            _send_telegram_notification(notify_msg)
     else:
         print("Usage: python -m src.auto_followup [check|send] [--sms-only]")
+
+
+# --- Telegram notification (replaces SMS to William) ---
+def _send_telegram_notification(message: str) -> bool:
+    """Send notification to William via Telegram instead of SMS."""
+    import urllib.request
+    import json
+    import os
+    
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "5692454753")  # William's Telegram ID
+    
+    if not bot_token:
+        print("TELEGRAM_BOT_TOKEN not set - skipping notification")
+        return False
+    
+    try:
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        data = json.dumps({
+            "chat_id": chat_id,
+            "text": f"📱 Auto Follow-up Report\n\n{message}",
+            "parse_mode": "HTML"
+        }).encode()
+        
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status == 200
+    except Exception as e:
+        print(f"Telegram notification failed: {e}")
+        return False
