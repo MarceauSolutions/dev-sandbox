@@ -4466,5 +4466,287 @@
     "tower_confidence": 0.5,
     "secondary_tower": null,
     "detected_services": []
+  },
+  {
+    "conversation_id": "conv_2101kmxzxacdfg0rvtazazfv9qaj",
+    "caller_number": "+18142895363",
+    "duration_seconds": 5,
+    "message_count": 1,
+    "timestamp": "2026-03-29 23:47 UTC",
+    "call_title": "AI Assistant Greeting",
+    "transcript_summary": "The conversation began with the AI agent for Marceau Solutions introducing itself and offering assistance to the user.",
+    "intent": "wrong_number",
+    "lead_quality": "not_lead",
+    "next_action": "No follow-up needed. This appears to be an accidental dial or hang-up with no engagement from the caller.",
+    "transcript": [
+      {
+        "role": "agent",
+        "agent_metadata": {
+          "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+          "workflow_node_id": null,
+          "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+        },
+        "message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?...",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 0,
+        "conversation_turn_metrics": {
+          "metrics": {
+            "convai_tts_service_ttfb": {
+              "elapsed_time": 0.13527634499769192
+            }
+          },
+          "convai_asr_provider": null,
+          "convai_tts_model": "eleven_flash_v2"
+        },
+        "rag_retrieval_info": null,
+        "llm_usage": null,
+        "interrupted": true,
+        "original_message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?",
+        "source_medium": null,
+        "source_event_id": 1,
+        "file_input": null
+      }
+    ],
+    "raw_data": {
+      "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+      "agent_name": "Marceau Solutions Receptionist",
+      "status": "done",
+      "user_id": "+18142895363",
+      "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+      "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71",
+      "metadata": {
+        "start_time_unix_secs": 1774828038,
+        "accepted_time_unix_secs": 1774828039,
+        "call_duration_secs": 5,
+        "cost": 32,
+        "deletion_settings": {
+          "deletion_time_unix_secs": null,
+          "deleted_logs_at_time_unix_secs": null,
+          "deleted_audio_at_time_unix_secs": null,
+          "deleted_transcript_at_time_unix_secs": null,
+          "delete_transcript_and_pii": false,
+          "delete_audio": false
+        },
+        "feedback": {
+          "type": null,
+          "overall_score": null,
+          "likes": 0,
+          "dislikes": 0,
+          "rating": null,
+          "comment": null
+        },
+        "authorization_method": "signed_url",
+        "charging": {
+          "dev_discount": false,
+          "is_burst": false,
+          "tier": "creator",
+          "llm_usage": {
+            "irreversible_generation": {
+              "model_usage": {}
+            },
+            "initiated_generation": {
+              "model_usage": {}
+            }
+          },
+          "llm_price": 0.0,
+          "llm_charge": 0,
+          "call_charge": 32,
+          "free_minutes_consumed": 0.0,
+          "free_llm_dollars_consumed": 0.0
+        },
+        "phone_call": {
+          "direction": "inbound",
+          "phone_number_id": "phnum_6301kmgk021tfqzr4zxnrrdkaqsr",
+          "agent_number": "+18552399364",
+          "external_number": "+18142895363",
+          "type": "twilio",
+          "stream_sid": "MZ252841bdf554f19b92dda06e7aaf6063",
+          "call_sid": "CA8507ec1868418446af0456650b465556"
+        },
+        "batch_call": null,
+        "termination_reason": "Call ended by remote party",
+        "error": null,
+        "warnings": [],
+        "main_language": "en",
+        "rag_usage": null,
+        "text_only": false,
+        "features_usage": {
+          "language_detection": {
+            "enabled": false,
+            "used": false
+          },
+          "transfer_to_agent": {
+            "enabled": false,
+            "used": false
+          },
+          "transfer_to_number": {
+            "enabled": false,
+            "used": false
+          },
+          "multivoice": {
+            "enabled": false,
+            "used": false
+          },
+          "dtmf_tones": {
+            "enabled": false,
+            "used": false
+          },
+          "external_mcp_servers": {
+            "enabled": false,
+            "used": false
+          },
+          "pii_zrm_workspace": false,
+          "pii_zrm_agent": false,
+          "tool_dynamic_variable_updates": {
+            "enabled": false,
+            "used": false
+          },
+          "is_livekit": false,
+          "voicemail_detection": {
+            "enabled": false,
+            "used": false
+          },
+          "workflow": {
+            "enabled": false,
+            "tool_node": {
+              "enabled": false,
+              "used": false
+            },
+            "standalone_agent_node": {
+              "enabled": false,
+              "used": false
+            },
+            "phone_number_node": {
+              "enabled": false,
+              "used": false
+            },
+            "end_node": {
+              "enabled": false,
+              "used": false
+            }
+          },
+          "agent_testing": {
+            "enabled": false,
+            "tests_ran_after_last_modification": false,
+            "tests_ran_in_last_7_days": false
+          },
+          "versioning": {
+            "enabled": true,
+            "used": false
+          },
+          "file_input": {
+            "enabled": true,
+            "used": false
+          }
+        },
+        "eleven_assistant": {
+          "is_eleven_assistant": false
+        },
+        "initiator_id": null,
+        "conversation_initiation_source": "twilio",
+        "conversation_initiation_source_version": null,
+        "timezone": null,
+        "async_metadata": null,
+        "whatsapp": null,
+        "agent_created_from": "ui",
+        "agent_last_updated_from": "api"
+      },
+      "analysis": {
+        "evaluation_criteria_results": {},
+        "data_collection_results": {},
+        "evaluation_criteria_results_list": [],
+        "data_collection_results_list": [],
+        "call_successful": "success",
+        "transcript_summary": "The conversation began with the AI agent for Marceau Solutions introducing itself and offering assistance to the user.",
+        "call_summary_title": "AI Assistant Greeting"
+      },
+      "conversation_initiation_client_data": {
+        "conversation_config_override": {
+          "turn": null,
+          "tts": null,
+          "conversation": null,
+          "agent": null
+        },
+        "custom_llm_extra_body": {},
+        "user_id": null,
+        "source_info": {
+          "source": null,
+          "version": null
+        },
+        "branch_id": null,
+        "environment": null,
+        "dynamic_variables": {
+          "system__agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "system__agent_turns": 1,
+          "system__current_agent_turns": 1,
+          "system__current_subagent_turns": 1,
+          "system__current_agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "system__conversation_id": "conv_2101kmxzxacdfg0rvtazazfv9qaj",
+          "system__call_duration_secs": 4,
+          "system__time_utc": "2026-03-29T23:47:23.436422+00:00",
+          "system__time": "Sunday, 23:47 29 March 2026",
+          "system__timezone": null,
+          "system__is_text_only": false,
+          "system__caller_id": "+18142895363",
+          "system__called_number": "+18552399364",
+          "system__call_sid": "CA8507ec1868418446af0456650b465556",
+          "system__conversation_history": "{\"x-elevenlabs-history\": true, \"entries\": [{\"role\": \"agent\", \"message\": \"Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?...\"}]}"
+        },
+        "tool_mock_config": {
+          "mocking_strategy": "none",
+          "fallback_strategy": "call_real_tool",
+          "mocked_tool_names": []
+        }
+      },
+      "environment": "production",
+      "hiding_reason": null,
+      "conversation_id": "conv_2101kmxzxacdfg0rvtazazfv9qaj",
+      "has_audio": true,
+      "has_user_audio": true,
+      "has_response_audio": true,
+      "transcript": [
+        {
+          "role": "agent",
+          "agent_metadata": {
+            "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+            "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+            "workflow_node_id": null,
+            "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+          },
+          "message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?...",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 0,
+          "conversation_turn_metrics": {
+            "metrics": {
+              "convai_tts_service_ttfb": {
+                "elapsed_time": 0.13527634499769192
+              }
+            },
+            "convai_asr_provider": null,
+            "convai_tts_model": "eleven_flash_v2"
+          },
+          "rag_retrieval_info": null,
+          "llm_usage": null,
+          "interrupted": true,
+          "original_message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?",
+          "source_medium": null,
+          "source_event_id": 1,
+          "file_input": null
+        }
+      ]
+    },
+    "detected_tower": "digital-ai-services",
+    "tower_confidence": 0.5,
+    "secondary_tower": null,
+    "detected_services": []
   }
 ]
