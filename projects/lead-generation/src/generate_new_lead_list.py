@@ -42,6 +42,17 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "execution"))
+    from timezone_utils import now_eastern, format_eastern
+except ImportError:
+    # Fallback if timezone_utils not available
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p"):
+        return (dt or datetime.now()).strftime(fmt)
+
 # Setup paths
 PROJECT_ROOT = Path(__file__).parent.parent
 SRC_DIR = Path(__file__).parent
@@ -750,7 +761,7 @@ def generate_lead_list(
         Summary dict with generation statistics
     """
     logger.info(f"\n{'='*60}")
-    logger.info(f"WEEKLY LEAD LIST GENERATION")
+    logger.info(f"WEEKLY LEAD LIST GENERATION — {format_eastern()} (Eastern)")
     logger.info(f"Mode: {'DRY RUN' if dry_run else 'LIVE'}")
     logger.info(f"Limit: {limit} leads")
     logger.info(f"{'='*60}\n")

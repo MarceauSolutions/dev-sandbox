@@ -39,6 +39,19 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "execution"))
+    from timezone_utils import now_eastern, format_eastern, format_time_only
+except ImportError:
+    # Fallback if timezone_utils not available
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p"):
+        return (dt or datetime.now()).strftime(fmt)
+    def format_time_only(dt=None):
+        return (dt or datetime.now()).strftime("%I:%M %p")
+
 # Setup paths
 PROJECT_ROOT = Path(__file__).parent.parent
 SRC_DIR = Path(__file__).parent
@@ -842,7 +855,7 @@ def run_full_loop(dry_run: bool = True):
     """Run the complete 8-stage acquisition loop."""
     mode = "DRY RUN" if dry_run else "LIVE"
     logger.info(f"\n{'='*60}")
-    logger.info(f"DAILY LOOP — {mode} — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    logger.info(f"DAILY LOOP — {mode} — {format_eastern()} (Eastern)")
     logger.info(f"{'='*60}\n")
 
     # Stage 0: Standardization check (non-blocking)
@@ -919,7 +932,7 @@ def run_full_loop(dry_run: bool = True):
             sys.path.insert(0, str(REPO_ROOT / "execution"))
             from safe_git_save import safe_save
             save_result = safe_save(
-                message=f"auto: daily loop {successes}/{total} — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+                message=f"auto: daily loop {successes}/{total} — {format_eastern()}",
             )
             if save_result.get("saved"):
                 logger.info(f"Auto-save: {save_result.get('files', 0)} files committed")

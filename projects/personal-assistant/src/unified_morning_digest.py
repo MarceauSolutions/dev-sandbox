@@ -30,6 +30,19 @@ from typing import Any, Dict, List, Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(REPO_ROOT / "execution"))
+    from timezone_utils import now_eastern, format_eastern, format_time_only
+except ImportError:
+    # Fallback if timezone_utils not available
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p"):
+        return (dt or datetime.now()).strftime(fmt)
+    def format_time_only(dt=None):
+        return (dt or datetime.now()).strftime("%I:%M %p")
+
 try:
     from dotenv import load_dotenv
     load_dotenv(REPO_ROOT / ".env")
@@ -307,7 +320,7 @@ def format_telegram_digest(
     health_line: str = ""
 ) -> str:
     """Format all data into one clean Telegram message."""
-    today = datetime.now().strftime("%A, %B %d")
+    today = now_eastern().strftime("%A, %B %d")
     lines = [f"☀️ *MORNING DIGEST — {today}*\n"]
 
     # System health (at top so issues are immediately visible)
@@ -463,7 +476,7 @@ def format_telegram_digest(
         lines.append("")
 
     # Footer
-    lines.append(f"_Generated {datetime.now().strftime('%I:%M %p')} | {hours_back}h lookback_")
+    lines.append(f"_Generated {format_time_only()} | {hours_back}h lookback_")
 
     return "\n".join(lines)
 

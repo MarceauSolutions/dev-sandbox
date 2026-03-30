@@ -9,10 +9,23 @@ Read-only, no sensitive data exposed.
 import json
 import sqlite3
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 from flask import Blueprint, jsonify
+
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "execution"))
+    from timezone_utils import now_eastern, format_eastern, EASTERN_TZ
+except ImportError:
+    # Fallback
+    EASTERN_TZ = None
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p ET"):
+        return (dt or datetime.now()).strftime(fmt)
 
 state_summary_bp = Blueprint('state_summary', __name__)
 
@@ -185,9 +198,14 @@ def state_summary():
     
     Returns aggregated system state for external agents (Grok).
     Read-only, no sensitive data.
+    
+    Note: timestamps include both UTC (for API consumers) and Eastern 
+    (for human readability — William is in Naples, FL).
     """
     return jsonify({
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_eastern": format_eastern(),
+        "timezone_note": "System runs on UTC. William is in Naples, FL (Eastern Time).",
         "pipeline": get_pipeline_stats(),
         "learning": get_learning_insights(),
         "goals": get_goals_progress(),
