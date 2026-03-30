@@ -6,6 +6,7 @@ Extracted from monolithic agent_bridge_api.py, refactored into Flask blueprint.
 """
 
 from datetime import datetime
+from typing import Any, Dict
 from flask import Blueprint, request, jsonify
 
 from .models import (
@@ -142,9 +143,7 @@ def behavior_list():
 # =============================================================================
 
 # Tool Discovery and Self-Improvement Storage
-DISCOVERED_TOOLS: Dict[str, dict] = {}
-TOOL_USAGE_STATS: Dict[str, dict] = {}
-ERROR_SOLUTIONS: Dict[str, dict] = {}
+# (DISCOVERED_TOOLS, TOOL_USAGE_STATS, ERROR_SOLUTIONS imported from models.py)
 CAPABILITY_REGISTRY: Dict[str, dict] = {}
 META_KNOWLEDGE: Dict[str, Any] = {
     'known_integrations': [],
