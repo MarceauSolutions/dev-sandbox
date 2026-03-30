@@ -349,6 +349,55 @@ def stage_follow_up(dry_run: bool = True) -> Dict[str, Any]:
         return {"error": str(e)}
 
 
+def stage_email_sequences(dry_run: bool = True) -> Dict[str, Any]:
+    """Stage 7b: Process email sequences via Gmail API.
+    
+    - Auto-enrolls qualified leads from pipeline
+    - Sends due emails
+    - Checks for replies and stops sequences
+    """
+    try:
+        sys.path.insert(0, str(REPO_ROOT.parent.parent / "execution"))
+        from email_sequence_engine import (
+            enroll_from_pipeline, process_due_emails, check_replies, get_status
+        )
+        
+        results = {
+            "enrolled": 0,
+            "sent": 0,
+            "replies": 0,
+            "errors": 0
+        }
+        
+        # Step 1: Auto-enroll new leads
+        enrolled = enroll_from_pipeline(max_enrollments=20, dry_run=dry_run)
+        results["enrolled"] = len(enrolled)
+        
+        # Step 2: Process due emails
+        if not dry_run:
+            stats = process_due_emails(dry_run=False)
+            results["sent"] = stats.get("sent", 0)
+            results["errors"] = stats.get("errors", 0)
+        else:
+            stats = process_due_emails(dry_run=True)
+            results["sent"] = stats.get("sent", 0)
+        
+        # Step 3: Check for replies
+        if not dry_run:
+            reply_count = check_replies()
+            results["replies"] = reply_count
+        
+        logger.info(f"Email sequences: enrolled={results['enrolled']}, sent={results['sent']}, replies={results['replies']}")
+        log_stage("email_sequences", True, results)
+        
+        return {"success": True, **results}
+        
+    except Exception as e:
+        logger.error(f"Email sequences stage failed: {e}")
+        log_stage("email_sequences", False, {"error": str(e)})
+        return {"success": False, "error": str(e)}
+
+
 def stage_check_responses() -> Dict[str, Any]:
     """Stages 5-6: Monitor for replies and classify them."""
     hot_leads = []
@@ -744,6 +793,10 @@ def run_full_loop(dry_run: bool = True):
     # Stage 7: Follow-up sequences
     logger.info("\n▶ Stage 7: Follow-up sequences")
     stage_follow_up(dry_run=dry_run)
+
+    # Stage 7b: Email sequences (Gmail API)
+    logger.info("\n▶ Stage 7b: Email sequences")
+    stage_email_sequences(dry_run=dry_run)
 
     # Stage 8a: Cross-tower handoffs (coaching leads → fitness-influencer)
     logger.info("\n▶ Stage 8a: Cross-tower handoffs")
