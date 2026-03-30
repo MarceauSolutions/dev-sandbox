@@ -32,7 +32,7 @@ def create_app():
 
     app = Flask(__name__)
 
-    # Register all 7 blueprint modules
+    # Register all 8 blueprint modules
     from .cost_tracking import cost_tracking_bp
     from .memory import memory_bp
     from .orchestration import orchestration_bp
@@ -40,6 +40,7 @@ def create_app():
     from .plugins import plugins_bp
     from .intelligence import intelligence_bp
     from .media import media_bp
+    from .state_summary import state_summary_bp
 
     app.register_blueprint(cost_tracking_bp)
     app.register_blueprint(memory_bp)
@@ -48,13 +49,14 @@ def create_app():
     app.register_blueprint(plugins_bp)
     app.register_blueprint(intelligence_bp)
     app.register_blueprint(media_bp)
+    app.register_blueprint(state_summary_bp)
 
     @app.route('/health', methods=['GET'])
     def health():
         return jsonify({
             "tower": "ai-systems",
             "status": "healthy",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "modules": {
                 "cost_tracking": 5,
                 "memory": 5,
@@ -63,8 +65,9 @@ def create_app():
                 "plugins": 7,
                 "intelligence": 45,
                 "media": 16,
+                "state_summary": 1,
             },
-            "total_routes": 95,
+            "total_routes": 96,
         })
 
     return app
