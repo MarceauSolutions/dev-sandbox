@@ -108,12 +108,39 @@ class VoiceAIReporter:
         self.state = self._load_state()
         self.anthropic = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         DAILY_LOG_DIR.mkdir(parents=True, exist_ok=True)
+        self._lock_file = STATE_FILE.with_suffix('.lock')
+    
+    def _acquire_lock(self) -> bool:
+        """Acquire file lock to prevent concurrent runs."""
+        import fcntl
+        try:
+            self._lock_fd = open(self._lock_file, 'w')
+            fcntl.flock(self._lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return True
+        except (IOError, OSError):
+            logger.warning("Another instance is running, skipping")
+            return False
+    
+    def _release_lock(self):
+        """Release file lock."""
+        import fcntl
+        try:
+            if hasattr(self, '_lock_fd') and self._lock_fd:
+                fcntl.flock(self._lock_fd, fcntl.LOCK_UN)
+                self._lock_fd.close()
+        except Exception:
+            pass
     
     def _load_state(self) -> Dict:
         """Load processed conversation state."""
         if STATE_FILE.exists():
-            with open(STATE_FILE, 'r') as f:
-                return json.load(f)
+            try:
+                with open(STATE_FILE, 'r') as f:
+                    state = json.load(f)
+                    logger.info(f"Loaded state with {len(state.get('processed_ids', []))} processed IDs")
+                    return state
+            except (json.JSONDecodeError, IOError) as e:
+                logger.error(f"Failed to load state: {e}")
         return {
             "processed_ids": [],
             "last_check": None,
@@ -121,9 +148,17 @@ class VoiceAIReporter:
         }
     
     def _save_state(self):
-        """Save state to disk."""
-        with open(STATE_FILE, 'w') as f:
-            json.dump(self.state, f, indent=2)
+        """Save state to disk atomically."""
+        import tempfile
+        try:
+            # Write to temp file first, then rename (atomic)
+            fd, tmp_path = tempfile.mkstemp(dir=STATE_FILE.parent, suffix='.tmp')
+            with os.fdopen(fd, 'w') as f:
+                json.dump(self.state, f, indent=2)
+            os.replace(tmp_path, STATE_FILE)
+            logger.info(f"Saved state with {len(self.state.get('processed_ids', []))} processed IDs")
+        except Exception as e:
+            logger.error(f"Failed to save state: {e}")
     
     def fetch_conversations(self, limit: int = 20) -> List[Dict]:
         """Fetch recent conversations from ElevenLabs."""
@@ -373,81 +408,95 @@ Return JSON:
     
     def process_new_conversations(self) -> Tuple[int, List[ConversationReport]]:
         """Process all new conversations."""
-        conversations = self.fetch_conversations()
-        processed = []
-        hot_leads = []
+        # Acquire lock to prevent concurrent runs
+        if not self._acquire_lock():
+            return 0, []
         
-        for conv in conversations:
-            conv_id = conv.get("conversation_id")
+        try:
+            # Reload state fresh to catch any updates from other runs
+            self.state = self._load_state()
             
-            # Skip if already processed
-            if conv_id in self.state["processed_ids"]:
-                continue
+            conversations = self.fetch_conversations()
+            processed = []
+            hot_leads = []
             
-            # Skip very short calls (< 5 seconds, just hangups)
-            if conv.get("call_duration_secs", 0) < 5:
+            for conv in conversations:
+                conv_id = conv.get("conversation_id")
+                
+                # Skip if already processed (double-check with fresh state)
+                if conv_id in self.state["processed_ids"]:
+                    logger.debug(f"Skipping already processed: {conv_id}")
+                    continue
+                
+                # Skip very short calls (< 5 seconds, just hangups)
+                if conv.get("call_duration_secs", 0) < 5:
+                    self.state["processed_ids"].append(conv_id)
+                    continue
+                
+                logger.info(f"Processing new conversation: {conv_id}")
+                
+                # Fetch full details
+                details = self.fetch_conversation_details(conv_id)
+                if not details:
+                    continue
+                
+                # Analyze
+                report = self.analyze_conversation(details)
+                processed.append(report)
+                
+                # Mark as processed IMMEDIATELY after analysis
                 self.state["processed_ids"].append(conv_id)
-                continue
+                
+                # Track daily stats
+                today = datetime.now().strftime("%Y-%m-%d")
+                if today not in self.state["daily_stats"]:
+                    self.state["daily_stats"][today] = {
+                        "total_calls": 0,
+                        "hot_leads": 0,
+                        "warm_leads": 0,
+                        "cold_leads": 0,
+                        "total_duration": 0
+                    }
+                
+                self.state["daily_stats"][today]["total_calls"] += 1
+                self.state["daily_stats"][today]["total_duration"] += report.duration_seconds
+                
+                if report.lead_quality == "hot":
+                    self.state["daily_stats"][today]["hot_leads"] += 1
+                    hot_leads.append(report)
+                elif report.lead_quality == "warm":
+                    self.state["daily_stats"][today]["warm_leads"] += 1
+                elif report.lead_quality == "cold":
+                    self.state["daily_stats"][today]["cold_leads"] += 1
+                
+                # Send report to Telegram
+                message = self.format_telegram_message(report)
+                
+                # HOT leads get immediate priority
+                if report.lead_quality == "hot":
+                    message = "🚨 <b>HOT LEAD ALERT!</b> 🚨\n\n" + message
+                    self.send_telegram_message(message, priority="urgent")
+                else:
+                    self.send_telegram_message(message)
+                
+                # Auto-route to pipeline (create lead)
+                lead_id = self.create_lead_from_call(report)
+                if lead_id:
+                    logger.info(f"Created/updated lead #{lead_id} → {report.detected_tower}")
+                
+                # Log to daily file
+                self._log_conversation(report)
+                
+                # Save state after EACH conversation to prevent duplicates on crash
+                self._save_state()
             
-            logger.info(f"Processing new conversation: {conv_id}")
+            # Final state update
+            self.state["last_check"] = datetime.now().isoformat()
+            self._save_state()
             
-            # Fetch full details
-            details = self.fetch_conversation_details(conv_id)
-            if not details:
-                continue
-            
-            # Analyze
-            report = self.analyze_conversation(details)
-            processed.append(report)
-            
-            # Mark as processed
-            self.state["processed_ids"].append(conv_id)
-            
-            # Track daily stats
-            today = datetime.now().strftime("%Y-%m-%d")
-            if today not in self.state["daily_stats"]:
-                self.state["daily_stats"][today] = {
-                    "total_calls": 0,
-                    "hot_leads": 0,
-                    "warm_leads": 0,
-                    "cold_leads": 0,
-                    "total_duration": 0
-                }
-            
-            self.state["daily_stats"][today]["total_calls"] += 1
-            self.state["daily_stats"][today]["total_duration"] += report.duration_seconds
-            
-            if report.lead_quality == "hot":
-                self.state["daily_stats"][today]["hot_leads"] += 1
-                hot_leads.append(report)
-            elif report.lead_quality == "warm":
-                self.state["daily_stats"][today]["warm_leads"] += 1
-            elif report.lead_quality == "cold":
-                self.state["daily_stats"][today]["cold_leads"] += 1
-            
-            # Send report to Telegram
-            message = self.format_telegram_message(report)
-            
-            # HOT leads get immediate priority
-            if report.lead_quality == "hot":
-                message = "🚨 <b>HOT LEAD ALERT!</b> 🚨\n\n" + message
-                self.send_telegram_message(message, priority="urgent")
-            else:
-                self.send_telegram_message(message)
-            
-            # Auto-route to pipeline (create lead)
-            lead_id = self.create_lead_from_call(report)
-            if lead_id:
-                logger.info(f"Created/updated lead #{lead_id} → {report.detected_tower}")
-            
-            # Log to daily file
-            self._log_conversation(report)
-        
-        # Update state
-        self.state["last_check"] = datetime.now().isoformat()
-        self._save_state()
-        
-        return len(processed), processed
+            return len(processed), processed
+        finally:
+            self._release_lock()
     
     def create_lead_from_call(self, report: ConversationReport) -> Optional[int]:
         """
