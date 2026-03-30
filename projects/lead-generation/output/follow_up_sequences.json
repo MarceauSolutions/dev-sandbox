@@ -7,7 +7,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.593754",
-      "last_touch_at": "2026-03-26T17:06:04.474886",
+      "last_touch_at": "2026-03-30T09:00:19.145314",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -26,9 +26,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.593754",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:19.145302",
+          "status": "sent",
+          "message_sid": "SMdbe9e4e4f01a951d68891a8f0c03ad1d",
           "response": ""
         },
         {
@@ -50,7 +50,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.595654",
-      "last_touch_at": "2026-03-26T17:06:06.481288",
+      "last_touch_at": "2026-03-30T09:00:21.325725",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -69,9 +69,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.595654",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:21.325717",
+          "status": "sent",
+          "message_sid": "SM8ef38b93383197c769a725e80ffd910a",
           "response": ""
         },
         {
@@ -93,7 +93,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.595893",
-      "last_touch_at": "2026-03-26T17:06:08.488946",
+      "last_touch_at": "2026-03-30T09:00:23.635703",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -112,9 +112,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.595893",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:23.635693",
+          "status": "sent",
+          "message_sid": "SM402ac53b4f24417219ea80bcacd7bc30",
           "response": ""
         },
         {
@@ -136,7 +136,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.596116",
-      "last_touch_at": "2026-03-26T17:06:10.497688",
+      "last_touch_at": "2026-03-30T09:00:25.940026",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -155,9 +155,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.596116",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:25.940014",
+          "status": "sent",
+          "message_sid": "SM29f0ef4363eb0ea6d6b41c368422f167",
           "response": ""
         },
         {
@@ -222,7 +222,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.596766",
-      "last_touch_at": "2026-03-26T17:06:14.506330",
+      "last_touch_at": "2026-03-30T09:00:30.324774",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -241,9 +241,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.596766",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:30.324762",
+          "status": "sent",
+          "message_sid": "SM6ed1bc44195283dae6b7ab12a4d45b69",
           "response": ""
         },
         {
@@ -265,7 +265,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.597241",
-      "last_touch_at": "2026-03-26T17:06:16.516126",
+      "last_touch_at": "2026-03-30T09:00:32.646761",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -284,9 +284,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.597241",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:32.646753",
+          "status": "sent",
+          "message_sid": "SM68b082cc1b131450f0e39523af113a10",
           "response": ""
         },
         {
@@ -308,7 +308,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.597636",
-      "last_touch_at": "2026-03-26T17:06:18.526409",
+      "last_touch_at": "2026-03-30T09:00:34.876981",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -327,9 +327,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.597636",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:34.876968",
+          "status": "sent",
+          "message_sid": "SMd845a69780071831addc34b83eb50c22",
           "response": ""
         },
         {
@@ -351,7 +351,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.598041",
-      "last_touch_at": "2026-03-26T17:06:20.534188",
+      "last_touch_at": "2026-03-30T09:00:37.199613",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -370,9 +370,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.598041",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:37.199600",
+          "status": "sent",
+          "message_sid": "SMf3e7119148772ce42e2a6cbfad8cc7ec",
           "response": ""
         },
         {
@@ -566,7 +566,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.600251",
-      "last_touch_at": "2026-03-26T17:06:30.562428",
+      "last_touch_at": "2026-03-30T09:00:48.203544",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -585,9 +585,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.600251",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:48.203535",
+          "status": "sent",
+          "message_sid": "SMa484622d16236f521f2f2c56643f8618",
           "response": ""
         },
         {
@@ -609,7 +609,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.600906",
-      "last_touch_at": "2026-03-26T17:06:32.569569",
+      "last_touch_at": "2026-03-30T09:00:50.456663",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -628,9 +628,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.600906",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:50.456651",
+          "status": "sent",
+          "message_sid": "SMbf75a4fe204c4ae50ea40430220ffc9c",
           "response": ""
         },
         {
@@ -695,7 +695,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.602379",
-      "last_touch_at": "2026-03-26T17:06:36.579078",
+      "last_touch_at": "2026-03-30T09:00:54.864297",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -714,9 +714,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.602379",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:54.864285",
+          "status": "sent",
+          "message_sid": "SM573e92f8f4aaff7aee650eb30f51d04b",
           "response": ""
         },
         {
@@ -738,7 +738,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.603051",
-      "last_touch_at": "2026-03-26T17:06:38.586593",
+      "last_touch_at": "2026-03-30T09:00:57.183635",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -757,9 +757,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.603051",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:00:57.183623",
+          "status": "sent",
+          "message_sid": "SMee09d721c11edc8f4a0db9c3f6c11f35",
           "response": ""
         },
         {
@@ -824,7 +824,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.604329",
-      "last_touch_at": "2026-03-26T17:06:42.596117",
+      "last_touch_at": "2026-03-30T09:01:01.621939",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -843,9 +843,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.604329",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:01:01.621927",
+          "status": "sent",
+          "message_sid": "SMddd29f47144181dd26d8c180fd485926",
           "response": ""
         },
         {
@@ -867,7 +867,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.604914",
-      "last_touch_at": "2026-03-26T17:06:44.604071",
+      "last_touch_at": "2026-03-30T09:01:03.887211",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -886,9 +886,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.604914",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:01:03.887200",
+          "status": "sent",
+          "message_sid": "SM28ebcb0c71608b3619b3195cf5e306b3",
           "response": ""
         },
         {
@@ -910,7 +910,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.605538",
-      "last_touch_at": "2026-03-26T17:06:46.613335",
+      "last_touch_at": "2026-03-30T09:01:06.226683",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -929,9 +929,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.605538",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:01:06.226670",
+          "status": "sent",
+          "message_sid": "SM66cc66484f9618efe91a961ef96aa3ee",
           "response": ""
         },
         {
@@ -1082,7 +1082,7 @@
       "sending_business_id": "marceau-solutions",
       "status": "in_sequence",
       "started_at": "2026-03-26T17:06:03.608297",
-      "last_touch_at": "2026-03-26T17:06:54.633935",
+      "last_touch_at": "2026-03-30T09:01:15.133137",
       "response_at": "",
       "notes": "",
       "touchpoints": [
@@ -1101,9 +1101,9 @@
           "template_name": "no_website_followup_question",
           "days_after_initial": 3,
           "scheduled_at": "2026-03-29T17:06:03.608297",
-          "sent_at": "",
-          "status": "pending",
-          "message_sid": "",
+          "sent_at": "2026-03-30T09:01:15.133125",
+          "status": "sent",
+          "message_sid": "SM1419bd184b4bc4327954c1e2e1e294ec",
           "response": ""
         },
         {
@@ -1119,5 +1119,5 @@
       ]
     }
   ],
-  "updated_at": "2026-03-26T17:06:54.634812"
+  "updated_at": "2026-03-30T09:01:15.134047"
 }
