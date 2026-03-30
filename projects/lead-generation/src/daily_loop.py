@@ -287,14 +287,83 @@ def _run_module(module_name: str, args: List[str], timeout: int = 300) -> Dict[s
         return {"success": False, "error": str(e)}
 
 
-def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
-    """Stages 1-3: Discover, score, enrich, and outreach via campaign_auto_launcher."""
+def _is_generation_day() -> bool:
+    """Check if today is a scheduled lead generation day.
+    
+    Default: Monday (weekly generation).
+    Checks generate_new_lead_list.should_run_generation() for dynamic scheduling.
+    """
     try:
+        from .generate_new_lead_list import should_run_generation
+        should_run, reason = should_run_generation()
+        logger.info(f"Generation day check: {should_run} — {reason}")
+        return should_run
+    except Exception as e:
+        logger.warning(f"Generation day check failed: {e}")
+        # Default: Monday is generation day
+        return datetime.now().weekday() == 0
+
+
+def stage_lead_generation(dry_run: bool = True) -> Dict[str, Any]:
+    """Stage 1a: Weekly lead list generation (runs on generation days only).
+    
+    Uses generate_new_lead_list module for ICP-tiered, deduplicated discovery.
+    Only runs on scheduled days (default: weekly Monday).
+    """
+    if not _is_generation_day():
+        logger.info("Not a generation day — skipping lead list generation")
+        log_stage("lead_generation", True, {"skipped": "not_generation_day"})
+        return {"skipped": True, "reason": "not_generation_day"}
+    
+    try:
+        from .generate_new_lead_list import generate_lead_list
+        
+        result = generate_lead_list(
+            limit=100,
+            dry_run=dry_run,
+            force=False  # Respect scheduling
+        )
+        
+        if result.get("status") == "completed":
+            log_stage("lead_generation", True, {
+                "generated": result.get("total_generated", 0),
+                "tier_1": result.get("tier_1", 0),
+                "tier_2": result.get("tier_2", 0),
+                "imported": result.get("imported", 0),
+            })
+        elif result.get("status") == "skipped":
+            log_stage("lead_generation", True, {"skipped": result.get("reason", "unknown")})
+        else:
+            log_stage("lead_generation", False, {"error": result.get("error", "unknown")})
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Lead generation failed: {e}\n{traceback.format_exc()}")
+        log_stage("lead_generation", False, {"error": str(e)})
+        return {"error": str(e)}
+
+
+def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
+    """Stages 1-3: Discover, score, enrich, and outreach via campaign_auto_launcher.
+    
+    NOTE: On generation days, new discovery is handled by stage_lead_generation.
+    This stage now focuses on processing existing pipeline leads (scoring/outreach).
+    """
+    try:
+        # On generation days, lead discovery is handled separately
+        # This stage focuses on outreach to existing Prospect/Qualified leads
+        is_gen_day = _is_generation_day()
+        
         args = ["--business", "marceau-solutions"]
         if dry_run:
             args.append("--dry-run")
         else:
             args.append("--for-real")
+        
+        # On non-generation days, limit new discovery to avoid flooding
+        if not is_gen_day:
+            args.extend(["--limit", "10"])  # Cap at 10 new leads on normal days
 
         result = _run_module("campaign_auto_launcher", args, timeout=180)
 
@@ -306,6 +375,7 @@ def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
             log_stage("discover_score", True, {
                 "discovered": discovered,
                 "outreached": outreached,
+                "generation_day": is_gen_day,
             })
         else:
             stderr = result.get("stderr", "")[:500]
@@ -537,10 +607,18 @@ def stage_digest() -> Dict[str, Any]:
 
         # Stage results from today's loop
         if STAGE_RESULTS:
+            lg = STAGE_RESULTS.get("lead_generation", {})
             ds = STAGE_RESULTS.get("discover_score", {})
             fu = STAGE_RESULTS.get("follow_up", {})
             cr = STAGE_RESULTS.get("check_responses", {})
             lines.append("*Today's Loop:*")
+            
+            # Lead generation (if ran)
+            if lg.get("success") and not lg.get("skipped"):
+                lines.append(f"  📋 Lead List Generated: {lg.get('generated', 0)} new leads")
+                lines.append(f"     Tier 1: {lg.get('tier_1', 0)} | Tier 2: {lg.get('tier_2', 0)}")
+                lines.append(f"     Imported: {lg.get('imported', 0)}")
+            
             if ds.get("success"):
                 lines.append(f"  Discovered: {ds.get('discovered', 0)} | "
                              f"Outreached: {ds.get('outreached', 0)}")
@@ -782,7 +860,13 @@ def run_full_loop(dry_run: bool = True):
     except Exception as e:
         logger.warning(f"Compliance check skipped: {e}")
 
+    # Stage 0.5: Weekly lead list generation (runs on generation days only)
+    logger.info("\n▶ Stage 0.5: Weekly Lead List Generation")
+    stage_lead_generation(dry_run=dry_run)
+
     # Stage 1-3: Discover, score, enrich, outreach (Touch 1)
+    # Note: On generation days, most discovery happens in Stage 0.5
+    # This stage processes existing pipeline + limited new discovery
     logger.info("\n▶ Stages 1-4: Discover → Score → Enrich → Outreach")
     stage_discover_and_score(dry_run=dry_run)
 
