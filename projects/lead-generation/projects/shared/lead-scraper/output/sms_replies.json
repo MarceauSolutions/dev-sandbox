@@ -55,14 +55,28 @@
       "processed": true,
       "forwarded": false,
       "notification_sent": true
+    },
+    {
+      "message_sid": "SMde3a034a5d11675986a6d86075ff7461",
+      "from_phone": "+12396432445",
+      "to_phone": "+18552399364",
+      "body": "Stop",
+      "date_sent": "2026-03-28 17:59:40+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "opt_out",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
     }
   ],
   "summary": {
-    "total": 4,
+    "total": 5,
     "hot_leads": 1,
     "warm_leads": 1,
-    "opt_outs": 1,
+    "opt_outs": 2,
     "unknown": 1
   },
-  "last_updated": "2026-03-28T16:21:11.152488"
+  "last_updated": "2026-03-30T13:00:13.979820"
 }

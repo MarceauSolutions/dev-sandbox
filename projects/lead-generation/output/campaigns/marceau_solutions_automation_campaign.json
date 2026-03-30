@@ -135,15 +135,16 @@
     "estimated_cost_per_batch": 7.9,
     "monthly_budget": 100.0
   },
-  "launched_at": "2026-03-28T09:00:10.464189",
+  "launched_at": "2026-03-30T13:00:08.683140",
   "stats": {
     "business_id": "marceau-solutions",
     "business_name": "Marceau Solutions",
     "total_targeted": 26,
-    "sent": 25,
-    "enrolled_in_sequence": 25,
+    "sent": 24,
+    "enrolled_in_sequence": 24,
     "errors": [
-      "Family Air Conditioning and Heating, Inc.: HTTP 400 error: Unable to create record: Attempt to send to unsubscribed recipient"
+      "Family Air Conditioning and Heating, Inc.: HTTP 400 error: Unable to create record: Attempt to send to unsubscribed recipient",
+      "Conditioned Air Naples: HTTP 400 error: Unable to create record: Attempt to send to unsubscribed recipient"
     ],
     "dry_run": false
   },
