@@ -1,22 +1,22 @@
 #!/bin/bash
-# backup-to-github.sh — Automated backup of EC2 workspace to GitHub
-# Runs on schedule, commits any changes, pushes to GitHub
+# backup-to-github.sh — Safe automated backup of EC2 workspace to GitHub
+# Runs hourly via cron. Only stages TRACKED files (never git add -A).
+# Respects .gitignore — will never stage .env, token.json, *.db, etc.
 
 set -e
 cd /home/clawdbot/dev-sandbox
 
-# Only proceed if there are changes
-if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
-    echo "$(date): No changes to backup"
+# Only stage tracked files that have changes (safe — never adds new files)
+git add -u
+
+# Only proceed if there are staged changes
+if git diff --cached --quiet; then
     exit 0
 fi
 
-# Add all changes (respecting .gitignore)
-git add -A
-
 # Commit with timestamp
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M')
-git commit -m "backup: auto-save ${TIMESTAMP}" || exit 0
+git commit -m "backup: auto-save ${TIMESTAMP}"
 
 # Push to GitHub
 git push origin main
