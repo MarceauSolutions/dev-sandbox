@@ -203,3 +203,5 @@ projects/lead-generation/projects/shared/lead-scraper/output/
 **/*.db-journal
 **/*.db-wal
 **/*.db-shm
+projects/lead-generation/output/
+projects/*/output/
