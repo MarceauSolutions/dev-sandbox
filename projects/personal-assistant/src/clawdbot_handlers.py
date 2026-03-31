@@ -1255,20 +1255,19 @@ def handle_demo(text: str) -> str:
 
     try:
         import os, ssl, json, urllib.request, certifi
-        import os, ssl, json, urllib.request, certifi
-        api_key = os.getenv("GROK_API_KEY", "") or os.getenv("GROQ_API_KEY", "")
+        api_key = os.getenv("XAI_API_KEY", "") or os.getenv("GROK_API_KEY", "")
         if not api_key:
-            return "GROK_API_KEY not set — cannot run demo (check .env)"
+            return "XAI_API_KEY/GROK_API_KEY not set — cannot run demo"
 
         ctx = ssl.create_default_context(cafile=certifi.where())
         data = json.dumps({
-            "model": "grok-beta",   # or "grok-4" / latest available - check https://docs.x.ai
+            "model": "grok-3-mini",
             "max_tokens": 300,
             "messages": [
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": caller_msg}
+                {"role": "user", "content": caller_msg},
             ],
-            "temperature": 0.7
+            "temperature": 0.7,
         }).encode()
 
         req = urllib.request.Request(
@@ -1276,35 +1275,12 @@ def handle_demo(text: str) -> str:
             data=data,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}"
+                "Authorization": f"Bearer {api_key}",
             }
         )
         resp = urllib.request.urlopen(req, timeout=30, context=ctx)
         result = json.loads(resp.read())
         ai_response = result["choices"][0]["message"]["content"]
-        if not api_key:
-            return "ANTHROPIC_API_KEY not set — cannot run demo"
-
-        ctx = ssl.create_default_context(cafile=certifi.where())
-        data = json.dumps({
-            "model": "claude-haiku-4-5-20251001",
-            "max_tokens": 300,
-            "system": system_prompt,
-            "messages": [{"role": "user", "content": caller_msg}],
-        }).encode()
-
-        req = urllib.request.Request(
-            "https://api.anthropic.com/v1/messages",
-            data=data,
-            headers={
-                "Content-Type": "application/json",
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-            }
-        )
-        resp = urllib.request.urlopen(req, timeout=30, context=ctx)
-        result = json.loads(resp.read())
-        ai_response = result["content"][0]["text"]
 
         return (
             f"AI DEMO: {config['name']}\n\n"
