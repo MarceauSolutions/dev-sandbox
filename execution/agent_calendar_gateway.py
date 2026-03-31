@@ -47,7 +47,7 @@ CORS(app)
 
 # --- Configuration ---
 
-PORT = 5015
+PORT = 5016  # Temp: using 5016 since 5015 has old process
 DB_PATH = Path(__file__).parent.parent / "data" / "agent_calendar.db"
 RULES_PATH = Path(__file__).parent.parent / "rules" / "tools" / "calendar-management.md"
 
@@ -299,6 +299,7 @@ def create_event():
     end = data.get("end")      # ISO 8601
     description = data.get("description", "")
     location = data.get("location", "")
+    transparency = data.get("transparency", "opaque")  # "opaque" (busy) or "transparent" (free)
     force = data.get("force", False)  # Skip validation
 
     if not all([calendar, summary, start, end]):
@@ -355,6 +356,7 @@ def create_event():
             "summary": summary,
             "start": {"dateTime": start, "timeZone": "America/New_York"},
             "end": {"dateTime": end, "timeZone": "America/New_York"},
+            "transparency": transparency,  # "opaque" (busy) or "transparent" (free)
         }
         if description:
             event_body["description"] = description
@@ -364,7 +366,7 @@ def create_event():
         created = service.events().insert(calendarId=cal_id, body=event_body).execute()
 
         log_action(agent, "create", calendar, summary, start, end, "success",
-                    json.dumps({"event_id": created.get("id")}))
+                    json.dumps({"event_id": created.get("id"), "transparency": transparency}))
 
         return jsonify({
             "status": "created",
@@ -373,6 +375,7 @@ def create_event():
             "calendar": calendar,
             "start": start,
             "end": end,
+            "show_as": "busy" if transparency == "opaque" else "free",
         })
 
     except Exception as e:

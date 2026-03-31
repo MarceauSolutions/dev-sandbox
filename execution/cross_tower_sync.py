@@ -40,10 +40,38 @@ logger = logging.getLogger("cross_tower_sync")
 
 
 def process_tower_requests(dry_run: bool = False) -> dict:
-    """Process pending tower_protocol requests for PA and fitness towers."""
-    results = {"pa": {"processed": 0}, "fitness": {"processed": 0}}
+    """Process pending tower_protocol requests for all towers.
+    
+    NEW: Requests are processed in ROI priority order (high priority first).
+    """
+    results = {
+        "pa": {"processed": 0}, 
+        "fitness": {"processed": 0},
+        "triggers_fired": 0,
+        "conversions_logged": 0,
+        "priority_order": True,
+    }
 
-    # Process personal-assistant requests
+    # Step 1: Check for deal stage changes and fire triggers
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "tower_triggers", REPO_ROOT / "execution" / "tower_triggers.py"
+        )
+        triggers = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(triggers)
+        
+        if not dry_run:
+            trigger_results = triggers.check_stage_triggers(since_minutes=15)
+            total_triggered = sum(len(v) for v in trigger_results.values())
+            results["triggers_fired"] = total_triggered
+            if total_triggered:
+                logger.info(f"Stage triggers fired: {total_triggered} requests")
+    except Exception as e:
+        logger.error(f"Trigger check failed: {e}")
+        results["trigger_error"] = str(e)
+
+    # Step 2: Process personal-assistant requests (priority order)
     try:
         import importlib.util
         spec = importlib.util.spec_from_file_location(
@@ -57,7 +85,7 @@ def process_tower_requests(dry_run: bool = False) -> dict:
         logger.error(f"PA tower handler failed: {e}")
         results["pa"]["error"] = str(e)
 
-    # Process fitness-influencer requests
+    # Step 3: Process fitness-influencer requests (priority order)
     try:
         import importlib.util
         spec = importlib.util.spec_from_file_location(
@@ -70,6 +98,41 @@ def process_tower_requests(dry_run: bool = False) -> dict:
     except Exception as e:
         logger.error(f"Fitness tower handler failed: {e}")
         results["fitness"]["error"] = str(e)
+
+    # Step 4: Log conversions for recently completed requests
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "tower_analytics", REPO_ROOT / "execution" / "tower_analytics.py"
+        )
+        analytics = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(analytics)
+        
+        # Get recently completed requests
+        from tower_protocol import _get_db
+        conn = _get_db()
+        completed = conn.execute("""
+            SELECT id FROM tower_requests 
+            WHERE status IN ('completed', 'failed')
+            AND updated_at > datetime('now', '-20 minutes')
+        """).fetchall()
+        conn.close()
+        
+        conversion_count = 0
+        for row in completed:
+            req_id = row[0]
+            conv_id = analytics.auto_log_completed_request(req_id)
+            if conv_id:
+                conversion_count += 1
+        
+        results["conversions_logged"] = conversion_count
+        
+        # Periodically update conversion probabilities (every ~6 hours)
+        analytics.update_conversion_probabilities()
+        
+    except Exception as e:
+        logger.error(f"Analytics logging failed: {e}")
+        results["analytics_error"] = str(e)
 
     return results
 
@@ -345,13 +408,31 @@ def _send_proposal_followup(deal: dict, pdb, conn) -> bool:
 
 
 def get_status() -> dict:
-    """Get pending counts across all systems."""
+    """Get pending counts across all systems including priority queue status."""
     status = {}
 
     try:
-        from tower_protocol import check_pending
-        status["pa_pending"] = len(check_pending("personal-assistant"))
-        status["fitness_pending"] = len(check_pending("fitness-influencer"))
+        from tower_protocol import check_pending, get_high_priority_requests
+        
+        # Pending by tower
+        pa_pending = check_pending("personal-assistant")
+        fitness_pending = check_pending("fitness-influencer")
+        
+        status["pa_pending"] = len(pa_pending)
+        status["fitness_pending"] = len(fitness_pending)
+        
+        # High priority requests
+        high_priority = get_high_priority_requests(min_priority=0.7)
+        status["high_priority_pending"] = len(high_priority)
+        
+        # Show top priority request
+        if pa_pending:
+            top = pa_pending[0]
+            status["pa_top_priority"] = f"{top.get('action', '?')} (p={top.get('priority_score', 0.5):.2f})"
+        if fitness_pending:
+            top = fitness_pending[0]
+            status["fitness_top_priority"] = f"{top.get('action', '?')} (p={top.get('priority_score', 0.5):.2f})"
+            
     except Exception as e:
         status["protocol_error"] = str(e)
 
@@ -374,6 +455,22 @@ def get_status() -> dict:
         status["goal_alerts"] = len(alerts)
         if alerts:
             status["alert_detail"] = alerts[0][:80]
+    except Exception:
+        pass
+
+    # Analytics summary
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "tower_analytics", REPO_ROOT / "execution" / "tower_analytics.py"
+        )
+        analytics = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(analytics)
+        
+        dash = analytics.get_tower_dashboard()
+        overall = dash.get("overall", {})
+        status["cross_tower_revenue"] = overall.get("total_revenue", 0)
+        status["cross_tower_clients_won"] = overall.get("clients_won", 0)
     except Exception:
         pass
 
@@ -615,23 +712,18 @@ def _generate_eod_summary() -> str:
 
 
 def _send_telegram_alert(message: str):
-    """Send an alert to William via Telegram (if credentials available)."""
-    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID", "5692454753")
-    if not bot_token:
-        logger.debug("No TELEGRAM_BOT_TOKEN, skipping alert")
-        return
-
+    """Queue alert for digest instead of sending immediately."""
     try:
-        import urllib.request
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        data = json.dumps({"chat_id": chat_id, "text": message}).encode()
-        req = urllib.request.Request(url, data=data,
-                                     headers={"Content-Type": "application/json"})
-        urllib.request.urlopen(req, timeout=10)
-        logger.info("Telegram alert sent")
+        from execution.notification_policy import queue_for_digest
+        queue_for_digest(
+            "tower_sync",
+            "Cross-Tower Sync Update",
+            message[:500],
+            metadata={"source": "cross_tower_sync"}
+        )
+        logger.info("Alert queued for digest")
     except Exception as e:
-        logger.error(f"Telegram alert failed: {e}")
+        logger.error(f"Failed to queue alert: {e}")
 
 
 def main():

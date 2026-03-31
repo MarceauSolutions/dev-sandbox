@@ -1,0 +1,82 @@
+{
+  "replies": [
+    {
+      "message_sid": "SM72ddc21b2bc8df821235650e1b24dc85",
+      "from_phone": "+12393501989",
+      "to_phone": "+18552399364",
+      "body": "Hey , quick question... what's been the hardest part about staying consistent with your fitness lately?",
+      "date_sent": "2026-03-27 13:34:09+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "warm_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": true
+    },
+    {
+      "message_sid": "SM28addb1ccc48b67d5ec6606f8714c32c",
+      "from_phone": "+12393544326",
+      "to_phone": "+18552399364",
+      "body": "STOP",
+      "date_sent": "2026-03-27 13:01:05+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "opt_out",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    },
+    {
+      "message_sid": "SM67da2ec89bae87b9292836b223375a32",
+      "from_phone": "+12395977873",
+      "to_phone": "+18552399364",
+      "body": "Thanks for texting us. We will be with you shortly. In the meantime, you can use this link to save our contact information. https://a.podium.co/GEMQMxK",
+      "date_sent": "2026-03-27 13:00:54+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "unknown",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    },
+    {
+      "message_sid": "SM26994bd430b59e1d863d03c01eeff7af",
+      "from_phone": "+12395977873",
+      "to_phone": "+18552399364",
+      "body": "Hi William, this is Jamie AI from Pure Air Conditioning. Thanks for reaching out! I'll share your offer with my team. If they're interested, someone will contact you.",
+      "date_sent": "2026-03-27 13:00:40+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "hot_lead",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": true
+    },
+    {
+      "message_sid": "SMde3a034a5d11675986a6d86075ff7461",
+      "from_phone": "+12396432445",
+      "to_phone": "+18552399364",
+      "body": "Stop",
+      "date_sent": "2026-03-28 17:59:40+00:00",
+      "status": "received",
+      "business_name": "",
+      "category": "opt_out",
+      "matched_to_outreach": false,
+      "processed": true,
+      "forwarded": false,
+      "notification_sent": false
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "hot_leads": 1,
+    "warm_leads": 1,
+    "opt_outs": 2,
+    "unknown": 1
+  },
+  "last_updated": "2026-03-30T13:00:13.979820"
+}

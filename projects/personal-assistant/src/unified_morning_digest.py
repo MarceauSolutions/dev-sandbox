@@ -30,6 +30,19 @@ from typing import Any, Dict, List, Optional
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(REPO_ROOT / "execution"))
+    from timezone_utils import now_eastern, format_eastern, format_time_only
+except ImportError:
+    # Fallback if timezone_utils not available
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p"):
+        return (dt or datetime.now()).strftime(fmt)
+    def format_time_only(dt=None):
+        return (dt or datetime.now()).strftime("%I:%M %p")
+
 try:
     from dotenv import load_dotenv
     load_dotenv(REPO_ROOT / ".env")
@@ -239,6 +252,66 @@ def get_sms_replies(hours_back: int = 12) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Today's Priorities (replaces daily_scheduler proposals)
+# ---------------------------------------------------------------------------
+
+def _format_todays_priorities(pipeline: Dict, calendar: List) -> str:
+    """Format today's key priorities based on pipeline and calendar.
+    
+    This replaces the daily_scheduler proposal section.
+    Shows what's important TODAY based on:
+    - Hot leads that need attention
+    - Proposals pending response
+    - Scheduled calls/meetings
+    - Follow-ups due
+    """
+    lines = []
+    
+    # Key items that need focus today
+    hot = pipeline.get("hot_leads", [])
+    proposals = pipeline.get("proposals", [])
+    followups = pipeline.get("followups_today", 0)
+    
+    # Count important calendar items
+    calls_today = [e for e in calendar if any(kw in e.get("summary", "").lower() 
+                   for kw in ["call", "meeting", "discovery", "consultation"])]
+    visits_today = [e for e in calendar if any(kw in e.get("summary", "").lower() 
+                    for kw in ["visit", "walk-in", "stop"])]
+    
+    if hot or proposals or calls_today or visits_today:
+        lines.append("🎯 *TODAY'S PRIORITIES*")
+        
+        # Hot leads = highest priority
+        if hot:
+            lines.append(f"  🔥 {len(hot)} hot lead(s) — ready to close")
+            for h in hot[:2]:
+                company = h.get("company", "Unknown")
+                lines.append(f"     • {company}")
+        
+        # Scheduled calls
+        if calls_today:
+            lines.append(f"  📞 {len(calls_today)} call(s) scheduled")
+            for c in calls_today[:2]:
+                lines.append(f"     • {c.get('time', '?')}: {c.get('summary', '?')[:30]}")
+        
+        # Visits
+        if visits_today:
+            lines.append(f"  🚗 {len(visits_today)} visit(s) planned")
+        
+        # Proposals waiting
+        if proposals:
+            pending = [p for p in proposals if p.get("status") == "sent"]
+            if pending:
+                lines.append(f"  📋 {len(pending)} proposal(s) awaiting response")
+        
+        # Auto follow-ups
+        if followups:
+            lines.append(f"  📧 {followups} auto follow-ups scheduled")
+    
+    return "\n".join(lines) if lines else ""
+
+
+# ---------------------------------------------------------------------------
 # Digest formatting
 # ---------------------------------------------------------------------------
 
@@ -247,7 +320,7 @@ def format_telegram_digest(
     health_line: str = ""
 ) -> str:
     """Format all data into one clean Telegram message."""
-    today = datetime.now().strftime("%A, %B %d")
+    today = now_eastern().strftime("%A, %B %d")
     lines = [f"☀️ *MORNING DIGEST — {today}*\n"]
 
     # System health (at top so issues are immediately visible)
@@ -403,7 +476,7 @@ def format_telegram_digest(
         lines.append("")
 
     # Footer
-    lines.append(f"_Generated {datetime.now().strftime('%I:%M %p')} | {hours_back}h lookback_")
+    lines.append(f"_Generated {format_time_only()} | {hours_back}h lookback_")
 
     return "\n".join(lines)
 
@@ -630,15 +703,13 @@ def generate_digest(hours_back: int = 12, preview: bool = False) -> str:
     except Exception as e:
         logger.warning(f"Tower proposals check failed: {e}")
 
-    # Daily schedule (ROI-based time blocking)
+    # Note: Weekly planning now handles time blocks (weekly_planner.py)
+    # Morning digest shows what's ALREADY scheduled, doesn't propose new blocks
     schedule_line = ""
     try:
-        from .daily_scheduler import generate_proposed_schedule, format_for_digest as fmt_schedule
-        is_post_april6 = datetime.now() >= datetime(2026, 4, 6)
-        schedule = generate_proposed_schedule(post_april_6=is_post_april6)
-        schedule_line = fmt_schedule(schedule)
+        schedule_line = _format_todays_priorities(pipeline, calendar)
     except Exception as e:
-        logger.warning(f"Daily scheduler failed: {e}")
+        logger.warning(f"Today's priorities failed: {e}")
 
     # Format
     combined_health = health_line

@@ -33,7 +33,7 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from execution.auto_iterator import (
+from auto_iterator import (
     Evaluator,
     Experiment,
     ExperimentMetrics,

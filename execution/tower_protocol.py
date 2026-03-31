@@ -64,38 +64,204 @@ def _ensure_table(conn: sqlite3.Connection):
             status      TEXT DEFAULT 'pending'
                         CHECK(status IN ('pending','processing','completed','failed')),
             result      TEXT DEFAULT NULL,
+            priority_score REAL DEFAULT 0.5,
             created_at  TEXT DEFAULT (datetime('now')),
             updated_at  TEXT DEFAULT (datetime('now'))
         )
     """)
     conn.commit()
+    
+    # Add priority_score column if missing (for existing tables)
+    try:
+        conn.execute("SELECT priority_score FROM tower_requests LIMIT 1")
+    except:
+        try:
+            conn.execute("ALTER TABLE tower_requests ADD COLUMN priority_score REAL DEFAULT 0.5")
+            conn.commit()
+        except:
+            pass  # Column may already exist
 
 
 def request_action(from_tower: str, to_tower: str, action: str,
-                   payload: Dict[str, Any] = None) -> int:
+                   payload: Dict[str, Any] = None,
+                   priority_score: float = None) -> int:
     """Request another tower to perform an action.
+
+    Args:
+        from_tower: Requesting tower ID
+        to_tower: Target tower ID
+        action: Action name to perform
+        payload: Optional dict with action parameters
+        priority_score: Optional priority (0-1). If not provided, calculated from payload.
 
     Returns the request ID.
     """
     conn = _get_db()
+    
+    # Calculate priority if not provided
+    if priority_score is None:
+        priority_score = calculate_priority(payload or {})
+    
     cursor = conn.execute(
-        "INSERT INTO tower_requests (from_tower, to_tower, action, payload) VALUES (?, ?, ?, ?)",
-        (from_tower, to_tower, action, json.dumps(payload or {}))
+        "INSERT INTO tower_requests (from_tower, to_tower, action, payload, priority_score) "
+        "VALUES (?, ?, ?, ?, ?)",
+        (from_tower, to_tower, action, json.dumps(payload or {}), priority_score)
     )
     request_id = cursor.lastrowid
     conn.commit()
     conn.close()
-    logger.info(f"Tower request #{request_id}: {from_tower} → {to_tower} [{action}]")
+    logger.info(f"Tower request #{request_id}: {from_tower} → {to_tower} [{action}] "
+                f"(priority: {priority_score:.3f})")
     return request_id
 
 
-def check_pending(tower: str) -> List[Dict[str, Any]]:
-    """Check for pending requests addressed to this tower."""
+def calculate_priority(payload: Dict[str, Any],
+                      conversion_prob: float = None,
+                      urgency_factor: float = None) -> float:
+    """Calculate ROI-based priority score.
+    
+    Score = normalized_deal_value × conversion_probability × urgency_factor
+    
+    Args:
+        payload: Request payload (may contain deal_value, priority_score, etc.)
+        conversion_prob: Override conversion probability (0-1)
+        urgency_factor: Override urgency factor (0-1)
+    
+    Returns: Priority score between 0 and 1
+    """
+    import math
+    
+    # Extract deal value from payload
+    deal_value = payload.get("deal_value", 0)
+    if not deal_value:
+        # Try to calculate from fees
+        setup = payload.get("setup_fee", 0) or 0
+        monthly = payload.get("monthly_fee", 0) or 0
+        deal_value = setup + (monthly * 12)
+    
+    # If payload already has a priority_score, use it as base
+    if "priority_score" in payload:
+        return float(payload["priority_score"])
+    
+    # Normalize deal value (assume max deal is $50k/year)
+    max_deal = 50000
+    normalized_value = min(deal_value / max_deal, 1.0) if deal_value > 0 else 0.2
+    
+    # Default conversion probability based on action type
+    if conversion_prob is None:
+        action_probs = {
+            "cross_sell": 0.3,
+            "generate_proposal": 0.6,
+            "send_email": 0.4,
+            "generate_content": 0.5,
+        }
+        # Check if any action keyword matches
+        action = payload.get("action", "").lower()
+        conversion_prob = 0.5
+        for key, prob in action_probs.items():
+            if key in action:
+                conversion_prob = prob
+                break
+    
+    # Default urgency based on context
+    if urgency_factor is None:
+        urgency_factor = 0.5
+        # Hot responses get higher urgency
+        if payload.get("stage") in ("Hot Response", "Trial Active"):
+            urgency_factor = 0.9
+        elif payload.get("cross_sell_context"):
+            urgency_factor = 0.7
+    
+    # Composite score
+    raw_score = normalized_value * conversion_prob * urgency_factor
+    
+    # Apply sigmoid scaling to spread scores between 0.1 and 0.9
+    scaled = 1 / (1 + math.exp(-8 * (raw_score - 0.25)))
+    scaled = 0.1 + (scaled * 0.8)  # Clamp to 0.1-0.9 range
+    
+    return round(scaled, 4)
+
+
+def update_priority(request_id: int, priority_score: float) -> bool:
+    """Update the priority score of an existing request."""
+    conn = _get_db()
+    conn.execute(
+        "UPDATE tower_requests SET priority_score = ?, updated_at = datetime('now') "
+        "WHERE id = ?",
+        (priority_score, request_id)
+    )
+    changed = conn.total_changes > 0
+    conn.commit()
+    conn.close()
+    return changed
+
+
+def boost_priority(request_id: int, multiplier: float = 1.5) -> float:
+    """Boost the priority of a request (e.g., when response received).
+    
+    Returns the new priority score.
+    """
+    conn = _get_db()
+    row = conn.execute(
+        "SELECT priority_score FROM tower_requests WHERE id = ?", (request_id,)
+    ).fetchone()
+    
+    if not row:
+        conn.close()
+        return 0.0
+    
+    old_priority = row[0] or 0.5
+    new_priority = min(1.0, old_priority * multiplier)
+    
+    conn.execute(
+        "UPDATE tower_requests SET priority_score = ?, updated_at = datetime('now') "
+        "WHERE id = ?",
+        (new_priority, request_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    logger.info(f"Priority boosted: request #{request_id} ({old_priority:.3f} → {new_priority:.3f})")
+    return new_priority
+
+
+def check_pending(tower: str, order_by_priority: bool = True) -> List[Dict[str, Any]]:
+    """Check for pending requests addressed to this tower.
+    
+    Args:
+        tower: Tower ID to check
+        order_by_priority: If True, return high-priority requests first.
+                          If False, return in FIFO order (created_at ASC).
+    
+    Returns: List of pending request dicts with priority_score included.
+    """
+    conn = _get_db()
+    
+    if order_by_priority:
+        # High priority first, then by age (older first within same priority)
+        order_clause = "ORDER BY priority_score DESC, created_at ASC"
+    else:
+        order_clause = "ORDER BY created_at ASC"
+    
+    rows = conn.execute(
+        f"SELECT * FROM tower_requests WHERE to_tower = ? AND status = 'pending' "
+        f"{order_clause}",
+        (tower,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_high_priority_requests(min_priority: float = 0.7) -> List[Dict[str, Any]]:
+    """Get all high-priority pending requests across all towers.
+    
+    Used for urgent processing or alerts.
+    """
     conn = _get_db()
     rows = conn.execute(
-        "SELECT * FROM tower_requests WHERE to_tower = ? AND status = 'pending' "
-        "ORDER BY created_at ASC",
-        (tower,)
+        "SELECT * FROM tower_requests WHERE status = 'pending' "
+        "AND priority_score >= ? ORDER BY priority_score DESC",
+        (min_priority,)
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]

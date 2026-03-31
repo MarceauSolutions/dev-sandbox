@@ -1,0 +1,197 @@
+{
+  "version": "1.0",
+  "updated": "2025-03-28",
+  "description": "Lead routing rules for multi-tower optimization",
+  
+  "towers": {
+    "digital-ai-services": {
+      "label": "AI Services",
+      "icon": "🤖",
+      "ideal_industries": [
+        "HVAC", "HVAC / Home Services", "Plumbing", "Roofing", "Electrical", 
+        "Pest Control", "Auto", "Medical", "Medical / Dental", "Dental",
+        "Chiropractic", "Med Spa", "Med Spa / Beauty", "Real Estate",
+        "Restaurants / Hospitality", "Restaurant", "Salon", "Local Business"
+      ],
+      "keywords": [
+        "missed calls", "text back", "chatbot", "automation", "ai", 
+        "appointment booking", "lead capture", "after hours", "voice ai"
+      ],
+      "company_size_fit": {
+        "min_employees": 1,
+        "max_employees": 200,
+        "ideal_revenue_min": 100000,
+        "ideal_revenue_max": 50000000
+      },
+      "budget_signals": {
+        "min_monthly": 97,
+        "ideal_monthly": 197,
+        "high_value": 497
+      },
+      "base_score": 50,
+      "description": "Best for service businesses losing calls/leads"
+    },
+    
+    "digital-web-dev": {
+      "label": "Web Development",
+      "icon": "🌐",
+      "ideal_industries": [
+        "Professional Services", "Technology", "SaaS", "Agency", 
+        "E-commerce", "Startup", "Consulting", "Healthcare Tech"
+      ],
+      "keywords": [
+        "website", "web design", "redesign", "landing page", "online presence",
+        "seo", "ecommerce", "custom development", "mobile app"
+      ],
+      "company_size_fit": {
+        "min_employees": 5,
+        "max_employees": 500,
+        "ideal_revenue_min": 500000,
+        "ideal_revenue_max": 100000000
+      },
+      "budget_signals": {
+        "min_project": 2000,
+        "ideal_project": 5000,
+        "high_value": 25000
+      },
+      "base_score": 40,
+      "description": "Best for companies needing digital presence"
+    },
+    
+    "fitness-coaching": {
+      "label": "Fitness Coaching",
+      "icon": "💪",
+      "ideal_industries": [
+        "Gym", "Fitness", "Personal Training", "CrossFit", "Yoga",
+        "Sports", "Wellness", "Health Coaching"
+      ],
+      "keywords": [
+        "fitness", "workout", "training", "gym", "weight loss", "muscle",
+        "strength", "nutrition", "bodybuilding", "coaching"
+      ],
+      "ideal_client_type": "individual",
+      "demographics": {
+        "age_range": [18, 55],
+        "commitment_level": "high"
+      },
+      "budget_signals": {
+        "min_monthly": 197,
+        "ideal_monthly": 297
+      },
+      "base_score": 30,
+      "description": "1:1 personal training coaching for individuals"
+    },
+    
+    "fitness-influencer": {
+      "label": "Influencer Deals",
+      "icon": "📸",
+      "ideal_industries": [
+        "Fitness Brand", "Supplement", "Apparel", "Equipment",
+        "Health Food", "Nutrition", "Sports Gear"
+      ],
+      "keywords": [
+        "influencer", "brand deal", "partnership", "sponsorship",
+        "content creator", "social media", "ambassador", "affiliate"
+      ],
+      "company_size_fit": {
+        "min_employees": 10,
+        "max_employees": 10000,
+        "ideal_revenue_min": 1000000
+      },
+      "budget_signals": {
+        "min_deal": 1000,
+        "ideal_deal": 5000,
+        "high_value": 25000
+      },
+      "base_score": 20,
+      "description": "Brand partnership deals for fitness influencers"
+    }
+  },
+  
+  "industry_mappings": {
+    "HVAC": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "HVAC / Home Services": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Plumbing": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Roofing": {"primary": "digital-ai-services", "secondary": null},
+    "Electrical": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Pest Control": {"primary": "digital-ai-services", "secondary": null},
+    "Auto": {"primary": "digital-ai-services", "secondary": null},
+    "Medical": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Medical / Dental": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Dental": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Chiropractic": {"primary": "digital-ai-services", "secondary": null},
+    "Med Spa": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Med Spa / Beauty": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Real Estate": {"primary": "digital-ai-services", "secondary": null},
+    "Restaurants / Hospitality": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Restaurant": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Salon": {"primary": "digital-ai-services", "secondary": null},
+    "Local Business": {"primary": "digital-ai-services", "secondary": "digital-web-dev"},
+    "Professional Services": {"primary": "digital-web-dev", "secondary": "digital-ai-services"},
+    "Technology": {"primary": "digital-web-dev", "secondary": null},
+    "SaaS": {"primary": "digital-web-dev", "secondary": null},
+    "E-commerce": {"primary": "digital-web-dev", "secondary": null},
+    "Gym": {"primary": "fitness-coaching", "secondary": "digital-ai-services"},
+    "Fitness": {"primary": "fitness-coaching", "secondary": "digital-ai-services"},
+    "Personal Training": {"primary": "fitness-coaching", "secondary": null},
+    "CrossFit": {"primary": "fitness-coaching", "secondary": "digital-ai-services"},
+    "Yoga": {"primary": "fitness-coaching", "secondary": null},
+    "Wellness": {"primary": "fitness-coaching", "secondary": "digital-ai-services"},
+    "Fitness Brand": {"primary": "fitness-influencer", "secondary": "digital-web-dev"},
+    "Supplement": {"primary": "fitness-influencer", "secondary": "digital-web-dev"},
+    "Apparel": {"primary": "fitness-influencer", "secondary": "digital-web-dev"},
+    "Other": {"primary": "digital-ai-services", "secondary": "digital-web-dev"}
+  },
+  
+  "scoring_weights": {
+    "industry_match": 30,
+    "keyword_match": 20,
+    "company_size_fit": 15,
+    "budget_signals": 15,
+    "pain_point_match": 10,
+    "lead_source_bonus": 10
+  },
+  
+  "lead_source_bonuses": {
+    "referral": 15,
+    "inbound": 12,
+    "google_places": 8,
+    "apollo": 5,
+    "yelp": 5,
+    "manual": 0
+  },
+  
+  "override_rules": [
+    {
+      "name": "Gym_Always_Coaching",
+      "condition": {"industry_contains": ["gym", "crossfit", "fitness center"]},
+      "action": {"force_tower": "fitness-coaching"},
+      "priority": 100
+    },
+    {
+      "name": "Brand_Deal_Keywords",
+      "condition": {"pain_points_contain": ["influencer", "brand deal", "sponsorship"]},
+      "action": {"force_tower": "fitness-influencer"},
+      "priority": 90
+    },
+    {
+      "name": "Website_Request",
+      "condition": {"pain_points_contain": ["website", "redesign", "landing page"]},
+      "action": {"boost_tower": "digital-web-dev", "boost_amount": 40},
+      "priority": 80
+    },
+    {
+      "name": "Missed_Calls_Pain",
+      "condition": {"pain_points_contain": ["missed calls", "after hours", "text back"]},
+      "action": {"boost_tower": "digital-ai-services", "boost_amount": 30},
+      "priority": 80
+    }
+  ],
+  
+  "learning_config": {
+    "min_samples_for_adjustment": 10,
+    "conversion_weight": 0.7,
+    "recency_decay_days": 90,
+    "max_score_adjustment": 15
+  }
+}

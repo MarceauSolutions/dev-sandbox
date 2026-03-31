@@ -1,0 +1,45 @@
+{
+  "processed_ids": [
+    "conv_1601kmv0g5fefs59g4d6hjt9yvy6",
+    "conv_5501kmtv6fz5fkva1vy5q00fvtaf",
+    "conv_3301kmt9hbmgf5ys2chngq3fbxre",
+    "conv_5901kmrxzabvf2zsgvw2ecdctb4n",
+    "conv_0501kmrj2nbbf2rsbyb78vqjyegd",
+    "conv_2601kmjw9tpde6z9f6rbz77jremn",
+    "conv_1501kmgy7fatfky9j3g8xzvd477v",
+    "conv_5301kmgthby0e3dr0v7m43t1e510",
+    "conv_3701kmgrqxh1far9xjmc69kh0wqp",
+    "conv_4201kmgmz0yyeesrjpat250gndp7",
+    "conv_9501kmvxmmt2f2br1w953d552zdh",
+    "conv_5201kmy0q49bfdm92561kxy0cphs",
+    "conv_1801kmy0fgqefcq8a75bm0sjhpcq",
+    "conv_2101kmxzxacdfg0rvtazazfv9qaj",
+    "conv_7801kmxyf64xed9ts736g3854wpn",
+    "conv_5101kmxa22c5eky8y890a0s7td86",
+    "conv_6401kmx65wexe7erf0xqddjt4xp2"
+  ],
+  "last_check": "2026-03-30T14:00:04.023362",
+  "daily_stats": {
+    "2026-03-28": {
+      "total_calls": 10,
+      "hot_leads": 1,
+      "warm_leads": 0,
+      "cold_leads": 0,
+      "total_duration": 358
+    },
+    "2026-03-29": {
+      "total_calls": 1,
+      "hot_leads": 0,
+      "warm_leads": 0,
+      "cold_leads": 0,
+      "total_duration": 6
+    },
+    "2026-03-30": {
+      "total_calls": 4,
+      "hot_leads": 0,
+      "warm_leads": 0,
+      "cold_leads": 0,
+      "total_duration": 97
+    }
+  }
+}

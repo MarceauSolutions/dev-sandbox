@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rave Thursdays: Escape Reality | April 23 @ Elite Lounge</title>
+    <meta name="description" content="EDM • Lights • Energy • Vibes. $20 Presale tickets for Rave Thursdays at Elite Lounge, North Fort Myers. Limited capacity - get your tickets now!">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Rave Thursdays: Escape Reality">
+    <meta property="og:description" content="April 23 @ Elite Lounge. $20 Presale | $30 Door. Limited capacity.">
+    <meta property="og:image" content="flyer.jpg">
+    <meta property="og:type" content="website">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #a855f7;
+            --primary-light: #c084fc;
+            --secondary: #3b82f6;
+            --accent: #f472b6;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --text: #ffffff;
+            --text-muted: #a1a1aa;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(244, 114, 182, 0.1) 0%, transparent 60%);
+            z-index: -1;
+            animation: pulse-bg 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-bg {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .logo span {
+            color: var(--primary-light);
+        }
+        
+        .event-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 12vw, 6rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 60px rgba(168, 85, 247, 0.5);
+        }
+        
+        .event-subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        
+        /* Countdown */
+        .countdown {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .countdown-item {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .countdown-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+        
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Event Details */
+        .event-details {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .detail-icon {
+            font-size: 1.25rem;
+        }
+        
+        /* Pricing */
+        .pricing {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .price-card.featured {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .price-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .price-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .price-card.featured .price-amount {
+            color: var(--primary-light);
+        }
+        
+        .price-note {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1.25rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+            animation: pulse-cta 2s infinite;
+        }
+        
+        @keyframes pulse-cta {
+            0%, 100% { box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 10px 60px rgba(168, 85, 247, 0.6); }
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(168, 85, 247, 0.5);
+        }
+        
+        .urgency {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: var(--accent);
+            font-size: 0.9rem;
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Features */
+        .features {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Flyer Section */
+        .flyer-section {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .flyer-container {
+            max-width: 500px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+        }
+        
+        .flyer-container img {
+            width: 100%;
+            display: block;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .promoter {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .promoter-name {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-light);
+        }
+        
+        .venue-link {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        
+        .venue-link:hover {
+            color: var(--primary-light);
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero { padding: 1.5rem; }
+            .countdown { gap: 0.75rem; }
+            .countdown-item { padding: 0.75rem 1rem; min-width: 65px; }
+            .countdown-number { font-size: 1.5rem; }
+            .pricing { gap: 1rem; }
+            .price-card { padding: 1rem 1.5rem; }
+            .price-card.featured { transform: scale(1); }
+            .cta-button { font-size: 1rem; padding: 1rem 2rem; }
+            .event-details { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <section class="hero">
+        <div class="logo"><span>Elite</span> Lounge Presents</div>
+        
+        <h1 class="event-title">RAVE</h1>
+        <h2 class="event-subtitle">Thursdays</h2>
+        <p class="tagline">Escape Reality</p>
+        
+        <div class="countdown" id="countdown">
+            <div class="countdown-item">
+                <div class="countdown-number" id="days">--</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="hours">--</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="minutes">--</div>
+                <div class="countdown-label">Mins</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-number" id="seconds">--</div>
+                <div class="countdown-label">Secs</div>
+            </div>
+        </div>
+        
+        <div class="event-details">
+            <div class="detail-item">
+                <span class="detail-icon">📅</span>
+                <span>April 23, 2026</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-icon">🕙</span>
+                <span>Doors @ 10PM</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-icon">📍</span>
+                <span>5781 Bayshore Rd, N. Fort Myers</span>
+            </div>
+        </div>
+        
+        <div class="pricing">
+            <div class="price-card featured">
+                <div class="price-label">Presale</div>
+                <div class="price-amount">$20</div>
+                <div class="price-note">Save $10!</div>
+            </div>
+            <div class="price-card">
+                <div class="price-label">At Door</div>
+                <div class="price-amount">$30</div>
+            </div>
+        </div>
+        
+        <a href="#tickets" class="cta-button" id="cta">
+            🎟️ Get Presale Tickets
+        </a>
+        
+        <div class="urgency">
+            <span>⚠️</span>
+            <span>LIMITED CAPACITY — Arrive Early</span>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🎵</span>
+                <span>EDM All Night</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">💡</span>
+                <span>Epic Light Show</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                <span>High Energy</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">✨</span>
+                <span>Good Vibes Only</span>
+            </div>
+        </div>
+    </section>
+    
+    <section class="flyer-section">
+        <div class="flyer-container">
+            <img src="flyer.jpg" alt="Rave Thursdays - April 23 at Elite Lounge">
+        </div>
+    </section>
+    
+    <footer>
+        <p class="promoter">Presented by <span class="promoter-name">Aura Promotions</span></p>
+        <a href="https://maps.google.com/?q=5781+Bayshore+Rd+North+Fort+Myers+FL" class="venue-link" target="_blank">
+            📍 Elite Lounge — 5781 Bayshore Rd, North Fort Myers, FL
+        </a>
+    </footer>
+
+    <script>
+        // Countdown Timer
+        const eventDate = new Date('April 23, 2026 22:00:00').getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        
+        // CTA click tracking (placeholder for actual ticket link)
+        document.getElementById('cta').addEventListener('click', function(e) {
+            // Will be replaced with actual ticket link
+            alert('Ticket link will be configured here!');
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>

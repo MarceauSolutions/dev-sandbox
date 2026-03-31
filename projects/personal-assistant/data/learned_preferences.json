@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-03-28T10:38:59.811685",
-  "total_outcomes": 1,
+  "updated_at": "2026-03-30T14:31:07.676366",
+  "total_outcomes": 5,
   "best_channel": "Call",
   "best_channel_rate": 90.6,
   "recommended_action": "call",
@@ -9,12 +9,28 @@
       "industry": "HVAC / Home Services",
       "conversion_pct": 100.0,
       "total": 1
+    },
+    {
+      "industry": "HVAC",
+      "conversion_pct": 100.0,
+      "total": 2
+    },
+    {
+      "industry": "Plumbing",
+      "conversion_pct": 100.0,
+      "total": 1
+    },
+    {
+      "industry": "Pest Control",
+      "conversion_pct": 100.0,
+      "total": 1
     }
   ],
   "deprioritized_industries": [],
-  "follow_up_days": 3,
+  "follow_up_days": 2,
   "insights": [
-    "Only 1 outcome(s) recorded. Need more data for reliable insights.",
-    "Record outcomes via: result [company]: [outcome]"
+    "Best channel: Call (90.6% response rate)",
+    "Stop using: Email (0% response rate after 242 attempts)",
+    "Converting industries: HVAC / Home Services (100.0%), HVAC (100.0%), Plumbing (100.0%), Pest Control (100.0%)"
   ]
 }

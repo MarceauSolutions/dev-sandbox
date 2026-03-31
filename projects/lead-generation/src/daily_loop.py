@@ -39,6 +39,19 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+# Timezone utilities for Eastern time display (William is in Naples, FL)
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "execution"))
+    from timezone_utils import now_eastern, format_eastern, format_time_only
+except ImportError:
+    # Fallback if timezone_utils not available
+    def now_eastern():
+        return datetime.now()
+    def format_eastern(dt=None, fmt="%Y-%m-%d %I:%M %p"):
+        return (dt or datetime.now()).strftime(fmt)
+    def format_time_only(dt=None):
+        return (dt or datetime.now()).strftime("%I:%M %p")
+
 # Setup paths
 PROJECT_ROOT = Path(__file__).parent.parent
 SRC_DIR = Path(__file__).parent
@@ -287,14 +300,83 @@ def _run_module(module_name: str, args: List[str], timeout: int = 300) -> Dict[s
         return {"success": False, "error": str(e)}
 
 
-def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
-    """Stages 1-3: Discover, score, enrich, and outreach via campaign_auto_launcher."""
+def _is_generation_day() -> bool:
+    """Check if today is a scheduled lead generation day.
+    
+    Default: Monday (weekly generation).
+    Checks generate_new_lead_list.should_run_generation() for dynamic scheduling.
+    """
     try:
+        from .generate_new_lead_list import should_run_generation
+        should_run, reason = should_run_generation()
+        logger.info(f"Generation day check: {should_run} — {reason}")
+        return should_run
+    except Exception as e:
+        logger.warning(f"Generation day check failed: {e}")
+        # Default: Monday is generation day
+        return datetime.now().weekday() == 0
+
+
+def stage_lead_generation(dry_run: bool = True) -> Dict[str, Any]:
+    """Stage 1a: Weekly lead list generation (runs on generation days only).
+    
+    Uses generate_new_lead_list module for ICP-tiered, deduplicated discovery.
+    Only runs on scheduled days (default: weekly Monday).
+    """
+    if not _is_generation_day():
+        logger.info("Not a generation day — skipping lead list generation")
+        log_stage("lead_generation", True, {"skipped": "not_generation_day"})
+        return {"skipped": True, "reason": "not_generation_day"}
+    
+    try:
+        from .generate_new_lead_list import generate_lead_list
+        
+        result = generate_lead_list(
+            limit=100,
+            dry_run=dry_run,
+            force=False  # Respect scheduling
+        )
+        
+        if result.get("status") == "completed":
+            log_stage("lead_generation", True, {
+                "generated": result.get("total_generated", 0),
+                "tier_1": result.get("tier_1", 0),
+                "tier_2": result.get("tier_2", 0),
+                "imported": result.get("imported", 0),
+            })
+        elif result.get("status") == "skipped":
+            log_stage("lead_generation", True, {"skipped": result.get("reason", "unknown")})
+        else:
+            log_stage("lead_generation", False, {"error": result.get("error", "unknown")})
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Lead generation failed: {e}\n{traceback.format_exc()}")
+        log_stage("lead_generation", False, {"error": str(e)})
+        return {"error": str(e)}
+
+
+def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
+    """Stages 1-3: Discover, score, enrich, and outreach via campaign_auto_launcher.
+    
+    NOTE: On generation days, new discovery is handled by stage_lead_generation.
+    This stage now focuses on processing existing pipeline leads (scoring/outreach).
+    """
+    try:
+        # On generation days, lead discovery is handled separately
+        # This stage focuses on outreach to existing Prospect/Qualified leads
+        is_gen_day = _is_generation_day()
+        
         args = ["--business", "marceau-solutions"]
         if dry_run:
             args.append("--dry-run")
         else:
             args.append("--for-real")
+        
+        # On non-generation days, limit new discovery to avoid flooding
+        if not is_gen_day:
+            args.extend(["--limit", "10"])  # Cap at 10 new leads on normal days
 
         result = _run_module("campaign_auto_launcher", args, timeout=180)
 
@@ -306,6 +388,7 @@ def stage_discover_and_score(dry_run: bool = True) -> Dict[str, Any]:
             log_stage("discover_score", True, {
                 "discovered": discovered,
                 "outreached": outreached,
+                "generation_day": is_gen_day,
             })
         else:
             stderr = result.get("stderr", "")[:500]
@@ -347,6 +430,55 @@ def stage_follow_up(dry_run: bool = True) -> Dict[str, Any]:
         logger.error(f"Stage follow_up failed: {e}\n{traceback.format_exc()}")
         log_stage("follow_up", False, {"error": str(e)})
         return {"error": str(e)}
+
+
+def stage_email_sequences(dry_run: bool = True) -> Dict[str, Any]:
+    """Stage 7b: Process email sequences via Gmail API.
+    
+    - Auto-enrolls qualified leads from pipeline
+    - Sends due emails
+    - Checks for replies and stops sequences
+    """
+    try:
+        sys.path.insert(0, str(REPO_ROOT.parent.parent / "execution"))
+        from email_sequence_engine import (
+            enroll_from_pipeline, process_due_emails, check_replies, get_status
+        )
+        
+        results = {
+            "enrolled": 0,
+            "sent": 0,
+            "replies": 0,
+            "errors": 0
+        }
+        
+        # Step 1: Auto-enroll new leads
+        enrolled = enroll_from_pipeline(max_enrollments=20, dry_run=dry_run)
+        results["enrolled"] = len(enrolled)
+        
+        # Step 2: Process due emails
+        if not dry_run:
+            stats = process_due_emails(dry_run=False)
+            results["sent"] = stats.get("sent", 0)
+            results["errors"] = stats.get("errors", 0)
+        else:
+            stats = process_due_emails(dry_run=True)
+            results["sent"] = stats.get("sent", 0)
+        
+        # Step 3: Check for replies
+        if not dry_run:
+            reply_count = check_replies()
+            results["replies"] = reply_count
+        
+        logger.info(f"Email sequences: enrolled={results['enrolled']}, sent={results['sent']}, replies={results['replies']}")
+        log_stage("email_sequences", True, results)
+        
+        return {"success": True, **results}
+        
+    except Exception as e:
+        logger.error(f"Email sequences stage failed: {e}")
+        log_stage("email_sequences", False, {"error": str(e)})
+        return {"success": False, "error": str(e)}
 
 
 def stage_check_responses() -> Dict[str, Any]:
@@ -488,10 +620,18 @@ def stage_digest() -> Dict[str, Any]:
 
         # Stage results from today's loop
         if STAGE_RESULTS:
+            lg = STAGE_RESULTS.get("lead_generation", {})
             ds = STAGE_RESULTS.get("discover_score", {})
             fu = STAGE_RESULTS.get("follow_up", {})
             cr = STAGE_RESULTS.get("check_responses", {})
             lines.append("*Today's Loop:*")
+            
+            # Lead generation (if ran)
+            if lg.get("success") and not lg.get("skipped"):
+                lines.append(f"  📋 Lead List Generated: {lg.get('generated', 0)} new leads")
+                lines.append(f"     Tier 1: {lg.get('tier_1', 0)} | Tier 2: {lg.get('tier_2', 0)}")
+                lines.append(f"     Imported: {lg.get('imported', 0)}")
+            
             if ds.get("success"):
                 lines.append(f"  Discovered: {ds.get('discovered', 0)} | "
                              f"Outreached: {ds.get('outreached', 0)}")
@@ -715,7 +855,7 @@ def run_full_loop(dry_run: bool = True):
     """Run the complete 8-stage acquisition loop."""
     mode = "DRY RUN" if dry_run else "LIVE"
     logger.info(f"\n{'='*60}")
-    logger.info(f"DAILY LOOP — {mode} — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    logger.info(f"DAILY LOOP — {mode} — {format_eastern()} (Eastern)")
     logger.info(f"{'='*60}\n")
 
     # Stage 0: Standardization check (non-blocking)
@@ -733,7 +873,13 @@ def run_full_loop(dry_run: bool = True):
     except Exception as e:
         logger.warning(f"Compliance check skipped: {e}")
 
+    # Stage 0.5: Weekly lead list generation (runs on generation days only)
+    logger.info("\n▶ Stage 0.5: Weekly Lead List Generation")
+    stage_lead_generation(dry_run=dry_run)
+
     # Stage 1-3: Discover, score, enrich, outreach (Touch 1)
+    # Note: On generation days, most discovery happens in Stage 0.5
+    # This stage processes existing pipeline + limited new discovery
     logger.info("\n▶ Stages 1-4: Discover → Score → Enrich → Outreach")
     stage_discover_and_score(dry_run=dry_run)
 
@@ -744,6 +890,10 @@ def run_full_loop(dry_run: bool = True):
     # Stage 7: Follow-up sequences
     logger.info("\n▶ Stage 7: Follow-up sequences")
     stage_follow_up(dry_run=dry_run)
+
+    # Stage 7b: Email sequences (Gmail API)
+    logger.info("\n▶ Stage 7b: Email sequences")
+    stage_email_sequences(dry_run=dry_run)
 
     # Stage 8a: Cross-tower handoffs (coaching leads → fitness-influencer)
     logger.info("\n▶ Stage 8a: Cross-tower handoffs")
@@ -782,7 +932,7 @@ def run_full_loop(dry_run: bool = True):
             sys.path.insert(0, str(REPO_ROOT / "execution"))
             from safe_git_save import safe_save
             save_result = safe_save(
-                message=f"auto: daily loop {successes}/{total} — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+                message=f"auto: daily loop {successes}/{total} — {format_eastern()}",
             )
             if save_result.get("saved"):
                 logger.info(f"Auto-save: {save_result.get('files', 0)} files committed")

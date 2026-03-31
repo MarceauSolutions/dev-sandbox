@@ -14,7 +14,7 @@ import hashlib
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 from pathlib import Path
 
 # =============================================================================
@@ -2053,6 +2053,9 @@ class BehaviorProfile:
 
 # In-memory storage for behavior profiles
 BEHAVIOR_PROFILES: Dict[str, BehaviorProfile] = {}
+DISCOVERED_TOOLS: Dict[str, dict] = {}
+TOOL_USAGE_STATS: Dict[str, dict] = {}
+ERROR_SOLUTIONS: Dict[str, dict] = {}
 
 
 def get_or_create_behavior_profile(session_id: str) -> BehaviorProfile:

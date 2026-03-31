@@ -1,0 +1,54 @@
+[
+  {
+    "timestamp": "2026-03-24T02:35:56.849596",
+    "client_name": "Luis",
+    "business_name": "ADVANCED POWER ELECTRICAL CONTRACTORS, INC.",
+    "email": "luis@advancedelectric.net",
+    "tier": 1,
+    "tier_name": "Tier 1 \u2014 Starter",
+    "monthly_rate": "$497/month",
+    "pain_point": "test",
+    "status": "proposal_sent",
+    "payment_link": "https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
+    "signing_url": "http://localhost:8797/0794f186-8d3b-4f82-8367-da8b5fccb972"
+  },
+  {
+    "timestamp": "2026-03-24T02:36:16.749414",
+    "client_name": "Luis",
+    "business_name": "ADVANCED POWER ELECTRICAL CONTRACTORS, INC.",
+    "email": "luis@advancedelectric.net",
+    "tier": 1,
+    "tier_name": "Tier 1 \u2014 Starter",
+    "monthly_rate": "$497/month",
+    "pain_point": "Missing after-hours calls",
+    "status": "proposal_sent",
+    "payment_link": "https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
+    "signing_url": "http://localhost:8797/dd079436-7dc9-46f2-8c56-4062cb4445b2"
+  },
+  {
+    "timestamp": "2026-03-24T02:36:56.625760",
+    "client_name": "Jeremy",
+    "business_name": "HORIZON POOL SERVICE LLC",
+    "email": "jeremy.meyers@horizonpoolsupply.com",
+    "tier": 1,
+    "tier_name": "Tier 1 \u2014 Starter",
+    "monthly_rate": "$497/month",
+    "pain_point": "Missing after-hours calls",
+    "status": "proposal_sent",
+    "payment_link": "https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
+    "signing_url": "http://localhost:8797/aaffbfe4-5560-4f74-b52e-752468cbb91f"
+  },
+  {
+    "timestamp": "2026-03-24T02:39:36.394775",
+    "client_name": "Jamie",
+    "business_name": "Antimidators",
+    "email": "jamie@antimidators.com",
+    "tier": 1,
+    "tier_name": "Tier 1 \u2014 Starter",
+    "monthly_rate": "$497/month",
+    "pain_point": "Improve lead capture and follow-up",
+    "status": "proposal_sent",
+    "payment_link": "https://buy.stripe.com/9B66oH7tBaeI0Wk8H8g360f",
+    "signing_url": "https://sign.marceausolutions.com/1cf32ccc-3136-44dd-9bd2-a7ea7a572a1d"
+  }
+]
