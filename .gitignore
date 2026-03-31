@@ -173,3 +173,33 @@ projects/lead-generation/output/**/*.json
 projects/lead-generation/output/**/*.jsonl
 projects/lead-generation/projects/shared/lead-scraper/output/
 
+
+# === PARALLEL WORKFLOW SYNC FIX ===
+# All mutable output/state files are gitignored
+# Source of truth for data = EC2 SQLite databases
+# Source of truth for code = GitHub (both agents push)
+
+# All output directories (regenerated)
+**/output/*.json
+**/output/*.jsonl
+**/output/*.csv
+**/output/*.pdf
+**/output/**/*.json
+**/output/**/*.pdf
+
+# Runtime state files
+**/*_state.json
+**/*_cache.json
+**/last_run*.json
+**/daily_*.json
+**/follow_up_*.json
+**/campaign*.json
+
+# Logs
+**/*.log
+**/logs/
+
+# SQLite temp files (already in gitignore but being explicit)
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm
