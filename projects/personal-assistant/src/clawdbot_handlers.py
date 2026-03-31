@@ -1255,7 +1255,33 @@ def handle_demo(text: str) -> str:
 
     try:
         import os, ssl, json, urllib.request, certifi
-        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        import os, ssl, json, urllib.request, certifi
+        api_key = os.getenv("GROK_API_KEY", "") or os.getenv("GROQ_API_KEY", "")
+        if not api_key:
+            return "GROK_API_KEY not set — cannot run demo (check .env)"
+
+        ctx = ssl.create_default_context(cafile=certifi.where())
+        data = json.dumps({
+            "model": "grok-beta",   # or "grok-4" / latest available - check https://docs.x.ai
+            "max_tokens": 300,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": caller_msg}
+            ],
+            "temperature": 0.7
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://api.x.ai/v1/chat/completions",
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            }
+        )
+        resp = urllib.request.urlopen(req, timeout=30, context=ctx)
+        result = json.loads(resp.read())
+        ai_response = result["choices"][0]["message"]["content"]
         if not api_key:
             return "ANTHROPIC_API_KEY not set — cannot run demo"
 
