@@ -17,15 +17,15 @@ What it does:
 
 ---
 
-## Pricing
+## Pricing — Three Tiers
 
 | Tier | Price | What They Get |
 |------|-------|---------------|
-| **Pilot** | $497/mo | AI phone agent + 2-week free onboarding + custom voice setup |
-| **Growth** | $997/mo | Multiple phone lines + full automation suite |
-| **Enterprise** | Custom | Multi-location, advanced integrations |
+| **Starter — AI Receptionist** | $297/mo | AI answers calls 24/7, qualifies leads, texts you hot leads instantly. Free 2-week setup. |
+| **Growth — Full Intake System** | $497/mo | Everything in Starter + trained on their services/pricing, books appointments, automated follow-ups. Free 2-week setup. |
+| **Professional — Complete AI Layer** | $997/mo | Everything in Growth + full Lead Management System, multi-channel intake, monthly strategy calls. Free 2-week setup. |
 
-**Always start with the $497 pilot.** Low-risk, proves ROI in week one.
+**Start with Growth ($497/mo)** — it's the sweet spot. AI Receptionist is too basic for most. Complete AI is for bigger operations.
 
 ---
 
