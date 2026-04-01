@@ -1,0 +1,35 @@
+{
+  "active_reps": [
+    {
+      "id": "will-george",
+      "name": "Will George",
+      "email": "Wiiliamgeorgefl88@gmail.com",
+      "phone": "",
+      "page_slug": "will",
+      "active": true,
+      "added": "2026-03-31",
+      "notes": "Referral partner \u2014 promoting Marceau Solutions AI services in exchange for EDM Nights website build"
+    },
+    {
+      "id": "julia-marceau",
+      "name": "Julia Marceau",
+      "email": "julzmarceau@gmail.com",
+      "phone": "",
+      "page_slug": "julia",
+      "active": true,
+      "added": "2026-03-31",
+      "notes": "Sister \u2014 helping with sales outreach for Marceau Solutions"
+    }
+  ],
+  "owner": {
+    "id": "william-marceau",
+    "name": "William Marceau",
+    "email": "wmarceau@marceausolutions.com",
+    "phone": "(239) 398-5676"
+  },
+  "assignment_rules": {
+    "default_rep": "william-marceau",
+    "auto_assign": false,
+    "max_leads_per_rep": 25
+  }
+}

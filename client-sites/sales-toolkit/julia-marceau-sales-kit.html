@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marceau Solutions — Sales Partner Kit</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --gold: #C9963C;
+            --gold-light: #d4a94f;
+            --dark: #1a1a1a;
+            --darker: #111111;
+            --text: #ffffff;
+            --text-muted: #999999;
+            --card-bg: #1e1e1e;
+            --border: #333333;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(201, 150, 60, 0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Sections */
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            margin-top: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        p, li {
+            color: #cccccc;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card.highlight {
+            border-color: var(--gold);
+        }
+
+        .card h3 {
+            color: var(--gold-light);
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0.5rem 0;
+        }
+
+        .price span {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        /* Script boxes */
+        .script-box {
+            background: rgba(201, 150, 60, 0.08);
+            border-left: 3px solid var(--gold);
+            padding: 1.25rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .script-box strong {
+            font-style: normal;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Lists */
+        ul {
+            padding-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        li { margin-bottom: 0.4rem; }
+
+        /* Target table */
+        .target-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .target-table th {
+            background: var(--card-bg);
+            color: var(--gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .target-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: #cccccc;
+        }
+
+        .target-table tr:hover td {
+            background: rgba(201, 150, 60, 0.05);
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 2.5rem;
+            background: var(--card-bg);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            margin-top: 3rem;
+        }
+
+        .cta-section h2 {
+            margin-top: 0;
+        }
+
+        .cta-link {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--darker);
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .cta-link:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* Objection handling */
+        .objection {
+            margin-bottom: 1.5rem;
+        }
+
+        .objection .q {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .objection .a {
+            color: #bbbbbb;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .card { padding: 1rem; }
+            .cta-section { padding: 1.5rem; }
+        }
+
+        @media print {
+            body { background: white; color: black; }
+            .card { border: 1px solid #ccc; }
+            .cta-link { background: #333; color: white; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>MARCEAU SOLUTIONS</h1>
+        <p>AI Automation for Small Businesses — Naples, FL</p>
+        <div class="badge">Sales Partner Kit — Julia Marceau</div>
+    </div>
+
+    <!-- ELEVATOR PITCH -->
+    <h2>The 30-Second Pitch</h2>
+
+    <div class="script-box">
+        <strong>What to say:</strong>
+        "I work with a guy who builds AI systems for small businesses. You know how you miss calls when you're busy? His AI answers the phone 24/7, books appointments, and follows up with leads automatically. It's like having a receptionist that never sleeps. He's based in Naples and he's already doing it for HVAC companies and med spas. Want me to connect you?"
+    </div>
+
+    <p>That's it. You don't need to explain the tech. Just connect them — William handles the rest.</p>
+
+    <!-- WHAT WE SELL -->
+    <h2>What We Sell</h2>
+
+    <div class="card highlight">
+        <h3>AI Phone Receptionist</h3>
+        <p class="price">$497/mo <span>+ $297 setup</span></p>
+        <p>AI answers calls 24/7, books appointments, qualifies leads, sends follow-up texts. Live in 7 days.</p>
+        <ul>
+            <li>Never miss a call again — AI picks up instantly</li>
+            <li>Books appointments directly into their calendar</li>
+            <li>Sends automatic text follow-ups to missed calls</li>
+            <li>Works nights, weekends, holidays</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Lead Generation Automation</h3>
+        <p class="price">$497/mo <span>+ $297 setup</span></p>
+        <p>Automated lead scraping, enrichment, and outreach. Finds new customers while they sleep.</p>
+    </div>
+
+    <div class="card">
+        <h3>Website + Automation Package</h3>
+        <p class="price">$997 one-time <span>or $197/mo</span></p>
+        <p>Professional website with integrated booking, CRM automation, and lead capture.</p>
+    </div>
+
+    <!-- WHO TO TARGET -->
+    <h2>Who to Talk To</h2>
+
+    <p>The best prospects are <strong>small business owners</strong> who answer their own phone or miss calls regularly. Focus on:</p>
+
+    <table class="target-table">
+        <thead>
+            <tr>
+                <th>Business Type</th>
+                <th>Pain Point</th>
+                <th>What to Say</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>HVAC / Plumbing</strong></td>
+                <td>Miss calls while on jobs</td>
+                <td>"How many calls do you miss when you're under a house?"</td>
+            </tr>
+            <tr>
+                <td><strong>Med Spas / Dental</strong></td>
+                <td>Front desk overwhelmed</td>
+                <td>"What happens when all your lines are busy?"</td>
+            </tr>
+            <tr>
+                <td><strong>Gyms / Studios</strong></td>
+                <td>No follow-up on inquiries</td>
+                <td>"How many people call about membership and never hear back?"</td>
+            </tr>
+            <tr>
+                <td><strong>Restaurants</strong></td>
+                <td>Missed reservations during rush</td>
+                <td>"How many reservation calls go to voicemail during dinner?"</td>
+            </tr>
+            <tr>
+                <td><strong>Auto Shops</strong></td>
+                <td>Owner is under a car</td>
+                <td>"Who answers the phone when you're elbow-deep in an engine?"</td>
+            </tr>
+            <tr>
+                <td><strong>Lawyers / CPAs</strong></td>
+                <td>After-hours calls lost</td>
+                <td>"What happens to the calls that come in after 5pm?"</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- HOW TO MAKE THE INTRO -->
+    <h2>How to Make the Introduction</h2>
+
+    <p>You don't need to sell anything. Just open the door. Three ways:</p>
+
+    <div class="card">
+        <h3>Option 1: Text or Call Introduction</h3>
+        <div class="script-box">
+            <strong>Text to send the prospect:</strong>
+            "Hey [Name], I know someone who builds AI phone systems for businesses like yours. It answers calls 24/7 and books appointments automatically. He's local in Naples. Want me to have him reach out? No pressure."
+        </div>
+        <p>If they say yes, text William their name and number: <strong>(239) 398-5676</strong></p>
+    </div>
+
+    <div class="card">
+        <h3>Option 2: Send Them the Booking Link</h3>
+        <p>Just share this link — it books a free 15-minute discovery call directly with William:</p>
+        <p style="color: var(--gold); font-weight: 600; font-size: 1.1rem;">calendly.com/wmarceau/ai-services-discovery-call</p>
+    </div>
+
+    <div class="card">
+        <h3>Option 3: Three-Way Text</h3>
+        <div class="script-box">
+            <strong>Group text:</strong>
+            "Hey [Prospect], meet William. William, meet [Prospect] — they own [Business] in [Area]. [Prospect], William does AI automation for small businesses. William, [Prospect] was telling me about [pain point]. I'll let you two take it from here."
+        </div>
+    </div>
+
+    <!-- OBJECTION HANDLING -->
+    <h2>If They Push Back</h2>
+
+    <p>You don't need to overcome objections — just plant the seed and let William handle the close. But if they ask:</p>
+
+    <div class="objection">
+        <div class="q">"I already have a receptionist."</div>
+        <div class="a">"This isn't a replacement — it handles the overflow. When your receptionist is on another call, on break, or after hours, the AI picks up instead of voicemail."</div>
+    </div>
+
+    <div class="objection">
+        <div class="q">"That sounds expensive."</div>
+        <div class="a">"It's less than a part-time employee. And think about how much one missed call costs you — if it's a $5,000 HVAC job that went to your competitor, $497/mo pays for itself with one saved call."</div>
+    </div>
+
+    <div class="objection">
+        <div class="q">"AI can't do what a real person does."</div>
+        <div class="a">"You'd be surprised. It sounds natural, books appointments, and sends follow-up texts. But don't take my word for it — call the demo line and hear it yourself: (855) 239-9364."</div>
+    </div>
+
+    <div class="objection">
+        <div class="q">"I'm not interested."</div>
+        <div class="a">"No worries at all. If you ever start missing calls or want to see what it sounds like, just let me know."</div>
+    </div>
+
+    <!-- DEMO LINE -->
+    <h2>Live Demo They Can Call</h2>
+
+    <div class="card highlight">
+        <h3>AI Receptionist Demo Line</h3>
+        <p class="price" style="font-size: 1.8rem;">(855) 239-9364</p>
+        <p>Anyone can call this number right now and talk to the AI. It answers as a sample HVAC company. This is the most powerful sales tool — let them hear it for themselves.</p>
+        <div class="script-box">
+            <strong>What to say:</strong>
+            "Here, call this number real quick — (855) 239-9364. That's what it sounds like. Imagine that answering YOUR phones."
+        </div>
+    </div>
+
+    <!-- COMMISSION -->
+    <h2>What's In It For You</h2>
+
+    <div class="card highlight">
+        <p>For every client you refer that signs up, William will work out compensation with you directly. The more qualified the intro, the easier the close. A warm "my friend William can help with that" beats a cold call every time.</p>
+        <p style="margin-top: 0.75rem;"><strong>Best intros are:</strong></p>
+        <ul>
+            <li>Business owners you know personally (not the receptionist)</li>
+            <li>People who've complained about missing calls or being too busy</li>
+            <li>Anyone who just opened a new business (they need everything)</li>
+        </ul>
+    </div>
+
+    <!-- QUICK REFERENCE -->
+    <h2>Quick Reference</h2>
+
+    <div class="card">
+        <p><strong>William's Phone:</strong> (239) 398-5676</p>
+        <p><strong>William's Email:</strong> wmarceau@marceausolutions.com</p>
+        <p><strong>Demo Line:</strong> (855) 239-9364</p>
+        <p><strong>Booking Link:</strong> calendly.com/wmarceau/ai-services-discovery-call</p>
+        <p><strong>Website:</strong> marceausolutions.com</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+        <h2>Send Prospects Here</h2>
+        <p>This link books a free 15-minute discovery call with William:</p>
+        <a href="https://calendly.com/wmarceau/ai-services-discovery-call" class="cta-link" target="_blank">
+            Book a Discovery Call
+        </a>
+        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+            Or have them call the demo line: (855) 239-9364
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>Marceau Solutions &mdash; AI Automation for Small Businesses</p>
+        <p><a href="https://marceausolutions.com">marceausolutions.com</a> | Naples, FL</p>
+    </div>
+
+</div>
+
+</body>
+</html>
