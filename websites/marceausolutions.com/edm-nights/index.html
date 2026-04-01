@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDM Nights | April 23 @ Elite Lounge — Find Your Frequency</title>
+    <meta name="description" content="EDM Nights — House, Tech House, Bass. April 23 at Elite Lounge, North Fort Myers. 21+ | Find your frequency. Escape reality.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="EDM Nights — Find Your Frequency">
+    <meta property="og:description" content="April 23 @ Elite Lounge, North Fort Myers. House, Tech House, Bass. 21+ | Escape Reality.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://marceausolutions.com/edm-nights/">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EDM Nights — Find Your Frequency">
+    <meta name="twitter:description" content="April 23 @ Elite Lounge. House, Tech House, Bass. 21+">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x25CE;</text></svg>">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MusicEvent",
+        "name": "EDM Nights",
+        "description": "House, Tech House, Bass. Find your frequency. Escape reality.",
+        "startDate": "2026-04-23T22:00:00-04:00",
+        "endDate": "2026-04-24T02:00:00-04:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+            "@type": "Place",
+            "name": "Elite Lounge",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "5781 Bayshore Road, Suite 111-112",
+                "addressLocality": "North Fort Myers",
+                "addressRegion": "FL",
+                "postalCode": "33917",
+                "addressCountry": "US"
+            }
+        },
+        "organizer": {
+            "@type": "Organization",
+            "name": "Aura Promotions"
+        },
+        "performer": [
+            { "@type": "MusicGroup", "name": "Tico" },
+            { "@type": "MusicGroup", "name": "DJ Sleaze" }
+        ],
+        "offers": {
+            "@type": "Offer",
+            "url": "https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?aff=marceausolutions",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "validFrom": "2026-03-31"
+        },
+        "typicalAgeRange": "21+"
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+        :root {
+            --cream: #ece8e1;
+            --cream-dark: #ddd8d0;
+            --black: #111111;
+            --black-soft: #2a2a2a;
+            --grey: #888888;
+            --grey-light: #b0b0b0;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--cream);
+            color: var(--black);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.03;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .hero-locating {
+            font-size: clamp(0.85rem, 2vw, 1rem);
+            letter-spacing: 0.05em;
+            color: var(--black);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        /* Stipple art container */
+        .stipple-art {
+            width: clamp(200px, 50vw, 350px);
+            height: clamp(200px, 50vw, 350px);
+            margin-bottom: 3rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stipple-art canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .stipple-text {
+            position: absolute;
+            font-size: 0.85rem;
+            color: var(--white);
+            letter-spacing: 0.05em;
+            mix-blend-mode: difference;
+        }
+
+        .event-title {
+            font-size: clamp(3rem, 12vw, 7rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.25rem;
+            color: var(--black);
+        }
+
+        .event-subtitle {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            margin-bottom: 2rem;
+        }
+
+        .tagline {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--black);
+            margin-bottom: 0.25rem;
+        }
+
+        .tagline-sub {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--grey);
+            margin-bottom: 2.5rem;
+        }
+
+        /* Countdown */
+        .countdown {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .countdown-item { text-align: center; }
+
+        .countdown-number {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: 700;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--grey);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-top: 0.25rem;
+        }
+
+        /* Event Details Row */
+        .event-details {
+            display: flex;
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            color: var(--black);
+        }
+
+        /* Genre Tags */
+        .genres {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--grey);
+        }
+
+        .genre-separator { color: var(--grey-light); }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            background: var(--black);
+            color: var(--cream);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 1.1rem 3.5rem;
+            border: none;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: var(--black-soft);
+            transform: translateY(-1px);
+        }
+
+        .age-note {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--grey);
+            margin-top: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Divider */
+        .divider {
+            width: 1px;
+            height: 60px;
+            background: var(--black);
+            margin: 4rem auto;
+            opacity: 0.2;
+        }
+
+        /* Lineup Section */
+        .lineup {
+            padding: 0 2rem 4rem;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--grey);
+            margin-bottom: 2rem;
+        }
+
+        .dj-name {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: var(--black);
+        }
+
+        /* Info Section */
+        .info-section {
+            padding: 4rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .info-item { margin-bottom: 0; }
+
+        .info-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--grey);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--black);
+            line-height: 1.5;
+        }
+
+        /* FAQ */
+        .faq-section {
+            padding: 2rem 2rem 4rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1.25rem 0;
+        }
+
+        .faq-q {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--black);
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--grey);
+        }
+
+        .faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: var(--grey);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .faq-a-inner { padding-top: 0.5rem; }
+
+        .faq-item.open .faq-a { max-height: 200px; }
+
+        /* Ticket Section */
+        .ticket-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .eventbrite-wrapper {
+            background: var(--white);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .eventbrite-wrapper iframe {
+            border: none;
+        }
+
+        .ticket-fallback {
+            margin-top: 1rem;
+        }
+
+        .ticket-fallback a {
+            font-family: 'Space Mono', monospace;
+            color: var(--grey);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .ticket-fallback a:hover {
+            color: var(--black);
+        }
+
+        /* Map */
+        .map-section {
+            padding: 0 2rem 4rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .map-container {
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            filter: grayscale(1);
+            transition: filter 0.3s ease;
+        }
+
+        .map-container:hover { filter: grayscale(0); }
+
+        .map-container iframe {
+            width: 100%;
+            height: 280px;
+            border: 0;
+            display: block;
+        }
+
+        /* Share */
+        .share-section {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .share-section p {
+            font-family: 'Space Mono', monospace;
+            color: var(--grey);
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            color: var(--black);
+            padding: 0.6rem 1.2rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .share-btn:hover {
+            background: var(--black);
+            color: var(--cream);
+            border-color: var(--black);
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--black);
+            line-height: 1;
+        }
+
+        .footer-logo-sub {
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: var(--grey);
+        }
+
+        .footer-aura {
+            background: var(--black);
+            color: var(--white);
+            padding: 0.75rem 1.25rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .footer-credit {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.7rem;
+            color: var(--grey-light);
+        }
+
+        .footer-credit a {
+            color: var(--grey);
+            text-decoration: none;
+        }
+
+        .footer-credit a:hover { color: var(--black); }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .hero { padding: 2rem 1.5rem; }
+            .countdown { gap: 1.25rem; }
+            .event-details { gap: 1.5rem; font-size: 0.75rem; }
+            .info-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            footer { flex-direction: column; align-items: center; gap: 2rem; }
+            .cta-button { padding: 1rem 2.5rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+
+        <!-- Hero -->
+        <section class="hero">
+            <p class="hero-locating">you're being located</p>
+
+            <!-- Stipple Art -->
+            <div class="stipple-art">
+                <canvas id="stipple-canvas"></canvas>
+                <span class="stipple-text">see you there</span>
+            </div>
+
+            <h1 class="event-title">EDM<br>Nights</h1>
+            <p class="tagline">Find Your Frequency</p>
+            <p class="tagline-sub">Escape Reality &mdash; Part 1</p>
+
+            <!-- Countdown -->
+            <div class="countdown" id="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">--</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">--</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">--</div>
+                    <div class="countdown-label">Mins</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">--</div>
+                    <div class="countdown-label">Secs</div>
+                </div>
+            </div>
+
+            <div class="event-details">
+                <span>04.23.2026</span>
+                <span>10 PM &mdash; 2 AM</span>
+                <span>Elite Lounge, N. Fort Myers</span>
+            </div>
+
+            <div class="genres">
+                <span>House</span>
+                <span class="genre-separator">&ndash;</span>
+                <span>Tech House</span>
+                <span class="genre-separator">&ndash;</span>
+                <span>Bass</span>
+            </div>
+
+            <a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=listing&utm-source=cp&aff=ebdsshcopyurl"
+               class="cta-button" target="_blank" rel="noopener" id="cta-hero">
+                Get Tickets
+            </a>
+
+            <p class="age-note">21+ &bull; Valid ID Required</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Lineup -->
+        <section class="lineup">
+            <p class="section-label">Lineup</p>
+            <p class="dj-name">Tico</p>
+            <p class="dj-name">DJ Sleaze</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Info -->
+        <section class="info-section">
+            <p class="section-label">Details</p>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">Thursday, April 23</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Time</div>
+                    <div class="info-value">10 PM &mdash; 2 AM</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Venue</div>
+                    <div class="info-value">Elite Lounge<br>5781 Bayshore Rd, Suite 111-112<br>North Fort Myers, FL 33917</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Parking</div>
+                    <div class="info-value">Free on-site parking</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Tickets / Eventbrite Embed -->
+        <section class="ticket-section" id="tickets">
+            <p class="section-label">Secure Your Spot</p>
+
+            <div class="eventbrite-wrapper">
+                <div id="eventbrite-widget-container"></div>
+            </div>
+
+            <a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=listing&utm-source=cp&aff=ebdsshcopyurl"
+               class="cta-button" target="_blank" rel="noopener" id="cta-tickets">
+                Buy on Eventbrite
+            </a>
+
+            <div class="ticket-fallback">
+                <a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=listing&utm-source=cp&aff=ebdsshcopyurl" target="_blank" rel="noopener">
+                    Open Eventbrite directly &rarr;
+                </a>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- FAQ -->
+        <section class="faq-section">
+            <p class="section-label">Need to Know</p>
+
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    What's the age requirement?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">21+ only. Valid photo ID required at the door.</div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    Is there parking?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">Yes, free parking is available at Elite Lounge.</div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    What kind of music?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">House, tech house, and bass-driven sounds. Featuring Tico and DJ Sleaze.</div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    Can I get a refund?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">Tickets are refundable up to 7 days before the event (April 16) through Eventbrite.</div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    Where exactly is it?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">Elite Lounge &mdash; 5781 Bayshore Road, Suite 111-112, North Fort Myers, FL 33917.</div></div>
+            </div>
+
+            <div class="faq-item" style="border-bottom: 1px solid rgba(0,0,0,0.1);">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    What time do doors open?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-a"><div class="faq-a-inner">Doors open at 10 PM. Event runs until 2 AM. Arrive early &mdash; limited capacity.</div></div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Map -->
+        <section class="map-section">
+            <p class="section-label">Find Us</p>
+            <div class="map-container">
+                <iframe
+                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=5781+Bayshore+Rd+North+Fort+Myers+FL+33917&zoom=14"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- Share -->
+        <section class="share-section">
+            <p>Bring Your Crew</p>
+            <div class="share-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://marceausolutions.com/edm-nights/" target="_blank" class="share-btn">Facebook</a>
+                <a href="https://twitter.com/intent/tweet?text=EDM%20Nights%20%E2%80%94%20April%2023%20at%20Elite%20Lounge.%20Find%20your%20frequency.&url=https://marceausolutions.com/edm-nights/" target="_blank" class="share-btn">X / Twitter</a>
+                <a href="sms:?body=EDM%20Nights%20April%2023%20at%20Elite%20Lounge!%20Get%20tickets%3A%20https%3A%2F%2Fmarceausolutions.com%2Fedm-nights%2F" class="share-btn">Text a Friend</a>
+            </div>
+        </section>
+
+        <!-- Footer (matching flyer layout: EL left, Aura right) -->
+        <footer>
+            <div>
+                <div class="footer-logo">E|L</div>
+                <div class="footer-logo-sub">Elite Lounge</div>
+            </div>
+            <div class="footer-aura">AURA</div>
+        </footer>
+
+        <div class="footer-credit">
+            Site by <a href="https://marceausolutions.com" target="_blank" rel="noopener">Marceau Solutions</a>
+        </div>
+
+    </div>
+
+    <!-- Eventbrite Embed Script -->
+    <script src="https://www.eventbrite.com/static/widgets/eb_widgets.js"></script>
+    <script>
+        try {
+            window.EBWidgets.createWidget({
+                widgetType: 'checkout',
+                eventId: '1986279658929',
+                iframeContainerId: 'eventbrite-widget-container',
+                iframeContainerHeight: 425,
+                onOrderComplete: function() {
+                    if (typeof gtag !== 'undefined') gtag('event', 'purchase', { event_category: 'tickets' });
+                }
+            });
+        } catch(e) {}
+    </script>
+
+    <script>
+        // Stipple/particle art (matching flyer aesthetic)
+        (function() {
+            const canvas = document.getElementById('stipple-canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 700;
+            canvas.width = size;
+            canvas.height = size;
+
+            const cx = size / 2;
+            const cy = size / 2;
+            const particles = 12000;
+
+            for (let i = 0; i < particles; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const baseRadius = Math.random() * size * 0.32;
+                // Create organic blob shape with noise
+                const noise = Math.sin(angle * 3) * 30 + Math.cos(angle * 5) * 20 + Math.sin(angle * 7) * 10;
+                const radius = baseRadius + noise;
+
+                const x = cx + Math.cos(angle) * radius;
+                const y = cy + Math.sin(angle) * radius;
+
+                // Density falls off from center
+                const dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+                const maxDist = size * 0.35;
+                const density = 1 - (dist / maxDist);
+
+                if (density > 0 && Math.random() < density * 0.8) {
+                    const dotSize = Math.random() * 1.8 + 0.3;
+                    const alpha = density * 0.7 + Math.random() * 0.3;
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(17, 17, 17, ${alpha})`;
+                    ctx.fill();
+                }
+            }
+        })();
+
+        // Countdown Timer — April 23, 2026 at 10 PM ET
+        const eventDate = new Date('2026-04-23T22:00:00-04:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML =
+                    '<div style="font-family: Space Mono, monospace; font-size: 1.2rem; letter-spacing: 0.1em; text-transform: uppercase;">The night is here</div>';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // FAQ Toggle
+        function toggleFaq(el) {
+            el.parentElement.classList.toggle('open');
+        }
+
+        // UTM tracking
+        const urlParams = new URLSearchParams(window.location.search);
+        const utmSource = urlParams.get('utm_source') || 'landing_page';
+        document.querySelectorAll('a[href*="eventbrite"]').forEach(link => {
+            const url = new URL(link.href);
+            url.searchParams.set('ref', 'marceau_' + utmSource);
+            link.href = url.toString();
+        });
+    </script>
+</body>
+</html>
