@@ -1,0 +1,72 @@
+{
+  "name": "Marceau Solutions AI Services Assistant",
+  "description": "Inbound call handler for AI automation services inquiries",
+  "elevenlabs_agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+  "voice_id": "qvqvkAWr0MfHOxziqHam",
+  "voice_name": "William (Instant Clone)",
+  "model": "eleven_flash_v2",
+  "llm": "gemini-2.5-flash",
+  "elevenlabs_native_twilio": true,
+  "first_message": "Hi, thanks for calling Marceau Solutions! I'm the AI assistant. I help connect local business owners with William to discuss how AI automation can help your business. Can I ask you a few quick questions to see if we'd be a good fit?",
+  
+  "conversation_flow": {
+    "qualifying_questions": [
+      {
+        "id": "business_type",
+        "question": "What type of business do you run?",
+        "follow_up": "That's great. {business_type} businesses have seen huge benefits from AI automation.",
+        "required": true
+      },
+      {
+        "id": "pain_points",
+        "question": "What's your biggest headache right now when it comes to handling customer calls, follow-ups, or repetitive tasks?",
+        "follow_up": "I hear that a lot. That's exactly the kind of thing we help automate.",
+        "required": true
+      },
+      {
+        "id": "current_tech",
+        "question": "Are you currently using any automation or AI tools in your business?",
+        "follow_up": null,
+        "required": false
+      },
+      {
+        "id": "timeline",
+        "question": "What's your timeline for implementing something like this - are you looking to move quickly or just exploring?",
+        "follow_up": null,
+        "required": true
+      },
+      {
+        "id": "budget",
+        "question": "Do you have a rough budget in mind, or should I have William walk you through typical pricing when he calls you back?",
+        "follow_up": null,
+        "required": false
+      }
+    ],
+    
+    "closing": {
+      "qualified": "Perfect! Based on what you've told me, I think William can definitely help. He'll give you a call within 24 hours to discuss specifics. What's the best number to reach you, and what time works best?",
+      "not_qualified": "Thanks for reaching out! Based on what you've shared, it sounds like you might not need full automation right now, but I'll have William send you some resources that might be helpful. What email should I send those to?",
+      "callback_requested": "Great, I've noted that down. William will call you back at {callback_time}. Is there anything specific you'd like him to address?"
+    },
+    
+    "objection_handling": {
+      "too_expensive": "I totally understand budget concerns. The good news is William builds custom solutions, so there's often a way to start small and scale up. Would you be open to a quick call to explore options?",
+      "not_ready": "No pressure at all. Would you like me to have William send you some case studies so you can see how other businesses have used AI automation when you're ready?",
+      "need_to_think": "Absolutely, take your time. Can I get your email so William can send over some information for you to review?"
+    }
+  },
+  
+  "data_collection": {
+    "required_fields": ["name", "phone", "business_type", "pain_points"],
+    "optional_fields": ["email", "timeline", "budget", "current_tech", "callback_time"]
+  },
+  
+  "webhook_url": "https://n8n.marceausolutions.com/webhook/ai-phone-lead",
+  "email_notification": "wmarceau@marceausolutions.com",
+  
+  "twilio_config": {
+    "phone_number": "+18552399364",
+    "record_calls": true,
+    "transcribe": true
+  }
+}
