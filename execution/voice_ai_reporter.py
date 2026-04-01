@@ -23,9 +23,13 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 import anthropic
 
+# Add project root to path for cross-module imports
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
 # Load environment
 from dotenv import load_dotenv
-env_path = Path(__file__).parent.parent / ".env"
+env_path = PROJECT_ROOT / ".env"
 load_dotenv(env_path)
 
 # Configure logging

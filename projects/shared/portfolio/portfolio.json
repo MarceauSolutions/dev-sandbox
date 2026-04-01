@@ -6,7 +6,12 @@
       "client": "Flames of Passion Entertainment",
       "title": "Professional Fire Performance Website",
       "description": "Full website build for a luxury fire dancing and acrobatics performer. Custom domain, event booking, fire safety documentation, mobile-responsive design with animated fire effects.",
-      "services": ["Website Design", "Custom Domain", "SEO", "Event Booking"],
+      "services": [
+        "Website Design",
+        "Custom Domain",
+        "SEO",
+        "Event Booking"
+      ],
       "result": "Professional online presence driving real bookings from Instagram and Facebook",
       "url": "https://flamesofpassionentertainment.com",
       "industry": "Entertainment",
@@ -19,8 +24,13 @@
       "client": "Aura Promotions",
       "title": "EDM Nights Event Landing Page",
       "description": "High-conversion event landing page with live countdown timer, Eventbrite checkout widget, social sharing, FAQ, and mobile-first design for a 21+ EDM event at Elite Lounge.",
-      "services": ["Landing Page", "Eventbrite Integration", "Mobile Optimization", "Social Sharing"],
-      "result": "Conversion-optimized ticket sales page with embedded checkout — no redirect needed",
+      "services": [
+        "Landing Page",
+        "Eventbrite Integration",
+        "Mobile Optimization",
+        "Social Sharing"
+      ],
+      "result": "Conversion-optimized ticket sales page with embedded checkout \u2014 no redirect needed",
       "url": "https://marceausolutions.com/edm-nights/",
       "industry": "Events / Nightlife",
       "date_completed": "2026-03-31",
@@ -29,11 +39,16 @@
     {
       "id": "boabfit",
       "tower": "fitness-coaching",
-      "client": "BOAB Fit — Julia Marceau",
+      "client": "BOAB Fit \u2014 Julia Marceau",
       "title": "Women's Fitness Coaching Platform",
       "description": "Custom fitness coaching website with program delivery, client onboarding, and branded PDF workout generation. Integrated with Stripe for subscription billing.",
-      "services": ["Website Design", "Stripe Billing", "PDF Generation", "Client Portal"],
-      "result": "Automated coaching delivery — workouts, nutrition guides, and progress tracking",
+      "services": [
+        "Website Design",
+        "Stripe Billing",
+        "PDF Generation",
+        "Client Portal"
+      ],
+      "result": "Automated coaching delivery \u2014 workouts, nutrition guides, and progress tracking",
       "url": "https://boabfit.com",
       "industry": "Fitness",
       "date_completed": "2026-02-02",
@@ -45,7 +60,12 @@
       "client": "SW Florida Comfort HVAC",
       "title": "HVAC Company Website",
       "description": "Professional website for an air conditioning company serving Southwest Florida. Service pages, emergency contact CTAs, Google Maps integration, and mobile-optimized design.",
-      "services": ["Website Design", "SEO", "Google Maps", "Mobile Optimization"],
+      "services": [
+        "Website Design",
+        "SEO",
+        "Google Maps",
+        "Mobile Optimization"
+      ],
       "result": "Professional web presence for local HVAC company",
       "url": "https://swfloridacomfort.com",
       "industry": "HVAC",
@@ -58,11 +78,32 @@
       "client": "Square Foot Shipping & Storage",
       "title": "Shipping & Storage Business Website",
       "description": "Business website for a shipping and storage company. Service listings, quote request forms, and location information.",
-      "services": ["Website Design", "Contact Forms", "Service Pages"],
+      "services": [
+        "Website Design",
+        "Contact Forms",
+        "Service Pages"
+      ],
       "result": "Online presence for local shipping business",
       "url": "",
       "industry": "Logistics",
       "date_completed": "2026-01-18",
+      "featured": false
+    },
+    {
+      "id": "aura-promotions-(edm-nights)",
+      "tower": "digital-web-dev",
+      "client": "Aura Promotions (EDM Nights)",
+      "title": "Events / Nightlife Business Website",
+      "description": "Custom solution delivered for a events / nightlife company in Southwest Florida.",
+      "services": [
+        "Website Design",
+        "Landing Page",
+        "SEO"
+      ],
+      "result": "Project delivered \u2014 details coming soon",
+      "url": "",
+      "industry": "Events / Nightlife",
+      "date_completed": "2026-04-01",
       "featured": false
     }
   ],
