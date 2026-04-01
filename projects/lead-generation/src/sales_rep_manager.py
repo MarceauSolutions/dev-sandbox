@@ -268,38 +268,28 @@ def generate_pages():
 
 
 def _generate_leads_html(rep: dict, leads: list, config: dict) -> str:
-    """Generate the leads page HTML for a rep."""
+    """Generate interactive leads page HTML for a rep.
+
+    Features:
+    - Tap Call → opens dialer + marks lead as contacted via API + disables button
+    - Tap Text → opens SMS with pre-filled message + marks as contacted
+    - When all leads contacted → auto-requests new batch from API
+    - All actions logged to pipeline.db outreach_log via API
+    """
     owner = config["owner"]
     now = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+    rep_id = rep["id"]
 
-    leads_html = ""
-    for i, lead in enumerate(leads, 1):
-        status_color = "#C9963C" if lead["status"] == "assigned" else "#666"
-        status_label = lead["status"].upper()
-        industry_badge = f'<span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">{lead["industry"]}</span>' if lead["industry"] else ""
-
-        phone_link = lead["contact_phone"].replace("(", "").replace(")", "").replace(" ", "").replace("-", "")
-        if not phone_link.startswith("+"):
-            phone_link = "+1" + phone_link
-
-        leads_html += f"""
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">{i}. {lead['company']}</strong>
-                {industry_badge}
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                {lead['contact_name'] or 'Ask for owner'} | {lead['stage']}
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:{phone_link}" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 {lead['contact_phone']}
-                </a>
-                <a href="sms:{phone_link}?body=Hey%20{lead['contact_name'].split()[0] if lead['contact_name'] else 'there'}%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>"""
+    # Build leads JSON for the JavaScript
+    leads_json = json.dumps([{
+        "deal_id": lead["deal_id"],
+        "company": lead["company"],
+        "contact_name": lead["contact_name"] or "",
+        "contact_phone": lead["contact_phone"],
+        "industry": lead["industry"] or "",
+        "stage": lead["stage"],
+        "status": lead["status"],
+    } for lead in leads])
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -320,9 +310,25 @@ def _generate_leads_html(rep: dict, leads: list, config: dict) -> str:
         .stat-number {{ font-size:1.5rem; font-weight:800; color:#C9963C; }}
         .stat-label {{ font-size:0.7rem; color:#999; text-transform:uppercase; letter-spacing:0.05em; }}
         .section-title {{ font-size:0.85rem; font-weight:700; color:#C9963C; text-transform:uppercase; letter-spacing:0.1em; margin:1.5rem 0 0.75rem; }}
+        .lead-card {{ background:#1e1e1e; border:1px solid #333; border-radius:12px; padding:1.25rem; margin-bottom:0.75rem; transition:all 0.3s; }}
+        .lead-card.contacted {{ opacity:0.4; border-color:#222; }}
+        .lead-card.contacted .call-btn {{ background:rgba(100,100,100,0.15); border-color:#555; color:#555; pointer-events:none; }}
+        .lead-card.contacted .text-btn {{ background:rgba(100,100,100,0.15); border-color:#555; color:#555; pointer-events:none; }}
+        .lead-card.contacted .contacted-badge {{ display:inline-block; }}
+        .lead-header {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }}
+        .lead-name {{ color:#fff; font-size:1rem; font-weight:700; }}
+        .industry-badge {{ background:rgba(59,130,246,0.15); color:#60a5fa; padding:2px 8px; border-radius:10px; font-size:0.75rem; }}
+        .lead-contact {{ color:#aaa; font-size:0.9rem; margin-bottom:0.75rem; }}
+        .lead-actions {{ display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; }}
+        .call-btn {{ display:inline-flex; align-items:center; gap:0.4rem; background:rgba(201,150,60,0.15); border:1px solid #C9963C; color:#C9963C; padding:0.5rem 1rem; border-radius:25px; text-decoration:none; font-size:0.85rem; font-weight:600; cursor:pointer; }}
+        .text-btn {{ display:inline-flex; align-items:center; gap:0.4rem; background:rgba(59,130,246,0.15); border:1px solid #3b82f6; color:#60a5fa; padding:0.5rem 1rem; border-radius:25px; text-decoration:none; font-size:0.85rem; font-weight:600; cursor:pointer; }}
+        .contacted-badge {{ display:none; background:rgba(34,197,94,0.15); color:#22c55e; padding:3px 10px; border-radius:10px; font-size:0.75rem; font-weight:600; }}
         .report {{ background:#1e1e1e; border:1px solid #C9963C; border-radius:12px; padding:1.25rem; margin-top:2rem; text-align:center; }}
         .report p {{ color:#aaa; font-size:0.9rem; margin-bottom:0.75rem; }}
         .report a {{ display:inline-block; background:#C9963C; color:#111; font-weight:700; padding:0.6rem 1.5rem; border-radius:25px; text-decoration:none; font-size:0.9rem; }}
+        .loading {{ text-align:center; padding:3rem; }}
+        .loading-spinner {{ display:inline-block; width:40px; height:40px; border:3px solid #333; border-top-color:#C9963C; border-radius:50%; animation:spin 0.8s linear infinite; }}
+        @keyframes spin {{ to {{ transform:rotate(360deg); }} }}
         .footer {{ text-align:center; margin-top:2rem; padding:1rem; color:#666; font-size:0.75rem; }}
         .refresh {{ color:#666; font-size:0.75rem; text-align:center; margin-bottom:1rem; }}
     </style>
@@ -334,28 +340,37 @@ def _generate_leads_html(rep: dict, leads: list, config: dict) -> str:
 
     <div class="stats">
         <div class="stat">
-            <div class="stat-number">{len(leads)}</div>
-            <div class="stat-label">Total Leads</div>
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Total</div>
         </div>
         <div class="stat">
-            <div class="stat-number">{sum(1 for l in leads if l['status'] == 'assigned')}</div>
+            <div class="stat-number" id="stat-remaining">0</div>
             <div class="stat-label">To Call</div>
         </div>
         <div class="stat">
-            <div class="stat-number">{sum(1 for l in leads if l['status'] == 'contacted')}</div>
-            <div class="stat-label">Contacted</div>
+            <div class="stat-number" id="stat-contacted">0</div>
+            <div class="stat-label">Called</div>
         </div>
     </div>
 
     <div class="refresh">Last updated: {now}</div>
 
-    <div class="section-title">Tap to Call or Text</div>
-    {leads_html}
+    <div id="leads-container">
+        <div class="section-title">Tap to Call or Text</div>
+    </div>
+
+    <div id="loading-new" style="display:none;">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p style="color:#C9963C;margin-top:1rem;font-weight:600;">Loading fresh leads...</p>
+            <p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">You crushed that batch! Assigning new ones now.</p>
+        </div>
+    </div>
 
     <div class="report">
-        <p>After you talk to someone, text William the result:</p>
-        <a href="sms:+12393985676?body=Lead%20update%3A%20">📱 Text William</a>
-        <p style="margin-top:0.75rem;font-size:0.8rem;">Example: "Spoke to John at ABC HVAC — interested, wants a demo"</p>
+        <p>After each call, text William the outcome:</p>
+        <a href="sms:+12393985676?body=Lead%20update%3A%20">📱 Text William the Result</a>
+        <p style="margin-top:0.75rem;font-size:0.8rem;">Example: "Dean at Naples Comfort — interested, wants a demo"</p>
     </div>
 
     <div class="footer">
@@ -363,6 +378,123 @@ def _generate_leads_html(rep: dict, leads: list, config: dict) -> str:
         <p>Questions? Call William: <a href="tel:+12393985676" style="color:#C9963C;text-decoration:none;">(239) 398-5676</a></p>
     </div>
 </div>
+
+<script>
+const API = 'https://api.marceausolutions.com';
+const REP_ID = '{rep_id}';
+let leads = {leads_json};
+
+function init() {{
+    // Merge server state with localStorage (localStorage tracks contacted on this device)
+    const local = JSON.parse(localStorage.getItem('rep_' + REP_ID) || '{{}}');
+    leads.forEach(l => {{
+        if (local[l.deal_id] === 'contacted') l.status = 'contacted';
+    }});
+    render();
+}}
+
+function render() {{
+    const container = document.getElementById('leads-container');
+    const assigned = leads.filter(l => l.status === 'assigned');
+    const contacted = leads.filter(l => l.status === 'contacted');
+
+    document.getElementById('stat-total').textContent = leads.length;
+    document.getElementById('stat-remaining').textContent = assigned.length;
+    document.getElementById('stat-contacted').textContent = contacted.length;
+
+    let html = '';
+    if (assigned.length > 0) {{
+        html += '<div class="section-title">Tap to Call or Text</div>';
+        assigned.forEach((l, i) => html += leadCard(l, i + 1, false));
+    }}
+    if (contacted.length > 0) {{
+        html += '<div class="section-title" style="color:#555;">Already Contacted</div>';
+        contacted.forEach((l, i) => html += leadCard(l, i + 1, true));
+    }}
+    container.innerHTML = html;
+}}
+
+function leadCard(lead, num, isContacted) {{
+    const phone = lead.contact_phone.replace(/[^0-9+]/g, '');
+    const phoneLink = phone.startsWith('+') ? phone : '+1' + phone;
+    const firstName = lead.contact_name ? lead.contact_name.split(' ')[0] : 'there';
+    const cls = isContacted ? 'lead-card contacted' : 'lead-card';
+    const badge = lead.industry ? '<span class="industry-badge">' + lead.industry + '</span>' : '';
+    const contactedBadge = isContacted ? '<span class="contacted-badge" style="display:inline-block;">CALLED</span>' : '<span class="contacted-badge">CALLED</span>';
+
+    return '<div class="' + cls + '" id="lead-' + lead.deal_id + '">' +
+        '<div class="lead-header">' +
+            '<span class="lead-name">' + lead.company + '</span>' +
+            badge +
+        '</div>' +
+        '<div class="lead-contact">' + (lead.contact_name || 'Ask for owner') + '</div>' +
+        '<div class="lead-actions">' +
+            '<a href="tel:' + phoneLink + '" class="call-btn" onclick="markContacted(\'' + lead.deal_id + '\', \'' + lead.company + '\')">' +
+                '📞 ' + lead.contact_phone +
+            '</a>' +
+            '<a href="sms:' + phoneLink + '?body=Hey%20' + firstName + '%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" class="text-btn" onclick="markContacted(\'' + lead.deal_id + '\', \'' + lead.company + '\')">' +
+                '💬 Text' +
+            '</a>' +
+            contactedBadge +
+        '</div>' +
+    '</div>';
+}}
+
+function markContacted(dealId, company) {{
+    // Update local state immediately
+    const lead = leads.find(l => l.deal_id === dealId);
+    if (!lead || lead.status === 'contacted') return;
+    lead.status = 'contacted';
+
+    // Save to localStorage (persists across page loads on this device)
+    const local = JSON.parse(localStorage.getItem('rep_' + REP_ID) || '{{}}');
+    local[dealId] = 'contacted';
+    localStorage.setItem('rep_' + REP_ID, JSON.stringify(local));
+
+    // Re-render the page
+    render();
+
+    // Notify the API (fire and forget — page already updated)
+    fetch(API + '/rep/contacted', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{ rep_id: REP_ID, deal_id: dealId }})
+    }}).then(r => r.json()).then(data => {{
+        if (data.all_contacted) {{
+            requestNewLeads();
+        }}
+    }}).catch(() => {{}});  // Offline? No problem — localStorage has it
+}}
+
+function requestNewLeads() {{
+    document.getElementById('leads-container').style.display = 'none';
+    document.getElementById('loading-new').style.display = 'block';
+
+    // Clear localStorage for this rep (new batch incoming)
+    localStorage.removeItem('rep_' + REP_ID);
+
+    fetch(API + '/rep/refresh', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{ rep_id: REP_ID, count: 15 }})
+    }}).then(r => r.json()).then(data => {{
+        if (data.ok) {{
+            // Reload the page to get fresh leads
+            setTimeout(() => window.location.reload(), 3000);
+        }} else {{
+            document.getElementById('loading-new').innerHTML =
+                '<div class="loading"><p style="color:#C9963C;">New leads are being prepared.</p>' +
+                '<p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">Refresh this page in a few minutes.</p></div>';
+        }}
+    }}).catch(() => {{
+        document.getElementById('loading-new').innerHTML =
+            '<div class="loading"><p style="color:#C9963C;">New leads are being prepared.</p>' +
+            '<p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">Refresh this page in a few minutes.</p></div>';
+    }});
+}}
+
+init();
+</script>
 </body>
 </html>"""
 

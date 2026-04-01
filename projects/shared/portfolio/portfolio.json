@@ -1,0 +1,87 @@
+{
+  "projects": [
+    {
+      "id": "flames-of-passion",
+      "tower": "digital-web-dev",
+      "client": "Flames of Passion Entertainment",
+      "title": "Professional Fire Performance Website",
+      "description": "Full website build for a luxury fire dancing and acrobatics performer. Custom domain, event booking, fire safety documentation, mobile-responsive design with animated fire effects.",
+      "services": ["Website Design", "Custom Domain", "SEO", "Event Booking"],
+      "result": "Professional online presence driving real bookings from Instagram and Facebook",
+      "url": "https://flamesofpassionentertainment.com",
+      "industry": "Entertainment",
+      "date_completed": "2026-03-05",
+      "featured": true
+    },
+    {
+      "id": "edm-nights",
+      "tower": "digital-web-dev",
+      "client": "Aura Promotions",
+      "title": "EDM Nights Event Landing Page",
+      "description": "High-conversion event landing page with live countdown timer, Eventbrite checkout widget, social sharing, FAQ, and mobile-first design for a 21+ EDM event at Elite Lounge.",
+      "services": ["Landing Page", "Eventbrite Integration", "Mobile Optimization", "Social Sharing"],
+      "result": "Conversion-optimized ticket sales page with embedded checkout — no redirect needed",
+      "url": "https://marceausolutions.com/edm-nights/",
+      "industry": "Events / Nightlife",
+      "date_completed": "2026-03-31",
+      "featured": true
+    },
+    {
+      "id": "boabfit",
+      "tower": "fitness-coaching",
+      "client": "BOAB Fit — Julia Marceau",
+      "title": "Women's Fitness Coaching Platform",
+      "description": "Custom fitness coaching website with program delivery, client onboarding, and branded PDF workout generation. Integrated with Stripe for subscription billing.",
+      "services": ["Website Design", "Stripe Billing", "PDF Generation", "Client Portal"],
+      "result": "Automated coaching delivery — workouts, nutrition guides, and progress tracking",
+      "url": "https://boabfit.com",
+      "industry": "Fitness",
+      "date_completed": "2026-02-02",
+      "featured": false
+    },
+    {
+      "id": "swflorida-comfort",
+      "tower": "digital-web-dev",
+      "client": "SW Florida Comfort HVAC",
+      "title": "HVAC Company Website",
+      "description": "Professional website for an air conditioning company serving Southwest Florida. Service pages, emergency contact CTAs, Google Maps integration, and mobile-optimized design.",
+      "services": ["Website Design", "SEO", "Google Maps", "Mobile Optimization"],
+      "result": "Professional web presence for local HVAC company",
+      "url": "https://swfloridacomfort.com",
+      "industry": "HVAC",
+      "date_completed": "2026-01-21",
+      "featured": false
+    },
+    {
+      "id": "squarefoot-shipping",
+      "tower": "digital-web-dev",
+      "client": "Square Foot Shipping & Storage",
+      "title": "Shipping & Storage Business Website",
+      "description": "Business website for a shipping and storage company. Service listings, quote request forms, and location information.",
+      "services": ["Website Design", "Contact Forms", "Service Pages"],
+      "result": "Online presence for local shipping business",
+      "url": "",
+      "industry": "Logistics",
+      "date_completed": "2026-01-18",
+      "featured": false
+    }
+  ],
+  "towers": {
+    "digital-web-dev": {
+      "name": "Web Development",
+      "tagline": "Professional websites that convert visitors into customers"
+    },
+    "digital-ai-services": {
+      "name": "AI Services",
+      "tagline": "AI phone systems, lead generation, and automation"
+    },
+    "fitness-coaching": {
+      "name": "Fitness Coaching",
+      "tagline": "Coaching platforms and fitness technology"
+    },
+    "fitness-influencer": {
+      "name": "Content & Media",
+      "tagline": "Video production, social media, and content automation"
+    }
+  }
+}
