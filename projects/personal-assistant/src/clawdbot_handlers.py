@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -884,12 +885,165 @@ def handle_help() -> str:
         "  runs — show recent goal runs\n"
         "  learned — what the system has learned from outcomes\n"
         "\n"
+        "PORTFOLIO:\n"
+        "  portfolio — show all projects\n"
+        "  portfolio check — scan pipeline for new wins\n"
+        "  portfolio add [company] — add project to portfolio\n"
+        "  portfolio featured [company] — toggle featured status\n"
+        "  portfolio refresh — regenerate and deploy page\n"
+        "\n"
         "SYSTEM:\n"
         "  health — system check\n"
         "  tasks — orchestrator queue\n"
         "  task add [text] — add task\n"
         "  help — this message"
     )
+
+
+def handle_portfolio(text: str) -> str:
+    """Manage the portfolio via natural language.
+
+    Commands:
+      portfolio — show all projects
+      portfolio add [company] — add a won deal to portfolio
+      portfolio featured [company] — toggle featured status
+      portfolio check — scan pipeline for new wins
+      portfolio refresh — regenerate and deploy the page
+    """
+    import importlib.util
+    repo_root = _REPO_ROOT
+    lower = text.lower().strip()
+
+    try:
+        # Resolve portfolio path — handles both Mac (repo_root = dev-sandbox)
+        # and EC2 (repo_root = /home/clawdbot, files in dev-sandbox/)
+        portfolio_path = repo_root / "projects" / "shared" / "portfolio" / "portfolio_builder.py"
+        if not portfolio_path.exists():
+            portfolio_path = repo_root / "dev-sandbox" / "projects" / "shared" / "portfolio" / "portfolio_builder.py"
+        spec = importlib.util.spec_from_file_location(
+            "portfolio_builder", portfolio_path
+        )
+        pb = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pb)
+
+        portfolio = pb._load_portfolio()
+        projects = portfolio["projects"]
+        towers = portfolio["towers"]
+
+        # "portfolio check" — scan pipeline for new wins
+        if "check" in lower or "scan" in lower or "new wins" in lower:
+            import io, contextlib
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                added = pb.check_pipeline()
+            output = buf.getvalue()
+            if added:
+                pb.generate_pages()
+                return f"PORTFOLIO UPDATED:\n\n{output}\nPage regenerated and deploying."
+            return f"PORTFOLIO CHECK:\n\n{output}" if output else "No new wins found in pipeline."
+
+        # "portfolio refresh" / "portfolio rebuild" — regenerate page
+        if any(kw in lower for kw in ["refresh", "rebuild", "regenerate", "deploy", "update page"]):
+            import io, contextlib
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                pb.generate_pages()
+            return f"PORTFOLIO REFRESHED:\n\n{buf.getvalue()}"
+
+        # "portfolio featured [company]" — toggle featured
+        if "featured" in lower or "feature " in lower:
+            company = lower
+            for prefix in ["portfolio featured ", "portfolio feature ", "feature ", "featured "]:
+                if company.startswith(prefix):
+                    company = company[len(prefix):]
+                    break
+            company = company.strip()
+            if not company:
+                featured = [p for p in projects if p.get("featured")]
+                if featured:
+                    return "FEATURED PROJECTS:\n\n" + "\n".join(
+                        f"  {p['client']} — {p['title']}" for p in featured
+                    ) + "\n\nTo toggle: portfolio featured [company name]"
+                return "No featured projects. Use: portfolio featured [company name]"
+
+            # Find and toggle
+            for p in projects:
+                if company in p["client"].lower() or company in p["id"]:
+                    p["featured"] = not p.get("featured", False)
+                    pb._save_portfolio(portfolio)
+                    status = "FEATURED" if p["featured"] else "unfeatured"
+                    pb.generate_pages()
+                    return f"'{p['client']}' is now {status}. Portfolio page updated."
+            return f"No project found matching '{company}'"
+
+        # "portfolio add [company]" — manually add a project
+        if "add " in lower:
+            company = lower
+            for prefix in ["portfolio add ", "add to portfolio ", "add "]:
+                if company.startswith(prefix):
+                    company = company[len(prefix):]
+                    break
+            company = company.strip()
+            if not company:
+                return "Which company? Usage: portfolio add [company name]"
+
+            # Check if already exists
+            if any(company in p["client"].lower() for p in projects):
+                return f"'{company}' is already in the portfolio."
+
+            # Check pipeline for this company
+            import sqlite3
+            db_path = repo_root / "projects" / "lead-generation" / "sales-pipeline" / "data" / "pipeline.db"
+            if db_path.exists():
+                conn = sqlite3.connect(str(db_path))
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM deals WHERE LOWER(company) LIKE ? LIMIT 1",
+                             (f"%{company}%",))
+                deal = cursor.fetchone()
+                conn.close()
+
+                if deal:
+                    deal = dict(deal)
+                    tower = deal.get("tower") or pb._guess_tower(deal.get("industry", ""))
+                    project = {
+                        "id": deal["company"].lower().replace(" ", "-")[:40],
+                        "tower": tower,
+                        "client": deal["company"],
+                        "title": pb._generate_title(deal),
+                        "description": pb._generate_description(deal),
+                        "services": pb.TOWER_SERVICES.get(tower, ["AI Services"])[:3],
+                        "result": "Project delivered",
+                        "url": "",
+                        "industry": deal.get("industry", ""),
+                        "date_completed": datetime.now().strftime("%Y-%m-%d"),
+                        "featured": False,
+                    }
+                    projects.append(project)
+                    pb._save_portfolio(portfolio)
+                    pb.generate_pages()
+                    return f"Added '{deal['company']}' to portfolio ({tower}). Page regenerated."
+
+            return f"No deal found matching '{company}' in pipeline. Add it to portfolio.json manually."
+
+        # Default: show portfolio summary
+        lines = [f"PORTFOLIO — {len(projects)} projects:\n"]
+        for t_id, t_info in towers.items():
+            t_projects = [p for p in projects if p["tower"] == t_id]
+            if t_projects:
+                lines.append(f"\n{t_info['name'].upper()} ({len(t_projects)}):")
+                for p in t_projects:
+                    star = " *" if p.get("featured") else ""
+                    lines.append(f"  {p['client']}{star}")
+                    if p.get("url"):
+                        lines.append(f"    {p['url']}")
+
+        lines.append(f"\nLive: marceausolutions.com/portfolio/")
+        lines.append(f"\nCommands: portfolio check | portfolio add [company] | portfolio featured [company] | portfolio refresh")
+        return "\n".join(lines)
+
+    except Exception as e:
+        return f"Portfolio error: {e}"
 
 
 def handle_goal_run(text: str) -> str:
@@ -2009,6 +2163,9 @@ def route_message(text: str) -> Optional[str]:
     if lower.startswith("onboard "):
         return handle_onboard(text)
 
+    if lower.startswith("portfolio") or lower == "our work" or lower == "show portfolio":
+        return handle_portfolio(text)
+
     if lower.startswith("run ") or lower.startswith("goal-run "):
         return handle_goal_run(text)
 
@@ -2118,6 +2275,17 @@ def route_message(text: str) -> Optional[str]:
     if any(kw in lower for kw in ["call scripts", "all scripts", "show scripts",
                                    "give me scripts"]):
         return handle_call_scripts()
+
+    # Portfolio (natural: "show me our work", "what have we built", "add X to portfolio")
+    if any(kw in lower for kw in ["our work", "our projects", "show portfolio",
+                                   "what have we built", "what we built",
+                                   "show me the portfolio", "case studies",
+                                   "add to portfolio", "any new wins"]):
+        if "add" in lower:
+            return handle_portfolio(text)
+        if "new wins" in lower or "check" in lower:
+            return handle_portfolio("portfolio check")
+        return handle_portfolio("portfolio")
 
     # General status / update requests
     if any(kw in lower for kw in ["any updates", "update me", "whats going on",

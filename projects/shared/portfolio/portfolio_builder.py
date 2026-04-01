@@ -30,8 +30,15 @@ else:
     _REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 _PORTFOLIO_JSON = Path(__file__).resolve().parent / "portfolio.json"
+
+# DB path — handle both Mac (REPO_ROOT=dev-sandbox) and EC2 (REPO_ROOT=/home/clawdbot)
 _DB_PATH = _REPO_ROOT / "projects" / "lead-generation" / "sales-pipeline" / "data" / "pipeline.db"
+if not _DB_PATH.exists():
+    _DB_PATH = _REPO_ROOT / "dev-sandbox" / "projects" / "lead-generation" / "sales-pipeline" / "data" / "pipeline.db"
+
 _OUTPUT_DIR = _REPO_ROOT / "client-sites" / "portfolio"
+if not _OUTPUT_DIR.parent.exists():
+    _OUTPUT_DIR = _REPO_ROOT / "dev-sandbox" / "client-sites" / "portfolio"
 
 TOWER_SERVICES = {
     "digital-web-dev": ["Website Design", "Landing Page", "SEO", "Mobile Optimization"],
