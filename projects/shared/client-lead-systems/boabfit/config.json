@@ -1,0 +1,31 @@
+{
+  "client": "BoabFit",
+  "product": "6-Week Barbie Body Program",
+  "webhooks": {
+    "signup": "/webhook/boabfit-signup",
+    "abandon": "/webhook/boabfit-abandon"
+  },
+  "email": {
+    "from_name": "Julia from BOABFIT",
+    "from_email": "wmarceau@marceausolutions.com",
+    "reply_to": "julia@boabfit.com"
+  },
+  "storage": {
+    "type": "google_sheets",
+    "sheet_id": "TO_BE_CREATED",
+    "sheet_name": "BoabFit Leads"
+  },
+  "sequences": {
+    "signup": [
+      {"delay_hours": 0, "template": "welcome"},
+      {"delay_hours": 24, "template": "day1_getting_started"},
+      {"delay_hours": 72, "template": "day3_checkin"},
+      {"delay_hours": 168, "template": "day7_motivation"}
+    ],
+    "abandon": [
+      {"delay_hours": 1, "template": "abandon_1hr"},
+      {"delay_hours": 24, "template": "abandon_24hr"},
+      {"delay_hours": 72, "template": "abandon_72hr"}
+    ]
+  }
+}
