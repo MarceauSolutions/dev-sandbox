@@ -1,0 +1,13 @@
+{
+  "project": "BOABFIT App",
+  "type": "app_build_kickoff",
+  "timestamp": "2026-04-02T00:17:15.702709+00:00",
+  "answers": {
+    "1": "Already has videos filmed. Will take more. Needs backend option to add new workouts whenever she wants.",
+    "2": "Free app with paid programs inside. One of the paid programs should be a monthly subscription option.",
+    "3": "Believes she already has an Apple Developer Account. Needs verification.",
+    "4": "Yes, will have other programs. Has not built them yet."
+  },
+  "action_items": [],
+  "approved_by": "william"
+}

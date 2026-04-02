@@ -1,0 +1,41 @@
+{
+  "campaign": "boabfit-6week-checkin-saturday",
+  "day": "saturday",
+  "sent_at": "2026-03-14T12:00:21.132648",
+  "batch_mode": false,
+  "batch_size": 18,
+  "message_length": 1302,
+  "segments": 9,
+  "sent_to": [
+    "Neha Chanda",
+    "Isabel Vega",
+    "Dupe Dina",
+    "Lesly Ramirez",
+    "Brianna McCulloch",
+    "Julia Morton",
+    "Rebeca Ornelas",
+    "Lauren Zmolek",
+    "Diana Laletina",
+    "Rusell Wheeler",
+    "Sherry Taylor",
+    "Isabella Flores",
+    "Jasmine Pena",
+    "Lindsay Kaley",
+    "William Marceau"
+  ],
+  "failed": [
+    {
+      "name": "Jennifer Hoffstein",
+      "error": "Unable to create record: Attempt to send to unsubscribed recipient"
+    },
+    {
+      "name": "Keeley Palon",
+      "error": "Unable to create record: Attempt to send to unsubscribed recipient"
+    },
+    {
+      "name": "Coralys Fuentes",
+      "error": "Unable to create record: Permission to send an SMS has not been enabled for the region indicated by the 'To' number: +1787559XXXX"
+    }
+  ],
+  "julia_notified": true
+}

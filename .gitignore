@@ -209,3 +209,4 @@ projects/lead-generation/output/
 projects/*/output/
 projects/lead-generation/output/
 projects/*/output/
+projects/boabfit/data/monitor.env
