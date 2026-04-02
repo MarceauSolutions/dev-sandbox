@@ -1,0 +1,454 @@
+{
+  "name": "Grok Agentic Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "grok-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.x.ai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'grok-3-latest', messages: [ { role: 'system', content: `You are Grok Agent, an AI assistant with tool access. Analyze the user request and respond with JSON: {\"action\": \"tool_name\", \"params\": {...}, \"response\": \"text if no tool needed\"}\n\nAvailable tools:\n- web_search: {query} - Search the web\n- calendar_check: {days_ahead} - Check calendar\n- send_email: {to, subject, body} - Send email\n- pipeline_status: {} - Get sales pipeline\n- execute_code: {code} - Run Python code\n- direct_response: {text} - Just respond\n\nAlways pick the most appropriate tool or respond directly.` }, { role: 'user', content: $json.body.message || $json.body.text || 'Hello' } ], temperature: 0.7 }) }}",
+        "options": {}
+      },
+      "id": "grok-reasoning",
+      "name": "Grok Reasoning",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "xai-cred",
+          "name": "xAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Grok's response and extract the action\nconst response = $input.first().json;\nlet content = response.choices?.[0]?.message?.content || '{}';\n\n// Try to parse JSON from response\nlet parsed;\ntry {\n  // Handle markdown code blocks\n  const jsonMatch = content.match(/```json?\\n?([\\s\\S]*?)\\n?```/) || content.match(/\\{[\\s\\S]*\\}/);\n  const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content;\n  parsed = JSON.parse(jsonStr);\n} catch (e) {\n  parsed = { action: 'direct_response', response: content };\n}\n\nreturn [{\n  json: {\n    action: parsed.action || 'direct_response',\n    params: parsed.params || {},\n    response: parsed.response || content,\n    raw: content\n  }\n}];"
+      },
+      "id": "parse-action",
+      "name": "Parse Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "web_search",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "web_search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "calendar",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "calendar_check",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "email",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "pipeline",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "pipeline_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "code",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "execute_code",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "direct",
+              "conditions": {
+                "options": {
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "direct_response",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "fallbackOutput": "direct"
+        },
+        "options": {}
+      },
+      "id": "action-router",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.search.brave.com/res/v1/web/search?q={{ encodeURIComponent($json.params.query) }}&count=5",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "web-search",
+      "name": "Web Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        100
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "brave-cred",
+          "name": "Brave Search"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:5010/pipeline/summary",
+        "options": {}
+      },
+      "id": "pipeline-check",
+      "name": "Pipeline Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Direct response - just pass through\nreturn [{ json: { result: $json.response, action: 'direct_response' } }];"
+      },
+      "id": "direct-response",
+      "name": "Direct Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate results from any tool\nconst input = $input.first().json;\nlet result = '';\n\nif (input.result) {\n  result = input.result;\n} else if (input.web?.results) {\n  result = input.web.results.slice(0, 3).map(r => `• ${r.title}: ${r.url}`).join('\\n');\n} else if (typeof input === 'string') {\n  result = input;\n} else {\n  result = JSON.stringify(input, null, 2);\n}\n\nreturn [{ json: { response: result, success: true } }];"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.x.ai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'grok-3-latest', messages: [ { role: 'system', content: 'You are Grok Agent. Summarize the tool results in a helpful, conversational way. Be concise.' }, { role: 'user', content: 'Tool result: ' + JSON.stringify($json.response) } ], temperature: 0.7 }) }}",
+        "options": {}
+      },
+      "id": "grok-summarize",
+      "name": "Grok Summarize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1540,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "xai-cred",
+          "name": "xAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, agent: 'grok', response: $json.choices?.[0]?.message?.content || $json.response || 'Processing complete' } }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1760,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Grok Reasoning",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grok Reasoning": {
+      "main": [
+        [
+          {
+            "node": "Parse Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Action": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "Web Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pipeline Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Direct Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pipeline Status": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Direct Response": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Grok Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grok Summarize": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
