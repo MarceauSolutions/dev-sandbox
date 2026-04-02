@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: letter; margin: 0.5in; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f1a; color: #f0f0f5; font-size: 11px; line-height: 1.4;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 3px solid #C9963C;
+    padding: 16px 20px; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header h1 { color: #C9963C; font-size: 20px; letter-spacing: 1px; }
+  .header .date { color: #8888aa; font-size: 11px; text-align: right; }
+  .stats {
+    display: flex; gap: 12px; margin: 0 8px 12px 8px;
+  }
+  .stat {
+    flex: 1; background: #1e1e30; border: 1px solid #2a2a3e;
+    border-radius: 6px; padding: 8px 12px; text-align: center;
+  }
+  .stat .num { font-size: 22px; font-weight: 700; color: #C9963C; }
+  .stat .label { font-size: 9px; color: #8888aa; text-transform: uppercase; letter-spacing: 1px; }
+  .lead-card {
+    background: #1e1e30; border: 1px solid #2a2a3e; border-radius: 8px;
+    margin: 8px; padding: 0; page-break-inside: avoid; overflow: hidden;
+  }
+  .lead-header {
+    padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #2a2a3e;
+  }
+  .lead-num { color: #C9963C; font-weight: 700; font-size: 14px; margin-right: 8px; }
+  .lead-company { font-size: 14px; font-weight: 600; }
+  .lead-priority {
+    font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .priority-warm { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b44; }
+  .priority-cold { background: #3b82f622; color: #3b82f6; border: 1px solid #3b82f644; }
+  .lead-body { padding: 10px 14px; }
+  .lead-meta {
+    display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .meta-item { font-size: 10px; color: #8888aa; }
+  .meta-item strong { color: #f0f0f5; }
+  .meta-item a { color: #C9963C; text-decoration: none; font-weight: 600; font-size: 12px; }
+  .section-label {
+    font-size: 9px; color: #C9963C; text-transform: uppercase; letter-spacing: 1px;
+    font-weight: 600; margin-top: 8px; margin-bottom: 4px;
+  }
+  .script-box {
+    background: #0f0f1a; border-left: 3px solid #C9963C; padding: 6px 10px;
+    margin: 4px 0; font-size: 10.5px; line-height: 1.5;
+    border-radius: 0 4px 4px 0;
+  }
+  .outreach-timeline {
+    margin: 4px 0; font-size: 10px;
+  }
+  .outreach-item {
+    padding: 2px 0; color: #8888aa; display: flex; gap: 6px;
+  }
+  .outreach-item .ch { color: #C9963C; font-weight: 600; min-width: 40px; }
+  .outreach-item .dt { color: #8888aa; min-width: 60px; }
+  .outreach-item .msg { color: #f0f0f5; }
+  .services { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .svc-tag {
+    background: #C9963C18; color: #C9963C; border: 1px solid #C9963C44;
+    padding: 1px 8px; border-radius: 10px; font-size: 9px;
+  }
+  .stage-badge {
+    display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 9px; font-weight: 600;
+  }
+  .stage-intake { background: #3b82f622; color: #3b82f6; }
+  .stage-contacted { background: #f59e0b22; color: #f59e0b; }
+  .stage-qualified { background: #22c55e22; color: #22c55e; }
+  .discovery-q {
+    background: #3b82f615; border: 1px solid #3b82f633; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10.5px; font-style: italic;
+  }
+  .next-action {
+    background: #f59e0b15; border: 1px solid #f59e0b33; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10.5px;
+  }
+  .two-col { display: flex; gap: 12px; }
+  .two-col > div { flex: 1; }
+  .close-script {
+    background: #22c55e12; border: 1px solid #22c55e33; border-radius: 4px;
+    padding: 4px 10px; margin: 4px 0; font-size: 10px;
+  }
+  .footer {
+    text-align: center; padding: 12px; color: #8888aa; font-size: 9px;
+    border-top: 1px solid #2a2a3e; margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>CALL SHEET</h1>
+    <div style="color:#8888aa;font-size:10px;margin-top:2px">Marceau Solutions</div>
+  </div>
+  <div class="date">
+    Thursday, April 02, 2026<br>03:00 PM<br>6 leads prioritized
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">6</div><div class="label">Total Calls</div></div>
+  <div class="stat"><div class="num">6</div><div class="label">Follow-ups</div></div>
+  <div class="stat"><div class="num">0</div><div class="label">Cold Calls</div></div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#1</span>
+      <span class="lead-company">Homepatible</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394271511">(239) 427-1511</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Amanda (receptionist)</div>
+      <div class="meta-item"><strong>Industry:</strong> Other</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Spoke to Amanda. Took all info. Said she would talk to decision-makers. Follow up Day 3. (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">SMS</span><span class="dt">2026-03-30</span><span class="msg">Auto follow-up (generic): Hey Amanda, this is William from Marceau Solutions. Fo</span></div>
+      <div class="outreach-item"><span class="ch">Email</span><span class="dt">2026-03-23</span><span class="msg">Subject: Homepatible — missed call follow-up | Research: Tier 2 — general batch </span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"We've been working with local businesses that already use things like automated text-backs and call handling. What we keep hearing is that those leads end up in different places — chat leads go one way, phone leads another, and nothing actually talks to each other. Leads slip through the cracks and follow-ups get delayed."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"What we do differently is build a single system that integrates everything you already have. It captures every lead no matter where it comes from, routes it to the right person, sends follow-ups at the right time, and manages the whole process through to closing — without jumping between five different tools. Most AI companies just sell you another standalone chatbot or voice agent. We turn all your existing systems into one unified engine that actually closes more sales."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"When a lead comes in from Google and another from a phone call — does all of that land in one place, or are you checking multiple things?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"If you're open to it, I'd love to show you a quick 10-15 minute demo tailored to your setup. What does your calendar look like this week?"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Unified lead pipeline</span>
+      <span class="svc-tag">Cross-channel automation</span>
+      <span class="svc-tag">Real-time lead routing</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#2</span>
+      <span class="lead-company">Family Air Conditioning and Heating, Inc.</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2393544326">(239) 354-4326</a></div>
+      <div class="meta-item"><strong>Contact:</strong> None</div>
+      <div class="meta-item"><strong>Industry:</strong> HVAC</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 3</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Follow up if no callback (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-30</span><span class="msg">Left voicemail. → <strong>voicemail</strong></span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-25</span><span class="msg">Called during lunch break. Office closed 12-1pm. Re-call after 1pm. → <strong>no_answer</strong></span></div>
+      <div class="outreach-item"><span class="ch">Phone Blitz</span><span class="dt">2026-03-24</span><span class="msg">Added to Phone Blitz 2026-03-24 call list</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey there, it's William from Marceau Solutions — we connected recently."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"Wanted to follow up and see if there's anything I can help with."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"When a lead comes in from Google and another from a phone call — does that all land in one place?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Follow up if no callback]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Online lead capture</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">Website: https://www.familyairconditioning.net/</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#3</span>
+      <span class="lead-company">Pure Air Conditioning</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2395977873">(239) 597-7873</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Michael Crothers</div>
+      <div class="meta-item"><strong>Industry:</strong> HVAC</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 3</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Follow up if no callback (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-30</span><span class="msg">Left voicemail. → <strong>voicemail</strong></span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-25</span><span class="msg">Left voicemail with new positioning — AI operations system, not just phone bot. → <strong>voicemail</strong></span></div>
+      <div class="outreach-item"><span class="ch">Phone Blitz</span><span class="dt">2026-03-24</span><span class="msg">Added to Phone Blitz 2026-03-24 call list</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Michael, it's William — sent over that info you asked for. Wanted to make sure you got it."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"Happy to walk through it live if that's easier than reading."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"Did you get a chance to look at what I sent?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Follow up if no callback]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Online lead capture</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">Website: https://getpureair.com/</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#4</span>
+      <span class="lead-company">Florida Health Dental - Naples</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2394273595">(239) 427-3595</a></div>
+      <div class="meta-item"><strong>Contact:</strong> None</div>
+      <div class="meta-item"><strong>Industry:</strong> Dental</div>
+      <div class="meta-item"><strong>Score:</strong> 100</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Re-call (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">SMS</span><span class="dt">2026-03-30</span><span class="msg">Auto follow-up (Re-call): Hey there, this is William from Marceau Solutions. I t</span></div>
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-24</span><span class="msg">No Answer → <strong>User busy error — line busy or blocked.</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey there, it's William from Marceau Solutions — we connected recently."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"Wanted to follow up and see if there's anything I can help with."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"When leads come in from different channels, does that all land in one system?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Re-call]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Lead capture</span>
+      <span class="svc-tag">Automated follow-up</span>
+      <span class="svc-tag">After-hours coverage</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#5</span>
+      <span class="lead-company">Florida Comfort Systems</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2397745501">(239) 774-5501</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Denny Martin Jr.</div>
+      <div class="meta-item"><strong>Industry:</strong> HVAC</div>
+      <div class="meta-item"><strong>Score:</strong> 96</div>
+      <div class="meta-item"><strong>Touches:</strong> 2</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Follow up (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-30</span><span class="msg">TEST ENTRY - Left voicemail for Denny Martin → <strong>voicemail</strong></span></div>
+      <div class="outreach-item"><span class="ch">Phone Blitz</span><span class="dt">2026-03-24</span><span class="msg">Added to Phone Blitz 2026-03-24 call list</span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Denny, it's William — sent over that info you asked for. Wanted to make sure you got it."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"Happy to walk through it live if that's easier than reading."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"Did you get a chance to look at what I sent?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Follow up]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Website with booking</span>
+      <span class="svc-tag">Google Business optimization</span>
+      <span class="svc-tag">Online lead capture</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">Website: http://acbyfcs.com/</div>
+  </div>
+</div>
+
+<div class="lead-card">
+  <div class="lead-header">
+    <div>
+      <span class="lead-num">#6</span>
+      <span class="lead-company">Cloud 9 Med Spa</span>
+      <span class="stage-badge stage-contacted">Contacted</span>
+    </div>
+    <span class="lead-priority priority-warm">FOLLOW-UP DUE</span>
+  </div>
+  <div class="lead-body">
+    <div class="lead-meta">
+      <div class="meta-item"><strong>Phone:</strong> <a href="tel:2392531325">(239) 253-1325</a></div>
+      <div class="meta-item"><strong>Contact:</strong> Carrie Freelander (owner)</div>
+      <div class="meta-item"><strong>Industry:</strong> Med Spa</div>
+      <div class="meta-item"><strong>Score:</strong> 86</div>
+      <div class="meta-item"><strong>Touches:</strong> 1</div>
+      <div class="meta-item"><strong>Last:</strong> 2026-03-30</div>
+    </div>
+
+    <div class="next-action">
+      <strong>Next Action:</strong> Follow up if no callback (due 2026-04-02)
+    </div>
+    <div class="section-label">Outreach History</div>
+    <div class="outreach-timeline">
+      <div class="outreach-item"><span class="ch">Call</span><span class="dt">2026-03-30</span><span class="msg">Left voicemail. → <strong>voicemail</strong></span></div>
+    </div>
+    <div class="two-col">
+      <div>
+
+        <div class="section-label">Opener</div>
+        <div class="script-box">"Hey Carrie, it's William — sent over that info you asked for. Wanted to make sure you got it."</div>
+
+        <div class="section-label">Hook</div>
+        <div class="script-box">"Happy to walk through it live if that's easier than reading."</div>
+      </div>
+      <div>
+
+        <div class="section-label">Ask This</div>
+        <div class="discovery-q">"Did you get a chance to look at what I sent?"</div>
+
+        <div class="section-label">Close</div>
+        <div class="close-script">"[Per pipeline: Follow up if no callback]"</div>
+      </div>
+    </div>
+    <div class="section-label">Mention</div>
+    <div class="services">
+      <span class="svc-tag">Lead capture</span>
+      <span class="svc-tag">Automated follow-up</span>
+      <span class="svc-tag">After-hours coverage</span>
+    </div>
+    <div style="font-size:9px;color:#8888aa;margin-top:4px">No website</div>
+  </div>
+</div>
+
+<div class="footer">
+  Call Sheet generated 2026-04-02 03:00 PM | Marceau Solutions<br>
+  Demo: (855) 239-9364 | marceausolutions.com
+</div>
+</body></html>
