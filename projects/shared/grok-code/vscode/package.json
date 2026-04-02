@@ -1,0 +1,200 @@
+{
+  "name": "grok-code",
+  "displayName": "Grok Code",
+  "description": "AI coding assistant powered by Grok with truth-seeking behavior",
+  "version": "0.1.0",
+  "publisher": "marceau-solutions",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "keywords": [
+    "grok",
+    "ai",
+    "coding",
+    "assistant",
+    "xai",
+    "code-completion"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "grok-code.startChat",
+        "title": "Grok: Start Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "grok-code.explainCode",
+        "title": "Grok: Explain This Code"
+      },
+      {
+        "command": "grok-code.refactorCode",
+        "title": "Grok: Refactor Selection"
+      },
+      {
+        "command": "grok-code.writeTests",
+        "title": "Grok: Write Tests"
+      },
+      {
+        "command": "grok-code.fixBugs",
+        "title": "Grok: Find & Fix Bugs"
+      },
+      {
+        "command": "grok-code.reviewCode",
+        "title": "Grok: Code Review"
+      },
+      {
+        "command": "grok-code.toggleContrarian",
+        "title": "Grok: Toggle Contrarian Mode"
+      },
+      {
+        "command": "grok-code.runAgent",
+        "title": "Grok: Run Multi-Agent Task"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "grok-code.explainCode",
+          "when": "editorHasSelection",
+          "group": "grok@1"
+        },
+        {
+          "command": "grok-code.refactorCode",
+          "when": "editorHasSelection",
+          "group": "grok@2"
+        },
+        {
+          "command": "grok-code.writeTests",
+          "when": "editorHasSelection",
+          "group": "grok@3"
+        },
+        {
+          "command": "grok-code.fixBugs",
+          "when": "editorHasSelection",
+          "group": "grok@4"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "grok-code.startChat",
+          "when": "view == grok-code-chat",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "grok-code",
+          "title": "Grok Code",
+          "icon": "images/grok-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "grok-code": [
+        {
+          "type": "webview",
+          "id": "grok-code-chat",
+          "name": "Chat"
+        },
+        {
+          "id": "grok-code-agents",
+          "name": "Agents"
+        },
+        {
+          "id": "grok-code-tasks",
+          "name": "Tasks"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Grok Code",
+      "properties": {
+        "grok-code.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "xAI API key for Grok",
+          "scope": "application"
+        },
+        "grok-code.model": {
+          "type": "string",
+          "default": "grok-3-latest",
+          "enum": ["grok-3-latest", "grok-2-latest", "grok-2-mini"],
+          "description": "Grok model to use"
+        },
+        "grok-code.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "Response temperature (creativity)"
+        },
+        "grok-code.contrarianMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable contrarian mode for code reviews"
+        },
+        "grok-code.showConfidence": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show confidence scores on responses"
+        },
+        "grok-code.autoApplyEdits": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically apply suggested edits"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "grok-code.startChat",
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g"
+      },
+      {
+        "command": "grok-code.explainCode",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorHasSelection"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "esbuild": "^0.20.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8"
+  },
+  "dependencies": {
+    "@grok-code/core": "file:../core"
+  }
+}

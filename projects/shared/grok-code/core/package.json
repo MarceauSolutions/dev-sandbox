@@ -1,0 +1,46 @@
+{
+  "name": "@grok-code/core",
+  "version": "0.1.0",
+  "description": "AI coding agent powered by Grok with truth-seeking behavior",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist/"
+  },
+  "keywords": [
+    "grok",
+    "ai",
+    "coding-agent",
+    "xai",
+    "llm",
+    "code-assistant",
+    "vscode"
+  ],
+  "author": "Marceau Solutions",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^10.3.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0",
+    "eslint": "^8.56.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarceauSolutions/grok-code"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ]
+}
