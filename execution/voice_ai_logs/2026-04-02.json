@@ -646,5 +646,659 @@
     "tower_confidence": 0.5,
     "secondary_tower": null,
     "detected_services": []
+  },
+  {
+    "conversation_id": "conv_1101kn5ejb3xesbt6r6ha30ed6zw",
+    "caller_number": "+15348008766",
+    "duration_seconds": 31,
+    "message_count": 5,
+    "timestamp": "2026-04-01 21:18 UTC",
+    "call_title": "Dropped Call",
+    "transcript_summary": "The AI agent from Marceau Solutions initiated the call. After the user remained silent, the agent attempted to re-engage twice before concluding the call, suggesting the user call back or visit their website. The conversation ended due to a lack of user response.",
+    "intent": "wrong_number",
+    "lead_quality": "not_lead",
+    "next_action": "No action required. This appears to be a wrong number or accidental dial as the caller never responded despite multiple prompts from the AI assistant.",
+    "transcript": [
+      {
+        "role": "agent",
+        "agent_metadata": {
+          "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+          "workflow_node_id": null,
+          "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+        },
+        "message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 0,
+        "conversation_turn_metrics": {
+          "metrics": {
+            "convai_tts_service_ttfb": {
+              "elapsed_time": 0.24549880299991855
+            }
+          },
+          "convai_asr_provider": null,
+          "convai_tts_model": "eleven_flash_v2",
+          "convai_tts_cascade": null
+        },
+        "rag_retrieval_info": null,
+        "llm_usage": null,
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": null,
+        "source_event_id": 1,
+        "file_input": null
+      },
+      {
+        "role": "user",
+        "agent_metadata": null,
+        "message": "...",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 11,
+        "conversation_turn_metrics": null,
+        "rag_retrieval_info": null,
+        "llm_usage": null,
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": "audio",
+        "source_event_id": 47,
+        "file_input": null
+      },
+      {
+        "role": "agent",
+        "agent_metadata": {
+          "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+          "workflow_node_id": null,
+          "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+        },
+        "message": "Hello? Are you still there?",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 12,
+        "conversation_turn_metrics": {
+          "metrics": {
+            "convai_llm_service_ttf_sentence": {
+              "elapsed_time": 0.5856487579999339
+            },
+            "convai_llm_service_ttfb": {
+              "elapsed_time": 0.5052342049998515
+            },
+            "convai_llm_service_tt_last_sentence": {
+              "elapsed_time": 0.5856365360000382
+            },
+            "convai_tts_service_ttfb": {
+              "elapsed_time": 0.10333341300020038
+            }
+          },
+          "convai_asr_provider": null,
+          "convai_tts_model": "eleven_flash_v2",
+          "convai_tts_cascade": null
+        },
+        "rag_retrieval_info": null,
+        "llm_usage": {
+          "model_usage": {
+            "gemini-2.5-flash": {
+              "input": {
+                "tokens": 1215,
+                "price": 0.00018225
+              },
+              "input_cache_read": {
+                "tokens": 0,
+                "price": 0.0
+              },
+              "input_cache_write": {
+                "tokens": 0,
+                "price": 0.0
+              },
+              "output_total": {
+                "tokens": 7,
+                "price": 4.2000000000000004e-06
+              }
+            }
+          }
+        },
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": null,
+        "source_event_id": 47,
+        "file_input": null
+      },
+      {
+        "role": "user",
+        "agent_metadata": null,
+        "message": "...",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 20,
+        "conversation_turn_metrics": null,
+        "rag_retrieval_info": null,
+        "llm_usage": null,
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": "audio",
+        "source_event_id": 84,
+        "file_input": null
+      },
+      {
+        "role": "agent",
+        "agent_metadata": {
+          "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+          "workflow_node_id": null,
+          "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+        },
+        "message": "It sounds like I might have lost you. Feel free to call back anytime or visit marceausolutions.com. Have a great day!",
+        "multivoice_message": null,
+        "tool_calls": [],
+        "tool_results": [],
+        "feedback": null,
+        "llm_override": null,
+        "time_in_call_secs": 22,
+        "conversation_turn_metrics": {
+          "metrics": {
+            "convai_llm_service_ttf_sentence": {
+              "elapsed_time": 1.589173818999825
+            },
+            "convai_llm_service_ttfb": {
+              "elapsed_time": 1.4256922479999048
+            },
+            "convai_llm_service_tt_last_sentence": {
+              "elapsed_time": 1.644784141999935
+            },
+            "convai_tts_service_ttfb": {
+              "elapsed_time": 0.11259685000004538
+            }
+          },
+          "convai_asr_provider": null,
+          "convai_tts_model": "eleven_flash_v2",
+          "convai_tts_cascade": null
+        },
+        "rag_retrieval_info": null,
+        "llm_usage": {
+          "model_usage": {
+            "gemini-2.5-flash": {
+              "input": {
+                "tokens": 1223,
+                "price": 0.00018345
+              },
+              "input_cache_read": {
+                "tokens": 0,
+                "price": 0.0
+              },
+              "input_cache_write": {
+                "tokens": 0,
+                "price": 0.0
+              },
+              "output_total": {
+                "tokens": 29,
+                "price": 1.74e-05
+              }
+            }
+          }
+        },
+        "interrupted": false,
+        "original_message": null,
+        "source_medium": null,
+        "source_event_id": 84,
+        "file_input": null
+      }
+    ],
+    "raw_data": {
+      "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+      "agent_name": "Marceau Solutions Receptionist",
+      "status": "done",
+      "user_id": "+15348008766",
+      "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+      "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71",
+      "metadata": {
+        "start_time_unix_secs": 1775078288,
+        "accepted_time_unix_secs": 1775078288,
+        "call_duration_secs": 31,
+        "cost": 208,
+        "deletion_settings": {
+          "deletion_time_unix_secs": null,
+          "deleted_logs_at_time_unix_secs": null,
+          "deleted_audio_at_time_unix_secs": null,
+          "deleted_transcript_at_time_unix_secs": null,
+          "delete_transcript_and_pii": false,
+          "delete_audio": false
+        },
+        "feedback": {
+          "type": null,
+          "overall_score": null,
+          "likes": 0,
+          "dislikes": 0,
+          "rating": null,
+          "comment": null
+        },
+        "authorization_method": "signed_url",
+        "charging": {
+          "dev_discount": false,
+          "is_burst": false,
+          "tier": "creator",
+          "llm_usage": {
+            "irreversible_generation": {
+              "model_usage": {
+                "gemini-2.5-flash": {
+                  "input": {
+                    "tokens": 2438,
+                    "price": 0.0003657
+                  },
+                  "input_cache_read": {
+                    "tokens": 0,
+                    "price": 0.0
+                  },
+                  "input_cache_write": {
+                    "tokens": 0,
+                    "price": 0.0
+                  },
+                  "output_total": {
+                    "tokens": 36,
+                    "price": 2.16e-05
+                  }
+                }
+              }
+            },
+            "initiated_generation": {
+              "model_usage": {
+                "gemini-2.5-flash": {
+                  "input": {
+                    "tokens": 2438,
+                    "price": 0.0003657
+                  },
+                  "input_cache_read": {
+                    "tokens": 0,
+                    "price": 0.0
+                  },
+                  "input_cache_write": {
+                    "tokens": 0,
+                    "price": 0.0
+                  },
+                  "output_total": {
+                    "tokens": 36,
+                    "price": 2.16e-05
+                  }
+                }
+              }
+            }
+          },
+          "llm_price": 0.0003873,
+          "llm_charge": 2,
+          "call_charge": 206,
+          "free_minutes_consumed": 0.0,
+          "free_llm_dollars_consumed": 0.0
+        },
+        "phone_call": {
+          "direction": "inbound",
+          "phone_number_id": "phnum_6301kmgk021tfqzr4zxnrrdkaqsr",
+          "agent_number": "+18552399364",
+          "external_number": "+15348008766",
+          "type": "twilio",
+          "stream_sid": "MZcad590709fd2926b40e9d97b8cc49309",
+          "call_sid": "CA491fc4a8f8df6aa7ca5f42d55ef5cfa2"
+        },
+        "batch_call": null,
+        "termination_reason": "Call ended by remote party",
+        "error": null,
+        "warnings": [],
+        "main_language": "en",
+        "rag_usage": null,
+        "text_only": false,
+        "features_usage": {
+          "language_detection": {
+            "enabled": false,
+            "used": false
+          },
+          "transfer_to_agent": {
+            "enabled": false,
+            "used": false
+          },
+          "transfer_to_number": {
+            "enabled": false,
+            "used": false
+          },
+          "multivoice": {
+            "enabled": false,
+            "used": false
+          },
+          "dtmf_tones": {
+            "enabled": false,
+            "used": false
+          },
+          "external_mcp_servers": {
+            "enabled": false,
+            "used": false
+          },
+          "pii_zrm_workspace": false,
+          "pii_zrm_agent": false,
+          "tool_dynamic_variable_updates": {
+            "enabled": false,
+            "used": false
+          },
+          "is_livekit": false,
+          "voicemail_detection": {
+            "enabled": false,
+            "used": false
+          },
+          "dtmf_input": {
+            "enabled": false,
+            "used": false
+          },
+          "workflow": {
+            "enabled": false,
+            "tool_node": {
+              "enabled": false,
+              "used": false
+            },
+            "standalone_agent_node": {
+              "enabled": false,
+              "used": false
+            },
+            "phone_number_node": {
+              "enabled": false,
+              "used": false
+            },
+            "end_node": {
+              "enabled": false,
+              "used": false
+            }
+          },
+          "agent_testing": {
+            "enabled": false,
+            "tests_ran_after_last_modification": false,
+            "tests_ran_in_last_7_days": false
+          },
+          "versioning": {
+            "enabled": true,
+            "used": false
+          },
+          "file_input": {
+            "enabled": true,
+            "used": false
+          }
+        },
+        "eleven_assistant": {
+          "is_eleven_assistant": false
+        },
+        "initiator_id": null,
+        "conversation_initiation_source": "twilio",
+        "conversation_initiation_source_version": null,
+        "timezone": null,
+        "async_metadata": null,
+        "whatsapp": null,
+        "agent_created_from": "ui",
+        "agent_last_updated_from": "api"
+      },
+      "analysis": {
+        "evaluation_criteria_results": {},
+        "data_collection_results": {},
+        "evaluation_criteria_results_list": [],
+        "data_collection_results_list": [],
+        "call_successful": "success",
+        "transcript_summary": "The AI agent from Marceau Solutions initiated the call. After the user remained silent, the agent attempted to re-engage twice before concluding the call, suggesting the user call back or visit their website. The conversation ended due to a lack of user response.",
+        "call_summary_title": "Dropped Call"
+      },
+      "conversation_initiation_client_data": {
+        "conversation_config_override": {
+          "turn": null,
+          "tts": null,
+          "conversation": null,
+          "agent": null
+        },
+        "custom_llm_extra_body": {},
+        "user_id": null,
+        "source_info": {
+          "source": null,
+          "version": null
+        },
+        "branch_id": null,
+        "environment": null,
+        "dynamic_variables": {
+          "system__agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "system__agent_turns": 3,
+          "system__current_agent_turns": 3,
+          "system__current_subagent_turns": 3,
+          "system__current_agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+          "system__conversation_id": "conv_1101kn5ejb3xesbt6r6ha30ed6zw",
+          "system__call_duration_secs": 30,
+          "system__time_utc": "2026-04-01T21:18:39.491468+00:00",
+          "system__time": "Wednesday, 21:18 01 April 2026",
+          "system__timezone": null,
+          "system__is_text_only": false,
+          "system__caller_id": "+15348008766",
+          "system__called_number": "+18552399364",
+          "system__call_sid": "CA491fc4a8f8df6aa7ca5f42d55ef5cfa2",
+          "system__conversation_history": "{\"x-elevenlabs-history\": true, \"entries\": [{\"role\": \"agent\", \"message\": \"Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?\"}, {\"role\": \"user\", \"message\": \"...\"}, {\"role\": \"agent\", \"message\": \"Hello? Are you still there?\"}, {\"role\": \"user\", \"message\": \"...\"}, {\"role\": \"agent\", \"message\": \"It sounds like I might have lost you. Feel free to call back anytime or visit marceausolutions.com. Have a great day!\"}]}"
+        },
+        "tool_mock_config": {
+          "mocking_strategy": "none",
+          "fallback_strategy": "call_real_tool",
+          "mocked_tool_names": []
+        }
+      },
+      "environment": "production",
+      "hiding_reason": null,
+      "conversation_id": "conv_1101kn5ejb3xesbt6r6ha30ed6zw",
+      "has_audio": true,
+      "has_user_audio": true,
+      "has_response_audio": true,
+      "transcript": [
+        {
+          "role": "agent",
+          "agent_metadata": {
+            "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+            "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+            "workflow_node_id": null,
+            "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+          },
+          "message": "Hey, thanks for calling Marceau Solutions! This is the AI assistant. How can I help you today?",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 0,
+          "conversation_turn_metrics": {
+            "metrics": {
+              "convai_tts_service_ttfb": {
+                "elapsed_time": 0.24549880299991855
+              }
+            },
+            "convai_asr_provider": null,
+            "convai_tts_model": "eleven_flash_v2",
+            "convai_tts_cascade": null
+          },
+          "rag_retrieval_info": null,
+          "llm_usage": null,
+          "interrupted": false,
+          "original_message": null,
+          "source_medium": null,
+          "source_event_id": 1,
+          "file_input": null
+        },
+        {
+          "role": "user",
+          "agent_metadata": null,
+          "message": "...",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 11,
+          "conversation_turn_metrics": null,
+          "rag_retrieval_info": null,
+          "llm_usage": null,
+          "interrupted": false,
+          "original_message": null,
+          "source_medium": "audio",
+          "source_event_id": 47,
+          "file_input": null
+        },
+        {
+          "role": "agent",
+          "agent_metadata": {
+            "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+            "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+            "workflow_node_id": null,
+            "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+          },
+          "message": "Hello? Are you still there?",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 12,
+          "conversation_turn_metrics": {
+            "metrics": {
+              "convai_llm_service_ttf_sentence": {
+                "elapsed_time": 0.5856487579999339
+              },
+              "convai_llm_service_ttfb": {
+                "elapsed_time": 0.5052342049998515
+              },
+              "convai_llm_service_tt_last_sentence": {
+                "elapsed_time": 0.5856365360000382
+              },
+              "convai_tts_service_ttfb": {
+                "elapsed_time": 0.10333341300020038
+              }
+            },
+            "convai_asr_provider": null,
+            "convai_tts_model": "eleven_flash_v2",
+            "convai_tts_cascade": null
+          },
+          "rag_retrieval_info": null,
+          "llm_usage": {
+            "model_usage": {
+              "gemini-2.5-flash": {
+                "input": {
+                  "tokens": 1215,
+                  "price": 0.00018225
+                },
+                "input_cache_read": {
+                  "tokens": 0,
+                  "price": 0.0
+                },
+                "input_cache_write": {
+                  "tokens": 0,
+                  "price": 0.0
+                },
+                "output_total": {
+                  "tokens": 7,
+                  "price": 4.2000000000000004e-06
+                }
+              }
+            }
+          },
+          "interrupted": false,
+          "original_message": null,
+          "source_medium": null,
+          "source_event_id": 47,
+          "file_input": null
+        },
+        {
+          "role": "user",
+          "agent_metadata": null,
+          "message": "...",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 20,
+          "conversation_turn_metrics": null,
+          "rag_retrieval_info": null,
+          "llm_usage": null,
+          "interrupted": false,
+          "original_message": null,
+          "source_medium": "audio",
+          "source_event_id": 84,
+          "file_input": null
+        },
+        {
+          "role": "agent",
+          "agent_metadata": {
+            "agent_id": "agent_9801kmgjg670fb7bdv5z9r96y66d",
+            "branch_id": "agtbrch_7801kmgjg7ejfrcr0r7yy3p5gfk2",
+            "workflow_node_id": null,
+            "version_id": "agtvrsn_4401kmgkw935f4xr6j6bzfhpqg71"
+          },
+          "message": "It sounds like I might have lost you. Feel free to call back anytime or visit marceausolutions.com. Have a great day!",
+          "multivoice_message": null,
+          "tool_calls": [],
+          "tool_results": [],
+          "feedback": null,
+          "llm_override": null,
+          "time_in_call_secs": 22,
+          "conversation_turn_metrics": {
+            "metrics": {
+              "convai_llm_service_ttf_sentence": {
+                "elapsed_time": 1.589173818999825
+              },
+              "convai_llm_service_ttfb": {
+                "elapsed_time": 1.4256922479999048
+              },
+              "convai_llm_service_tt_last_sentence": {
+                "elapsed_time": 1.644784141999935
+              },
+              "convai_tts_service_ttfb": {
+                "elapsed_time": 0.11259685000004538
+              }
+            },
+            "convai_asr_provider": null,
+            "convai_tts_model": "eleven_flash_v2",
+            "convai_tts_cascade": null
+          },
+          "rag_retrieval_info": null,
+          "llm_usage": {
+            "model_usage": {
+              "gemini-2.5-flash": {
+                "input": {
+                  "tokens": 1223,
+                  "price": 0.00018345
+                },
+                "input_cache_read": {
+                  "tokens": 0,
+                  "price": 0.0
+                },
+                "input_cache_write": {
+                  "tokens": 0,
+                  "price": 0.0
+                },
+                "output_total": {
+                  "tokens": 29,
+                  "price": 1.74e-05
+                }
+              }
+            }
+          },
+          "interrupted": false,
+          "original_message": null,
+          "source_medium": null,
+          "source_event_id": 84,
+          "file_input": null
+        }
+      ]
+    },
+    "detected_tower": "digital-ai-services",
+    "tower_confidence": 0.5,
+    "secondary_tower": null,
+    "detected_services": []
   }
 ]

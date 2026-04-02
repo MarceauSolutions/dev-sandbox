@@ -21,9 +21,10 @@
     "conv_1301kn2g1ww1ev4sqgz6whncfjqh",
     "conv_5801kn2ftm6wftsvzeqvenwmtdyx",
     "conv_1401kn29gtv2fewryk80xd9hhmzn",
-    "conv_9001kmzr0e76eg0tt4345gjv7vr5"
+    "conv_9001kmzr0e76eg0tt4345gjv7vr5",
+    "conv_1101kn5ejb3xesbt6r6ha30ed6zw"
   ],
-  "last_check": "2026-04-01T14:00:03.953051",
+  "last_check": "2026-04-02T19:00:06.807502",
   "daily_stats": {
     "2026-03-28": {
       "total_calls": 10,
@@ -52,6 +53,13 @@
       "warm_leads": 0,
       "cold_leads": 1,
       "total_duration": 82
+    },
+    "2026-04-02": {
+      "total_calls": 1,
+      "hot_leads": 0,
+      "warm_leads": 0,
+      "cold_leads": 0,
+      "total_duration": 31
     }
   }
 }

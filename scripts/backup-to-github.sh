@@ -1,13 +1,13 @@
 #!/bin/bash
 # backup-to-github.sh — Safe automated backup of EC2 workspace to GitHub
-# Runs hourly via cron. Only stages TRACKED files (never git add -A).
-# Respects .gitignore — will never stage .env, token.json, *.db, etc.
+# Runs hourly via cron. Uses git add -A (stages new + modified, respects .gitignore).
+# .gitignore covers: .env, credentials.json, token_*.json, __pycache__, .tmp/
 
 set -e
 cd /home/clawdbot/dev-sandbox
 
-# Only stage tracked files that have changes (safe — never adds new files)
-git add -u
+# Stage all changes (respects .gitignore — safe for sensitive files)
+git add -A
 
 # Only proceed if there are staged changes
 if git diff --cached --quiet; then
