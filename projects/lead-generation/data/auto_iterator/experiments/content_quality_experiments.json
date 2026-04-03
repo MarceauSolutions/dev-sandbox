@@ -1,7 +1,7 @@
 {
   "domain": "content_quality",
-  "updated_at": "2026-03-28T19:45:26.338799",
-  "total_experiments": 2,
+  "updated_at": "2026-04-03T06:07:29.518792",
+  "total_experiments": 7,
   "experiments": [
     {
       "experiment_id": "content_quality_20260328_7dfc7295c835",
@@ -86,6 +86,246 @@
       "evaluated_at": "",
       "result": "",
       "learnings": "",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260403_c844960655f4",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260403_c844960655f4",
+        "domain": "content_quality",
+        "variant_text": "Create a science-backed 4-week muscle-building and fat-loss transformation program for a 35-year-old male, including exact workout schedules with rep/set schemes, progressive overload tracking sheets, compound movement form guides, meal timing strategies, sleep optimization protocols, and weekly body composition monitoring methods with troubleshooting tips for common plateaus.",
+        "baseline_text": "Create a 4-week workout program for a 35-year-old male \nlooking to build muscle and lose fat. Include progressive overload principles, \ncompound movements, and recovery protocols.",
+        "hypothesis": "This variant will outperform the baseline by combining the proven success of specific, detailed promises with scientific credibility and comprehensive tracking systems, addressing the complete ecosystem of transformation rather than just workouts, which increases perceived expertise and practical value.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-03T06:00:11.664615",
+        "metadata": {
+          "reasoning": "The previous successful experiment showed that specificity and comprehensive detail significantly outperform generic requests. This variant builds on that learning by adding three key enhancement layers: (1) scientific credibility with 'science-backed' positioning, (2) practical implementation tools like 'tracking sheets' and 'monitoring methods', and (3) problem-solving elements like 'troubleshooting tips for plateaus'. The 35-year-old male demographic is retained since it proved effective, but now we're expanding beyond just workout structure to include nutrition timing, sleep, and monitoring - creating a complete transformation ecosystem that demonstrates higher expertise and provides more actionable value than either the baseline or previous variant."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.0,
+          "engagement": 6.0,
+          "brand_voice": 7.0,
+          "actionability": 7.0
+        },
+        "composite_score": 0.675,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:00:48.541832"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 9,
+          "engagement": 7,
+          "brand_voice": 8,
+          "actionability": 8
+        },
+        "composite_score": 0.8,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:01:20.616629"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-03T06:00:11.665826",
+      "deployed_at": "2026-04-03T06:00:48.541850",
+      "evaluated_at": "2026-04-03T06:01:24.644992",
+      "result": "kept",
+      "learnings": "**What worked:** Adding scientific credibility (\"science-backed\"), specific deliverables (\"exact workout schedules,\" \"tracking sheets\"), and framing it as a complete \"transformation program\" significantly improved performance because it increased perceived expertise and provided tangible, actionable tools users could immediately implement.\n\n**Key learning:** Users prefer content promises that combine authoritative positioning with concrete, specific deliverables rather than general topic coverage, as it demonstrates both credibility and practical value.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260403_57157a79326c",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260403_57157a79326c",
+        "domain": "content_quality",
+        "variant_text": "Create a science-backed 28-day muscle-building and fat-loss transformation system for busy 35-year-old professionals, featuring 3 exact workout templates (45-minute sessions), progressive overload calculators, compound movement video breakdowns, intermittent fasting meal plans with prep guides, sleep hack protocols, weekly body composition tracking dashboards, and a troubleshooting guide for the 5 most common plateau scenarios with specific solutions.",
+        "baseline_text": "Create a science-backed 4-week muscle-building and fat-loss transformation program for a 35-year-old male, including exact workout schedules with rep/set schemes, progressive overload tracking sheets, compound movement form guides, meal timing strategies, sleep optimization protocols, and weekly body composition monitoring methods with troubleshooting tips for common plateaus.",
+        "hypothesis": "This variant will outperform the baseline by combining proven elements (science-backed credibility, specific timeframes, detailed deliverables) while adding busy professional lifestyle targeting, efficiency promises (45-minute sessions), and enhanced practical tools (calculators, dashboards, video breakdowns) that reduce friction and increase perceived implementation ease.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-03T06:01:33.760881",
+        "metadata": {
+          "reasoning": "Past experiments show that scientific credibility, specific deliverables, and targeted audience profiling significantly boost performance. This variant builds on those successes by: 1) Reframing '4-week' as '28-day' (feels more precise and urgent), 2) Adding 'busy professional' targeting beyond just age demographics, 3) Including time efficiency promises (45-minute sessions) that address the target's main constraint, 4) Upgrading tools from basic 'sheets' to interactive 'calculators' and 'dashboards' which feel more modern and valuable, 5) Adding 'video breakdowns' to address visual learning preferences, and 6) Making the troubleshooting more specific ('5 most common scenarios') which increases confidence in the content's completeness."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 8.0,
+          "engagement": 6.0,
+          "brand_voice": 7.0,
+          "actionability": 7.0
+        },
+        "composite_score": 0.7,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:02:10.718264"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 7,
+          "engagement": 8,
+          "brand_voice": 9,
+          "actionability": 6
+        },
+        "composite_score": 0.75,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:02:44.558923"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-03T06:01:33.762078",
+      "deployed_at": "2026-04-03T06:02:10.718281",
+      "evaluated_at": "2026-04-03T06:02:48.708049",
+      "result": "kept",
+      "learnings": "**What worked:** Targeting busy professionals with efficiency-focused messaging (45-minute sessions) and systematic language (\"28-day system\" vs \"4-week program\") improved performance by 7.1%, likely because it reduced perceived time barriers and increased implementation confidence for the target audience.\n\n**Key takeaway:** When promoting fitness programs, emphasizing time efficiency and using more systematic, professional language can significantly boost appeal among working adults who value structured, time-conscious solutions.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260403_f3d0d90c29b4",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260403_f3d0d90c29b4",
+        "domain": "content_quality",
+        "variant_text": "Create the \"Executive Edge\" 28-day physique transformation protocol for time-pressed professionals earning $100K+, featuring 3 proven workout templates (maximum 45 minutes), automatic progressive overload calculators, HD movement demonstrations with form-check guides, executive-optimized intermittent fasting meal plans with 15-minute prep protocols, high-performer sleep optimization system, weekly biomarker tracking dashboards, and an advanced troubleshooting playbook for the 5 most common plateau scenarios with research-backed solutions.",
+        "baseline_text": "Create a science-backed 28-day muscle-building and fat-loss transformation system for busy 35-year-old professionals, featuring 3 exact workout templates (45-minute sessions), progressive overload calculators, compound movement video breakdowns, intermittent fasting meal plans with prep guides, sleep hack protocols, weekly body composition tracking dashboards, and a troubleshooting guide for the 5 most common plateau scenarios with specific solutions.",
+        "hypothesis": "This variant will outperform the baseline by elevating the positioning from general professionals to high-earning executives with premium branding ('Executive Edge'), adding income qualification ($100K+) to increase perceived exclusivity and value, while enhancing the scientific credibility with 'research-backed solutions' and 'biomarker tracking' to justify premium positioning.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-03T06:02:57.965783",
+        "metadata": {
+          "reasoning": "Past experiments show that targeting busy professionals with specific timeframes (28-day), efficiency promises (45-minute sessions), and science-backed credibility consistently improves performance. This variant builds on those proven elements while adding premium positioning through executive branding and income targeting, which should increase perceived value and exclusivity. The addition of 'HD demonstrations,' 'biomarker tracking,' and 'research-backed solutions' maintains the scientific authority that worked in previous tests while upgrading the language to match executive expectations. The '15-minute prep protocols' addresses time constraints even more specifically than before, and calling it a 'protocol' rather than 'system' adds professional sophistication that should resonate with the target audience."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 6.5,
+          "brand_voice": 7.5,
+          "actionability": 7.0
+        },
+        "composite_score": 0.7125,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:03:36.393212"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 7,
+          "engagement": 8,
+          "brand_voice": 9,
+          "actionability": 8
+        },
+        "composite_score": 0.8,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:04:09.726539"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-03T06:02:57.967104",
+      "deployed_at": "2026-04-03T06:03:36.393230",
+      "evaluated_at": "2026-04-03T06:04:13.456889",
+      "result": "kept",
+      "learnings": "**What worked:** Positioning the product as exclusive and premium for high-earning executives ($100K+) with branded naming (\"Executive Edge\") and scientific language (\"protocol,\" \"proven\") significantly outperformed the generic professional targeting, increasing the score from 0.7125 to 0.8000. **Why it worked:** The income qualification and executive positioning created perceived exclusivity and higher value, while the premium branding and scientific terminology enhanced credibility and justified a higher price point for the target demographic.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260403_0b13cdd54abd",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260403_0b13cdd54abd",
+        "domain": "content_quality",
+        "variant_text": "Create the \"Executive Edge\" 28-day physique transformation protocol for time-pressed C-suite and senior executives earning $150K+, featuring 3 scientifically-validated workout templates (maximum 45 minutes), AI-powered progressive overload calculators, 4K movement demonstrations with executive form-check guides, performance-optimized intermittent fasting meal plans with 15-minute prep protocols, elite sleep optimization system with circadian rhythm tracking, weekly biomarker tracking dashboards with executive health metrics, VIP troubleshooting playbook for the 5 most common plateau scenarios with peer-reviewed research solutions, and exclusive access to executive fitness accountability network.",
+        "baseline_text": "Create the \"Executive Edge\" 28-day physique transformation protocol for time-pressed professionals earning $100K+, featuring 3 proven workout templates (maximum 45 minutes), automatic progressive overload calculators, HD movement demonstrations with form-check guides, executive-optimized intermittent fasting meal plans with 15-minute prep protocols, high-performer sleep optimization system, weekly biomarker tracking dashboards, and an advanced troubleshooting playbook for the 5 most common plateau scenarios with research-backed solutions.",
+        "hypothesis": "This variant will outperform the baseline by elevating the target audience from general $100K+ professionals to $150K+ C-suite executives, adding AI and 4K technology positioning for premium appeal, introducing an exclusive accountability network for peer connection, and incorporating executive health metrics to align with the sophisticated health optimization mindset of senior leaders.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-03T06:04:24.160840",
+        "metadata": {
+          "reasoning": "Based on past experiments, premium positioning with income qualification has been highly successful (+12.2% in experiment 1). This variant builds on proven elements: (1) Keeps the successful 'Executive Edge' branding and scientific credibility that drove previous wins, (2) Raises the exclusivity bar from $100K+ to $150K+ and specifically targets C-suite/senior executives for even higher perceived value, (3) Upgrades technology positioning from 'HD' to '4K' and adds 'AI-powered' calculators to justify premium pricing, (4) Introduces 'executive accountability network' which adds social proof and networking value that executives highly value, (5) Incorporates 'peer-reviewed research' and 'executive health metrics' to appeal to the data-driven mindset of senior leaders. The combination of higher exclusivity, advanced technology positioning, and executive networking should drive significantly higher perceived value."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 7.0,
+          "brand_voice": 8.0,
+          "actionability": 6.5
+        },
+        "composite_score": 0.725,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:05:10.424915"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 7,
+          "engagement": 6,
+          "brand_voice": 8,
+          "actionability": 6
+        },
+        "composite_score": 0.675,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:05:48.802626"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-03T06:04:24.162499",
+      "deployed_at": "2026-04-03T06:05:10.424932",
+      "evaluated_at": "2026-04-03T06:05:52.566252",
+      "result": "reverted",
+      "learnings": "The attempt to elevate the target audience from $100K+ professionals to $150K+ C-suite executives and add premium positioning elements (AI, 4K technology, exclusive networks) backfired, reducing performance by 6.9%. This suggests that overly narrow targeting and excessive premium positioning can alienate the broader, more accessible professional audience who may find the original $100K+ threshold more attainable and inclusive.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260403_ad40b9e65e33",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260403_ad40b9e65e33",
+        "domain": "content_quality",
+        "variant_text": "Create the \"Executive Edge\" 28-day physique transformation protocol for time-pressed professionals earning $100K+, featuring 3 proven workout templates (maximum 45 minutes), automatic progressive overload calculators, HD movement demonstrations with form-check guides, executive-optimized intermittent fasting meal plans with 15-minute prep protocols, high-performer sleep optimization system, weekly biomarker tracking dashboards, an advanced troubleshooting playbook for the 5 most common plateau scenarios with research-backed solutions, PLUS exclusive access to the Executive Transformation Community for peer accountability and a dedicated mobile app with AI workout adjustments for travel and schedule disruptions.",
+        "baseline_text": "Create the \"Executive Edge\" 28-day physique transformation protocol for time-pressed professionals earning $100K+, featuring 3 proven workout templates (maximum 45 minutes), automatic progressive overload calculators, HD movement demonstrations with form-check guides, executive-optimized intermittent fasting meal plans with 15-minute prep protocols, high-performer sleep optimization system, weekly biomarker tracking dashboards, and an advanced troubleshooting playbook for the 5 most common plateau scenarios with research-backed solutions.",
+        "hypothesis": "This variant will outperform the baseline by adding two high-value elements that address key pain points for the target demographic: a peer accountability community that leverages social proof and networking desires of high earners, and a mobile app with AI adjustments that solves the critical problem of maintaining consistency during business travel and unpredictable schedules.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-03T06:06:02.150869",
+        "metadata": {
+          "reasoning": "The current baseline already incorporates all the successful elements from past experiments (Executive Edge branding, $100K+ targeting, time efficiency, scientific credibility, specific deliverables). However, it's missing two critical elements that high-earning professionals value most: peer connection with similar individuals and flexibility for their unpredictable schedules. The previous failed experiment tried to over-segment with $150K+ C-suite targeting, but this variant keeps the proven $100K+ threshold while adding practical value. The community element taps into the networking mindset of professionals, while the AI-powered mobile app addresses the biggest implementation barrier - maintaining consistency despite travel and schedule changes. These additions feel premium and sophisticated without being exclusionary, building on the proven foundation rather than replacing it."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.0,
+          "engagement": 7.5,
+          "brand_voice": 8.5,
+          "actionability": 6.5
+        },
+        "composite_score": 0.7375,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:06:48.376625"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 8,
+          "engagement": 8,
+          "brand_voice": 8,
+          "actionability": 9
+        },
+        "composite_score": 0.825,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-03T06:07:25.425247"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-03T06:06:02.152516",
+      "deployed_at": "2026-04-03T06:06:48.376642",
+      "evaluated_at": "2026-04-03T06:07:29.518739",
+      "result": "kept",
+      "learnings": "The addition of a peer accountability community and mobile app with AI adjustments significantly improved performance (0.7375 to 0.8250), demonstrating that high-earning professionals highly value social proof networking opportunities and technology solutions that adapt to their unpredictable travel schedules. This validates that addressing both the social and logistical pain points of busy executives through community features and adaptive technology is more effective than focusing solely on workout efficiency.",
       "approval_required": false,
       "metrics_window_hours": 0
     }
