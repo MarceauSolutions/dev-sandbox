@@ -657,7 +657,11 @@
     "transcript_summary": "The AI agent from Marceau Solutions initiated the call. After the user remained silent, the agent attempted to re-engage twice before concluding the call, suggesting the user call back or visit their website. The conversation ended due to a lack of user response.",
     "intent": "wrong_number",
     "lead_quality": "not_lead",
+<<<<<<< Updated upstream
     "next_action": "No action required. This appears to be a wrong number or accidental dial as the caller never responded despite multiple prompts from the AI assistant.",
+=======
+    "next_action": "No follow-up needed. This appears to be a silent call with no engagement - likely a wrong number, butt dial, or automated system hang-up. William should monitor if this number calls back with actual engagement before taking any action.",
+>>>>>>> Stashed changes
     "transcript": [
       {
         "role": "agent",
@@ -681,8 +685,12 @@
             }
           },
           "convai_asr_provider": null,
+<<<<<<< Updated upstream
           "convai_tts_model": "eleven_flash_v2",
           "convai_tts_cascade": null
+=======
+          "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
         },
         "rag_retrieval_info": null,
         "llm_usage": null,
@@ -742,8 +750,12 @@
             }
           },
           "convai_asr_provider": null,
+<<<<<<< Updated upstream
           "convai_tts_model": "eleven_flash_v2",
           "convai_tts_cascade": null
+=======
+          "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
         },
         "rag_retrieval_info": null,
         "llm_usage": {
@@ -824,8 +836,12 @@
             }
           },
           "convai_asr_provider": null,
+<<<<<<< Updated upstream
           "convai_tts_model": "eleven_flash_v2",
           "convai_tts_cascade": null
+=======
+          "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
         },
         "rag_retrieval_info": null,
         "llm_usage": {
@@ -1119,8 +1135,12 @@
               }
             },
             "convai_asr_provider": null,
+<<<<<<< Updated upstream
             "convai_tts_model": "eleven_flash_v2",
             "convai_tts_cascade": null
+=======
+            "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
           },
           "rag_retrieval_info": null,
           "llm_usage": null,
@@ -1180,8 +1200,12 @@
               }
             },
             "convai_asr_provider": null,
+<<<<<<< Updated upstream
             "convai_tts_model": "eleven_flash_v2",
             "convai_tts_cascade": null
+=======
+            "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
           },
           "rag_retrieval_info": null,
           "llm_usage": {
@@ -1262,8 +1286,12 @@
               }
             },
             "convai_asr_provider": null,
+<<<<<<< Updated upstream
             "convai_tts_model": "eleven_flash_v2",
             "convai_tts_cascade": null
+=======
+            "convai_tts_model": "eleven_flash_v2"
+>>>>>>> Stashed changes
           },
           "rag_retrieval_info": null,
           "llm_usage": {
