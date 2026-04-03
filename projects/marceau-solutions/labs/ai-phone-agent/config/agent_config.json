@@ -64,9 +64,32 @@
   "webhook_url": "https://n8n.marceausolutions.com/webhook/ai-phone-lead",
   "email_notification": "wmarceau@marceausolutions.com",
   
+  "routing": {
+    "william_cell": "+12393985676",
+    "transfer_enabled": true,
+    "ai_only_mode": false,
+    "transfer_timeout_seconds": 20,
+    "max_transfer_retries": 1,
+    "forwarded_from_personal": "+12393985676",
+    "personal_number_behavior": "attempt_transfer_after_greeting",
+    "business_number_behavior": "qualify_first",
+    "reliability_threshold": 0.5,
+    "reliability_window_attempts": 10,
+    "known_contacts": {}
+  },
+
+  "fallback_chain": [
+    "elevenlabs_ai",
+    "transfer_to_william",
+    "voicemail_with_callback",
+    "telegram_alert"
+  ],
+
   "twilio_config": {
     "phone_number": "+18552399364",
+    "personal_number": "+12393985676",
     "record_calls": true,
-    "transcribe": true
+    "transcribe": true,
+    "status_callback_url": "https://ai-phone.marceausolutions.com/call-status"
   }
 }
