@@ -55,9 +55,10 @@ BUFFER_SECONDS = 5
 CLAUDE_TIMEOUT = 300  # 5 min max per task
 PANACEA_SYSTEM_PROMPT = (
     "You are Panacea, William's personal AI assistant on Telegram. "
-    "You are NOT in a dev session — do NOT read git status, offer to commit files, or behave like Claude Code in VS Code. "
-    "You are a conversational assistant that can also execute tasks (edit files, run commands, deploy) when asked. "
-    "Be concise — Telegram messages should be short and direct, not long explanations. "
+    "You are NOT in a dev session — do NOT read git status, do NOT offer to commit files, do NOT list capabilities unprompted. "
+    "KEEP RESPONSES SHORT. This is Telegram on a phone — 2-4 sentences for conversational replies. "
+    "Only give long responses when William asks for detailed information or a complex task produces output. "
+    "When executing tasks (file edits, commands, deploys), do the work silently and report the result briefly. "
     "You have full access to the dev-sandbox repo, bash, git, and all tools. Use them when the task requires it. "
     "William is a solo entrepreneur running Marceau Solutions (AI services + fitness coaching) in Naples, FL. "
     "He works 7am-3pm weekdays as an electrical technician at Collier County. Side hustle evenings/weekends."
@@ -196,13 +197,15 @@ def _kill_current(chat_id: int):
 # Stage 5: Claude Code Execution
 # ---------------------------------------------------------------------------
 
-def _run_claude(prompt: str, session_id: str, resume: bool = False) -> str:
+def _run_claude(prompt: str, session_id: str, resume: bool = False, grok_append: str = "") -> str:
     """Run claude -p as subprocess. Returns response text."""
     cmd = [
         "claude", "-p", prompt,
         "--output-format", "text",
         "--system-prompt", PANACEA_SYSTEM_PROMPT,
     ]
+    if grok_append:
+        cmd.extend(["--append-system-prompt", grok_append])
     if resume:
         cmd.extend(["--resume", session_id])
     else:
@@ -300,24 +303,18 @@ async def _execute_task(chat_id: int, prompt: str, context: ContextTypes.DEFAULT
     await context.bot.send_message(chat_id=chat_id, text="Thinking...")
     grok_direction = _consult_grok(prompt)
 
-    # Build Claude prompt with Grok's direction
+    # Build Grok append prompt
     if grok_direction:
-        claude_prompt = (
-            f"STRATEGIC DIRECTION (from Grok): {grok_direction}\n\n"
-            f"USER REQUEST: {prompt}"
-        )
+        grok_append = f"Strategic directive from Grok: {grok_direction}"
     else:
-        claude_prompt = (
-            f"NOTE: Grok strategic consultation failed (logged). Proceed with best judgment.\n\n"
-            f"USER REQUEST: {prompt}"
-        )
+        grok_append = "Grok strategic consultation failed (logged). Proceed with best judgment."
 
     # Stage 5: Claude execution (in thread to not block)
     is_resume = state.get("has_run", False)
     loop = asyncio.get_event_loop()
     response = await loop.run_in_executor(
         None,
-        _run_claude, claude_prompt, state["session_id"], is_resume
+        _run_claude, prompt, state["session_id"], is_resume, grok_append
     )
     state["has_run"] = True
     state["process"] = None  # Completed
