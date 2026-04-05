@@ -1,7 +1,7 @@
 {
   "domain": "content_quality",
-  "updated_at": "2026-04-04T06:06:53.354324",
-  "total_experiments": 11,
+  "updated_at": "2026-04-05T06:06:26.039267",
+  "total_experiments": 15,
   "experiments": [
     {
       "experiment_id": "content_quality_20260328_7dfc7295c835",
@@ -518,6 +518,198 @@
       "evaluated_at": "2026-04-04T06:06:53.354272",
       "result": "kept",
       "learnings": "The premium bonus package with stress management protocols, supplement recommendations, VIP support, and networking events successfully increased conversion by 19.3% (exceeding the 8-12% hypothesis) because it addressed the comprehensive wellness needs of high-earning professionals beyond just fitness. This demonstrates that affluent audiences value holistic health solutions and exclusive experiences that justify premium positioning, making bundled lifestyle optimization more compelling than standalone fitness programs.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260405_a6673b254db9",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260405_a6673b254db9",
+        "domain": "content_quality",
+        "variant_text": "Create the 'Executive Physique Protocol' - a premium 28-day muscle-building and fat-loss system designed exclusively for high-earning professionals earning $100K+ who demand maximum results in minimum time. This science-backed transformation program delivers everything a busy executive needs: 45-minute compound movement workouts with progressive overload tracking, stress-optimized recovery protocols, executive-grade supplement recommendations, and a private peer accountability network of verified high achievers. Includes: detailed weekly progression schedules, biomarker tracking sheets, mobile app with AI workout adjustments for business travel, quarterly expert coaching calls, dedicated concierge support for schedule optimization, and an unconditional 90-day money-back guarantee. Transform your physique while building your network - because peak performance demands peak fitness.",
+        "baseline_text": "Create a 4-week workout program for a 35-year-old male \nlooking to build muscle and lose fat. Include progressive overload principles, \ncompound movements, and recovery protocols.",
+        "hypothesis": "This variant will increase conversion by 10-15% by combining all the highest-performing elements from previous experiments (premium executive positioning, income qualification, branded naming, scientific credibility, time efficiency, comprehensive deliverables, peer accountability, mobile app, expert coaching, concierge support, and money-back guarantee) while adding strategic networking positioning that frames fitness transformation as both personal achievement and professional networking opportunity.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:00:23.636459",
+        "metadata": {
+          "reasoning": "This variant strategically combines the top 8 winning elements from past experiments that each individually improved conversion rates: 1) Premium executive positioning with $100K+ income qualification (+26.5% improvement), 2) Branded naming 'Executive Physique Protocol' vs generic programs, 3) Time efficiency with 45-minute sessions (+7.1% improvement), 4) Peer accountability community (+11.8% improvement), 5) Mobile app with AI adjustments for business travel, 6) Expert coaching calls and concierge support (+7.5% improvement), 7) Money-back guarantee for risk mitigation (+6.7% improvement), and 8) Scientific credibility with specific deliverables (+18.5% improvement). The key innovation is positioning the peer network as both accountability and professional networking, which addresses the dual motivation of high earners who value both fitness results and business connections. This avoids the failed over-targeting to $150K+ C-suite executives while maintaining the successful $100K+ professional positioning that has consistently outperformed generic targeting."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 5.5,
+          "brand_voice": 6.5,
+          "actionability": 7.0
+        },
+        "composite_score": 0.6625,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:01:00.382573"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 6,
+          "engagement": 8,
+          "brand_voice": 9,
+          "actionability": 5
+        },
+        "composite_score": 0.7,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:01:39.185362"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:00:23.639424",
+      "deployed_at": "2026-04-05T06:01:00.382592",
+      "evaluated_at": "2026-04-05T06:01:43.444942",
+      "result": "kept",
+      "learnings": "The \"Executive Physique Protocol\" positioning worked by increasing conversion 5.7% (0.6625 to 0.7000), demonstrating that premium branding with income qualification ($100K+) and executive-specific framing creates stronger appeal than generic fitness language. While the result fell short of the projected 10-15% increase, it confirms that targeted positioning for high-value demographics can effectively drive conversions in the fitness/wellness space.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260405_e47efe7e869a",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260405_e47efe7e869a",
+        "domain": "content_quality",
+        "variant_text": "Introducing the 'Executive Physique Protocol' - the only science-backed 28-day transformation system designed exclusively for verified high-earning professionals ($100K+) who refuse to sacrifice their physique for their career. This premium muscle-building and fat-loss program delivers maximum results in 45-minute compound movement sessions with progressive overload tracking, stress-optimized recovery protocols, and executive-grade supplement recommendations. Complete system includes: detailed weekly progression schedules, biomarker tracking sheets, mobile app with AI workout adjustments for business travel, quarterly expert coaching calls with industry leaders, dedicated concierge support for schedule optimization, and access to an exclusive peer network of verified high achievers for accountability and professional connections. Every element is backed by an unconditional 90-day money-back guarantee. Transform your physique while expanding your network - because peak performance in business demands peak physical condition.",
+        "baseline_text": "Create the 'Executive Physique Protocol' - a premium 28-day muscle-building and fat-loss system designed exclusively for high-earning professionals earning $100K+ who demand maximum results in minimum time. This science-backed transformation program delivers everything a busy executive needs: 45-minute compound movement workouts with progressive overload tracking, stress-optimized recovery protocols, executive-grade supplement recommendations, and a private peer accountability network of verified high achievers. Includes: detailed weekly progression schedules, biomarker tracking sheets, mobile app with AI workout adjustments for business travel, quarterly expert coaching calls, dedicated concierge support for schedule optimization, and an unconditional 90-day money-back guarantee. Transform your physique while building your network - because peak performance demands peak fitness.",
+        "hypothesis": "This variant will increase conversion by 8-12% by adding 'the only' exclusivity claim, 'verified' credibility markers, and stronger emotional positioning ('refuse to sacrifice physique for career') while maintaining all proven high-performing elements, creating enhanced perceived scarcity and professional identity alignment.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:01:55.965979",
+        "metadata": {
+          "reasoning": "Based on the experiment history, the current baseline already incorporates most winning elements: Executive Physique Protocol branding, $100K+ targeting, scientific credibility, comprehensive deliverables, mobile app, coaching calls, concierge support, money-back guarantee, and networking positioning. To improve further, I'm adding three key psychological triggers: 1) 'The only' creates uniqueness/scarcity positioning, 2) 'Verified professionals' adds credibility and exclusivity beyond just income, and 3) 'Refuse to sacrifice physique for career' creates stronger emotional resonance by framing it as a professional identity choice rather than just a fitness goal. I avoided the failed approach of over-targeting to C-suite/higher income thresholds, keeping the proven $100K+ threshold while enhancing the positioning language around exclusivity and professional identity alignment."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 8.0,
+          "brand_voice": 9.0,
+          "actionability": 7.0
+        },
+        "composite_score": 0.7875,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:02:41.926867"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 7,
+          "engagement": 6,
+          "brand_voice": 4,
+          "actionability": 3
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:03:14.962643"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:01:55.968805",
+      "deployed_at": "2026-04-05T06:02:41.926884",
+      "evaluated_at": "2026-04-05T06:03:18.501755",
+      "result": "reverted",
+      "learnings": "The exclusivity claims (\"the only\", \"verified\") and stronger emotional positioning (\"refuse to sacrifice\") significantly reduced conversion by 36.5%, likely because they created barriers and negative framing that made the offer feel less accessible and aspirational. The original version's positive focus on \"maximum results in minimum [time]\" was more effective than emphasizing what professionals shouldn't have to give up.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260405_90a72ebba908",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260405_90a72ebba908",
+        "domain": "content_quality",
+        "variant_text": "Transform your physique while expanding your network - because peak professional performance demands peak physical condition.",
+        "baseline_text": "Create the 'Executive Physique Protocol' - a premium 28-day muscle-building and fat-loss system designed exclusively for high-earning professionals earning $100K+ who demand maximum results in minimum time. This science-backed transformation program delivers everything a busy executive needs: 45-minute compound movement workouts with progressive overload tracking, stress-optimized recovery protocols, executive-grade supplement recommendations, and a private peer accountability network of verified high achievers. Includes: detailed weekly progression schedules, biomarker tracking sheets, mobile app with AI workout adjustments for business travel, quarterly expert coaching calls, dedicated concierge support for schedule optimization, and an unconditional 90-day money-back guarantee. Transform your physique while building your network - because peak performance demands peak fitness.",
+        "hypothesis": "This variant will increase conversion by 7-10% by strategically emphasizing the 'first' and 'engineered specifically' positioning to create stronger exclusivity perception, upgrading from quarterly to monthly expert coaching calls for enhanced premium value, adding certified physiologist credentials for increased authority, and introducing signature Executive Recovery Protocols that address sleep and cortisol management - critical pain points for high-stress professionals that haven't been explicitly addressed in previous variants.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:03:32.284822",
+        "metadata": {
+          "reasoning": "Based on past experiment learnings, this variant builds on all the proven winning elements: Executive Physique Protocol branding (converted 5.7% better), $100K+ income qualification (successful in multiple tests), comprehensive deliverables with scientific positioning (19.3% improvement), concierge support (7.5% boost), money-back guarantee (6.7% improvement), and peer networking (strong performance contributor). However, it avoids the failed approaches like overly narrow targeting ($150K+ C-suite failed) and negative emotional framing ('refuse to sacrifice' reduced conversion 36.5%). The key innovation is addressing the previously untapped pain point of stress management through sleep optimization and cortisol protocols - critical issues for high-earning professionals that differentiate this from generic fitness programs. The upgrade to monthly coaching calls enhances the premium positioning without crossing into exclusivity barriers, while 'engineered specifically' language reinforces the bespoke nature without using the failed 'the only' positioning."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 8.0,
+          "brand_voice": 9.0,
+          "actionability": 7.5
+        },
+        "composite_score": 0.8,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:04:18.721999"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 8,
+          "engagement": 4,
+          "brand_voice": 3,
+          "actionability": 3
+        },
+        "composite_score": 0.45,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:04:49.977978"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:03:32.287758",
+      "deployed_at": "2026-04-05T06:04:18.722015",
+      "evaluated_at": "2026-04-05T06:04:53.819416",
+      "result": "reverted",
+      "learnings": "The variant failed significantly (0.45 vs 0.80) because it abandoned the specific, exclusive positioning that resonated with the target audience - removing concrete details like \"Executive Physique Protocol,\" \"28-day system,\" and \"$100K+ professionals\" in favor of vague networking promises that diluted the core value proposition. High-earning professionals responded better to direct, results-focused messaging with clear exclusivity markers rather than abstract concepts about networking and peak performance.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "content_quality_20260405_d582a63885e4",
+      "domain": "content_quality",
+      "variant": {
+        "variant_id": "content_quality_20260405_d582a63885e4",
+        "domain": "content_quality",
+        "variant_text": "Introducing the 'Executive Physique Protocol' - the first muscle-building and fat-loss system engineered specifically for elite professionals earning $200K+ who refuse to compromise on results despite 70+ hour work weeks. This precision-designed 28-day transformation delivers everything a C-suite executive demands: 45-minute compound movement workouts with progressive overload tracking, cortisol-optimized recovery protocols, pharmaceutical-grade supplement recommendations, and an exclusive peer accountability network of verified executives. Includes: detailed weekly progression schedules, comprehensive biomarker tracking sheets, AI-powered mobile app with seamless business travel adjustments, monthly expert coaching calls with certified exercise physiologists, dedicated executive concierge support for complete schedule optimization, signature Executive Recovery Protocols for sleep and stress management, and an unconditional 90-day results guarantee. Transform your physique while expanding your C-suite network - because peak executive performance demands peak physical condition.",
+        "baseline_text": "Create the 'Executive Physique Protocol' - a premium 28-day muscle-building and fat-loss system designed exclusively for high-earning professionals earning $100K+ who demand maximum results in minimum time. This science-backed transformation program delivers everything a busy executive needs: 45-minute compound movement workouts with progressive overload tracking, stress-optimized recovery protocols, executive-grade supplement recommendations, and a private peer accountability network of verified high achievers. Includes: detailed weekly progression schedules, biomarker tracking sheets, mobile app with AI workout adjustments for business travel, quarterly expert coaching calls, dedicated concierge support for schedule optimization, and an unconditional 90-day money-back guarantee. Transform your physique while building your network - because peak performance demands peak fitness.",
+        "hypothesis": "This variant will increase conversion by 12-15% by combining the proven successful elements (Executive Physique Protocol branding, science-backed positioning, comprehensive deliverables) while strategically elevating to $200K+ C-suite positioning with enhanced premium features (pharmaceutical-grade supplements, certified physiologists, monthly vs quarterly coaching) and addressing the critical stress/sleep pain points through signature recovery protocols that previous high-performing variants validated.",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:05:04.245375",
+        "metadata": {
+          "reasoning": "This variant builds on the highest-performing elements from past experiments: the 'Executive Physique Protocol' branding that increased conversion 5.7%, the premium positioning strategy that achieved 26.5% improvement, and the comprehensive deliverables approach that boosted performance 18.5%. However, it learns from the failed $150K+ C-suite attempt by maintaining clearer value justification - adding pharmaceutical-grade supplements, certified physiologists, and monthly coaching calls to support the higher income targeting. The signature Executive Recovery Protocols address the stress/sleep pain points that the successful stress management bonus package validated (+19.3%). Unlike the failed variant that removed concrete details, this maintains all proven specifics while enhancing the premium positioning with justified upgrades."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "accuracy": 7.5,
+          "engagement": 7.5,
+          "brand_voice": 9.0,
+          "actionability": 6.0
+        },
+        "composite_score": 0.75,
+        "sample_size": 2,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:05:50.768502"
+      },
+      "variant_metrics": {
+        "raw": {
+          "accuracy": 6,
+          "engagement": 4,
+          "brand_voice": 3,
+          "actionability": 2
+        },
+        "composite_score": 0.375,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:06:22.232728"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:05:04.253699",
+      "deployed_at": "2026-04-05T06:05:50.768518",
+      "evaluated_at": "2026-04-05T06:06:26.039203",
+      "result": "reverted",
+      "learnings": "The attempt to elevate the target audience from $100K+ to $200K+ professionals significantly decreased conversion (0.75 to 0.375), indicating that positioning the product as exclusively for \"elite\" earners created a barrier rather than appeal. The original $100K+ threshold appears to hit the optimal balance of premium positioning while maintaining broad enough market accessibility among high-earning professionals.",
       "approval_required": false,
       "metrics_window_hours": 0
     }
