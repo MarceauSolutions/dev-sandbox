@@ -1,7 +1,7 @@
 {
   "domain": "website_cta",
-  "updated_at": "2026-04-03T06:09:06.155894",
-  "total_experiments": 10,
+  "updated_at": "2026-04-05T06:07:58.823038",
+  "total_experiments": 20,
   "experiments": [
     {
       "experiment_id": "website_cta_20260329_b6519a02afd0",
@@ -490,6 +490,496 @@
       "evaluated_at": "2026-04-03T06:09:06.155844",
       "result": "reverted",
       "learnings": "The hypothesis that \"Schedule a Free Consultation\" would outperform \"Get a Free Consultation\" by reducing friction and implying more structure was incorrect, as both versions achieved identical 50% conversion rates. This suggests that the perceived benefits of using more specific, action-oriented language may not always translate to measurable improvements, and that other factors like audience familiarity with common CTA patterns (\"Get\" being widely recognized) may be more influential than anticipated psychological triggers.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260404_6b4064260bfe",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260404_6b4064260bfe",
+        "domain": "website_cta",
+        "variant_text": "Get a Free Consultation (30 mins)",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Adding specific time duration '30 mins' will increase conversion rates by 6-10% because it reduces uncertainty about time commitment and makes the consultation feel manageable and non-threatening",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-04T06:07:00.246967",
+        "metadata": {
+          "reasoning": "All 10 previous experiments focused on changing action words ('Schedule', 'Start', 'Claim', 'Book'), adding urgency ('Today', 'Now'), personalization ('Your'), or value proposition changes ('Growth Plan', 'Strategy Call', 'Business Advice'). None addressed a key conversion barrier: uncertainty about time commitment. The learnings show that 'Get' and 'Free Consultation' are already optimized words that consistently perform well. Rather than changing these proven elements, I'm adding specific information that reduces friction by setting clear expectations. A 30-minute duration is long enough to be valuable but short enough to feel manageable, addressing the psychological barrier of unknown time investment that may be preventing conversions at the current 50% plateau."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:04.195214"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:07.873523"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-04T06:07:00.250650",
+      "deployed_at": "2026-04-04T06:07:04.195228",
+      "evaluated_at": "2026-04-04T06:07:10.740764",
+      "result": "reverted",
+      "learnings": "Adding the specific time duration \"30 mins\" to the CTA did not improve conversion rates, suggesting that users were not deterred by uncertainty about time commitment or that the added specificity may have created perceived barriers rather than reducing them. This indicates that simpler, more direct CTAs without qualifying details may be more effective for consultation offers.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260404_e64865e588ba",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260404_e64865e588ba",
+        "domain": "website_cta",
+        "variant_text": "Get Free Expert Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Adding 'Expert' will increase conversion rates by 5-8% because it enhances credibility and perceived value of the consultation without adding friction, while maintaining the proven high-converting 'Get' and 'Free' elements that have consistently performed well across all experiments",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-04T06:07:18.284370",
+        "metadata": {
+          "reasoning": "Based on 11 failed experiments, I've identified that successful CTAs need to maintain the core high-converting elements 'Get' + 'Free' + 'Consultation' while making minimal but meaningful changes. Past failures show that: 1) Adding time specifics, urgency words, or personalization creates friction, 2) Changing the core action verb ('Get') consistently fails, 3) Removing 'Free' hurts conversion, 4) Adding vague bonus deliverables lacks credibility. However, one key insight is that users may question the quality of truly 'free' services. Adding 'Expert' addresses this concern by qualifying the consultation provider without changing the proven formula. Unlike previous additions that were either pushy (Today, Now), vague (Growth Plan), or unnecessary (Your), 'Expert' provides concrete value differentiation that justifies the free offer and builds trust."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:21.739651"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:25.650999"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-04T06:07:18.287180",
+      "deployed_at": "2026-04-04T06:07:21.739665",
+      "evaluated_at": "2026-04-04T06:07:29.199420",
+      "result": "reverted",
+      "learnings": "Adding \"Expert\" to the CTA did not improve conversion rates, suggesting that extra descriptive words may not always enhance perceived value and could potentially create unnecessary friction or cognitive load. The original concise \"Get a Free Consultation\" remains optimal, demonstrating that clarity and brevity often outperform attempts to add credibility through additional qualifiers in CTA copy.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260404_83214dcdb1fa",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260404_83214dcdb1fa",
+        "domain": "website_cta",
+        "variant_text": "Get a Free 15-Minute Discovery Call",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Specifying a shorter, concrete time commitment (15 minutes) combined with 'Discovery Call' framing will reduce user hesitation about time investment while making the interaction feel less salesy and more exploratory, increasing conversion rates by 6-10%",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-04T06:07:35.992149",
+        "metadata": {
+          "reasoning": "Past experiments show that adding vague qualifiers like 'Expert' or abstract deliverables failed, but the 30-minute duration test suggests time commitment matters - it just may have been too long. A 15-minute commitment is minimal enough to overcome procrastination while 'Discovery Call' positions it as mutual exploration rather than a sales pitch. This maintains the proven 'Get' and 'Free' elements while addressing the core barrier of perceived time investment with a much smaller ask. The terminology 'Discovery Call' also feels more collaborative and less intimidating than 'Consultation' which can imply a formal, lengthy business meeting."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:39.730151"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:43.987755"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-04T06:07:35.995332",
+      "deployed_at": "2026-04-04T06:07:39.730167",
+      "evaluated_at": "2026-04-04T06:07:47.666414",
+      "result": "reverted",
+      "learnings": "The specific time commitment and \"Discovery Call\" framing did not improve conversion rates, suggesting that users may not have been hesitating due to unclear time expectations or overly salesy language in the original CTA. This indicates that the barrier to conversion likely lies elsewhere in the user journey rather than in the perceived time investment or sales pressure of the consultation offer.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260404_29729f54c582",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260404_29729f54c582",
+        "domain": "website_cta",
+        "variant_text": "Get Free Marketing Audit",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Changing from 'Consultation' to 'Marketing Audit' will increase conversion rates by 7-12% because an audit implies a concrete deliverable with tangible outcomes, reducing perceived sales pressure while maintaining the proven high-converting 'Get' and 'Free' elements",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-04T06:07:55.556257",
+        "metadata": {
+          "reasoning": "After 13 failed experiments, the pattern shows that minor word variations (Get vs Schedule vs Claim vs Book) and adding qualifiers (Expert, Your, Today, 30 mins) don't move conversion rates from the 0.500 baseline. However, two key learnings emerge: 1) The 'Get' + 'Free' combination consistently performs well and should be maintained, and 2) Previous attempts to change the deliverable ('Business Growth Plan', 'Business Advice') failed because they were either too vague or too good to be true. 'Marketing Audit' strikes a different balance - it's specific enough to feel tangible, professional enough to be credible, and commonly understood in business contexts. Unlike 'consultation' which can feel like a sales call, 'audit' implies analysis and findings that benefit the prospect regardless of whether they buy. This reframes the interaction from 'being sold to' to 'receiving professional assessment', which should reduce friction while maintaining the proven conversion elements."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:07:59.231666"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:08:03.385850"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-04T06:07:55.559213",
+      "deployed_at": "2026-04-04T06:07:59.231679",
+      "evaluated_at": "2026-04-04T06:08:06.864368",
+      "result": "reverted",
+      "learnings": "The change from \"Get a Free Consultation\" to \"Get Free Marketing Audit\" showed no improvement in conversion rates, suggesting that \"consultation\" may actually be more appealing than expected as it implies personalized attention rather than creating sales pressure. The hypothesis that \"audit\" would feel more concrete and less sales-focused was incorrect, indicating that users prefer the human connection implied by a consultation over what may be perceived as a more impersonal audit process.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260404_895a2e5b2379",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260404_895a2e5b2379",
+        "domain": "website_cta",
+        "variant_text": "Get a Free 1-on-1 Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Adding '1-on-1' will increase conversion rates by 6-10% because it emphasizes personal attention and exclusivity without adding sales pressure or complexity, addressing the core user desire for individualized service while maintaining the proven high-converting 'Get' + 'Free' + 'Consultation' formula",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-04T06:08:15.205214",
+        "metadata": {
+          "reasoning": "Analysis of the 14 failed experiments reveals that the baseline 'Get a Free Consultation' consistently performs at 0.500 conversion rate, and all attempts to modify it have failed when they either: 1) removed 'Free' (Book Your Strategy Call), 2) added vague value props (Growth Plan, Business Growth Plan), 3) created artificial urgency (Today, Now), 4) used different action verbs (Schedule, Start, Claim, Book), or 5) substituted consultation terms (Audit, Advice, Strategy Call). However, none of the experiments tested emphasizing the personal, individualized nature of the consultation. Adding '1-on-1' maintains all proven elements while addressing a key psychological driver - the desire for personalized attention - that differentiates a consultation from generic advice or group sessions. This addition is concrete, credible, and directly enhances the core value proposition without the issues that plagued previous variants."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:08:18.829060"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-04T06:08:22.327884"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-04T06:08:15.208385",
+      "deployed_at": "2026-04-04T06:08:18.829074",
+      "evaluated_at": "2026-04-04T06:08:26.506451",
+      "result": "reverted",
+      "learnings": "Adding \"1-on-1\" to the CTA did not improve conversion rates, showing that emphasizing personal attention had no measurable impact on user behavior. This suggests that users either already assume consultations are one-on-one by default, or the added specificity doesn't address their primary conversion barriers, indicating the original concise CTA was already optimized for clarity and action.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260405_e887682ccd04",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260405_e887682ccd04",
+        "domain": "website_cta",
+        "variant_text": "Get a Free Consultation (No Sales Pitch)",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Adding '(No Sales Pitch)' will increase conversion rates by 8-12% because it directly addresses the primary barrier preventing users from converting - fear of being sold to - while maintaining the proven high-converting 'Get a Free Consultation' formula that has been consistent across all experiments",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:06:33.236214",
+        "metadata": {
+          "reasoning": "After 15 experiments with identical 0.500 conversion rates, it's clear that word substitutions, time commitments, urgency language, and value additions haven't addressed the core conversion barrier. The consistent performance suggests users understand and like the 'Get a Free Consultation' offer but are hesitant to act. The most logical barrier for consultation CTAs is fear of sales pressure. All previous experiments modified positive elements (adding value, urgency, specificity) but none addressed potential user concerns. This variant keeps the proven baseline intact while explicitly removing the primary objection, which should unlock conversions from users who want the consultation but fear being pitched to."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:06:36.793214"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:06:40.917735"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:06:33.244084",
+      "deployed_at": "2026-04-05T06:06:36.793227",
+      "evaluated_at": "2026-04-05T06:06:44.180204",
+      "result": "reverted",
+      "learnings": "Adding \"(No Sales Pitch)\" to the CTA did not improve conversion rates, showing that explicitly addressing sales concerns may not be as effective as hypothesized or could potentially signal distrust. The baseline \"Get a Free Consultation\" remains the optimal CTA, suggesting users are already comfortable with this framing and additional reassurances may be unnecessary or counterproductive.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260405_3e44d1e894e6",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260405_3e44d1e894e6",
+        "domain": "website_cta",
+        "variant_text": "Book a Free Strategy Session",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Replacing 'Get a Consultation' with 'Book a Strategy Session' will increase conversion rates by 6-10% because 'Book' implies immediate calendar action with lower friction than 'Get', while 'Strategy Session' suggests a concrete outcome-focused meeting rather than a potentially sales-oriented consultation",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:06:52.245277",
+        "metadata": {
+          "reasoning": "After analyzing 16 failed experiments, all attempts to modify the baseline by adding words (Your, Today, Expert, 1-on-1, No Sales Pitch) or changing single elements have failed. The pattern shows that users respond consistently to offers around 50% regardless of minor tweaks. However, no experiment has tested simultaneous changes to both the action verb AND the service description. 'Book' is more specific and actionable than 'Get' - it implies a concrete next step (scheduling) without the vagueness that might create friction. 'Strategy Session' maintains the professional appeal of consultation but suggests a more structured, outcome-focused interaction rather than an open-ended discussion that might feel sales-oriented. This combination addresses two potential friction points: unclear next steps and unclear meeting purpose, while maintaining the crucial 'Free' element that appears in the baseline."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:06:55.565826"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:06:59.360723"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:06:52.254626",
+      "deployed_at": "2026-04-05T06:06:55.565841",
+      "evaluated_at": "2026-04-05T06:07:02.673896",
+      "result": "reverted",
+      "learnings": "The hypothesis that \"Book a Free Strategy Session\" would outperform \"Get a Free Consultation\" did not hold, as both CTAs achieved identical 0.5000 conversion rates. This suggests that subtle word choice changes in CTAs may have less impact than expected, and that the value proposition (\"Free\") may be more important than the specific action verbs or meeting descriptions used.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260405_7b747db7cf1e",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260405_7b747db7cf1e",
+        "domain": "website_cta",
+        "variant_text": "Claim Your Free Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Using 'Claim' will increase conversion rates by 6-10% because it implies the user already owns or deserves the consultation, creating a sense of entitlement and reducing perceived barriers to action compared to 'Get' which suggests requesting something",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:07:10.205150",
+        "metadata": {
+          "reasoning": "After analyzing 17 failed experiments, I notice all variants either added complexity (extra words, qualifiers, time frames) or made minor substitutions that didn't fundamentally change user psychology. The consistent pattern shows that 'Free' and 'Consultation' are proven high-converting elements that should be preserved. However, no experiment has tested the psychological shift from 'Get' (requesting/asking) to 'Claim' (taking ownership of something already earned). 'Claim' is still a single, clear action word like 'Get' but creates a different mental framework - instead of asking for something, users are taking what's rightfully theirs. This psychological ownership effect could reduce hesitation without adding friction, complexity, or sales pressure that previous experiments introduced."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:13.969970"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:18.191001"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:07:10.214249",
+      "deployed_at": "2026-04-05T06:07:13.969985",
+      "evaluated_at": "2026-04-05T06:07:23.730825",
+      "result": "reverted",
+      "learnings": "The hypothesis that \"Claim Your Free Consultation\" would outperform \"Get a Free Consultation\" by creating a sense of entitlement was disproven, as both CTAs achieved identical conversion rates (0.5000). This suggests that subtle psychological framing changes in CTA copy may have minimal impact on user behavior, and that other factors like value proposition clarity or page design likely play more significant roles in driving conversions.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260405_4bb0ac32bc9e",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260405_4bb0ac32bc9e",
+        "domain": "website_cta",
+        "variant_text": "Start Your Free Consultation",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Using 'Start' will increase conversion rates by 4-7% because it implies beginning a journey or process rather than just receiving something, creating a sense of forward momentum and personal agency that makes users feel more in control of the decision",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:07:30.938397",
+        "metadata": {
+          "reasoning": "After analyzing 18 experiments, all variations that added words, specificity, urgency, or changed the core structure failed. However, the successful elements 'Free' and 'Consultation' have been consistently validated. The key insight is that 'Get' may be too passive - users might prefer feeling like they're initiating action rather than receiving something. 'Start' maintains the simplicity that has proven effective while shifting from a passive recipient mindset to an active initiator mindset. This is a minimal change that preserves the proven formula while testing a fundamental psychological shift from receiving to beginning, which could tap into users' preference for feeling empowered and in control of their business decisions."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:34.479314"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:38.476374"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:07:30.947439",
+      "deployed_at": "2026-04-05T06:07:34.479332",
+      "evaluated_at": "2026-04-05T06:07:41.368419",
+      "result": "reverted",
+      "learnings": "The word change from \"Get\" to \"Start Your\" had no impact on conversion rates, suggesting that subtle language modifications around agency and momentum may not be significant enough to influence user behavior. When testing CTA copy variations, focus on more substantial changes in value proposition or urgency rather than minor verb substitutions.",
+      "approval_required": false,
+      "metrics_window_hours": 0
+    },
+    {
+      "experiment_id": "website_cta_20260405_d8ba608bf382",
+      "domain": "website_cta",
+      "variant": {
+        "variant_id": "website_cta_20260405_d8ba608bf382",
+        "domain": "website_cta",
+        "variant_text": "Get Free Quote",
+        "baseline_text": "Get a Free Consultation",
+        "hypothesis": "Replacing 'Consultation' with 'Quote' will increase conversion rates by 8-15% because a quote implies a concrete, tangible deliverable that users can evaluate and act upon, reducing perceived commitment and sales pressure while maintaining clear commercial intent",
+        "proposed_by": "claude-sonnet-4-20250514",
+        "proposed_at": "2026-04-05T06:07:48.394995",
+        "metadata": {
+          "reasoning": "After analyzing 19 failed experiments, all attempts to modify the proven 'Get' and 'Free' formula have failed when adding words, changing verbs, or adding qualifiers. However, none have tested changing 'Consultation' to something that implies immediate, concrete value. The word 'Quote' is fundamentally different from all previous variants because it: 1) Promises a specific deliverable rather than a meeting format, 2) Implies the user will receive actionable pricing information they can use regardless of whether they proceed, 3) Reduces commitment anxiety since quotes don't require ongoing engagement, and 4) Maintains commercial clarity without seeming pushy. This addresses the core conversion barrier that consultation-focused language hasn't overcome across all previous experiments."
+        }
+      },
+      "baseline_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:51.963106"
+      },
+      "variant_metrics": {
+        "raw": {
+          "clarity": 5,
+          "urgency": 5,
+          "relevance": 5,
+          "value_prop": 5,
+          "predicted_click_improvement_pct": 0
+        },
+        "composite_score": 0.5,
+        "sample_size": 1,
+        "collection_window_hours": 0,
+        "collected_at": "2026-04-05T06:07:55.917243"
+      },
+      "status": "evaluated",
+      "approved_at": "2026-04-05T06:07:48.404057",
+      "deployed_at": "2026-04-05T06:07:51.963121",
+      "evaluated_at": "2026-04-05T06:07:58.822978",
+      "result": "reverted",
+      "learnings": "The replacement of \"Consultation\" with \"Quote\" did not improve conversion rates, suggesting that users may perceive \"consultation\" as more valuable or trustworthy than \"quote\" in this context. This indicates that emphasizing expert guidance and personalized advice may be more effective than focusing on concrete deliverables when users are in the early stages of their decision-making process.",
       "approval_required": false,
       "metrics_window_hours": 0
     }
