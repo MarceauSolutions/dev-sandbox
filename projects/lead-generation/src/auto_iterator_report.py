@@ -27,8 +27,8 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from execution.auto_iterator import ExperimentStore, EXPERIMENTS_DIR
-from execution.auto_iterator_evaluators import EVALUATORS
+from auto_iterator import ExperimentStore, EXPERIMENTS_DIR
+from auto_iterator_evaluators import EVALUATORS
 from execution.branded_pdf_engine import BrandedPDFEngine
 
 REPORTS_DIR = ROOT / "data" / "auto_iterator" / "reports"

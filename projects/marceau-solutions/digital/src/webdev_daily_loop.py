@@ -32,7 +32,7 @@ from typing import List, Dict, Any, Optional
 # Add project paths
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
-from execution.webdev_project_manager import WebDevProjectManager
+from webdev_project_manager import WebDevProjectManager
 
 logger = logging.getLogger(__name__)
 

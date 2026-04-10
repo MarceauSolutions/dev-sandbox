@@ -20,6 +20,15 @@
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x25CE;</text></svg>">
 
+    <!-- Google Ads Conversion Tracking (AW-18066813493) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18066813493"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18066813493');
+    </script>
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -599,8 +608,7 @@
                 <span>Bass</span>
             </div>
 
-            <a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=listing&utm-source=cp&aff=ebdsshcopyurl"
-               class="cta-button" target="_blank" rel="noopener" id="cta-hero">
+            <a href="#tickets" class="cta-button" id="cta-hero">
                 Get Tickets
             </a>
 
@@ -651,8 +659,7 @@
                 <div id="eventbrite-widget-container"></div>
             </div>
 
-            <a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?utm-campaign=social&utm-content=attendeeshare&utm-medium=discovery&utm-term=listing&utm-source=cp&aff=ebdsshcopyurl"
-               class="cta-button cta-button-visible" target="_blank" rel="noopener" id="cta-tickets">
+            <a href="#" class="cta-button cta-button-visible" id="cta-tickets">
                 Buy on Eventbrite
             </a>
 
@@ -758,20 +765,71 @@
 
     </div>
 
-    <!-- Eventbrite Embed Script -->
+    <!-- Eventbrite Checkout -->
     <script src="https://www.eventbrite.com/static/widgets/eb_widgets.js"></script>
     <script>
+        // Embedded checkout in the ticket section
         try {
             window.EBWidgets.createWidget({
                 widgetType: 'checkout',
                 eventId: '1986279658929',
                 iframeContainerId: 'eventbrite-widget-container',
-                iframeContainerHeight: 425,
+                iframeContainerHeight: 500,
                 onOrderComplete: function() {
-                    if (typeof gtag !== 'undefined') gtag('event', 'purchase', { event_category: 'tickets' });
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'conversion', {'send_to': 'AW-18066813493'});
+                        gtag('event', 'purchase', { event_category: 'tickets' });
+                    }
                 }
             });
         } catch(e) {}
+
+        // Modal popup checkout — triggered by hero "Get Tickets" button
+        try {
+            window.EBWidgets.createWidget({
+                widgetType: 'checkout',
+                eventId: '1986279658929',
+                modal: true,
+                modalTriggerElementId: 'cta-hero',
+                onOrderComplete: function() {
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'conversion', {'send_to': 'AW-18066813493'});
+                        gtag('event', 'purchase', { event_category: 'tickets' });
+                    }
+                }
+            });
+        } catch(e) {}
+
+        // Modal popup checkout — triggered by "Buy on Eventbrite" button
+        try {
+            window.EBWidgets.createWidget({
+                widgetType: 'checkout',
+                eventId: '1986279658929',
+                modal: true,
+                modalTriggerElementId: 'cta-tickets',
+                onOrderComplete: function() {
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'conversion', {'send_to': 'AW-18066813493'});
+                        gtag('event', 'purchase', { event_category: 'tickets' });
+                    }
+                }
+            });
+        } catch(e) {}
+
+        // Fallback: if embedded widget doesn't render after 5s, show direct link
+        setTimeout(function() {
+            var container = document.getElementById('eventbrite-widget-container');
+            if (container && container.children.length === 0) {
+                container.innerHTML =
+                    '<div style="padding: 3rem 1rem; text-align: center;">' +
+                    '<p style="color: #888; font-family: Space Mono, monospace; font-size: 0.8rem; margin-bottom: 1.5rem; letter-spacing: 0.05em;">Ticket checkout available on Eventbrite</p>' +
+                    '<a href="https://www.eventbrite.com/e/edm-nights-tickets-1986279658929?aff=marceausolutions" ' +
+                    'target="_blank" rel="noopener" ' +
+                    'style="display:inline-block; background:#111; color:#ece8e1; padding:1rem 2.5rem; ' +
+                    'text-decoration:none; font-size:0.9rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;">' +
+                    'Get Tickets on Eventbrite</a></div>';
+            }
+        }, 5000);
     </script>
 
     <script>

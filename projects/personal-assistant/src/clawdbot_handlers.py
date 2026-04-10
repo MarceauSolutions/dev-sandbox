@@ -2166,7 +2166,7 @@ def route_message(text: str) -> Optional[str]:
     if lower.startswith("portfolio") or lower == "our work" or lower == "show portfolio":
         return handle_portfolio(text)
 
-    if lower.startswith("run ") or lower.startswith("goal-run "):
+    if lower.startswith("goal-run ") or lower.startswith("run goal "):
         return handle_goal_run(text)
 
     if lower == "runs" or lower == "goal runs":

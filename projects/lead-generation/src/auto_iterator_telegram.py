@@ -35,9 +35,9 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from execution.auto_iterator import AutoIterator, ExperimentStore, EXPERIMENTS_DIR
-from execution.auto_iterator_evaluators import get_evaluator, EVALUATORS
-from execution.auto_iterator_bridge import (
+from auto_iterator import AutoIterator, ExperimentStore, EXPERIMENTS_DIR
+from auto_iterator_evaluators import get_evaluator, EVALUATORS
+from auto_iterator_bridge import (
     sync_winning_variants,
     send_experiment_notification,
     run_cycle,
@@ -211,7 +211,7 @@ def _handle_status(args: list) -> str:
 
 def _handle_report() -> str:
     try:
-        from execution.auto_iterator_report import generate_report
+        from auto_iterator_report import generate_report
         path = generate_report()
         if path:
             return f"Report generated: {path}\nOpening on Mac..."

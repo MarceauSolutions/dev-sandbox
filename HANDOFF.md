@@ -104,35 +104,45 @@
 
 ---
 
-## For Panacea (EC2, Telegram — formerly Clawdbot)
+## For Panacea (EC2, Telegram — replaces Clawdbot + Ralph)
 
-### Standing Orders:
-- Morning accountability: 5:00am ET (n8n — cron `0 0 9 * * 1-6`)
-- EOD check-in: 7pm ET (n8n)
-- Weekly report: Sunday 7pm ET (n8n)
-- Treatment day detector: daily 5am ET (n8n)
-- Parse replies per accountability_handler.py rules
-- Monitor upgrade triggers per Knowledge Base
+### What Changed (2026-04-05 — Phase 0.5)
+- **Clawdbot retired** — Anthropic banned third-party OAuth tokens April 4. Clawdbot used molt.bot framework with OAuth.
+- **Ralph absorbed** — same `claude -p` engine, redundant as separate agent.
+- **Panacea deployed** — unified EC2 agent: Telegram relay + Grok strategic layer + Claude Code execution.
+- **Grok integrated** — consulted on every AI request via `--append-system-prompt`. No exceptions.
+- **Pre-filters disabled** — `clawdbot_handlers.py` route_message() removed. All messages go through Grok → Claude Code.
+- **Accountability check-ins disabled** — morning/EOD not working. Will rebuild once core is stable.
 
-### Quality Enforcement:
-- **SOUL.md v2.1.0** now includes E10, interface-first, and quality benchmark sections
-- Every recommendation must pass: "Is this the right interface for William's life, not just the easiest to code?"
-- When building anything: n8n > CLI script, branded PDF > markdown, SMS > "check this command"
+### Architecture
+```
+Telegram message → 5s buffer (. fires immediately) → Grok API → claude -p → Telegram response
+Control: stop/cancel (kills task), add: (appends context)
+```
 
-### Gmail Capability:
-- `token.json` now has full Gmail scopes: read, send, compose, modify, drafts
-- Can create email drafts via Google API (see SOUL.md for code example)
-- Can send via SMTP (credentials in .env)
+### Service Details
+- **systemd**: `panacea.service` (enabled on boot, runs as `ec2-user`)
+- **Source**: `/home/clawdbot/dev-sandbox/projects/personal-assistant/src/panacea_relay.py`
+- **Grok layer**: `/home/clawdbot/dev-sandbox/projects/personal-assistant/src/grok_strategic_layer.py`
+- **Auth**: `CLAUDE_CODE_OAUTH_TOKEN` in `.env` (Max subscription, setup-token from Mac)
+- **Bot token**: same @W_marceaubot (`TELEGRAM_BOT_TOKEN` in `.env`)
+- **Repo**: `/home/clawdbot/dev-sandbox/` (symlinked from `/home/ec2-user/dev-sandbox/`, owned by `ec2-user`)
 
-### MANDATORY — Handoff State Protocol:
-- **On every session start**: Read this file + check `execution/agent_comms.py` for pending messages
-- **On every session end**: Update this file with what was done, push to GitHub
-- **When William asks something meant for Claude Code**: Add to "For Claude Code" section, push
-- **When completing a task**: Move to "Completed Tasks" with date
+### What Still Works
+- Telegram bot (@W_marceaubot) — same identity
+- n8n workflows — none depended on Clawdbot internals
+- All Claude Code skills, SOPs, CLAUDE.md context
+- Pipeline queries (Claude Code can query directly)
+
+### What's Retired
+- Clawdbot Node.js binary, molt.bot framework, SOUL.md
+- Ralph webhook_server.py, separate PRD trigger
+- clawdbot_handlers.py pre-filter routing
+- Ollama + LanceDB memory (replaced by Claude Code memory system)
 
 ---
 
-## For Ralph (EC2, PRD-driven)
+## For Ralph (RETIRED — absorbed into Panacea)
 
 ### Task 1: Content Batch Processing Pipeline Test
 **Priority**: Medium | **Complexity**: 7/10 | **Status**: Ready

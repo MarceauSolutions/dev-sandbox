@@ -8106,6 +8106,46 @@ def gmail_send():
         return jsonify({"success": False, "error": f"SMTP error: {e}"})
 
 
+@app.route('/gmail/draft', methods=['POST'])
+def gmail_create_draft():
+    """Create a draft email in Gmail."""
+    data = request.get_json() or {}
+    to = data.get('to')
+    subject = data.get('subject', '')
+    body = data.get('body', '')
+    cc = data.get('cc', '')
+    bcc = data.get('bcc', '')
+    if not to:
+        return make_error_response(ErrorCode.MISSING_PARAMETER, "to is required")
+    service = get_gmail_service()
+    if not service:
+        return jsonify({"success": False, "error": "Gmail service not available. Token may lack gmail.compose scope."})
+    try:
+        import base64
+        from email.mime.text import MIMEText
+        msg = MIMEText(body)
+        msg['To'] = to
+        msg['Subject'] = subject
+        if cc:
+            msg['Cc'] = cc
+        if bcc:
+            msg['Bcc'] = bcc
+        raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+        draft = service.users().drafts().create(
+            userId='me',
+            body={'message': {'raw': raw}}
+        ).execute()
+        return jsonify({
+            "success": True,
+            "draft_id": draft['id'],
+            "message_id": draft['message']['id'],
+            "to": to,
+            "subject": subject
+        })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
 @app.route('/gmail/search', methods=['POST'])
 def gmail_search():
     """Search emails with Gmail query syntax."""
@@ -8125,6 +8165,51 @@ def gmail_search():
             emails.append({'id': msg['id'], 'snippet': msg_data.get('snippet', ''), 'from': headers.get('From', ''),
                           'subject': headers.get('Subject', ''), 'date': headers.get('Date', '')})
         return jsonify({"success": True, "query": query, "emails": emails, "count": len(emails)})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route('/gmail/search-all', methods=['POST'])
+def gmail_search_all():
+    """Search emails across ALL registered Gmail accounts (business + personal).
+
+    POST /gmail/search-all
+    Body: {"query": "insurance quote", "accounts": "all", "max_results": 10}
+
+    accounts: "all" (default), "business", "personal", or comma-separated aliases
+    """
+    data = request.get_json() or {}
+    query = data.get('query', '')
+    accounts = data.get('accounts', 'all')
+    max_results = data.get('max_results', 10)
+
+    if not query:
+        return jsonify({"success": False, "error": "query is required"})
+
+    try:
+        import subprocess
+        cmd = [
+            sys.executable, '-W', 'ignore', os.path.join(os.path.dirname(__file__), 'multi_gmail_search.py'),
+            '--query', query,
+            '--accounts', accounts,
+            '--max-results', str(max_results),
+            '--json-output'
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30,
+                                cwd=os.path.dirname(os.path.dirname(__file__)))
+        if result.returncode != 0:
+            return jsonify({"success": False, "error": result.stderr.strip()})
+
+        emails = json.loads(result.stdout) if result.stdout.strip() else []
+        return jsonify({
+            "success": True,
+            "query": query,
+            "accounts": accounts,
+            "emails": emails,
+            "count": len(emails),
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({"success": False, "error": "Search timed out after 30s"})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
@@ -8600,7 +8685,7 @@ def meta_capabilities():
     capabilities = {
         'core_tools': ['file_read', 'file_write', 'file_edit', 'command', 'git_status', 'grep', 'glob', 'web_search', 'web_fetch', 'todo', 'checkpoint'],
         'integrations': {
-            'gmail': ['gmail/list', 'gmail/read', 'gmail/send', 'gmail/search'],
+            'gmail': ['gmail/list', 'gmail/read', 'gmail/send', 'gmail/search', 'gmail/draft', 'gmail/search-all'],
             'sheets': ['sheets/read', 'sheets/write', 'sheets/append'],
             'sms': ['sms/send', 'sms/list'],
             'clickup': ['clickup/list-tasks', 'clickup/create-task', 'clickup/update-task'],

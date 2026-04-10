@@ -30,8 +30,8 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from execution.auto_iterator import ExperimentStore, STRATEGIES_DIR, EXPERIMENTS_DIR
-from execution.auto_iterator_evaluators import EVALUATORS
+from auto_iterator import ExperimentStore, STRATEGIES_DIR, EXPERIMENTS_DIR
+from auto_iterator_evaluators import EVALUATORS
 
 MODEL = "claude-sonnet-4-20250514"
 

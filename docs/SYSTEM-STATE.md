@@ -225,7 +225,7 @@ Voice: others → `https://api.marceausolutions.com/twilio/voice`
 | Domain | Status | Client |
 |--------|--------|--------|
 | `swfloridacomfort.com` | HTTP 200 ✓ | SW Florida Comfort HVAC |
-| `www.boabfit.com` | REMOVED | BoabFit (no longer a client as of 2026-03-28) |
+| `www.boabfit.com` | SSL re-provisioning (GitHub Pages cert) | BoabFit — Julia Marceau (ACTIVE client, reinstated 2026-03-31) |
 | `flamesofpassionentertainment.com` | DNS not configured | Flames of Passion (client-blocked) |
 
 ### n8n Webhook Domain

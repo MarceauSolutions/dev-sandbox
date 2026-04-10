@@ -61,7 +61,7 @@ def warn(msg): return f"{YELLOW}⚠{RESET} {msg}"
 def _infer_category(msg):
     """Best-effort category inference from failure message text."""
     msg_lower = msg.lower()
-    if any(s in msg_lower for s in ["clawdbot", "mem0", "n8n", "fitai", "voice-api", "ai-phone"]):
+    if any(s in msg_lower for s in ["panacea", "clawdbot", "mem0", "n8n", "fitai", "voice-api", "ai-phone"]):
         return "service_down"
     if "memory" in msg_lower:
         return "high_memory"
@@ -119,7 +119,7 @@ def check_ec2_services():
     print(header("EC2 SERVICES"))
     services = {
         "n8n": "Workflow automation",
-        "clawdbot": "AI assistant (Telegram)",
+        "panacea": "AI assistant — Telegram + Grok + Claude Code",
         "mem0-api": "Shared agent memory",
         "fitai": "Fitness influencer platform",
         "voice-api": "Voice AI API",
@@ -272,30 +272,22 @@ def check_n8n():
             print(f"  {warn(name)}: inactive")
 
 
-def check_clawdbot():
-    print(header("CLAWDBOT"))
-    out, success = ssh("sudo -u clawdbot env PATH=/home/clawdbot/app/node_modules/.bin:/usr/local/bin:$PATH clawdbot sessions 2>/dev/null | grep 'agent:main:main'")
-    if success and out:
-        parts = out.split()
-        tokens_col = next((p for p in parts if "/" in p and "k" in p), None)
-        if tokens_col:
-            used, total = tokens_col.split("/")
-            used_k = float(used.replace("k", ""))
-            total_k = float(total.replace("k", "").replace("(", ""))
-            pct = int(used_k / total_k * 100)
-            color = RED if pct > 80 else YELLOW if pct > 60 else GREEN
-            print(f"  Context: {color}{tokens_col} ({pct}%){RESET}")
-        else:
-            print(f"  {ok('Session active, context fresh')}")
-    else:
-        print(f"  {warn('Could not read session info')}")
-
-    out, _ = ssh("sudo journalctl -u clawdbot --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Main process exited'")
+def check_panacea():
+    print(header("PANACEA"))
+    out, _ = ssh("sudo journalctl -u panacea --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Main process exited'")
     crashes = int(out.strip()) if out.strip().isdigit() else 0
     if crashes == 0:
         print(f"  {ok('0 crashes in last 24h')}")
     else:
         print(f"  {warn(f'{crashes} crash(es) in last 24h')}")
+
+    out, _ = ssh("sudo journalctl -u panacea --since '1 hour ago' --no-pager 2>/dev/null | grep -c 'Grok consulted'")
+    grok_calls = int(out.strip()) if out.strip().isdigit() else 0
+    print(f"  {ok(f'Grok consultations (last 1h): {grok_calls}')}")
+
+    out, _ = ssh("sudo journalctl -u panacea --since '1 hour ago' --no-pager 2>/dev/null | grep -c 'Running: claude -p'")
+    claude_calls = int(out.strip()) if out.strip().isdigit() else 0
+    print(f"  {ok(f'Claude executions (last 1h): {claude_calls}')}")
 
 
 def check_credential_lifecycle():
@@ -370,15 +362,15 @@ def check_ec2_stability():
     """Check EC2 service stability indicators beyond basic is-active."""
     print(header("EC2 STABILITY"))
 
-    # Clawdbot restart count (separate from n8n which is already checked)
-    out, _ = ssh("sudo journalctl -u clawdbot --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Started clawdbot'")
-    cb_restarts = int(out.strip()) if out.strip().isdigit() else 0
-    if cb_restarts <= 1:
-        print(f"  {ok(f'Clawdbot stable: {cb_restarts} restart(s) in 24h')}")
-    elif cb_restarts <= 3:
-        print(f"  {warn(f'Clawdbot restarted {cb_restarts}x in 24h')}")
+    # Panacea restart count
+    out, _ = ssh("sudo journalctl -u panacea --since '24 hours ago' --no-pager 2>/dev/null | grep -c 'Started panacea'")
+    p_restarts = int(out.strip()) if out.strip().isdigit() else 0
+    if p_restarts <= 1:
+        print(f"  {ok(f'Panacea stable: {p_restarts} restart(s) in 24h')}")
+    elif p_restarts <= 3:
+        print(f"  {warn(f'Panacea restarted {p_restarts}x in 24h')}")
     else:
-        print(f"  {fail(f'Clawdbot unstable: {cb_restarts} restarts in 24h', category='service_unstable', service='clawdbot', detail=str(cb_restarts))}")
+        print(f"  {fail(f'Panacea unstable: {p_restarts} restarts in 24h', category='service_unstable', service='panacea', detail=str(p_restarts))}")
 
     # n8n symlink check (prevents crash-loop on restart)
     out, success = ssh("sudo test -L /home/ec2-user/.local/bin/n8n && echo exists || echo missing")
@@ -387,19 +379,8 @@ def check_ec2_stability():
     else:
         print(f"  {fail('n8n symlink MISSING — will crash-loop on restart', category='n8n_symlink_missing', service='n8n')}")
 
-    # SOUL.md version check
-    out, _ = ssh("sudo grep 'Version' /home/clawdbot/clawd/SOUL.md 2>/dev/null | head -1")
-    if out:
-        version = out.strip()
-        if "2.1.0" in version:
-            print(f"  {ok(f'SOUL.md: {version}')}")
-        else:
-            print(f"  {warn(f'SOUL.md version drift: {version} (expected 2.1.0)')}")
-    else:
-        print(f"  {fail('SOUL.md not readable')}")
-
-    # Check ARCHITECTURE-DECISIONS.md exists and is recent
-    out, _ = ssh("sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && test -f docs/ARCHITECTURE-DECISIONS.md && echo exists'")
+    # Check ARCHITECTURE-DECISIONS.md exists on EC2
+    out, _ = ssh("test -f /home/clawdbot/dev-sandbox/docs/ARCHITECTURE-DECISIONS.md && echo exists")
     if "exists" in (out or ""):
         print(f"  {ok('ARCHITECTURE-DECISIONS.md: present on EC2')}")
     else:
@@ -865,7 +846,7 @@ def check_repo_sync():
         github_commit = "unknown"
 
     # EC2 commit
-    ec2_out, ec2_ok = ssh("sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && git rev-parse HEAD'")
+    ec2_out, ec2_ok = ssh("cd /home/clawdbot/dev-sandbox && git rev-parse HEAD")
     ec2_commit = ec2_out.strip()[:7] if ec2_ok else "unknown"
 
     print(f"  Local:  {local_commit}")
@@ -897,14 +878,14 @@ def check_repo_sync():
         print(f"  {ok('EC2 ↔ GitHub in sync')}")
 
     # Check sync agent exists on EC2
-    agent_out, agent_ok = ssh("sudo -u clawdbot test -x /home/clawdbot/scripts/sync-agent.sh && echo exists")
+    agent_out, agent_ok = ssh("test -x /home/clawdbot/scripts/sync-agent.sh && echo exists")
     if agent_ok and "exists" in agent_out:
         print(f"  {ok('EC2 sync-agent.sh deployed')}")
     else:
         print(f"  {fail('EC2 sync-agent.sh missing or not executable')}")
 
     # Check cron is set
-    cron_out, cron_ok = ssh("sudo -u clawdbot crontab -l 2>/dev/null")
+    cron_out, cron_ok = ssh("crontab -l 2>/dev/null")
     if cron_ok and "sync-agent.sh" in cron_out:
         print(f"  {ok('EC2 auto-sync cron active')}")
     else:
@@ -912,7 +893,7 @@ def check_repo_sync():
 
 
 def repatch_telegram():
-    """Re-patch the Clawdbot Telegram credential in n8n with the token from .env."""
+    """Re-patch the Panacea Telegram credential in n8n with the token from .env."""
     import ssl
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
@@ -925,7 +906,7 @@ def repatch_telegram():
 
     n8n_url = os.getenv("N8N_URL", "https://n8n.marceausolutions.com")
     payload = json.dumps({
-        "name": "Clawdbot Telegram",
+        "name": "Panacea Telegram",
         "type": "telegramApi",
         "data": {"accessToken": token}
     }).encode()
@@ -976,7 +957,7 @@ def main():
         check_ec2_stability()
         check_domains()
         check_n8n()
-        check_clawdbot()
+        check_panacea()
         check_repo_sync()
         check_ai_apis()
         check_stripe_webhooks()

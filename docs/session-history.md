@@ -4,6 +4,45 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+### Session 2026-04-04/05 — Phase 0.5: Panacea (Clawdbot + Ralph + Grok Unification)
+**Focus**: Anthropic OAuth ban response, unified EC2 agent build
+
+**Context**: Anthropic banned third-party OAuth tokens effective April 4, 2026. Clawdbot (molt.bot framework) used Max OAuth — directly affected.
+
+**What Was Built**:
+- **Panacea relay** (`panacea_relay.py`) — Python Telegram bot with 5-stage pipeline: buffer → Grok → queue → Claude Code → response
+- **Grok strategic layer** (`grok_strategic_layer.py`) — shared module consulted on every AI request via `--append-system-prompt`
+- **Mac autonomous wrapper** (`scripts/panacea_mac.sh`) — same architecture for fire-and-forget tasks on Mac
+- **systemd service** (`panacea.service`) — runs as `ec2-user`, enabled on boot
+
+**Key Decisions**:
+- Replaced Clawdbot entirely (not reconfigured) — Clawdbot was a limited version of what Claude Code already does
+- Absorbed Ralph — same `claude -p` engine, redundant as separate agent
+- Grok always consulted — no smart router, no false negatives. William's directive.
+- Pre-filters disabled — `clawdbot_handlers.py` route_message() was too aggressive with keyword matching and built for Clawdbot's limitations
+- Accountability check-ins disabled — not working, rebuild once core is stable
+- File ownership fixed — `/home/clawdbot/dev-sandbox/` changed to `ec2-user` ownership
+
+**Architecture Change**:
+- Before: 4 moving parts (Grok external + Claude Code Mac + Clawdbot EC2 + Ralph EC2)
+- After: 2 agents (Claude Code Mac + Panacea EC2), Grok built into both
+
+**Pre-flight Findings**:
+- `claude -p` works headlessly via `CLAUDE_CODE_OAUTH_TOKEN` env var
+- `--resume <uuid>` supports multi-turn conversations
+- `--append-system-prompt` injects Grok direction as system-level instruction
+- Telegram bot token in `.env` was stale (different from Clawdbot config) — fixed
+
+**Files Created/Modified**:
+- `projects/personal-assistant/src/panacea_relay.py` (new)
+- `projects/personal-assistant/src/grok_strategic_layer.py` (new)
+- `scripts/panacea_mac.sh` (new)
+- `docs/REBUILD-GAP-ANALYSIS.md` (Action #6 / Phase 0.5 added, full implementation plan updated)
+- `HANDOFF.md` (Panacea section replaces Clawdbot + Ralph)
+- `.env` (CLAUDE_CODE_OAUTH_TOKEN added on both Mac and EC2)
+
+---
+
 ### Session 2026-03-24 21:00 (Evening — Blitz Day 2 EOD)
 **Focus**: Phone blitz execution, Apollo sequence setup, calendar architecture fix, agent gateway
 

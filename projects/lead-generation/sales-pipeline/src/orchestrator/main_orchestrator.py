@@ -185,6 +185,100 @@ def run_step(step: str, dry_run: bool = False) -> dict:
 
     return result
 
+
+def run_full_pipeline(dry_run: bool = False) -> dict:
+    """
+    Run the complete daily pipeline.
+
+    Steps in order:
+    1. Acquire — Pull fresh leads from Apollo
+    2. Score — Score and tier all leads
+    3. Validate — Self-correct pipeline data
+    4. Check Replies — Monitor inbox for responses
+    5. Route — Determine today's tasks
+    6. Outreach — Send emails (cold) + SMS (opted-in only)
+    7. Report — Generate daily call sheet
+    8. A/B Eval — Check if any tests have a winner
+
+    Each step is independent — one failure doesn't stop others.
+    """
+    print("=" * 60)
+    print(f"  SALES PIPELINE ORCHESTRATOR — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    print(f"  Mode: {'DRY RUN' if dry_run else 'LIVE'}")
+    print("=" * 60)
+
+    steps = [
+        "acquire",    # 1. Pull new leads
+        "score",      # 2. Score and tier
+        "validate",   # 3. Fix pipeline data
+        "replies",    # 4. Check for email responses
+        "route",      # 5. Determine today's tasks
+        "outreach",   # 6. Send emails/SMS
+        "report",     # 7. Generate call sheet
+        "morning_routine",  # 8. Create schedule, update goals, prepare command center
+        "ab_eval",    # 9. Evaluate A/B tests
+    ]
+
+    all_results = {}
+    errors = []
+    start_time = datetime.now()
+
+    for step in steps:
+        step_start = datetime.now()
+        result = run_step(step, dry_run=dry_run)
+        step_duration = (datetime.now() - step_start).total_seconds()
+
+        result["duration_seconds"] = round(step_duration, 1)
+        all_results[step] = result
+
+        if result["status"] == "error":
+            errors.append(step)
+            print(f"\n  [{step.upper()}] FAILED ({step_duration:.1f}s)")
+        else:
+            print(f"\n  [{step.upper()}] OK ({step_duration:.1f}s)")
+
+    total_duration = (datetime.now() - start_time).total_seconds()
+
+    # Final summary
+    print("\n" + "=" * 60)
+    print("  PIPELINE SUMMARY")
+    print("=" * 60)
+    print(f"  Duration: {total_duration:.1f}s")
+    print(f"  Steps: {len(steps) - len(errors)}/{len(steps)} succeeded")
+    if errors:
+        print(f"  FAILED: {', '.join(errors)}")
+
+    # Key metrics
+    if "score" in all_results and all_results["score"]["status"] == "success":
+        s = all_results["score"]["data"]
+        print(f"  Scored: {s.get('total', 0)} leads (T1:{s.get('t1', 0)} T2:{s.get('t2', 0)} T3:{s.get('t3', 0)})")
+
+    if "outreach" in all_results and all_results["outreach"]["status"] == "success":
+        o = all_results["outreach"]["data"]
+        print(f"  Outreach: {o.get('total_sent', 0)} sent, {o.get('total_failed', 0)} failed")
+
+    if "report" in all_results and all_results["report"]["status"] == "success":
+        r = all_results["report"]["data"]
+        print(f"  Call sheet: {r.get('task_count', 0)} leads")
+        if r.get("sheet_url"):
+            print(f"  Sheet: {r['sheet_url']}")
+
+    if "replies" in all_results and all_results["replies"]["status"] == "success":
+        rep = all_results["replies"]["data"]
+        print(f"  Replies: {rep.get('total_replies', 0)} found")
+
+    all_results["_summary"] = {
+        "timestamp": datetime.now().isoformat(),
+        "duration_seconds": round(total_duration, 1),
+        "steps_ok": len(steps) - len(errors),
+        "steps_failed": len(errors),
+        "failed_steps": errors,
+        "dry_run": dry_run,
+    }
+
+    return all_results
+
+
 def run_morning_routine(dry_run: bool = False):
     """Run complete morning routine: create schedule, update goals, prepare command center."""
     print("\n🌅 MORNING ROUTINE")

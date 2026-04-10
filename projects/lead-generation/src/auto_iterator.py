@@ -641,7 +641,7 @@ def main():
                     print(f"    [{emoji}] {l['hypothesis'][:70]}")
 
     elif args.command in ("propose", "approve", "evaluate", "batch"):
-        from execution.auto_iterator_evaluators import get_evaluator, EVALUATORS
+        from auto_iterator_evaluators import get_evaluator, EVALUATORS
 
         if args.command == "propose":
             evaluator = get_evaluator(args.domain)

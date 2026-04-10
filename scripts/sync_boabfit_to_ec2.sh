@@ -32,13 +32,14 @@ done
 
 # BoabFit project files
 echo "Syncing BoabFit project files..."
-scp -i $SSH_KEY "$LOCAL_BASE/projects/marceau-solutions/fitness/clients/boabfit/src/daily_checkin_sms.py" "$EC2:$BASE/projects/boabfit/src/"
-echo "  ✓ projects/boabfit/src/daily_checkin_sms.py"
+for f in daily_checkin_sms.py sms_relay.py send_welcome_sms.py workout_plan.json drip_checker.py abandon_checker.py register_signup.py drip_mark_sent.py; do
+    if [ -f "$LOCAL_BASE/projects/boabfit/src/$f" ]; then
+        scp -i $SSH_KEY "$LOCAL_BASE/projects/boabfit/src/$f" "$EC2:$BASE/projects/boabfit/src/"
+        echo "  ✓ projects/boabfit/src/$f"
+    fi
+done
 
-scp -i $SSH_KEY "$LOCAL_BASE/projects/marceau-solutions/fitness/clients/boabfit/src/workout_plan.json" "$EC2:$BASE/projects/boabfit/src/"
-echo "  ✓ projects/boabfit/src/workout_plan.json"
-
-scp -i $SSH_KEY "$LOCAL_BASE/projects/marceau-solutions/fitness/clients/boabfit/clients/roster.json" "$EC2:$BASE/projects/boabfit/clients/"
+scp -i $SSH_KEY "$LOCAL_BASE/projects/boabfit/clients/roster.json" "$EC2:$BASE/projects/boabfit/clients/"
 echo "  ✓ projects/boabfit/clients/roster.json"
 
 # .env (credentials)

@@ -17,9 +17,25 @@
         .stat-number { font-size:1.5rem; font-weight:800; color:#C9963C; }
         .stat-label { font-size:0.7rem; color:#999; text-transform:uppercase; letter-spacing:0.05em; }
         .section-title { font-size:0.85rem; font-weight:700; color:#C9963C; text-transform:uppercase; letter-spacing:0.1em; margin:1.5rem 0 0.75rem; }
+        .lead-card { background:#1e1e1e; border:1px solid #333; border-radius:12px; padding:1.25rem; margin-bottom:0.75rem; transition:all 0.3s; }
+        .lead-card.contacted { opacity:0.4; border-color:#222; }
+        .lead-card.contacted .call-btn { background:rgba(100,100,100,0.15); border-color:#555; color:#555; pointer-events:none; }
+        .lead-card.contacted .text-btn { background:rgba(100,100,100,0.15); border-color:#555; color:#555; pointer-events:none; }
+        .lead-card.contacted .contacted-badge { display:inline-block; }
+        .lead-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; }
+        .lead-name { color:#fff; font-size:1rem; font-weight:700; }
+        .industry-badge { background:rgba(59,130,246,0.15); color:#60a5fa; padding:2px 8px; border-radius:10px; font-size:0.75rem; }
+        .lead-contact { color:#aaa; font-size:0.9rem; margin-bottom:0.75rem; }
+        .lead-actions { display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; }
+        .call-btn { display:inline-flex; align-items:center; gap:0.4rem; background:rgba(201,150,60,0.15); border:1px solid #C9963C; color:#C9963C; padding:0.5rem 1rem; border-radius:25px; text-decoration:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
+        .text-btn { display:inline-flex; align-items:center; gap:0.4rem; background:rgba(59,130,246,0.15); border:1px solid #3b82f6; color:#60a5fa; padding:0.5rem 1rem; border-radius:25px; text-decoration:none; font-size:0.85rem; font-weight:600; cursor:pointer; }
+        .contacted-badge { display:none; background:rgba(34,197,94,0.15); color:#22c55e; padding:3px 10px; border-radius:10px; font-size:0.75rem; font-weight:600; }
         .report { background:#1e1e1e; border:1px solid #C9963C; border-radius:12px; padding:1.25rem; margin-top:2rem; text-align:center; }
         .report p { color:#aaa; font-size:0.9rem; margin-bottom:0.75rem; }
         .report a { display:inline-block; background:#C9963C; color:#111; font-weight:700; padding:0.6rem 1.5rem; border-radius:25px; text-decoration:none; font-size:0.9rem; }
+        .loading { text-align:center; padding:3rem; }
+        .loading-spinner { display:inline-block; width:40px; height:40px; border:3px solid #333; border-top-color:#C9963C; border-radius:50%; animation:spin 0.8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
         .footer { text-align:center; margin-top:2rem; padding:1rem; color:#666; font-size:0.75rem; }
         .refresh { color:#666; font-size:0.75rem; text-align:center; margin-bottom:1rem; }
     </style>
@@ -31,283 +47,37 @@
 
     <div class="stats">
         <div class="stat">
-            <div class="stat-number">15</div>
-            <div class="stat-label">Total Leads</div>
+            <div class="stat-number" id="stat-total">0</div>
+            <div class="stat-label">Total</div>
         </div>
         <div class="stat">
-            <div class="stat-number">15</div>
+            <div class="stat-number" id="stat-remaining">0</div>
             <div class="stat-label">To Call</div>
         </div>
         <div class="stat">
-            <div class="stat-number">0</div>
-            <div class="stat-label">Contacted</div>
+            <div class="stat-number" id="stat-contacted">0</div>
+            <div class="stat-label">Called</div>
         </div>
     </div>
 
-    <div class="refresh">Last updated: March 31, 2026 at 08:05 PM</div>
+    <div class="refresh">Last updated: March 31, 2026 at 09:03 PM</div>
 
-    <div class="section-title">Tap to Call or Text</div>
-    
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">1. Downeast Air Heating & Cooling</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                William Mussenden | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12395302665" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 530-2665
-                </a>
-                <a href="sms:+12395302665?body=Hey%20William%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
+    <div id="leads-container">
+        <div class="section-title">Tap to Call or Text</div>
+    </div>
+
+    <div id="loading-new" style="display:none;">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p style="color:#C9963C;margin-top:1rem;font-weight:600;">Loading fresh leads...</p>
+            <p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">You crushed that batch! Assigning new ones now.</p>
         </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">2. Low Temp A/C LLC</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Jose Estanislao | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12393802343" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 380-2343
-                </a>
-                <a href="sms:+12393802343?body=Hey%20Jose%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">3. Dor-Mar Naples Air Conditioning Repair and Service</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12393761051" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 376-1051
-                </a>
-                <a href="sms:+12393761051?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">4. Heating and AC Experts</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12397372671" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 737-2671
-                </a>
-                <a href="sms:+12397372671?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">5. Speedy Air Conditioning Contractors</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12399770145" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 977-0145
-                </a>
-                <a href="sms:+12399770145?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">6. Always Be Cooling - Air Conditioning, HVAC Installation, AC Maintenance, Insulation, & Duct Cleaning</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Cale Lenhart | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12397773972" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 777-3972
-                </a>
-                <a href="sms:+12397773972?body=Hey%20Cale%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">7. Wilshere AC Repair Naples</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12393470260" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 347-0260
-                </a>
-                <a href="sms:+12393470260?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">8. Naples Comfort Systems By Stahlman Cooling & Heating | Naples Florida Air Conditioning Company</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Dean Stahlman | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12392302975" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 230-2975
-                </a>
-                <a href="sms:+12392302975?body=Hey%20Dean%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">9. JL Appliances Services Inc</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Jorge Lorenzo | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+13055191713" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (305) 519-1713
-                </a>
-                <a href="sms:+13055191713?body=Hey%20Jorge%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">10. Coastal Air Conditioning</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Phillip Ziegler | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12394032665" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 403-2665
-                </a>
-                <a href="sms:+12394032665?body=Hey%20Phillip%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">11. Modern Services</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12395973178" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 597-3178
-                </a>
-                <a href="sms:+12395973178?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">12. A5 Air Conditioning, LLC</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Robby Adams | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12396862522" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 686-2522
-                </a>
-                <a href="sms:+12396862522?body=Hey%20Robby%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">13. Applied Heating and Cooling</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Ask for owner | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12392510199" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 251-0199
-                </a>
-                <a href="sms:+12392510199?body=Hey%20there%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">14. Freeze The Heat Air Conditioning & Duct Cleaning</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Carlos Nieto | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12397779563" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 777-9563
-                </a>
-                <a href="sms:+12397779563?body=Hey%20Carlos%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
-        <div style="background:#1e1e1e;border:1px solid #333;border-radius:12px;padding:1.25rem;margin-bottom:0.75rem;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                <strong style="color:#fff;font-size:1rem;">15. Nixon Air Conditioning</strong>
-                <span style="background:rgba(59,130,246,0.15);color:#60a5fa;padding:2px 8px;border-radius:10px;font-size:0.75rem;">HVAC</span>
-            </div>
-            <div style="color:#aaa;font-size:0.9rem;margin-bottom:0.75rem;">
-                Nixon Lopez | Contacted
-            </div>
-            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-                <a href="tel:+12392691042" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(201,150,60,0.15);border:1px solid #C9963C;color:#C9963C;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    📞 (239) 269-1042
-                </a>
-                <a href="sms:+12392691042?body=Hey%20Nixon%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" style="display:inline-flex;align-items:center;gap:0.4rem;background:rgba(59,130,246,0.15);border:1px solid #3b82f6;color:#60a5fa;padding:0.5rem 1rem;border-radius:25px;text-decoration:none;font-size:0.85rem;font-weight:600;">
-                    💬 Text
-                </a>
-            </div>
-        </div>
+    </div>
 
     <div class="report">
-        <p>After you talk to someone, text William the result:</p>
-        <a href="sms:+12393985676?body=Lead%20update%3A%20">📱 Text William</a>
-        <p style="margin-top:0.75rem;font-size:0.8rem;">Example: "Spoke to John at ABC HVAC — interested, wants a demo"</p>
+        <p>After each call, text William the outcome:</p>
+        <a href="sms:+12393985676?body=Lead%20update%3A%20">📱 Text William the Result</a>
+        <p style="margin-top:0.75rem;font-size:0.8rem;">Example: "Dean at Naples Comfort — interested, wants a demo"</p>
     </div>
 
     <div class="footer">
@@ -315,5 +85,122 @@
         <p>Questions? Call William: <a href="tel:+12393985676" style="color:#C9963C;text-decoration:none;">(239) 398-5676</a></p>
     </div>
 </div>
+
+<script>
+const API = 'https://api.marceausolutions.com';
+const REP_ID = 'will-george';
+let leads = [{"deal_id": "136", "company": "Downeast Air Heating & Cooling", "contact_name": "William Mussenden", "contact_phone": "(239) 530-2665", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "135", "company": "Low Temp A/C LLC", "contact_name": "Jose Estanislao", "contact_phone": "(239) 380-2343", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "134", "company": "Dor-Mar Naples Air Conditioning Repair and Service", "contact_name": "", "contact_phone": "(239) 376-1051", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "133", "company": "Heating and AC Experts", "contact_name": "", "contact_phone": "(239) 737-2671", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "132", "company": "Speedy Air Conditioning Contractors", "contact_name": "", "contact_phone": "(239) 977-0145", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "131", "company": "Always Be Cooling - Air Conditioning, HVAC Installation, AC Maintenance, Insulation, & Duct Cleaning", "contact_name": "Cale Lenhart", "contact_phone": "(239) 777-3972", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "130", "company": "Wilshere AC Repair Naples", "contact_name": "", "contact_phone": "(239) 347-0260", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "129", "company": "Naples Comfort Systems By Stahlman Cooling & Heating | Naples Florida Air Conditioning Company", "contact_name": "Dean Stahlman", "contact_phone": "(239) 230-2975", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "128", "company": "JL Appliances Services Inc", "contact_name": "Jorge Lorenzo", "contact_phone": "(305) 519-1713", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "127", "company": "Coastal Air Conditioning", "contact_name": "Phillip Ziegler", "contact_phone": "(239) 403-2665", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "126", "company": "Modern Services", "contact_name": "", "contact_phone": "(239) 597-3178", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "125", "company": "A5 Air Conditioning, LLC", "contact_name": "Robby Adams", "contact_phone": "(239) 686-2522", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "124", "company": "Applied Heating and Cooling", "contact_name": "", "contact_phone": "(239) 251-0199", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "123", "company": "Freeze The Heat Air Conditioning & Duct Cleaning", "contact_name": "Carlos Nieto", "contact_phone": "(239) 777-9563", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}, {"deal_id": "122", "company": "Nixon Air Conditioning", "contact_name": "Nixon Lopez", "contact_phone": "(239) 269-1042", "industry": "HVAC", "stage": "Contacted", "status": "assigned"}];
+
+function init() {
+    // Merge server state with localStorage (localStorage tracks contacted on this device)
+    const local = JSON.parse(localStorage.getItem('rep_' + REP_ID) || '{}');
+    leads.forEach(l => {
+        if (local[l.deal_id] === 'contacted') l.status = 'contacted';
+    });
+    render();
+}
+
+function render() {
+    const container = document.getElementById('leads-container');
+    const assigned = leads.filter(l => l.status === 'assigned');
+    const contacted = leads.filter(l => l.status === 'contacted');
+
+    document.getElementById('stat-total').textContent = leads.length;
+    document.getElementById('stat-remaining').textContent = assigned.length;
+    document.getElementById('stat-contacted').textContent = contacted.length;
+
+    let html = '';
+    if (assigned.length > 0) {
+        html += '<div class="section-title">Tap to Call or Text</div>';
+        assigned.forEach((l, i) => html += leadCard(l, i + 1, false));
+    }
+    if (contacted.length > 0) {
+        html += '<div class="section-title" style="color:#555;">Already Contacted</div>';
+        contacted.forEach((l, i) => html += leadCard(l, i + 1, true));
+    }
+    container.innerHTML = html;
+}
+
+function leadCard(lead, num, isContacted) {
+    const phone = lead.contact_phone.replace(/[^0-9+]/g, '');
+    const phoneLink = phone.startsWith('+') ? phone : '+1' + phone;
+    const firstName = lead.contact_name ? lead.contact_name.split(' ')[0] : 'there';
+    const cls = isContacted ? 'lead-card contacted' : 'lead-card';
+    const badge = lead.industry ? '<span class="industry-badge">' + lead.industry + '</span>' : '';
+    const contactedBadge = isContacted ? '<span class="contacted-badge" style="display:inline-block;">CALLED</span>' : '<span class="contacted-badge">CALLED</span>';
+
+    return '<div class="' + cls + '" id="lead-' + lead.deal_id + '">' +
+        '<div class="lead-header">' +
+            '<span class="lead-name">' + lead.company + '</span>' +
+            badge +
+        '</div>' +
+        '<div class="lead-contact">' + (lead.contact_name || 'Ask for owner') + '</div>' +
+        '<div class="lead-actions">' +
+            '<a href="tel:' + phoneLink + '" class="call-btn" onclick="markContacted('' + lead.deal_id + '', '' + lead.company + '')">' +
+                '📞 ' + lead.contact_phone +
+            '</a>' +
+            '<a href="sms:' + phoneLink + '?body=Hey%20' + firstName + '%2C%20I%20work%20with%20a%20company%20that%20builds%20AI%20phone%20systems%20for%20businesses.%20Would%20you%20be%20open%20to%20a%20quick%20chat%3F" class="text-btn" onclick="markContacted('' + lead.deal_id + '', '' + lead.company + '')">' +
+                '💬 Text' +
+            '</a>' +
+            contactedBadge +
+        '</div>' +
+    '</div>';
+}
+
+function markContacted(dealId, company) {
+    // Update local state immediately
+    const lead = leads.find(l => l.deal_id === dealId);
+    if (!lead || lead.status === 'contacted') return;
+    lead.status = 'contacted';
+
+    // Save to localStorage (persists across page loads on this device)
+    const local = JSON.parse(localStorage.getItem('rep_' + REP_ID) || '{}');
+    local[dealId] = 'contacted';
+    localStorage.setItem('rep_' + REP_ID, JSON.stringify(local));
+
+    // Re-render the page
+    render();
+
+    // Notify the API (fire and forget — page already updated)
+    fetch(API + '/rep/contacted', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rep_id: REP_ID, deal_id: dealId })
+    }).then(r => r.json()).then(data => {
+        if (data.all_contacted) {
+            requestNewLeads();
+        }
+    }).catch(() => {});  // Offline? No problem — localStorage has it
+}
+
+function requestNewLeads() {
+    document.getElementById('leads-container').style.display = 'none';
+    document.getElementById('loading-new').style.display = 'block';
+
+    // Clear localStorage for this rep (new batch incoming)
+    localStorage.removeItem('rep_' + REP_ID);
+
+    fetch(API + '/rep/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rep_id: REP_ID, count: 15 })
+    }).then(r => r.json()).then(data => {
+        if (data.ok) {
+            // Reload the page to get fresh leads
+            setTimeout(() => window.location.reload(), 3000);
+        } else {
+            document.getElementById('loading-new').innerHTML =
+                '<div class="loading"><p style="color:#C9963C;">New leads are being prepared.</p>' +
+                '<p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">Refresh this page in a few minutes.</p></div>';
+        }
+    }).catch(() => {
+        document.getElementById('loading-new').innerHTML =
+            '<div class="loading"><p style="color:#C9963C;">New leads are being prepared.</p>' +
+            '<p style="color:#666;font-size:0.85rem;margin-top:0.5rem;">Refresh this page in a few minutes.</p></div>';
+    });
+}
+
+init();
+</script>
 </body>
 </html>

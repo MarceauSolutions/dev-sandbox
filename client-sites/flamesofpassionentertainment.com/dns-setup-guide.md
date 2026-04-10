@@ -130,7 +130,7 @@ Once you see your website on your domain, text me so I can:
 If you get stuck, just text or call:
 
 **William Marceau**
-Phone: (239) 398-5676
+Phone: (855) 239-9364
 Email: wmarceau@marceausolutions.com
 
 ---

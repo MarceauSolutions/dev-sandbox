@@ -34,8 +34,8 @@ load_dotenv()
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from execution.auto_iterator import AutoIterator, ExperimentStore, STRATEGIES_DIR
-from execution.auto_iterator_evaluators import get_evaluator, EVALUATORS
+from auto_iterator import AutoIterator, ExperimentStore, STRATEGIES_DIR
+from auto_iterator_evaluators import get_evaluator, EVALUATORS
 
 # Lead scraper paths
 LEAD_SCRAPER_DIR = ROOT / "projects" / "shared" / "lead-scraper"

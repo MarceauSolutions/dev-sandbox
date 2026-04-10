@@ -36,17 +36,17 @@ mkdir -p "$(dirname "$LOG")"
     # Get local HEAD before sync
     LOCAL_HEAD=$(cd "$REPO_ROOT" && git rev-parse --short HEAD 2>/dev/null)
 
-    # Pull on EC2
+    # Pull on EC2 (stash first to handle runtime changes from cron/Telegram)
     RESULT=$(ssh -i "$EC2_KEY" -o ConnectTimeout=8 -o StrictHostKeyChecking=no \
         "$EC2_USER@$EC2_HOST" \
-        "sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && git fetch origin main && git pull origin main --rebase 2>&1'" \
+        "cd /home/clawdbot/dev-sandbox && git stash -q 2>/dev/null; git fetch origin main && git pull origin main --rebase 2>&1; git stash pop -q 2>/dev/null; true" \
         2>&1)
     PULL_EXIT=$?
 
     # Verify: compare commits
     EC2_HEAD=$(ssh -i "$EC2_KEY" -o ConnectTimeout=5 -o StrictHostKeyChecking=no \
         "$EC2_USER@$EC2_HOST" \
-        "sudo -u clawdbot bash -c 'cd /home/clawdbot/dev-sandbox && git rev-parse --short HEAD'" \
+        "cd /home/clawdbot/dev-sandbox && git rev-parse --short HEAD" \
         2>/dev/null)
 
     TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
