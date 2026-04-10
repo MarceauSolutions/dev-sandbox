@@ -1,0 +1,60 @@
+{
+  "name": "amazon-seller-mcp",
+  "display_name": "Amazon Seller MCP Server",
+  "description": "Amazon seller tools for FBA fee calculation, inventory optimization, and restock recommendations via the SP-API.",
+  "version": "1.0.0",
+  "author": {
+    "name": "William Marceau Jr.",
+    "email": "william@marceausolutions.com",
+    "url": "https://marceausolutions.com"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/MarceauSolutions/dev-sandbox",
+  "homepage": "https://github.com/MarceauSolutions/dev-sandbox/tree/main/projects/marceau-solutions/amazon-seller",
+  "categories": ["ecommerce", "amazon", "inventory", "business"],
+  "tags": ["amazon", "fba", "seller", "inventory", "ecommerce", "sp-api"],
+  "runtime": "python",
+  "transport": "stdio",
+  "installation": {
+    "pypi": "amazon-seller-mcp",
+    "docker": true
+  },
+  "tools": [
+    {
+      "name": "calculate_fba_fees",
+      "description": "Calculate FBA fees for a product including storage, fulfillment, and referral fees"
+    },
+    {
+      "name": "get_inventory_status",
+      "description": "Get current inventory levels and health metrics"
+    },
+    {
+      "name": "get_restock_recommendations",
+      "description": "Get AI-powered restock recommendations based on sales velocity"
+    },
+    {
+      "name": "analyze_profitability",
+      "description": "Analyze product profitability including all Amazon fees"
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "AMAZON_REFRESH_TOKEN",
+      "description": "Amazon SP-API refresh token",
+      "required": true,
+      "secret": true
+    },
+    {
+      "name": "AMAZON_LWA_APP_ID",
+      "description": "Amazon LWA App ID (Client ID)",
+      "required": true,
+      "secret": true
+    },
+    {
+      "name": "AMAZON_LWA_CLIENT_SECRET",
+      "description": "Amazon LWA Client Secret",
+      "required": true,
+      "secret": true
+    }
+  ]
+}
