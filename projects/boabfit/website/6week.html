@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6-Week Barbie Body Program | BOABFIT by Julia Marceau</title>
+    <meta name="description" content="6-Week Barbie Body program by BOABFIT. 5 days/week, 30 min/day. Fully guided workouts, pre-scheduled calendar, in-app tracking. Transform your body with Julia.">
+
+    <meta property="og:title" content="6-Week Barbie Body | BOABFIT">
+    <meta property="og:description" content="Hot girls don't overthink their workouts — they follow a system. 6 weeks. 5 days/week. 30 min/day. Let's go.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink: #E84B8A;
+            --pink-light: #f472a8;
+            --pink-dark: #c7306e;
+            --pink-glow: rgba(232, 75, 138, 0.25);
+            --grey-dark: #333333;
+            --grey: #666666;
+            --grey-light: #999999;
+            --grey-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --card-border: #e8e8e8;
+            --bg: #ffffff;
+            --text: #333333;
+            --text-muted: #777777;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Dynamic particle canvas */
+        #particle-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        /* ── Hero Section ──────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(255,255,255,0.1) 0%,
+                rgba(255,255,255,0.6) 50%,
+                var(--bg) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(232, 75, 138, 0.1);
+            border: 1px solid var(--pink);
+            color: var(--pink);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--grey-dark);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-title span {
+            color: var(--pink);
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-details {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.5rem 0 2.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .hero-detail {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--pink);
+        }
+
+        .hero-detail-separator { color: var(--card-border); }
+
+        /* ── Scroll Teaser (replaces top CTA) ──────── */
+        .scroll-teaser {
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.2s forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .scroll-teaser-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--pink);
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid var(--pink);
+            border-bottom: 2px solid var(--pink);
+            transform: rotate(45deg);
+            animation: bounceArrow 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+            50% { transform: rotate(45deg) translateY(8px); opacity: 0.5; }
+        }
+
+        .scroll-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* ── CTA Button ────────────────────────────── */
+        .cta-button {
+            display: inline-block;
+            background: var(--pink);
+            color: var(--bg);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 1.4rem 3.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 35px var(--pink-glow);
+            animation: ctaPulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--pink), var(--pink-light), var(--pink));
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(12px);
+            animation: ctaGlow 2s ease-in-out infinite;
+        }
+
+        .cta-button:hover {
+            background: var(--pink-dark);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(232, 75, 138, 0.5);
+        }
+
+        @keyframes ctaPulse {
+            0%, 100% { box-shadow: 0 8px 35px var(--pink-glow); transform: scale(1); }
+            50% { box-shadow: 0 12px 45px rgba(232, 75, 138, 0.45); transform: scale(1.03); }
+        }
+
+        @keyframes ctaGlow {
+            0%, 100% { opacity: 0.4; filter: blur(12px); }
+            50% { opacity: 0.8; filter: blur(18px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Divider ───────────────────────────────── */
+        .glow-divider {
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--pink-light) 20%,
+                var(--pink) 50%,
+                var(--pink-light) 80%,
+                transparent 100%
+            );
+            max-width: 300px;
+            margin: 4rem auto;
+            opacity: 0.4;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* ── Section Styling ───────────────────────── */
+        .section {
+            padding: 4rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--pink);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--grey-dark);
+            line-height: 1.2;
+        }
+
+        .section-text {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* ── Feature Cards ─────────────────────────── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--pink);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--pink-glow);
+        }
+
+        .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+
+        .feature-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--pink);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── Checklist ─────────────────────────────── */
+        .checklist {
+            max-width: 500px;
+            margin: 2rem auto;
+            list-style: none;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .check-icon {
+            color: var(--pink);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Image Showcase ────────────────────────── */
+        .showcase {
+            padding: 4rem 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .showcase-item {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            aspect-ratio: 4/5;
+        }
+
+        .showcase-item:hover {
+            border-color: var(--pink);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--pink-glow);
+        }
+
+        .showcase-item img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .showcase-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #ffffff;
+        }
+
+        /* ── Steps ─────────────────────────────────── */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--pink);
+            line-height: 1;
+            min-width: 40px;
+        }
+
+        .step-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--grey-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── Bottom CTA ────────────────────────────── */
+        .bottom-cta {
+            text-align: center;
+            padding: 5rem 2rem;
+            position: relative;
+            background: var(--grey-bg);
+        }
+
+        /* ── Pink Particle Rise (bottom section) ───── */
+        .particle-rise-container {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 250px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .rise-particle {
+            position: absolute;
+            bottom: -20px;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleRise linear infinite;
+        }
+
+        @keyframes particleRise {
+            0% { opacity: 0; transform: translateY(0) scale(1); }
+            15% { opacity: 0.7; }
+            50% { opacity: 0.4; transform: translateY(-100px) scale(0.6); }
+            100% { opacity: 0; transform: translateY(-250px) scale(0.1); }
+        }
+
+        /* ── Footer ────────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            color: var(--pink);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-ig a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .footer-ig a:hover { color: var(--pink); }
+
+        .footer-credit {
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            color: var(--grey-light);
+        }
+
+        .footer-credit a {
+            color: var(--grey-light);
+            text-decoration: none;
+        }
+
+        .footer-credit a:hover { color: var(--pink); }
+
+        /* ── Signup Form ───────────────────────────── */
+        .form-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+        }
+
+        .form-progress {
+            height: 4px;
+            background: var(--grey-bg);
+            border-radius: 2px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .form-progress-bar {
+            height: 100%;
+            width: 33%;
+            background: var(--pink);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .form-steps-label {
+            text-align: right;
+            font-size: 0.7rem;
+            color: var(--grey-light);
+            margin-bottom: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .form-step {
+            display: none;
+            text-align: center;
+        }
+
+        .form-step.active { display: block; }
+
+        .form-label {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--grey-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--text);
+            background: var(--bg);
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--pink);
+            box-shadow: 0 0 0 4px rgba(232, 75, 138, 0.1);
+        }
+
+        .form-input::placeholder { color: var(--grey-light); }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--grey-light);
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-next {
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .form-back {
+            flex: 0 0 auto;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--card-border);
+            border-radius: 50px;
+            background: transparent;
+            color: var(--grey);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .form-back:hover {
+            border-color: var(--grey);
+            color: var(--grey-dark);
+        }
+
+        .form-options {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .form-option {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .form-option input { display: none; }
+
+        .form-option-label {
+            display: block;
+            padding: 1rem;
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--grey);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .form-option input:checked + .form-option-label {
+            border-color: var(--pink);
+            background: rgba(232, 75, 138, 0.08);
+            color: var(--pink);
+        }
+
+        .form-option-label:hover {
+            border-color: var(--pink-light);
+            color: var(--pink);
+        }
+
+        .form-error {
+            color: var(--pink);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-input.error { border-color: var(--pink); }
+
+        /* ── Scroll Animations ─────────────────────── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Mobile ────────────────────────────────── */
+        @media (max-width: 768px) {
+            .hero { min-height: 90vh; padding: 2rem 1.5rem; }
+            .hero-details { gap: 1rem; }
+            .showcase-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .cta-button { padding: 1rem 2rem; font-size: 0.85rem; }
+            .step { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic pink particle canvas -->
+    <canvas id="particle-bg"></canvas>
+
+    <div class="content">
+
+        <!-- ── Hero ────────────────────────────────── -->
+        <section class="hero">
+            <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/6da6c82c-6dc9-4a0b-bb4f-c4f358c4394b/Image+9-9-25+at+12.07%E2%80%AFPM.jpg"
+                 alt="BOABFIT 6-Week Program" class="hero-bg" loading="eager">
+            <div class="hero-content">
+                <span class="hero-badge">BOABFIT by Julia Marceau</span>
+                <h1 class="hero-title">Hot Girls Don't Overthink Their Workouts &mdash; <span>They Follow a System.</span></h1>
+                <p class="hero-sub">6-Week BARBIE BODY &mdash; Your transformation starts now.</p>
+                <div class="hero-details">
+                    <span class="hero-detail">6 Weeks</span>
+                    <span class="hero-detail-separator">&bull;</span>
+                    <span class="hero-detail">5 Days/Week</span>
+                    <span class="hero-detail-separator">&bull;</span>
+                    <span class="hero-detail">30 Min/Day</span>
+                    <span class="hero-detail-separator">&bull;</span>
+                    <span class="hero-detail">Dumbbells + Band</span>
+                </div>
+
+                <!-- Dynamic scroll teaser instead of CTA -->
+                <a href="#signup" class="scroll-teaser" style="text-decoration:none;">
+                    <span class="scroll-teaser-text">See what's inside</span>
+                    <div class="scroll-arrow"></div>
+                    <span class="scroll-hint">Your fully guided program awaits</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- ── Showcase Images (right after hero) ──── -->
+        <section class="showcase fade-in">
+            <p class="section-label">Inside the Program</p>
+            <h2 class="section-title" style="text-align:center; margin-bottom: 2rem;">Your Fully Guided Daily Workouts &mdash; Just Press Play</h2>
+
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/4bc820b5-14cd-41c6-9565-fafce417eba0/IMG_1240.jpeg"
+                         alt="BOABFIT guided workouts" loading="lazy">
+                    <div class="showcase-label">Guided Workouts</div>
+                </div>
+                <div class="showcase-item">
+                    <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/7ec25168-3e67-442d-97df-d04b682a8adf/A0091AA9-ED18-4CA1-8AF6-BE8142919293.jpeg"
+                         alt="BOABFIT pre-scheduled calendar" loading="lazy">
+                    <div class="showcase-label">Pre-Scheduled Calendar</div>
+                </div>
+                <div class="showcase-item">
+                    <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/1e84f291-2f55-42c6-bbc3-5e52efe901d5/IMG_1137.jpeg"
+                         alt="BOABFIT progress tracking" loading="lazy">
+                    <div class="showcase-label">Track Your Progress</div>
+                </div>
+                <div class="showcase-item">
+                    <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/d267e721-0dd6-43c0-b636-e72f8c37e86c/IMG_1365.jpeg"
+                         alt="BOABFIT results" loading="lazy">
+                    <div class="showcase-label">Real Results</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- ── Signup Form ──────────────────────────── -->
+        <section class="section fade-in" id="signup">
+            <p class="section-label">Let's Go</p>
+            <h2 class="section-title">Begin Your Body Transformation</h2>
+
+            <div class="form-container">
+                <!-- Progress bar -->
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="progressBar"></div>
+                </div>
+                <div class="form-steps-label">
+                    <span id="stepLabel">Step 1 of 3</span>
+                </div>
+
+                <form id="signupForm" novalidate>
+                    <!-- Step 1: Email (captured first for abandonment tracking) -->
+                    <div class="form-step active" data-step="1">
+                        <label class="form-label" for="email">What's your email?</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="you@email.com" required>
+                        <p class="form-hint">We'll send your program access here</p>
+                        <button type="button" class="cta-button form-next" onclick="nextStep(1)">Next</button>
+                    </div>
+
+                    <!-- Step 2: Name + Phone -->
+                    <div class="form-step" data-step="2">
+                        <label class="form-label" for="name">Your name (first & last)</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Julia Marceau" required>
+                        <label class="form-label" for="phone" style="margin-top:1.5rem;">Phone number</label>
+                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="(555) 123-4567" required>
+                        <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                            <button type="button" class="form-back" onclick="prevStep(2)">Back</button>
+                            <button type="button" class="cta-button form-next" onclick="nextStep(2)">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Commitment -->
+                    <div class="form-step" data-step="3">
+                        <label class="form-label">Are you seriously committed to starting your bubble butt journey!?</label>
+                        <div class="form-options">
+                            <label class="form-option">
+                                <input type="radio" name="committed" value="YES" required>
+                                <span class="form-option-label">YES</span>
+                            </label>
+                            <label class="form-option">
+                                <input type="radio" name="committed" value="HELL YES">
+                                <span class="form-option-label">HELL YES</span>
+                            </label>
+                        </div>
+                        <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                            <button type="button" class="form-back" onclick="prevStep(3)">Back</button>
+                            <button type="submit" class="cta-button form-next" id="submitBtn">Let's Do This!</button>
+                        </div>
+                    </div>
+
+                    <!-- Success -->
+                    <div class="form-step" data-step="4" id="formSuccess">
+                        <div style="font-size:3rem; margin-bottom:1rem;">&#x1F389;</div>
+                        <h3 class="section-title" style="font-size:1.5rem;">You're In!</h3>
+                        <p class="form-hint" style="font-size:1rem;">Check your email for program access. See you on Day 1!</p>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- ── What You Get ────────────────────────── -->
+        <section class="section fade-in">
+            <p class="section-label">What's Included</p>
+            <h2 class="section-title">I've Done the Thinking &mdash;<br>You Just Follow Along.</h2>
+            <p class="section-text">Clear reps, sets & progression with timers and video examples. I'll be doing every single workout with you.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4F1;</div>
+                    <div class="feature-title">In-App Access</div>
+                    <div class="feature-text">Full program delivered through the BOABFIT app. Timers, video demos, and tracking built in.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4C5;</div>
+                    <div class="feature-title">Pre-Scheduled</div>
+                    <div class="feature-text">Your calendar is already built. Just show up and press play. No guessing what to do.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F3CB;&#xFE0F;&#x200D;&#x2640;&#xFE0F;</div>
+                    <div class="feature-title">30 Min Workouts</div>
+                    <div class="feature-text">Efficient resistance training. Dumbbells + booty band. 5 days a week. That's it.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#x1F4AA;</div>
+                    <div class="feature-title">I Do It With You</div>
+                    <div class="feature-text">I'm not just giving you a plan &mdash; I'll be doing every workout alongside you with live coaching videos.</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- ── How It Works ────────────────────────── -->
+        <section class="section fade-in">
+            <p class="section-label">How It Works</p>
+            <h2 class="section-title">Once You Sign Up&hellip;</h2>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3>Instant Email Access</h3>
+                        <p>You'll get immediate access to the BOABFIT app and your full 6-week program the moment you sign up.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3>Follow the Calendar</h3>
+                        <p>Your workouts are pre-scheduled. Open the app, check today's session, and press play. No thinking required.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3>Train With Me</h3>
+                        <p>I'll be posting live coaching videos on Instagram during the 6 weeks. Tips, tricks, and motivation &mdash; we do this together.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3>Track & Transform</h3>
+                        <p>Log your progress in-app. Watch your numbers go up and your body change over 6 weeks. 8 weeks total access.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+
+        <!-- ── Footer ──────────────────────────────── -->
+        <footer>
+            <div class="footer-brand">BOABFIT</div>
+            <div class="footer-ig">
+                <a href="https://instagram.com/boabfit" target="_blank" rel="noopener">@boabfit</a>
+            </div>
+            <div class="footer-credit">
+                Site by <a href="https://marceausolutions.com" target="_blank" rel="noopener">Marceau Solutions</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+    // ============================================
+    // DYNAMIC PINK PARTICLE BACKGROUND
+    // Mouse-reactive floating dots (EDM Nights style)
+    // ============================================
+    (function() {
+        var canvas = document.getElementById('particle-bg');
+        var ctx = canvas.getContext('2d');
+        var width, height, particles = [];
+        var mouse = { x: -1000, y: -1000 };
+        var PARTICLE_COUNT = window.innerWidth < 768 ? 200 : 500;
+        var time = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        function noise(x, y, t) {
+            return Math.sin(x * 0.008 + t) * Math.cos(y * 0.01 + t * 0.7) +
+                   Math.sin(x * 0.006 - t * 0.5) * Math.cos(y * 0.005 + t * 0.3) +
+                   Math.sin((x + y) * 0.004 + t * 0.4) * 0.5;
+        }
+
+        function createParticle() {
+            var w = width || window.innerWidth;
+            var h = height || window.innerHeight;
+            return {
+                x: Math.random() * w,
+                y: Math.random() * h,
+                originX: Math.random() * w,
+                originY: Math.random() * h,
+                size: Math.random() * 3 + 0.8,
+                baseAlpha: Math.random() * 0.35 + 0.08,
+                drift: Math.random() * 0.8 + 0.3,
+                wobblePhase: Math.random() * Math.PI * 2,
+                wobbleSpeed: Math.random() * 0.02 + 0.008,
+                pulsePhase: Math.random() * Math.PI * 2,
+                pulseSpeed: Math.random() * 0.025 + 0.01,
+                angle: Math.random() * Math.PI * 2,
+                glow: Math.random() > 0.75,
+                _mouseBoost: 0
+            };
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            for (var i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(createParticle());
+            }
+        }
+
+        function animate() {
+            time += 0.006;
+            ctx.clearRect(0, 0, width, height);
+
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+
+                var n = noise(p.originX, p.originY, time);
+                var flowX = Math.cos(n * Math.PI * 2) * p.drift;
+                var flowY = Math.sin(n * Math.PI * 2) * p.drift;
+
+                p.wobblePhase += p.wobbleSpeed;
+                p.pulsePhase += p.pulseSpeed;
+                var wobbleX = Math.sin(p.wobblePhase) * 2.5;
+                var wobbleY = Math.cos(p.wobblePhase * 1.3) * 2.5;
+
+                p.x = p.originX + flowX * 20 + wobbleX;
+                p.y = p.originY + flowY * 20 + wobbleY;
+
+                p.originX += Math.sin(time * 0.4 + p.angle) * 0.08;
+                p.originY += Math.cos(time * 0.3 + p.angle) * 0.08 - 0.03;
+
+                if (p.originY < -30) { p.originY = height + 30; p.originX = Math.random() * width; }
+                if (p.originX < -30) p.originX = width + 30;
+                if (p.originX > width + 30) p.originX = -30;
+
+                // Mouse attraction
+                var dx = mouse.x - p.x;
+                var dy = mouse.y - p.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var drawX = p.x;
+                var drawY = p.y;
+
+                if (dist < 150) {
+                    var force = (150 - dist) / 150;
+                    drawX += dx * force * 0.15;
+                    drawY += dy * force * 0.15;
+                    p._mouseBoost = force;
+                } else {
+                    p._mouseBoost = 0;
+                }
+
+                var sizeMult = 1 + Math.sin(p.pulsePhase) * 0.4;
+                var alpha = p.baseAlpha * (0.6 + Math.sin(p.pulsePhase * 0.7) * 0.4);
+                alpha = Math.min(0.8, alpha + p._mouseBoost * 0.4);
+                var finalSize = p.size * sizeMult * (1 + p._mouseBoost * 0.5);
+
+                // Pink glow halo
+                if (p.glow || p._mouseBoost > 0.3) {
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY, finalSize * 8, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(232, 75, 138, ' + (alpha * 0.06) + ')';
+                    ctx.fill();
+                }
+
+                // Pink particle
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, finalSize, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(232, 75, 138, ' + alpha + ')';
+                ctx.fill();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        document.addEventListener('mousemove', function(e) { mouse.x = e.clientX; mouse.y = e.clientY; });
+        document.addEventListener('mouseleave', function() { mouse.x = -1000; mouse.y = -1000; });
+        document.addEventListener('touchmove', function(e) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', function() { mouse.x = -1000; mouse.y = -1000; });
+
+        window.addEventListener('resize', resize);
+        init();
+        animate();
+    })();
+
+    // ============================================
+    // RISING PINK PARTICLES (bottom CTA section)
+    // ============================================
+    (function() {
+        var container = document.getElementById('riseParticles');
+        if (!container) return;
+        for (var i = 0; i < 35; i++) {
+            var particle = document.createElement('div');
+            particle.className = 'rise-particle';
+            var size = Math.random() * 10 + 4;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.background = 'radial-gradient(circle, rgba(232,115,111,0.6), rgba(232,115,111,0.1))';
+            particle.style.animationDuration = (Math.random() * 2.5 + 1.5) + 's';
+            particle.style.animationDelay = (Math.random() * 3) + 's';
+            container.appendChild(particle);
+        }
+    })();
+
+    // ============================================
+    // SCROLL FADE-IN ANIMATIONS
+    // ============================================
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+
+    // ============================================
+    // MULTI-STEP FORM + N8N WEBHOOK
+    // ============================================
+    var WEBHOOK_URL = 'https://n8n.marceausolutions.com/webhook/boabfit-signup';
+    var ABANDON_URL = 'https://n8n.marceausolutions.com/webhook/boabfit-abandon';
+    var currentStep = 1;
+
+    function showStep(step) {
+        document.querySelectorAll('.form-step').forEach(function(s) { s.classList.remove('active'); });
+        var target = document.querySelector('[data-step="' + step + '"]');
+        if (target) target.classList.add('active');
+
+        // Update progress
+        var pct = step === 4 ? 100 : Math.round((step / 3) * 100);
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('stepLabel').textContent = step <= 3 ? 'Step ' + step + ' of 3' : 'Complete!';
+        currentStep = step;
+    }
+
+    function nextStep(from) {
+        if (from === 1) {
+            var email = document.getElementById('email');
+            if (!email.value || !email.value.includes('@')) {
+                email.classList.add('error');
+                return;
+            }
+            email.classList.remove('error');
+
+            // Capture email immediately for abandonment tracking
+            try {
+                fetch(ABANDON_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email.value,
+                        step: 1,
+                        timestamp: new Date().toISOString(),
+                        type: 'partial'
+                    })
+                });
+            } catch(e) {}
+            localStorage.setItem('boabfit_email', email.value);
+        }
+
+        if (from === 2) {
+            var name = document.getElementById('name');
+            var phone = document.getElementById('phone');
+            if (!name.value.trim()) { name.classList.add('error'); return; }
+            if (!phone.value.trim()) { phone.classList.add('error'); return; }
+            name.classList.remove('error');
+            phone.classList.remove('error');
+
+            // Update partial submission with name/phone
+            try {
+                fetch(ABANDON_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        name: name.value,
+                        phone: phone.value,
+                        step: 2,
+                        timestamp: new Date().toISOString(),
+                        type: 'partial'
+                    })
+                });
+            } catch(e) {}
+        }
+
+        showStep(from + 1);
+    }
+
+    function prevStep(from) {
+        showStep(from - 1);
+    }
+
+    // Form submission
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var committed = document.querySelector('input[name="committed"]:checked');
+        if (!committed) return;
+
+        var btn = document.getElementById('submitBtn');
+        btn.textContent = 'Submitting...';
+        btn.disabled = true;
+
+        var data = {
+            email: document.getElementById('email').value,
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            committed: committed.value,
+            timestamp: new Date().toISOString(),
+            type: 'complete',
+            source: 'boabfit-6week-landing'
+        };
+
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function() {
+            showStep(4);
+            localStorage.setItem('boabfit_submitted', 'true');
+            localStorage.removeItem('boabfit_email');
+        }).catch(function() {
+            // Still show success — n8n might be slow but data was sent
+            showStep(4);
+            localStorage.setItem('boabfit_submitted', 'true');
+        });
+    });
+
+    // If already submitted, show success
+    if (localStorage.getItem('boabfit_submitted') === 'true') {
+        var formEl = document.getElementById('signupForm');
+        if (formEl) {
+            document.querySelectorAll('.form-step').forEach(function(s) { s.classList.remove('active'); });
+            document.getElementById('formSuccess').classList.add('active');
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('stepLabel').textContent = 'Complete!';
+        }
+    }
+    </script>
+</body>
+</html>

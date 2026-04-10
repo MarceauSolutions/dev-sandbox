@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOABFIT | Julia Marceau — Women's Fitness & Strength Training</title>
+    <meta name="description" content="BOABFIT by Julia Marceau. Women's fitness programs, guided workouts, and strength training. Transform your body with personalized coaching.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #E84B8A;
+            --pink-light: #f472a8;
+            --pink-dark: #c7306e;
+            --pink-glow: rgba(232, 75, 138, 0.25);
+            --grey-dark: #333333;
+            --grey: #666666;
+            --grey-light: #999999;
+            --grey-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --card-border: #e8e8e8;
+            --bg: #ffffff;
+            --text: #333333;
+            --text-muted: #777777;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        #particle-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .content { position: relative; z-index: 1; }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease;
+        }
+        nav.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+            padding: 0.7rem 5%;
+        }
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem; font-weight: 900;
+            color: var(--grey-dark); text-decoration: none; letter-spacing: 2px;
+        }
+        .logo span { color: var(--pink); }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a {
+            text-decoration: none; color: var(--grey-dark);
+            font-weight: 600; font-size: 0.85rem;
+            letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--pink); }
+        .mobile-menu { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+        .mobile-menu span { width: 25px; height: 2px; background: var(--grey-dark); transition: 0.3s; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 6rem 2rem 3rem; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.7) 50%, var(--bg) 100%);
+            z-index: 1;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center top; z-index: 0;
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 700px; }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(232, 75, 138, 0.1); border: 1px solid var(--pink); color: var(--pink);
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 0.4rem 1.2rem; border-radius: 50px; margin-bottom: 1.5rem;
+        }
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 800;
+            line-height: 1.15; margin-bottom: 1rem; color: var(--grey-dark);
+        }
+        .hero-title span { color: var(--pink); }
+        .hero-sub {
+            font-size: 1.05rem; color: var(--text-muted);
+            margin-bottom: 2rem; max-width: 550px; margin-left: auto; margin-right: auto;
+        }
+        .btn {
+            display: inline-block; font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; padding: 1rem 2.5rem; border-radius: 50px;
+            text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: var(--pink); color: white;
+            box-shadow: 0 6px 25px var(--pink-glow);
+        }
+        .btn-primary:hover {
+            background: var(--pink-dark); transform: translateY(-2px);
+            box-shadow: 0 10px 35px rgba(232, 75, 138, 0.4);
+        }
+        .btn-secondary {
+            background: transparent; color: var(--pink);
+            border: 2px solid var(--pink);
+        }
+        .btn-secondary:hover { background: rgba(232, 75, 138, 0.05); }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* Section common */
+        .section-tag {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em;
+            text-transform: uppercase; color: var(--pink);
+        }
+        section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800;
+            color: var(--grey-dark); margin: 0.5rem 0 1rem; line-height: 1.2;
+        }
+        .glow-divider {
+            height: 2px; max-width: 300px; margin: 4rem auto; opacity: 0.4;
+            background: linear-gradient(90deg, transparent, var(--pink), transparent);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes glowPulse { 0%,100%{opacity:0.3;} 50%{opacity:0.6;} }
+
+        /* About */
+        .about {
+            padding: 4rem 5%; max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+        }
+        .about-image {
+            background: var(--grey-bg); border-radius: 20px;
+            aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center;
+            font-size: 4rem; position: relative; overflow: hidden;
+        }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; }
+        .about-content { }
+        .about-content p { color: var(--text-muted); margin-bottom: 1rem; font-size: 0.95rem; }
+        .about-features {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+        }
+        .feature-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            font-size: 0.9rem; font-weight: 600; color: var(--grey-dark);
+        }
+        .feature-item .fi { font-size: 1.3rem; }
+
+        /* Programs */
+        .programs { padding: 4rem 5%; text-align: center; }
+        .programs-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem; max-width: 1000px; margin: 2rem auto 0;
+        }
+        .program-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 20px; padding: 2.5rem 2rem; text-align: center;
+            transition: all 0.3s ease;
+        }
+        .program-card:hover {
+            border-color: var(--pink); transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--pink-glow);
+        }
+        .program-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .program-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--grey-dark);
+        }
+        .program-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+
+        /* Testimonials */
+        .testimonials { padding: 4rem 5%; text-align: center; background: var(--grey-bg); }
+        .testimonials-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem; max-width: 1000px; margin: 2rem auto 0;
+        }
+        .testimonial-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 2rem; text-align: left;
+        }
+        .testimonial-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; }
+        .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+        .author-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--pink); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700;
+        }
+        .author-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--grey-dark); }
+        .author-info span { font-size: 0.8rem; color: var(--pink); font-weight: 600; }
+
+        /* Contact */
+        .contact { padding: 4rem 5%; max-width: 800px; margin: 0 auto; text-align: center; }
+        .contact-methods { display: flex; gap: 2rem; justify-content: center; margin: 1.5rem 0; flex-wrap: wrap; }
+        .contact-method { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Footer */
+        footer {
+            text-align: center; padding: 2rem; border-top: 1px solid var(--card-border);
+        }
+        .footer-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem; font-weight: 800; letter-spacing: 0.1em;
+            color: var(--pink); margin-bottom: 0.5rem;
+        }
+        .footer-ig a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; }
+        .footer-ig a:hover { color: var(--pink); }
+        .footer-credit { margin-top: 1rem; font-size: 0.7rem; color: var(--grey-light); }
+        .footer-credit a { color: var(--grey-light); text-decoration: none; }
+        .footer-credit a:hover { color: var(--pink); }
+
+        /* Fade in */
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu { display: flex; }
+            .nav-links.open {
+                display: flex; flex-direction: column; position: absolute;
+                top: 100%; left: 0; right: 0; background: white;
+                padding: 1rem 5%; gap: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+            .hero { min-height: 85vh; padding: 5rem 1.5rem 3rem; }
+            .about { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 1.5rem; }
+            .about-image { max-width: 300px; margin: 0 auto; }
+            .programs { padding: 3rem 1.5rem; }
+            .testimonials { padding: 3rem 1.5rem; }
+            .contact { padding: 3rem 1.5rem; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-bg"></canvas>
+
+    <div class="content">
+        <!-- Nav -->
+        <nav id="navbar">
+            <a href="#" class="logo">BOAB<span>FIT</span></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="mobile-menu" id="navToggle">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero">
+            <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/6da6c82c-6dc9-4a0b-bb4f-c4f358c4394b/Image+9-9-25+at+12.07%E2%80%AFPM.jpg"
+                 alt="BOABFIT" class="hero-bg" loading="eager">
+            <div class="hero-content">
+                <span class="hero-badge">Women's Fitness by Julia Marceau</span>
+                <h1 class="hero-title">Transform Your Body. <span>Embrace Your Strength.</span></h1>
+                <p class="hero-sub">Ex-competitive cheerleader, track runner, and your biggest hype girl. Ready to feel amazing in your own skin? Let's make it happen.</p>
+                <div class="hero-buttons">
+                    <a href="#programs" class="btn btn-primary">View Programs</a>
+                    <a href="https://instagram.com/boabfit" target="_blank" class="btn btn-secondary">Follow @boabfit</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- About -->
+        <section class="about fade-in" id="about">
+            <div class="about-image">
+                <img src="https://images.squarespace-cdn.com/content/v1/67d49a6fbd9b696f2838f1d8/d267e721-0dd6-43c0-b636-e72f8c37e86c/IMG_1365.jpeg"
+                     alt="Julia Marceau" loading="lazy">
+            </div>
+            <div class="about-content">
+                <span class="section-tag">About Julia</span>
+                <h2>Your Girls' Girl in Fitness</h2>
+                <p>From competitive cheerleading mats to track fields, I've spent my life understanding what it takes to build a strong, confident body. Now I'm dedicated to sharing that knowledge with women who are ready to transform.</p>
+                <p>My approach isn't about extreme diets or punishing workouts. It's about smart, effective training designed for the female body — building strength, creating shape, and helping you feel incredible.</p>
+                <div class="about-features">
+                    <div class="feature-item"><span class="fi">🎯</span> Personalized Plans</div>
+                    <div class="feature-item"><span class="fi">💪</span> Strength Focused</div>
+                    <div class="feature-item"><span class="fi">📱</span> In-App Coaching</div>
+                    <div class="feature-item"><span class="fi">❤️</span> Body Positive</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- Programs -->
+        <section class="programs fade-in" id="programs">
+            <span class="section-tag">Programs</span>
+            <h2>Find Your Perfect Fit</h2>
+            <p style="color:var(--text-muted); max-width:500px; margin:0 auto;">Whether you're just starting out or ready to level up, I've got a program for your goals.</p>
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-icon">🍑</div>
+                    <h3>6-Week Barbie Body</h3>
+                    <p>5 days a week, 30 minutes a day. Dumbbells + booty band. Fully guided workouts with video demos. I do every workout with you.</p>
+                    <a href="6week.html" class="btn btn-primary">Join Now</a>
+                </div>
+                <div class="program-card">
+                    <div class="program-icon">🔥</div>
+                    <h3>Sculpt & Tone</h3>
+                    <p>Ready to shape up? This program targets all the right areas for that strong, feminine physique.</p>
+                    <span class="btn btn-secondary" style="opacity:0.5; cursor:default; pointer-events:none;">Coming Soon</span>
+                </div>
+                <div class="program-card">
+                    <div class="program-icon">⚡</div>
+                    <h3>Elite Performance</h3>
+                    <p>For experienced athletes who want to push boundaries and achieve peak physical condition.</p>
+                    <span class="btn btn-secondary" style="opacity:0.5; cursor:default; pointer-events:none;">Coming Soon</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- Testimonials -->
+        <section class="testimonials fade-in" id="results">
+            <span class="section-tag">Success Stories</span>
+            <h2>Real Women, Real Results</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Julia completely changed my relationship with fitness. For the first time, I actually enjoy working out and I've never felt stronger or more confident!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SK</div>
+                        <div class="author-info"><h4>Sarah K.</h4><span>Lost 25 lbs</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The personalized attention is unreal. Julia designs every workout around MY goals. I've seen more progress in 3 months than I did in 3 years alone."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div class="author-info"><h4>Maria R.</h4><span>Gained Confidence</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"As a busy mom, I thought getting fit was impossible. Julia showed me how to make it work with my schedule. Her energy is contagious!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JT</div>
+                        <div class="author-info"><h4>Jennifer T.</h4><span>Busy Mom of 3</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="glow-divider"></div>
+
+        <!-- Contact -->
+        <section class="contact fade-in" id="contact">
+            <span class="section-tag">Get In Touch</span>
+            <h2>Ready to Transform?</h2>
+            <p style="color:var(--text-muted); max-width:500px; margin:0 auto 1.5rem;">Follow me on Instagram or check out the 6-Week Barbie Body program to get started.</p>
+            <div class="contact-methods">
+                <div class="contact-method"><span>📧</span> info@boabfit.com</div>
+                <div class="contact-method"><span>📍</span> Online Training Worldwide</div>
+                <div class="contact-method"><span>📸</span> <a href="https://instagram.com/boabfit" target="_blank" style="color:var(--pink); text-decoration:none; font-weight:600;">@boabfit</a></div>
+            </div>
+            <div style="margin-top: 2rem;">
+                <a href="6week.html" class="btn btn-primary">Start Your Journey</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-brand">BOABFIT</div>
+            <div class="footer-ig"><a href="https://instagram.com/boabfit" target="_blank">@boabfit</a></div>
+            <div class="footer-credit">Site by <a href="https://marceausolutions.com" target="_blank" rel="noopener">Marceau Solutions</a></div>
+        </footer>
+    </div>
+
+    <script>
+    // Pink particles (same as 6week.html)
+    (function(){
+        var canvas=document.getElementById('particle-bg'),ctx=canvas.getContext('2d'),width,height,particles=[],mouse={x:-1000,y:-1000},PARTICLE_COUNT=window.innerWidth<768?80:180,time=0;
+        function resize(){width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight}
+        function noise(x,y,t){return Math.sin(x*0.008+t)*Math.cos(y*0.01+t*0.7)+Math.sin(x*0.006-t*0.5)*Math.cos(y*0.005+t*0.3)+Math.sin((x+y)*0.004+t*0.4)*0.5}
+        function createParticle(){var w=width||window.innerWidth,h=height||window.innerHeight;return{x:Math.random()*w,y:Math.random()*h,originX:Math.random()*w,originY:Math.random()*h,size:Math.random()*3+0.8,baseAlpha:Math.random()*0.35+0.08,drift:Math.random()*0.8+0.3,wobblePhase:Math.random()*Math.PI*2,wobbleSpeed:Math.random()*0.02+0.008,pulsePhase:Math.random()*Math.PI*2,pulseSpeed:Math.random()*0.025+0.01,angle:Math.random()*Math.PI*2,glow:Math.random()>0.75,_mouseBoost:0}}
+        function init(){resize();particles=[];for(var i=0;i<PARTICLE_COUNT;i++)particles.push(createParticle())}
+        function animate(){time+=0.006;ctx.clearRect(0,0,width,height);for(var i=0;i<particles.length;i++){var p=particles[i],n=noise(p.originX,p.originY,time),flowX=Math.cos(n*Math.PI*2)*p.drift,flowY=Math.sin(n*Math.PI*2)*p.drift;p.wobblePhase+=p.wobbleSpeed;p.pulsePhase+=p.pulseSpeed;p.x=p.originX+flowX*20+Math.sin(p.wobblePhase)*2.5;p.y=p.originY+flowY*20+Math.cos(p.wobblePhase*1.3)*2.5;p.originX+=Math.sin(time*0.4+p.angle)*0.08;p.originY+=Math.cos(time*0.3+p.angle)*0.08-0.03;if(p.originY<-30){p.originY=height+30;p.originX=Math.random()*width}if(p.originX<-30)p.originX=width+30;if(p.originX>width+30)p.originX=-30;var dx=mouse.x-p.x,dy=mouse.y-p.y,dist=Math.sqrt(dx*dx+dy*dy),drawX=p.x,drawY=p.y;if(dist<150){var force=(150-dist)/150;drawX+=dx*force*0.15;drawY+=dy*force*0.15;p._mouseBoost=force}else{p._mouseBoost=0}var sizeMult=1+Math.sin(p.pulsePhase)*0.4,alpha=p.baseAlpha*(0.6+Math.sin(p.pulsePhase*0.7)*0.4);alpha=Math.min(0.8,alpha+p._mouseBoost*0.4);var fs=p.size*sizeMult*(1+p._mouseBoost*0.5);if(p.glow||p._mouseBoost>0.3){ctx.beginPath();ctx.arc(drawX,drawY,fs*8,0,Math.PI*2);ctx.fillStyle='rgba(232,75,138,'+(alpha*0.06)+')';ctx.fill()}ctx.beginPath();ctx.arc(drawX,drawY,fs,0,Math.PI*2);ctx.fillStyle='rgba(232,75,138,'+alpha+')';ctx.fill()}requestAnimationFrame(animate)}
+        document.addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY});
+        document.addEventListener('mouseleave',function(){mouse.x=-1000;mouse.y=-1000});
+        document.addEventListener('touchmove',function(e){mouse.x=e.touches[0].clientX;mouse.y=e.touches[0].clientY},{passive:true});
+        document.addEventListener('touchend',function(){mouse.x=-1000;mouse.y=-1000});
+        window.addEventListener('resize',resize);init();animate()
+    })();
+
+    // Nav
+    window.addEventListener('scroll',function(){var n=document.getElementById('navbar');n.classList.toggle('scrolled',window.scrollY>50)});
+    document.getElementById('navToggle').addEventListener('click',function(){document.getElementById('navLinks').classList.toggle('open')});
+    document.querySelectorAll('.nav-links a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('open')})});
+
+    // Fade in
+    var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:0.1});
+    document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el)});
+    </script>
+</body>
+</html>

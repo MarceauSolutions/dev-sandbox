@@ -210,3 +210,9 @@ projects/*/output/
 projects/lead-generation/output/
 projects/*/output/
 projects/boabfit/data/monitor.env
+
+# Claude Code internal state
+.claude/agent-memory/
+
+# Sync backup artifacts
+.sync-backups/
