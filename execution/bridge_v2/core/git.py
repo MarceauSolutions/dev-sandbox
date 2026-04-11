@@ -8,7 +8,7 @@ from pathlib import Path
 from flask import Blueprint, jsonify, request
 from execution.bridge_v2.app import (
     ErrorCode, make_error, make_success, validate_path, truncate_output,
-    ALLOWED_BASE_PATHS, PENDING_APPROVALS,
+    ALLOWED_BASE_PATHS, DEFAULT_CWD, PENDING_APPROVALS,
     track_request,
 )
 
@@ -20,7 +20,7 @@ def git_status():
     """Get git status for a repository."""
     track_request('git/status')
     data = request.get_json() or {}
-    repo_path = data.get('repo_path', ALLOWED_BASE_PATHS[0])
+    repo_path = data.get('repo_path', DEFAULT_CWD)
 
     # Validate path
     valid, resolved_path = validate_path(repo_path)
@@ -133,7 +133,7 @@ def git_commit():
     """Commit changes to git."""
     track_request('git/commit')
     data = request.get_json() or {}
-    repo_path = data.get('repo_path', ALLOWED_BASE_PATHS[0])
+    repo_path = data.get('repo_path', DEFAULT_CWD)
     message = data.get('message')
     files = data.get('files', [])  # List of files or "all"
     author = data.get('author')
@@ -211,7 +211,7 @@ def git_push():
     """Push to remote repository."""
     track_request('git/push')
     data = request.get_json() or {}
-    repo_path = data.get('repo_path', ALLOWED_BASE_PATHS[0])
+    repo_path = data.get('repo_path', DEFAULT_CWD)
     remote = data.get('remote', 'origin')
     branch = data.get('branch')
     force = data.get('force', False)
@@ -298,7 +298,7 @@ def git_diff():
     """Get git diff."""
     track_request('git/diff')
     data = request.get_json() or {}
-    repo_path = data.get('repo_path', ALLOWED_BASE_PATHS[0])
+    repo_path = data.get('repo_path', DEFAULT_CWD)
     base = data.get('base', 'HEAD')
     head = data.get('head', '')
 

@@ -8,7 +8,7 @@ import uuid
 from flask import Blueprint, jsonify, request
 from execution.bridge_v2.app import (
     ErrorCode, make_error, make_success, validate_path, truncate_output,
-    ALLOWED_BASE_PATHS, COMMAND_TIMEOUT, MAX_OUTPUT_SIZE, PENDING_APPROVALS,
+    ALLOWED_BASE_PATHS, DEFAULT_CWD, COMMAND_TIMEOUT, MAX_OUTPUT_SIZE, PENDING_APPROVALS,
     track_request,
 )
 
@@ -21,7 +21,7 @@ def execute():
     track_request('command/execute')
     data = request.get_json() or {}
     command = data.get('command')
-    cwd = data.get('cwd', ALLOWED_BASE_PATHS[0])
+    cwd = data.get('cwd', DEFAULT_CWD)
     timeout = min(data.get('timeout', COMMAND_TIMEOUT), 300)
     env = data.get('env', {})
     require_approval = data.get('require_approval', False)

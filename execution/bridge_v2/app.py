@@ -49,6 +49,12 @@ ALLOWED_BASE_PATHS = [
     "/home/clawdbot/dev-sandbox",
 ]
 
+# Auto-detect default working directory based on what exists
+DEFAULT_CWD = next(
+    (p for p in ALLOWED_BASE_PATHS if Path(p).exists() and p != "/tmp"),
+    ALLOWED_BASE_PATHS[0]
+)
+
 SERVER_START_TIME = time.time()
 
 
