@@ -429,14 +429,16 @@ AFTER (2 agents, Grok built-in everywhere):
 
 **Execution order:**
 ```
-Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8
+Phase 0.5 ✅ → Phase 0 ✅ → Phase 1 ✅ → Phase 2 ✅ → Phase 3 ✅ → Phase 4 ✅ → Phase 5 ✅ → Phase 6 ✅ → Phase 7 ⬜ → Phase 8 ⬜
 ```
+**Last updated**: 2026-04-10 (end of session — Phases 0.5 through 6 complete)
 
 **Safety rules**: Git tag before each phase. Import shims after file moves. Mac first, EC2 second. One commit per phase for surgical rollback.
 
 ---
 
 ### Phase 0.5: Panacea — Unified EC2 Agent + Grok Integration (URGENT)
+**Status:** COMPLETE (2026-04-05)
 **Priority**: IMMEDIATE — Clawdbot OAuth ban enforcement is live
 **Estimated time**: 3-4 hours across 2 sessions
 **Depends on**: Nothing — fully independent
@@ -476,6 +478,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 ---
 
 ### Phase 0: Scaffold + Safety Net
+**Status:** COMPLETE
 **Estimated time**: 30 minutes
 **Depends on**: Nothing
 
@@ -485,6 +488,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 4. Snapshot current state in `docs/session-history.md`
 
 ### Phase 1: Root-Level Cleanup
+**Status:** COMPLETE
 **Estimated time**: 45 minutes
 **Depends on**: Phase 0
 
@@ -495,6 +499,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 5. Git tag: `post-phase-1`
 
 ### Phase 2: execution/ — Tower-Specific File Moves
+**Status:** COMPLETE
 **Estimated time**: 60 minutes
 **Depends on**: Phase 1
 
@@ -504,6 +509,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 4. Git tag: `post-phase-2`
 
 ### Phase 3: execution/ — Duplicate Cleanup
+**Status:** COMPLETE
 **Estimated time**: 30 minutes
 **Depends on**: Phase 2
 
@@ -513,6 +519,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 4. Git tag: `post-phase-3`
 
 ### Phase 4: followup_prioritizer Migration
+**Status:** COMPLETE (confirmed — already moved)
 **Estimated time**: 30 minutes
 **Depends on**: Phase 3
 
@@ -522,6 +529,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 4. Git tag: `post-phase-4`
 
 ### Phase 5: Tower Purification
+**Status:** COMPLETE (2026-04-10) — tower purification + lead-gen agency structure
 **Estimated time**: 90 minutes
 **Depends on**: Phase 4
 
@@ -534,6 +542,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 7. Git tag: `post-phase-5`
 
 ### Phase 6: Strangler Fig Foundation
+**Status:** COMPLETE (2026-04-10) — bridge_v2 scaffold built, deployed on EC2 port 5011, all endpoints tested/passing. EC2 security group fixed (IP change). Sync mechanism verified.
 **Estimated time**: 60 minutes
 **Depends on**: Phase 0 (can run in parallel with Phases 1-5)
 
@@ -544,6 +553,7 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 5. Git tag: `post-phase-6`
 
 ### Phase 7: Monolith Migration (Incremental)
+**Status:** NOT STARTED — next up (Saturday 2026-04-11)
 **Estimated time**: 15 minutes per endpoint group, ~10 groups
 **Depends on**: Phase 6
 
@@ -555,8 +565,9 @@ Phase 0.5 → Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 
 6. Git tag after each group: `post-phase-7-{group}`
 
 ### Phase 8: Tower Communication Protocols
+**Status:** NOT STARTED — Saturday 2026-04-11 (can run in parallel with Phase 7 since Phase 5 is complete)
 **Estimated time**: 60 minutes
-**Depends on**: Phase 5
+**Depends on**: Phase 5 (COMPLETE)
 
 1. Create `projects/shared/communication.py` with protocol definitions
 2. Implement protocol validation

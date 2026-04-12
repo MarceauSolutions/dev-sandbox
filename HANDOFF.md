@@ -1,8 +1,8 @@
 # HANDOFF.md — Agent Task Queue
 
-**Purpose**: Single source of truth for work handoffs between EC2 (Panacea/Ralph) and MacBook (Claude Code).
+**Purpose**: Single source of truth for work handoffs between all Claude Code instances (Mac sessions, EC2/Panacea).
 
-**Last Updated**: 2026-03-23
+**Last Updated**: 2026-04-10
 
 ## CRITICAL: Read These Files At Session Start
 
@@ -11,6 +11,20 @@
 | `docs/ARCHITECTURE-DECISIONS.md` | Cross-agent conventions, E10 quality rules, interface-first standards |
 | `docs/SYSTEM-STATE.md` | What's built, what's broken, DO NOT REDO list |
 | `docs/session-history.md` | What was done in recent sessions |
+| **This file's CHANGELOG below** | What changed since your last session — read before doing anything |
+
+---
+
+## CHANGELOG — Cross-Session Updates
+
+> **Convention**: When ANY session completes work that affects other sessions, append an entry here with the date, what changed, and what the next session should know. Read top-down on session start. Entries older than 2 weeks can be archived to `docs/session-history.md`.
+
+### 2026-04-10 (evening session)
+- **Rebuild progress**: Phases 0.5 through 6 are COMPLETE. Only Phases 7 + 8 remain.
+- **Phase 7** (next): Migrate 6 n8n workflows from port 5010 → 5011, create bridge_v2 systemd service, stop monolith, archive `agent_bridge_api.py`
+- **Phase 8** (next): Tower communication protocols. Can run in parallel with Phase 7 (Phase 5 dependency satisfied).
+- **NEW: Agent architecture upgrades** added — see `docs/AGENT-ARCHITECTURE-UPGRADES.md`. 5 behavioral upgrades (ReAct loops, reasoning traces, dynamic staging). All structural blockers cleared — all 5 are safe to apply now. Integrate as you encounter each file during Phases 7-8, or as a follow-up pass.
+- **EC2 infra**: Security group updated (Verizon IP changed), sync mechanism verified (HTTPS remote, ec2-user ownership), all environments synced.
 
 ---
 
@@ -93,6 +107,23 @@
 **Data foundation already exists:** `deals` (industry, tier, size), `outreach_log` (channel), `activities` (stage progression), `email_template` column, call outcomes in activities. Just needs aggregation layer + schema additions for script tracking.
 
 **DO NOT build until:** At least 10-20 logged call outcomes exist. Analytics on 0 data is useless. Let the call blitz generate data first.
+
+---
+
+## INSTRUCTION FOR REBUILD INSTANCE — 2026-04-10: Agent Architecture Upgrades
+
+**Read `docs/AGENT-ARCHITECTURE-UPGRADES.md` before starting any rebuild phase.** It contains 5 behavioral upgrades to agent systems (ReAct reflection loops, reasoning traces, dynamic staging) that must be applied AS you work through the rebuild phases — not as a separate pass. These are additive enhancements, not structural changes. They do not conflict with the gap analysis if you follow the phase dependencies below.
+
+**Integration order (as of 2026-04-10, Phases 0.5 through 6 are COMPLETE):**
+- **UNLOCKED NOW:** All 5 upgrades. Phases 2, 3, and 5 are complete — no remaining structural blockers.
+  - Upgrade 1: Goal Runner ReAct (`execution/goal_runner.py`)
+  - Upgrade 2: AutoIterator reasoning traces — Phase 3 already promoted `auto_iterator.py` to `execution/`, apply upgrade there
+  - Upgrade 3: Daily Loop dynamic staging — Phases 2+5 completed surrounding file moves, safe to modify loops now
+  - Upgrade 4: Panacea metrics (`panacea_relay.py`)
+  - Upgrade 5: Tool Discovery protocol (process)
+- **Remaining rebuild work (Saturday 2026-04-11):** Phase 7 (n8n workflow migration 5010→5011) + Phase 8 (tower communication protocols). These do NOT block any upgrades.
+
+**The gap analysis rebuild remains the primary mission. These upgrades enhance the files you're already touching — they don't add scope or change structure.**
 
 ---
 
