@@ -22,6 +22,7 @@ import logging
 import os
 import signal
 import subprocess
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -53,6 +54,24 @@ WILLIAM_CHAT_ID = int(os.environ.get("TELEGRAM_CHAT_ID", "5692454753"))
 CLAUDE_OAUTH_TOKEN = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN", "")
 BUFFER_SECONDS = 5
 CLAUDE_TIMEOUT = 300  # 5 min max per task
+
+# Attachment inbox (images, PDFs, text/code files sent via Telegram)
+INBOX_DIR = Path("/tmp/panacea-inbox")
+INBOX_DIR.mkdir(parents=True, exist_ok=True)
+INBOX_FILE_MAX_BYTES = 25 * 1024 * 1024      # 25 MB per file
+INBOX_TOTAL_MAX_BYTES = 500 * 1024 * 1024    # 500 MB total across all files
+INBOX_TTL_SECONDS = 3600                      # sweep anything older than 1 hour
+
+# File extensions Claude's Read tool can handle meaningfully
+READABLE_SUFFIXES = {
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp",
+    ".pdf", ".ipynb",
+    ".md", ".txt", ".py", ".js", ".ts", ".tsx", ".jsx",
+    ".json", ".yaml", ".yml", ".toml", ".ini", ".env",
+    ".html", ".css", ".scss", ".sh", ".bash", ".zsh",
+    ".sql", ".csv", ".log", ".xml",
+}
+
 PANACEA_SYSTEM_PROMPT = (
     "You are Panacea, William's personal AI assistant on Telegram. "
     "You are NOT in a dev session — do NOT read git status, do NOT offer to commit files, do NOT list capabilities unprompted. "
@@ -60,6 +79,9 @@ PANACEA_SYSTEM_PROMPT = (
     "Only give long responses when William asks for detailed information or a complex task produces output. "
     "When executing tasks (file edits, commands, deploys), do the work silently and report the result briefly. "
     "You have full access to the dev-sandbox repo, bash, git, and all tools. Use them when the task requires it. "
+    "When William's prompt begins with one or more '[attached file: <path>]' lines, use the Read tool on each path "
+    "before responding — those are files (images, PDFs, documents) he sent via Telegram. If there is no accompanying "
+    "text, briefly describe or analyze what you see. "
     "William is a solo entrepreneur running Marceau Solutions (AI services + fitness coaching) in Naples, FL. "
     "He works 7am-3pm weekdays as an electrical technician at Collier County. Side hustle evenings/weekends."
 )
@@ -85,36 +107,121 @@ _buffers: dict[int, dict] = {}
 _tasks: dict[int, dict] = {}
 
 # ---------------------------------------------------------------------------
+# Attachment inbox — storage-bounded scratch dir for Telegram media
+# ---------------------------------------------------------------------------
+
+def _sweep_inbox() -> None:
+    """Delete files older than TTL, then evict oldest until under total cap."""
+    try:
+        entries = list(INBOX_DIR.iterdir())
+    except OSError:
+        return
+
+    now = time.time()
+    for p in entries:
+        try:
+            if now - p.stat().st_mtime > INBOX_TTL_SECONDS:
+                p.unlink()
+        except OSError:
+            pass
+
+    try:
+        remaining = sorted(INBOX_DIR.iterdir(), key=lambda p: p.stat().st_mtime)
+    except OSError:
+        return
+    total = 0
+    sizes: list[tuple[Path, int]] = []
+    for p in remaining:
+        try:
+            sz = p.stat().st_size
+        except OSError:
+            continue
+        sizes.append((p, sz))
+        total += sz
+    i = 0
+    while total > INBOX_TOTAL_MAX_BYTES and i < len(sizes):
+        p, sz = sizes[i]
+        try:
+            p.unlink()
+            total -= sz
+        except OSError:
+            pass
+        i += 1
+
+
+def _delete_attachments(files: list[Path]) -> None:
+    """Best-effort cleanup of a task's downloaded files."""
+    for f in files or []:
+        try:
+            f.unlink()
+        except OSError:
+            pass
+
+
+async def _download_attachment(bot, file_id: str, suffix: str) -> Optional[Path]:
+    """Download a Telegram file into the inbox. Returns path or None on failure."""
+    try:
+        tg_file = await bot.get_file(file_id)
+    except Exception as e:
+        logger.error(f"get_file failed: {e}")
+        return None
+    if tg_file.file_size and tg_file.file_size > INBOX_FILE_MAX_BYTES:
+        logger.warning(f"Attachment too large: {tg_file.file_size} bytes (cap {INBOX_FILE_MAX_BYTES})")
+        return None
+    dest = INBOX_DIR / f"{uuid.uuid4().hex}{suffix}"
+    try:
+        await tg_file.download_to_drive(custom_path=str(dest))
+    except Exception as e:
+        logger.error(f"download_to_drive failed: {e}")
+        return None
+    return dest
+
+
+# ---------------------------------------------------------------------------
 # Stage 1: Message Buffer
 # ---------------------------------------------------------------------------
 
 async def _fire_buffer(chat_id: int, context: ContextTypes.DEFAULT_TYPE):
-    """Assemble buffered messages into one prompt and process it."""
+    """Assemble buffered messages (and any attached files) into one prompt and process it."""
     buf = _buffers.pop(chat_id, None)
-    if not buf or not buf["messages"]:
+    if not buf or (not buf["messages"] and not buf["files"]):
         return
-    full_prompt = "\n".join(buf["messages"])
-    logger.info(f"Buffer fired for {chat_id}: {len(buf['messages'])} message(s)")
-    await _process_prompt(chat_id, full_prompt, context)
+    text_part = "\n".join(buf["messages"])
+    files: list[Path] = buf["files"]
+    if files:
+        attached_lines = "\n".join(f"[attached file: {p}]" for p in files)
+        full_prompt = f"{attached_lines}\n\n{text_part}".strip()
+    else:
+        full_prompt = text_part
+    logger.info(f"Buffer fired for {chat_id}: {len(buf['messages'])} msg(s), {len(files)} file(s)")
+    await _process_prompt(chat_id, full_prompt, context, files)
 
 
-async def _buffer_message(chat_id: int, text: str, context: ContextTypes.DEFAULT_TYPE):
-    """Add message to buffer. Fire immediately if ends with '.', else wait 5s."""
+async def _buffer_message(
+    chat_id: int,
+    text: str,
+    files: list[Path],
+    context: ContextTypes.DEFAULT_TYPE,
+):
+    """Add message and/or files to buffer. Fire immediately if text ends with '.', else wait 5s."""
     if chat_id not in _buffers:
-        _buffers[chat_id] = {"messages": [], "timer": None}
+        _buffers[chat_id] = {"messages": [], "files": [], "timer": None}
 
-    _buffers[chat_id]["messages"].append(text)
+    if text:
+        _buffers[chat_id]["messages"].append(text)
+    if files:
+        _buffers[chat_id]["files"].extend(files)
 
     # Cancel existing timer
     if _buffers[chat_id]["timer"] is not None:
         _buffers[chat_id]["timer"].cancel()
 
-    # Fire immediately if message ends with period
-    if text.rstrip().endswith("."):
+    # Fire immediately if text ends with period (text-only signal)
+    if text and text.rstrip().endswith("."):
         await _fire_buffer(chat_id, context)
         return
 
-    # Otherwise set 5-second timer
+    # Otherwise set 5-second timer — gives albums/multi-message sends time to arrive
     async def _timer():
         await asyncio.sleep(BUFFER_SECONDS)
         await _fire_buffer(chat_id, context)
@@ -199,6 +306,7 @@ def _start_claude(chat_id: int, prompt: str, session_id: str, resume: bool = Fal
         "claude", "-p", prompt,
         "--output-format", "text",
         "--system-prompt", PANACEA_SYSTEM_PROMPT,
+        "--dangerously-skip-permissions",
     ]
     if grok_append:
         cmd.extend(["--append-system-prompt", grok_append])
@@ -245,18 +353,26 @@ def _wait_for_claude(proc: subprocess.Popen) -> str:
 # Main Processing Pipeline
 # ---------------------------------------------------------------------------
 
-async def _process_prompt(chat_id: int, prompt: str, context: ContextTypes.DEFAULT_TYPE):
+async def _process_prompt(
+    chat_id: int,
+    prompt: str,
+    context: ContextTypes.DEFAULT_TYPE,
+    files: Optional[list[Path]] = None,
+):
     """Process an assembled prompt through stages 2-6."""
+    files = files or []
     lower = prompt.lower().strip()
 
     # Stage 2: Pre-filters
     prefilter_response = _try_prefilters(prompt)
     if prefilter_response:
+        _delete_attachments(files)
         await context.bot.send_message(chat_id=chat_id, text=prefilter_response)
         return
 
     # Stage 4 control keywords (bypass Grok — these are task management, not AI)
     if lower in ("stop", "cancel"):
+        _delete_attachments(files)
         logger.info(f"Stop/cancel received. is_running={_is_running(chat_id)}")
         if _is_running(chat_id):
             logger.info("Killing current claude -p process")
@@ -264,8 +380,8 @@ async def _process_prompt(chat_id: int, prompt: str, context: ContextTypes.DEFAU
             state = _get_task_state(chat_id)
             if state["queue"]:
                 await context.bot.send_message(chat_id=chat_id, text="Cancelled. Starting next queued task...")
-                next_prompt = state["queue"].pop(0)
-                await _execute_task(chat_id, next_prompt, context)
+                entry = state["queue"].pop(0)
+                await _execute_task(chat_id, entry["prompt"], context, entry.get("files") or [])
             else:
                 await context.bot.send_message(chat_id=chat_id, text="Cancelled. What do you need?")
         else:
@@ -273,6 +389,7 @@ async def _process_prompt(chat_id: int, prompt: str, context: ContextTypes.DEFAU
         return
 
     if lower.startswith("add:"):
+        _delete_attachments(files)
         additional = prompt[4:].strip()
         if _is_running(chat_id):
             state = _get_task_state(chat_id)
@@ -291,7 +408,7 @@ async def _process_prompt(chat_id: int, prompt: str, context: ContextTypes.DEFAU
     # Stage 4: Queue management
     if _is_running(chat_id):
         state = _get_task_state(chat_id)
-        state["queue"].append(prompt)
+        state["queue"].append({"prompt": prompt, "files": files})
         pos = len(state["queue"])
         await context.bot.send_message(
             chat_id=chat_id,
@@ -300,38 +417,49 @@ async def _process_prompt(chat_id: int, prompt: str, context: ContextTypes.DEFAU
         return
 
     # Stage 3 + 5 + 6: Grok -> Claude -> Respond
-    await _execute_task(chat_id, prompt, context)
+    await _execute_task(chat_id, prompt, context, files)
 
 
-async def _execute_task(chat_id: int, prompt: str, context: ContextTypes.DEFAULT_TYPE):
-    """Execute a task: consult Grok, run Claude, deliver response."""
+async def _execute_task(
+    chat_id: int,
+    prompt: str,
+    context: ContextTypes.DEFAULT_TYPE,
+    files: Optional[list[Path]] = None,
+):
+    """Execute a task: consult Grok, run Claude, deliver response. Cleans up attached files when done."""
+    files = files or []
     state = _get_task_state(chat_id)
+    response = ""
 
-    # Stage 3: Grok consultation (always)
-    await context.bot.send_message(chat_id=chat_id, text="Thinking...")
-    grok_direction = _consult_grok(prompt)
+    try:
+        # Stage 3: Grok consultation (always)
+        await context.bot.send_message(chat_id=chat_id, text="Thinking...")
+        grok_direction = _consult_grok(prompt)
 
-    # Build Grok append prompt
-    if grok_direction:
-        grok_append = f"Strategic directive from Grok: {grok_direction}"
-    else:
-        grok_append = "Grok strategic consultation failed (logged). Proceed with best judgment."
+        # Build Grok append prompt
+        if grok_direction:
+            grok_append = f"Strategic directive from Grok: {grok_direction}"
+        else:
+            grok_append = "Grok strategic consultation failed (logged). Proceed with best judgment."
 
-    # Stage 5: Claude execution (non-blocking — Popen + wait in executor)
-    is_resume = state.get("has_run", False)
-    proc = _start_claude(chat_id, prompt, state["session_id"], is_resume, grok_append)
-    loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(None, _wait_for_claude, proc)
-    state["has_run"] = True
-    state["process"] = None  # Completed
+        # Stage 5: Claude execution (non-blocking — Popen + wait in executor)
+        is_resume = state.get("has_run", False)
+        proc = _start_claude(chat_id, prompt, state["session_id"], is_resume, grok_append)
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, _wait_for_claude, proc)
+        state["has_run"] = True
+        state["process"] = None  # Completed
 
-    # Stage 6: Response delivery
-    # Telegram has a 4096 char limit per message
-    if len(response) <= 4096:
-        await context.bot.send_message(chat_id=chat_id, text=response)
-    else:
-        for i in range(0, len(response), 4096):
-            await context.bot.send_message(chat_id=chat_id, text=response[i:i+4096])
+        # Stage 6: Response delivery
+        # Telegram has a 4096 char limit per message
+        if len(response) <= 4096:
+            await context.bot.send_message(chat_id=chat_id, text=response)
+        else:
+            for i in range(0, len(response), 4096):
+                await context.bot.send_message(chat_id=chat_id, text=response[i:i+4096])
+    finally:
+        # Primary cleanup — always runs even on error. Sweep catches anything missed.
+        _delete_attachments(files)
 
     # Handle add: context that came in during execution
     if state["add_context"]:
@@ -346,9 +474,9 @@ async def _execute_task(chat_id: int, prompt: str, context: ContextTypes.DEFAULT
 
     # Advance queue
     if state["queue"]:
-        next_prompt = state["queue"].pop(0)
+        entry = state["queue"].pop(0)
         await context.bot.send_message(chat_id=chat_id, text="Starting next queued task...")
-        await _execute_task(chat_id, next_prompt, context)
+        await _execute_task(chat_id, entry["prompt"], context, entry.get("files") or [])
 
 
 # ---------------------------------------------------------------------------
@@ -356,30 +484,71 @@ async def _execute_task(chat_id: int, prompt: str, context: ContextTypes.DEFAULT
 # ---------------------------------------------------------------------------
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle incoming Telegram messages."""
-    if not update.message or not update.message.text:
+    """Handle incoming Telegram messages (text, photos, documents)."""
+    if not update.message:
         return
-
+    msg = update.message
     chat_id = update.effective_chat.id
-    text = update.message.text.strip()
 
     # Only respond to William (security)
     if chat_id != WILLIAM_CHAT_ID:
         logger.warning(f"Ignoring message from unknown chat_id: {chat_id}")
         return
 
-    if not text:
+    # Sweep stale orphans on every incoming message (cheap, runs <1ms usually)
+    _sweep_inbox()
+
+    # Text or caption
+    text = (msg.text or msg.caption or "").strip()
+
+    # Attempt to download any attached media
+    attached: list[Path] = []
+
+    if msg.photo:
+        biggest = msg.photo[-1]  # PhotoSize list is sorted smallest→largest
+        path = await _download_attachment(context.bot, biggest.file_id, ".jpg")
+        if path:
+            attached.append(path)
+        else:
+            await msg.reply_text("Image download failed (file may exceed 25 MB cap).")
+            return
+
+    if msg.document:
+        doc = msg.document
+        mime = (doc.mime_type or "").lower()
+        name = doc.file_name or ""
+        suffix = Path(name).suffix.lower() or ".bin"
+        readable = (
+            mime.startswith("image/")
+            or mime == "application/pdf"
+            or mime.startswith("text/")
+            or suffix in READABLE_SUFFIXES
+        )
+        if not readable:
+            await msg.reply_text(
+                f"Unsupported file type: {mime or suffix}. "
+                "I can read images, PDFs, and text/code files."
+            )
+            return
+        path = await _download_attachment(context.bot, doc.file_id, suffix)
+        if path:
+            attached.append(path)
+        else:
+            await msg.reply_text("Document download failed (file may exceed 25 MB cap).")
+            return
+
+    if not text and not attached:
         return
 
-    # Control keywords bypass the buffer
+    # Control keywords bypass the buffer — text-only path
     lower = text.lower().strip()
-    if lower in ("stop", "cancel") or lower.startswith("add:"):
+    if text and not attached and (lower in ("stop", "cancel") or lower.startswith("add:")):
         logger.info(f"Control keyword received: '{lower}' — bypassing buffer")
         await _process_prompt(chat_id, text, context)
         return
 
     # Stage 1: Buffer
-    await _buffer_message(chat_id, text, context)
+    await _buffer_message(chat_id, text, attached, context)
 
 
 async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -415,7 +584,12 @@ def main():
 
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", handle_start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(
+        MessageHandler(
+            (filters.TEXT | filters.PHOTO | filters.Document.ALL) & ~filters.COMMAND,
+            handle_message,
+        )
+    )
 
     logger.info("Panacea relay running. Polling for Telegram messages...")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
