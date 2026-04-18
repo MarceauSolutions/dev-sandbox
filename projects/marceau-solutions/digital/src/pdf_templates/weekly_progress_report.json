@@ -1,0 +1,5 @@
+{
+  "template": "progress",
+  "title": "Weekly Progress Report",
+  "fields": ["Week", "Symptom Improvement", "Functionality Gained", "Notes", "Next Goals"]
+}

@@ -1,0 +1,83 @@
+{
+  "name": "Recovery-Product-Delivery",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Stripe Trigger",
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "command": "python -m execution.branded_pdf_engine --template recovery --input {{$json}}"
+      },
+      "id": "2",
+      "name": "Generate PDF",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8786/message",
+        "method": "POST",
+        "body": "Your Recovery Automation PDF is ready! Check your email or Telegram."
+      },
+      "id": "3",
+      "name": "Send via Panacea",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "python -m execution.pipeline_db log_delivery --deal_id {{$json.deal_id}}"
+      },
+      "id": "4",
+      "name": "Log to Pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Stripe Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate PDF": {
+      "main": [
+        [
+          {
+            "node": "Send via Panacea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Panacea": {
+      "main": [
+        [
+          {
+            "node": "Log to Pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "recovery-product-delivery"
+}

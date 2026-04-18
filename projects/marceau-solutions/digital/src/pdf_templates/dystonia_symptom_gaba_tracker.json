@@ -1,0 +1,5 @@
+{
+  "template": "generic_document",
+  "title": "Dystonia Symptom + GABA Medication Tracker",
+  "fields": ["Date", "Symptom Severity (1-10)", "Spasm Duration", "GABA Med Dose", "Notes"]
+}

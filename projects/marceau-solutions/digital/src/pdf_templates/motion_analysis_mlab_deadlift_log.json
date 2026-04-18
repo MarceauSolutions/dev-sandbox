@@ -1,0 +1,5 @@
+{
+  "template": "generic_document",
+  "title": "Motion Analysis Log (MATLAB-inspired)",
+  "fields": ["Date", "Joint", "Range of Motion (degrees)", "Moment Force", "Spasticity Notes", "Exercise"]
+}

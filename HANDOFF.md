@@ -2,7 +2,7 @@
 
 **Purpose**: Single source of truth for work handoffs between all Claude Code instances (Mac sessions, EC2/Panacea).
 
-**Last Updated**: 2026-04-10
+**Last Updated**: 2026-04-12
 
 ## CRITICAL: Read These Files At Session Start
 
@@ -18,6 +18,15 @@
 ## CHANGELOG — Cross-Session Updates
 
 > **Convention**: When ANY session completes work that affects other sessions, append an entry here with the date, what changed, and what the next session should know. Read top-down on session start. Entries older than 2 weeks can be archived to `docs/session-history.md`.
+
+### 2026-04-12 (afternoon session — 3:50 PM EDT)
+- **REBUILD COMPLETE**: All 8 phases done. Tagged `post-phase-8` at commit `4abe4277`.
+- **Phase 7 completed**: 6 n8n workflows migrated 5010→5011, bridge_v2 systemd service created, monolith archived to `docs/archive/legacy-code/`
+- **Phase 8 completed**: Tower protocols verified (tower_protocol.py), VERSION files updated, cross-tower import validation passing
+- **BOABFIT client_db.py built**: Unified SQLite client database replacing scattered JSON files. Tier 1 tracking fields implemented (lifecycle_stage with at_risk/alumni, workout tracking, stripe_customer_id, program_completed). 24 clients migrated.
+- **BOABFIT drip fix**: Welcome email now event-driven (signup webhook), not hourly cron. Follow-up drip (Day 3/7/14) runs daily at 9am ET. Test addresses removed.
+- **Next session**: BOABFIT app build (Expo React Native + Supabase). Read `projects/boabfit/CLAUDE.md` and `projects/boabfit/docs/client-tracking-schema-reference.md`.
+- **All environments synced** at `4abe4277` (Local, GitHub, EC2)
 
 ### 2026-04-10 (evening session)
 - **Rebuild progress**: Phases 0.5 through 6 are COMPLETE. Only Phases 7 + 8 remain.

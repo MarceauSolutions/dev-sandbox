@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "dev-sandbox (root)",
+      "path": "."
+    },
+    {
+      "name": "boabfit-app",
+      "path": "projects/boabfit/app"
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "projects/boabfit/app/node_modules/typescript/lib",
+    "eslint.workingDirectories": [
+      { "pattern": "projects/boabfit/app" }
+    ],
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/.expo": true,
+      "**/dist": true
+    }
+  }
+}
