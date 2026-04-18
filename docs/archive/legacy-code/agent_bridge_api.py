@@ -207,7 +207,13 @@ DEFAULT_PORT = 5010
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 MAX_OUTPUT_SIZE = 100 * 1024  # 100KB for command output
 COMMAND_TIMEOUT = 120  # 2 minutes default
+_IS_EC2 = os.path.exists("/home/ec2-user")
 ALLOWED_BASE_PATHS = [
+    "/home/clawdbot/dev-sandbox",
+    "/home/ec2-user/dev-sandbox",
+    "/home/ec2-user",
+    "/tmp",
+] if _IS_EC2 else [
     "/Users/williammarceaujr./dev-sandbox",
     "/Users/williammarceaujr./production",
     "/tmp",

@@ -4,6 +4,60 @@ Running log of significant learnings, decisions, and patterns discovered during 
 
 ---
 
+### Session 2026-04-11 07:00
+**Focus**: bridge_v2 DEFAULT_CWD auto-detection for Mac vs EC2; bridge_v2 scaffold
+**Completed**:
+- [fix] bridge_v2 DEFAULT_CWD auto-detection for Mac vs EC2
+- [feat] bridge_v2 scaffold — modular replacement for agent_bridge_api.py
+**Files Changed**: 12 files
+**Key Changes**:
+- `execution/` — 12 files (execution/bridge_v2/__init__.py, execution/bridge_v2/app.py, ...)
+**Open Threads**:
+- Modified: docs/session-history.md
+- Modified: execution/agent_bridge_api.py
+- Modified: projects/boabfit/data/abandon_sent.json
+- Modified: projects/boabfit/src/drip_checker.py
+- Modified: projects/boabfit/src/drip_mark_sent.py
+- Untracked: projects/boabfit/src/client_db.py
+- Untracked: projects/marceau-solutions/website/
+**Next Session**:
+- Review and commit/discard 7 uncommitted changes
+- Continue from latest work
+
+---
+
+### Session 2026-04-10 07:00
+**Focus**: rebuild phase 5; commit all untracked project files + fix missed rebuild artifacts; rebuild phases 0.5-3
+**Completed**:
+- [feat] rebuild phase 5 — tower purification + lead-gen agency structure
+- [chore] commit all untracked project files + fix missed rebuild artifacts
+- [feat] rebuild phases 0.5-3 — Panacea, root cleanup, execution/ refactor
+**Files Changed**: 491 files
+**Key Changes**:
+- `.claude/` — .claude/hooks/post-push-ec2-sync.sh
+- `directives/` — 12 files (directives/{ => skills}/ai-customer-service.md, directives/{ => skills}/convert_markdown_to_pdf.md, ...)
+- `docs/` — 17 files (docs/REBUILD-GAP-ANALYSIS.md, docs/SYSTEM-STATE.md, ...)
+- `execution/` — 10 files (execution/agent_bridge_api.py, execution/client_questionnaire.py, ...)
+- `projects/amazon-seller/` — projects/amazon-seller/CLAUDE.md
+- `projects/boabfit/` — 33 files (projects/boabfit/CLAUDE.md, projects/boabfit/app/.gitignore, ...)
+- `projects/fitness-influencer/` — projects/fitness-influencer/CLAUDE.md
+- `projects/lead-generation/` — projects/lead-generation/CLAUDE.md, projects/lead-generation/src/auto_iterator.py, projects/lead-generation/src/twilio_sms.py
+- `projects/marceau-solutions/` — projects/marceau-solutions/website
+- `projects/mcp-services/` — projects/mcp-services/CLAUDE.md, projects/mcp-services/src/amazon-seller-mcp/app.py
+- `projects/personal-assistant/` — projects/personal-assistant/CLAUDE.md, projects/personal-assistant/src/panacea_relay.py
+- `projects/shared/` — projects/shared/import_shims/README.md
+- `root` — 402 files (.gitignore, HANDOFF.md, ...)
+- `scripts/` — 5 files (scripts/capture_propane_evidence.py, scripts/health_check.py, ...)
+**Open Threads**:
+- Modified: execution/agent_bridge_api.py
+- Modified: projects/boabfit/data/abandon_sent.json
+- Untracked: projects/marceau-solutions/website/
+**Next Session**:
+- Review and commit/discard 3 uncommitted changes
+- Continue from latest work
+
+---
+
 ### Session 2026-04-04/05 — Phase 0.5: Panacea (Clawdbot + Ralph + Grok Unification)
 **Focus**: Anthropic OAuth ban response, unified EC2 agent build
 
