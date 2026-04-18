@@ -499,3 +499,30 @@ class GooglePlacesScraper:
             logger.info(f"[{area_name}] Found {category_count} leads for '{category}'")
 
         logger.info(f"[{area_name}] Total leads found: {total_leads}")
+
+
+class GooglePlacesClient(GooglePlacesScraper):
+    """Compatibility wrapper exposing a flat `search_businesses` API.
+
+    Used by generate_new_lead_list.py which expects plain-dict results
+    from text queries like "HVAC company Naples FL".
+    """
+
+    def search_businesses(self, query: str, max_results: int = 20) -> List[Dict[str, Any]]:
+        results: List[Dict[str, Any]] = []
+        for place in self.text_search(query):
+            if len(results) >= max_results:
+                break
+            address_parts = self._parse_address(place)
+            results.append({
+                "name": place.get("name", ""),
+                "phone": place.get("formatted_phone_number")
+                         or place.get("international_phone_number", ""),
+                "city": address_parts.get("city", ""),
+                "state": address_parts.get("state", ""),
+                "website": place.get("website", ""),
+                "rating": place.get("rating", 0),
+                "review_count": place.get("user_ratings_total", 0),
+                "place_id": place.get("place_id", ""),
+            })
+        return results

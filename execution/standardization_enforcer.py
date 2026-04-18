@@ -113,11 +113,23 @@ def check_no_nested_src() -> List[str]:
 
 
 def check_no_node_modules() -> List[str]:
-    """Check for node_modules (should never be in repo)."""
+    """Check for node_modules inside recognized Python towers.
+
+    Towers are Python-only, so node_modules there signals contamination.
+    Labs/legacy JS projects (e.g. projects/boabfit/app) are allowed to
+    have node_modules — they're already covered by the root .gitignore
+    and preserved per project memory. We only scan the six TOWERS.
+    """
     violations = []
-    for d in (REPO_ROOT / "projects").rglob("node_modules"):
-        if d.is_dir():
-            violations.append(f"NODE_MODULES: {d.relative_to(REPO_ROOT)} (delete or .gitignore)")
+    for tower in TOWERS:
+        tower_dir = REPO_ROOT / "projects" / tower
+        if not tower_dir.exists():
+            continue
+        for d in tower_dir.rglob("node_modules"):
+            if d.is_dir():
+                violations.append(
+                    f"NODE_MODULES: {d.relative_to(REPO_ROOT)} (delete or .gitignore)"
+                )
     return violations
 
 

@@ -1,46 +1,13 @@
 {
-  "short_term": {
-    "goal": "Land first AI client by April 6",
-    "deadline": "2026-04-06",
-    "metrics": [
-      "1 signed client",
-      "1 discovery call completed",
-      "pipeline producing warm leads"
-    ],
-    "updated": "2026-03-27"
-  },
-  "medium_term": {
-    "goal": "$5000/mo recurring by July",
-    "deadline": "2026-05-15",
-    "metrics": [
-      "$1500+ monthly recurring",
-      "referral from first client"
-    ],
-    "updated": "2026-03-27"
-  },
-  "long_term": {
-    "goal": "Replace day job income with Marceau Solutions AI services",
-    "deadline": "2026-12-31",
-    "metrics": [
-      "$5000+/mo recurring",
-      "5+ active clients",
-      "system runs autonomously"
-    ],
-    "updated": "2026-03-27",
-    "protected": true
-  },
-  "post_april6": {
-    "goal": "Run business evenings and weekends while working at Collier County 7am-3pm",
-    "deadline": "ongoing",
-    "metrics": [
-      "Morning digest at 6:30am",
-      "System handles outreach during work hours",
-      "Manual work limited to calls, visits, and closing after 3pm"
-    ],
-    "updated": "2026-03-27"
-  },
-  "research_phase": {
-    "note": "Before acting on a goal, the assistant should research options and tradeoffs rather than immediately executing based on William's first instinct. Use data from pipeline.db, outcome tracking, and market signals to recommend the best path \u2014 not just the path William suggests in the moment.",
-    "updated": "2026-03-27"
-  }
+  "primary_goal": "Launch Marceau Recovery Automation — hybrid digital rehab products + PT/neuro clinic agency layer",
+  "schedule": "Collier County full-time job 7am-3pm weekdays; business work evenings and weekends only",
+  "financial_target": "Generate $5k–$15k/mo recurring revenue to fund $15k–$30k stem-cell therapy courses by July 2026",
+  "key_principles": [
+    "Grok-native only",
+    "laptop-first",
+    "85-90% autonomous via Panacea + n8n + existing towers",
+    "Use dystonia/PHARMA EXPOSED story as authentic moat"
+  ],
+  "status": "In progress — core files generated April 17 2026",
+  "next_milestone": "First digital product delivery test + first agency lead outreach"
 }

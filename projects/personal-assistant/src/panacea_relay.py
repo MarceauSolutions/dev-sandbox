@@ -53,7 +53,7 @@ BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8596701493:AAHvayxq-kUmRsI-39B
 WILLIAM_CHAT_ID = int(os.environ.get("TELEGRAM_CHAT_ID", "5692454753"))
 CLAUDE_OAUTH_TOKEN = os.environ.get("CLAUDE_CODE_OAUTH_TOKEN", "")
 BUFFER_SECONDS = 5
-CLAUDE_TIMEOUT = 300  # 5 min max per task
+CLAUDE_TIMEOUT = 600  # 10 min max per task
 
 # Attachment inbox (images, PDFs, text/code files sent via Telegram)
 INBOX_DIR = Path("/tmp/panacea-inbox")
@@ -343,7 +343,7 @@ def _wait_for_claude(proc: subprocess.Popen) -> str:
     except subprocess.TimeoutExpired:
         proc.kill()
         proc.communicate()
-        return "Task timed out after 5 minutes. Send the request again or break it into smaller pieces."
+        return "Task timed out after 10 minutes. Send the request again or break it into smaller pieces."
     except Exception as e:
         logger.error(f"claude -p failed: {e}")
         return f"Claude Code execution failed: {e}"

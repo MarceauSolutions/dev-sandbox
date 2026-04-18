@@ -78,7 +78,29 @@ GMAIL_SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
     "https://www.googleapis.com/auth/gmail.modify"
 ]
-PIPELINE_DB = Path("/home/clawdbot/data/pipeline.db")
+def _resolve_pipeline_db() -> Path:
+    """Locate pipeline.db across EC2 (clawdbot/ec2-user) and Mac layouts.
+
+    Honors PIPELINE_DB_PATH env var override. Falls back to the canonical
+    lead-generation tower path so a missing DB surfaces as a clear error
+    rather than crashing elsewhere.
+    """
+    env_override = os.getenv("PIPELINE_DB_PATH")
+    if env_override:
+        return Path(env_override)
+    candidates = [
+        REPO_ROOT / "sales-pipeline" / "data" / "pipeline.db",
+        Path("/home/clawdbot/data/pipeline.db"),
+        Path("/home/clawdbot/dev-sandbox/projects/lead-generation/sales-pipeline/data/pipeline.db"),
+        Path("/home/ec2-user/dev-sandbox/projects/lead-generation/sales-pipeline/data/pipeline.db"),
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return candidates[0]
+
+
+PIPELINE_DB = _resolve_pipeline_db()
 SEQUENCE_DB = REPO_ROOT / "data" / "email_sequences.db"
 TEMPLATES_FILE = REPO_ROOT / "docs" / "apollo-sequence-templates.txt"
 

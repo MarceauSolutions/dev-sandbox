@@ -1077,3 +1077,32 @@ def apollo_company_to_lead(apollo_company: Dict[str, Any]) -> Dict[str, Any]:
         "pain_points": [],
         "notes": f"Employees: {apollo_company.get('estimated_num_employees', 'Unknown')}"
     }
+
+
+class Apollo(ApolloClient):
+    """Compatibility wrapper that accepts a PeopleSearchFilters object.
+
+    Used by generate_new_lead_list.py which was written against a filter-object API.
+    Keeps ApolloClient's positional signature intact while providing
+    `search_people(q_keywords=..., filters=..., per_page=...)`.
+    """
+
+    def search_people(  # type: ignore[override]
+        self,
+        q_keywords: Optional[str] = None,
+        filters: Optional[PeopleSearchFilters] = None,
+        per_page: Optional[int] = None,
+        **kwargs: Any,
+    ) -> Optional[Dict[str, Any]]:
+        if filters is not None:
+            params = filters.to_api_params()
+            if q_keywords:
+                params["q_keywords"] = q_keywords
+            if per_page:
+                params["per_page"] = min(per_page, 100)
+            return self._make_request("POST", "/mixed_people/api_search", params)
+        return super().search_people(
+            q_keywords=q_keywords,
+            per_page=per_page or 25,
+            **kwargs,
+        )

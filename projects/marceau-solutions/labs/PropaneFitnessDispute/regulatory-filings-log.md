@@ -24,9 +24,10 @@ Track all complaint filings, reference numbers, and status.
 | Field | Detail |
 |-------|--------|
 | **Reference Number** | PENDING |
-| **Date Filed** | Not yet filed |
+| **Date Filed** | Not yet filed — scheduled April 18, 2026 (Saturday) |
 | **Portal** | referrals.citizensadvice.org.uk/consumer/forms/general |
-| **Status** | TO FILE — Available weekdays 4am-12pm ET (9am-5pm GMT) |
+| **Status** | TO FILE — Webform is **out-of-hours only**: Friday 5pm UK (noon ET) through Monday 9am UK (4am ET). Phone helpline 0808 223 1133 available weekdays 9am–5pm UK (4am–12pm ET) but conflicts with cardholder's 7am–3pm ET work schedule. Saturday April 18 chosen as filing date. |
+| **Plan** | Saturday April 18 morning: file via webform, capture reference number, trigger Supplement 2 build, upload to both AmEx cases same day. 4-day buffer before April 22 resolution window. |
 
 ---
 
@@ -49,4 +50,19 @@ Track all complaint filings, reference numbers, and status.
 | **Cases** | D-93497818 (Card 1007) / D-93497819 (Card 1049) |
 | **Package Submitted** | PROPANE-DISPUTE-FINAL-PACKAGE.pdf |
 | **Date Submitted** | April 7, 2026 |
-| **Supplemental (pending)** | Will submit reference numbers from regulatory filings once received |
+| **Estimated Resolution** | April 22, 2026 |
+
+### Supplement 1 — Regulatory References (April 12, 2026)
+
+| Field | Detail |
+|-------|--------|
+| **Date Submitted** | April 12, 2026 |
+| **Cases** | D-93497818 and D-93497819 (both submitted — green badge confirmed on both) |
+| **Document** | propane-amex-supplement-2026-04-12.pdf |
+| **Contents** | CMA reference CMAE2600101 + Action Fraud reference RF26040189625C |
+| **Format** | 1-page PDF; no portal message (AmEx dispute portal does not support inline messaging — PDF stands alone) |
+| **Status** | Submitted to both cases |
+| **Next Supplement** | Supplement 2 will add UK Trading Standards reference once issued |
+| **Evidence — Card 1007** | `evidence/2026-04-12_amex-supplement-case-D93497818-submitted.jpg` (post-submit, green badge) |
+| **Evidence — Card 1049** | `evidence/2026-04-13_amex-supplement-case-D93497819-submitted.png` (post-submit, green badge, captured April 13, 2026 at 16:11 ET) |
+| **Context Evidence** | `evidence/2026-04-12_amex-dispute-portal-messages-inbox.jpg` and `evidence/2026-04-12_amex-dispute-portal-alerts-page.jpg` document that no messaging channel exists in the dispute portal, establishing why the supplement was PDF-only. |

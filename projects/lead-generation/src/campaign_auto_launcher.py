@@ -616,10 +616,15 @@ def main():
             limit=args.limit
         )
 
-        print(f"\n{stats['business_name']} Results:")
-        print(f"  Sent: {stats['sent']}/{stats['total_targeted']}")
-        print(f"  Enrolled: {stats['enrolled_in_sequence']}")
-        print(f"  Errors: {len(stats['errors'])}")
+        business_name = CAMPAIGNS.get(args.business, {}).get("business_name", args.business)
+        if stats.get("status") in ("aborted", "skipped"):
+            print(f"\n{business_name}: {stats['status'].upper()}")
+            print(f"  Reason: {stats.get('reason', 'Unknown')}")
+        else:
+            print(f"\n{stats.get('business_name', business_name)} Results:")
+            print(f"  Sent: {stats['sent']}/{stats['total_targeted']}")
+            print(f"  Enrolled: {stats['enrolled_in_sequence']}")
+            print(f"  Errors: {len(stats['errors'])}")
     else:
         # All businesses
         results = launcher.launch_all_campaigns(
