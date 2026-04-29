@@ -103,6 +103,9 @@ projects/shared/photo-processor/output/
 token_sheets.json
 token_marceausolutions.json
 token_gmail_compose.json
+token_gmail_readonly.json
+token.json.old.*
+token.json.bak
 
 # Lead capture export data (sensitive — don't commit)
 *-export.json

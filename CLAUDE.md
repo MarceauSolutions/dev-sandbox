@@ -1,328 +1,166 @@
-# Modular Multi-Tower Architecture Guide
+# Marceau Solutions — Dev-Sandbox Architecture
 
-> This document defines the modular multi-tower architecture for laptop-based company operations. Read this at the start of every session.
-
----
-
-## ⚠️ ACTUAL WORKFLOW (Updated 2026-03-30)
-
-**Note:** The original architecture described "laptop-first" development. In practice, the system has evolved to **EC2-first**:
-
-| Aspect | Original Design | Actual Current State |
-|--------|-----------------|---------------------|
-| Primary development | Mac laptop | EC2 (Clawdbot/Panacea) |
-| Who commits | Claude Code on Mac | Clawdbot on EC2 |
-| Sync direction | Mac → EC2 | Bidirectional via git |
-| Runtime | EC2 | EC2 |
-
-**Git workflow:**
-- EC2 commits and pushes changes to GitHub
-- Mac pulls to stay in sync: `git pull origin main`
-- Both can push; git is the sync mechanism
-
-**Why this matters:** If you're giving advice based on this doc, know that EC2 is the active development environment. The autonomous systems (daily_loop, morning digest, hot_lead_handler, etc.) all run on EC2 and Clawdbot makes direct code changes there.
+> Read this at the start of every session. Also read MEMORY.md for behavioral rules, project history, and user context.
 
 ---
 
-## Overview
+## Build vs. Run Split
 
-The system operates as a **modular multi-tower company** where each tower represents a specialized business unit. Towers operate independently but can communicate through standardized protocols. The entire system runs on a laptop with lightweight, version-controlled, and observable development practices.
+| Role | Environment | What it does |
+|------|-------------|-------------|
+| **Build** | Mac / Claude Code in VS Code | Write code, create features, design systems |
+| **Run** | EC2 / Panacea via Telegram | Autonomous tasks: email follow-up, daily loop, monitoring |
+| **Strategy** | Grok (xAI API) | Consulted on EVERY AI request. No exceptions. |
 
-## Tower Structure
+**Git workflow:** Both Mac and EC2 push to GitHub. `git pull origin main` to sync. Git is the coordination mechanism.
 
-### Core Towers
+**EC2 reliability caveat (as of April 2026):** EC2/Telegram has timeout issues and false "third-party app" errors with `claude -p`. Do NOT expand EC2 scope until existing autonomous features are battle-tested. Mac remains the reliable build environment.
 
-| Tower | Domain | Location | Lead |
-|-------|--------|----------|------|
-| **ai-systems** | AI infrastructure and tooling | `projects/ai-systems/` | Claude/Cline |
-| **amazon-seller** | Amazon marketplace operations | `projects/amazon-seller/` | Claude/Cline |
-| **fitness-influencer** | Fitness content and influencer operations | `projects/fitness-influencer/` | Claude/Cline |
-| **lead-generation** | Lead scraping and outreach | `projects/lead-generation/` | Claude/Cline |
-| **mcp-services** | Model Context Protocol servers | `projects/mcp-services/` | Claude/Cline |
-| **personal-assistant** | Personal automation and scheduling | `projects/personal-assistant/` | Claude/Cline |
+**EC2 access:** `ssh -i ~/.ssh/marceau-ec2-key.pem ec2-user@34.193.98.97`
 
-### Tower Independence
+---
 
-Each tower maintains:
-- **Own codebase**: `projects/[tower-name]/src/`
-- **Own workflows**: `projects/[tower-name]/workflows/`
-- **Own version control**: Tracked in dev-sandbox git
-- **Own deployment**: Separate production repos when needed
+## Tower Map
 
-## Separation of Concerns
+| Tower | Domain | Status | Location |
+|-------|--------|--------|----------|
+| **personal-assistant** | Email, calendar, Panacea agent, automation | Active | `projects/personal-assistant/` |
+| **lead-generation** | Scraping, SMS campaigns, pipeline, competitor research | Active (tool) | `projects/lead-generation/` |
+| **ai-systems** | AI infra, customer service, command center | On ice | `projects/ai-systems/` |
+| **fitness-influencer** | Video editing, content, social media | On ice | `projects/fitness-influencer/` |
+| **amazon-seller** | SP-API, inventory, fee calculator | On ice | `projects/amazon-seller/` |
+| **mcp-services** | MCP server dev, PyPI publishing | On ice | `projects/mcp-services/` |
+| **marceau-solutions** | Brand hub (digital, fitness, media, labs) | Umbrella | `projects/marceau-solutions/` |
+| **boabfit** | Fitness app (React Native) | Halted Apr 14 | `projects/boabfit/` |
+| **shared** | Cross-tower tools (md-to-pdf, voice-ai, etc.) | Active | `projects/shared/` |
 
-### Tower Responsibilities
+Each tower has: `src/` (code), `workflows/` (procedures), `VERSION`, and its own `CLAUDE.md`.
 
-**ai-systems**: Core AI infrastructure, shared utilities, model integrations
-**amazon-seller**: SP-API integration, inventory management, seller operations
-**fitness-influencer**: Video editing automation, content creation, social media
-**lead-generation**: Lead scraping, SMS campaigns, follow-up sequences
-**mcp-services**: MCP server development, PyPI publishing, registry management
-**personal-assistant**: Email digests, calendar management, routine automation
+---
 
-### Shared Resources
+## Shared Utility Layer: `execution/`
 
-**Location**: `execution/` and `projects/shared/`
-- Cross-tower utilities (gmail_monitor.py, twilio_sms.py)
-- Multi-tenant tools used by 2+ towers
-- Infrastructure components
+**Rule:** If a script is used by 2+ projects, it goes in `execution/`. If only 1 project uses it, it stays in `projects/[name]/src/`.
 
-**Location**: `docs/`
-- Architecture documentation
-- Shared workflows and SOPs
-- System-wide standards
+Before writing ANY new utility, search `execution/` first — it likely already exists. Key categories:
+- **Communication:** `gmail_monitor.py`, `twilio_sms.py`, `send_onboarding_email.py`
+- **AI Content:** `grok_image_gen.py`, `multi_provider_image_router.py`, `multi_provider_video_router.py`
+- **CRM/Leads:** `add_lead.py`, `lead_manager.py`, `intent_router.py`
+- **Documents:** `branded_pdf_engine.py`, `markdown_to_pdf.py`, `pptx_generator.py`
+- **Infrastructure:** `agent_bridge_api.py` (n8n bridge), `mem0_api.py` (AI memory), `deploy_to_skills.py`
 
-## Communication Protocols
+All scripts read credentials from root `.env` via `python-dotenv`.
 
-### Inter-Tower Communication
+---
 
-1. **Direct API Calls**: Towers can import and use functions from other towers
-2. **Shared Data**: Common data formats in `data/` directory
-3. **Event System**: Pub/sub pattern for cross-tower notifications
-4. **MCP Protocol**: Standardized interface for AI agent interactions
+## Development Workflow
 
-### Handoff Procedures
+1. **Identify tower:** Which tower owns this work? Code goes there from first commit.
+2. **Check existing tools:** Search `execution/` and the tower's `src/` before writing new code.
+3. **Work in tower:** `projects/[tower-name]/src/` for code, `workflows/` for procedures.
+4. **Use shared utils:** Import from `execution/` when the capability exists.
+5. **Test from William's perspective:** Not just syntax — does it actually work end-to-end?
+6. **Deploy if needed:** `python deploy_to_skills.py --project [tower] --version X.Y.Z`
 
-**When Tower A needs Tower B's capability**:
-1. Tower A identifies requirement
-2. Check if Tower B has existing solution
-3. If yes: Import and use directly
-4. If no: Tower B develops capability, then Tower A integrates
+## Tower Lifecycle (Creating New Towers)
 
-**Example**: Fitness tower needs lead data → Import from lead-generation tower
+```
+mkdir -p projects/[new-tower]/{src,workflows}
+echo "1.0.0-dev" > projects/[new-tower]/VERSION
+```
 
-### Standardized Interfaces
+Then: create `directives/[new-tower].md` defining capabilities and integration points. Implement in `src/`, document in `workflows/`, use `execution/` utilities where possible. Expose via Python modules (`from projects.[tower].src import X`) or MCP servers.
 
-All towers expose capabilities through:
-- **Python modules**: `from projects.[tower].src import [capability]`
-- **CLI commands**: `python -m projects.[tower].src.[script]`
-- **MCP servers**: For AI agent integration
+## Inter-Tower Communication
 
-## Agent Operating Rules
+Towers import from each other: `from projects.[tower].src import [capability]`
+Shared data lives in `data/`. Cross-tower notifications use pub/sub via n8n.
+When Tower A needs Tower B's capability: check if it exists first, import directly if yes.
 
-### Core Operating Principles
+---
 
-**Always check the Focus Chain markdown as the single source of truth for progress**
-
-**When user says "work on [tower]", switch context and work inside `projects/[tower]/`**
-
-**Use the simplified CLAUDE.md as the primary architecture guide at the start of every session**
-
-### Research-First Execution Policy (MANDATORY)
+## Research-First Execution Policy (MANDATORY)
 
 **Before executing ANY task, Claude MUST:**
 1. **Check data first** — Read pipeline.db, outcome tracking, and existing code before recommending an approach
 2. **Do NOT execute William's first instinct** — If William says "do X", validate X against data before proceeding. Ask "have you considered Y?" if data suggests a better path
 3. **Present alternatives with tradeoffs** — Never present only one option. Show 2-3 approaches with pros/cons
-4. **Verify before declaring complete** — Test from the user's perspective (not just syntax checks). If it touches EC2, SSH and verify. If it touches n8n, check the n8n database.
-5. **Never give false completion signals** — If something isn't working end-to-end, say so. "Partially done" is honest. "Complete" when it's not is a trust violation.
-
-**Current goals** (read `projects/personal-assistant/data/goals.json` for details):
-- Short-term: Land first AI client by April 6
-- Medium-term: 3 paying clients by May 15
-- Long-term: Replace day job income with Marceau Solutions
-- Post-April 6: Run business evenings/weekends while at Collier County 7am-3pm
-
-**Update goals**: `cd projects/personal-assistant && python3 -m src.goal_manager show`
-
-### Primary Agent Role
-
-**Cline/Grok serves as the central orchestrator** for all tower operations:
-
-- **Reads directives**: Understands tower requirements from `directives/[tower].md`
-- **Orchestrates execution**: Calls appropriate scripts and utilities
-- **Handles communication**: Manages inter-tower handoffs
-- **Maintains architecture**: Ensures separation of concerns
-- **Self-anneals**: Updates documentation and improves processes
-
-### Agent Communication Patterns
-
-| User Says | Agent Does |
-|-----------|------------|
-| "Work on [tower]" | Switch context to that tower's directory |
-| "Deploy [tower]" | Run deployment pipeline for that tower |
-| "Integrate [tower A] with [tower B]" | Set up communication protocol between towers |
-| "Add capability to [tower]" | Create new module in tower's src/ |
-| "Cross-tower [task]" | Identify which towers involved, orchestrate handoff |
-
-### Agent Best Practices
-
-1. **Tower-first thinking**: Always consider which tower owns the capability
-2. **Minimize coupling**: Keep towers independent, use protocols for communication
-3. **Document handoffs**: Update workflows when towers interact
-4. **Version control**: Commit changes to dev-sandbox after tower work
-5. **Observable operations**: Log actions, provide status updates
-
-## Version Control & Deployment
-
-### Single Development Repository
-
-**All tower development occurs in the single `dev-sandbox/` git repository**:
-- No nested git repositories within towers
-- All changes tracked in one place for easy coordination
-- Weekly verification ensures no accidental nested repos
-
-### Optional Production Deployment
-
-**Production deployments create separate repositories when needed**:
-- `~/production/[tower]-prod/` - Standalone production environment
-- `~/websites/[domain]/` - Web deployments
-- `~/active-projects/[repo]/` - GitHub-published projects
-
-**Deployment is optional**: Towers can remain in development-only state indefinitely
-
-## Laptop-Based Development Best Practices
-
-### Lightweight Architecture
-
-**No heavy infrastructure required**:
-- All code runs locally on laptop
-- No cloud dependencies for development
-- Production deployments are optional and separate
-- Version control handles all coordination
-
-### Version Control Strategy
-
-**Single source of truth**: `dev-sandbox/` git repository
-- All towers tracked in one repo
-- No nested git repositories
-- Weekly verification: `find . -name ".git" -type d` shows only `./.git`
-
-**Deployment creates separate repos**:
-- Production: `~/production/[tower]-prod/`
-- Websites: `~/websites/[domain]/`
-- GitHub projects: `~/active-projects/[repo]/`
-
-### Observable Operations
-
-**All operations must be**:
-- **Logged**: Actions recorded for review
-- **Reproducible**: Commands documented and repeatable
-- **Recoverable**: Changes can be rolled back
-- **Auditable**: History shows what happened and why
-
-### Development Workflow
-
-```
-1. Read tower directive: directives/[tower].md
-2. Work in tower directory: projects/[tower]/
-3. Use shared utilities: execution/*.py when applicable
-4. Test locally on laptop
-5. Commit to dev-sandbox
-6. Deploy to production (optional)
-```
-
-### File Organization Standards
-
-```
-dev-sandbox/
-├── projects/
-│   ├── [tower-name]/          # Tower-specific code
-│   │   ├── src/               # Python modules
-│   │   ├── workflows/         # Task procedures
-│   │   ├── VERSION            # Current version
-│   │   └── README.md          # Tower documentation
-│   └── shared/                # Multi-tower utilities
-├── execution/                 # Cross-tower shared utilities
-├── docs/                      # System documentation
-├── directives/                # Tower capability definitions
-└── data/                      # Shared data files
-```
-
-## Tower Development Lifecycle
-
-### 1. Tower Initialization
-```bash
-# Create new tower structure
-mkdir -p projects/[new-tower]/{src,workflows}
-echo "1.0.0-dev" > projects/[new-tower]/VERSION
-```
-
-### 2. Define Capabilities
-Create `directives/[new-tower].md` with:
-- What the tower does
-- Key capabilities
-- Integration points with other towers
-
-### 3. Implement Features
-- Code in `projects/[new-tower]/src/`
-- Workflows in `projects/[new-tower]/workflows/`
-- Use shared utilities from `execution/` when possible
-
-### 4. Test Locally
-- Manual testing first
-- Multi-agent testing for complex features
-- All testing happens on laptop
-
-### 5. Deploy (Optional)
-```bash
-python deploy_to_skills.py --project [new-tower] --version 1.0.0
-```
-Creates `~/production/[new-tower]-prod/` with separate git repo
-
-### 6. Integrate with Other Towers
-- Expose capabilities through standardized interfaces
-- Document handoff procedures
-- Update communication protocols
-
-## Key Commands
-
-### Tower Management
-```bash
-# List all towers
-ls projects/
-
-# Work on specific tower
-cd projects/[tower-name]
-
-# Check tower status
-cat projects/[tower-name]/VERSION
-
-# Deploy tower
-python deploy_to_skills.py --project [tower-name] --version X.Y.Z
-```
-
-### Inter-Tower Operations
-```bash
-# Use capability from another tower
-python -c "from projects.[tower].src import [capability]"
-
-# Run cross-tower workflow
-python -m projects.[tower-a].workflows.[workflow] --integrate [tower-b]
-```
-
-### System Maintenance
-```bash
-# Verify no nested repos
-find . -name ".git" -type d
-
-# Commit all tower changes
-git add projects/ && git commit -m "feat: Update [towers]"
-
-# Check shared utilities
-ls execution/
-```
-
-## Operating Principles
-
-1. **Tower Independence**: Each tower owns its domain and can operate standalone
-2. **Protocol-Based Communication**: Towers communicate through defined interfaces, not direct coupling
-3. **Agent-Centric Orchestration**: Cline/Grok coordinates all operations and maintains architecture
-4. **Laptop-First Development**: All development happens locally, production is optional
-5. **Observable by Default**: Every operation is logged, documented, and recoverable
-6. **Self-Annealing System**: Documentation and processes improve through use
-
-## Quick Start
-
-1. **Choose tower**: `cd projects/[tower-name]`
-2. **Read directive**: `cat ../../directives/[tower-name].md`
-3. **Check workflows**: `ls workflows/`
-4. **Run capability**: `python -m src.[script]`
-5. **Commit changes**: `git add . && git commit -m "feat: [description]"`
+4. **Verify before declaring complete** — Test from the user's perspective. If it touches EC2, SSH and verify. If it touches n8n, check the n8n database
+5. **Never give false completion signals** — If something isn't working end-to-end, say so. "Partially done" is honest. "Complete" when it's not is a trust violation
 
 ---
 
-**Architecture**: Modular towers with standardized communication
-**Agent**: Cline/Grok as central orchestrator
-**Platform**: Laptop-based, version-controlled, observable
-**Principle**: Independent towers, coordinated through protocols.
+## Current Goals (Updated April 28, 2026)
+
+Read `projects/personal-assistant/data/goals.json` for full details.
+- **Priority 1:** Excel at Collier County I&E tech job (7am-3pm, 6-month probation)
+- **Priority 2:** Low-overhead side income (3D printing/Etsy, crypto trading, Claude-powered projects) — all under Marceau Solutions
+- **Priority 3:** Keep autonomous infrastructure running (daily loop, monitoring, lead-gen as research tool)
+- **Schedule:** Business work evenings/weekends only. Training 6-8pm non-negotiable.
+
+Update goals: `cd projects/personal-assistant && python3 -m src.goal_manager show`
+
+---
+
+## Agent Architecture
+
+**Three agents** (consolidated from original design):
+- **Claude Code (Mac/VS Code)** — Primary build tool. This is where features get created.
+- **Panacea (EC2/Telegram)** — Unified agent replacing Clawdbot+Ralph. Runs `claude -p` with Grok direction appended. Telegram bot `@w_marceaubot`.
+- **Grok (xAI API)** — Strategic advisor consulted on every request via `grok_strategic_layer.py`. 2-3 sentence direction, never silent on failure.
+
+**Agent rules:**
+- "Work on [tower]" → switch context to that tower's directory
+- "Deploy [tower]" → run deployment pipeline
+- Tower-first thinking: always consider which tower owns the capability
+- Minimize coupling between towers
+- All operations must be logged, reproducible, and recoverable
+
+---
+
+## Version Control & Deployment
+
+**Single repo:** All towers live in `dev-sandbox/`. No nested git repos (verify weekly).
+**Production deploys** create separate repos when needed:
+- `~/production/[tower]-prod/` — standalone production
+- `~/websites/[domain]/` — web deployments (e.g., `websites/marceausolutions.com/` = GitHub Pages)
+- `~/active-projects/[repo]/` — GitHub-published projects
+
+---
+
+## Hooks (Enforced via `.claude/settings.local.json`)
+
+6 pre-tool hooks enforce architectural rules automatically:
+- **check-existing-tools** — prevents reinventing utilities that exist in `execution/`
+- **project-structure-guard** — ensures code goes in correct tower
+- **interface-first-guard** — blocks CLI-only tools (must be web/SMS/PDF/Telegram)
+- **api-cost-guard** — prevents expensive API calls without awareness
+- **destructive-guard** — blocks dangerous operations (rm -rf, force push, etc.)
+- **stack-guard** — enforces technology stack consistency
+- **complete-the-loop-guard** — ensures tasks finish end-to-end
+- **post-push-ec2-sync** — syncs to EC2 after git push
+
+---
+
+## Key References
+
+| What | Where |
+|------|-------|
+| Live system state | `docs/SYSTEM-STATE.md` |
+| Architecture decisions | `docs/ARCHITECTURE-DECISIONS.md` |
+| Agent handoffs | `HANDOFF.md` |
+| Session history | `docs/session-history.md` |
+| Calendar rules | `rules/tools/calendar-management.md` |
+| All SOPs (33) | `docs/sops/INDEX.md` |
+| Auto-memory index | `~/.claude/projects/.../memory/MEMORY.md` |
+| API Key Manager | `./scripts/api-key-manager.sh` -> http://127.0.0.1:8793 |
+| Health check | `python scripts/health_check.py` |
+| Daily standup | `./scripts/daily_standup.sh` |
+
+---
+
+## Brand & Contact
+
+- **Email:** wmarceau@marceausolutions.com | **Phone:** (239) 398-5676
+- **Brand:** "Embrace the Pain & Defy the Odds" | Gold `#C9963C` / Charcoal `#333333` | NEVER green
+- **Website:** marceausolutions.com | **n8n:** n8n.marceausolutions.com
