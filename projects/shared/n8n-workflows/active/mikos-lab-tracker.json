@@ -1,0 +1,564 @@
+{
+  "updatedAt": "2026-04-29T22:08:42.184Z",
+  "createdAt": "2026-04-29T21:56:47.706Z",
+  "id": "tS6FLdNGyfto4PPQ",
+  "name": "mikos-lab-tracker",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 13 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 8am ET (13:00 UTC)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://t.me/s/mikoslab",
+        "options": {
+          "headers": {
+            "values": [
+              {
+                "name": "User-Agent",
+                "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+              }
+            ]
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "http-fetch",
+      "name": "Fetch Miko Lab Channel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load static state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id (e.g. 'mikoslab/412') \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.seen_ids) {\n  // Pre-seeded with all 20 post IDs visible on 2026-04-29 (posts 399-419)\n  staticData.seen_ids = [\n    \"mikoslab/399\",\"mikoslab/400\",\"mikoslab/401\",\"mikoslab/403\",\n    \"mikoslab/404\",\"mikoslab/405\",\"mikoslab/406\",\"mikoslab/407\",\n    \"mikoslab/408\",\"mikoslab/409\",\"mikoslab/410\",\"mikoslab/411\",\n    \"mikoslab/412\",\"mikoslab/413\",\"mikoslab/414\",\"mikoslab/415\",\n    \"mikoslab/416\",\"mikoslab/417\",\"mikoslab/418\",\"mikoslab/419\"\n  ];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n  \n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n  \n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n  \n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n  \n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
+      },
+      "id": "parse-messages",
+      "name": "Parse Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "new-posts-check",
+              "leftValue": "={{ $json.newCount }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-new-posts",
+      "name": "New Posts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Update state and build notification\nconst staticData = $getWorkflowStaticData('global');\nconst { newPosts, newCount } = $input.first().json;\n\n// Append new post IDs to seen_ids, cap at 500 FIFO\nconst seenIds = staticData.seen_ids || [];\nfor (const p of newPosts) seenIds.push(p.post_id);\nstaticData.seen_ids = seenIds.length > 500 ? seenIds.slice(seenIds.length - 500) : seenIds;\n\n// Build Telegram message\nconst postsToShow = newCount >= 5 ? newPosts.slice(0, 3) : newPosts;\nconst remainder = newCount >= 5 ? newCount - 3 : 0;\n\nlet message = `\ud83d\udce1 *Miko's Lab \u2014 ${newCount} new post${newCount > 1 ? 's' : ''}*\\n`;\n\nfor (const p of postsToShow) {\n  const truncated = p.text.length > 200 ? p.text.substring(0, 200) + '...' : p.text;\n  const postNum = p.post_id.replace('mikoslab/', '');\n  message += `\\n[Post ${postNum}] ${p.date}\\n${truncated}\\n\ud83d\udd17 ${p.url}\\n`;\n}\n\nif (remainder > 0) message += `\\n_(+${remainder} more)_`;\n\nreturn [{ json: { message, newCount } }];"
+      },
+      "id": "update-state",
+      "name": "Update State & Build Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-notify",
+      "name": "Telegram \u2014 New Posts",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        200
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "RlAwU3xzcX4hifgj",
+          "name": "Panacea Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// No new posts \u2014 log and exit gracefully\nconsole.log('mikos-lab-tracker: no new posts found');\nreturn [{ json: { status: 'no_new_posts' } }];"
+      },
+      "id": "no-new-posts",
+      "name": "No New Posts (End)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "5692454753",
+        "text": "=\u26a0\ufe0f mikos-lab-tracker ERROR\n\n{{ $json.message }}\n\nNode: {{ $json.node }}\nTime: {{ $now.toISO() }}",
+        "additionalFields": {}
+      },
+      "id": "telegram-error",
+      "name": "Telegram \u2014 Error Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        600
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "RlAwU3xzcX4hifgj",
+          "name": "Panacea Telegram"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 8am ET (13:00 UTC)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Miko Lab Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Miko Lab Channel": {
+      "main": [
+        [
+          {
+            "node": "Parse Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Messages": {
+      "main": [
+        [
+          {
+            "node": "New Posts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Posts?": {
+      "main": [
+        [
+          {
+            "node": "Update State & Build Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No New Posts (End)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State & Build Message": {
+      "main": [
+        [
+          {
+            "node": "Telegram \u2014 New Posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "Ob7kiVvCnmDHAfNW",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Daily 8am ET (13:00 UTC)": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+  "activeVersionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+  "versionCounter": 28,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-29T21:56:47.711Z",
+      "createdAt": "2026-04-29T21:56:47.711Z",
+      "role": "workflow:owner",
+      "workflowId": "tS6FLdNGyfto4PPQ",
+      "projectId": "K0tuXr7ScEf3VOi6",
+      "project": {
+        "updatedAt": "2026-04-01T13:37:28.827Z",
+        "createdAt": "2025-11-19T23:19:21.744Z",
+        "id": "K0tuXr7ScEf3VOi6",
+        "name": "William Marceau <wmarceau@marceausolutions.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-11-19T23:19:21.744Z",
+            "createdAt": "2025-11-19T23:19:21.744Z",
+            "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+            "projectId": "K0tuXr7ScEf3VOi6",
+            "user": {
+              "updatedAt": "2026-04-29T10:00:28.000Z",
+              "createdAt": "2025-11-19T23:19:21.693Z",
+              "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
+              "email": "wmarceau@marceausolutions.com",
+              "firstName": "William",
+              "lastName": "Marceau",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-11-19T23:25:34.123Z",
+                "personalization_survey_n8n_version": "1.64.3",
+                "companySize": "<20",
+                "companyType": "systems-integrator",
+                "role": "business-owner",
+                "reportedSource": "twitter"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "rWonSOjisRyGBxg1",
+                "userActivatedAt": 1770425509492,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1774291506234
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-04-29",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-04-29T22:08:42.186Z",
+    "createdAt": "2026-04-29T22:08:42.186Z",
+    "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+    "workflowId": "tS6FLdNGyfto4PPQ",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 0 13 * * *"
+              }
+            ]
+          }
+        },
+        "id": "schedule-trigger",
+        "name": "Daily 8am ET (13:00 UTC)",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://t.me/s/mikoslab",
+          "options": {
+            "headers": {
+              "values": [
+                {
+                  "name": "User-Agent",
+                  "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                }
+              ]
+            },
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "id": "http-fetch",
+        "name": "Fetch Miko Lab Channel",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Load static state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id (e.g. 'mikoslab/412') \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.seen_ids) {\n  // Pre-seeded with all 20 post IDs visible on 2026-04-29 (posts 399-419)\n  staticData.seen_ids = [\n    \"mikoslab/399\",\"mikoslab/400\",\"mikoslab/401\",\"mikoslab/403\",\n    \"mikoslab/404\",\"mikoslab/405\",\"mikoslab/406\",\"mikoslab/407\",\n    \"mikoslab/408\",\"mikoslab/409\",\"mikoslab/410\",\"mikoslab/411\",\n    \"mikoslab/412\",\"mikoslab/413\",\"mikoslab/414\",\"mikoslab/415\",\n    \"mikoslab/416\",\"mikoslab/417\",\"mikoslab/418\",\"mikoslab/419\"\n  ];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n  \n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n  \n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n  \n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n  \n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
+        },
+        "id": "parse-messages",
+        "name": "Parse Messages",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          680,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "new-posts-check",
+                "leftValue": "={{ $json.newCount }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "check-new-posts",
+        "name": "New Posts?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          900,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Update state and build notification\nconst staticData = $getWorkflowStaticData('global');\nconst { newPosts, newCount } = $input.first().json;\n\n// Append new post IDs to seen_ids, cap at 500 FIFO\nconst seenIds = staticData.seen_ids || [];\nfor (const p of newPosts) seenIds.push(p.post_id);\nstaticData.seen_ids = seenIds.length > 500 ? seenIds.slice(seenIds.length - 500) : seenIds;\n\n// Build Telegram message\nconst postsToShow = newCount >= 5 ? newPosts.slice(0, 3) : newPosts;\nconst remainder = newCount >= 5 ? newCount - 3 : 0;\n\nlet message = `\ud83d\udce1 *Miko's Lab \u2014 ${newCount} new post${newCount > 1 ? 's' : ''}*\\n`;\n\nfor (const p of postsToShow) {\n  const truncated = p.text.length > 200 ? p.text.substring(0, 200) + '...' : p.text;\n  const postNum = p.post_id.replace('mikoslab/', '');\n  message += `\\n[Post ${postNum}] ${p.date}\\n${truncated}\\n\ud83d\udd17 ${p.url}\\n`;\n}\n\nif (remainder > 0) message += `\\n_(+${remainder} more)_`;\n\nreturn [{ json: { message, newCount } }];"
+        },
+        "id": "update-state",
+        "name": "Update State & Build Message",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          200
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "5692454753",
+          "text": "={{ $json.message }}",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "id": "telegram-notify",
+        "name": "Telegram \u2014 New Posts",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1340,
+          200
+        ],
+        "credentials": {
+          "telegramApi": {
+            "id": "RlAwU3xzcX4hifgj",
+            "name": "Panacea Telegram"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// No new posts \u2014 log and exit gracefully\nconsole.log('mikos-lab-tracker: no new posts found');\nreturn [{ json: { status: 'no_new_posts' } }];"
+        },
+        "id": "no-new-posts",
+        "name": "No New Posts (End)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          420
+        ]
+      },
+      {
+        "parameters": {
+          "chatId": "5692454753",
+          "text": "=\u26a0\ufe0f mikos-lab-tracker ERROR\n\n{{ $json.message }}\n\nNode: {{ $json.node }}\nTime: {{ $now.toISO() }}",
+          "additionalFields": {}
+        },
+        "id": "telegram-error",
+        "name": "Telegram \u2014 Error Alert",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1120,
+          600
+        ],
+        "credentials": {
+          "telegramApi": {
+            "id": "RlAwU3xzcX4hifgj",
+            "name": "Panacea Telegram"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Daily 8am ET (13:00 UTC)": {
+        "main": [
+          [
+            {
+              "node": "Fetch Miko Lab Channel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Miko Lab Channel": {
+        "main": [
+          [
+            {
+              "node": "Parse Messages",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Messages": {
+        "main": [
+          [
+            {
+              "node": "New Posts?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "New Posts?": {
+        "main": [
+          [
+            {
+              "node": "Update State & Build Message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No New Posts (End)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update State & Build Message": {
+        "main": [
+          [
+            {
+              "node": "Telegram \u2014 New Posts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "William Marceau",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-04-29T22:08:43.387Z",
+        "id": 656,
+        "workflowId": "tS6FLdNGyfto4PPQ",
+        "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+        "event": "activated",
+        "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec"
+      }
+    ]
+  }
+}
