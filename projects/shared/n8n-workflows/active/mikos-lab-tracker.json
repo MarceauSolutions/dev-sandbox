@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-29T22:08:42.184Z",
+  "updatedAt": "2026-04-29T22:17:10.186Z",
   "createdAt": "2026-04-29T21:56:47.706Z",
   "id": "tS6FLdNGyfto4PPQ",
   "name": "mikos-lab-tracker",
@@ -57,7 +57,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Load static state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id (e.g. 'mikoslab/412') \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.seen_ids) {\n  // Pre-seeded with all 20 post IDs visible on 2026-04-29 (posts 399-419)\n  staticData.seen_ids = [\n    \"mikoslab/399\",\"mikoslab/400\",\"mikoslab/401\",\"mikoslab/403\",\n    \"mikoslab/404\",\"mikoslab/405\",\"mikoslab/406\",\"mikoslab/407\",\n    \"mikoslab/408\",\"mikoslab/409\",\"mikoslab/410\",\"mikoslab/411\",\n    \"mikoslab/412\",\"mikoslab/413\",\"mikoslab/414\",\"mikoslab/415\",\n    \"mikoslab/416\",\"mikoslab/417\",\"mikoslab/418\",\"mikoslab/419\"\n  ];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n  \n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n  \n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n  \n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n  \n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
+        "jsCode": "// Load state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\n\n// Bootstrap guard: re-seed if state was ever cleared\nif (!staticData.seen_ids || staticData.seen_ids.length === 0) {\n  staticData.seen_ids = [\"mikoslab/399\", \"mikoslab/400\", \"mikoslab/401\", \"mikoslab/403\", \"mikoslab/404\", \"mikoslab/405\", \"mikoslab/406\", \"mikoslab/407\", \"mikoslab/408\", \"mikoslab/409\", \"mikoslab/410\", \"mikoslab/411\", \"mikoslab/412\", \"mikoslab/413\", \"mikoslab/414\", \"mikoslab/415\", \"mikoslab/416\", \"mikoslab/417\", \"mikoslab/418\", \"mikoslab/419\"];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n\n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n\n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n\n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n\n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
       },
       "id": "parse-messages",
       "name": "Parse Messages",
@@ -138,7 +138,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// No new posts \u2014 log and exit gracefully\nconsole.log('mikos-lab-tracker: no new posts found');\nreturn [{ json: { status: 'no_new_posts' } }];"
+        "jsCode": "// No new posts \u2014 force-write state so n8n persists staticData to SQLite\nconst staticData = $getWorkflowStaticData('global');\n// Touch seen_ids with slice() to create a new array reference \u2014 marks dirty for n8n persistence\nconst ids = staticData.seen_ids || [];\nstaticData.seen_ids = ids.slice();\nconsole.log('mikos-lab-tracker: no new posts. seen_ids count:', ids.length);\nreturn [{ json: { status: 'no_new_posts', seen_count: ids.length } }];"
       },
       "id": "no-new-posts",
       "name": "No New Posts (End)",
@@ -249,9 +249,9 @@
   },
   "meta": null,
   "pinData": null,
-  "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
-  "activeVersionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
-  "versionCounter": 28,
+  "versionId": "f50a920a-3a5f-4a79-a934-65312b02d9ab",
+  "activeVersionId": "f50a920a-3a5f-4a79-a934-65312b02d9ab",
+  "versionCounter": 47,
   "triggerCount": 1,
   "shared": [
     {
@@ -276,7 +276,7 @@
             "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec",
             "projectId": "K0tuXr7ScEf3VOi6",
             "user": {
-              "updatedAt": "2026-04-29T10:00:28.000Z",
+              "updatedAt": "2026-04-29T22:15:14.000Z",
               "createdAt": "2025-11-19T23:19:21.693Z",
               "id": "39622bf8-ce74-4af0-a471-7139b1c2deec",
               "email": "wmarceau@marceausolutions.com",
@@ -313,9 +313,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-04-29T22:08:42.186Z",
-    "createdAt": "2026-04-29T22:08:42.186Z",
-    "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+    "updatedAt": "2026-04-29T22:17:10.187Z",
+    "createdAt": "2026-04-29T22:17:10.187Z",
+    "versionId": "f50a920a-3a5f-4a79-a934-65312b02d9ab",
     "workflowId": "tS6FLdNGyfto4PPQ",
     "nodes": [
       {
@@ -368,7 +368,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Load static state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id (e.g. 'mikoslab/412') \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.seen_ids) {\n  // Pre-seeded with all 20 post IDs visible on 2026-04-29 (posts 399-419)\n  staticData.seen_ids = [\n    \"mikoslab/399\",\"mikoslab/400\",\"mikoslab/401\",\"mikoslab/403\",\n    \"mikoslab/404\",\"mikoslab/405\",\"mikoslab/406\",\"mikoslab/407\",\n    \"mikoslab/408\",\"mikoslab/409\",\"mikoslab/410\",\"mikoslab/411\",\n    \"mikoslab/412\",\"mikoslab/413\",\"mikoslab/414\",\"mikoslab/415\",\n    \"mikoslab/416\",\"mikoslab/417\",\"mikoslab/418\",\"mikoslab/419\"\n  ];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n  \n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n  \n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n  \n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n  \n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
+          "jsCode": "// Load state \u2014 $getWorkflowStaticData is the correct API for n8n 2.4.x task runner\n// Dedup by post_id \u2014 stable, unique, no crypto needed\nconst staticData = $getWorkflowStaticData('global');\n\n// Bootstrap guard: re-seed if state was ever cleared\nif (!staticData.seen_ids || staticData.seen_ids.length === 0) {\n  staticData.seen_ids = [\"mikoslab/399\", \"mikoslab/400\", \"mikoslab/401\", \"mikoslab/403\", \"mikoslab/404\", \"mikoslab/405\", \"mikoslab/406\", \"mikoslab/407\", \"mikoslab/408\", \"mikoslab/409\", \"mikoslab/410\", \"mikoslab/411\", \"mikoslab/412\", \"mikoslab/413\", \"mikoslab/414\", \"mikoslab/415\", \"mikoslab/416\", \"mikoslab/417\", \"mikoslab/418\", \"mikoslab/419\"];\n}\n\n// Parse HTML\nconst html = $input.first().json.data;\nconst postSections = html.split(/(?=<div[^>]+class=\"[^\"]*tgme_widget_message_wrap[^\"]*\")/);\n\nconst posts = [];\nfor (const section of postSections) {\n  const postIdMatch = section.match(/data-post=\"(mikoslab\\/(\\d+))\"/);\n  if (!postIdMatch) continue;\n\n  const postId = postIdMatch[1];\n  const postNum = postIdMatch[2];\n\n  const dateMatch = section.match(/datetime=\"([^\"]+)\"/);\n  const dateStr = dateMatch ? dateMatch[1].substring(0, 10) : 'unknown';\n\n  const textMatch = section.match(/<div[^>]+class=\"[^\"]*tgme_widget_message_text[^\"]*\"[^>]*>([\\s\\S]*?)<\\/div>/);\n  let rawText = '';\n  if (textMatch) {\n    rawText = textMatch[1]\n      .replace(/<br\\s*\\/?>/gi, '\\n')\n      .replace(/<a[^>]+href=\"[^\"]+\"[^>]*>([^<]*)<\\/a>/gi, '$1')\n      .replace(/<[^>]+>/g, '')\n      .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')\n      .replace(/&quot;/g, '\"').replace(/&#39;/g, \"'\").replace(/&nbsp;/g, ' ')\n      .trim();\n  }\n\n  posts.push({ post_id: postId, post_num: parseInt(postNum), date: dateStr, text: rawText, url: `https://t.me/${postId}` });\n}\n\nconst postMap = new Map();\nfor (const p of posts) postMap.set(p.post_id, p);\nconst uniquePosts = [...postMap.values()].sort((a, b) => a.post_num - b.post_num);\n\nconst seenIds = staticData.seen_ids;\nconst newPosts = uniquePosts.filter(p => !seenIds.includes(p.post_id));\n\nconsole.log(`Parsed ${uniquePosts.length} unique posts, ${newPosts.length} new`);\n\nreturn [{ json: { posts: uniquePosts, newPosts, totalParsed: uniquePosts.length, newCount: newPosts.length } }];"
         },
         "id": "parse-messages",
         "name": "Parse Messages",
@@ -449,7 +449,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// No new posts \u2014 log and exit gracefully\nconsole.log('mikos-lab-tracker: no new posts found');\nreturn [{ json: { status: 'no_new_posts' } }];"
+          "jsCode": "// No new posts \u2014 force-write state so n8n persists staticData to SQLite\nconst staticData = $getWorkflowStaticData('global');\n// Touch seen_ids with slice() to create a new array reference \u2014 marks dirty for n8n persistence\nconst ids = staticData.seen_ids || [];\nstaticData.seen_ids = ids.slice();\nconsole.log('mikos-lab-tracker: no new posts. seen_ids count:', ids.length);\nreturn [{ json: { status: 'no_new_posts', seen_count: ids.length } }];"
         },
         "id": "no-new-posts",
         "name": "No New Posts (End)",
@@ -552,10 +552,10 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-04-29T22:08:43.387Z",
-        "id": 656,
+        "createdAt": "2026-04-29T22:17:10.394Z",
+        "id": 662,
         "workflowId": "tS6FLdNGyfto4PPQ",
-        "versionId": "adc29918-74e7-4bba-aa3a-8ef3c132246b",
+        "versionId": "f50a920a-3a5f-4a79-a934-65312b02d9ab",
         "event": "activated",
         "userId": "39622bf8-ce74-4af0-a471-7139b1c2deec"
       }
