@@ -1,0 +1,82 @@
+{
+  "sop_number": "WW-SOP-001",
+  "title": "Front Desk Agent Daily Procedures",
+  "department": "Wastewater Operations",
+  "version": "1.0",
+  "effective_date": "2026-05-15",
+  "prepared_by": "William Marceau, I&E Technician",
+  "approved_by": "[Supervisor Name]",
+
+  "purpose": "Establish standardized opening, mid-day, and closing procedures for the front desk agent role at the Wastewater Operations department to ensure consistent service, accurate record-keeping, and proper handoff between shifts.",
+
+  "scope": "Applies to all personnel assigned to front desk coverage at the Wastewater Operations administrative office during business hours (Monday through Friday, 7:00 AM to 4:00 PM).",
+
+  "definitions": [
+    {"term": "Work Order", "definition": "A documented request for field service issued through the county work order management system."},
+    {"term": "Visitor Log", "definition": "The physical or digital register where all non-employee visitors are recorded upon entry."},
+    {"term": "After-hours Call", "definition": "Any incoming call received outside business hours and routed to the on-call duty officer."}
+  ],
+
+  "responsibilities": [
+    {"role": "Front Desk Agent", "owns": "All procedures defined in this SOP, including opening, visitor management, call handling, and closing."},
+    {"role": "Shift Supervisor", "owns": "Reviewing the daily visitor log and call log at end of day, signing off on completion."},
+    {"role": "On-Call Duty Officer", "owns": "Handling after-hours escalations forwarded by the front desk."}
+  ],
+
+  "procedure": [
+    {
+      "phase": "Morning Startup (7:00 AM – 7:30 AM)",
+      "steps": [
+        "Unlock the front desk area and turn on workstation and printer.",
+        "Log into the county network using assigned credentials.",
+        "Open the work order management system, visitor log, and email client.",
+        "Review any overnight emails and flag urgent items for the supervisor.",
+        "Check the answering service log for messages received after hours."
+      ]
+    },
+    {
+      "phase": "Visitor Management",
+      "steps": [
+        "Greet every visitor within 15 seconds of arrival.",
+        "Verify the visitor's name, affiliation, and purpose of visit.",
+        "Record entry in the visitor log: name, time in, organization, contact being visited.",
+        "Issue a visitor badge and direct the visitor to the appropriate waiting area.",
+        "Notify the staff member the visitor is here to see.",
+        "Record time out and collect the visitor badge upon departure."
+      ]
+    },
+    {
+      "phase": "Call Handling",
+      "steps": [
+        "Answer all calls within three rings using the standard greeting: 'Wastewater Operations, [your name] speaking, how may I help you?'",
+        "Determine whether the call is informational, a service request, or an emergency.",
+        "For service requests, capture caller name, address, contact number, and issue description.",
+        "Create a work order in the county system for any field service request.",
+        "For emergencies (sewer overflow, hazardous condition), follow the emergency escalation procedure in WW-SOP-003.",
+        "Log every call in the daily call log with time, caller, and disposition."
+      ]
+    },
+    {
+      "phase": "End of Day Closing (3:30 PM – 4:00 PM)",
+      "steps": [
+        "Reconcile the visitor log: ensure all visitors have a recorded time out.",
+        "Complete the daily call log summary.",
+        "Forward the office phone line to the after-hours answering service.",
+        "Submit the daily log to the shift supervisor for signoff.",
+        "Lock the front desk area and secure all materials."
+      ]
+    }
+  ],
+
+  "exceptions": [
+    "If the work order management system is unavailable, record service requests on the paper backup form and enter them as soon as the system is restored.",
+    "If a visitor refuses to sign the visitor log, politely deny entry and notify the shift supervisor.",
+    "If an after-hours emergency call comes in before the line is forwarded, follow WW-SOP-003 and document the incident."
+  ],
+
+  "references": [
+    "WW-SOP-003 — Emergency Response and Escalation",
+    "Collier County Visitor Management Policy",
+    "Wastewater Operations Employee Handbook, Section 4"
+  ]
+}

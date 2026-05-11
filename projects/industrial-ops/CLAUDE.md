@@ -89,9 +89,11 @@ Do NOT commit proprietary county specs or internal documents to the repo.
 ## Milestones
 
 ### Milestone 1 — SOP Builder (Week 1–2)
-- [ ] Build SOP template (neutral county styling, not Marceau Solutions gold/charcoal)
-- [ ] Front desk agent SOP — first real deliverable for boss
-- [ ] Test: William provides process notes → PDF SOP output in under 5 minutes
+- [x] Build SOP template (neutral county styling, navy header, Arial — no Marceau gold/charcoal)
+- [x] `sop_generator.py` CLI — structured JSON or rough-notes input modes
+- [x] PDF rendering via weasyprint (clean page breaks, no artifacts)
+- [x] Test with front desk example — verified clean 3-page PDF
+- [ ] Front desk agent SOP — first real deliverable for boss (waiting on William's process notes)
 - [ ] Deliver to boss, document reaction and feedback
 
 ### Milestone 2 — Knowledge Base Scaffold (Week 3–4)
