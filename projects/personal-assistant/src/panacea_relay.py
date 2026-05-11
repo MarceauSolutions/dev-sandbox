@@ -316,6 +316,7 @@ def _start_claude(chat_id: int, prompt: str, session_id: str, resume: bool = Fal
         cmd.extend(["--session-id", session_id])
 
     env = os.environ.copy()
+    env.pop("ANTHROPIC_API_KEY", None)  # Force Max subscription — not API billing
     env["CLAUDE_CODE_OAUTH_TOKEN"] = CLAUDE_OAUTH_TOKEN
 
     logger.info(f"Running: claude -p (session={session_id[:8]}..., resume={resume})")
