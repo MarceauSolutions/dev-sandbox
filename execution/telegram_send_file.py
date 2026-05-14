@@ -18,6 +18,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 
 import requests
 
@@ -32,7 +33,7 @@ BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 DEFAULT_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "5692454753")  # William's chat
 
 
-def send_file(file_path: str, chat_id: str | None = None, caption: str = "") -> dict:
+def send_file(file_path: str, chat_id: Optional[str] = None, caption: str = "") -> dict:
     """Send a file to Telegram. Returns the API response dict on success or raises."""
     if not BOT_TOKEN:
         raise RuntimeError("TELEGRAM_BOT_TOKEN not set in environment / .env")
