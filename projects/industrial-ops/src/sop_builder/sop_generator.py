@@ -33,6 +33,7 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).parent))
 
 import markdown as md_lib
 from weasyprint import HTML, CSS
@@ -294,24 +295,42 @@ class SOPGenerator:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--input", required=True, help="Path to input file (JSON for structured, .txt for notes)")
-    parser.add_argument("--from-notes", action="store_true", help="Treat input as rough notes and use Claude to structure")
-    parser.add_argument("--sop-number", help="SOP number (e.g. WW-SOP-001). Required when --from-notes")
-    parser.add_argument("--title", help="SOP title. Required when --from-notes")
+    src = parser.add_mutually_exclusive_group(required=True)
+    src.add_argument("--input", help="Path to input file (JSON for structured, .txt for notes)")
+    src.add_argument("--gdrive-folder", help="Google Drive folder name containing scanned notes")
+    parser.add_argument("--from-notes", action="store_true", help="Treat --input as rough notes and use Claude to structure")
+    parser.add_argument("--sop-number", help="SOP number (e.g. WW-SOP-001). Required when --from-notes or --gdrive-folder")
+    parser.add_argument("--title", help="SOP title. Required when --from-notes or --gdrive-folder")
     parser.add_argument("--department", default="Wastewater Operations", help="Department name")
     parser.add_argument("--prepared-by", default="William Marceau, I&E Technician", help="Author name")
     parser.add_argument("--approved-by", default="[Supervisor Name]", help="Approver name")
     parser.add_argument("--output-dir", default="projects/industrial-ops/data/output", help="Output directory")
+    parser.add_argument("--save-notes", help="If --gdrive-folder, also write the combined notes to this path for review")
     args = parser.parse_args()
 
-    input_path = Path(args.input)
-    if not input_path.exists():
-        sys.exit(f"ERROR: input file not found: {input_path}")
+    use_ai_structuring = args.from_notes or args.gdrive_folder is not None
+    if use_ai_structuring and (not args.sop_number or not args.title):
+        sys.exit("ERROR: --from-notes and --gdrive-folder require --sop-number and --title")
 
-    if args.from_notes:
-        if not args.sop_number or not args.title:
-            sys.exit("ERROR: --from-notes requires --sop-number and --title")
-        notes = input_path.read_text(encoding="utf-8")
+    if args.gdrive_folder:
+        from drive_collector import collect_notes_from_folder
+        print(f"→ Pulling notes from Drive folder '{args.gdrive_folder}'...")
+        notes = collect_notes_from_folder(args.gdrive_folder)
+        print(f"→ Collected {len(notes)} chars total.")
+        if args.save_notes:
+            Path(args.save_notes).write_text(notes, encoding="utf-8")
+            print(f"→ Saved combined notes to {args.save_notes}")
+    else:
+        input_path = Path(args.input)
+        if not input_path.exists():
+            sys.exit(f"ERROR: input file not found: {input_path}")
+        if args.from_notes:
+            notes = input_path.read_text(encoding="utf-8")
+        else:
+            data = json.loads(input_path.read_text(encoding="utf-8"))
+            notes = None
+
+    if use_ai_structuring:
         print(f"→ Structuring notes via Claude API ({len(notes)} chars)...")
         data = structure_notes_with_ai(
             notes=notes,
@@ -321,8 +340,6 @@ def main():
             prepared_by=args.prepared_by,
             approved_by=args.approved_by,
         )
-    else:
-        data = json.loads(input_path.read_text(encoding="utf-8"))
 
     gen = SOPGenerator(output_dir=Path(args.output_dir))
     md_path, pdf_path = gen.generate(data)
