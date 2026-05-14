@@ -77,15 +77,21 @@ The full hands-free path:
 4. Panacea recognizes the request, runs `make_sop.py` with `--deliver`, and sends the PDF
    back to your Telegram chat within ~1-2 minutes.
 
-**One-time EC2 setup for this mode:**
-- Run `--gdrive-folder` once locally on the Mac so the OAuth browser flow can complete.
-- Copy the resulting `token_drive_readonly.json` to EC2:
-  ```
-  scp -i ~/.ssh/marceau-ec2-key.pem token_drive_readonly.json \
-      ec2-user@34.193.98.97:/home/clawdbot/dev-sandbox/
-  ```
-- EC2 already has weasyprint, google-api-python-client, anthropic installed
-  (see `make_sop.py` for the full chain).
+**One-time setup (literally one command):**
+```bash
+bash projects/industrial-ops/src/sop_builder/setup_drive_auth.sh
+```
+This opens a browser, asks you to approve Drive read access for your Google account,
+saves the refresh token locally, and SCPs it to EC2 — all in one shot. You only do
+this once. After that, everything is hands-free from your phone.
+
+**Battle-tested (2026-05-14):**
+- `telegram_send_file.py` send works from both Mac and EC2 ✓
+- `sop_generator.py` JSON mode produces clean PDF on Mac and EC2 ✓
+- Python 3.9 compat (EC2 runtime) ✓
+- Error path (invalid folder) handled gracefully ✓
+- Panacea system prompt updated with the new tool invocation ✓
+- Drive end-to-end pending: needs you to run `setup_drive_auth.sh` once
 
 ## Output
 - `WW-SOP-001_<slug>.md` — source markdown (editable)
