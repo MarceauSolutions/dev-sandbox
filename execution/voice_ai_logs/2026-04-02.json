@@ -655,9 +655,15 @@
     "timestamp": "2026-04-01 21:18 UTC",
     "call_title": "Dropped Call",
     "transcript_summary": "The AI agent from Marceau Solutions initiated the call. After the user remained silent, the agent attempted to re-engage twice before concluding the call, suggesting the user call back or visit their website. The conversation ended due to a lack of user response.",
+<<<<<<< Updated upstream
     "intent": "unknown",
     "lead_quality": "not_lead",
     "next_action": "No follow-up needed. This appears to be a silent call or potential spam. Monitor if this number calls back multiple times, but otherwise no action required.",
+=======
+    "intent": "wrong_number",
+    "lead_quality": "not_lead",
+    "next_action": "No follow-up required. This appears to be an accidental dial or wrong number call with no engagement from the caller.",
+>>>>>>> Stashed changes
     "transcript": [
       {
         "role": "agent",
