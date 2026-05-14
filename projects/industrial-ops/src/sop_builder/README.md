@@ -66,6 +66,27 @@ What happens under the hood:
 **Requirements:** `ANTHROPIC_API_KEY` in env (for OCR + structuring), `credentials.json`
 in repo root (Google OAuth client — already present from existing Gmail/Sheets setup).
 
+### Mode 4 — From iPhone via Telegram (the real workflow)
+
+The full hands-free path:
+1. At work, pull out your phone.
+2. Open Google Drive app → Scan (camera icon) → scan paper docs into your SOP folder
+   (e.g. `SOP-Front-Desk-Notes`). Each scan saves as a PDF.
+3. Open Telegram → `@w_marceaubot` → send a message like:
+   > "Make me an SOP from `SOP-Front-Desk-Notes`, number WW-SOP-001, title Front Desk Agent Daily Procedures"
+4. Panacea recognizes the request, runs `make_sop.py` with `--deliver`, and sends the PDF
+   back to your Telegram chat within ~1-2 minutes.
+
+**One-time EC2 setup for this mode:**
+- Run `--gdrive-folder` once locally on the Mac so the OAuth browser flow can complete.
+- Copy the resulting `token_drive_readonly.json` to EC2:
+  ```
+  scp -i ~/.ssh/marceau-ec2-key.pem token_drive_readonly.json \
+      ec2-user@34.193.98.97:/home/clawdbot/dev-sandbox/
+  ```
+- EC2 already has weasyprint, google-api-python-client, anthropic installed
+  (see `make_sop.py` for the full chain).
+
 ## Output
 - `WW-SOP-001_<slug>.md` — source markdown (editable)
 - `WW-SOP-001_<slug>.pdf` — county-styled PDF (deliverable)
