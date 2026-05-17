@@ -19,6 +19,24 @@
 
 > **Convention**: When ANY session completes work that affects other sessions, append an entry here with the date, what changed, and what the next session should know. Read top-down on session start. Entries older than 2 weeks can be archived to `docs/session-history.md`.
 
+### 2026-05-17 (afternoon — AI phone agent hardened end-to-end)
+- **AI phone agent now runs under gunicorn as ec2-user** — was crash-looping 153k times because the old unit ran as clawdbot which can't write the ec2-user-owned data dir. Same root cause as the 2026-05-11 sync-agent migration.
+- **5 audit BLOCKERS resolved:**
+  - FL recording disclosure added to `first_message` (FS 934.03)
+  - `src/db.py` — SQLite persistence layer for active_calls, leads, cell_reliability, tenants. `CallStore` exposes dict-like API so app.py call sites are unchanged.
+  - `gunicorn_conf.py` + systemd units at `deploy/`. Both services active on 8795/8796.
+  - `/elevenlabs-poll/sync` endpoint joins polled transcripts to lead rows by conversation_id. **n8n workflow still needs a node added to POST to it** — not done in n8n yet.
+  - `scripts/client_setup.py` — provisions Twilio subaccount + ElevenLabs agent + tenant row. Multi-tenant runtime routing is the follow-up.
+- **Memory:** `project_ai_phone_agent_hardening.md` captures the post-fix state, what's done vs. not done, and how to invoke `client_setup.py`.
+- **Both research and code audits** are in `docs/research/ai-phone-agent-*-2026-05-16.md`.
+
+### 2026-05-16 (evening — Clawdbot retirement + memory rewrite)
+- Stopped + disabled `clawdbot.service` and `ralph-webhook.service` on EC2. They had been running silently for weeks alongside Panacea, causing third-party LLM billing errors and getUpdates conflicts on the Telegram bot.
+- Deleted 3 zombie n8n workflows (`EOD-Accountability-Checkin`, `Morning-Accountability-Checkin`, `Weekly-Accountability-Report`) that were firing despite `active=0`.
+- Added `scripts/claude_auto.sh` for Mac autonomous claude -p runs (bypasses permission prompts).
+- Verification cron scheduled on EC2 for 2026-05-23 13:07 UTC — sends Telegram heartbeat confirming cleanup held.
+- Memory system audit + rewrite: 8 new memory files documenting OAuth rotation playbook, EC2 git push setup, EC2 services map, etc.
+
 ### 2026-04-12 (afternoon session — 3:50 PM EDT)
 - **REBUILD COMPLETE**: All 8 phases done. Tagged `post-phase-8` at commit `4abe4277`.
 - **Phase 7 completed**: 6 n8n workflows migrated 5010→5011, bridge_v2 systemd service created, monolith archived to `docs/archive/legacy-code/`
