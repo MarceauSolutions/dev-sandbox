@@ -657,7 +657,7 @@
     "transcript_summary": "The AI agent from Marceau Solutions initiated the call. After the user remained silent, the agent attempted to re-engage twice before concluding the call, suggesting the user call back or visit their website. The conversation ended due to a lack of user response.",
     "intent": "wrong_number",
     "lead_quality": "not_lead",
-    "next_action": "No action needed. This appears to be a silent call with no engagement - likely a wrong number, accidental dial, or robocall. Monitor if this number calls back with actual engagement.",
+    "next_action": "No follow-up needed. This appears to be a silent call or wrong number with no engagement from the caller despite multiple prompts from the AI assistant.",
     "transcript": [
       {
         "role": "agent",
