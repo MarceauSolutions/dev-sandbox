@@ -39,8 +39,10 @@ else
     FAIL=1
 fi
 
-# Check 3 — Panacea logs clean for 7 days
-ERR_COUNT=$(sudo journalctl -u panacea --since '7 days ago' 2>/dev/null | grep -ciE '401|third-party|getUpdates conflict' || echo 0)
+# Check 3 — Panacea logs clean for 7 days (specific error patterns, not millisecond timestamps)
+ERR_COUNT=$(sudo journalctl -u panacea --since '7 days ago' 2>/dev/null \
+    | grep -ciE 'Failed to authenticate|Invalid authentication|authentication_error|third-party|getUpdates conflict' \
+    || echo 0)
 if [ "$ERR_COUNT" = "0" ]; then
     LINES+=("✓ Panacea logs clean (no 401 / third-party / conflict errors in 7 days)")
 else
