@@ -1,0 +1,18 @@
+[Unit]
+Description=AI Phone Agent — Warm Leads Dashboard (gunicorn)
+After=network.target ai-phone-agent.service
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/clawdbot/dev-sandbox/projects/marceau-solutions/labs/ai-phone-agent/src
+ExecStart=/home/ec2-user/.local/bin/gunicorn -c gunicorn_conf.py dashboard:app
+Restart=always
+RestartSec=10
+Environment=HOME=/home/ec2-user
+Environment=AI_PHONE_ENV_PATH=/home/clawdbot/dev-sandbox/.env
+Environment=BIND=0.0.0.0:8796
+Environment=WEB_CONCURRENCY=2
+
+[Install]
+WantedBy=multi-user.target

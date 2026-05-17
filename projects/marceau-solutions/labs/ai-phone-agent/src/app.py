@@ -24,7 +24,16 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv('/home/clawdbot/dev-sandbox/.env')
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+import db  # SQLite persistence layer (active_calls, leads, cell_reliability, tenants)
+
+# .env path is configurable for non-EC2 runs (Mac dev, tests)
+_ENV_PATH = os.environ.get("AI_PHONE_ENV_PATH", "/home/clawdbot/dev-sandbox/.env")
+if Path(_ENV_PATH).exists():
+    load_dotenv(_ENV_PATH)
+else:
+    load_dotenv()  # fall back to project-local .env
 
 app = Flask(__name__)
 CORS(app)
@@ -54,61 +63,50 @@ TRANSFER_TIMEOUT = ROUTING.get('transfer_timeout_seconds', 20)
 PERSONAL_NUMBER = ROUTING.get('forwarded_from_personal', '+12393985676')
 TWILIO_NUMBER = AGENT_CONFIG.get('twilio_config', {}).get('phone_number', '+18552399364')
 
-# In-memory state
-active_calls = {}
+# Persistent state (SQLite — see src/db.py). active_calls keeps its dict-like API.
+active_calls = db.CallStore()
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
+# One-shot import of legacy JSON files on first boot. No-op once imported.
+try:
+    _migrated = db.migrate_legacy_json()
+    if any(_migrated.values()):
+        print(f"[startup] migrated legacy JSON to SQLite: {_migrated}")
+except Exception as _e:
+    print(f"[startup] legacy migration skipped: {_e}")
+
 # =============================================================================
-# Cell Reliability Tracker
+# Cell Reliability Tracker (SQLite-backed)
 # =============================================================================
 
-CELL_TRACKER_PATH = Path(__file__).parent.parent / 'data' / 'cell_reliability.json'
-CELL_TRACKER_PATH.parent.mkdir(parents=True, exist_ok=True)
+# AI-only mode flag lives in the data dir as a tiny file (per-instance toggle).
+# It's lightweight enough to not warrant its own table; SQLite would be fine too.
+_AI_ONLY_FLAG = Path(__file__).parent.parent / 'data' / 'ai_only_mode.flag'
+_AI_ONLY_FLAG.parent.mkdir(parents=True, exist_ok=True)
 
 
-def load_cell_tracker():
-    if CELL_TRACKER_PATH.exists():
-        with open(CELL_TRACKER_PATH) as f:
-            return json.load(f)
-    return {
-        'attempts': [],
-        'ai_only_mode': False,
-        'ai_only_set_at': None,
-        'total_transfers': 0,
-        'total_answered': 0
-    }
+def _set_ai_only_flag(enabled: bool):
+    if enabled:
+        _AI_ONLY_FLAG.write_text(datetime.now().isoformat())
+    elif _AI_ONLY_FLAG.exists():
+        _AI_ONLY_FLAG.unlink()
 
 
-def save_cell_tracker(tracker):
-    with open(CELL_TRACKER_PATH, 'w') as f:
-        json.dump(tracker, f, indent=2)
+def _get_ai_only_flag() -> bool:
+    return _AI_ONLY_FLAG.exists()
 
 
 def record_transfer_attempt(answered, call_sid, caller):
-    tracker = load_cell_tracker()
-    tracker['attempts'].append({
-        'timestamp': datetime.now().isoformat(),
-        'call_sid': call_sid,
-        'caller': caller,
-        'answered': answered
-    })
-    tracker['total_transfers'] += 1
-    if answered:
-        tracker['total_answered'] += 1
-    # Keep only last 50 attempts
-    tracker['attempts'] = tracker['attempts'][-50:]
-    save_cell_tracker(tracker)
+    db.record_transfer(call_sid=call_sid, caller=caller, answered=bool(answered))
 
-    # Check if we should auto-enable AI-only mode
+    # Check if we should auto-enable AI-only mode based on recent success rate
     window = ROUTING.get('reliability_window_attempts', 10)
     threshold = ROUTING.get('reliability_threshold', 0.5)
-    recent = tracker['attempts'][-window:]
+    recent = db.recent_transfers(window=window)
     if len(recent) >= window:
         success_rate = sum(1 for a in recent if a['answered']) / len(recent)
-        if success_rate < threshold and not tracker.get('ai_only_mode'):
-            tracker['ai_only_mode'] = True
-            tracker['ai_only_set_at'] = datetime.now().isoformat()
-            save_cell_tracker(tracker)
+        if success_rate < threshold and not _get_ai_only_flag():
+            _set_ai_only_flag(True)
             send_telegram_alert(
                 f"<b>Auto AI-Only Mode Activated</b>\n"
                 f"Your cell answered only {success_rate:.0%} of the last {window} transfer attempts.\n"
@@ -119,17 +117,16 @@ def record_transfer_attempt(answered, call_sid, caller):
 
 
 def is_ai_only_mode():
-    tracker = load_cell_tracker()
     # Config override takes precedence
     if ROUTING.get('ai_only_mode', False):
         return True
-    return tracker.get('ai_only_mode', False)
+    return _get_ai_only_flag()
 
 
 def get_cell_reliability():
-    tracker = load_cell_tracker()
     window = ROUTING.get('reliability_window_attempts', 10)
-    recent = tracker['attempts'][-window:]
+    recent = db.recent_transfers(window=window)
+    total, answered = db.transfer_totals()
     if not recent:
         return {'rate': 1.0, 'attempts': 0, 'window': window, 'ai_only': is_ai_only_mode()}
     success_rate = sum(1 for a in recent if a['answered']) / len(recent)
@@ -137,10 +134,10 @@ def get_cell_reliability():
         'rate': round(success_rate, 2),
         'attempts': len(recent),
         'window': window,
-        'total_transfers': tracker.get('total_transfers', 0),
-        'total_answered': tracker.get('total_answered', 0),
+        'total_transfers': total,
+        'total_answered': answered,
         'ai_only': is_ai_only_mode(),
-        'last_attempt': recent[-1] if recent else None
+        'last_attempt': recent[-1] if recent else None,
     }
 
 
@@ -216,20 +213,14 @@ def health():
 @app.route('/admin/routing', methods=['GET', 'POST'])
 def admin_routing():
     """View and toggle routing configuration."""
-    tracker = load_cell_tracker()
-
     if request.method == 'POST':
         data = request.json or {}
         if 'ai_only_mode' in data:
-            tracker['ai_only_mode'] = bool(data['ai_only_mode'])
-            if not tracker['ai_only_mode']:
-                tracker['ai_only_set_at'] = None
-            else:
-                tracker['ai_only_set_at'] = datetime.now().isoformat()
-            save_cell_tracker(tracker)
-            mode = "AI-only" if tracker['ai_only_mode'] else "Transfer-enabled"
+            enabled = bool(data['ai_only_mode'])
+            _set_ai_only_flag(enabled)
+            mode = "AI-only" if enabled else "Transfer-enabled"
             send_telegram_alert(f"<b>Routing Mode Changed</b>\nNow: {mode}")
-            return jsonify({'status': 'updated', 'ai_only_mode': tracker['ai_only_mode']})
+            return jsonify({'status': 'updated', 'ai_only_mode': enabled})
 
         return jsonify({'error': 'No recognized fields to update'}), 400
 
@@ -241,7 +232,7 @@ def admin_routing():
         'personal_number': PERSONAL_NUMBER,
         'twilio_number': TWILIO_NUMBER,
         'cell_reliability': get_cell_reliability(),
-        'recent_attempts': tracker.get('attempts', [])[-10:]
+        'recent_attempts': db.recent_transfers(window=10),
     })
 
 
@@ -305,7 +296,7 @@ def incoming_call():
     # Known contact with auto-transfer? Skip AI, go straight to transfer.
     if origin['auto_transfer'] and not is_ai_only_mode():
         print(f"  → Known contact {origin['known_contact']['name']}, auto-transferring")
-        active_calls[call_sid]['status'] = 'auto_transfer'
+        active_calls.update_fields(call_sid, status='auto_transfer')
         return _initiate_transfer_twiml(call_sid)
 
     # Everyone else gets the AI receptionist
@@ -383,10 +374,13 @@ def elevenlabs_transfer_tool():
 
     # Store transfer context
     if call_sid in active_calls:
-        active_calls[call_sid]['transfer_reason'] = reason
-        active_calls[call_sid]['caller_name'] = caller_name
-        active_calls[call_sid]['urgency'] = urgency
-        active_calls[call_sid]['status'] = 'transferring'
+        active_calls.update_fields(
+            call_sid,
+            transfer_reason=reason,
+            caller_name=caller_name,
+            urgency=urgency,
+            status='transferring',
+        )
 
     if is_ai_only_mode():
         # Don't attempt transfer, tell the AI to take a message instead
@@ -573,11 +567,14 @@ def gather_response():
     print(f"Caller said: {speech_result} (confidence: {confidence})")
 
     if call_sid in active_calls:
-        active_calls[call_sid]['transcript'].append({
+        existing = active_calls.get(call_sid, {})
+        transcript = list(existing.get('transcript', []))
+        transcript.append({
             'speaker': 'caller',
             'text': speech_result,
-            'timestamp': datetime.now().isoformat()
+            'timestamp': datetime.now().isoformat(),
         })
+        active_calls.update_fields(call_sid, transcript=transcript)
 
     response = VoiceResponse()
 
@@ -590,7 +587,7 @@ def gather_response():
                         'returning his call', 'returning a call', 'he called me']
     if any(phrase in speech_result.lower() for phrase in transfer_phrases):
         if not is_ai_only_mode():
-            active_calls[call_sid]['transfer_reason'] = f'Caller said: {speech_result}'
+            active_calls.update_fields(call_sid, transfer_reason=f'Caller said: {speech_result}')
             return _initiate_transfer_twiml(call_sid)
         else:
             response.say(
@@ -614,7 +611,7 @@ def gather_response():
         current_q = questions[current_q_idx - 1] if current_q_idx > 0 else None
         if current_q:
             collected[current_q['id']] = speech_result
-            active_calls[call_sid]['collected_data'] = collected
+            active_calls.update_fields(call_sid, collected_data=collected)
 
         if current_q_idx < len(questions):
             next_q = questions[current_q_idx]
@@ -657,17 +654,24 @@ def call_complete():
     )
     response.hangup()
 
-    # Send lead data to webhook
+    # Send lead data to webhook AND persist locally so the ElevenLabs poller
+    # can later upsert a transcript by call_sid / conversation_id.
     lead_data = {
         'source': 'ai-phone-agent',
         'phone': caller,
         'call_sid': call_sid,
+        'conversation_id': call_data.get('conversation_id', ''),
         'timestamp': datetime.now().isoformat(),
         'collected_data': call_data.get('collected_data', {}),
         'transcript': call_data.get('transcript', []),
         'origin': call_data.get('origin', {}),
         'status': 'warm_lead'
     }
+
+    try:
+        db.insert_lead(lead_data)
+    except Exception as e:
+        print(f"Failed to persist lead to SQLite: {e}")
 
     try:
         requests.post(WEBHOOK_URL, json=lead_data, timeout=10)
@@ -723,12 +727,18 @@ def voicemail_complete():
     lead_data = {
         'source': 'voicemail',
         'phone': caller,
+        'call_sid': call_sid,
         'recording_url': recording_url,
         'timestamp': datetime.now().isoformat(),
         'collected_data': call_data.get('collected_data', {}),
         'origin': call_data.get('origin', {}),
         'status': 'voicemail_lead'
     }
+
+    try:
+        db.insert_lead(lead_data)
+    except Exception as e:
+        print(f"Failed to persist voicemail lead to SQLite: {e}")
 
     try:
         requests.post(WEBHOOK_URL, json=lead_data, timeout=10)
@@ -781,15 +791,81 @@ def call_status():
 
 
 # =============================================================================
-# Entry Point
+# ElevenLabs poller hook — upsert lead transcripts by conversation_id
 # =============================================================================
 
+@app.route('/elevenlabs-poll/sync', methods=['POST'])
+def elevenlabs_poll_sync():
+    """
+    Called by the n8n `ElevenLabs Call Poller` workflow once per polled
+    conversation. Joins the polled transcript back to the lead row that
+    was created at /call-complete (by call_sid OR conversation_id).
+
+    Payload shape (sent by the n8n workflow):
+        {
+          "conversation_id": "...",         (required)
+          "call_sid":        "...",         (optional, joins lead row)
+          "transcript":      [...],         (the structured transcript)
+          "duration_seconds": 87,
+          "status":          "completed",
+          "summary":         "...",
+          "collected_data":  {...},         (optional, overrides if present)
+          "recording_url":   "..."
+        }
+    """
+    data = request.json or {}
+    conv_id = data.get('conversation_id')
+    if not conv_id:
+        return jsonify({'error': 'conversation_id required'}), 400
+
+    patch = {
+        'conversation_id': conv_id,
+        'transcript': data.get('transcript', []),
+        'recording_url': data.get('recording_url', ''),
+        'notes': data.get('summary', ''),
+        'status': 'warm_lead' if data.get('duration_seconds', 0) >= 10 else 'short_call',
+    }
+    if data.get('collected_data'):
+        patch['collected_data'] = data['collected_data']
+        # Surface the high-signal flat fields too
+        cd = data['collected_data']
+        if cd.get('business_type'):
+            patch['business_type'] = cd['business_type']
+        if cd.get('pain_points'):
+            patch['pain_points'] = cd['pain_points']
+        if cd.get('timeline'):
+            patch['timeline'] = cd['timeline']
+    if data.get('call_sid'):
+        patch['call_sid'] = data['call_sid']
+
+    # Use the upsert path — handles "lead already exists" (PATCH) and
+    # "lead doesn't exist yet" (INSERT) in one call.
+    upsert_payload = {
+        'phone': data.get('phone', ''),
+        'source': 'ai-phone-agent',
+        'call_sid': data.get('call_sid', ''),
+        **patch,
+    }
+    lead = db.upsert_lead_by_conversation(conv_id, upsert_payload)
+
+    return jsonify({'status': 'synced', 'lead_id': lead['id']})
+
+
+# =============================================================================
+# Entry Point
+# =============================================================================
+# In production this module is run by gunicorn (see `gunicorn_conf.py` and the
+# `ai-phone-agent.service` systemd unit on EC2). The block below is kept ONLY
+# for local development — never used in production.
+
 if __name__ == '__main__':
-    print(f"AI Phone Agent (Twilio-First) starting on port 8795")
+    print(f"[dev] AI Phone Agent starting on port 8795 (Flask dev server)")
     print(f"  Twilio number: {TWILIO_NUMBER}")
     print(f"  Personal number: {PERSONAL_NUMBER}")
     print(f"  William cell: {WILLIAM_CELL}")
     print(f"  Transfer enabled: {TRANSFER_ENABLED}")
     print(f"  AI-only mode: {is_ai_only_mode()}")
     print(f"  Transfer timeout: {TRANSFER_TIMEOUT}s")
+    print(f"  ⚠  This is the Flask dev server. In production use:")
+    print(f"     gunicorn -c gunicorn_conf.py app:app")
     app.run(host='0.0.0.0', port=8795, debug=False)

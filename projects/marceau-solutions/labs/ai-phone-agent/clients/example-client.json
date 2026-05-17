@@ -1,0 +1,24 @@
+{
+  "tenant_id": "example-naples-hvac",
+  "business_name": "Naples HVAC Pros (example)",
+  "persona_name": "Sandra",
+  "telegram_chat_id": "5692454753",
+  "transfer_target_cell": "+12395550100",
+
+  "persona_first_message": "Hi, thanks for calling Naples HVAC Pros! Just so you know, this call may be recorded for quality and training purposes. I'm Sandra — how can I help you today?",
+
+  "qualifying_questions": [
+    "Is this for a residential or commercial property?",
+    "What's going on with your system — no cooling, no heat, leak, or something else?",
+    "How urgent is this — same-day, this week, or just getting quotes?",
+    "What's the best phone number to text you a confirmation?"
+  ],
+
+  "kb_facts": {
+    "service_area": "Naples, Bonita Springs, Marco Island, Estero. Outside that area we refer to partners.",
+    "emergency_fee": "$149 after-hours diagnostic, applied to repair if you book.",
+    "warranty": "One-year parts and labor on all installs. Manufacturer warranty pass-through.",
+    "payment_options": "Cash, card, financing through GoodLeap for installs over $3,000.",
+    "hours": "Mon-Sat 8am-6pm. Emergency line 24/7."
+  }
+}

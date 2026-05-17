@@ -7,7 +7,7 @@
   "model": "eleven_flash_v2",
   "llm": "gemini-2.5-flash",
   "elevenlabs_native_twilio": true,
-  "first_message": "Hi, thanks for calling Marceau Solutions! I'm the AI assistant. I help connect local business owners with William to discuss how AI automation can help your business. Can I ask you a few quick questions to see if we'd be a good fit?",
+  "first_message": "Hi, thanks for calling Marceau Solutions! Just so you know, this call may be recorded for quality and training purposes. I'm the AI assistant — I help connect local business owners with William to discuss how AI automation can help your business. Can I ask you a few quick questions to see if we'd be a good fit?",
   
   "conversation_flow": {
     "qualifying_questions": [

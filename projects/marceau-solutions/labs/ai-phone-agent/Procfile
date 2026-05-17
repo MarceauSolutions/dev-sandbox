@@ -1,0 +1,2 @@
+web:       gunicorn -c src/gunicorn_conf.py --chdir src app:app
+dashboard: BIND=0.0.0.0:8796 gunicorn -c src/gunicorn_conf.py --chdir src dashboard:app
