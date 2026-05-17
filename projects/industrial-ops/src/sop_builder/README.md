@@ -109,13 +109,48 @@ See `examples/front_desk_example.json`. Required fields:
 
 Optional: `definitions`, `responsibilities`, `exceptions`, `references`, `revision_history`.
 
+## Wrapper script: `make_sop.py`
+
+`make_sop.py` is the end-to-end orchestrator that Panacea invokes from Telegram.
+It runs `sop_generator.py --gdrive-folder` and optionally delivers the resulting
+PDF to William's Telegram chat via `execution/telegram_send_file.py`.
+
+```bash
+python3 projects/industrial-ops/src/sop_builder/make_sop.py \
+    --gdrive-folder "SOP-Lift-Station-Notes" \
+    --sop-number WW-SOP-002 \
+    --title "Lift Station Daily Inspection" \
+    --department "Wastewater Operations" \
+    --prepared-by "William Marceau, I&E Technician" \
+    --output-dir projects/industrial-ops/data/output \
+    --deliver
+```
+
+`--deliver` is the magic flag — it pipes the PDF to Telegram so you get the file
+on your phone without touching the EC2 filesystem.
+
 ## Dependencies
+
+### Python packages
 ```
 pip install markdown weasyprint anthropic \
     google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
 - `anthropic` only needed for `--from-notes` / `--gdrive-folder` modes
 - `google-*` only needed for `--gdrive-folder` mode
+
+### System packages (for weasyprint)
+WeasyPrint links against native libraries. Without these, you get cryptic GObject errors:
+
+| OS | Command |
+|---|---|
+| macOS | `brew install pango cairo gdk-pixbuf libffi` |
+| Amazon Linux 2023 / RHEL | `sudo dnf install -y pango cairo gdk-pixbuf2 libffi` |
+| Debian / Ubuntu | `sudo apt install -y libpango-1.0-0 libpangoft2-1.0-0` |
+
+### Model override
+The default Claude model for notes structuring and PDF OCR is `claude-opus-4-7`. To
+override: `export SOP_BUILDER_MODEL=claude-sonnet-4-6` (or whatever).
 
 ## Conflict-of-interest note
 This tool generates documents for William's internal Collier County work. Output uses

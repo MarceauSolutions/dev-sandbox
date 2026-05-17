@@ -40,6 +40,10 @@ from weasyprint import HTML, CSS
 
 CSS_PATH = Path(__file__).parent / "county_sop.css"
 
+# Model used for notes→JSON structuring and (in drive_collector) PDF/image OCR.
+# Override with env var if a newer model is preferred or this one is retired.
+CLAUDE_MODEL = os.environ.get("SOP_BUILDER_MODEL", "claude-opus-4-7")
+
 
 def _render_pdf(markdown_text: str, pdf_path: Path, css_path: Path) -> None:
     """Convert markdown → HTML → PDF using weasyprint (no phantom table headers)."""
@@ -231,7 +235,7 @@ def structure_notes_with_ai(
     )
 
     message = client.messages.create(
-        model="claude-opus-4-7",
+        model=CLAUDE_MODEL,
         max_tokens=4096,
         system=system_prompt,
         messages=[{"role": "user", "content": user_msg}],

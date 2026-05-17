@@ -181,8 +181,9 @@ def extract_text_with_anthropic(file_bytes: bytes, mime_type: str, filename: str
         "If parts are unreadable, note them as [illegible]."
     )
 
+    model = os.environ.get("SOP_BUILDER_MODEL", "claude-opus-4-7")
     message = client.messages.create(
-        model="claude-opus-4-7",
+        model=model,
         max_tokens=8192,
         messages=[{
             "role": "user",
