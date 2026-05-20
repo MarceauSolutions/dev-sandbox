@@ -193,21 +193,46 @@ def generate_pages():
     print(f"Portfolio page generated: {output_path}")
     print(f"  {len(projects)} projects across {len(tower_groups)} towers")
 
-    # Deploy to website repo
-    for repo_path in [Path("/tmp/marceausolutions-check"), Path("/home/clawdbot/marceausolutions.com")]:
-        if repo_path.exists():
-            dest_dir = repo_path / "portfolio"
-            dest_dir.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(str(output_path), str(dest_dir / "index.html"))
-            try:
-                subprocess.run(["git", "add", "portfolio/"], capture_output=True, cwd=str(repo_path))
-                subprocess.run(["git", "commit", "-m", "auto: portfolio page updated"],
-                             capture_output=True, cwd=str(repo_path))
-                subprocess.run(["git", "push", "origin", "main"],
-                             capture_output=True, timeout=30, cwd=str(repo_path))
-                print(f"  Deployed to {repo_path}")
-            except Exception:
-                pass
+    # Deploy to all known GitHub Pages source paths. Each path is the root of a
+    # separate marceausolutions.com checkout — we copy the generated index.html
+    # to <repo>/portfolio/index.html and commit+push to trigger GitHub Pages.
+    deploy_targets = [
+        Path.home() / "Documents" / "GitHub" / "marceausolutions.com",   # Mac standalone repo
+        _REPO_ROOT / "websites" / "marceausolutions.com",                 # dev-sandbox working copy
+        Path("/home/clawdbot/marceausolutions.com"),                       # EC2 standalone repo
+        Path("/tmp/marceausolutions-check"),                               # local CI sandbox
+    ]
+    for repo_path in deploy_targets:
+        if not repo_path.exists():
+            continue
+        dest_dir = repo_path / "portfolio"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(str(output_path), str(dest_dir / "index.html"))
+        print(f"  Copied portfolio/index.html to {repo_path}")
+
+        # Only commit+push from real git repos (not the dev-sandbox working copy,
+        # which is tracked inside dev-sandbox itself, and not the /tmp sandbox).
+        if not (repo_path / ".git").exists():
+            continue
+        try:
+            subprocess.run(["git", "add", "portfolio/"], check=True, capture_output=True, cwd=str(repo_path))
+            commit = subprocess.run(
+                ["git", "commit", "-m", "auto: portfolio page updated"],
+                capture_output=True, text=True, cwd=str(repo_path),
+            )
+            if commit.returncode == 0:
+                push = subprocess.run(
+                    ["git", "push", "origin", "main"],
+                    capture_output=True, text=True, timeout=30, cwd=str(repo_path),
+                )
+                if push.returncode == 0:
+                    print(f"  Pushed to {repo_path}")
+                else:
+                    print(f"  WARN: push failed at {repo_path}: {push.stderr.strip()[:200]}")
+        except subprocess.CalledProcessError as e:
+            print(f"  WARN: git add failed at {repo_path}: {e}")
+        except subprocess.TimeoutExpired:
+            print(f"  WARN: git push timed out at {repo_path}")
 
     return len(projects)
 
@@ -313,12 +338,48 @@ def _build_portfolio_html(projects: list, tower_groups: dict, towers: dict) -> s
 </html>"""
 
 
+def add_project(project: dict) -> dict:
+    """Add or update a single project in portfolio.json. Returns the saved entry.
+
+    `project` must contain at minimum: id, tower, client, title, description.
+    Re-running with the same id replaces the existing entry in place.
+    """
+    required = {"id", "tower", "client", "title", "description"}
+    missing = required - project.keys()
+    if missing:
+        raise ValueError(f"add_project: missing required fields: {missing}")
+
+    portfolio = _load_portfolio()
+    project.setdefault("services", [])
+    project.setdefault("result", "")
+    project.setdefault("url", "")
+    project.setdefault("industry", "")
+    project.setdefault("date_completed", datetime.now().strftime("%Y-%m-%d"))
+    project.setdefault("featured", False)
+
+    # Replace if same id exists, else append
+    replaced = False
+    for i, existing in enumerate(portfolio["projects"]):
+        if existing["id"] == project["id"]:
+            portfolio["projects"][i] = project
+            replaced = True
+            break
+    if not replaced:
+        portfolio["projects"].append(project)
+
+    _save_portfolio(portfolio)
+    print(f"{'Updated' if replaced else 'Added'} project: {project['id']}")
+    return project
+
+
 def main():
     parser = argparse.ArgumentParser(description="Portfolio Builder")
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("list", help="List all portfolio projects")
     sub.add_parser("check", help="Check pipeline for new wins")
-    sub.add_parser("generate", help="Generate portfolio page")
+    sub.add_parser("generate", help="Generate portfolio page and deploy")
+    add_p = sub.add_parser("add", help="Add or update a project from a JSON file")
+    add_p.add_argument("--from-file", required=True, help="Path to project JSON")
     args = parser.parse_args()
 
     if args.command == "list":
@@ -328,6 +389,11 @@ def main():
         if added:
             generate_pages()
     elif args.command == "generate":
+        generate_pages()
+    elif args.command == "add":
+        with open(args.from_file) as f:
+            project = json.load(f)
+        add_project(project)
         generate_pages()
     else:
         parser.print_help()

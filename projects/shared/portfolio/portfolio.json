@@ -105,6 +105,24 @@
       "industry": "Events / Nightlife",
       "date_completed": "2026-04-01",
       "featured": false
+    },
+    {
+      "id": "resume-builder",
+      "tower": "internal-tools",
+      "client": "Marceau Solutions (Internal)",
+      "title": "Tailored Resume & Cover Letter Generator",
+      "description": "End-to-end pipeline that turns a job posting + master profile into a tailored resume and cover letter, both Markdown and PDF. Uses Claude to parse the posting, score the match, rewrite resume bullets against the requirements, and draft a custom cover letter. Built originally for personal job hunting; the engine is the same one wired into the (currently inactive) Stripe-gated webhook for future SaaS use.",
+      "services": [
+        "Claude API (Sonnet 4.6)",
+        "Python Engine",
+        "PDF Generation",
+        "Job Parsing"
+      ],
+      "result": "Resume + cover letter in ~60 seconds from a pasted job posting. 89+ tailored versions already produced.",
+      "url": "https://github.com/MarceauSolutions/dev-sandbox/tree/main/projects/shared/resume",
+      "industry": "Career / HR",
+      "date_completed": "2026-05-18",
+      "featured": false
     }
   ],
   "towers": {
@@ -123,6 +141,10 @@
     "fitness-influencer": {
       "name": "Content & Media",
       "tagline": "Video production, social media, and content automation"
+    },
+    "internal-tools": {
+      "name": "Internal Tools & R&D",
+      "tagline": "Production systems built and operated in-house"
     }
   }
 }
