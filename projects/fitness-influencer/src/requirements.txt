@@ -6,7 +6,7 @@ google-auth==2.41.1
 google-auth-oauthlib==1.2.3
 google-auth-httplib2==0.3.0
 google-api-python-client==2.187.0
-Pillow==10.1.0
+Pillow==10.4.0
 requests==2.31.0
 # MoviePy requires ffmpeg - will be installed via nixpacks
 moviepy==1.0.3
