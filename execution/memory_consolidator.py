@@ -19,11 +19,31 @@ from collections import defaultdict
 from datetime import datetime, date
 from pathlib import Path
 
-MEMORY_DIR = Path(
-    os.path.expanduser(
-        "~/.claude/projects/-Users-williammarceaujr--dev-sandbox/memory"
-    )
-)
+def _detect_memory_dir() -> Path:
+    """Auto-detect the correct Claude memory path for Mac or EC2."""
+    import subprocess
+    # Try to find the project path by looking at the cwd
+    cwd = Path.cwd()
+    # Convert cwd to Claude project hash format (replace / with -)
+    project_hash = str(cwd).replace("/", "-").lstrip("-")
+    candidate = Path.home() / ".claude" / "projects" / project_hash / "memory"
+    if candidate.exists():
+        return candidate
+    # Fallback: try known paths
+    known_paths = [
+        Path.home() / ".claude/projects/-home-clawdbot-dev-sandbox/memory",
+        Path.home() / ".claude/projects/-Users-williammarceaujr--dev-sandbox/memory",
+        Path.home() / ".claude/projects/-home-ec2-user-dev-sandbox/memory",
+    ]
+    for p in known_paths:
+        if p.exists():
+            return p
+    # Return the most likely EC2 path (create it if needed)
+    ec2_path = Path.home() / ".claude/projects/-home-clawdbot-dev-sandbox/memory"
+    return ec2_path
+
+
+MEMORY_DIR = _detect_memory_dir()
 MEMORY_MD = MEMORY_DIR / "MEMORY.md"
 LINE_LIMIT = 200
 
