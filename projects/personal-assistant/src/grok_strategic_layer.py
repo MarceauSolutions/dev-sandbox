@@ -24,6 +24,18 @@ logger = logging.getLogger("grok_strategic_layer")
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
+# Load .env at import time. On EC2 Panacea's systemd EnvironmentFile already
+# populates the env; on Mac, callers usually import this module without first
+# sourcing .env. Without this, XAI_API_KEY is silently unset and every Grok
+# consultation fails — Panacea logs were clean, Mac runs were not.
+try:
+    from dotenv import load_dotenv as _load_dotenv_module
+    _ENV_PATH = REPO_ROOT / ".env"
+    if _ENV_PATH.exists():
+        _load_dotenv_module(_ENV_PATH)
+except ImportError:
+    pass
+
 XAI_API_URL = "https://api.x.ai/v1/chat/completions"
 XAI_MODEL = "grok-3-latest"
 GROK_TIMEOUT = 10
