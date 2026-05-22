@@ -39,6 +39,9 @@ except ImportError:
 
 COVER_LETTER_PROMPT = """You are an expert cover letter writer. Write a compelling, professional cover letter.
 
+## TODAY'S DATE (use this exact date in the letter — do not substitute or hallucinate):
+{today_date}
+
 ## CANDIDATE PROFILE:
 {profile_json}
 
@@ -138,6 +141,9 @@ def generate_cover_letter(
 
     resume_context = resume_md if resume_md else "Not provided — generate cover letter from profile and job data only."
 
+    from datetime import date
+    today_str = date.today().strftime("%B %-d, %Y")  # e.g. "May 22, 2026"
+
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     response = client.messages.create(
@@ -146,6 +152,7 @@ def generate_cover_letter(
         messages=[{
             "role": "user",
             "content": COVER_LETTER_PROMPT.format(
+                today_date=today_str,
                 profile_json=json.dumps(profile, indent=2),
                 job_json=json.dumps(parsed_job, indent=2),
                 resume_context=resume_context,

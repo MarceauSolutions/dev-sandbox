@@ -2,7 +2,7 @@
   "contact": {
     "name": "William John Marceau Jr.",
     "phone": "(239) 398-5676",
-    "email": "wmarceau26@gmail.com",
+    "email": "wmarceau@marceausolutions.com",
     "linkedin": "linkedin.com/in/williamjmarceau",
     "github": "github.com/wmarceau",
     "location": "Naples, FL",
@@ -12,23 +12,112 @@
     "software_engineer": "Full-stack software engineer with production experience building AI-integrated platforms. Founded technical consultancy delivering Python-based automation systems, MCP servers, and REST APIs serving multiple clients. Background in biomedical engineering brings systematic approach to complex system design and rigorous testing practices.",
     "ai_ml_engineer": "AI/ML engineer specializing in LLM integration and intelligent automation systems. Built production MCP servers connecting AI agents to real-world services, with experience in ML pipelines, time-series analysis, and prompt engineering. Combines software engineering rigor with deep understanding of AI agent architectures.",
     "technical_lead": "Technical founder with experience architecting multi-tier platforms and leading AI-augmented development workflows. Designed DOE (Directive-Orchestration-Execution) architecture pattern managing 10+ interconnected projects. Strong background in system design, API architecture, and cross-functional delivery.",
-    "product_manager": "Technical product manager with hands-on engineering experience and business acumen. Founded consultancy achieving 80%+ efficiency gains for clients through AI-powered automation. Skilled at translating technical capabilities into business outcomes, with experience in roadmap planning, metrics definition, and stakeholder communication."
+    "product_manager": "Technical product manager with hands-on engineering experience and business acumen. Founded consultancy achieving 80%+ efficiency gains for clients through AI-powered automation. Skilled at translating technical capabilities into business outcomes, with experience in roadmap planning, metrics definition, and stakeholder communication.",
+    "instrumentation_tech": "Instrumentation & Electrical Technician at Collier County Wastewater Utilities with a B.S. in Bioengineering from FGCU and prior controls-engineering and biomedical-instrumentation experience. Hands-on with PLC and SCADA troubleshooting, loop calibration, P&ID interpretation, and CMMS-driven preventative maintenance programs. Founder of a software consultancy delivering production automation, monitoring, and reporting pipelines \u2014 bringing a documentation-first, data-driven mindset to maintenance and reliability work.",
+    "controls_engineer": "Controls engineer with a B.S. in Bioengineering from FGCU, currently working as an Instrumentation & Electrical Technician at Collier County Wastewater Utilities \u2014 hands-on PLC troubleshooting, SCADA, loop calibration, and P&ID-driven diagnostics on operating utility infrastructure. Background includes Controls Engineering teaching assistantship at FGCU (PLC programming, ladder logic, sensor calibration), biomedical instrumentation maintenance at NCH Baker Hospital, and founding a software consultancy that ships Python automation systems end-to-end. Eager to grow into structured-text PLC development on platforms like Beckhoff/TwinCAT, Siemens, or Rockwell."
   },
   "skills": {
-    "languages": ["Python", "SQL", "JavaScript", "VBA", "MATLAB"],
-    "backend": ["FastAPI", "REST APIs", "PostgreSQL", "MCP Protocol", "OAuth 2.0"],
-    "cloud_devops": ["Railway", "AWS (basics)", "Git", "CI/CD", "Docker basics"],
-    "ai_ml": ["Claude MCP", "xAI API", "scikit-learn", "pandas", "NumPy", "TensorFlow basics", "Prompt Engineering"],
-    "automation": ["n8n", "Zapier", "Workflow Orchestration", "Webhooks", "Cron Jobs"],
-    "controls": ["PLC Programming", "Ladder Logic", "Sensor Integration", "PID Control", "EtherNet/IP"],
-    "tools": ["SolidWorks", "Jupyter", "Maximo", "Excel VBA", "Git"]
+    "languages": [
+      "Python",
+      "SQL",
+      "JavaScript",
+      "VBA",
+      "MATLAB"
+    ],
+    "backend": [
+      "FastAPI",
+      "REST APIs",
+      "PostgreSQL",
+      "MCP Protocol",
+      "OAuth 2.0"
+    ],
+    "cloud_devops": [
+      "Railway",
+      "AWS (basics)",
+      "Git",
+      "CI/CD",
+      "Docker basics"
+    ],
+    "ai_ml": [
+      "Claude MCP",
+      "xAI API",
+      "scikit-learn",
+      "pandas",
+      "NumPy",
+      "TensorFlow basics",
+      "Prompt Engineering"
+    ],
+    "automation": [
+      "n8n",
+      "Zapier",
+      "Workflow Orchestration",
+      "Webhooks",
+      "Cron Jobs"
+    ],
+    "controls": [
+      "PLC Programming",
+      "Ladder Logic",
+      "Sensor Integration",
+      "PID Control",
+      "EtherNet/IP"
+    ],
+    "tools": [
+      "SolidWorks",
+      "Jupyter",
+      "Maximo",
+      "Excel VBA",
+      "Git"
+    ],
+    "instrumentation_and_controls": [
+      "PLC troubleshooting (Allen-Bradley, Siemens basics; learning Beckhoff/TwinCAT)",
+      "SCADA / HMI familiarity",
+      "Loop calibration (4\u201320 mA, 0\u201310 V, RTD, thermocouple)",
+      "Reading P&IDs, electrical schematics, and loop diagrams",
+      "Motor controls: 24V DC, 120V AC, 480V three-phase",
+      "CMMS work-order documentation",
+      "Wastewater process instrumentation (flow, level, pressure, pH, DO)",
+      "Safety: LOTO, confined-space awareness, NFPA 70E familiarity",
+      "Structured text / IEC 61131-3 (learning)"
+    ]
   },
   "experience": {
+    "collier_county": {
+      "title": "Instrumentation & Electrical Technician",
+      "company": "Collier County Wastewater Utilities",
+      "location": "Naples, FL",
+      "dates": "April 2026 \u2013 Present",
+      "bullets": {
+        "instrumentation_tech": [
+          "Perform preventative maintenance and loop calibration on field instrumentation across lift stations, force mains, and wastewater treatment facilities",
+          "Diagnose and repair faults in PLC-based control systems, motor control centers, and SCADA-monitored equipment",
+          "Read and interpret P&IDs, electrical schematics, and loop diagrams to isolate field issues and document corrective actions",
+          "Record all maintenance and repair work in the county CMMS, supporting reliability tracking and audit compliance",
+          "Respond to control-system alarms on a rotating on-call schedule, restoring service for residents under tight SLA windows"
+        ],
+        "controls_engineer": [
+          "Maintain PLC, SCADA, and HMI systems supporting wastewater treatment and conveyance for Collier County (~350k residents served)",
+          "Troubleshoot 24V DC, 120V AC, and 480V three-phase control circuits in operating utility infrastructure",
+          "Document instrument calibration history and equipment failure modes to improve preventative maintenance scheduling",
+          "Read P&IDs, electrical schematics, and loop diagrams to support field commissioning, calibration, and fault isolation"
+        ]
+      },
+      "tags": [
+        "instrumentation",
+        "electrical",
+        "controls",
+        "plc",
+        "scada",
+        "wastewater",
+        "municipal",
+        "i&e",
+        "cmms"
+      ]
+    },
     "founder": {
       "title": "Founder & Technical Lead",
       "company": "Marceau Solutions",
       "location": "Naples, FL",
-      "dates": "Feb 2025 – Present",
+      "dates": "Feb 2025 \u2013 Present",
       "bullets": {
         "software_engineer": [
           "Architected MCP Aggregator platform: multi-tier marketplace routing AI agents to 100+ service providers using Python, PostgreSQL, and FastAPI",
@@ -48,7 +137,7 @@
           "Designed and documented DOE (Directive-Orchestration-Execution) architecture: standardized pattern for AI-augmented software development",
           "Led multi-agent parallel development efforts: coordinated 4 specialized agents building independent system components simultaneously",
           "Created 16+ Standard Operating Procedures (SOPs) covering development, testing, deployment, and MCP registry publishing",
-          "Architected 4-tier MCP Aggregator platform: AI agents → Aggregation layer → MCP servers → Service providers",
+          "Architected 4-tier MCP Aggregator platform: AI agents \u2192 Aggregation layer \u2192 MCP servers \u2192 Service providers",
           "Established testing strategy with manual, multi-agent, and pre-deployment verification phases"
         ],
         "product_manager": [
@@ -57,14 +146,22 @@
           "Defined product roadmap for MCP Aggregator: Phase 1 break-even ($500/mo), Phase 2 marketplace ($50K/mo), Phase 3 scale ($500K/mo)",
           "Built self-healing automation systems with 99%+ uptime through webhook retries and alerting infrastructure",
           "Managed Shopify storefront with automated inventory triggers and customer segmentation"
+        ],
+        "instrumentation_tech": [
+          "Built production Python pipelines (PDF generation, monitoring, alerting) \u2014 same documentation discipline applied to maintenance and reliability work",
+          "Owned end-to-end systems from sensor signal / API ingest through database to dashboards; comfortable bridging hardware, software, and operations"
+        ],
+        "controls_engineer": [
+          "Architected automation and monitoring systems for a Florida services business \u2014 Python orchestration, REST API integrations, event-driven workflows on n8n",
+          "Comfortable working with structured data formats, scripting environments, and reading vendor docs to learn unfamiliar control stacks"
         ]
       }
     },
     "codecademy": {
-      "title": "Machine Learning / AI Engineer – Career Path",
+      "title": "Machine Learning / AI Engineer \u2013 Career Path",
       "company": "Codecademy",
       "location": "Remote",
-      "dates": "Jun 2025 – Present",
+      "dates": "Jun 2025 \u2013 Present",
       "bullets": [
         "Completing intensive Machine Learning/AI Engineering track with portfolio projects in Python",
         "Building seizure prediction classifier using EEG time-series features (scikit-learn, pandas)",
@@ -75,7 +172,7 @@
       "title": "Mover & Logistics Specialist",
       "company": "2 College Brothers Moving Company",
       "location": "Naples, FL",
-      "dates": "Oct 2024 – Feb 2025",
+      "dates": "Oct 2024 \u2013 Feb 2025",
       "bullets": [
         "Optimized daily route scheduling and load sequencing for 50+ moves per week using real-time prioritization logic",
         "Identified and resolved bottlenecks in loading/unloading workflows, improving throughput and delivery times"
@@ -85,7 +182,7 @@
       "title": "Personal Trainer",
       "company": "Crunch Fitness",
       "location": "Naples, FL",
-      "dates": "Feb 2024 – Oct 2024",
+      "dates": "Feb 2024 \u2013 Oct 2024",
       "bullets": [
         "Automated client progress tracking and rebooking funnels using Zapier + Google Sheets, reducing administrative time by 60%",
         "Developed customized tracking systems with automated feedback loops, improving client adherence rates by 30% for 20+ clients"
@@ -95,7 +192,7 @@
       "title": "Mechanical Engineering Intern",
       "company": "AXI International",
       "location": "Fort Myers, FL",
-      "dates": "Oct 2023 – Feb 2024",
+      "dates": "Oct 2023 \u2013 Feb 2024",
       "bullets": [
         "Designed and 3D-printed prototypes for automated fuel filtration systems with sensor feedback loops using SolidWorks",
         "Supported PLC troubleshooting for inline magnetic conditioners; gained exposure to EtherNet/IP for real-time data acquisition",
@@ -106,7 +203,7 @@
       "title": "Biomedical Engineering Technician",
       "company": "Sodexo (NCH Baker Hospital)",
       "location": "Naples, FL",
-      "dates": "Aug 2023 – Oct 2023",
+      "dates": "Aug 2023 \u2013 Oct 2023",
       "bullets": [
         "Performed preventive maintenance and calibration on 50+ critical medical devices (ventilators, monitors, infusion pumps)",
         "Troubleshot instrumentation issues in high-acuity settings, adhering to FDA/ISO 13485 standards",
@@ -117,7 +214,7 @@
       "title": "Engineering (Project Management) Intern",
       "company": "Marmon Aerospace & Defense",
       "location": "Fort Myers, FL",
-      "dates": "Feb 2023 – May 2023",
+      "dates": "Feb 2023 \u2013 May 2023",
       "bullets": [
         "Managed Kanban-based inventory for military-grade Cat 5e cable production, automating reorder alerts via VBA",
         "Co-led water-block cable development, prototyping designs with 3D printing; reduced costs by 12%",
@@ -128,7 +225,7 @@
       "title": "Quality Engineer Intern",
       "company": "Insulet Corporation (Omnipod)",
       "location": "Bedford, MA",
-      "dates": "Aug 2022 – Feb 2023",
+      "dates": "Aug 2022 \u2013 Feb 2023",
       "bullets": [
         "Scheduled and executed preventive maintenance on mission-critical manufacturing equipment using Maximo, maintaining 99%+ uptime",
         "Automated repetitive QC tasks with Excel VBA, boosting team efficiency by 25%",
@@ -139,7 +236,7 @@
       "title": "Teaching Assistant (Controls Engineering)",
       "company": "Florida Gulf Coast University",
       "location": "Fort Myers, FL",
-      "dates": "Aug 2019 – May 2022",
+      "dates": "Aug 2019 \u2013 May 2022",
       "bullets": [
         "Developed and graded hands-on PLC labs using Arduino: traffic light controllers, temperature gates, PID basics",
         "Taught ladder logic, state-machine design, and sensor integration to 100+ students",
@@ -150,7 +247,7 @@
       "title": "Research Assistant",
       "company": "Dr. Lura's Lab, Florida Gulf Coast University",
       "location": "Fort Myers, FL",
-      "dates": "2020 – 2022",
+      "dates": "2020 \u2013 2022",
       "bullets": [
         "Designed and 3D-printed adjustable upper-limb prosthesis with passive mechanical compliance",
         "Presented at BMES 2020 and American Academy of Orthotists & Prosthetists 2021"
@@ -162,7 +259,7 @@
     "minor": "Mathematics",
     "school": "Florida Gulf Coast University",
     "location": "Fort Myers, FL",
-    "dates": "Aug 2017 – May 2022",
+    "dates": "Aug 2017 \u2013 May 2022",
     "gpa": "3.8/4.0",
     "honors": "Honors graduate"
   },
@@ -170,7 +267,12 @@
     "mcp_aggregator": {
       "name": "MCP Aggregator Platform",
       "description": "Multi-tier marketplace routing AI agents to service providers",
-      "tech": ["Python", "FastAPI", "PostgreSQL", "MCP Protocol"],
+      "tech": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "MCP Protocol"
+      ],
       "highlights": [
         "Intelligent routing with reliability scoring and latency optimization",
         "Billing system with transaction tracking and fee calculations",
@@ -180,7 +282,12 @@
     "amazon_seller": {
       "name": "Amazon Seller Operations MCP",
       "description": "AI-powered Amazon Seller Central tools via SP-API",
-      "tech": ["Python", "Amazon SP-API", "MCP Protocol", "OAuth 2.0"],
+      "tech": [
+        "Python",
+        "Amazon SP-API",
+        "MCP Protocol",
+        "OAuth 2.0"
+      ],
       "highlights": [
         "Inventory management with restock recommendations",
         "FBA fee calculator with 2026 fee structure",
@@ -190,7 +297,13 @@
     "fitness_influencer": {
       "name": "Fitness Influencer Platform",
       "description": "Full-stack automation suite for content creators",
-      "tech": ["Python", "FastAPI", "xAI API", "Shotstack", "Twilio"],
+      "tech": [
+        "Python",
+        "FastAPI",
+        "xAI API",
+        "Shotstack",
+        "Twilio"
+      ],
       "highlights": [
         "Video processing pipeline with jump-cut automation",
         "AI image generation via xAI API",
@@ -200,7 +313,12 @@
     "seizure_prediction": {
       "name": "Seizure Prediction Classifier",
       "description": "ML model using EEG time-series features",
-      "tech": ["Python", "scikit-learn", "pandas", "NumPy"],
+      "tech": [
+        "Python",
+        "scikit-learn",
+        "pandas",
+        "NumPy"
+      ],
       "highlights": [
         "Feature engineering from EEG signals",
         "Classification model for seizure prediction",
@@ -210,7 +328,11 @@
     "prosthesis": {
       "name": "Adaptive Upper-Limb Prosthesis",
       "description": "Passive mechanical design for residual limb volume changes",
-      "tech": ["SolidWorks", "3D Printing", "Mechanical Design"],
+      "tech": [
+        "SolidWorks",
+        "3D Printing",
+        "Mechanical Design"
+      ],
       "highlights": [
         "Presented at BMES 2020",
         "Presented at American Academy of Orthotists & Prosthetists 2021"
