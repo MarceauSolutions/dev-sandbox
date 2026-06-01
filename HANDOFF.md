@@ -19,6 +19,19 @@
 
 > **Convention**: When ANY session completes work that affects other sessions, append an entry here with the date, what changed, and what the next session should know. Read top-down on session start. Entries older than 2 weeks can be archived to `docs/session-history.md`.
 
+### 2026-05-28 (afternoon — AmEx supervisor breakthrough + Marceau Air v2 plan)
+- **AmEx FX dispute escalated and acknowledged.** William called 1-800-528-4800, escalated through two reps trying to re-scope the dispute to $3,150 USD and invent a "30-day reopen window." Supervisor **Michael, Employee ID HE0973A** confirmed on recorded call that the disputed amount on file is **$8,741.76 USD** (per April 7 resubmission), back-end team reviewing the FX shortfall, **decision expected Tuesday June 9, 2026**.
+- **Written record created** since AmEx claimed no proactive written confirmation possible: `projects/marceau-solutions/labs/PropaneFitnessDispute/propane-amex-call-memorialization-may28-2026.pdf` uploaded to both case files in AmEx Dispute Center + emailed to William. Generator at `propane-amex-call-memorialization-may28-2026.py`.
+- **Marceau Air HVAC strategy pivoted v1 → v2.** v1 (Path C Hybrid: W-2 + HVAC side build, Oct launch) replaced by v2 (Self-Funded: no W-2 dependency, dad as bridge sole-proprietor, mid-June first paid job, mid-July LLC transition). v1 file `projects/marceau-solutions/hvac/pivot-plan.md` preserved unchanged. v2 file `projects/marceau-solutions/hvac/pivot-plan-v2-self-funded.md` is now the active plan, rendered to `marceau-air-launch-plan-v2-self-funded.pdf`.
+- **New reusable brand CSS** at `projects/marceau-solutions/hvac/marceau-brand.css` — Marceau gold/charcoal palette for `execution/markdown_to_pdf.py --css` rendering. Replaces the default blue-heavy CSS for any Marceau doc going forward. Consider moving to `execution/styles/marceau-brand.css` if other towers want it.
+- **Memory:** New `project_marceau_air_hvac.md` captures the v2 plan state, dad's NY residence + training trip + remote QA structure, tiered service scope, capital plan. `project_propane_fitness_dispute.md` updated with the May 28 supervisor call.
+- **Hard deadlines next session(s) should know about:**
+  - **Sat-Sun May 30-31:** William taking EPA 608 Universal cert ($50, ESCO Institute)
+  - **Fri Jun 5:** CILB 4357 filed with DBPR; 3 contractor-specialty GL insurance quotes due (single-policy dad→LLC transition structure)
+  - **Tue Jun 9:** AmEx FX decision deadline. If denied or silent → file CFPB at consumerfinance.gov/complaint that day
+  - **Early-to-mid June:** Dad's training trip to Naples (replaces AC at his Naples property, William trained hands-on)
+  - **Wk of Jul 13:** Target DBPR approval, Marceau Solutions LLC takes over contracting
+
 ### 2026-05-17 (afternoon — AI phone agent hardened end-to-end)
 - **AI phone agent now runs under gunicorn as ec2-user** — was crash-looping 153k times because the old unit ran as clawdbot which can't write the ec2-user-owned data dir. Same root cause as the 2026-05-11 sync-agent migration.
 - **5 audit BLOCKERS resolved:**
