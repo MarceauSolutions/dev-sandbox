@@ -1,0 +1,226 @@
+/*
+ * Marceau Solutions brand stylesheet for markdown-to-PDF
+ * Palette: Gold #C9963C / Charcoal #333333 / Light gray #EEEEEE / Off-white #FAFAFA
+ * Used for: Marceau Air HVAC launch plan + other internal Marceau docs
+ */
+
+@page {
+    size: Letter;
+    margin: 22mm 18mm 22mm 18mm;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #333333;
+    text-align: left;
+}
+
+/* ---------- Headings ---------- */
+
+h1 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 22pt;
+    font-weight: bold;
+    color: #333333;
+    margin-top: 20pt;
+    margin-bottom: 12pt;
+    page-break-after: avoid;
+    border-bottom: 2px solid #C9963C;
+    padding-bottom: 6pt;
+    letter-spacing: -0.3pt;
+}
+
+h2 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16pt;
+    font-weight: bold;
+    color: #333333;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+    page-break-after: avoid;
+    border-bottom: 1px solid #DDDDDD;
+    padding-bottom: 4pt;
+}
+
+h3 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: bold;
+    color: #4A4A4A;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    font-weight: bold;
+    color: #555555;
+    margin-top: 10pt;
+    margin-bottom: 4pt;
+    page-break-after: avoid;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+}
+
+h5, h6 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10pt;
+    font-weight: bold;
+    color: #666666;
+    margin-top: 8pt;
+    margin-bottom: 4pt;
+    page-break-after: avoid;
+}
+
+/* ---------- Paragraphs and text ---------- */
+
+p {
+    margin-top: 0;
+    margin-bottom: 7pt;
+    orphans: 3;
+    widows: 3;
+}
+
+strong, b {
+    color: #333333;
+    font-weight: bold;
+}
+
+em, i {
+    font-style: italic;
+}
+
+/* ---------- Links ---------- */
+
+a {
+    color: #8A6A28;
+    text-decoration: none;
+    border-bottom: 1px dotted #C9963C;
+}
+
+a:visited {
+    color: #8A6A28;
+}
+
+/* ---------- Lists ---------- */
+
+ul, ol {
+    margin-top: 4pt;
+    margin-bottom: 8pt;
+    padding-left: 22pt;
+}
+
+li {
+    margin-bottom: 3pt;
+}
+
+/* ---------- Tables ---------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8pt;
+    margin-bottom: 12pt;
+    font-size: 10pt;
+    page-break-inside: avoid;
+}
+
+thead tr {
+    background-color: #333333;
+}
+
+th {
+    background-color: #333333;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-align: left;
+    padding: 7pt 9pt;
+    border: 1px solid #333333;
+    font-size: 10pt;
+}
+
+td {
+    padding: 6pt 9pt;
+    border: 1px solid #DDDDDD;
+    vertical-align: top;
+    color: #333333;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #FAFAFA;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #FFFFFF;
+}
+
+/* ---------- Code blocks ---------- */
+
+code {
+    font-family: "Menlo", "Consolas", monospace;
+    background-color: #F4F4F4;
+    color: #333333;
+    padding: 1pt 4pt;
+    font-size: 9.5pt;
+    border-radius: 2pt;
+}
+
+pre {
+    background-color: #F8F8F8;
+    border: 1px solid #DDDDDD;
+    border-left: 3px solid #C9963C;
+    padding: 8pt 10pt;
+    font-family: "Menlo", "Consolas", monospace;
+    font-size: 9.5pt;
+    line-height: 1.4;
+    overflow-x: auto;
+    page-break-inside: avoid;
+}
+
+pre code {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+}
+
+/* ---------- Blockquotes ---------- */
+
+blockquote {
+    border-left: 3px solid #C9963C;
+    padding: 4pt 14pt;
+    margin: 8pt 0;
+    color: #555555;
+    background-color: #FAFAFA;
+    font-style: italic;
+}
+
+blockquote p {
+    margin-bottom: 4pt;
+}
+
+/* ---------- Horizontal rules ---------- */
+
+hr {
+    border: none;
+    border-top: 1px solid #DDDDDD;
+    margin: 14pt 0;
+    height: 0;
+}
+
+/* ---------- Images ---------- */
+
+img {
+    max-width: 100%;
+    height: auto;
+    page-break-inside: avoid;
+}
+
+/* ---------- Page breaks ---------- */
+
+.page-break {
+    page-break-after: always;
+}

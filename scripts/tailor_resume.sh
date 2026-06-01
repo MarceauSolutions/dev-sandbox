@@ -38,6 +38,22 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Resolve output dir to absolute path BEFORE we cd, so relative paths from the
+# caller's CWD don't get nested when the engine resolves them again post-cd.
+case "$OUTPUT_DIR" in
+    /*) ;;  # already absolute
+    *)  OUTPUT_DIR="$(pwd)/$OUTPUT_DIR" ;;
+esac
+mkdir -p "$OUTPUT_DIR"
+
+# Same for the job file if it's relative
+if [ -n "$JOB_FILE" ]; then
+    case "$JOB_FILE" in
+        /*) ;;
+        *)  JOB_FILE="$(pwd)/$JOB_FILE" ;;
+    esac
+fi
+
 # If neither flag was passed, read stdin
 JOB_TEXT_FILE=""
 if [ -z "$JOB_FILE" ] && [ -z "$JOB_URL" ]; then

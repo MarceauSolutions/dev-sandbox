@@ -2,6 +2,9 @@
 .env
 .env.local
 
+# Personal documents — kept local, not synced to GitHub or EC2
+projects/personal-assistant/data/personal/
+
 # Google OAuth credentials
 credentials.json
 token.json
