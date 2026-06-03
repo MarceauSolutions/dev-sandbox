@@ -19,6 +19,18 @@
 
 > **Convention**: When ANY session completes work that affects other sessions, append an entry here with the date, what changed, and what the next session should know. Read top-down on session start. Entries older than 2 weeks can be archived to `docs/session-history.md`.
 
+### 2026-06-03 (process audit + reversible kill pass — Mac/EC2/n8n)
+- **Trigger:** Claude Code usage limit pain. Audited Mac cron+launchd, EC2 systemd, n8n workflows.
+- **Killed (all reversible — see `docs/audits/2026-06-03-process-kill-plan.md`):**
+  - **Clawdbot resurrected after May 16 retirement.** `clawdbot.service`, `clawdbot-pa.service`, `accountability.service` all running since Apr 28 (rebuild date silently re-enabled them). Permanently neutralized: stopped + disabled + unit files renamed to `.service.disabled-2026-06-03`. Panacea Telegram `getUpdates 409 Conflict` errors confirmed resolved.
+  - n8n: `ElevenLabs Call Poller` (paused per "keep deployed" decision), `Questionnaire Response Watcher`, `Treatment-Day-Detector` deactivated. ~1,015 executions/day eliminated.
+  - Mac: 10 broken `outreach_scheduler` cron lines commented out (had been failing `ModuleNotFoundError` for weeks). `cross-tower-sync` and `pa.morning-digest` LaunchAgents unloaded (plists preserved).
+  - EC2: Spanish drill cron commented out.
+- **Open items for next session:**
+  - `mem0_api.service` is crashlooping on EC2 (fresh PID every ~minute). Panacea depends on it. Not in today's scope.
+  - Clawdbot resurrection root cause unknown — something between May 16 and June 3 re-enabled the services. Audit `deploy_to_skills.py`, EC2 sync-agent cron, and rebuild scripts before unmasking anything.
+  - Mac `x_post_cron.sh`, `daily_followup_cron.sh`, `weekly_optimization_review.sh`, `bjk_refund_reminder.py` still firing. EC2 `fitai.service` + `voice-api.service` still running. None in today's scope; cut next pass if needed.
+
 ### 2026-06-01 (late afternoon — EPA 608 deep study session + personal study guide compiled)
 - **EPA 608 Universal study session completed.** William finished ESCO 9th Edition Manual practice exams across all three Type sections (75 questions total, ~55 correct / 20 missed). Patterns identified and locked into `project_marceau_air_hvac.md` memory.
 - **CRITICAL — ESCO PT chart is allowed in the exam room.** Two-page Pressure-Temperature chart contains ASHRAE class, GWP, pressure category, and family for every common refrigerant. This materially changes study strategy: William does NOT need to memorize those properties for charted refrigerants. Study time should focus on EPA regulatory facts (vacuum levels, timelines, recordkeeping thresholds) which are NOT on the chart.

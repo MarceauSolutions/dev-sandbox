@@ -33,20 +33,26 @@ Sessions 1-12 are DONE. Do not restart these efforts. See `docs/session-history.
 | Service | Status | What It Does |
 |---------|--------|-------------|
 | `n8n` | ACTIVE | Workflow automation (port 5678) |
-| `clawdbot` | ACTIVE | AI assistant via Telegram (@w_marceaubot) |
-| `mem0-api` | ACTIVE | Shared agent memory (port 5020) |
-| `fitai` | ACTIVE | Fitness influencer platform (fitai.marceausolutions.com) |
-| `voice-api` | ACTIVE | Voice AI API (legacy — api.marceausolutions.com) |
-| `ai-phone-agent` | ACTIVE | AI receptionist with ElevenLabs Conversational AI (port 8795, ai-phone.marceausolutions.com) |
-| `webhook_server.py` | ACTIVE | Ralph webhook handler (port 5002) |
-| `dystonia-digest` | ACTIVE | Dystonia Research Digest web dashboard (port 8792, dystonia.marceausolutions.com) |
-| `stripe-webhook` | STOPPED | Disabled 2026-03-06 — was crash-looping (port conflict with webhook_server.py on 5002). n8n handles Stripe natively. |
+| `panacea` | ACTIVE | Sole AI agent — Telegram bot + Grok + claude -p |
+| `bridge-v2` | ACTIVE | Modular Flask API for n8n callbacks (port 5011) |
+| `mem0-api` | ACTIVE ⚠️ | Shared agent memory (port 5020). **Crashlooping as of 2026-06-03 — fresh PID ~every minute. Needs fix.** |
+| `fitai` | ACTIVE | Fitness influencer platform (fitai.marceausolutions.com:8000). Legacy — candidate for retirement. |
+| `voice-api` | ACTIVE | Voice AI API (legacy api.marceausolutions.com:8001). Candidate for retirement. |
+| `ai-phone-agent` | ACTIVE | AI receptionist (gunicorn, port 8795). Service running but `ElevenLabs Call Poller` n8n workflow PAUSED 2026-06-03 — reactivate when HVAC inbound goes live. |
+| `ai-phone-dashboard` | ACTIVE | Warm leads dashboard (gunicorn, port 8796) |
+| `sms-webhook` | ACTIVE | Twilio inbound SMS handler (port 5001) |
+| `stripe-webhook` | STOPPED | Disabled 2026-03-06 — was crash-looping. n8n handles Stripe natively. |
+| ~~`clawdbot`~~ | NEUTRALIZED 2026-06-03 | Unit file renamed to `.service.disabled-2026-06-03`. Was resurrected after May 16 retirement, fighting Panacea for Telegram polling. **Do not unmask** without root-cause investigation. |
+| ~~`clawdbot-pa`~~ | NEUTRALIZED 2026-06-03 | Unit file renamed. Was Grok-only PA on 8786. Redundant with Panacea. |
+| ~~`accountability`~~ | NEUTRALIZED 2026-06-03 | Unit file renamed. 90-day accountability plan ended. |
+| ~~`webhook_server.py`~~ | RETIRED 2026-05-16 | Ralph webhook absorbed into Panacea. |
 
-### EC2 Resources (as of 2026-03-06 session 2)
-- **Disk**: 21G/30G (70%) — freed ~220MB (old SQLite backups + /tmp/jiti cache + journals)
-- **Memory**: ~999M-1.1G/1.8G (~54-61%)
+### EC2 Resources (as of 2026-06-03)
+- **Disk**: 24G/30G (78%) — climbing, watch for cleanup
+- **Memory**: 1.0G/1.8G + 978M swap — over budget on 2GB instance; ~400MB freed today by clawdbot kill
 - **Journal**: Capped at 500MB (`/etc/systemd/journald.conf.d/size-limit.conf`)
 - **n8n memory**: Capped at 700M max, 600M high watermark
+- **n8n executions cut 2026-06-03**: ~1,015/day eliminated (ElevenLabs Call Poller paused, Questionnaire Response Watcher + Treatment-Day-Detector deactivated)
 
 ---
 
