@@ -71,6 +71,83 @@ When a question asks "what pressure category is R-X?" — just find R-X on the c
 
 **Important observation:** R-134a appears in the **medium-pressure** section on this chart (its 104°F pressure is in the 30-155 range), even though it's sometimes loosely grouped with "high-pressure HFCs." **Trust the chart** for classification questions on the exam.
 
+## EXAM-DAY TECHNIQUE — How to classify any refrigerant's pressure category using the chart
+
+The chart is organized **by pressure category**. Use either of the two methods below to definitively classify any refrigerant during the exam:
+
+### Method 1 (fastest) — Read the colored section header above the refrigerant column
+
+Each section of the chart has a color-coded header that explicitly names the pressure category in plain text:
+
+| Header color | Header text | Category |
+|---|---|---|
+| **Blue** | "Low-Pressure Refrigerant <30 psig at 104°F" | Low-pressure |
+| **Green** | "Medium-Pressure Refrigerant 30 to 155 psig at 104°F" | Medium-pressure |
+| **Orange/Yellow** | "High-Pressure Refrigerant 155 to 340 psig at 104°F" | High-pressure |
+| **Red** | "Very-High Pressure over 340 psig at 104°F" | Very-high-pressure |
+
+**Step:** Find the refrigerant column on the chart → look up to the colored header → that's the category. **Done in 2 seconds.**
+
+### Method 2 (backup) — Read the 104°F row pressure value and apply boundaries
+
+If you can't see the section header clearly, find the **104°F** row (the row is bolded on the chart) and read the refrigerant's pressure value. Then apply:
+
+| Pressure at 104°F | Category |
+|---|---|
+| < 30 psig | Low-pressure |
+| 30 – 155 psig | Medium-pressure |
+| 155 – 340 psig | High-pressure |
+| > 340 psig | Very-high-pressure |
+
+### Worked examples (verified against your chart)
+
+| Refrigerant | Pressure at 104°F | Category |
+|---|---|---|
+| **R-22** | 208 psig (155–340 range) | **High-pressure** |
+| **R-134a** | 133 psig (30–155 range) | **Medium-pressure** |
+| **R-123** | 7.7 psig (<30) | **Low-pressure** |
+| **R-410A** | 336 psig (155–340, just below very-high cutoff) | **High-pressure** |
+| **R-744 (CO₂)** | Off-chart (>1000 psig) | **Very-high-pressure** |
+| **R-1234yf** | 96.5 psig (30–155 range) | **Medium-pressure** |
+| **R-407C** | 209 psig (155–340 range) | **High-pressure** |
+| **R-12** | 124 psig (30–155 range) | **Medium-pressure** |
+
+### Decision tree for ANY recovery vacuum question on the exam
+
+This is the workflow that uses the chart for what it gives you, and your memory for what it doesn't:
+
+1. **Read the question** — note the refrigerant name AND the charge size (above or below 200 lbs?)
+2. **Find the refrigerant on your chart** — read the colored section header → know the pressure category
+3. **Apply the EPA recovery vacuum table** (memorized — NOT on the chart):
+
+| Pressure category | <200 lbs | ≥200 lbs |
+|---|---|---|
+| Very-high-pressure | 0 psig | 0 psig |
+| High-pressure | **0" Hg** | **10" Hg** |
+| Medium-pressure | 10" Hg | 15" Hg |
+| Low-pressure | 25 mm Hg absolute | 25 mm Hg absolute |
+| Type I (small appliance) | 4" Hg or 90%/80% recovery | (n/a — Type I is always ≤5 lbs) |
+
+**That's the whole technique.** Step 2 uses the chart. Step 3 uses memory. Combined → you can answer every recovery vacuum question correctly.
+
+### Refrigerants NOT on the chart (memorize these by category)
+
+A few refrigerants don't appear on the ESCO chart but can still show up on the exam. Memorize their categories:
+
+| Refrigerant | Category | Notes |
+|---|---|---|
+| **R-13** | Very-high-pressure | CFC, ultra-low temp cascade |
+| **R-23** | Very-high-pressure | HFC, ultra-low temp cascade |
+| **R-503** | Very-high-pressure | Azeotropic blend, legacy |
+| **R-11** | Low-pressure | CFC chiller, banned for new equipment |
+| **R-113** | Low-pressure | CFC, historical |
+| **R-502** | High-pressure | CFC blend, legacy commercial refrigeration |
+| **R-500** | Medium-pressure | CFC blend, legacy |
+
+**Memory hooks:**
+> *"R-13, R-23, R-503 = very-high-pressure cascades."*
+> *"R-11, R-113, R-123, R-245fa = all low-pressure chillers."*
+
 ## What's NOT on the chart (THIS is what you must memorize)
 
 The chart doesn't give you any of the EPA regulatory information. That's where ALL your remaining study time should go:
