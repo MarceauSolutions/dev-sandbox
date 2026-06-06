@@ -142,8 +142,8 @@ def run(dry_run=False, apollo_only=False, pattern_only=False):
 
     api_key = os.getenv('APOLLO_API_KEY', '')
     if not api_key and not pattern_only:
-        # Try hardcoded key from existing scripts as fallback
-        api_key = 'RhRnIKITS2Ye6qSQQO9hUg'
+        # Fallback to env var (hardcoded key redacted 2026-06-06)
+        api_key = os.getenv("APOLLO_API_KEY", "")
 
     updated = []
     skipped = []

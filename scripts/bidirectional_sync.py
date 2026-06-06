@@ -382,7 +382,7 @@ def sync_env_files(dry_run: bool = False) -> list:
                 "TELEGRAM_BOT_TOKEN", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN",
                 "TWILIO_PHONE_NUMBER", "SMTP_USERNAME", "SMTP_PASSWORD",
                 "XAI_API_KEY", "GROK_API_KEY", "STRIPE_SECRET_KEY",
-                "ANTHROPIC_API_KEY", "HUNTER_API_KEY", "GOOGLE_PLACES_API_KEY",
+                "ANTHROPIC_API_KEY", "GOOGLE_PLACES_API_KEY",
                 "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "TELEGRAM_CHAT_ID",
             ]
             added_to_clawdbot = []

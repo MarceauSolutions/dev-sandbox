@@ -146,6 +146,10 @@ token.json.bak
 outputs/letter-for-mom.pdf
 execution/send_mom_letter.py
 
+# Archived / retired API keys (inert, never loaded by code)
+.archived-keys/
+.env.bak-hunter-*
+
 # KeyVault secrets
 projects/shared/api-key-manager/data/.encryption_key
 projects/shared/api-key-manager/data/.jwt_secret

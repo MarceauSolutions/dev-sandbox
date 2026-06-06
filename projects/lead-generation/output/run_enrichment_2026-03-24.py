@@ -4,6 +4,7 @@ Apollo Sequences Activation + Prospect Enrichment
 Tasks 1-4 for 2026-03-24 AI client sprint
 """
 
+import os
 import json
 import time
 import requests
@@ -11,8 +12,8 @@ import re
 from datetime import datetime
 from urllib.parse import urlparse
 
-HUNTER_API_KEY = "157c9ef57f69493f1308e6dba1b511f346f51ccc"
-APOLLO_API_KEY = "RhRnIKITS2Ye6qSQQO9hUg"
+HUNTER_API_KEY = os.getenv("HUNTER_API_KEY", "")   # was hardcoded; redacted 2026-06-06
+APOLLO_API_KEY = os.getenv("APOLLO_API_KEY", "")   # was hardcoded; redacted 2026-06-06
 
 BASE_DIR = "/Users/williammarceaujr./dev-sandbox/projects/shared/lead-scraper/output"
 
