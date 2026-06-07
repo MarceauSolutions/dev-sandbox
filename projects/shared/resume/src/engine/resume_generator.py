@@ -95,10 +95,23 @@ GPA: [GPA] | [Honors]
 **[Project Name]** — [One-line description]
 [Tech stack] | [Key highlight]
 
-IMPORTANT:
+CRITICAL ANTI-FABRICATION RULES (override all other instructions):
+- DO NOT claim qualifications, certifications, licenses, or credentials not present in the candidate profile. NEVER write "clean driving record," "EIT certification," "PE license," "security clearance," "Six Sigma certified," "X years of experience" unless those facts appear in the profile data.
+- DO NOT invent specific incidents, troubleshooting stories, project numbers, percentages, or quantified achievements not present in the profile bullets. If the profile says "Troubleshot PLC systems," do NOT expand to "Troubleshot 12 PLC systems with 99% uptime." If the profile says "Reduced costs," do NOT expand to "Reduced costs by 30%."
+- DO NOT fabricate dates, durations, or tenure beyond what the profile lists.
+- DO NOT apply industry-specific regulatory terminology to work in industries where it does not apply. Examples of overreach to AVOID:
+  * Applying FDA/ISO 13485/Design Control/DHF/CAPA/QSR terminology to non-medical-device work (e.g., Marceau Solutions commercial software, AXI fuel systems, Collier wastewater, Codecademy coursework).
+  * Applying medical-device manufacturing QMS terminology (First Article Inspection, pFMEA, GD&T, SPC, validation protocols) to hospital BMET work, which uses different terminology.
+  * Reframing a candidate's actual work using regulatory keywords from the job posting to inflate apparent fit. Use the candidate's REAL terminology and let the hiring manager see the transferable skill.
+- DO NOT misclassify products or facts. Verify before stating regulatory class (Class I/II/III), industry (medical device vs commercial), or scope (production vs research).
+- If a job requirement is NOT met by the profile, OMIT it. Do NOT create a false match.
+- Preserve the EXACT job dates and tenses from the profile data — if a role is dated "April 2026 – May 2026," it is PAST work. Use past tense bullets.
+- Preserve the EXACT degree titles, school names, GPA values, and education `status` field from the profile verbatim. If an education entry includes a `formatting_note`, OBEY it exactly. NEVER add a graduation date, "Expected [term/year]," "in progress," "currently pursuing," "currently enrolled," or any active-coursework language to a degree unless that exact wording is present in the profile data. If a degree's status indicates a Leave of Absence (or similar), render it factually as written and do NOT imply ongoing study or a return date.
+- For the "relocation" field in the profile contact section, respect the candidate's stated relocation constraints verbatim. If the profile says "Not currently relocating," do NOT claim "willing to relocate."
+
+OTHER REQUIREMENTS:
 - Keep to 1-2 pages of content
-- Use the candidate's REAL experience — do not fabricate
-- Match the job posting's exact terminology for ATS parsing
+- Match the job posting's exact terminology for ATS parsing (but only for qualifications the candidate actually has)
 - Lead with the most relevant experience
 - Output ONLY the markdown resume, nothing else"""
 

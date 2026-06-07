@@ -6,15 +6,17 @@
     "linkedin": "linkedin.com/in/williamjmarceau",
     "github": "github.com/wmarceau",
     "location": "Naples, FL",
-    "relocation": "Willing to relocate"
+    "relocation": "Not currently relocating — housing committed through August 2027. Open to remote, hybrid, or roles within driving distance of Naples, FL (SW Florida region). Open to business travel as required by role."
   },
   "summaries": {
     "software_engineer": "Full-stack software engineer with production experience building AI-integrated platforms. Founded technical consultancy delivering Python-based automation systems, MCP servers, and REST APIs serving multiple clients. Background in biomedical engineering brings systematic approach to complex system design and rigorous testing practices.",
     "ai_ml_engineer": "AI/ML engineer specializing in LLM integration and intelligent automation systems. Built production MCP servers connecting AI agents to real-world services, with experience in ML pipelines, time-series analysis, and prompt engineering. Combines software engineering rigor with deep understanding of AI agent architectures.",
     "technical_lead": "Technical founder with experience architecting multi-tier platforms and leading AI-augmented development workflows. Designed DOE (Directive-Orchestration-Execution) architecture pattern managing 10+ interconnected projects. Strong background in system design, API architecture, and cross-functional delivery.",
     "product_manager": "Technical product manager with hands-on engineering experience and business acumen. Founded consultancy achieving 80%+ efficiency gains for clients through AI-powered automation. Skilled at translating technical capabilities into business outcomes, with experience in roadmap planning, metrics definition, and stakeholder communication.",
-    "instrumentation_tech": "Instrumentation & Electrical Technician at Collier County Wastewater Utilities with a B.S. in Bioengineering from FGCU and prior controls-engineering and biomedical-instrumentation experience. Hands-on with PLC and SCADA troubleshooting, loop calibration, P&ID interpretation, and CMMS-driven preventative maintenance programs. Founder of a software consultancy delivering production automation, monitoring, and reporting pipelines \u2014 bringing a documentation-first, data-driven mindset to maintenance and reliability work.",
-    "controls_engineer": "Controls engineer with a B.S. in Bioengineering from FGCU, currently working as an Instrumentation & Electrical Technician at Collier County Wastewater Utilities \u2014 hands-on PLC troubleshooting, SCADA, loop calibration, and P&ID-driven diagnostics on operating utility infrastructure. Background includes Controls Engineering teaching assistantship at FGCU (PLC programming, ladder logic, sensor calibration), biomedical instrumentation maintenance at NCH Baker Hospital, and founding a software consultancy that ships Python automation systems end-to-end. Eager to grow into structured-text PLC development on platforms like Beckhoff/TwinCAT, Siemens, or Rockwell."
+    "instrumentation_tech": "Instrumentation & Electrical Technician with recent field experience at Collier County Wastewater Utilities and a B.S. in Biomedical Engineering from FGCU (3.8 GPA, Honors). Hands-on with PLC and SCADA troubleshooting, loop calibration, P&ID interpretation, and CMMS-driven preventative maintenance programs. Founder of a software consultancy delivering production automation, monitoring, and reporting pipelines \u2014 bringing a documentation-first, data-driven mindset to maintenance and reliability work.",
+    "controls_engineer": "Controls engineer with a B.S. in Biomedical Engineering from FGCU (3.8 GPA, Honors). Recent field experience at Collier County Wastewater Utilities \u2014 hands-on PLC troubleshooting, SCADA, loop calibration, and P&ID-driven diagnostics on operating utility infrastructure. Background includes three years as a Controls Engineering Teaching Assistant at FGCU (PLC programming, ladder logic, sensor calibration, PID fundamentals), biomedical instrumentation maintenance at NCH Baker Hospital, and founding a software consultancy that ships Python automation systems end-to-end.",
+    "biomedical_specialist": "Biomedical Engineer with hands-on hospital instrumentation experience and a B.S. in Biomedical Engineering from FGCU (3.8 GPA, Honors). Field experience calibrating and troubleshooting 50+ critical medical devices at NCH Baker Hospital under FDA/ISO 13485 compliance, plus medical-device manufacturing quality work at Insulet Corporation (Omnipod). Published biomedical design work including an adaptive upper-limb prosthesis presented at BMES 2020 and the American Academy of Orthotists & Prosthetists 2021. Comfortable communicating with clinical staff and clinical environments, with documentation-first methodology built across healthcare, utility, and industrial settings.",
+    "technical_sales": "Technical sales / applications engineer with a B.S. in Biomedical Engineering from FGCU and founder of a Python-based automation consultancy delivering B2B technical services. Combines engineering depth (PLC/SCADA, biomedical instrumentation, controls design) with client-facing experience translating technical capabilities into measurable customer outcomes. Comfortable in pre-sales technical demos, customer training, post-sale support, and cross-functional collaboration with engineering, product, and marketing teams."
   },
   "skills": {
     "languages": [
@@ -69,7 +71,7 @@
       "Git"
     ],
     "instrumentation_and_controls": [
-      "PLC troubleshooting (Allen-Bradley, Siemens basics; learning Beckhoff/TwinCAT)",
+      "PLC troubleshooting (Allen-Bradley, Siemens basics)",
       "SCADA / HMI familiarity",
       "Loop calibration (4\u201320 mA, 0\u201310 V, RTD, thermocouple)",
       "Reading P&IDs, electrical schematics, and loop diagrams",
@@ -77,7 +79,7 @@
       "CMMS work-order documentation",
       "Wastewater process instrumentation (flow, level, pressure, pH, DO)",
       "Safety: LOTO, confined-space awareness, NFPA 70E familiarity",
-      "Structured text / IEC 61131-3 (learning)"
+      "Foundational understanding of structured text / IEC 61131-3 from controls coursework"
     ]
   },
   "experience": {
@@ -85,19 +87,19 @@
       "title": "Instrumentation & Electrical Technician",
       "company": "Collier County Wastewater Utilities",
       "location": "Naples, FL",
-      "dates": "April 2026 \u2013 Present",
+      "dates": "April 2026 \u2013 May 2026",
       "bullets": {
         "instrumentation_tech": [
-          "Perform preventative maintenance and loop calibration on field instrumentation across lift stations, force mains, and wastewater treatment facilities",
-          "Diagnose and repair faults in PLC-based control systems, motor control centers, and SCADA-monitored equipment",
-          "Read and interpret P&IDs, electrical schematics, and loop diagrams to isolate field issues and document corrective actions",
-          "Record all maintenance and repair work in the county CMMS, supporting reliability tracking and audit compliance",
-          "Respond to control-system alarms on a rotating on-call schedule, restoring service for residents under tight SLA windows"
+          "Performed preventative maintenance and loop calibration on field instrumentation across lift stations, force mains, and wastewater treatment facilities",
+          "Diagnosed and repaired faults in PLC-based control systems, motor control centers, and SCADA-monitored equipment",
+          "Read and interpreted P&IDs, electrical schematics, and loop diagrams to isolate field issues and document corrective actions",
+          "Recorded all maintenance and repair work in the county CMMS, supporting reliability tracking and audit compliance",
+          "Responded to control-system alarms on a rotating on-call schedule, restoring service for residents under tight SLA windows"
         ],
         "controls_engineer": [
-          "Maintain PLC, SCADA, and HMI systems supporting wastewater treatment and conveyance for Collier County (~350k residents served)",
-          "Troubleshoot 24V DC, 120V AC, and 480V three-phase control circuits in operating utility infrastructure",
-          "Document instrument calibration history and equipment failure modes to improve preventative maintenance scheduling",
+          "Maintained PLC, SCADA, and HMI systems supporting wastewater treatment and conveyance for Collier County (~350k residents served)",
+          "Troubleshot 24V DC, 120V AC, and 480V three-phase control circuits in operating utility infrastructure",
+          "Documented instrument calibration history and equipment failure modes to improve preventative maintenance scheduling",
           "Read P&IDs, electrical schematics, and loop diagrams to support field commissioning, calibration, and fault isolation"
         ]
       },
@@ -158,14 +160,14 @@
       }
     },
     "codecademy": {
-      "title": "Machine Learning / AI Engineer \u2013 Career Path",
+      "title": "Machine Learning / AI Engineering \u2014 Coursework",
       "company": "Codecademy",
       "location": "Remote",
-      "dates": "Jun 2025 \u2013 Present",
+      "dates": "Jun 2025 \u2013 [end date TBD by William]",
       "bullets": [
-        "Completing intensive Machine Learning/AI Engineering track with portfolio projects in Python",
-        "Building seizure prediction classifier using EEG time-series features (scikit-learn, pandas)",
-        "Developing supervised/unsupervised learning models with feature engineering pipelines"
+        "Completed coursework in Python for data science, supervised and unsupervised machine learning fundamentals, and feature engineering",
+        "Built a seizure prediction classifier using EEG time-series features with scikit-learn and pandas as a coursework project",
+        "Developed working knowledge of ML model evaluation, classification methods, and Python data science libraries (pandas, NumPy, scikit-learn)"
       ]
     },
     "moving_company": {
@@ -254,15 +256,25 @@
       ]
     }
   },
-  "education": {
-    "degree": "B.S., Biomedical Engineering",
-    "minor": "Mathematics",
-    "school": "Florida Gulf Coast University",
-    "location": "Fort Myers, FL",
-    "dates": "Aug 2017 \u2013 May 2022",
-    "gpa": "3.8/4.0",
-    "honors": "Honors graduate"
-  },
+  "education": [
+    {
+      "degree": "B.S., Biomedical Engineering",
+      "minor": "Mathematics",
+      "school": "Florida Gulf Coast University",
+      "location": "Fort Myers, FL",
+      "dates": "Aug 2017 \u2013 May 2022",
+      "gpa": "3.8/4.0",
+      "honors": "Honors graduate"
+    },
+    {
+      "degree": "M.S. Coursework \u2014 Biomedical Engineering & Engineering and Technology Innovation Management (dual program)",
+      "status": "Currently on Leave of Absence",
+      "school": "Carnegie Mellon University",
+      "college": "Carnegie Institute of Technology",
+      "location": "Pittsburgh, PA",
+      "formatting_note": "Display under Education or Additional Education section. Do NOT include any expected graduation date or 'in progress' language. Do NOT imply active coursework. Honest framing: candidate started the program and is currently on leave; no concrete return commitment."
+    }
+  ],
   "projects": {
     "mcp_aggregator": {
       "name": "MCP Aggregator Platform",

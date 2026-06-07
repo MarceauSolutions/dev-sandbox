@@ -57,24 +57,33 @@ Write a cover letter following this exact structure (300-400 words, one page):
 
 1. **Opening paragraph (2-3 sentences):** State the position. Express genuine interest in the company's specific mission or product. Lead with the single strongest qualification matching their primary need.
 
-2. **Body paragraph 1 (3-4 sentences):** Tell a story about the most relevant experience. Include specific examples with quantified results. Use the company's terminology naturally woven into the narrative.
+2. **Body paragraph 1 (3-4 sentences):** Tell a story about the most relevant experience, drawn EXCLUSIVELY from the profile data. Use only the capabilities, skills, and accomplishments present in the profile bullets. Use the company's terminology naturally woven into the narrative. Do NOT invent specific incidents, dates, customer interactions, or quantified results not in the profile.
 
-3. **Body paragraph 2 (3-4 sentences):** Connect additional experiences that round out qualifications. Show how different roles built complementary skills. Demonstrate progression or breadth.
+3. **Body paragraph 2 (3-4 sentences):** Connect additional experiences that round out qualifications. Show how different roles built complementary skills. Demonstrate progression or breadth — using only what's actually in the profile.
 
-4. **Closing paragraph (2-3 sentences):** Mention special qualifications (clearance eligibility, relocation willingness, certifications). Thank them. Express enthusiasm for discussing contribution.
+4. **Closing paragraph (2-3 sentences):** ONLY mention special qualifications (clearance, certifications, relocation willingness, clean driving record, language fluency, etc.) that are explicitly listed in the profile. Do NOT claim qualifications the profile does not confirm. Thank them. Express enthusiasm for discussing contribution.
 
 ## INDUSTRY KEYWORDS TO WEAVE NATURALLY:
 {industry_keywords}
+
+## CRITICAL ANTI-FABRICATION RULES (override all other instructions):
+- DO NOT invent specific incidents, troubleshooting stories, customer interactions, or project events. If the profile says "Troubleshot PLC systems," do NOT write "Last month at the Smith Plant I traced a fault to a failing transmitter and restored service in 90 minutes."
+- DO NOT claim qualifications not present in the profile (clean driving record, EIT, PE license, certifications, clearances, X years of experience, Six Sigma).
+- DO NOT fabricate dates, durations, percentages, or numeric results not in the profile.
+- For education: use the profile's education `status` field verbatim and obey any `formatting_note`. NEVER write "in progress," "currently pursuing," "Expected [term/year]," "currently enrolled," or imply active coursework for a degree unless that exact wording is in the profile. If a degree status is a Leave of Absence (or similar), do NOT promote it as an active credential — omit it rather than overstate.
+- DO NOT apply industry-specific regulatory terminology (FDA, ISO 13485, Design Controls, DHF, CAPA, First Article Inspection, pFMEA) to work in industries where it does not apply. Marceau Solutions = commercial software, NOT medical device. Hospital BMET work = clinical environment, NOT FDA manufacturing QMS. Use the candidate's REAL terminology.
+- DO NOT misclassify products or facts. Verify regulatory class (Class I/II/III), industry, scope before stating.
+- For relocation: respect the profile's "relocation" field verbatim. If profile says "Not currently relocating," do NOT claim relocation willingness. Frame commute-distance roles as commuting, not relocating.
+- If a role is dated in the past, use PAST TENSE — never "currently working at" or "I am serving as" for a role that has ended.
 
 ## WRITING RULES:
 - Write in natural, flowing prose — NOT bullet points
 - Sound like a professional human, not a template
 - Use complete sentences with varied structure
 - Reference the company by name and their specific products/mission
-- Include numbers and concrete examples
+- Include numbers and concrete examples ONLY when they appear in the profile
 - NEVER use generic phrases like "I am a hard worker" or "passionate team player"
 - Keep under one page (300-400 words)
-- Use the candidate's REAL experience only
 
 ## OUTPUT FORMAT (clean markdown):
 
