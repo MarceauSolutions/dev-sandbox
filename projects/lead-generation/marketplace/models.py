@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS contractors (
     is_active      INTEGER NOT NULL DEFAULT 1,
     is_seed        INTEGER NOT NULL DEFAULT 0,   -- Marceau Air / internal first-buyer
     promo_granted  INTEGER NOT NULL DEFAULT 0,
+    -- CRM provenance (integrity: every buyer is traceable to its source, never guessed):
+    source         TEXT DEFAULT 'manual',        -- seed | pipeline_import | self_signup | admin_invite
+    source_deal_id INTEGER,                       -- hard FK to pipeline.db deals(id) when imported from CRM
     created_at     TEXT NOT NULL
 );
 
@@ -73,6 +76,8 @@ CREATE TABLE IF NOT EXISTS appointments (
     -- TCPA / compliance gate:
     consent_captured INTEGER NOT NULL DEFAULT 0,
     consent_source   TEXT,                   -- e.g. "web form 2026-06-07", "inbound call"
+    -- Provenance (integrity: where this lead came from — never fabricated):
+    origin         TEXT DEFAULT 'admin_manual',     -- homeowner_form | admin_manual | demo | pipeline
     -- Marketplace state:
     status         TEXT NOT NULL DEFAULT 'draft',  -- draft|available|sold|expired|refunded
     sold_to        INTEGER REFERENCES contractors(id),
@@ -98,9 +103,22 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_stripe_ref ON transactions(stripe_ref) WHE
 """
 
 
+def _migrate(c):
+    """Idempotently add provenance columns to pre-existing tables."""
+    have_ctr = {r["name"] for r in c.execute("PRAGMA table_info(contractors)")}
+    if "source" not in have_ctr:
+        c.execute("ALTER TABLE contractors ADD COLUMN source TEXT DEFAULT 'manual'")
+    if "source_deal_id" not in have_ctr:
+        c.execute("ALTER TABLE contractors ADD COLUMN source_deal_id INTEGER")
+    have_appt = {r["name"] for r in c.execute("PRAGMA table_info(appointments)")}
+    if "origin" not in have_appt:
+        c.execute("ALTER TABLE appointments ADD COLUMN origin TEXT DEFAULT 'admin_manual'")
+
+
 def init_db():
     with get_conn() as c:
         c.executescript(SCHEMA)
+        _migrate(c)
 
 
 # ---------------- Contractors ----------------
@@ -110,19 +128,30 @@ class MarketplaceError(Exception):
 
 
 def create_contractor(company_name, contact_name, email, password, phone=None,
-                      service_area=None, is_seed=False, grant_promo=True) -> int:
+                      service_area=None, is_seed=False, grant_promo=True,
+                      source="manual", source_deal_id=None) -> int:
     email = email.strip().lower()
+    # Integrity guard: a CRM-sourced buyer must carry its deal id, and that deal id
+    # must not already be linked to another contractor (prevents wrong-company reuse).
     with get_conn() as c:
         existing = c.execute("SELECT id FROM contractors WHERE email=?", (email,)).fetchone()
         if existing:
             raise MarketplaceError("An account with that email already exists.")
+        if source_deal_id is not None:
+            dup = c.execute("SELECT id, company_name FROM contractors WHERE source_deal_id=?",
+                            (source_deal_id,)).fetchone()
+            if dup:
+                raise MarketplaceError(
+                    f"CRM deal #{source_deal_id} is already linked to contractor "
+                    f"#{dup['id']} ({dup['company_name']}). Refusing to double-link.")
         cur = c.execute(
             """INSERT INTO contractors
                (company_name, contact_name, email, phone, password_hash, service_area,
-                is_seed, created_at)
-               VALUES (?,?,?,?,?,?,?,?)""",
+                is_seed, source, source_deal_id, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
             (company_name.strip(), contact_name.strip(), email, phone,
-             generate_password_hash(password), service_area, 1 if is_seed else 0, _now()),
+             generate_password_hash(password), service_area, 1 if is_seed else 0,
+             source, source_deal_id, _now()),
         )
         cid = cur.lastrowid
     if grant_promo and config.SIGNUP_PROMO_CENTS > 0:
@@ -230,13 +259,13 @@ def create_appointment(**f) -> int:
             """INSERT INTO appointments
                (service_type, city, zip, scheduled_time, job_summary, est_job_value_cents,
                 price_cents, homeowner_name, address_full, homeowner_phone, homeowner_email,
-                private_notes, consent_captured, consent_source, status, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                private_notes, consent_captured, consent_source, origin, status, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (f["service_type"], f["city"], f["zip"], f["scheduled_time"], f["job_summary"],
              f.get("est_job_value_cents"), int(f["price_cents"]), f["homeowner_name"],
              f["address_full"], f["homeowner_phone"], f.get("homeowner_email"),
              f.get("private_notes"), 1 if f.get("consent_captured") else 0,
-             f.get("consent_source"), "draft", _now()),
+             f.get("consent_source"), f.get("origin", "admin_manual"), "draft", _now()),
         )
         return cur.lastrowid
 
@@ -258,13 +287,13 @@ def create_homeowner_request(**f) -> int:
             """INSERT INTO appointments
                (service_type, city, zip, scheduled_time, job_summary, price_cents,
                 homeowner_name, address_full, homeowner_phone, homeowner_email,
-                private_notes, consent_captured, consent_source, status, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                private_notes, consent_captured, consent_source, origin, status, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (f["service_type"], f["city"], f["zip"], f.get("scheduled_time") or "TBD — confirm with homeowner",
              f.get("job_summary") or "Homeowner request (admin to qualify)", 0,
              f["homeowner_name"], f["address_full"], f["homeowner_phone"], f.get("homeowner_email"),
              f.get("private_notes"), 1, f.get("consent_source", "homeowner web form"),
-             "draft", _now()),
+             "homeowner_form", "draft", _now()),
         )
         return cur.lastrowid
 
@@ -371,6 +400,22 @@ def purchase_appointment(contractor_id: int, appointment_id: int) -> dict:
             raise
         revealed = c.execute("SELECT * FROM appointments WHERE id=?", (appointment_id,)).fetchone()
         return dict(revealed)
+
+
+def delete_appointment(appointment_id: int) -> bool:
+    """Hard-delete a non-sold appointment (draft/available/expired/refunded).
+    A SOLD appointment is never deleted — the sale record must be preserved (refund first)."""
+    with get_conn() as c:
+        c.execute("BEGIN IMMEDIATE")
+        a = c.execute("SELECT status FROM appointments WHERE id=?", (appointment_id,)).fetchone()
+        if a is None:
+            c.execute("ROLLBACK"); raise MarketplaceError("Appointment not found.")
+        if a["status"] == "sold":
+            c.execute("ROLLBACK")
+            raise MarketplaceError("Cannot delete a sold appointment — refund it first.")
+        c.execute("DELETE FROM appointments WHERE id=?", (appointment_id,))
+        c.execute("COMMIT")
+    return True
 
 
 def refund_appointment(appointment_id: int, reason: str = "") -> dict:

@@ -287,7 +287,8 @@ ADMIN = """
     <td>{{ a['id'] }}</td><td>{{ a['service_type'] }}</td><td>{{ a['city'] }} {{ a['zip'] }}</td>
     <td class="muted">{{ a['scheduled_time'] }}</td><td class="right">{{ dollars(a['price_cents']) }}</td>
     <td><span class="pill {{ a['status'] }}">{{ a['status'] }}</span>
-        {% if not a['consent_captured'] %}<br><span class="muted">no consent</span>{% endif %}</td>
+        {% if not a['consent_captured'] %}<br><span class="muted">no consent</span>{% endif %}
+        {% if a['origin'] %}<br><span class="muted">{{ a['origin'] }}</span>{% endif %}</td>
     <td>{{ a['sold_to'] or '' }}</td>
     <td>
       {% if a['status']=='draft' %}
@@ -297,6 +298,7 @@ ADMIN = """
         <form method="post" action="/admin/appointments/{{ a['id'] }}/publish"><button class="btn ghost">Publish</button></form>
       {% endif %}
       {% if a['status']=='sold' %}<form method="post" action="/admin/appointments/{{ a['id'] }}/refund" onsubmit="return confirm('Refund this appointment?')"><button class="btn ghost">Refund</button></form>{% endif %}
+      {% if a['status'] != 'sold' %}<form method="post" action="/admin/appointments/{{ a['id'] }}/delete" onsubmit="return confirm('Delete appointment #{{ a['id'] }}?')" style="margin-top:4px"><button class="btn ghost" style="color:#a33">Delete</button></form>{% endif %}
     </td></tr>
     {% if a['consent_source'] %}<tr><td></td><td colspan="7" class="muted" style="font-size:.78rem">consent: {{ a['consent_source'] }}</td></tr>{% endif %}
     {% endfor %}

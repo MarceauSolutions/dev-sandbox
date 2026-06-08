@@ -50,7 +50,7 @@ def fetch_deals(industry=None, city=None):
         where.append("lower(industry)=lower(?)"); args.append(industry)
     if city:
         where.append("lower(city)=lower(?)"); args.append(city)
-    q = (f"SELECT company, contact_name, contact_email, contact_phone, city, state, industry "
+    q = (f"SELECT id, company, contact_name, contact_email, contact_phone, city, state, industry "
          f"FROM deals WHERE {' AND '.join(where)} AND contact_email IS NOT NULL "
          f"AND contact_email != '' ORDER BY company")
     rows = c.execute(q, args).fetchall()
@@ -80,14 +80,17 @@ def run(commit=False, grant_promo=True, industry=None, city=None):
             created += 1; continue
         temp_pw = secrets.token_urlsafe(9)
         try:
+            # Atomic copy from ONE verified deal row + hard CRM link (source_deal_id).
+            # company/contact/email travel together — never recombined across rows.
             cid = models.create_contractor(
                 company_name=d["company"], contact_name=d["contact_name"] or d["company"],
                 email=email, password=temp_pw, phone=d["contact_phone"],
-                service_area=f"{d['city']}, {d['state']}", is_seed=False, grant_promo=grant_promo)
+                service_area=f"{d['city']}, {d['state']}", is_seed=False, grant_promo=grant_promo,
+                source="pipeline_import", source_deal_id=d["id"])
             have.add(email); created += 1
             invites.append({"company": d["company"], "email": email,
-                            "temp_password": temp_pw, "contractor_id": cid})
-            print(f"  + invited: {d['company']} <{email}>  (temp pw: {temp_pw})")
+                            "temp_password": temp_pw, "contractor_id": cid, "deal_id": d["id"]})
+            print(f"  + invited: {d['company']} <{email}>  (deal #{d['id']}, temp pw: {temp_pw})")
         except models.MarketplaceError as e:
             skipped += 1; print(f"  skip ({e}): {d['company']}")
 

@@ -173,6 +173,12 @@ def main():
     expect_error("cannot refund non-sold appointment",
                  lambda: models.refund_appointment(aid2))
 
+    # --- delete (non-sold only) ---
+    dtmp = models.create_appointment(**appt_payload(consent=True))
+    models.delete_appointment(dtmp)
+    check("draft appointment deletes", models.get_appointment(dtmp) is None)
+    expect_error("cannot delete a SOLD appointment", lambda: models.delete_appointment(aid3))
+
     # --- homeowner intake + price gate ---
     print("\n=== HOMEOWNER INTAKE / PRICE GATE ===")
     hreq = models.create_homeowner_request(
@@ -193,6 +199,32 @@ def main():
     models.publish_appointment(hreq)
     check("draft publishes once priced + consented", models.get_appointment(hreq)["status"] == "available")
     expect_error("set_price rejects zero", lambda: models.set_price(hreq, 0))
+
+    # --- CRM linkage integrity (anti mis-association) ---
+    print("\n=== CRM LINKAGE INTEGRITY ===")
+    # a CRM-sourced buyer carries its deal id atomically
+    linked = models.create_contractor("Linked HVAC", "Real Person", "real@linkedhvac.com",
+                                       "password123", source="pipeline_import", source_deal_id=4242)
+    lc = models.get_contractor(linked)
+    check("source_deal_id stored", lc["source_deal_id"] == 4242)
+    check("source recorded", lc["source"] == "pipeline_import")
+    # the SAME deal cannot be linked to a second contractor (prevents wrong-company reuse)
+    expect_error("deal cannot double-link to another contractor",
+                 lambda: models.create_contractor("Other Co", "X", "x@other.com",
+                         "password123", source="pipeline_import", source_deal_id=4242))
+    # origin provenance on appointments
+    homeo = models.get_appointment(hreq)
+    check("homeowner appt origin = homeowner_form", homeo["origin"] == "homeowner_form")
+    admin_appt = models.get_appointment(aid2)
+    check("admin appt origin = admin_manual", admin_appt["origin"] == "admin_manual")
+    # reconcile runs; non-CRM buyers are 'n/a', no false mismatches
+    import crm_link
+    rep = crm_link.reconcile()
+    check("reconcile returns a report", "contractors" in rep and "issues" in rep)
+    seed_entries = [e for e in rep["contractors"] if e["source_deal_id"] is None]
+    check("non-CRM buyers marked n/a (not flagged)",
+          all("n/a" in (e["verified"] or "") for e in seed_entries))
+    check("no sold_to_missing orphans", not any(i["type"] == "sold_to_missing" for i in rep["issues"]))
 
     # ================= HTTP layer =================
     print("\n=== HTTP LAYER ===")

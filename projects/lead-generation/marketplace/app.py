@@ -181,6 +181,11 @@ def buy(aid):
     flash(f"You won this appointment! Contact details unlocked below. "
           f"({config.dollars(appt['price_cents'])} spent)", "ok")
     notifications.notify_buyer_won(c, appt)
+    try:
+        import crm_link
+        crm_link.log_marketplace_purchase(c, appt)  # best-effort; tied by source_deal_id
+    except Exception:
+        pass
     notifications.notify_admin(
         f"💰 {c['company_name']} bought appt #{aid} ({appt['service_type']}, "
         f"{appt['city']}) for {config.dollars(appt['price_cents'])}")
@@ -301,6 +306,16 @@ def admin_set_price(aid):
 def admin_publish(aid):
     try:
         models.publish_appointment(aid); flash(f"Appointment #{aid} published.", "ok")
+    except models.MarketplaceError as e:
+        flash(str(e), "err")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/appointments/<int:aid>/delete", methods=["POST"])
+@admin_required
+def admin_delete(aid):
+    try:
+        models.delete_appointment(aid); flash(f"Appointment #{aid} deleted.", "ok")
     except models.MarketplaceError as e:
         flash(str(e), "err")
     return redirect(url_for("admin"))
