@@ -19,8 +19,9 @@ os.environ["MARKETPLACE_PROMO_CENTS"] = "30000"
 os.environ["MARKETPLACE_PROMO_CODE"] = ""
 os.environ["MARKETPLACE_ADMIN_EMAIL"] = "admin@test.com"
 os.environ["MARKETPLACE_ADMIN_PASSWORD"] = "adminpass123"
-os.environ["MARKETPLACE_SECRET_KEY"] = "test-secret"
+os.environ["MARKETPLACE_SECRET_KEY"] = "test-secret-key-0123456789"
 os.environ["MARKETPLACE_NOTIFY"] = "false"
+os.environ["MARKETPLACE_ALLOW_INSECURE"] = "true"  # test client uses http; allow non-secure cookies
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -39,6 +40,13 @@ def check(name, cond):
     else:
         _FAIL += 1
         print(f"  ✗ FAIL: {name}")
+
+
+def _raises(fn):
+    try:
+        fn(); return False
+    except Exception:
+        return True
 
 
 def expect_error(name, fn):
@@ -301,6 +309,65 @@ def main():
     r = client.get("/register", follow_redirects=True)
     check("register blocked when invite-only", b"invite-only" in r.data.lower())
     config.PUBLIC_SIGNUP = True
+
+    # ================= SECURITY + HARDENING =================
+    print("\n=== SECURITY / HARDENING ===")
+    r = client.get("/")
+    check("security headers set (X-Frame-Options, nosniff)",
+          r.headers.get("X-Frame-Options") == "DENY"
+          and r.headers.get("X-Content-Type-Options") == "nosniff")
+    r = client.get("/health")
+    hj = r.get_json()
+    check("health does NOT leak config", "payment_mode" not in hj and "stripe_live" not in hj)
+    check("health reports db+ledger", hj.get("db") == "ok" and hj.get("ledger_ok") is True)
+
+    # CSRF is enforced when not in TESTING mode
+    flaskapp.app.config["TESTING"] = False
+    try:
+        r = client.post("/login", data=dict(email="x@y.com", password="z"))
+        check("CSRF blocks tokenless POST (400)", r.status_code == 400)
+    finally:
+        flaskapp.app.config["TESTING"] = True
+
+    # config refuses insecure defaults (temporarily force defaults + no allow-insecure)
+    def _force_insecure():
+        sk, pw, ai = config.SECRET_KEY, config.ADMIN_PASSWORD, config.ALLOW_INSECURE
+        config.SECRET_KEY = config._DEV_SECRET; config.ADMIN_PASSWORD = config._DEV_ADMIN_PW
+        config.ALLOW_INSECURE = False
+        try:
+            config.validate_security()
+        finally:
+            config.SECRET_KEY, config.ADMIN_PASSWORD, config.ALLOW_INSECURE = sk, pw, ai
+    check("validate_security raises on dev defaults", _raises(_force_insecure))
+
+    # origin anti-fabrication: admin path cannot claim homeowner_form
+    fake = models.create_appointment(**dict(appt_payload(consent=True), origin="homeowner_form"))
+    check("admin appt cannot fake homeowner_form origin",
+          models.get_appointment(fake)["origin"] == "admin_manual")
+
+    # contact-name cleaning (role/parenthetical stripping)
+    import pipeline_import
+    check("clean strips parenthetical role", pipeline_import._clean_contact_name("Diana (receptionist - friendly)") == "Diana")
+    check("clean drops bare role word", pipeline_import._clean_contact_name("Owner (spoke directly)") == "")
+    check("clean takes first of slash list", pipeline_import._clean_contact_name("Yolanda / Karrie") == "Yolanda")
+
+    # verification gate + unverified flag in reconcile
+    unv = models.create_contractor("Unv HVAC", "Real Person", "p@unvhvac.com", "password123",
+                                   source="pipeline_import", source_deal_id=7777, verified=False,
+                                   email_confidence="0", contact_raw="Front desk (Sue)")
+    rep2 = crm_link.reconcile()
+    ue = next(e for e in rep2["contractors"] if e["contractor_id"] == unv)
+    check("imported buyer is unverified", ue["human_verified"] is False)
+    models.verify_contractor(unv)
+    rep3 = crm_link.reconcile()
+    ue3 = next(e for e in rep3["contractors"] if e["contractor_id"] == unv)
+    check("verify_contractor flips to verified", ue3["human_verified"] is True)
+
+    # amount bounds
+    from app import _usd_to_cents
+    check("amount rejects non-positive", _raises(lambda: _usd_to_cents(0)))
+    check("amount rejects > $100k", _raises(lambda: _usd_to_cents(200000)))
+    check("amount accepts normal", _usd_to_cents(75) == 7500)
 
     # final integrity
     check("FINAL ledger integrity clean", models.verify_ledger() == [])

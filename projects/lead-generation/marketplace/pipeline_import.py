@@ -16,6 +16,7 @@ Usage:
   python pipeline_import.py --commit --industry HVAC --city Naples
 """
 import argparse
+import re
 import secrets
 import sqlite3
 import sys
@@ -24,7 +25,26 @@ from pathlib import Path
 import models
 import config
 
-PIPELINE_DB = str(Path(__file__).resolve().parents[1] / "sales-pipeline" / "data" / "pipeline.db")
+# CRM access goes through the SAME resolver crm_link/reconcile use — so source_deal_id
+# always points into ONE canonical pipeline.db (fixes the Mac/EC2 split-brain that could
+# resolve a deal id to a different company).
+_ROOT = Path(__file__).resolve().parents[3]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+
+def _clean_contact_name(raw: str) -> str:
+    """Strip observational/role parentheticals ('Diana (receptionist)', 'Owner (spoke directly)').
+    Returns '' if nothing verifiable remains (we will NOT present an unverified person)."""
+    if not raw:
+        return ""
+    name = re.sub(r"\([^)]*\)", "", raw)          # drop parentheticals
+    name = re.split(r"\s+/\s+", name)[0]           # 'Yolanda / Karrie' -> first only
+    name = name.strip(" -—/")
+    # role words that aren't a person's name
+    if name.lower() in {"owner", "manager", "receptionist", "front desk", "main", "info", "office"}:
+        return ""
+    return name
 
 # Strong HVAC signal, minus obvious non-HVAC homographs ("hair", "air bar", salons, roofers).
 HVAC_FILTER = (
@@ -39,18 +59,28 @@ HVAC_FILTER = (
     "AND lower(company) NOT LIKE '%organic%'")
 
 
+def _crm_conn():
+    """The ONE canonical CRM connection (same resolver as reconcile)."""
+    from execution.pipeline_db import get_db
+    c = get_db()
+    c.row_factory = sqlite3.Row
+    return c
+
+
 def fetch_deals(industry=None, city=None):
-    if not Path(PIPELINE_DB).exists():
-        print(f"Pipeline DB not found: {PIPELINE_DB}", file=sys.stderr)
+    try:
+        c = _crm_conn()
+    except Exception as e:
+        print(f"CRM (pipeline.db) unavailable: {e}", file=sys.stderr)
         return []
-    c = sqlite3.connect(PIPELINE_DB); c.row_factory = sqlite3.Row
     where = [HVAC_FILTER]
     args = []
     if industry:
         where.append("lower(industry)=lower(?)"); args.append(industry)
     if city:
         where.append("lower(city)=lower(?)"); args.append(city)
-    q = (f"SELECT id, company, contact_name, contact_email, contact_phone, city, state, industry "
+    q = (f"SELECT id, company, contact_name, contact_email, contact_phone, city, state, "
+         f"industry, email_source, email_confidence "
          f"FROM deals WHERE {' AND '.join(where)} AND contact_email IS NOT NULL "
          f"AND contact_email != '' ORDER BY company")
     rows = c.execute(q, args).fetchall()
@@ -76,21 +106,34 @@ def run(commit=False, grant_promo=True, industry=None, city=None):
         if email in have:
             skipped += 1; print(f"  skip (exists): {d['company']} <{email}>"); continue
         if not commit:
-            print(f"  would invite: {d['company']} <{email}> ({d['city']})")
+            unv = (not d["email_source"]) or str(d["email_confidence"]).lower() in (
+                "", "none", "no_email", "0", "personal_owner")
+            print(f"  would import: {d['company']} <{email}> ({d['city']}) "
+                  f"raw_contact='{d['contact_name'] or ''}'"
+                  f"{'  ⚠ UNVERIFIED EMAIL' if unv else ''}")
             created += 1; continue
-        temp_pw = secrets.token_urlsafe(9)
+        temp_pw = secrets.token_urlsafe(12)
+        raw_contact = d["contact_name"] or ""
+        clean_contact = _clean_contact_name(raw_contact) or d["company"]  # never present an unverified person
+        esrc = d["email_source"]
+        econf = d["email_confidence"]
+        unverified = (not esrc) or str(econf).lower() in ("", "none", "no_email", "0", "personal_owner")
         try:
-            # Atomic copy from ONE verified deal row + hard CRM link (source_deal_id).
-            # company/contact/email travel together — never recombined across rows.
+            # Atomic copy from ONE deal row + hard CRM link (source_deal_id) into the
+            # canonical DB. Imported buyers are ALWAYS verified=0 until a human confirms.
             cid = models.create_contractor(
-                company_name=d["company"], contact_name=d["contact_name"] or d["company"],
+                company_name=d["company"], contact_name=clean_contact,
                 email=email, password=temp_pw, phone=d["contact_phone"],
                 service_area=f"{d['city']}, {d['state']}", is_seed=False, grant_promo=grant_promo,
-                source="pipeline_import", source_deal_id=d["id"])
+                source="pipeline_import", source_deal_id=d["id"], verified=False,
+                email_source=esrc, email_confidence=str(econf) if econf is not None else None,
+                contact_raw=raw_contact)
             have.add(email); created += 1
-            invites.append({"company": d["company"], "email": email,
-                            "temp_password": temp_pw, "contractor_id": cid, "deal_id": d["id"]})
-            print(f"  + invited: {d['company']} <{email}>  (deal #{d['id']}, temp pw: {temp_pw})")
+            flag = " ⚠ UNVERIFIED EMAIL" if unverified else ""
+            invites.append({"company": d["company"], "email": email, "temp_password": temp_pw,
+                            "contractor_id": cid, "deal_id": d["id"], "unverified": unverified})
+            print(f"  + imported (UNVERIFIED): {d['company']} <{email}>  deal #{d['id']}"
+                  f"  raw_contact='{raw_contact}'{flag}")
         except models.MarketplaceError as e:
             skipped += 1; print(f"  skip ({e}): {d['company']}")
 

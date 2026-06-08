@@ -53,7 +53,13 @@ CREATE TABLE IF NOT EXISTS contractors (
     promo_granted  INTEGER NOT NULL DEFAULT 0,
     -- CRM provenance (integrity: every buyer is traceable to its source, never guessed):
     source         TEXT DEFAULT 'manual',        -- seed | pipeline_import | self_signup | admin_invite
-    source_deal_id INTEGER,                       -- hard FK to pipeline.db deals(id) when imported from CRM
+    source_deal_id INTEGER UNIQUE,                -- hard FK to pipeline.db deals(id); UNIQUE = one deal -> one buyer
+    -- Verification (the March-25 antidote: an UNVERIFIED buyer must be visibly flagged, never trusted):
+    verified       INTEGER NOT NULL DEFAULT 0,    -- 1 only after a human confirms contact+company are real
+    verified_at    TEXT,
+    email_source   TEXT,                          -- copied from CRM deal.email_source (how the email was obtained)
+    email_confidence TEXT,                         -- copied from CRM deal.email_confidence
+    contact_raw    TEXT,                           -- the ORIGINAL unmodified CRM contact_name (e.g. "Diana (receptionist)")
     created_at     TEXT NOT NULL
 );
 
@@ -104,12 +110,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_stripe_ref ON transactions(stripe_ref) WHE
 
 
 def _migrate(c):
-    """Idempotently add provenance columns to pre-existing tables."""
+    """Idempotently add provenance + verification columns to pre-existing tables."""
     have_ctr = {r["name"] for r in c.execute("PRAGMA table_info(contractors)")}
-    if "source" not in have_ctr:
-        c.execute("ALTER TABLE contractors ADD COLUMN source TEXT DEFAULT 'manual'")
-    if "source_deal_id" not in have_ctr:
-        c.execute("ALTER TABLE contractors ADD COLUMN source_deal_id INTEGER")
+    for col, ddl in [
+        ("source", "TEXT DEFAULT 'manual'"),
+        ("source_deal_id", "INTEGER"),
+        ("verified", "INTEGER NOT NULL DEFAULT 0"),
+        ("verified_at", "TEXT"),
+        ("email_source", "TEXT"),
+        ("email_confidence", "TEXT"),
+        ("contact_raw", "TEXT"),
+    ]:
+        if col not in have_ctr:
+            c.execute(f"ALTER TABLE contractors ADD COLUMN {col} {ddl}")
+    # DB-level uniqueness for the CRM link (one deal -> one buyer). Partial-ish:
+    # SQLite allows multiple NULLs, so seed/manual buyers (NULL deal) are unaffected.
+    c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_source_deal "
+              "ON contractors(source_deal_id) WHERE source_deal_id IS NOT NULL")
     have_appt = {r["name"] for r in c.execute("PRAGMA table_info(appointments)")}
     if "origin" not in have_appt:
         c.execute("ALTER TABLE appointments ADD COLUMN origin TEXT DEFAULT 'admin_manual'")
@@ -127,12 +144,23 @@ class MarketplaceError(Exception):
     """Expected, user-facing failures (insufficient credits, already sold, etc.)."""
 
 
+MIN_PASSWORD_LEN = 8
+
+
 def create_contractor(company_name, contact_name, email, password, phone=None,
                       service_area=None, is_seed=False, grant_promo=True,
-                      source="manual", source_deal_id=None) -> int:
-    email = email.strip().lower()
+                      source="manual", source_deal_id=None, verified=False,
+                      email_source=None, email_confidence=None, contact_raw=None) -> int:
+    email = (email or "").strip().lower()
+    if "@" not in email or "." not in email.split("@")[-1]:
+        raise MarketplaceError("A valid email is required.")
+    if not password or len(password) < MIN_PASSWORD_LEN:
+        raise MarketplaceError(f"Password must be at least {MIN_PASSWORD_LEN} characters.")
+    if not company_name or not company_name.strip():
+        raise MarketplaceError("Company name is required.")
     # Integrity guard: a CRM-sourced buyer must carry its deal id, and that deal id
     # must not already be linked to another contractor (prevents wrong-company reuse).
+    # This is enforced both here AND by a DB UNIQUE index (defense in depth).
     with get_conn() as c:
         existing = c.execute("SELECT id FROM contractors WHERE email=?", (email,)).fetchone()
         if existing:
@@ -147,11 +175,13 @@ def create_contractor(company_name, contact_name, email, password, phone=None,
         cur = c.execute(
             """INSERT INTO contractors
                (company_name, contact_name, email, phone, password_hash, service_area,
-                is_seed, source, source_deal_id, created_at)
-               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                is_seed, source, source_deal_id, verified, verified_at,
+                email_source, email_confidence, contact_raw, created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (company_name.strip(), contact_name.strip(), email, phone,
              generate_password_hash(password), service_area, 1 if is_seed else 0,
-             source, source_deal_id, _now()),
+             source, source_deal_id, 1 if verified else 0, _now() if verified else None,
+             email_source, email_confidence, contact_raw, _now()),
         )
         cid = cur.lastrowid
     if grant_promo and config.SIGNUP_PROMO_CENTS > 0:
@@ -195,6 +225,29 @@ def get_contractor(contractor_id: int) -> Optional[sqlite3.Row]:
 def list_contractors():
     with get_conn() as c:
         return c.execute("SELECT * FROM contractors ORDER BY created_at DESC").fetchall()
+
+
+def verify_contractor(contractor_id: int) -> bool:
+    """Mark a buyer human-verified (contact + company confirmed real). The antidote to
+    trusting a scraped/role contact: a buyer is UNVERIFIED until a person confirms it."""
+    with get_conn() as c:
+        cur = c.execute("UPDATE contractors SET verified=1, verified_at=? WHERE id=?",
+                        (_now(), contractor_id))
+        if cur.rowcount != 1:
+            raise MarketplaceError("Contractor not found.")
+    return True
+
+
+_VALID_ORIGINS = {"homeowner_form", "admin_manual", "demo", "pipeline"}
+
+
+def _appt_origin(origin):
+    """Admin-created appointments may NOT claim 'homeowner_form' provenance (anti-fabrication).
+    Only create_homeowner_request (the real public form) may stamp homeowner_form."""
+    origin = origin or "admin_manual"
+    if origin not in _VALID_ORIGINS or origin == "homeowner_form":
+        return "admin_manual"
+    return origin
 
 
 # ---------------- Credits ----------------
@@ -265,7 +318,7 @@ def create_appointment(**f) -> int:
              f.get("est_job_value_cents"), int(f["price_cents"]), f["homeowner_name"],
              f["address_full"], f["homeowner_phone"], f.get("homeowner_email"),
              f.get("private_notes"), 1 if f.get("consent_captured") else 0,
-             f.get("consent_source"), f.get("origin", "admin_manual"), "draft", _now()),
+             f.get("consent_source"), _appt_origin(f.get("origin")), "draft", _now()),
         )
         return cur.lastrowid
 
@@ -430,6 +483,9 @@ def refund_appointment(appointment_id: int, reason: str = "") -> dict:
                 raise MarketplaceError("Only a sold appointment can be refunded.")
             buyer = appt["sold_to"]; price = appt["price_cents"]
             ctr = c.execute("SELECT balance_cents FROM contractors WHERE id=?", (buyer,)).fetchone()
+            if ctr is None:
+                c.execute("ROLLBACK")
+                raise MarketplaceError("Buyer account no longer exists; cannot refund.")
             new_bal = ctr["balance_cents"] + price
             c.execute("UPDATE contractors SET balance_cents=? WHERE id=?", (new_bal, buyer))
             c.execute("UPDATE appointments SET status='refunded' WHERE id=?", (appointment_id,))

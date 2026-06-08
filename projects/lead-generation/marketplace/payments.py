@@ -67,11 +67,19 @@ def handle_webhook(payload: bytes, sig_header: str) -> dict:
         raise models.MarketplaceError(f"Webhook signature verification failed: {e}")
     if event["type"] == "checkout.session.completed":
         s = event["data"]["object"]
-        if s.get("payment_status") == "paid":
-            cid = int(s["metadata"]["contractor_id"])
-            cents = int(s["metadata"]["credit_cents"])
-            ref = s["id"]
-            bal = models.add_credits(cid, cents, kind="credit_purchase",
-                                     stripe_ref=ref, note="Stripe credit top-up")
-            return {"ok": True, "contractor_id": cid, "credited": cents, "balance": bal}
+        if s.get("payment_status") != "paid":
+            return {"ok": True, "ignored": "not paid"}
+        # Credit the AUTHORITATIVE amount Stripe actually captured, never client metadata.
+        cents = s.get("amount_total")
+        try:
+            cid = int((s.get("metadata") or {}).get("contractor_id"))
+        except (TypeError, ValueError):
+            # Malformed/missing metadata: ACK with 200 so Stripe stops retrying; log for review.
+            print(f"[payments] webhook {s.get('id')} missing contractor_id metadata", file=__import__('sys').stderr)
+            return {"ok": True, "ignored": "no contractor_id"}
+        if not cents or cents <= 0:
+            return {"ok": True, "ignored": "no amount_total"}
+        bal = models.add_credits(cid, int(cents), kind="credit_purchase",
+                                 stripe_ref=s["id"], note="Stripe credit top-up")
+        return {"ok": True, "contractor_id": cid, "credited": int(cents), "balance": bal}
     return {"ok": True, "ignored": event["type"]}

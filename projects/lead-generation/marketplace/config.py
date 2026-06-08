@@ -61,11 +61,32 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_TEST_WEBHOOK_SECRET") or os.getenv("ST
 STRIPE_IS_LIVE = STRIPE_SECRET_KEY.startswith("sk_live")
 
 # --- App ---
-SECRET_KEY = os.getenv("MARKETPLACE_SECRET_KEY", "dev-insecure-change-me")
+_DEV_SECRET = "dev-insecure-change-me"
+_DEV_ADMIN_PW = "changeme-admin"
+SECRET_KEY = os.getenv("MARKETPLACE_SECRET_KEY", _DEV_SECRET)
 ADMIN_EMAIL = os.getenv("MARKETPLACE_ADMIN_EMAIL", "wmarceau@marceausolutions.com")
-ADMIN_PASSWORD = os.getenv("MARKETPLACE_ADMIN_PASSWORD", "changeme-admin")
+ADMIN_PASSWORD = os.getenv("MARKETPLACE_ADMIN_PASSWORD", _DEV_ADMIN_PW)
 PORT = _i("MARKETPLACE_PORT", 8767)
 BASE_URL = os.getenv("MARKETPLACE_BASE_URL", f"http://127.0.0.1:{PORT}")
+# Local dev/tests may run with default secrets; production must NOT. Set this only for dev.
+ALLOW_INSECURE = _b("MARKETPLACE_ALLOW_INSECURE", False)
+
+
+def validate_security():
+    """Refuse to boot in production with default/placeholder secrets (audit #2/#3)."""
+    problems = []
+    if SECRET_KEY == _DEV_SECRET:
+        problems.append("MARKETPLACE_SECRET_KEY is the dev default (forgeable admin sessions)")
+    if ADMIN_PASSWORD == _DEV_ADMIN_PW:
+        problems.append("MARKETPLACE_ADMIN_PASSWORD is the dev default")
+    if len(SECRET_KEY) < 16 and SECRET_KEY != _DEV_SECRET:
+        problems.append("MARKETPLACE_SECRET_KEY is too short")
+    if problems and not ALLOW_INSECURE:
+        raise RuntimeError(
+            "Refusing to start with insecure config:\n  - " + "\n  - ".join(problems) +
+            "\nSet strong MARKETPLACE_SECRET_KEY / MARKETPLACE_ADMIN_PASSWORD, "
+            "or MARKETPLACE_ALLOW_INSECURE=true for local dev only.")
+    return problems
 
 # --- Notifications (best-effort; failures never block a purchase) ---
 NOTIFY_TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "5692454753")

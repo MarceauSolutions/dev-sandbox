@@ -60,6 +60,15 @@ BASE = """<!DOCTYPE html>
   {{ body }}
 </div>
 <footer class="wrap muted center">{{ brand.name }} · {{ brand.support_email }} · {{ brand.support_phone }}</footer>
+<script>
+  // Inject CSRF token into every same-origin POST form (avoids editing each form).
+  document.querySelectorAll('form[method="post"], form[method="POST"]').forEach(function(f){
+    if (f.querySelector('[name="_csrf"]')) return;
+    var i = document.createElement('input');
+    i.type = 'hidden'; i.name = '_csrf'; i.value = '{{ csrf_token }}';
+    f.appendChild(i);
+  });
+</script>
 </body></html>"""
 
 
@@ -308,11 +317,16 @@ ADMIN = """
   <h3>Contractors</h3>
   <table><tr><th>ID</th><th>Company</th><th>Email</th><th class="right">Balance</th><th>Add credits</th></tr>
   {% for c in contractors %}<tr>
-    <td>{{ c['id'] }}</td><td>{{ c['company_name'] }}{% if c['is_seed'] %} <span class="pill draft">seed</span>{% endif %}</td>
-    <td class="muted">{{ c['email'] }}</td><td class="right gold">{{ dollars(c['balance_cents']) }}</td>
-    <td><form method="post" action="/admin/contractors/{{ c['id'] }}/credits" style="display:flex;gap:6px">
+    <td>{{ c['id'] }}</td><td>{{ c['company_name'] }}{% if c['is_seed'] %} <span class="pill draft">seed</span>{% endif %}
+      {% if c['source_deal_id'] %}<br><span class="muted">deal #{{ c['source_deal_id'] }} · {{ c['source'] }}</span>
+        {% if c['contact_raw'] and c['contact_raw'] != c['contact_name'] %}<br><span class="muted">raw: {{ c['contact_raw'] }}</span>{% endif %}{% endif %}
+      <br>{% if c['verified'] %}<span class="pill available">✓ verified</span>{% elif c['source_deal_id'] %}<span class="pill refunded">⚠ unverified</span>{% endif %}</td>
+    <td class="muted">{{ c['email'] }}{% if c['email_confidence'] %}<br><span class="muted">conf: {{ c['email_confidence'] }}</span>{% endif %}</td>
+    <td class="right gold">{{ dollars(c['balance_cents']) }}</td>
+    <td><form method="post" action="/admin/contractors/{{ c['id'] }}/credits" style="display:flex;gap:6px;margin-bottom:4px">
         <input name="amount" type="number" step="1" placeholder="USD" style="width:90px;margin:0">
-        <button class="btn ghost">Add</button></form></td>
+        <button class="btn ghost">Add</button></form>
+        {% if c['source_deal_id'] and not c['verified'] %}<form method="post" action="/admin/contractors/{{ c['id'] }}/verify" onsubmit="return confirm('Confirm you have verified this contact + company are real?')"><button class="btn ghost">Mark verified</button></form>{% endif %}</td>
   </tr>{% endfor %}</table>
   <h4>Invite a contractor</h4>
   <form method="post" action="/admin/contractors/new">

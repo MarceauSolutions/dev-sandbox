@@ -7,9 +7,13 @@ pay-per-appointment. Marceau-Air-first (public signup gated by config flag).
 Run:  ./run.sh   (or python app.py)
 """
 import functools
-from datetime import timezone
+import hmac
+import secrets as _secrets
+import time
+from collections import defaultdict
 
 from flask import (Flask, request, redirect, url_for, session, flash, abort, jsonify)
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 import config
 import models
@@ -18,9 +22,85 @@ import notifications
 from templates import (render, LANDING, LOGIN, REGISTER, DASHBOARD, CREDITS, ADMIN,
                        REQUEST_FORM, THANKYOU)
 
+# Boot-time guard: refuse to run in production with default secrets (forgeable admin).
+config.validate_security()
+
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+# Trust exactly one proxy hop (nginx) so client IP for the TCPA consent log is real, not spoofable.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.config.update(
+    SESSION_COOKIE_SECURE=not config.ALLOW_INSECURE,   # HTTPS-only in prod
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    MAX_CONTENT_LENGTH=512 * 1024,                      # cap request body
+)
 models.init_db()
+
+
+# ---------- security headers ----------
+# The company site (different origin) fetches the public intake form cross-origin.
+_CORS_ORIGINS = {"https://marceauair.com", "https://www.marceauair.com"}
+
+
+@app.after_request
+def _security_headers(resp):
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["X-Frame-Options"] = "DENY"            # clickjacking defense on the buy form
+    resp.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    if not config.ALLOW_INSECURE:
+        resp.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    # CORS only for the public homeowner intake, only for the known company origins.
+    if request.path == "/request-service":
+        origin = request.headers.get("Origin", "")
+        if origin in _CORS_ORIGINS:
+            resp.headers["Access-Control-Allow-Origin"] = origin
+            resp.headers["Vary"] = "Origin"
+            resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+            resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return resp
+
+
+# ---------- CSRF (lightweight, dependency-free) ----------
+def _csrf_token():
+    tok = session.get("_csrf")
+    if not tok:
+        tok = _secrets.token_urlsafe(32)
+        session["_csrf"] = tok
+    return tok
+
+
+@app.context_processor
+def _inject_csrf():
+    return {"csrf_token": _csrf_token()}
+
+
+# /request-service is a deliberately cross-origin public lead form (posted from the
+# company site on a different domain) — CSRF tokens can't cross origins; it's protected
+# by the honeypot + required consent instead. The webhook is protected by Stripe signature.
+_CSRF_EXEMPT = {"/webhook/stripe", "/request-service"}
+
+
+@app.before_request
+def _csrf_protect():
+    if app.config.get("TESTING"):
+        return
+    if request.method in ("POST", "PUT", "DELETE", "PATCH") and request.path not in _CSRF_EXEMPT:
+        sent = request.form.get("_csrf") or request.headers.get("X-CSRF-Token")
+        if not sent or not hmac.compare_digest(sent, session.get("_csrf", "")):
+            abort(400, "CSRF token missing or invalid")
+
+
+# ---------- simple per-IP rate limit (login brute-force) ----------
+_HITS = defaultdict(list)
+
+
+def _rate_limited(key, limit=8, window=300):
+    now = time.time()
+    hits = [t for t in _HITS[key] if now - t < window]
+    hits.append(now)
+    _HITS[key] = hits
+    return len(hits) > limit
 
 
 # ---------------- auth helpers ----------------
@@ -52,7 +132,12 @@ def admin_required(f):
 
 
 def _usd_to_cents(v) -> int:
-    return int(round(float(v) * 100))
+    cents = int(round(float(v) * 100))
+    if cents <= 0:
+        raise ValueError("Amount must be positive.")
+    if cents > 100_000_00:                         # $100k sanity ceiling (fat-finger guard)
+        raise ValueError("Amount exceeds the allowed maximum.")
+    return cents
 
 
 def _now_iso() -> str:
@@ -70,34 +155,44 @@ def index():
                   public_signup=config.PUBLIC_SIGNUP)
 
 
-@app.route("/request-service", methods=["GET", "POST"])
+@app.route("/request-service", methods=["GET", "POST", "OPTIONS"])
 def request_service():
     """Public homeowner intake -> draft appointment with recorded TCPA consent.
-    Feeds the lead pipeline AND becomes marketplace inventory once admin qualifies+prices."""
+    Accepts both a normal form post (redirects to thank-you) and a cross-origin fetch
+    from the company site (returns JSON so the site can show inline success/error)."""
+    if request.method == "OPTIONS":
+        return ("", 204)  # CORS preflight; headers added by after_request
+    wants_json = ("application/json" in request.headers.get("Accept", "")
+                  or request.headers.get("X-Requested-With") == "fetch")
     if request.method == "POST":
         f = request.form
+        def fail(msg, code=400):
+            if wants_json:
+                return jsonify(ok=False, error=msg), code
+            flash(msg, "err"); return render(REQUEST_FORM)
         if not f.get("consent"):
-            flash("Please check the consent box to submit.", "err")
-            return render(REQUEST_FORM)
-        # structured, auditable consent proof
+            return fail("Please check the consent box to submit.")
+        if f.get("_gotcha"):  # honeypot tripped -> silently accept, drop
+            return (jsonify(ok=True) if wants_json else redirect(url_for("request_thanks")))
         ip = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
         ua = request.headers.get("User-Agent", "")[:200]
         consent_src = (f"homeowner web form @ {_now_iso()} | IP {ip} | UA {ua} | "
                        f"checkbox: call/SMS/email authorization")
         try:
             aid = models.create_homeowner_request(
-                service_type=f["service_type"], city=f["city"], zip=f["zip"],
+                service_type=f.get("service_type"), city=f.get("city"), zip=f.get("zip"),
                 scheduled_time=f.get("scheduled_time"), job_summary=f.get("job_summary"),
-                homeowner_name=f["homeowner_name"], address_full=f["address_full"],
-                homeowner_phone=f["homeowner_phone"], homeowner_email=f.get("homeowner_email"),
+                homeowner_name=f.get("homeowner_name"), address_full=f.get("address_full"),
+                homeowner_phone=f.get("homeowner_phone"), homeowner_email=f.get("homeowner_email"),
                 consent_captured=True, consent_source=consent_src)
         except models.MarketplaceError as e:
-            flash(str(e), "err")
-            return render(REQUEST_FORM)
+            return fail(str(e))
         notifications.notify_admin(
-            f"🏠 New homeowner request #{aid}: {f['service_type']} — {f['city']} {f['zip']} "
-            f"({f['homeowner_name']}, {f['homeowner_phone']})")
-        session["thanks"] = {"name": f["homeowner_name"], "phone": f["homeowner_phone"]}
+            f"🏠 New homeowner request #{aid}: {f.get('service_type')} — {f.get('city')} {f.get('zip')} "
+            f"({f.get('homeowner_name')}, {f.get('homeowner_phone')})")
+        if wants_json:
+            return jsonify(ok=True)
+        session["thanks"] = {"name": f.get("homeowner_name"), "phone": f.get("homeowner_phone")}
         return redirect(url_for("request_thanks"))
     return render(REQUEST_FORM)
 
@@ -110,8 +205,14 @@ def request_thanks():
 
 @app.route("/health")
 def health():
-    return jsonify(status="ok", payment_mode=config.PAYMENT_MODE,
-                   public_signup=config.PUBLIC_SIGNUP, stripe_live=config.STRIPE_IS_LIVE)
+    # Minimal, non-sensitive: real DB touch + ledger invariant. No config disclosure.
+    try:
+        bad = models.verify_ledger()
+        with models.get_conn() as c:
+            c.execute("SELECT 1")
+        return jsonify(status="ok", db="ok", ledger_ok=(len(bad) == 0))
+    except Exception:
+        return jsonify(status="degraded", db="error"), 503
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -145,8 +246,12 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        c = models.authenticate(request.form["email"], request.form["password"])
+        if _rate_limited(f"login:{request.remote_addr}"):
+            flash("Too many attempts. Wait a few minutes and try again.", "err")
+            return render(LOGIN, show_register=True, public_signup=config.PUBLIC_SIGNUP)
+        c = models.authenticate(request.form.get("email", ""), request.form.get("password", ""))
         if c:
+            session.clear()                       # anti session-fixation
             session["contractor_id"] = c["id"]
             return redirect(url_for("dashboard"))
         flash("Invalid email or password.", "err")
@@ -173,10 +278,14 @@ def dashboard():
 @login_required
 def buy(aid):
     c = current_contractor()
+    import sqlite3
     try:
         appt = models.purchase_appointment(c["id"], aid)
     except models.MarketplaceError as e:
         flash(str(e), "err")
+        return redirect(url_for("dashboard"))
+    except sqlite3.OperationalError:
+        flash("The system is busy — please try again in a moment.", "err")
         return redirect(url_for("dashboard"))
     flash(f"You won this appointment! Contact details unlocked below. "
           f"({config.dollars(appt['price_cents'])} spent)", "ok")
@@ -239,8 +348,13 @@ def stripe_webhook():
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
-        if (request.form.get("email") == config.ADMIN_EMAIL
-                and request.form.get("password") == config.ADMIN_PASSWORD):
+        if _rate_limited(f"adminlogin:{request.remote_addr}", limit=5):
+            flash("Too many attempts. Wait a few minutes.", "err")
+            return render(LOGIN, title="Admin log in", is_admin=False, public_signup=config.PUBLIC_SIGNUP)
+        email_ok = hmac.compare_digest(request.form.get("email", ""), config.ADMIN_EMAIL)
+        pw_ok = hmac.compare_digest(request.form.get("password", ""), config.ADMIN_PASSWORD)
+        if email_ok and pw_ok:
+            session.clear()                       # anti session-fixation
             session["is_admin"] = True
             return redirect(url_for("admin"))
         flash("Invalid admin credentials.", "err")
@@ -341,6 +455,17 @@ def admin_new_contractor():
             f["company_name"], f["contact_name"], f["email"], f["password"],
             phone=f.get("phone"), is_seed=bool(f.get("is_seed")))
         flash(f"Contractor {f['company_name']} created.", "ok")
+    except models.MarketplaceError as e:
+        flash(str(e), "err")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/contractors/<int:cid>/verify", methods=["POST"])
+@admin_required
+def admin_verify_contractor(cid):
+    try:
+        models.verify_contractor(cid)
+        flash(f"Contractor #{cid} marked human-verified.", "ok")
     except models.MarketplaceError as e:
         flash(str(e), "err")
     return redirect(url_for("admin"))
