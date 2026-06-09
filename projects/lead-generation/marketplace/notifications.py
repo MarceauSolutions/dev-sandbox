@@ -23,8 +23,10 @@ if str(_ROOT) not in sys.path:
 
 
 def notify_buyer_won(contractor, appt: dict) -> bool:
-    """SMS the winning buyer the revealed appointment details (transactional)."""
-    if not config.NOTIFY_ENABLED or not contractor["phone"]:
+    """SMS the winning buyer the revealed appointment details (transactional).
+    Disabled until Twilio is reactivated (config.NOTIFY_SMS) — the buyer also sees the
+    contact on-screen immediately and William gets a Telegram alert regardless."""
+    if not config.NOTIFY_ENABLED or not config.NOTIFY_SMS or not contractor["phone"]:
         return False
     body = (
         f"{config.BRAND['name']}: you won an appointment!\n"

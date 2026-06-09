@@ -91,6 +91,9 @@ def validate_security():
 # --- Notifications (best-effort; failures never block a purchase) ---
 NOTIFY_TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "5692454753")
 NOTIFY_ENABLED = _b("MARKETPLACE_NOTIFY", True)
+# Automated SMS is OFF until Twilio is reactivated. Telegram alerts to William still work.
+# Re-enable with MARKETPLACE_NOTIFY_SMS=true once the Twilio A2P number is live again.
+NOTIFY_SMS = _b("MARKETPLACE_NOTIFY_SMS", False)
 
 
 def dollars(cents: int) -> str:
