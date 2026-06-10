@@ -100,6 +100,81 @@ def submit_form():
         }), 500
 
 
+@app.route('/request-service', methods=['POST', 'OPTIONS'])
+def marceau_air_request_service():
+    """
+    Dedicated intake for the Marceau Air website (marceausolutions.com/air).
+
+    The live form POSTs FormData with HVAC-specific field names and the
+    front-end JS only treats the submission as successful when the response
+    JSON contains {"ok": true}. This route adapts that contract:
+      - maps homeowner_* / service / address fields to the FormSubmission schema
+      - forces source=marceauair so leads land in the Marceau Air pipeline
+        (not Marceau Solutions, even though the page lives on that domain)
+      - honors the _gotcha honeypot
+      - returns {"ok": true} / {"ok": false, "error": ...}
+    """
+    if request.method == 'OPTIONS':
+        return '', 204
+
+    try:
+        if request.is_json:
+            raw = request.get_json() or {}
+        else:
+            raw = request.form.to_dict()
+
+        # Honeypot: silently accept bots so they don't retry, but don't process.
+        if raw.get('_gotcha'):
+            return jsonify({"ok": True}), 200
+
+        # Compose the service address into the message so it's captured
+        # (the FormSubmission model has no dedicated address fields).
+        address_bits = [raw.get('address_full', ''), raw.get('city', ''), raw.get('zip', '')]
+        address = ', '.join(b for b in address_bits if b).strip(', ')
+        job = raw.get('job_summary', '')
+        message_parts = []
+        if address:
+            message_parts.append(f"Service address: {address}")
+        if job:
+            message_parts.append(job)
+        message = "\n\n".join(message_parts)
+
+        consented = bool(raw.get('consent'))
+
+        mapped = {
+            "source": "marceauair",          # force Marceau Air routing
+            "name": raw.get('homeowner_name', ''),
+            "phone": raw.get('homeowner_phone', ''),
+            "email": raw.get('homeowner_email', ''),
+            "interest": raw.get('service_type', ''),
+            "message": message,
+            "email_opt_in": consented,
+            "sms_opt_in": consented,
+            # metadata
+            "ip_address": request.remote_addr,
+            "user_agent": request.headers.get('User-Agent', ''),
+            "referrer": request.headers.get('Referer', ''),
+            "origin": request.headers.get('Origin', ''),
+            "utm_source": raw.get('utm_source', request.args.get('utm_source', '')),
+            "utm_medium": raw.get('utm_medium', request.args.get('utm_medium', '')),
+            "utm_campaign": raw.get('utm_campaign', request.args.get('utm_campaign', '')),
+        }
+
+        # Need at least a phone or email to be a usable lead.
+        if not mapped['phone'] and not mapped['email']:
+            return jsonify({"ok": False, "error": "Please include a phone number or email so we can reach you"}), 200
+
+        result = handler.process_submission(mapped)
+
+        # Lead is saved even if some integrations errored; that's still a win.
+        if result.get('submission_id'):
+            return jsonify({"ok": True, "id": result['submission_id']}), 200
+        return jsonify({"ok": False, "error": "We couldn't save your request"}), 200
+
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.route('/api/form/health', methods=['GET'])
 def health_check():
     """Health check endpoint with business info."""

@@ -87,7 +87,42 @@ Marceau Solutions
         calendly_link="https://calendly.com/wmarceau/free-fitness-strategy-call",
     ),
 
-    # SW Florida Comfort HVAC - FAMILY BUSINESS (William Marceau Sr.)
+    # Marceau Air - WILLIAM'S HVAC COMPANY (replaces SW Florida Comfort)
+    # Operates under FL Class A License #CAC1814895. This is the active HVAC brand.
+    "marceauair": BusinessConfig(
+        business_id="marceauair",
+        business_name="Marceau Air",
+        domain="marceauair.com",
+        owner_name="William Marceau",
+        owner_email="wmarceau@marceausolutions.com",
+        owner_phone="+12393985676",  # Number published on marceausolutions.com/air
+        clickup_list_id="901709854724",  # HVAC Leads list (repurposed from retired SW Florida Comfort)
+        google_sheet_id="1Lli3vWKErLR2eUo_623eJbyfohqhaqhKcWndss74eTM",  # HVAC Sheet (repurposed)
+        is_client_business=False,  # William's OWN company
+        auto_response_sms_template="""Hi {name}! Thanks for contacting Marceau Air.
+
+We received your request and a technician will call you shortly about your {service_type} needs.
+
+For urgent issues, call us directly at (239) 398-5676.
+
+- Marceau Air""",
+        auto_response_email_template="""Hi {name},
+
+Thank you for contacting Marceau Air!
+
+We received your request about {service_type}. A technician will reach out within a few hours during business hours to get you scheduled.
+
+For immediate help or emergencies, call us at (239) 398-5676.
+
+Best regards,
+Marceau Air
+Licensed & family-owned — Naples, Bonita Springs & Estero
+FL Class A License #CAC1814895
+""",
+        calendly_link="",  # HVAC books by phone, not Calendly
+    ),
+
+    # SW Florida Comfort HVAC - RETIRED (no longer actively pursued, kept for records)
     "swfloridacomfort": BusinessConfig(
         business_id="swfloridacomfort",
         business_name="SW Florida Comfort HVAC",
@@ -170,7 +205,8 @@ def get_business_config(identifier: str) -> Optional[BusinessConfig]:
 
     # Lookup by form source patterns
     source_mapping = {
-        "hvac": "swfloridacomfort",
+        "marceauair": "marceauair",
+        "hvac": "marceauair",  # HVAC inquiries now route to Marceau Air (SW Florida Comfort retired)
         "swflorida": "swfloridacomfort",
         "squarefoot": "squarefootshipping",
         "shipping": "squarefootshipping",
