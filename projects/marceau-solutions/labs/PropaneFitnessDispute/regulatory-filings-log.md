@@ -52,6 +52,30 @@ Track all complaint filings, reference numbers, and status.
 | **Date Submitted** | April 7, 2026 |
 | **Estimated Resolution** | April 22, 2026 |
 
+### FX Shortfall — Reconciliation & CFPB Escalation (June 11, 2026)
+
+| Field | Detail |
+|-------|--------|
+| **Amount owed (verified)** | **$2,271.66 USD** — FX conversion shortfall, reconciled to the penny against posted activity |
+| **Per-card breakdown** | Charged $4,370.88/card; credited $3,235.05/card ($3,150 principal at par + $85.05 partial FX fee); uncredited **$1,135.83/card** |
+| **Tie-out** | Current statement balance $2,234.81 (June 10 stmt) = uncredited dispute $2,271.66 + all other activity −$36.85. Crediting the shortfall zeroes the account (−$36.85, in cardholder's favor). |
+| **Correction to prior estimate** | Supersedes May 28 memo figure of $2,441.76 — Amex posted a partial FX-fee credit of $85.05/card ($170.10 total) not captured in the earlier estimate. Use **$2,271.66**. |
+| **Missed AmEx commitment** | Supervisor Michael (HE0973A) committed June 9, 2026 decision on recorded May 28 call. June 9 passed; June 10 statement shows no credit, no contact. |
+| **Supporting memo** | `propane-amex-cfpb-complaint-june11-2026.pdf` (generated + emailed to self June 11, 2026 16:29 ET for timestamped record) |
+| **CFPB Complaint #** | **260611-34004878** (sent to American Express Company) |
+| **Date Filed** | June 11, 2026 — SUBMITTED |
+| **Portal** | consumerfinance.gov/complaint (portal.consumerfinance.gov) |
+| **Product/Issue** | Credit card → Problem with a purchase shown on your statement → credit not posted |
+| **Attachments uploaded** | CFPB June 11 memo, May 28 call memorialization, AmEx Notice of Dispute Information, April 7 resubmission |
+| **Resolution sought** | Credit $2,271.66 to cases D-93497818 / D-93497819 + written confirmation |
+| **Status** | FILED — awaiting AmEx response (~June 26) |
+| **Master rebuttal** | `propane-amex-cfpb-rebuttal-june11-2026.pdf` — built from full re-analysis of contract + all docs both sides filed. Use when AmEx responds in CFPB portal. |
+| **Dispositive finding** | FORCED CHARGEBACK (reason code 4553 representment filings) → AmEx controls the GBP→USD conversion. Charge @ $1.3511/£, reversal @ $1.00/£. ~95% confidence; post-Apr-9 statement credit label would make it definitive. |
+| **Corrected facts** | Pre-chargeback outreach = Mar 4 platform request + written demands Mar 6/7/12/13 (CC admin@). Refund form withheld until Mar 16 (NOT Mar 14). Verbal-pricing claim dropped (memory-only). Frame as non-DELIVERY, never non-USE. |
+| **Contract anchors** | §12.5(B) + §7.3 statutory-rights exceptions defeat "chargeback=breach"; §12.5(A) 7-day + §7.4 form-on-request = merchant breached first; §11.4 misrep not excludable; NO currency/FX clause exists in contract. |
+
+---
+
 ### Supplement 1 — Regulatory References (April 12, 2026)
 
 | Field | Detail |
