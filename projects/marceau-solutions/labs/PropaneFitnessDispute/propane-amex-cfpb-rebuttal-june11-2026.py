@@ -138,26 +138,32 @@ def build():
     # CORE POSITION
     e.append(Paragraph("CORE POSITION", s["h1"]))
     e.append(Paragraph(
-        "American Express resolved this dispute in my favor through a <b>forced chargeback</b> (reason "
-        "code 4553) and credited the &pound;6,300 principal. American Express &mdash; not the merchant "
-        "&mdash; then converted that reversal to U.S. dollars at an implied <b>$1.00/&pound; parity "
-        "rate</b>, while it had posted the original charge at <b>$1.3511/&pound;</b>. That leaves "
-        "<b>$2,271.66</b> uncredited. On June 11, 2026, a supervisor (Michael, ID 7273100) stated American "
-        "Express will not credit this amount directly, directed me to a merchant &ldquo;refund completion "
-        "form,&rdquo; and asserted that declining it would breach my contract with the merchant. Each of "
-        "those positions is addressed and refuted below.",
+        "This is a billing-error dispute under the Fair Credit Billing Act and Regulation Z "
+        "(12 C.F.R. &sect;1026.13). American Express resolved it in my favor <b>as a dispute under reason "
+        "code 4553 (&ldquo;not as described&rdquo;) &mdash; not a voluntary merchant refund</b> &mdash; and "
+        "credited the &pound;6,300 principal. Because it was resolved through the dispute/chargeback "
+        "process, <b>American Express, not the merchant, converted the reversal to U.S. dollars</b>. It "
+        "posted my charge at <b>$1.3511/&pound;</b> but the reversal at an implied <b>$1.00/&pound; parity "
+        "rate</b>, leaving <b>$2,271.66</b> of the $8,741.76 it originally posted uncredited. Regulation Z "
+        "requires American Express to restore me to the position I would have occupied absent the disputed "
+        "charge &mdash; i.e., to credit the full amount it posted. On June 11, 2026, a supervisor (Michael, "
+        "ID 7273100) instead refused to credit the $2,271.66, directed me to a merchant &ldquo;refund "
+        "completion form,&rdquo; and claimed declining it would breach my merchant contract. That "
+        "instruction is an improper delegation of American Express's own Regulation Z duty, and each "
+        "position is refuted below.",
         s["body"]))
 
     # ISSUE 1
-    e.append(Paragraph("1. THIS WAS A FORCED CHARGEBACK — AMERICAN EXPRESS CONTROLS THE CONVERSION", s["h1"]))
+    e.append(Paragraph("1. RESOLVED AS A DISPUTE (CODE 4553), NOT A VOLUNTARY REFUND — AMEX CONTROLS THE CONVERSION", s["h1"]))
     e.append(Paragraph(
-        "The dispute documentation on file carries American Express <b>chargeback reason code 4553</b> and "
-        "consists of the merchant's <b>representment (chargeback-defense) filings</b> arguing the "
-        "&ldquo;chargeback&hellip; is invalid.&rdquo; Reason codes and representments exist only inside the "
-        "chargeback rail; a voluntary merchant refund has neither. This was therefore a forced chargeback in "
-        "which <b>American Express debited the merchant in GBP and credited me on my USD account</b> &mdash; "
-        "meaning the GBP&rarr;USD conversion of the reversal was American Express's own act, not the "
-        "merchant's.",
+        "The dispute documentation on file carries American Express <b>reason code 4553</b> and consists of "
+        "the merchant's <b>representment (chargeback-defense) filings</b> arguing the &ldquo;chargeback&hellip; "
+        "is invalid.&rdquo; Reason codes and representments exist only inside the dispute/chargeback process; "
+        "a voluntary merchant refund has neither. American Express therefore <b>reversed the charge against "
+        "the merchant in GBP and credited me on my USD account</b> &mdash; meaning the GBP&rarr;USD "
+        "conversion of the reversal was American Express's own act, not the merchant's. This is confirmed in "
+        "American Express's own online activity: the original charge posts as <b>$4,255.97</b> and the "
+        "settlement credit posts, same merchant, as <b>&minus;$3,150.00</b> labeled &ldquo;Credit.&rdquo;",
         s["body"]))
     e.append(Paragraph(
         "American Express applied <b>two different rates to the same transaction</b>: it converted the "
@@ -201,6 +207,16 @@ def build():
         "refund. It cannot grant a partial recovery and then route the currency remainder &mdash; a remainder "
         "<b>its own conversion created</b> &mdash; back to a merchant I have already won a chargeback against.",
         s["body"]))
+    e.append(Paragraph("(d) American Express cannot delegate its Regulation Z duty.", s["h2"]))
+    e.append(Paragraph(
+        "Directing me to a merchant &ldquo;refund completion form&rdquo; to recover a credit that American "
+        "Express's own conversion withheld is an improper attempt to shift its billing-error obligation onto "
+        "the merchant and onto me. Under Regulation Z (12 C.F.R. &sect;1026.13), the duty to investigate and "
+        "correct the billing error rests on the card issuer, not the cardholder, and must be completed within "
+        "two billing cycles. I did not accept any merchant remedy and was not offered a valid one &mdash; the "
+        "merchant withheld its own refund form until March 16 &mdash; so any suggestion that I failed to "
+        "mitigate or accepted a merchant resolution is contrary to the record.",
+        s["body"]))
 
     # ISSUE 3
     e.append(Paragraph("3. THE UNDERLYING CHARGEBACK IS VALID — ON THE MERCHANT'S OWN DOCUMENTS", s["h1"]))
@@ -239,8 +255,9 @@ def build():
     # QUESTIONS
     e.append(Paragraph("5. QUESTIONS AMERICAN EXPRESS MUST ANSWER IN WRITING", s["h1"]))
     for i, q in enumerate([
-        "Was the &pound;6,300 credit a forced chargeback (American Express debited the merchant) or a "
-        "voluntary merchant refund? The reason-code-4553 representment filings indicate the former.",
+        "Was the &pound;6,300 credit issued as a dispute resolution in which American Express debited the "
+        "merchant, or as a voluntary merchant refund? The reason-code-4553 representment filings indicate "
+        "the former, meaning American Express controlled the currency conversion.",
         "At what exchange rate and on what date was the &pound;6,300 reversal converted to USD, and on what "
         "basis was it $1.00/&pound; when the charge was posted at $1.3511/&pound;?",
         "If the position is that the merchant short-remitted, produce documentation of what the merchant "
@@ -253,11 +270,13 @@ def build():
     # RESOLUTION
     e.append(Paragraph("6. RESOLUTION REQUESTED", s["h1"]))
     e.append(Paragraph(
-        "Post a corrective credit of <b>$2,271.66</b> to cases D-93497818 and D-93497819, bringing the "
-        "balance to zero, with written confirmation. Alternatively, provide a written denial citing the "
-        "specific rule under which a &pound;3,150 charge posted at $1.3511/&pound; may be refunded at a "
-        "$1.00/&pound; parity rate. I am not completing any merchant form, am not withdrawing either case, "
-        "and continue to pay the statement minimum without waiving this dispute.",
+        "Post a corrective credit of <b>$2,271.66</b> to cases D-93497818 and D-93497819 <b>as a Regulation Z "
+        "billing-error correction</b>, restoring my account to the position it would have occupied absent the "
+        "disputed charge (full credit of the $8,741.76 originally posted), with written confirmation. "
+        "Alternatively, provide a written denial citing the specific rule under which a &pound;3,150 charge "
+        "posted at $1.3511/&pound; may be refunded at a $1.00/&pound; parity rate. I am not completing any "
+        "merchant form, am not withdrawing either case, and continue to pay the statement minimum without "
+        "waiving this dispute.",
         s["body"]))
 
     e.append(Spacer(1, 10))

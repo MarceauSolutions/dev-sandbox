@@ -69,8 +69,9 @@ Track all complaint filings, reference numbers, and status.
 | **Attachments uploaded** | CFPB June 11 memo, May 28 call memorialization, AmEx Notice of Dispute Information, April 7 resubmission |
 | **Resolution sought** | Credit $2,271.66 to cases D-93497818 / D-93497819 + written confirmation |
 | **Status** | FILED — awaiting AmEx response (~June 26) |
-| **Master rebuttal** | `propane-amex-cfpb-rebuttal-june11-2026.pdf` — built from full re-analysis of contract + all docs both sides filed. Use when AmEx responds in CFPB portal. |
-| **Dispositive finding** | FORCED CHARGEBACK (reason code 4553 representment filings) → AmEx controls the GBP→USD conversion. Charge @ $1.3511/£, reversal @ $1.00/£. ~95% confidence; post-Apr-9 statement credit label would make it definitive. |
+| **Master rebuttal** | `propane-amex-cfpb-rebuttal-june11-2026.pdf` (v2, Reg Z framing) — built from full re-analysis of contract + all docs both sides filed. Use when AmEx responds in CFPB portal. |
+| **Primary framing (Grok-corrected)** | **Reg Z billing error (12 C.F.R. §1026.13)**: AmEx must restore the pre-transaction position (full $8,741.76 credited); $2,271.66 = unrestored remainder. FX mechanics = explanation, not claim. "Use merchant form" = improper delegation of issuer's Reg Z duty. Pre-empt "failed to mitigate" kill (merchant withheld form to Mar 16). NO second chargeback (risks reversing the £6,300 already credited). |
+| **Dispositive finding** | Resolved as a DISPUTE under reason code 4553 ("not as described"), NOT a voluntary refund → AmEx controls the GBP→USD conversion. Charge @ $1.3511/£, reversal @ $1.00/£. Confirmed in AmEx's own activity: charge $4,255.97 vs credit −$3,150.00 (same merchant, labeled "Credit"). Capture that screen + the dispute-reason page as proof. |
 | **Corrected facts** | Pre-chargeback outreach = Mar 4 platform request + written demands Mar 6/7/12/13 (CC admin@). Refund form withheld until Mar 16 (NOT Mar 14). Verbal-pricing claim dropped (memory-only). Frame as non-DELIVERY, never non-USE. |
 | **Contract anchors** | §12.5(B) + §7.3 statutory-rights exceptions defeat "chargeback=breach"; §12.5(A) 7-day + §7.4 form-on-request = merchant breached first; §11.4 misrep not excludable; NO currency/FX clause exists in contract. |
 
