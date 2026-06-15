@@ -228,3 +228,4 @@ projects/boabfit/data/monitor.env
 .sync-backups/
 token_drive_readonly.json
 data/.uptime_state.json
+execution/voice_ai_state.json
