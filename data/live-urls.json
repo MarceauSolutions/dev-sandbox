@@ -1,0 +1,60 @@
+{
+  "_comment": "Canonical registry of Marceau Solutions live URLs. Single source of truth for the uptime monitor (execution/uptime_monitor.py) AND for Panacea/Telegram answering 'what's my working link'. Update here when a site goes live or changes domain.",
+  "updated": "2026-06-14",
+  "sites": [
+    {
+      "name": "Marceau Solutions (brand hub)",
+      "url": "https://marceausolutions.com",
+      "host": "GitHub Pages",
+      "expect": [200],
+      "monitor": true,
+      "client_facing": true
+    },
+    {
+      "name": "Marceau Air (HVAC site)",
+      "url": "https://marceauair.com",
+      "host": "GitHub Pages",
+      "expect": [200],
+      "monitor": true,
+      "client_facing": true
+    },
+    {
+      "name": "Marceau Air — appointment intake backend",
+      "url": "https://appointments.marceauair.com/request-service",
+      "host": "EC2 form-handler.service (gunicorn :8768 behind nginx)",
+      "note": "POST-only endpoint. GET returns 405 = HEALTHY. Any HTTP response = up; timeout/000 = down.",
+      "expect": [405, 200],
+      "monitor": true,
+      "client_facing": true
+    },
+    {
+      "name": "FitAI",
+      "url": "https://fitai.marceausolutions.com",
+      "host": "EC2",
+      "expect": [200],
+      "monitor": true,
+      "client_facing": true
+    },
+    {
+      "name": "n8n automation",
+      "url": "https://n8n.marceausolutions.com",
+      "host": "EC2 (:5678)",
+      "expect": [200],
+      "monitor": true,
+      "client_facing": false
+    }
+  ],
+  "known_dead": [
+    {
+      "name": "Flames of Passion Entertainment",
+      "url": "https://flamesofpassionentertainment.com",
+      "status": "NO DNS A record — domain transfer from Squarespace never completed. Site cannot go live until the domain is under our control and pointed at GitHub Pages.",
+      "do_not_confuse_with": "flamesofpassion.com / flamesofpassion.org are SQUATTER/parking domains we do not own."
+    },
+    {
+      "name": "appointments.marceausolutions.com",
+      "url": "https://appointments.marceausolutions.com",
+      "status": "Has an nginx conf on EC2 but returns 000 (not responding). Verify whether still needed; excluded from alerts."
+    }
+  ]
+}

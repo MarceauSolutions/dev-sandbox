@@ -227,3 +227,4 @@ projects/boabfit/data/monitor.env
 # Sync backup artifacts
 .sync-backups/
 token_drive_readonly.json
+data/.uptime_state.json
