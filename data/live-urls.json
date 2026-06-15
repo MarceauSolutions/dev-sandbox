@@ -44,6 +44,13 @@
       "client_facing": false
     }
   ],
+  "planned": [
+    {
+      "name": "Marketplace (HVAC lead resale product)",
+      "url": "https://leads.marceausolutions.com",
+      "status": "PLANNED domain for the marketplace product (projects/lead-generation/marketplace). Pre-launch, empty DB. Stand up per projects/lead-generation/marketplace/LAUNCH.md when onboarding contractors. Separate from Marceau Air intake."
+    }
+  ],
   "known_dead": [
     {
       "name": "Flames of Passion Entertainment",
@@ -54,7 +61,7 @@
     {
       "name": "appointments.marceausolutions.com",
       "url": "https://appointments.marceausolutions.com",
-      "status": "Has an nginx conf on EC2 but returns 000 (not responding). Verify whether still needed; excluded from alerts."
+      "status": "DECOMMISSIONED 2026-06-15. This was the HVAC lead-marketplace product on a misleading 'appointments' subdomain. nginx route removed + marketplace.service disabled. Do not revive at this name."
     }
   ]
 }

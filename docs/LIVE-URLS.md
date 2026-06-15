@@ -18,7 +18,11 @@ _Last verified: 2026-06-14_
 ## Known dead — do NOT hand these out
 
 - **Flames of Passion** — real domain is `flamesofpassionentertainment.com`, but it has **no DNS A record**: the domain transfer from Squarespace never completed, so it points nowhere and cannot go live until we control the domain and point it at GitHub Pages. `flamesofpassion.com` and `flamesofpassion.org` are **squatter/parking domains we do not own** — never present them as ours.
-- **appointments.marceausolutions.com** — has an nginx conf on EC2 but returns 000 (not responding). Excluded from alerts until confirmed needed.
+- **appointments.marceausolutions.com** — **decommissioned 2026-06-15**. Was the HVAC lead-marketplace product squatting on a misleading "appointments" subdomain. nginx route removed, `marketplace.service` disabled. Do not revive at this name.
+
+## Planned (not yet live)
+
+- **leads.marceausolutions.com** — future home of the marketplace product (`projects/lead-generation/marketplace/`), a contractor lead-resale SaaS (separate from Marceau Air's intake). Pre-launch, empty DB. Stand up via [`marketplace/LAUNCH.md`](../projects/lead-generation/marketplace/LAUNCH.md) when onboarding contractors.
 
 ## Monitoring
 
