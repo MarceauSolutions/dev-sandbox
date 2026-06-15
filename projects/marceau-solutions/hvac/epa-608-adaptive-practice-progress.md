@@ -303,3 +303,46 @@ First Type-focused session since the failed retake. Core untouched (already pass
 ---
 
 *Status as of 2026-06-12: 4 sessions, 179 total questions. Cycle diagnosis + leak math rebuilt. Next session: T1 sales/disposal detail + START the simulated Type blocks. Confirm leak-rate standard with provider.*
+
+---
+
+## Session 5 — 2026-06-15 (55 questions) — THE SIMULATED TYPE BLOCKS (finally run)
+
+This is the session that addresses the documented root cause of the 6/5 failure: the simulated Type I/II/III blocks that were never run last time. **All three passed.**
+
+### Simulated blocks (no chart, 70% = pass)
+| Block | Score | Result |
+|---|---|---|
+| Type I (small appliances) | 8/10 (80%) | **PASS** (was FAILED on real exam) |
+| Type II (high-pressure) | 7/10 (70%) | **PASS** — borderline, then 4/4 lock-in → solid (was FAILED) |
+| Type III (low-pressure) | 9/10 (90%) | **PASS** (was FAILED) |
+| Mixed I/II/III (exam-realistic random) | 12/15 (80%) | **PASS** |
+| Final lock-in (recovery table + equipment cap) | **6/6 (100%)** | locked cold |
+
+### Key pattern: every miss today was slippery RECALL, not concept
+Reasoning/diagnosis is solid. The recall items that kept slipping (and their fixes):
+- **Recovery vacuum table** — was unstable (put 15 then 0 for High≥200). Fixed with the string **`0-10-10-15`** (High<200 / High≥200 / Med<200 / Med≥200). Extremes ignore charge: VeryHigh=0 psig, Low=25 mm absolute. 15" lives ONLY in Medium row. → 6/6 in lock-in.
+- **Equipment cap application** — missed 3× today (knows cap=15 lb, won't apply it). Meta-fix that worked: **"Which equipment? Count POUNDS only, ignore pressure. Over 15 → active (self-contained)."** → locked in LF5/LF6.
+- **Charge ladder** — swapped 5↔15 (small appliance = 5 lb, NOT 15). Mantra: **"5 appliance, 15 equipment, 50 leak, 200 vacuum."**
+- **R-22 = HIGH pressure** (regressed once, then nailed it). Low-pressure list: R-11/113/123/1233zd/245fa.
+- **Section 609 = motor vehicle AC** (608 = stationary).
+
+### Reflexes confirmed HOLDING from Session 4
+- ✅ Air vs dirty-condenser (P-T match check) — held across multiple questions
+- ✅ Leak rates 10/20/30 + math — all correct
+- ✅ Cycle fundamentals, undercharge/overcharge signatures, TXV direction (after one slip)
+
+### EXAM-MORNING CHEAT SHEET (top 4)
+1. **`0-10-10-15`** recovery table (high→med, <200/≥200). VeryHigh=0 psig, Low=25 mm absolute.
+2. **"Which equipment? Count pounds only. Over 15 → active."**
+3. **Charge ladder: 5 appliance · 15 equipment · 50 leak · 200 vacuum.**
+4. **R-22 = HIGH** · leak rates **10/20/30** · Section **609 = vehicles**.
+
+### Still worth a glance before exam (lower priority — all passed already)
+- T1 sales restrictions detail (small cans, self-sealing valves)
+- ASHRAE 15 vs 34 vs AHRI 700
+- R-600a (isobutane) = newer household fridges, A3 flammable
+
+---
+
+*Status as of 2026-06-15: 5 sessions, 234 total questions. **All 3 simulated Type blocks PASSED** (the gap that caused the 6/5 failure is closed). Retake ~6/19. William is exam-ready; remaining work is light recall maintenance on the cheat-sheet items. Confirm leak-rate standard (10/20/30 vs 20/30) with test provider.*
