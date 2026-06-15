@@ -1,2 +1,2 @@
 osxphotos>=67.0.0
-pillow>=10.0.0
+pillow>=11.3.0

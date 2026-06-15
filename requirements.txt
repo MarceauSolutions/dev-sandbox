@@ -37,7 +37,7 @@ pygments
 
 # Video processing (for fitness influencer assistant)
 moviepy
-pillow
+pillow>=11.3.0
 imageio-ffmpeg
 
 # Audio processing (for video background music)
