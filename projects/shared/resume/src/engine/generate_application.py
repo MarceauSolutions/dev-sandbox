@@ -29,9 +29,17 @@ Usage:
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
+
+
+def _slugify(text: str, max_len: int = 40) -> str:
+    """Clean slug for filenames: lowercase, alphanumerics only, underscore-separated.
+    Strips commas, em-dashes, parens, etc. so output filenames stay portable."""
+    slug = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    return slug[:max_len].strip("_")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -110,8 +118,8 @@ def generate_full_application(
 
     company = parsed_job.get("company", "company")
     role = parsed_job.get("role_title", "role")
-    company_slug = company.lower().replace(" ", "_").replace("/", "_")[:30]
-    role_slug = role.lower().replace(" ", "_").replace("/", "_")[:30]
+    company_slug = _slugify(company, 30)
+    role_slug = _slugify(role, 30)
 
     # Save parsed job for reference
     parsed_job_path = output_path / f"parsed_job_{company_slug}_{role_slug}.json"

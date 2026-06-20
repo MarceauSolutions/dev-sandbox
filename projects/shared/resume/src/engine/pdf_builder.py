@@ -18,9 +18,16 @@ Usage:
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _slugify(text: str, max_len: int = 30) -> str:
+    """Clean slug for filenames: lowercase, alphanumerics only, underscore-separated."""
+    slug = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")
+    return slug[:max_len].strip("_")
 
 
 def build_pdf(
@@ -100,8 +107,8 @@ def build_both(
         Dict with paths to generated PDFs and success status
     """
     # Sanitize names for filenames
-    company_slug = company.lower().replace(" ", "_").replace("/", "_")[:30]
-    role_slug = role.lower().replace(" ", "_").replace("/", "_")[:30]
+    company_slug = _slugify(company, 30)
+    role_slug = _slugify(role, 30)
 
     resume_pdf = str(Path(output_dir) / f"resume_{company_slug}_{role_slug}.pdf")
     cover_pdf = str(Path(output_dir) / f"cover_letter_{company_slug}_{role_slug}.pdf")
