@@ -15,12 +15,26 @@ Usage:
 import json
 import logging
 import os
+import ssl
 import urllib.request
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 logger = logging.getLogger("grok_strategic_layer")
+
+# TLS context for api.x.ai. The python.org framework build on Mac ships without
+# a populated CA store (its Install Certificates.command is never run), so the
+# default context fails every HTTPS call with CERTIFICATE_VERIFY_FAILED, while
+# EC2/Panacea's system Python has the OS CA store and works. That asymmetry is
+# why Grok appeared to "intermittently" fail — it was deterministic per host.
+# Prefer certifi's bundle (portable across both hosts); fall back to the system
+# default if certifi is absent. Never disable verification on an API key call.
+try:
+    import certifi
+    _SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
+except Exception:  # certifi missing or unreadable bundle
+    _SSL_CONTEXT = ssl.create_default_context()
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parent.parent.parent.parent))
 
@@ -119,7 +133,7 @@ def consult_grok(user_message: str, additional_context: str = "") -> Optional[st
             },
             method="POST",
         )
-        resp = urllib.request.urlopen(req, timeout=GROK_TIMEOUT)
+        resp = urllib.request.urlopen(req, timeout=GROK_TIMEOUT, context=_SSL_CONTEXT)
         result = json.loads(resp.read())
         direction = result["choices"][0]["message"]["content"].strip()
         logger.info(f"Grok consulted — direction: {direction[:100]}...")
